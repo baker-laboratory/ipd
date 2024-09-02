@@ -1,0 +1,9 @@
+{
+	"folders":
+	[
+		{
+			"path": "/home/sheffler/rfdsym/lib/ipd/lib/ipd",
+            "folder_exclude_patterns": [ "Eigen", ".benchmarks", ".git" ]
+		}
+	]
+}
