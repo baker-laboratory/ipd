@@ -7,6 +7,7 @@ import numpy as np
 import ipd
 from ipd.voxel.voxel_cuda import _voxel
 import random
+from icecream import ic
 
 def main():
     Voxel_score_converse()

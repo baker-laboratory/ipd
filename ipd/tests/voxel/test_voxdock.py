@@ -4,6 +4,7 @@ import ipd
 import torch as th
 import willutil as wu
 from willutil import h
+from icecream import ic
 
 def main():
     test_voxdock_ab()

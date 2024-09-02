@@ -5,6 +5,7 @@ import ipd
 import torch as th
 from willutil import h
 import willutil as wu
+from icecream import ic
 
 def main():
     # fitsd()

@@ -5,6 +5,7 @@ import torch as th
 import ipd
 from willutil import h
 from numba import cuda
+from icecream import ic
 
 _voxel = ipd.dev.LazyModule('ipd.voxel.voxel_cuda')
 

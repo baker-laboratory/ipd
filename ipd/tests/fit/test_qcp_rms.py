@@ -161,19 +161,19 @@ def test_qcp_regions_simple_1seg():
         assert rms.shape == (len(offsets), )
         assert np.allclose(rms[i], rmsref, atol=1e-4)
 
-@pytest.mark.skip
-@pytest.mark.fast
-def test_qcp_regions_simple_2seg():
-    N = 40
-    pts1 = h.randpoint(N, th.float32)[:, :3].contiguous()
-    pts2 = h.randpoint(N, th.float32)[:, :3].contiguous()
-    rmsref = _rms.qcp_rms_f8(pts1, pts2)
-    # pts1[:, :3] -= pts1[:, :3].mean(axis=0).reshape(1, 3)
-    # pts2[:, :3] -= pts2[:, :3].mean(axis=0).reshape(1, 3)
-    for i in range(5, 35):
-        [i, N - i]
-        assert rms.shape == len(offset)
-        assert np.allclose(rms, rmsref, atol=1e-4)
+# @pytest.mark.skip
+# @pytest.mark.fast
+# def test_qcp_regions_simple_2seg():
+#     N = 40
+#     pts1 = h.randpoint(N, th.float32)[:, :3].contiguous()
+#     pts2 = h.randpoint(N, th.float32)[:, :3].contiguous()
+#     rmsref = _rms.qcp_rms_f8(pts1, pts2)
+#     # pts1[:, :3] -= pts1[:, :3].mean(axis=0).reshape(1, 3)
+#     # pts2[:, :3] -= pts2[:, :3].mean(axis=0).reshape(1, 3)
+#     for i in range(5, 35):
+#         [i, N - i]
+#         assert rms.shape == len(offset)
+#         assert np.allclose(rms, rmsref, atol=1e-4)
 
 def _random_int_partition(n, r):
     p = list()

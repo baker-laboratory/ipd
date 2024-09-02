@@ -4,6 +4,7 @@ import ipd
 import willutil as wu
 from willutil import h
 import dataclasses
+from icecream import ic
 
 ic.configureOutput(includeContext=False)
 
