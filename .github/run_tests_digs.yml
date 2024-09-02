@@ -14,11 +14,11 @@ jobs:
 
     - name: run ruff
       run: |
-        /home/bench/.local/bin/ruff check 2&>1 | tee ruff.log
+        /home/bench/.local/bin/ruff check 2>&1 | tee ruff.log
 
     - name: run pytest digs
       run: |
-        srun -p gpu --gres=gpu:a4000:1 --cpus-per-task=4 --mem=32G apptainer exec /home/sheffler/project/apptainer/TEST pytest 2&>1 | tee pytest.log
+        srun -p gpu --gres=gpu:a4000:1 --cpus-per-task=4 --mem=32G apptainer exec /home/sheffler/project/apptainer/TEST pytest 2>&1 | tee pytest.log
 
     - name: check test results
       run: |
