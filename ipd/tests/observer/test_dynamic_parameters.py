@@ -88,33 +88,33 @@ def test_dynparam_bool_in_range():
     #
     dynp.newparam_true_in_range('range1', diffuse=(0.5, 0.5))
     # ic(dynp.params['range1'].diffuse_steps)
-    assert SS(diffuse=0).range1 == False
-    assert SS(diffuse=1).range1 == False
-    assert SS(diffuse=2).range1 == False
-    assert SS(diffuse=3).range1 == True
-    assert SS(diffuse=4).range1 == False
-    assert SS(diffuse=5).range1 == False
-    assert SS(diffuse=6).range1 == False
+    assert SS(diffuse=0).range1 is False
+    assert SS(diffuse=1).range1 is False
+    assert SS(diffuse=2).range1 is False
+    assert SS(diffuse=3).range1 is True
+    assert SS(diffuse=4).range1 is False
+    assert SS(diffuse=5).range1 is False
+    assert SS(diffuse=6).range1 is False
 
     dynp.newparam_true_in_range('range2', rfold=[(0, 2), (4, 5)])
     # ic(dynp.params['range2'].diffuse_steps)
-    assert SS(rfold=0).range2 == True
-    assert SS(rfold=1).range2 == True
-    assert SS(rfold=2).range2 == True
-    assert SS(rfold=3).range2 == False
-    assert SS(rfold=4).range2 == True
-    assert SS(rfold=5).range2 == True
-    assert SS(rfold=6).range2 == False
+    assert SS(rfold=0).range2 is True
+    assert SS(rfold=1).range2 is True
+    assert SS(rfold=2).range2 is True
+    assert SS(rfold=3).range2 is False
+    assert SS(rfold=4).range2 is True
+    assert SS(rfold=5).range2 is True
+    assert SS(rfold=6).range2 is False
 
     dynp.newparam_false_in_range('range3', rfold=[(0, 2), (4, 5)])
     # ic(dynp.params['range3'].diffuse_steps)
-    assert SS(rfold=0).range3 != True
-    assert SS(rfold=1).range3 != True
-    assert SS(rfold=2).range3 != True
-    assert SS(rfold=3).range3 != False
-    assert SS(rfold=4).range3 != True
-    assert SS(rfold=5).range3 != True
-    assert SS(rfold=6).range3 != False
+    assert SS(rfold=0).range3 is not True
+    assert SS(rfold=1).range3 is not True
+    assert SS(rfold=2).range3 is not True
+    assert SS(rfold=3).range3 is not False
+    assert SS(rfold=4).range3 is not True
+    assert SS(rfold=5).range3 is not True
+    assert SS(rfold=6).range3 is not False
 
 
 @pytest.mark.fast
@@ -124,14 +124,14 @@ def test_dynparam_bool_on_steps():
 
     dynp.newparam_true_on_steps('toi', diffuse=[1, 3])
 
-    assert dynp.toi == False
-    assert SS(diffuse=1).toi == True
-    assert SS(diffuse=3).toi == True
-    assert SS(diffuse=0).toi == False
-    assert SS(diffuse=2).toi == False
-    assert SS(diffuse=4).toi == False
-    assert SS(diffuse=5).toi == False
-    assert SS(diffuse=6).toi == False
+    assert dynp.toi is False
+    assert SS(diffuse=1).toi is True
+    assert SS(diffuse=3).toi is True
+    assert SS(diffuse=0).toi is False
+    assert SS(diffuse=2).toi is False
+    assert SS(diffuse=4).toi is False
+    assert SS(diffuse=5).toi is False
+    assert SS(diffuse=6).toi is False
 
     dynp.newparam_false_on_steps('foi', design=1, rfold=[1, 3])
     for i in range(7):
@@ -174,23 +174,23 @@ def test_dynparam_bool_on_steps():
 
     dynp.newparam_true_on_steps('float1', diffuse=[0.33])
     # ic(dynp.params['float1'].diffuse_steps)
-    assert SS(diffuse=0).float1 == False
-    assert SS(diffuse=1).float1 == False
-    assert SS(diffuse=2).float1 == True
-    assert SS(diffuse=3).float1 == False
-    assert SS(diffuse=4).float1 == False
-    assert SS(diffuse=5).float1 == False
-    assert SS(diffuse=6).float1 == False
+    assert SS(diffuse=0).float1 is False
+    assert SS(diffuse=1).float1 is False
+    assert SS(diffuse=2).float1 is True
+    assert SS(diffuse=3).float1 is False
+    assert SS(diffuse=4).float1 is False
+    assert SS(diffuse=5).float1 is False
+    assert SS(diffuse=6).float1 is False
 
     dynp.newparam_true_on_steps('float2', diffuse=[0.01, -0.33])
     # ic(dynp.params['float2'].diffuse_steps)
-    assert SS(diffuse=0).float2 == True
-    assert SS(diffuse=1).float2 == False
-    assert SS(diffuse=2).float2 == False
-    assert SS(diffuse=3).float2 == False
-    assert SS(diffuse=4).float2 == True
-    assert SS(diffuse=5).float2 == False
-    assert SS(diffuse=6).float2 == False
+    assert SS(diffuse=0).float2 is True
+    assert SS(diffuse=1).float2 is False
+    assert SS(diffuse=2).float2 is False
+    assert SS(diffuse=3).float2 is False
+    assert SS(diffuse=4).float2 is True
+    assert SS(diffuse=5).float2 is False
+    assert SS(diffuse=6).float2 is False
 
 
 @pytest.mark.fast
@@ -226,28 +226,28 @@ def test_dynparam_parse():
     with pytest.raises(ValueError):
         dp.parse_dynamic_param('foo', 'rfold:[(2,4)]')
     assert not dp.foo
-    assert dp._set_step(rfold=1).foo == False
-    assert dp._set_step(rfold=2).foo == True
-    assert dp._set_step(rfold=3).foo == True
-    assert dp._set_step(rfold=4).foo == True
-    assert dp._set_step(rfold=5).foo == False
+    assert dp._set_step(rfold=1).foo is False
+    assert dp._set_step(rfold=2).foo is True
+    assert dp._set_step(rfold=3).foo is True
+    assert dp._set_step(rfold=4).foo is True
+    assert dp._set_step(rfold=5).foo is False
 
     dp.parse_dynamic_param('bar', 'rfold:[(0.5,1)]')
-    assert dp._set_step(rfold=3).bar == False
-    assert dp._set_step(rfold=7).bar == True
-    assert dp._set_step(rfold=9).bar == True
+    assert dp._set_step(rfold=3).bar is False
+    assert dp._set_step(rfold=7).bar is True
+    assert dp._set_step(rfold=9).bar is True
 
     dp.parse_dynamic_param('baz', 'rfold:[(-4,-1)]*diffuse:[(0,0.5)]')
-    assert dp._set_step(rfold=1, diffuse=2).baz == False
-    assert dp._set_step(rfold=5, diffuse=2).baz == False
-    assert dp._set_step(rfold=6, diffuse=2).baz == True
-    assert dp._set_step(rfold=8, diffuse=2).baz == True
-    assert dp._set_step(rfold=9, diffuse=2).baz == True
-    assert dp._set_step(rfold=1, diffuse=7).baz == False
-    assert dp._set_step(rfold=5, diffuse=7).baz == False
-    assert dp._set_step(rfold=6, diffuse=7).baz == False
-    assert dp._set_step(rfold=8, diffuse=7).baz == False
-    assert dp._set_step(rfold=9, diffuse=7).baz == False
+    assert dp._set_step(rfold=1, diffuse=2).baz is False
+    assert dp._set_step(rfold=5, diffuse=2).baz is False
+    assert dp._set_step(rfold=6, diffuse=2).baz is True
+    assert dp._set_step(rfold=8, diffuse=2).baz is True
+    assert dp._set_step(rfold=9, diffuse=2).baz is True
+    assert dp._set_step(rfold=1, diffuse=7).baz is False
+    assert dp._set_step(rfold=5, diffuse=7).baz is False
+    assert dp._set_step(rfold=6, diffuse=7).baz is False
+    assert dp._set_step(rfold=8, diffuse=7).baz is False
+    assert dp._set_step(rfold=9, diffuse=7).baz is False
 
 
 @pytest.mark.fast

@@ -3,9 +3,8 @@ import numpy as np
 import gemmi
 import torch as th
 import ipd
-import willutil as wu
 from willutil import h
-from numba import cuda, float32 as f4, int32 as i4, void
+from numba import cuda
 
 _voxel = ipd.dev.LazyModule('ipd.voxel.voxel_cuda')
 
@@ -79,8 +78,8 @@ class Voxel:
         if isinv: voxposinv = voxpos
         else: voxposinv = th.linalg.inv(voxpos).contiguous()
         if boundscheck:
-            assert outerprod == False
-            assert isinv == False
+            assert outerprod is False
+            assert isinv is False
             cen1, rad1 = voxpos @ self.boundcen, self.boundrad
             if xyz is self.xyz:
                 cen2, rad2 = self.boundcen, self.boundrad

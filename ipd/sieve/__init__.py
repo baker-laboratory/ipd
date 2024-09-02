@@ -1,4 +1,4 @@
 from ipd.sieve.sieve import *
-import ipd.sieve.basic_sieves
+from ipd.sieve import basic_sieves as basic_sieves
 
 

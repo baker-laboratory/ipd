@@ -1,7 +1,5 @@
 import ipd
 import torch as th
-import willutil as wu
-from willutil import h
 
 class VoxRB(ipd.voxel.Voxel):
     '''Represents a rigid body with an associated Voxel score'''

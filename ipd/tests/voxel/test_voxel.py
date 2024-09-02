@@ -63,11 +63,11 @@ def test_numba_vox_create():
     rad, resl = th.tensor([3, 4], device='cuda', dtype=th.float32), 1
     vox = ipd.voxel.Voxel(xyz)
 
-    with wu.Timer() as t:
+    with wu.Timer():
         for i in range(10):
             vox = ipd.voxel.Voxel(xyz)
 
-    with wu.Timer() as t:
+    with wu.Timer():
         for i in range(10):
             lb = xyz.min(0).values - rad[-1] - resl
             ub = xyz.max(0).values + rad[-1] + resl
@@ -133,7 +133,7 @@ def test_create_voxel_grid_clash():
 def test_create_voxel_grid_contact():
     xyz = make_test_points(1000, 50)
     xyzorig = xyz.clone()
-    rad = th.tensor([4, 5]).to('cuda')
+    th.tensor([4, 5]).to('cuda')
     nthread = th.tensor([32, 2, 2])
     assert th.allclose(xyz, xyzorig)
     nsamp = 100
@@ -200,7 +200,7 @@ def test_Voxel_score_voxpos():
 @pytest.mark.fast
 def test_Voxel_class():
     xyz = make_test_points(300, 30)
-    vox = ipd.voxel.Voxel(xyz, func=ipd.cuda.ClashFunc(3, 4), resl=1)
+    ipd.voxel.Voxel(xyz, func=ipd.cuda.ClashFunc(3, 4), resl=1)
 
 @wu.timed
 @pytest.mark.fast
@@ -215,7 +215,7 @@ def test_Voxel_score_clash_perf():
     for isamp in range(nsamp + 1):
         with wu.Timer(verbose=False) as t:
             if isamp: ttot.start()
-            sc = vox.score(localxyz, xyzpos=frame, nthread=th.tensor([1, 256, 1]))
+            vox.score(localxyz, xyzpos=frame, nthread=th.tensor([1, 256, 1]))
             if isamp: ttot.stop()
         mintime = min(mintime, t.elapsed())
     print(f'score  clash   min {mintime*1000:7.2f}ms avg {ttot.elapsed()/nsamp*1000:7.2f}ms')
@@ -234,7 +234,7 @@ def test_Voxel_score_contact_perf():
     for isamp in range(nsamp + 1):
         with wu.Timer(verbose=False) as t:
             if isamp: ttot.start()
-            sc = vox.score(localxyz, xyzpos=frame, nthread=th.tensor([1, 256, 1]))
+            vox.score(localxyz, xyzpos=frame, nthread=th.tensor([1, 256, 1]))
             if isamp: ttot.stop()
         mintime = min(mintime, t.elapsed())
     print(f'score  contact min {mintime*1000:7.2f}ms avg {ttot.elapsed()/nsamp*1000:7.2f}ms')
@@ -255,7 +255,7 @@ def test_Voxel_score_symcheck_perf():
     for isamp in range(nsamp + 1):
         with wu.Timer(verbose=False) as t:
             if isamp: ttot.start()
-            sc = vox.score(localxyz, frame, symx=symx, symclashdist=3, nthread=th.tensor([1, 128, 1]))
+            vox.score(localxyz, frame, symx=symx, symclashdist=3, nthread=th.tensor([1, 128, 1]))
             if isamp: ttot.stop()
         mintime = min(mintime, t.elapsed())
     print(f'symcheck min {mintime*1000:7.2f}ms avg {ttot.elapsed()/nsamp*1000:7.2f}ms')
@@ -343,7 +343,7 @@ def test_Voxel_score_symcheck():
             # ic(symxyz)
             if nxyz == 1: symdist = (xyz - symxyz).norm()[None, None]
             else: symdist = (xyz[:, None] - symxyz[:, :, None]).norm(dim=-1).min(-1)[0]
-            symdistfull = (xyz[:, None] - symxyz[:, :, None]).norm(dim=-1)
+            (xyz[:, None] - symxyz[:, :, None]).norm(dim=-1)
             # ic(symdistfull)
             sc = th.where(th.any(symdist < symclashdist, dim=1), 9e9, sc)
             sc2 = th.where(th.any(symdist < symclashdist, dim=1), 9e9, sc2)

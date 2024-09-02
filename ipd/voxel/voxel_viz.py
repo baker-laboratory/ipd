@@ -2,9 +2,6 @@ import random
 import sys
 import willutil as wu
 import ipd
-import gemmi
-import torch as th
-import numpy as np
 import tempfile
 try:
     import pymol

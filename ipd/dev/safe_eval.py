@@ -8,7 +8,7 @@ try:
 
     def safe_exec(code, **kw):
         return exec(compile_restricted(code, filename='<inline code>', mode='exec'), **kw)
-except:
+except ImportError:
     logging.warning('RestrictedPython not installed, exec and eval will be unsafe. pip install RestrictedPython')
     safe_eval = eval
     safe_exec = exec

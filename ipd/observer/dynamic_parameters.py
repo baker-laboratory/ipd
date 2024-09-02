@@ -109,14 +109,12 @@ for the four corners exactly
 
 import sys
 from collections.abc import Mapping
-from omegaconf import DictConfig
 from collections import namedtuple
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 import numpy as np
 from scipy.interpolate import CubicSpline, CloughTocher2DInterpolator
 from scipy.spatial import QhullError
-from icecream import ic
 import ipd
 from ipd.observer.observer import Observer
 import willutil as wu
@@ -443,7 +441,7 @@ def _as_set(thing, n):
     thing = {int(n * x) if isinstance(x, float) else x for x in thing}
     thing = {x if x >= 0 else x + n for x in thing}
     if invert:
-        thing = set([_ for _ in range(n) if not _ in thing])
+        thing = set([_ for _ in range(n) if _ not in thing])
 
     return thing
 
@@ -462,9 +460,8 @@ class DynamicParam(ABC):
             getattr(self, 'parent').manager = manager
 
     def __str__(self):
-        val = 'No Current Value'
         try:
-            val = self.value()
+            self.value()
         except TypeError:
             pass
         return f'{self.__class__.__name__}'
@@ -524,7 +521,7 @@ class _Spline1D(DynamicParam):
     def __init__(self, manager, design, diffuse, rfold, **kw):
         super().__init__(manager)
         if 1 != sum([design is not None, diffuse is not None, rfold is not None]):
-            raise ValueError(f'add_spline_1d requires exactly one of design, diffuse, or rfold ')
+            raise ValueError('add_spline_1d requires exactly one of design, diffuse, or rfold ')
         self.which, vals, n = 'design', design, self.manager._nstep.design
         if diffuse is not None: self.which, vals, n = 'diffuse', diffuse, self.manager._nstep.diffuse
         if rfold is not None: self.which, vals, n = 'rfold', rfold, self.manager._nstep.rfold
@@ -546,7 +543,7 @@ class _Spline2D(DynamicParam):
         super().__init__(manager)
         x, y, z = [np.array(_) for _ in zip(*diffuse_rfold)]
         if len(x) < 3:
-            raise ValueError(f'need at least 3 points to interpolate from')
+            raise ValueError('need at least 3 points to interpolate from')
         xy = np.stack([x, y], axis=-1)
         if not np.all(np.logical_and(-0.001 <= x, x <= 1.001)):
             raise ValueError(f'interpolation points {x} must be 0 <= x <= 1')

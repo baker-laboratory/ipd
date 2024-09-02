@@ -34,7 +34,7 @@ def test_welzl_sphere():
 
 @pytest.mark.fast
 def test_randxform_big():
-    x = ipd.samp.randxform(2**23)
+    ipd.samp.randxform(2**23)
     # x = ipd.samp.randxform(2**23 + 1) # fails?!? still!?!?
 
 @pytest.mark.fast
@@ -138,7 +138,7 @@ def test_randxform_large_angle():
         avg[maxang.item()].append(float(ang2.mean()))
         std[maxang.item()].append(float(ang2.std()))
     from statistics import mean
-    qheight = th.tensor(list(avg.keys()))
+    th.tensor(list(avg.keys()))
     avg = th.tensor([mean(l) for l in avg.values()])
     std = th.tensor([mean(l) for l in std.values()])
     print(maxang)
@@ -163,7 +163,7 @@ def test_randxform_small_angle():
         # avg[sd.item()].append(float(ang2.mean()))
         # std[sd.item()].append(float(ang2.std()))
         # continue
-        quant2 = th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))
+        th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))
         # xform = h.randsmall(N, rot_sd=sd, device='cuda', dtype=th.float32)
         # ang3 = wu.h.angle(xform)
         # ic(ang3[:10])
@@ -213,13 +213,15 @@ def test_randxform_perf():
             'willutil',
     ]:
         if gentype == 'willutil':
-            func = lambda: wu.h.rand(N, dtype=th.float32, device='cuda')
+            def func():
+                return wu.h.rand(N, dtype=th.float32, device='cuda')
         else:
             assert th.allclose(ipd.samp.randxform(1, gentype=gentype, seed=0),
                                ipd.samp.randxform(1, gentype=gentype, seed=0))
             assert not th.allclose(ipd.samp.randxform(1, gentype=gentype), ipd.samp.randxform(1,
                                                                                             gentype=gentype))
-            func = lambda: ipd.samp.randxform(N, gentype=gentype, dtype=th.float32, device='cuda')
+            def func():
+                return ipd.samp.randxform(N, gentype=gentype, dtype=th.float32, device='cuda')
         t = timeit(func, number=20)
         print(f'{gentype:>30} {t:7.3f}')
 
@@ -233,7 +235,7 @@ def fitsd():
         0.6500, 0.6600, 0.6700, 0.6800, 0.6900, 0.7000, 0.7100, 0.7200, 0.7300, 0.7400, 0.7500, 0.7600, 0.7700,
         0.7800, 0.7900, 0.8000, 0.8100, 0.8200, 0.8300, 0.8400, 0.8500, 0.8600
     ])
-    avg = th.tensor([
+    th.tensor([
         0.0000, 0.0319, 0.0638, 0.0957, 0.1274, 0.1591, 0.1906, 0.2220, 0.2531, 0.2842, 0.3150, 0.3457, 0.3760,
         0.4062, 0.4359, 0.4654, 0.4948, 0.5235, 0.5522, 0.5803, 0.6083, 0.6359, 0.6629, 0.6898, 0.7165, 0.7427,
         0.7684, 0.7940, 0.8191, 0.8438, 0.8682, 0.8919, 0.9159, 0.9391, 0.9619, 0.9844, 1.0068, 1.0286, 1.0502,

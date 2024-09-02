@@ -1,7 +1,6 @@
 import ipd
 from rf_diffusion.structure import get_bb_pydssp_seq_xyz_isgp_issm, assign_torch
 from willutil import h
-import willutil as wu
 import torch as th
 
 def generate_O(coords):

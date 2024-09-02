@@ -1,8 +1,6 @@
 import pytest
 import torch as th
 import ipd
-from ipd.samp import sampling_cuda
-import willutil as wu
 from willutil import h
 
 def main():
@@ -84,11 +82,11 @@ def test_hypercone_samp():
 
 @pytest.mark.fast
 def test_tip_atom_groups():
-    tips = ipd.samp.get_tip_atom_groups()
+    ipd.samp.get_tip_atom_groups()
 
 @pytest.mark.fast
 def test_tip_atom_definitions():
-    tips = ipd.samp.get_tip_atom_groups()
+    ipd.samp.get_tip_atom_groups()
     # print()
     # assert 0
 

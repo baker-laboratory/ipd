@@ -1,4 +1,3 @@
-import shutil
 import os
 import torch as th
 import torch.utils.cpp_extension

@@ -1,5 +1,4 @@
 import itertools
-import os
 import torch as th
 import numpy as np
 import torch.utils.cpp_extension

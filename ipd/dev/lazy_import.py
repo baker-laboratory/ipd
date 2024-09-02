@@ -32,7 +32,7 @@ class LazyModule:
             print(e)
             print('-'*80)
             raise ImportError(f'Failed to import module: {self._name}')
-        except Exception as e:
+        except Exception:
             raise ImportError(f'Failed to import module: {self._name}')
 
     @property

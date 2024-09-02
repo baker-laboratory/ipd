@@ -16,12 +16,12 @@ class ObserverMethod:
         if self.method not in self.subject._allmethods:
             warn = f'no observers have registered for {self.method}. all methods registered: {self.subject._allmethods}'
             if strict: raise ObserverError(warn)
-            if not warn in self.subject._warnings: self.subject._warnings.add(warn)
+            if warn not in self.subject._warnings: self.subject._warnings.add(warn)
         results = list()
         for observer in self.subject._observers.values():
             try:
                 _METHOD_ = getattr(observer, self.method)
-            except AttributeError as e:
+            except AttributeError:
                 continue
             if _METHOD_.__name__ != self.method: kw['methodname'] = self.method
             results.append(_METHOD_(*args, **kw))

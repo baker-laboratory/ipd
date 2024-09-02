@@ -4,7 +4,6 @@ import ipd
 import torch as th
 import willutil as wu
 from willutil import h
-import time
 
 def main():
     test_voxdock_ab()

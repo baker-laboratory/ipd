@@ -1,11 +1,8 @@
-import math
 import numpy as np
-import gemmi
 import torch as th
 import ipd
 import willutil as wu
 from willutil import h
-from numba import cuda, float32 as f4, int32 as i4, void
 import dataclasses
 
 ic.configureOutput(includeContext=False)
@@ -136,11 +133,10 @@ def don_nh2(aname, xyz, nname, cname, bname):
     return don
 
 def acc_n_ring(aname, xyz, nname, bname1, bname2):
-    P = th.pi
     n = xyz[aname == nname]
     b1 = xyz[aname == bname1]
     b2 = xyz[aname == bname2]
-    ax = h.cross(n - b1, n - b2)
+    h.cross(n - b1, n - b2)
     accp = h.point(n)
     accv = h.normvec(n - (b1 + b2) / 2)
     acc = th.stack([accp, accv], dim=2)
@@ -153,8 +149,6 @@ def don_n_ring(aname, xyz, nname, bname1, bname2):
 def find_don_acc(resn, aname, xyz):
     aname = np.asarray(aname)
     don, acc = th.zeros((0, 4, 2)), th.zeros((0, 4, 2))
-    names = list()
-    P = th.pi
     if resn in 'asp glu'.split():
         acc = th.empty(6, 4, 2)
         acc[:3] = acc_doublebond_O(aname, xyz, aname[-1], aname[-3], aname[-2])

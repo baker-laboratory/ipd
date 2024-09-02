@@ -1,7 +1,7 @@
 import os
 from icecream import ic
 from ipd import dev
-from ipd.observer import spy
+from ipd.observer import spy as spy
 
 cuda = dev.LazyModule('ipd.cuda')
 fit = dev.LazyModule('ipd.fit')

@@ -8,8 +8,6 @@ from ipd.fit.qcp_rms import _rms
 import willutil as wu
 from willutil import h
 import numpy as np
-from icecream import ic
-from numba import cuda
 
 def main():
     test_qcp_kernel_numba()
@@ -173,12 +171,11 @@ def test_qcp_regions_simple_2seg():
     # pts1[:, :3] -= pts1[:, :3].mean(axis=0).reshape(1, 3)
     # pts2[:, :3] -= pts2[:, :3].mean(axis=0).reshape(1, 3)
     for i in range(5, 35):
-        sizes = [i, N - i]
+        [i, N - i]
         assert rms.shape == len(offset)
         assert np.allclose(rms, rmsref, atol=1e-4)
 
 def _random_int_partition(n, r):
-    import random
     p = list()
     while sum(p) < n:
         p.append(random.randint(0, r))
