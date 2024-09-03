@@ -24,8 +24,6 @@ jobs:
       run: |
         python ipd/tests/check_test_results.py
 
-
-
     # - name: build docs
     #   run: |
     #     export LC_ALL=C

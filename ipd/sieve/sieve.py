@@ -15,7 +15,11 @@ class SieveManager:
 
     def init_sieves(self, conf):
         self.conf = conf
+<<<<<<< HEAD
+        self.opt = ipd.DynamicParameters(conf.inference.num_designs, conf.diffuser.T, 40)
+=======
         self.opt = ipd.observer.DynamicParameters(conf.inference.num_designs, conf.diffuser.T, 40)
+>>>>>>> origin/main
         self.opt.enabled = True # default
         if 'sieve' not in conf: return
         for key in conf['sieve']:
@@ -59,7 +63,11 @@ class Sieve:
     def __init__(self, manager, conf):
         self.manager = manager
         self.conf = conf
+<<<<<<< HEAD
+        self.opt = ipd.DynamicParameters(manager.conf.inference.num_designs, manager.conf.diffuser.T, 40)
+=======
         self.opt = ipd.observer.DynamicParameters(manager.conf.inference.num_designs, manager.conf.diffuser.T, 40)
+>>>>>>> origin/main
         self.opt.enabled = True # default
         for k, v in self.conf.items():
             setattr(self, k, v)
