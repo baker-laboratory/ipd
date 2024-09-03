@@ -1,0 +1,2881 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"diff",
+				"diffuse_t"
+			],
+			[
+				"desi",
+				"design_steps"
+			],
+			[
+				"tens",
+				"tensor_is_xyz"
+			],
+			[
+				"swap",
+				"swapdims"
+			],
+			[
+				"tns",
+				"tensor_keydim_to_front"
+			],
+			[
+				"re",
+				"replusive_only"
+			],
+			[
+				"filter",
+				"filter_classes"
+			],
+			[
+				"rad",
+				"randxform"
+			],
+			[
+				"max",
+				"max_size"
+			],
+			[
+				"min",
+				"min_size"
+			],
+			[
+				"voxpo",
+				"voxposinv"
+			],
+			[
+				"voxp",
+				"voxposinv"
+			],
+			[
+				"out",
+				"out_of_bounds"
+			],
+			[
+				"wel",
+				"welzl_bounding_sphere_tensor"
+			],
+			[
+				"test_voxdock",
+				"test_voxdock_c3"
+			],
+			[
+				"test_tip",
+				"test_tip_frames"
+			],
+			[
+				"tip",
+				"tip_atom_start"
+			],
+			[
+				"numb",
+				"numba_kernel_qcp_raw"
+			],
+			[
+				"help",
+				"helper_test_qcp_raw_cuda"
+			],
+			[
+				"compu",
+				"compute_rotation"
+			],
+			[
+				"kpr",
+				"kprint_simple"
+			],
+			[
+				"int",
+				"int16_t"
+			],
+			[
+				"get",
+				"qcp_scan_get_idx_rms"
+			],
+			[
+				"kM",
+				"kMatXT3"
+			],
+			[
+				"qcp",
+				"qcp_scan_cuda"
+			],
+			[
+				"hel",
+				"helper_test_qcp_scan_cuda"
+			],
+			[
+				"test_q",
+				"test_qcp_scan"
+			],
+			[
+				"tr",
+				"trxs"
+			],
+			[
+				"__",
+				"__restrict__"
+			],
+			[
+				"sort",
+				"sort_inplace_topk_kernel"
+			],
+			[
+				"Tenso",
+				"TensorOptions"
+			],
+			[
+				"rand_unit_quat_",
+				"rand_unit_quat_uniform"
+			],
+			[
+				"qu",
+				"quat_height"
+			],
+			[
+				"test_ran",
+				"test_rand_xform_angle"
+			],
+			[
+				"cura",
+				"curandStateXORWOW_t"
+			],
+			[
+				"x",
+				"xform"
+			],
+			[
+				"eval",
+				"eval_func_kernel"
+			],
+			[
+				"conta",
+				"contactend"
+			],
+			[
+				"ab",
+				"abstractproperty"
+			],
+			[
+				"xyzvo",
+				"xyzvox2"
+			],
+			[
+				"test_",
+				"test_Voxel_score_symcheck"
+			],
+			[
+				"test_V",
+				"test_Voxel_score_symcheck"
+			],
+			[
+				"sym",
+				"symclashdist"
+			],
+			[
+				"kMat",
+				"kMatX3"
+			],
+			[
+				"crea",
+				"create_voxel_grid_kernel"
+			],
+			[
+				"blo",
+				"blocks3d"
+			],
+			[
+				"thre",
+				"threadIdx"
+			],
+			[
+				"_in",
+				"_indep_type"
+			],
+			[
+				"test_qcp_scan_",
+				"test_qcp_scan_vis"
+			],
+			[
+				"_",
+				"_qcp_scan_checks"
+			],
+			[
+				"ze",
+				"zeros_like"
+			],
+			[
+				"asu",
+				"align_asu"
+			],
+			[
+				"chi",
+				"chiralxyz"
+			],
+			[
+				"chiral",
+				"chiralxyz"
+			],
+			[
+				"atomi",
+				"atomize_indeces"
+			],
+			[
+				"atomize_in",
+				"atomize_indices"
+			],
+			[
+				"atm",
+				"atomize_resnum2atomnames"
+			],
+			[
+				"contig",
+				"contig_atoms"
+			],
+			[
+				"qcp_calc_rmsd_cuda_",
+				"qcp_calc_rmsd_cuda_fixlen"
+			],
+			[
+				"e",
+				"exyz2"
+			],
+			[
+				"dat",
+				"data_ptr"
+			],
+			[
+				"ex",
+				"exyz2"
+			],
+			[
+				"qcp_",
+				"qcp_rmsd_raw_vec_f4"
+			],
+			[
+				"sta",
+				"state_size"
+			],
+			[
+				"qcpk",
+				"qcp_scan_rmsd_cuda_kernel"
+			],
+			[
+				"qcp_sca",
+				"qcp_scan_rmsd_cuda_kernel"
+			],
+			[
+				"CHECK",
+				"CHECK_INPUT"
+			],
+			[
+				"igno",
+				"ignoresym"
+			],
+			[
+				"qcp_rm",
+				"qcp_rmsd_raw_vec"
+			],
+			[
+				"qcp_rms_r",
+				"qcp_rmsd_raw_vec"
+			],
+			[
+				"xyz",
+				"xyz1_in"
+			],
+			[
+				"build",
+				"build_directory"
+			],
+			[
+				"test_cal",
+				"test_calcium_motif_no_guidepost"
+			],
+			[
+				"conti",
+				"contig_is_symmetric"
+			],
+			[
+				"upda",
+				"_update_orig"
+			],
+			[
+				"apply",
+				"apply_symmetry_pair"
+			],
+			[
+				"slice",
+				"slice2d"
+			],
+			[
+				"_up",
+				"_update_orig"
+			],
+			[
+				"test_sym_ten",
+				"test_sym_tensor"
+			],
+			[
+				"cont",
+				"contiguous"
+			],
+			[
+				"sym_ten",
+				"sym_tensor_types"
+			],
+			[
+				"symten",
+				"sym_tensor_types"
+			],
+			[
+				"ori",
+				"origval"
+			],
+			[
+				"SYMTEN",
+				"SYMTENTYPES"
+			],
+			[
+				"_sy",
+				"_type_maps"
+			],
+			[
+				"sympair",
+				"sympair_protein_only"
+			],
+			[
+				"symma",
+				"symmatrix"
+			],
+			[
+				"_ty",
+				"_type_maps"
+			],
+			[
+				"T",
+				"TwoDim"
+			],
+			[
+				"_type",
+				"_type_maps"
+			],
+			[
+				"make",
+				"makeclass"
+			],
+			[
+				"test_sym",
+				"test_sym_tensor_factory"
+			],
+			[
+				"resh",
+				"reshaped_vanilla"
+			],
+			[
+				"is",
+				"is_gp"
+			],
+			[
+				"spr",
+				"sproj_orig"
+			],
+			[
+				"sp",
+				"sproj_orig"
+			],
+			[
+				"fie",
+				"fields"
+			],
+			[
+				"tran",
+				"transform_indep"
+			],
+			[
+				"inse",
+				"insert_contig_pre_atomization"
+			],
+			[
+				"transfor",
+				"transform_indep"
+			],
+			[
+				"indep",
+				"indep_cond"
+			],
+			[
+				"symm",
+				"symmetrizable"
+			],
+			[
+				"_set",
+				"_setup_benchmark_array"
+			],
+			[
+				"un",
+				"untied_p2p"
+			],
+			[
+				"rf",
+				"rf_with_gradients"
+			],
+			[
+				"move",
+				"move_all_nonprot"
+			],
+			[
+				"dis",
+				"disable_all_fitting"
+			],
+			[
+				"mat",
+				"matchpair"
+			],
+			[
+				"app",
+				"apply_symmetry_pair"
+			],
+			[
+				"sympa",
+				"sympair_protein_only"
+			],
+			[
+				"mth",
+				"methodname"
+			],
+			[
+				"value",
+				"valuekind"
+			],
+			[
+				"wei",
+				"weights_pkl"
+			],
+			[
+				"Ob",
+				"ObserverTest"
+			],
+			[
+				"show",
+				"show_xyz_in_pymol"
+			],
+			[
+				"sho",
+				"show_xyz_in_pymol"
+			],
+			[
+				"_ob",
+				"_observer_classes"
+			],
+			[
+				"foo",
+				"foobar_called"
+			],
+			[
+				"read_",
+				"read_pkl"
+			],
+			[
+				"map",
+				"map_location"
+			],
+			[
+				"idx",
+				"idx_sym_to_sub"
+			],
+			[
+				"SYMM",
+				"SYMMETRIZED"
+			],
+			[
+				"idx_asym",
+				"idx_asym_to_sym"
+			],
+			[
+				"idx_sym",
+				"idx_sym_to_asu"
+			],
+			[
+				"hydra",
+				"hydra_sandbox"
+			],
+			[
+				"exi",
+				"exist_ok"
+			],
+			[
+				"ali",
+				"align_asu"
+			],
+			[
+				"defa",
+				"default_extra_params"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "import ipd as rf\nimport torch as th\nimport willutil as wu\nfrom willutil import h\n\nclass VoxRB(rf.voxel.Voxel):\n    '''Represents a rigid body with an associated Voxel score'''\n    def __init__(self, *a, func=rf.cuda.ContactFunc(), **kw):\n        super().__init__(*a, func=func, **kw)\n        self._vizpos = th.eye(4)\n\n    def score(self, other, pos=th.eye(4), otherpos=th.eye(4), **kw):\n        if isinstance(other, VoxRB):\n            other = other.xyz\n        return super().score(other, otherpos, pos, **kw)\n\n\n\nclass VoxRBSym:\n    '''Represents a symmetric rigid body with an associated Voxel score'''\n    def __init__(self, rb, frames):\n        super().__init__()\n        self.rb = rb\n        self.frames = frames\n",
+			"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxdock.py",
+			"file_size": 720,
+			"file_write_time": 133692921440860307,
+			"settings":
+			{
+				"buffer_size": 718,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					1,
+					"",
+					null,
+					"AQAAAAcAAAAAAAAACgAAAAAAAAAFAAAAcmYyYWE",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		},
+		{
+			"contents": "import math\nimport numpy as np\nimport gemmi\nimport torch as th\nimport ipd as rf\nimport willutil as wu\nfrom willutil import h\nfrom numba import cuda, float32 as f4, int32 as i4, void\n\n_voxel = rf.tools.LazyModule('ipd.voxel.voxel_cuda')\n\nclass Voxel:\n    def __init__(\n            self,\n            xyz: th.Tensor,\n            resl: float = 1,\n            func: rf.cuda.CudaFunc = rf.cuda.ClashFunc(3, 4),\n            repulsive_only: th.Tensor = None,\n    ):\n        assert th.cuda.is_available()\n        self.xyz = th.as_tensor(xyz, device='cuda', dtype=th.float32)\n        self.resl = float(resl)\n        self.func = func\n        self.create_threads = th.tensor([32, 2, 2])\n        self.repulsive_only = th.empty(0, dtype=bool) if repulsive_only is None else repulsive_only\n        import ipd.samp.sampling_cuda\n        self.boundcen, self.boundrad = rf.samp.bounding_sphere(self.xyz)\n        self.boundcen = h.point(self.boundcen.to('cuda'))\n        self.create_grid()\n\n    def create_grid(self):\n        self.grid, self.lb = _voxel.create_voxel_grid(xyz=self.xyz,\n                                                      resl=self.resl,\n                                                      func=self.func.label,\n                                                      funcarg=self.func.arg,\n                                                      nthread=self.create_threads,\n                                                      repulsive_only=self.repulsive_only)\n        if not th.all(self.lb + self.resl < self.xyz.min(0)[0]):\n            ic(self.lb)\n            assert th.all(self.lb + self.resl < self.xyz.min(0)[0])\n\n    def score(\n        self,\n        xyz,\n        xyzpos=None,\n        voxpos=None,\n        symx=None,\n        symclashdist=0,\n        nthread=None,\n        isinv=False,\n        outerprod=False,\n        boundscheck=False,\n        repulsive_only=None,\n    ):\n        if symx is None:\n            assert symclashdist == 0\n            symx = th.empty(0, device='cuda')\n        if xyzpos is None: xyzpos = th.eye(4)\n        if voxpos is None: voxpos = th.eye(4)\n        if xyzpos.ndim == 2 and voxpos.ndim == 2: outshape = ()\n        elif xyzpos.ndim == 2: outshape = (len(voxpos), )\n        elif voxpos.ndim == 2: outshape = (len(xyzpos), )\n        else: outshape = (len(voxpos), len(xyzpos))\n        if xyzpos.ndim == 2: xyzpos = xyzpos[None]\n        xyzpos = xyzpos.to('cuda').to(th.float32)\n        if voxpos.ndim == 2: voxpos = voxpos[None]\n        voxpos = voxpos.to('cuda').to(th.float32)\n        if not outerprod:\n            outshape = (max(len(voxpos), len(xyzpos)), )\n            if len(voxpos) == len(xyzpos):\n                xyzpos = th.linalg.solve(voxpos, xyzpos).contiguous()\n                voxpos = th.eye(4, device='cuda', dtype=th.float32)[None]\n            else:\n                len(voxpos) == 1 or len(xyzpos) == 1\n        if nthread is None:\n            if len(xyzpos) == 1: nthread = th.tensor([256, 1, 1])\n            elif len(voxpos) == 1: nthread = th.tensor([1, 256, 1])\n            else: nthread = th.tensor([16, 16, 1])\n        if isinv: voxposinv = voxpos\n        else: voxposinv = th.linalg.inv(voxpos).contiguous()\n        if boundscheck:\n            assert outerprod == False\n            assert isinv == False\n            cen1, rad1 = voxpos @ self.boundcen, self.boundrad\n            if xyz is self.xyz:\n                cen2, rad2 = self.boundcen, self.boundrad\n            else:\n                cen2, rad2 = rf.samp.bounding_sphere(xyz)\n            cen2 = xyzpos @ h.point(cen2.to('cuda'))\n            pad = self.func.arg[-1] + self.resl * math.sqrt(3) / 2\n            ok = h.norm2(cen1 - cen2) < (rad1 + rad2 + pad)**2\n            # ic(ok.sum() / len(ok))\n            if ok.sum() == 0: return th.zeros(1, device='cuda')\n            if len(voxposinv) > 1: voxposinv = voxposinv[ok]\n            if len(xyzpos) > 1: xyzpos = xyzpos[ok]\n            # ic(cen1.shape, cen2.shape, rad1, rad2)\n        if repulsive_only is None: repulsive_only = th.empty(0, dtype=bool)\n        score = _voxel.score_voxel_grid(\n            self.grid,\n            voxposinv,\n            xyz,\n            xyzpos,\n            self.lb,\n            self.resl,\n            nthread,\n            symx=symx,\n            symclashdist=symclashdist,\n            repulsive_only=repulsive_only,\n        ).reshape(-1)\n        if boundscheck:\n            # assert th.allclose(score[~ok], th.tensor(0.0), atol=1e-3)\n            sok, score = score, th.zeros(len(ok), device='cuda')\n            score[ok] = sok\n        return score.reshape(outshape)\n\n    def score_per_atom(self, xyz):\n        assert xyz.ndim == 2\n        return th.as_tensor([self.score(pt.to('cuda')[None]) for pt in xyz])\n\n    def dump_ccp4(self, fname):\n        self.ccp4().write_ccp4_map(fname)\n\n    def ccp4(self):\n        npgrid = self.grid.to(th.float32).cpu().numpy()\n        grid = gemmi.FloatGrid(npgrid)\n        grid.set_size(*npgrid.shape)\n        bound = np.array(grid.shape) * self.resl\n        grid.set_unit_cell(gemmi.UnitCell(*bound, 90, 90, 90))\n        assert grid.shape == npgrid.shape\n        assert np.allclose(grid.spacing, self.resl)\n        ccp4 = gemmi.Ccp4Map()\n        ccp4.grid = grid\n        ccp4.update_ccp4_header()\n        return ccp4\n        # print(ccp4)\n        # ccp4.write_ccp4_map(fname)\n\n@cuda.jit('void(f4[:, :], f4[:], f4[:], i4, f4, float16[:, :, :])', cache=True, fastmath=True)\ndef create_voxel_numba(xyz, lb, rad, irad, resl, vox):\n    ixyz = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x\n    if ixyz >= len(xyz): return\n    ix = cuda.blockIdx.y * cuda.blockDim.y + cuda.threadIdx.y\n    iy = cuda.blockIdx.z * cuda.blockDim.z + cuda.threadIdx.z\n    # icen = ((xyz[ixyz] - lb) / resl).astype(int)\n    icenx = int(xyz[ixyz, 0] - lb[0]) / resl\n    iceny = int(xyz[ixyz, 1] - lb[1]) / resl\n    icenz = int(xyz[ixyz, 2] - lb[2]) / resl\n    i = int(ix - irad - 1 + icenx)\n    j = int(iy - irad - 1 + iceny)\n\n    for k in range(icenz - irad, icenz + irad + 1):\n        bcenx = lb[0] + float(i) * resl\n        bceny = lb[1] + float(j) * resl\n        bcenz = lb[2] + float(k) * resl\n        dist = math.sqrt((bcenx - xyz[ixyz, 0])**2 + (bceny - xyz[ixyz, 1])**2 + (bcenz - xyz[ixyz, 2])**2)\n        # val = 1.0 if dist < rad else 0.0\n        if dist > rad[1]: val = 0.0\n        elif dist < rad[0]: val = 1.0\n        else: val = (rad[1] - dist) / (rad[1] - rad[0])\n        if val: vox[i, j, k] += val\n",
+			"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxel.py",
+			"file_size": 6428,
+			"file_write_time": 133692924415860883,
+			"settings":
+			{
+				"buffer_size": 6422,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					1,
+					"",
+					null,
+					"AwAAABoDAAAAAAAAHQMAAAAAAAAFAAAAcmYyYWHXAAAAAAAAANoAAAAAAAAABQAAAHJmMmFhRgAAAAAAAABJAAAAAAAAAAUAAAByZjJhYQ",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		},
+		{
+			"contents": "import os\nimport ipd as rf\n\n_voxel = rf.cuda.build_extension(\"_voxel\", [\n    os.path.abspath(f\"{os.path.dirname(__file__)}/_voxel.cpp\"),\n    os.path.abspath(f\"{os.path.dirname(__file__)}/_voxel.cu\"),\n], ['voxel'], globals())\n\n",
+			"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxel_cuda.py",
+			"file_size": 228,
+			"file_write_time": 133682484353543580,
+			"settings":
+			{
+				"buffer_size": 226,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					1,
+					"",
+					null,
+					"AQAAABEAAAAAAAAAFAAAAAAAAAAFAAAAcmYyYWE",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		},
+		{
+			"contents": "{\n\t\"folders\":\n\t[\n\t\t{\n\t\t\t\"path\": \"/home/sheffler/rfdsym/lib/ipd/lib/ipd\"\n\t\t}\n\t]\n}\n",
+			"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ide/whs/ipd.sublime-project",
+			"file_size": 83,
+			"file_write_time": 133697783970580327,
+			"settings":
+			{
+				"buffer_size": 81,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					1,
+					"",
+					null,
+					"AQAAADsAAAAAAAAAPgAAAAAAAAAFAAAAcmYyYWE",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		},
+		{
+			"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/dev/__init__.py",
+			"settings":
+			{
+				"buffer_size": 35,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					3,
+					1,
+					"insert",
+					{
+						"characters": "f"
+					},
+					"AQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					5,
+					1,
+					"insert",
+					{
+						"characters": "r"
+					},
+					"AQAAAAEAAAAAAAAAAgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					7,
+					1,
+					"insert",
+					{
+						"characters": "o"
+					},
+					"AQAAAAIAAAAAAAAAAwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAIAAAAAAAAAAgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					9,
+					1,
+					"insert",
+					{
+						"characters": "m"
+					},
+					"AQAAAAMAAAAAAAAABAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAMAAAAAAAAAAwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					11,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAAQAAAAAAAAABQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					13,
+					1,
+					"insert",
+					{
+						"characters": "i"
+					},
+					"AQAAAAUAAAAAAAAABgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAUAAAAAAAAABQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					15,
+					1,
+					"insert",
+					{
+						"characters": "p"
+					},
+					"AQAAAAYAAAAAAAAABwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAYAAAAAAAAABgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					17,
+					1,
+					"insert",
+					{
+						"characters": "d"
+					},
+					"AQAAAAcAAAAAAAAACAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAcAAAAAAAAABwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					19,
+					1,
+					"insert",
+					{
+						"characters": "."
+					},
+					"AQAAAAgAAAAAAAAACQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAgAAAAAAAAACAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					21,
+					1,
+					"insert",
+					{
+						"characters": "L"
+					},
+					"AQAAAAkAAAAAAAAACgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAkAAAAAAAAACQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					23,
+					1,
+					"insert",
+					{
+						"characters": "a"
+					},
+					"AQAAAAoAAAAAAAAACwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAoAAAAAAAAACgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					25,
+					1,
+					"insert",
+					{
+						"characters": "z"
+					},
+					"AQAAAAsAAAAAAAAADAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAsAAAAAAAAACwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					27,
+					1,
+					"insert",
+					{
+						"characters": "y"
+					},
+					"AQAAAAwAAAAAAAAADQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAwAAAAAAAAADAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					29,
+					1,
+					"insert",
+					{
+						"characters": "M"
+					},
+					"AQAAAA0AAAAAAAAADgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA0AAAAAAAAADQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					31,
+					1,
+					"insert",
+					{
+						"characters": "o"
+					},
+					"AQAAAA4AAAAAAAAADwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA4AAAAAAAAADgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					33,
+					1,
+					"insert",
+					{
+						"characters": "d"
+					},
+					"AQAAAA8AAAAAAAAAEAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA8AAAAAAAAADwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					35,
+					1,
+					"left_delete",
+					null,
+					"AQAAAA8AAAAAAAAADwAAAAAAAAABAAAAZA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					37,
+					1,
+					"left_delete",
+					null,
+					"AQAAAA4AAAAAAAAADgAAAAAAAAABAAAAbw",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA8AAAAAAAAADwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					39,
+					1,
+					"left_delete",
+					null,
+					"AQAAAA0AAAAAAAAADQAAAAAAAAABAAAATQ",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA4AAAAAAAAADgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					41,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAwAAAAAAAAADAAAAAAAAAABAAAAeQ",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA0AAAAAAAAADQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					43,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAsAAAAAAAAACwAAAAAAAAABAAAAeg",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAwAAAAAAAAADAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					45,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAoAAAAAAAAACgAAAAAAAAABAAAAYQ",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAsAAAAAAAAACwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					47,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAkAAAAAAAAACQAAAAAAAAABAAAATA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAoAAAAAAAAACgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					49,
+					1,
+					"insert",
+					{
+						"characters": "d"
+					},
+					"AQAAAAkAAAAAAAAACgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAkAAAAAAAAACQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					51,
+					1,
+					"insert",
+					{
+						"characters": "e"
+					},
+					"AQAAAAoAAAAAAAAACwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAoAAAAAAAAACgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					53,
+					1,
+					"insert",
+					{
+						"characters": "v"
+					},
+					"AQAAAAsAAAAAAAAADAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAsAAAAAAAAACwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					55,
+					1,
+					"insert",
+					{
+						"characters": "/"
+					},
+					"AQAAAAwAAAAAAAAADQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAwAAAAAAAAADAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					57,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAwAAAAAAAAADAAAAAAAAAABAAAALw",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA0AAAAAAAAADQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					59,
+					1,
+					"insert",
+					{
+						"characters": "."
+					},
+					"AQAAAAwAAAAAAAAADQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAwAAAAAAAAADAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					61,
+					1,
+					"insert",
+					{
+						"characters": "l"
+					},
+					"AQAAAA0AAAAAAAAADgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA0AAAAAAAAADQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					63,
+					1,
+					"insert",
+					{
+						"characters": "a"
+					},
+					"AQAAAA4AAAAAAAAADwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA4AAAAAAAAADgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					65,
+					1,
+					"insert",
+					{
+						"characters": "z"
+					},
+					"AQAAAA8AAAAAAAAAEAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAA8AAAAAAAAADwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					67,
+					1,
+					"insert",
+					{
+						"characters": "y"
+					},
+					"AQAAABAAAAAAAAAAEQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					69,
+					1,
+					"insert",
+					{
+						"characters": "_"
+					},
+					"AQAAABEAAAAAAAAAEgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABEAAAAAAAAAEQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					71,
+					1,
+					"insert",
+					{
+						"characters": "m"
+					},
+					"AQAAABIAAAAAAAAAEwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABIAAAAAAAAAEgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					73,
+					1,
+					"insert",
+					{
+						"characters": "d"
+					},
+					"AQAAABMAAAAAAAAAFAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABMAAAAAAAAAEwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					76,
+					1,
+					"left_delete",
+					null,
+					"AQAAABMAAAAAAAAAEwAAAAAAAAABAAAAZA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABQAAAAAAAAAFAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					78,
+					1,
+					"left_delete",
+					null,
+					"AQAAABIAAAAAAAAAEgAAAAAAAAABAAAAbQ",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABMAAAAAAAAAEwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					80,
+					1,
+					"insert",
+					{
+						"characters": "i"
+					},
+					"AQAAABIAAAAAAAAAEwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABIAAAAAAAAAEgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					82,
+					1,
+					"insert",
+					{
+						"characters": "m"
+					},
+					"AQAAABMAAAAAAAAAFAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABMAAAAAAAAAEwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					84,
+					1,
+					"insert",
+					{
+						"characters": "p"
+					},
+					"AQAAABQAAAAAAAAAFQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABQAAAAAAAAAFAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					86,
+					1,
+					"insert",
+					{
+						"characters": "o"
+					},
+					"AQAAABUAAAAAAAAAFgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABUAAAAAAAAAFQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					88,
+					1,
+					"insert",
+					{
+						"characters": "r"
+					},
+					"AQAAABYAAAAAAAAAFwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABYAAAAAAAAAFgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					90,
+					1,
+					"insert",
+					{
+						"characters": "t"
+					},
+					"AQAAABcAAAAAAAAAGAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABcAAAAAAAAAFwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					92,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAABgAAAAAAAAAGQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABgAAAAAAAAAGAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					94,
+					1,
+					"insert",
+					{
+						"characters": "i"
+					},
+					"AQAAABkAAAAAAAAAGgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABkAAAAAAAAAGQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					96,
+					1,
+					"insert",
+					{
+						"characters": "m"
+					},
+					"AQAAABoAAAAAAAAAGwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABoAAAAAAAAAGgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					98,
+					1,
+					"insert",
+					{
+						"characters": "p"
+					},
+					"AQAAABsAAAAAAAAAHAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABsAAAAAAAAAGwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					100,
+					1,
+					"insert",
+					{
+						"characters": "o"
+					},
+					"AQAAABwAAAAAAAAAHQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAABwAAAAAAAAAHAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					102,
+					1,
+					"insert",
+					{
+						"characters": "r"
+					},
+					"AQAAAB0AAAAAAAAAHgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAB0AAAAAAAAAHQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					104,
+					1,
+					"insert",
+					{
+						"characters": "t"
+					},
+					"AQAAAB4AAAAAAAAAHwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAB4AAAAAAAAAHgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					106,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAB8AAAAAAAAAIAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAB8AAAAAAAAAHwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					108,
+					1,
+					"insert",
+					{
+						"characters": "&"
+					},
+					"AQAAACAAAAAAAAAAIQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					110,
+					1,
+					"left_delete",
+					null,
+					"AQAAACAAAAAAAAAAIAAAAAAAAAABAAAAJg",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACEAAAAAAAAAIQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					112,
+					1,
+					"insert",
+					{
+						"characters": "L"
+					},
+					"AQAAACAAAAAAAAAAIQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					114,
+					1,
+					"insert",
+					{
+						"characters": "a"
+					},
+					"AQAAACEAAAAAAAAAIgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACEAAAAAAAAAIQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					116,
+					1,
+					"insert",
+					{
+						"characters": "z"
+					},
+					"AQAAACIAAAAAAAAAIwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACIAAAAAAAAAIgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					118,
+					1,
+					"insert",
+					{
+						"characters": "y"
+					},
+					"AQAAACMAAAAAAAAAJAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACMAAAAAAAAAIwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					120,
+					1,
+					"insert",
+					{
+						"characters": "I"
+					},
+					"AQAAACQAAAAAAAAAJQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACQAAAAAAAAAJAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					122,
+					1,
+					"insert",
+					{
+						"characters": "m"
+					},
+					"AQAAACUAAAAAAAAAJgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACUAAAAAAAAAJQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					124,
+					1,
+					"insert",
+					{
+						"characters": "p"
+					},
+					"AQAAACYAAAAAAAAAJwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACYAAAAAAAAAJgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					126,
+					1,
+					"insert",
+					{
+						"characters": "o"
+					},
+					"AQAAACcAAAAAAAAAKAAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACcAAAAAAAAAJwAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					128,
+					1,
+					"insert",
+					{
+						"characters": "r"
+					},
+					"AQAAACgAAAAAAAAAKQAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACgAAAAAAAAAKAAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					130,
+					1,
+					"insert",
+					{
+						"characters": "t"
+					},
+					"AQAAACkAAAAAAAAAKgAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACkAAAAAAAAAKQAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					133,
+					1,
+					"ensure_newline_at_eof",
+					null,
+					"AQAAACoAAAAAAAAAKwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACoAAAAAAAAAKgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					136,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AQAAACoAAAAAAAAAKwAAAAAAAAAAAAAA",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACoAAAAAAAAAKgAAAAAAAAAAAAAAAADwvw"
+				],
+				[
+					142,
+					1,
+					"insert",
+					{
+						"characters": "*"
+					},
+					"AgAAACAAAAAAAAAAIQAAAAAAAAAAAAAAIQAAAAAAAAAhAAAAAAAAAAoAAABMYXp5SW1wb3J0",
+					"AwAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAACAAAAAAAAAAKgAAAAAAAAAAAAAAAADwvw"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"canc",
+				"Build: Cancel"
+			],
+			[
+				"saveal",
+				"File: Save All"
+			],
+			[
+				"k",
+				"Preferences: Key Bindings"
+			],
+			[
+				"ca",
+				"Build: Cancel"
+			],
+			[
+				"ui",
+				"UI: Select Color Scheme"
+			],
+			[
+				"key",
+				"Preferences: Key Bindings"
+			],
+			[
+				"sett",
+				"Preferences: Settings"
+			],
+			[
+				"settin",
+				"Preferences: Settings"
+			],
+			[
+				"can",
+				"Build: Cancel"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"kye",
+				"Preferences: Key Bindings"
+			],
+			[
+				"ky",
+				"Preferences: Key Bindings"
+			],
+			[
+				"kyb",
+				"Preferences: Key Bindings"
+			],
+			[
+				"keyb",
+				"Preferences: Key Bindings"
+			],
+			[
+				"save",
+				"File: Save All"
+			],
+			[
+				"bash",
+				"Set Syntax: Bash"
+			],
+			[
+				"pyth",
+				"Set Syntax: Python"
+			],
+			[
+				"python",
+				"Set Syntax: Python"
+			],
+			[
+				"proj",
+				"Project: Edit Project"
+			],
+			[
+				"dest",
+				"Origami: Destroy Current Pane"
+			],
+			[
+				"setting",
+				"Preferences: Settings"
+			],
+			[
+				"crea",
+				"Origami: Create Pane on the Right"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"preferen",
+				"Preferences: Settings"
+			],
+			[
+				"prefer",
+				"Preferences: Settings"
+			],
+			[
+				"neovinsett",
+				"Preferences: NeoVintageous Settings"
+			],
+			[
+				"creatbel",
+				"Origami: Create Pane Below"
+			],
+			[
+				"keybind",
+				"Preferences: Key Bindings"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"keybin",
+				"Preferences: Key Bindings"
+			],
+			[
+				"prefersett",
+				"Preferences: Settings"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"import",
+				"Py Rock: Import Symbol"
+			],
+			[
+				"inse",
+				"Insert Nums"
+			],
+			[
+				"ins",
+				"Insert Nums"
+			],
+			[
+				"sor",
+				"SortBy: Alphabetically"
+			],
+			[
+				"debug",
+				"Package Control: Disable Debug Mode"
+			],
+			[
+				"lsp",
+				"LSP: Format File"
+			],
+			[
+				"preferpy",
+				"Preferences: LSP-pyright Settings"
+			],
+			[
+				"cacn",
+				"Build: Cancel"
+			],
+			[
+				"sort",
+				"SortBy: Alphabetically"
+			],
+			[
+				"insnu",
+				"Insert Nums"
+			],
+			[
+				"clan",
+				"Clang Format: Format Selection"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"insnum",
+				"Insert Nums"
+			],
+			[
+				"low",
+				"Convert Case: Lower Case"
+			],
+			[
+				"sav",
+				"File: Save All"
+			],
+			[
+				"inser",
+				"Insert Nums"
+			],
+			[
+				"mer",
+				"Sublime Merge: Open Repository"
+			],
+			[
+				"merge",
+				"Sublime Merge: Open Repository"
+			],
+			[
+				"cac",
+				"Build: Cancel"
+			],
+			[
+				"sortl",
+				"Sort Lines"
+			],
+			[
+				"buil",
+				"Build: Cancel"
+			],
+			[
+				"refer",
+				"Project: Refresh Folders"
+			],
+			[
+				"pref",
+				"Preferences: Settings"
+			],
+			[
+				"removepa",
+				"Package Control: Remove Package"
+			],
+			[
+				"forma",
+				"LSP: Format File"
+			],
+			[
+				"ruff",
+				"Preferences: LSP-ruff Settings"
+			],
+			[
+				"format",
+				"LSP: Format File"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"edit",
+				"Project: Edit Project"
+			],
+			[
+				"creap",
+				"Origami: Create Pane on the Right"
+			],
+			[
+				"prv",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"edi",
+				"Project: Edit Project"
+			],
+			[
+				"creri",
+				"Origami: Create Pane on the Right"
+			],
+			[
+				"instllpa",
+				"Package Control: Install Package"
+			],
+			[
+				"openai",
+				"OpenAI: New Message"
+			],
+			[
+				"crepa",
+				"Origami: Create Pane on the Left"
+			],
+			[
+				"crele",
+				"Origami: Create Pane on the Left"
+			],
+			[
+				"clea",
+				"Bookmarks: Clear All"
+			],
+			[
+				"braek",
+				"Python Breakpoints: Toggle"
+			],
+			[
+				"save pro",
+				"Project: Save As"
+			],
+			[
+				"colo",
+				"UI: Select Color Scheme"
+			],
+			[
+				"uicol",
+				"UI: Select Color Scheme"
+			],
+			[
+				"color",
+				"UI: Select Color Scheme"
+			],
+			[
+				"crae",
+				"Origami: Create Pane with File Below"
+			],
+			[
+				"rn",
+				"Rename File"
+			],
+			[
+				"rena",
+				"Rename File"
+			],
+			[
+				"rename",
+				"Rename File"
+			],
+			[
+				"craepa",
+				"Origami: Create Pane Above"
+			],
+			[
+				"text",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"cnc",
+				"ColorSchemeSelector: Next Color Scheme"
+			],
+			[
+				"fold",
+				"Code Folding: Fold All"
+			],
+			[
+				"ccanc",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"cahc",
+				"Package Control: Add Channel"
+			],
+			[
+				"dist",
+				"View: Toggle Distraction Free"
+			],
+			[
+				"zoom",
+				"Origami: Zoom/Unzoom Current Pane (Toggle Zoom)"
+			],
+			[
+				"creabel",
+				"Origami: Create Pane Below"
+			],
+			[
+				"soa",
+				"SortBy: Alphabetically"
+			],
+			[
+				"tab",
+				"View: Toggle Tabs"
+			],
+			[
+				"move",
+				"Origami: Move File to Pane on the Right"
+			],
+			[
+				"tabs",
+				"View: Toggle Tabs"
+			],
+			[
+				"craebelo",
+				"Origami: Create Pane Below"
+			],
+			[
+				"bel",
+				"Origami: Create Pane Below"
+			],
+			[
+				"crerig",
+				"Origami: Create Pane on the Right"
+			],
+			[
+				"trarigh",
+				"Origami: Destroy Pane on the Right"
+			],
+			[
+				"minim",
+				"View: Toggle Minimap"
+			],
+			[
+				"instll",
+				"Package Control: Install Package"
+			],
+			[
+				"col",
+				"UI: Select Color Scheme"
+			],
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"colorcomm",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"me",
+				"View: Toggle Menu"
+			],
+			[
+				"de",
+				"Origami: Destroy Current Pane"
+			],
+			[
+				"menu",
+				"View: Toggle Menu"
+			],
+			[
+				"togg",
+				"View: Toggle Menu"
+			],
+			[
+				"cerri",
+				"Origami: Create Pane on the Right"
+			],
+			[
+				"detrc",
+				"Origami: Destroy Current Pane"
+			],
+			[
+				"sypy",
+				"Set Syntax: Python"
+			],
+			[
+				"uis",
+				"UI: Select Color Scheme"
+			],
+			[
+				"uic",
+				"UI: Select Color Scheme"
+			],
+			[
+				"selecolo",
+				"UI: Select Color Scheme"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"enstai",
+				"Package Control: Satisfy Dependencies"
+			],
+			[
+				"yap",
+				"PyYapf: Format Document"
+			],
+			[
+				"desp",
+				"Origami: Destroy Current Pane"
+			],
+			[
+				"for",
+				"Clang Format: Format Selection"
+			],
+			[
+				"ya",
+				"PyYapf: Format Document"
+			],
+			[
+				"runte",
+				"Terminus Utilities: Generate User Theme"
+			],
+			[
+				"buildwi",
+				"Build With: test_align_code"
+			],
+			[
+				"pyrigh",
+				"Preferences: LSP-pyright Settings"
+			],
+			[
+				"crebel",
+				"Origami: Create Pane Below"
+			],
+			[
+				"to",
+				"View: Toggle Menu"
+			],
+			[
+				"project",
+				"Project: Edit Project"
+			],
+			[
+				"unfo",
+				"Code Folding: Unfold All"
+			],
+			[
+				"remopa",
+				"Package Control: Remove Package"
+			],
+			[
+				"reopa",
+				"Package Control: Remove Package"
+			],
+			[
+				"synpy",
+				"Set Syntax: Python"
+			],
+			[
+				"synpay",
+				"Set Syntax: Python"
+			]
+		],
+		"width": 488.0
+	},
+	"console":
+	{
+		"height": 283.0,
+		"history":
+		[
+			"sublime.log_commands(True)",
+			"print()\n",
+			"print()",
+			"clear",
+			"os.environ['PATH']",
+			"print(sys.version)",
+			"import os",
+			"print(sys.path)",
+			"print(sys.executable)",
+			"import sys",
+			"os.environ['PATH']",
+			"import os",
+			"sys.path",
+			"import sys",
+			"print(os.environ['PATH'])",
+			"import os",
+			"print(os.environ['PATH'])",
+			"import os",
+			"print(os.environ['PATH'])",
+			"import os",
+			"print(sys.executable)",
+			"print sys.executable",
+			"import sys"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": false,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": true,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/cuda"
+	],
+	"file_history":
+	[
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/_voxel_cuda.hpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/_voxel.cpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/sieve/sieve.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/sieve/basic_sieves.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/sieve/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/samp/tip_atom_placer.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/samp/sampling_cuda.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/samp/sampling.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/samp/_shapes.hpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/samp/_sampling_cuda.hpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/samp/_sampling.cpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/samp/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/observer/dynamic_parameters.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/observer/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/fit/qcp_scan.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/fit/qcp_rms_cuda.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/fit/qcp_rms.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/fit/_qcp_rms_cuda.hpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/fit/_qcp_rms.cpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/fit/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/cuda/rf2aa_util.hpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/cuda/rf2aa_cuda_util.hpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/cuda/cudafunc.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/cuda/cudabuild.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/cuda/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/voxel/test_voxdock.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/samp/test_tip_atom_placer.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/samp/test_sampling.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/observer/test_observer.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/observer/test_dynamic_parameters.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/fit/test_qcp_scan.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/fit/test_qcp_rms.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/cuda/test_cudafunc.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxel_viz.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/tests/voxel/test_voxel.py",
+		"/home/sheffler/rfdsym/ide/whs/notes.txt",
+		"/home/sheffler/rfdsym/ide/whs/rf_diffusion.sublime-project",
+		"/home/sheffler/rfdsym/sublime_build.log",
+		"/home/sheffler/rfdsym/rf_diffusion/observer/pymol_observer.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sieve/basic_sieves.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sieve/sieve.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/rf2_sym_manager.py",
+		"/home/sheffler/rfdsym/rf_diffusion/inference/model_runners.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/sym_manager.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/sym_fitting.py",
+		"/home/sheffler/rfdsym/ide/whs/scripts/asym_test.yaml",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/model/Track_module.py",
+		"/home/sheffler/rfdsym/rf_diffusion/sym/sym_indep.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/model/RoseTTAFoldModel.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/sym/test_rf2_sym_manager.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/sym_options.py",
+		"/home/sheffler/rfdsym/rf_diffusion/contigs.py",
+		"/home/sheffler/rfdsym/rf_diffusion/viz/viz_indep_pymol.py",
+		"/home/sheffler/rfdsym/rf_diffusion/frame_diffusion/rf_score/model.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/observer/dynamic_parameters.py",
+		"/home/sheffler/rfdsym/rf_diffusion/features.py",
+		"/home/sheffler/rfdsym/rf_diffusion/tests/integration/test_sym_inference.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/sym_check.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/sym/test_sym_fitting.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/sym_adapt.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/voxel/test_voxdock.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/sym/sym_test_util.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/sym/test_sym_manager.py",
+		"/home/sheffler/rfdsym/rf_diffusion/config/inference/sym.yaml",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/config/inference/sym_test.yaml",
+		"/home/sheffler/.config/alacritty/keybinds.yaml",
+		"/home/sheffler/.config/alacritty/alacritty.toml",
+		"/home/sheffler/.ssh/config",
+		"/home/sheffler/rfdsym/rf_diffusion/tests/sym/test_sym_indep.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/sym/test_sym_adapt.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/sym_kind.py",
+		"/home/sheffler/rfdsym/rf_diffusion/aa_model.py",
+		"/home/sheffler/rfdsym/rf_diffusion/sym/__init__.py",
+		"/home/sheffler/rfdsym/rf_diffusion/sym/sym_rfio.py",
+		"/home/sheffler/rfdsym/rf_diffusion/tests/sym/test_rfd_sym_manager.py",
+		"/home/sheffler/rfdsym/rf_diffusion/tests/sym/test_sym_rfio.py",
+		"/home/sheffler/rfdsym/openfold/utils/rigid_utils.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/util.py",
+		"/home/sheffler/rfdsym/rf_diffusion/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sym/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/voxel/voxel_viz.py",
+		"/home/sheffler/rfdsym/rf_diffusion/test_inference.py",
+		"/home/sheffler/rfdsym/rf_diffusion/structure.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/cuda/cudabuild.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/fit/test_qcp_rms.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/fit/_qcp_rms_cuda.hpp",
+		"/home/sheffler/sw/MambaForge/envs/TEST/lib/python3.12/site-packages/torch/utils/cpp_extension.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/cuda/rf2aa_util.hpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/voxel/_voxel.cpp",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/voxel/voxdock.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/voxel/voxel.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/voxel/_voxel_cuda.hpp",
+		"/home/sheffler/rfdsym/rf_diffusion/run_inference.py",
+		"/home/sheffler/rfdsym/rf_diffusion/train_multi_deep.py",
+		"/home/sheffler/rfdsym/lib/se3_flow_matching/se3_flow_matching/data/so3_utils.py",
+		"/home/sheffler/rfdsym/ide/whs/scripts/asym_test.sh",
+		"/home/sheffler/rfdsym/ide/whs/scripts/asym_test.yml",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/voxel/voxel_cuda.py",
+		"/home/sheffler/willutil/willutil/viz/pymol_viz.py",
+		"/home/sheffler/willutil/willutil/sym/sym.py",
+		"/home/sheffler/willutil/willutil/sym/symframes.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/sieve/__init__.py",
+		"/home/sheffler/rfdsym/rf_diffusion/ppi.py",
+		"/home/sheffler/willutil/willutil/chem/dssp.py",
+		"/home/sheffler/rfdsym/rf_diffusion/kinematics.py",
+		"/home/sheffler/willutil/willutil/pdb/pdbdump.py",
+		"/home/sheffler/rfdsym/ide/whs/scripts/filter_test.sh",
+		"/home/sheffler/rfdsym/lib/se3_flow_matching/se3_flow_matching/openfold/utils/import_weights.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/filter/filter.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/model/__init__.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/observer/observer.py",
+		"/home/sheffler/rfdsym/rf_diffusion/config/training/whs_fm_tip_cyclic.yaml",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/trainer_new.py",
+		"/home/sheffler/rfdsym/rf_diffusion/config/inference/viz.yaml",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/sym/test_sym_check.py",
+		"/home/sheffler/rfdsym/lib/rf2aa/rf2aa/tests/observer/test_dynamic_parameters.py",
+		"/home/sheffler/.config/btrbk/btrbk.conf",
+		"/etc/systemd/sleep.conf",
+		"/home/sheffler/.config/hypr/pyprland.toml",
+		"/home/sheffler/.config/fish/conf.d/env.fish",
+		"/home/sheffler/.config/fish/config.fish",
+		"/home/sheffler/digs/project/rfd_train_symgp/input/submit_rfd_train_symgp.sh",
+		"/digs/home/heisen/scripts/diffusion/all_atom/scripts/submit_train.sh",
+		"/home/sheffler/rfdsym/rf2aa/filter/filter.py",
+		"/home/sheffler/rfdsym/rf2aa/filter/__init__.py"
+	],
+	"find":
+	{
+		"height": 32.0
+	},
+	"find_in_files":
+	{
+		"height": 213.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"rf2aa",
+			"ipd"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"ipd"
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": false,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxdock.py",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 718,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python"
+								}
+							],
+							"lsp_active": true,
+							"lsp_uri": "file:///home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxdock.py",
+							"show_definitions": false,
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxel.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6422,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python"
+								}
+							],
+							"lsp_active": true,
+							"lsp_uri": "file:///home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxel.py",
+							"show_definitions": false,
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxel_cuda.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 226,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python"
+								}
+							],
+							"lsp_active": true,
+							"lsp_uri": "file:///home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/voxel/voxel_cuda.py",
+							"show_definitions": false,
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ide/whs/ipd.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 81,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"lsp_uri": "file:///home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ide/whs/ipd.sublime-project",
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/PackageDev/Package/Sublime Text Project/Sublime Text Project.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/dev/__init__.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 35,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								33,
+								33
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python"
+								}
+							],
+							"lsp_active": true,
+							"lsp_uri": "file:///home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/dev/__init__.py",
+							"show_definitions": false,
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 50.0
+	},
+	"input":
+	{
+		"height": 224.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.LSP Log Panel":
+	{
+		"height": 0.0
+	},
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.diagnostics":
+	{
+		"height": 0.0
+	},
+	"output.exec":
+	{
+		"height": 38.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "asym_test",
+	"project": "ipd.sublime-project",
+	"replace":
+	{
+		"height": 60.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"test_voxel",
+				"ipd/tests/voxel/test_voxel.py"
+			],
+			[
+				"symfitt",
+				"lib/rf2aa/rf2aa/sym/sym_fitting.py"
+			],
+			[
+				"asymtest",
+				"ide/whs/scripts/asym_test.yaml"
+			],
+			[
+				"rfsymman",
+				"lib/rf2aa/rf2aa/sym/rf2_sym_manager.py"
+			],
+			[
+				"sieve",
+				"lib/rf2aa/rf2aa/sieve/sieve.py"
+			],
+			[
+				"basicsi",
+				"lib/rf2aa/rf2aa/sieve/basic_sieves.py"
+			],
+			[
+				"pymobs",
+				"rf_diffusion/observer/pymol_observer.py"
+			],
+			[
+				"symmana",
+				"lib/rf2aa/rf2aa/sym/sym_manager.py"
+			],
+			[
+				"asymte",
+				"ide/whs/scripts/asym_test.yaml"
+			],
+			[
+				"modrunn",
+				"rf_diffusion/inference/model_runners.py"
+			],
+			[
+				"vizind",
+				"rf_diffusion/viz/viz_indep_pymol.py"
+			],
+			[
+				"sie",
+				"lib/rf2aa/rf2aa/sieve/sieve.py"
+			],
+			[
+				"dyna",
+				"lib/rf2aa/rf2aa/observer/dynamic_parameters.py"
+			],
+			[
+				"rf_sym",
+				"lib/rf2aa/rf2aa/sym/rf2_sym_manager.py"
+			],
+			[
+				"symada",
+				"lib/rf2aa/rf2aa/sym/sym_adapt.py"
+			],
+			[
+				"sym_op",
+				"lib/rf2aa/rf2aa/sym/sym_options.py"
+			],
+			[
+				"voxdoc",
+				"lib/rf2aa/rf2aa/tests/voxel/test_voxdock.py"
+			],
+			[
+				"test_sym_ma",
+				"lib/rf2aa/rf2aa/tests/sym/test_sym_manager.py"
+			],
+			[
+				"basic_sie",
+				"lib/rf2aa/rf2aa/sieve/basic_sieves.py"
+			],
+			[
+				"sym_opt",
+				"lib/rf2aa/rf2aa/sym/sym_options.py"
+			],
+			[
+				"symop",
+				"lib/rf2aa/rf2aa/sym/sym_options.py"
+			],
+			[
+				"dy",
+				"lib/rf2aa/rf2aa/observer/dynamic_parameters.py"
+			],
+			[
+				"dynam",
+				"lib/rf2aa/rf2aa/observer/dynamic_parameters.py"
+			],
+			[
+				"modelrunn",
+				"rf_diffusion/inference/model_runners.py"
+			],
+			[
+				"fittin",
+				"lib/rf2aa/rf2aa/sym/sym_fitting.py"
+			],
+			[
+				"sym.",
+				"rf_diffusion/config/inference/sym.yaml"
+			],
+			[
+				"rfsymma",
+				"lib/rf2aa/rf2aa/sym/rf2_sym_manager.py"
+			],
+			[
+				"symmaa",
+				"lib/rf2aa/rf2aa/sym/sym_manager.py"
+			],
+			[
+				"pmolob",
+				"rf_diffusion/observer/pymol_observer.py"
+			],
+			[
+				"testsymindep",
+				"rf_diffusion/tests/sym/test_sym_indep.py"
+			],
+			[
+				"test_sym_ada",
+				"lib/rf2aa/rf2aa/tests/sym/test_sym_adapt.py"
+			],
+			[
+				"rf2symmana",
+				"lib/rf2aa/rf2aa/sym/rf2_sym_manager.py"
+			],
+			[
+				"symkin",
+				"lib/rf2aa/rf2aa/sym/sym_kind.py"
+			],
+			[
+				"syminit",
+				"rf_diffusion/sym/__init__.py"
+			],
+			[
+				"sym_ri",
+				"rf_diffusion/sym/sym_rfio.py"
+			],
+			[
+				"sym_in",
+				"rf_diffusion/sym/sym_indep.py"
+			],
+			[
+				"aa_mod",
+				"rf_diffusion/aa_model.py"
+			],
+			[
+				"pymol",
+				"rf_diffusion/observer/pymol_observer.py"
+			],
+			[
+				"Track",
+				"lib/rf2aa/rf2aa/model/Track_module.py"
+			],
+			[
+				"asym",
+				"ide/whs/scripts/asym_test.yaml"
+			],
+			[
+				"sym__init",
+				"lib/rf2aa/rf2aa/sym/__init__.py"
+			],
+			[
+				"__init",
+				"rf_diffusion/__init__.py"
+			],
+			[
+				"symindep",
+				"rf_diffusion/sym/sym_indep.py"
+			],
+			[
+				"aa_mo",
+				"rf_diffusion/aa_model.py"
+			],
+			[
+				"rigid_ut",
+				"openfold/utils/rigid_utils.py"
+			],
+			[
+				"sym_adap",
+				"lib/rf2aa/rf2aa/sym/sym_adapt.py"
+			],
+			[
+				"symana",
+				"lib/rf2aa/rf2aa/sym/sym_manager.py"
+			],
+			[
+				"test_rfd",
+				"rf_diffusion/tests/sym/test_rfd_sym_manager.py"
+			],
+			[
+				"rf_diffus/__init",
+				"rf_diffusion/__init__.py"
+			],
+			[
+				"sym_rfio",
+				"rf_diffusion/sym/sym_rfio.py"
+			],
+			[
+				"asym_test",
+				"ide/whs/scripts/asym_test.yaml"
+			],
+			[
+				"_qcp",
+				"lib/rf2aa/rf2aa/fit/_qcp_rms_cuda.hpp"
+			],
+			[
+				"cuda",
+				"lib/rf2aa/rf2aa/cuda/cudabuild.py"
+			],
+			[
+				"test_infer",
+				"rf_diffusion/test_inference.py"
+			],
+			[
+				"struct",
+				"rf_diffusion/structure.py"
+			],
+			[
+				"test_symada",
+				"lib/rf2aa/rf2aa/tests/sym/test_sym_adapt.py"
+			],
+			[
+				"sym_ada",
+				"lib/rf2aa/rf2aa/sym/sym_adapt.py"
+			],
+			[
+				"sym_mana",
+				"lib/rf2aa/rf2aa/sym/sym_manager.py"
+			],
+			[
+				"test_rf",
+				"lib/rf2aa/rf2aa/tests/sym/test_rf2_sym_manager.py"
+			],
+			[
+				"test_rf2",
+				"lib/rf2aa/rf2aa/tests/sym/test_rf2_sym_manager.py"
+			],
+			[
+				"test_rfsym",
+				"rf_diffusion/tests/sym/test_rfd_sym_manager.py"
+			],
+			[
+				"test_sym_mana",
+				"lib/rf2aa/rf2aa/tests/sym/test_sym_manager.py"
+			],
+			[
+				"model_runn",
+				"rf_diffusion/inference/model_runners.py"
+			],
+			[
+				"symini",
+				"rf_diffusion/sym/__init__.py"
+			],
+			[
+				"sym_inde",
+				"rf_diffusion/sym/sym_indep.py"
+			],
+			[
+				"run_infer",
+				"rf_diffusion/run_inference.py"
+			],
+			[
+				"asymtest.ya",
+				"ide/whs/scripts/asym_test.yaml"
+			],
+			[
+				"sym.y",
+				"rf_diffusion/config/inference/sym.yaml"
+			],
+			[
+				"utilhpp",
+				"lib/rf2aa/rf2aa/cuda/rf2aa_util.hpp"
+			],
+			[
+				"voxcu",
+				"lib/rf2aa/rf2aa/voxel/_voxel_cuda.hpp"
+			],
+			[
+				"rfutil.h",
+				"lib/rf2aa/rf2aa/cuda/rf2aa_util.hpp"
+			],
+			[
+				"voxhpp",
+				"lib/rf2aa/rf2aa/voxel/_voxel_cuda.hpp"
+			],
+			[
+				"voxel.cpp",
+				"lib/rf2aa/rf2aa/voxel/_voxel.cpp"
+			],
+			[
+				"Voxel",
+				"lib/rf2aa/rf2aa/voxel/voxel.py"
+			],
+			[
+				"voxel.py",
+				"lib/rf2aa/rf2aa/voxel/voxdock.py"
+			],
+			[
+				"viz",
+				"lib/rf2aa/rf2aa/voxel/voxel_viz.py"
+			],
+			[
+				"test_vox",
+				"lib/rf2aa/rf2aa/tests/voxel/test_voxdock.py"
+			],
+			[
+				"run_inf",
+				"rf_diffusion/run_inference.py"
+			],
+			[
+				"sieveini",
+				"lib/rf2aa/rf2aa/sieve/__init__.py"
+			],
+			[
+				"filter",
+				"ide/whs/scripts/filter_test.sh"
+			],
+			[
+				"rf2aainit",
+				"lib/rf2aa/rf2aa/__init__.py"
+			],
+			[
+				"vizinp",
+				"rf_diffusion/viz/viz_indep_pymol.py"
+			],
+			[
+				"vizinde",
+				"rf_diffusion/viz/viz_indep_pymol.py"
+			],
+			[
+				"viz.ya",
+				"rf_diffusion/config/inference/viz.yaml"
+			],
+			[
+				"viz.",
+				"rf_diffusion/config/inference/viz.yaml"
+			],
+			[
+				"config.fi",
+				"~/.config/fish/config.fish"
+			],
+			[
+				"fm_tipyam",
+				"rf_diffusion/config/training/whs_fm_tip_cyclic.yaml"
+			],
+			[
+				"test_sym",
+				"rf_diffusion/tests/integration/test_sym_inference.py"
+			],
+			[
+				"rf2aa__init",
+				"lib/rf2aa/rf2aa/__init__.py"
+			],
+			[
+				"rf_scor/model",
+				"rf_diffusion/frame_diffusion/rf_score/model.py"
+			],
+			[
+				"diffu",
+				"diffusion.py"
+			],
+			[
+				"diffusion",
+				"diffusion.py"
+			],
+			[
+				"util.py",
+				"rf_diffusion/util.py"
+			],
+			[
+				"infut",
+				"rf_diffusion/inference/utils.py"
+			],
+			[
+				"data_load",
+				"rf_diffusion/data_loader.py"
+			],
+			[
+				"conftest",
+				"rf_diffusion/conftest.py"
+			],
+			[
+				"slurm_too",
+				"rf_diffusion/benchmark/util/slurm_tools.py"
+			],
+			[
+				"pdb2fa",
+				"rf_diffusion/benchmark/util/pdb2fasta.py"
+			],
+			[
+				"af2met",
+				"rf_diffusion/benchmark/util/af2_metrics.py"
+			],
+			[
+				"sweep",
+				"rf_diffusion/benchmark/sweep_hyperparam_inpaint.py"
+			],
+			[
+				"rfdifargumen",
+				"rf_diffusion/arguments.py"
+			],
+			[
+				"infuti",
+				"rf_diffusion/inference/utils.py"
+			],
+			[
+				"potenmana",
+				"rf_diffusion/potentials/manager.py"
+			],
+			[
+				"manag",
+				"rf_diffusion/potentials/manager.py"
+			],
+			[
+				"mana",
+				"rf_diffusion/potentials/manager.py"
+			],
+			[
+				"potenti",
+				"rf_diffusion/potentials/potentials.py"
+			],
+			[
+				"READ",
+				"README.md"
+			],
+			[
+				"test_app",
+				"rf_diffusion/test_apptainer.py"
+			],
+			[
+				"test_rms.",
+				"lib/rf2aa/rf2aa/tests/fit/test_qcp_rms.py"
+			],
+			[
+				"cudabu",
+				"lib/rf2aa/rf2aa/cuda/cudabuild.py"
+			],
+			[
+				"testtipap",
+				"lib/rf2aa/rf2aa/tests/samp/test_tip_atom_placer.py"
+			],
+			[
+				"tipatomplacer",
+				"lib/rf2aa/rf2aa/tests/samp/test_tip_atom_placer.py"
+			],
+			[
+				"tipatompl",
+				"lib/rf2aa/rf2aa/samp/tip_atom_placer.py"
+			],
+			[
+				"subli",
+				"sublime_build.log"
+			],
+			[
+				"test_voxdo",
+				"lib/rf2aa/rf2aa/tests/voxel/test_voxdock.py"
+			],
+			[
+				"rf2aa_cu",
+				"lib/rf2aa/rf2aa/cuda/rf2aa_cuda_util.hpp"
+			],
+			[
+				"sym.ya",
+				"rf_diffusion/config/inference/sym.yaml"
+			],
+			[
+				"confte",
+				"rf_diffusion/conftest.py"
+			],
+			[
+				"dila",
+				"lib/rf2aa/rf2aa/samp/_dilated_int.hpp"
+			],
+			[
+				"smahpp",
+				"lib/rf2aa/rf2aa/samp/_sampling_cuda.hpp"
+			],
+			[
+				"test_samp",
+				"lib/rf2aa/rf2aa/tests/samp/test_sampling.py"
+			],
+			[
+				"sampl",
+				"lib/rf2aa/rf2aa/samp/sampling.py"
+			],
+			[
+				"voxehpp",
+				"lib/rf2aa/rf2aa/voxel/_voxel_cuda.hpp"
+			],
+			[
+				"voxel",
+				"lib/rf2aa/rf2aa/voxel/voxel.py"
+			],
+			[
+				"testvoxdo",
+				"lib/rf2aa/rf2aa/tests/voxel/test_voxdock.py"
+			],
+			[
+				"test_qcp",
+				"lib/rf2aa/rf2aa/tests/fit/test_qcp_rms.py"
+			],
+			[
+				"tip_atom_pla",
+				"lib/rf2aa/rf2aa/samp/tip_atom_placer.py"
+			],
+			[
+				"test_tip",
+				"lib/rf2aa/rf2aa/tests/samp/test_tip_atom_placer.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 650.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 494.0
+	},
+	"select_symbol":
+	{
+		"height": 430.0,
+		"last_filter": "__deepc",
+		"selected_items":
+		[
+			[
+				"__deepc",
+				"__deepcopy__"
+			],
+			[
+				"fillrom",
+				"fill_from_contiguous"
+			],
+			[
+				"cretestsym",
+				"create_test_sym_manager"
+			],
+			[
+				"inserco",
+				"insert_contig_pre_atomization"
+			],
+			[
+				"insercon",
+				"insert_contig_pre_atomization"
+			],
+			[
+				"insercont",
+				"insert_contig"
+			],
+			[
+				"set_kind",
+				"set_kind"
+			],
+			[
+				"symindep",
+				"SymAdaptIndep"
+			],
+			[
+				"unsym",
+				"move_unsym_to_match_asu"
+			],
+			[
+				"set_nstep",
+				"set_nstep"
+			],
+			[
+				"mounsym",
+				"move_unsym_to_match_asu"
+			],
+			[
+				"testsymconti",
+				"test_sym_contig"
+			],
+			[
+				"applypair",
+				"apply_symmetry_pair"
+			]
+		],
+		"width": 994.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 323.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -11,6 +11,7 @@ def main():
             for line in lines:
                 fail |= 'ERROR' in line
                 fail |= 'FAILED' in line
+                fail |= 'FATAL' in line
                 fail |= 'Error while loading ' in line
         if fail:
             print('PYTEST FAILED:', f)
