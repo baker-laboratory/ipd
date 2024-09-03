@@ -359,7 +359,7 @@ class DynamicParameters(Mapping):
         self._sanity_check()
         return self
 
-    def _in_ipd(self):
+    def _in_rf2aa(self):
         return self._step.rfold is not None
 
     @property

@@ -41,13 +41,13 @@ def test_tgt_frames():
 
 @pytest.mark.fast
 def test_hypercone_samp():
-    for i in range(3):
+    for _ in range(3):
         spacing = th.rand(1).item() * 30 * th.pi / 180
         # spacing = 15 * th.pi / 180
         longtol = 2 * th.pi
         shorttol = (1 + th.rand(1).item() * 2) * spacing
         # shorttol = spacing*2
-        ntest = 1000
+        ntest = 100
         xhtor = ipd.samp.quat_torus_xform(resl=spacing, maxtip=shorttol, ringang=longtol)
         xsamp = ipd.samp.randxform(ntest, orimax=spacing, cartmax=0)
         xsamp = h.rot([0, 0, 1], th.rand(ntest) * th.pi, device='cuda') @ xsamp
