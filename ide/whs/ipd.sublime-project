@@ -2,8 +2,20 @@
 	"folders":
 	[
 		{
-			"path": "/home/sheffler/rfdsym/lib/ipd/lib/ipd",
+			"path": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd",
             "folder_exclude_patterns": [ "Eigen", ".benchmarks", ".git" ]
 		}
-	]
+	],
+	"build_systems": [
+		{
+            "name": "runtest.py",
+            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ide/runtest.py $file &> ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "pymol",
+            "shell_cmd": "cd $folder; pymol",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+	],
 }
