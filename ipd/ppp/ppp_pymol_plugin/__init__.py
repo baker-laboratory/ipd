@@ -5,7 +5,7 @@ import contextlib
 
 with contextlib.suppress(ImportError):
     import pymol, sys, os
-    ipd_path = os.path.realpath(os.path.dirname(__file__) + '/..')
+    ipd_path = os.path.realpath(os.path.dirname(__file__) + '../../..')
     if ipd_path not in sys.path: sys.path.append(ipd_path)
 
     from ipd.pymol.ppppp.prettier_protein_project_pymol_plugin import run_ppppp_gui
@@ -18,4 +18,5 @@ with contextlib.suppress(ImportError):
 
     def __init_plugin__(app=None):
         from pymol.plugins import addmenuitemqt as addmenuitem
-        addmenuitem('Pretty Protein Project Pymol Plugin', run_ppppp_gui)
+        path = os.path.dirname(__file__)
+        addmenuitem(f'Pretty Protein Project Pymol Plugin {path}', run_ppppp_gui)

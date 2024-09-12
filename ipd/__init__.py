@@ -5,6 +5,7 @@ from ipd import dev
 cuda = dev.LazyModule('ipd.cuda')
 fit = dev.LazyModule('ipd.fit')
 import ipd.observer
+ppp = dev.LazyModule('ipd.ppp')
 samp = dev.LazyModule('ipd.samp')
 sieve = dev.LazyModule('ipd.sieve')
 sym = dev.LazyModule('ipd.sym')
