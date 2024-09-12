@@ -16,3 +16,4 @@ ic.configureOutput(includeContext=True)
 proj_dir = os.path.realpath(os.path.dirname(__file__))
 
 from ipd.observer import spy, DynamicParameters
+from ipd.dev import Bunch

@@ -9,7 +9,7 @@ def test_read_root():
     assert response.json() == {"msg": "Hello World"}
 
 def main():
-    test_read_main()
+    test_read_root()
     print('PASS')
 
 def test_pppapi():

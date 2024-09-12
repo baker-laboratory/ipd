@@ -19,7 +19,7 @@
         },
         {
             "name": "pymol",
-            "shell_cmd": "cd $folder; pymol",
+            "shell_cmd": "cd $folder; QT_QPA_PLATFORM=xcb /home/sheffler/sw/MambaForge/envs/basic_pymol/bin/pymol",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
 	],

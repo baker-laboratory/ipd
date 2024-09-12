@@ -113,11 +113,8 @@ from collections import namedtuple
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 import numpy as np
-from scipy.interpolate import CubicSpline, CloughTocher2DInterpolator
-from scipy.spatial import QhullError
 import ipd
 from ipd.observer.observer import Observer
-import willutil as wu
 
 Step = namedtuple('Step', 'design diffuse rfold')
 
@@ -370,7 +367,7 @@ class DynamicParameters(Mapping):
             return "_".join(str(_) for _ in self._step)
 
     def to_bunch(self):
-        return wu.Bunch(self, tag=self.tag)
+        return ipd.Bunch(self, tag=self.tag)
 
     # @property
     # def progress(self):
@@ -519,6 +516,8 @@ class _TrueOnIters(DynamicParam):
 
 class _Spline1D(DynamicParam):
     def __init__(self, manager, design, diffuse, rfold, **kw):
+        from scipy.interpolate import CubicSpline
+        from scipy.spatial import QhullError
         super().__init__(manager)
         if 1 != sum([design is not None, diffuse is not None, rfold is not None]):
             raise ValueError('add_spline_1d requires exactly one of design, diffuse, or rfold ')
@@ -540,6 +539,8 @@ class _Spline1D(DynamicParam):
 
 class _Spline2D(DynamicParam):
     def __init__(self, manager, diffuse_rfold, **kw):
+        from scipy.interpolate import CloughTocher2DInterpolator
+        from scipy.spatial import QhullError
         super().__init__(manager)
         x, y, z = [np.array(_) for _ in zip(*diffuse_rfold)]
         if len(x) < 3:
