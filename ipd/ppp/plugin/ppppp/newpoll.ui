@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NewPoll</class>
+ <widget class="QDialog" name="NewPoll">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>541</width>
+    <height>281</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QCheckBox" name="telemetry">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>210</y>
+     <width>351</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Submit to AI Overlords? (aka Helen)</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="name">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Poll Name</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="desc">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Poll Description</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="path">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Path to directory or list file</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="duration">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>160</y>
+     <width>251</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>weeks=17 days=3 hours=7 minutes=23</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>181</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>How long should it last?</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="ispublic">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>190</y>
+     <width>351</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Is Public?</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ok">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>240</y>
+     <width>80</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancel">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>240</y>
+     <width>80</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>251</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Source Code Pro Semibold</family>
+     <pointsize>12</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Create a new poll</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

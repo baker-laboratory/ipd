@@ -18,13 +18,14 @@ def test_poll():
     assert client.post('/poll', json=dict(name='foo', desc='bar', path=path))
     assert client.post('/poll', json=dict(name='foo', desc='bar', path=path))
 
-    assert client.get('/poll2').json()[0]['id'] == 2
-    polls = [Poll(**js) for js in client.get('/poll').json()]
+    assert client.get('/poll2').json()[0]['pollid'] == 2
+    polljs =client.get('/poll').json()
+    print(polljs)
+    polls = [Poll(**_) for _ in polljs]
     assert len(polls) == 3
     for poll in polls:
-        print(poll)
-        print(len(poll.files))
-        print(list(poll.files)[:2])
+        print(poll, len(poll.files))
+        # print(list(poll.files)[:2])
 
     for f in polls[1].files:
         f2 = client.get('/poll1/file').json()

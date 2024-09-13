@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PPPPP_GUI</class>
- <widget class="QWidget" name="PPPPP_GUI">
+ <class>PPPPP</class>
+ <widget class="QWidget" name="PPPPP">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>392</height>
+    <width>570</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>PPPPP_GUI</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <widget class="QPushButton" name="stier">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>20</y>
+     <x>20</x>
+     <y>470</y>
      <width>80</width>
      <height>25</height>
     </rect>
@@ -32,8 +35,8 @@
   <widget class="QPushButton" name="atier">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>20</y>
+     <x>110</x>
+     <y>470</y>
      <width>80</width>
      <height>25</height>
     </rect>
@@ -48,8 +51,8 @@
   <widget class="QPushButton" name="btier">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>20</y>
+     <x>200</x>
+     <y>470</y>
      <width>80</width>
      <height>25</height>
     </rect>
@@ -64,8 +67,8 @@
   <widget class="QPushButton" name="ctier">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>50</y>
+     <x>290</x>
+     <y>470</y>
      <width>80</width>
      <height>25</height>
     </rect>
@@ -80,24 +83,232 @@
   <widget class="QPushButton" name="dtier">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>50</y>
+     <x>380</x>
+     <y>470</y>
      <width>80</width>
      <height>25</height>
     </rect>
    </property>
    <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a bad protein. Even David doesn't like it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This protein is butt ugly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>D Tier</string>
    </property>
   </widget>
+  <widget class="QListWidget" name="polls">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>90</y>
+     <width>251</width>
+     <height>261</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="toggles">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>90</y>
+     <width>261</width>
+     <height>261</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="newpoll">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>60</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might order this protein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>New Poll...</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="newpollcurdir">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>60</y>
+     <width>151</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might order this protein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Just Use Current Dir</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="reviewaction">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>380</y>
+     <width>371</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>cp $file ./ppp/{grade}_$filebase</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>360</y>
+     <width>201</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Source Code Pro Semibold</family>
+     <pointsize>12</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>local review acton</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="quit">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>510</y>
+     <width>81</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This protein is butt ugly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="comment">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>410</y>
+     <width>531</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Comment...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="newopt">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>261</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>New Option...</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>360</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Source Code Pro Semibold</family>
+     <pointsize>12</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>click a grade</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>380</y>
+     <width>101</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Source Code Pro Semibold</family>
+     <pointsize>12</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>to review</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>531</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Source Code Pro Semibold</family>
+     <pointsize>15</pointsize>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Prettier Protein Project Pymol Plug-in Panel</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="rewiewactionenabled">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>380</y>
+     <width>82</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
   <widget class="QPushButton" name="ftier">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>50</y>
+     <x>470</x>
+     <y>470</y>
      <width>80</width>
      <height>25</height>
     </rect>
@@ -109,57 +320,20 @@
     <string>F Tier</string>
    </property>
   </widget>
-  <widget class="QListWidget" name="polls">
+  <widget class="QPushButton" name="saveconfig">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>20</y>
-     <width>221</width>
-     <height>311</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>test poll1</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>test poll2</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QListWidget" name="toggles">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>90</y>
-     <width>256</width>
-     <height>241</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>test toggle1</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>test toggle2</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QPushButton" name="quit">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>350</y>
-     <width>501</width>
+     <x>20</x>
+     <y>510</y>
+     <width>441</width>
      <height>25</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This protein is butt ugly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
-    <string>Quit</string>
+    <string>Save Prettier Protein Project Pymol Plug-in Panel Pickle to ~/.config/ppp</string>
    </property>
   </widget>
  </widget>

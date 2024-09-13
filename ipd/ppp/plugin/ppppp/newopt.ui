@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NewOption</class>
+ <widget class="QDialog" name="NewOption">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>541</width>
+    <height>243</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QLineEdit" name="name">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Option Name</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="cmdon">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>on enable pymol command</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="cmdoff">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>on disable pymol command</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="ispublic">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>160</y>
+     <width>351</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Make publicly avaliable</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ok">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>190</y>
+     <width>80</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancel">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>190</y>
+     <width>80</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>251</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Source Code Pro Semibold</family>
+     <pointsize>12</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Create a new toggle option</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="onstart">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>351</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>On by default</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

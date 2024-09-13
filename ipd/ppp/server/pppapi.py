@@ -1,6 +1,7 @@
 import os
 import functools
 import random
+from datetime import datetime, timedelta
 import fastapi
 from ordered_set import OrderedSet as ordset
 from pathlib import Path
@@ -10,19 +11,28 @@ import sqlmodel
 from icecream import ic
 
 class Poll(sqlmodel.SQLModel, table=True):
-    id: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
+    pollid: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     name: str
     desc: str
     path: str
     public: bool = sqlmodel.Field(default=False)
+    telemetry: bool = sqlmodel.Field(default=False)
+    start: datetime = sqlmodel.Field(default_factory=datetime.now)
+    end: datetime = sqlmodel.Field(default_factory=lambda: datetime.now() + timedelta(days=3))
 
     def __hash__(self):
         return hash(self.path)
 
+    @property
+    @functools.lru_cache
+    def files(self):
+        with open(self.path) as inp:
+            return ordset([_.strip() for _ in inp.readlines()])
+
     def replace_dir_with_pdblist(self, datadir, suffix):
         path = Path(self.path)
         if path.is_dir:
-            newpath = f'{datadir}/poll/{self.id}.pdblist'
+            newpath = f'{datadir}/poll/{self.pollid}.pdblist'
             os.makedirs(os.path.dirname(newpath), exist_ok=True)
             with open(newpath, 'w') as out:
                 for root, dirs, files in os.walk(path):
@@ -35,12 +45,6 @@ class Poll(sqlmodel.SQLModel, table=True):
             with open(self.path, 'w') as out:
                 out.write(os.linesep.join(fnames) + os.linesep)
 
-    @property
-    @functools.lru_cache
-    def files(self):
-        with open(self.path) as inp:
-            return ordset([_.strip() for _ in inp.readlines()])
-
 class Review(sqlmodel.SQLModel, table=True):
     reviewid: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     pollid: Optional[int] = None
@@ -48,9 +52,6 @@ class Review(sqlmodel.SQLModel, table=True):
     user: str
     grade: str
     data: str
-
-
-
 
 class PPPServer:
     def __init__(self, engine, datadir):
@@ -73,6 +74,9 @@ class PPPServer:
         return dict(msg='Hello World')
 
     def add_poll(self, poll: Poll) -> None:
+        dtfmt = "%Y-%m-%dT%H:%M:%S.%f"
+        if isinstance(poll.start, str): poll.start = datetime.strptime(poll.start, dtfmt)
+        if isinstance(poll.end, str): poll.end = datetime.strptime(poll.end, dtfmt)
         self.session.add(poll)
         self.session.commit()  # sets pollid
         poll.replace_dir_with_pdblist(self.datadir, self.suffix)
@@ -83,7 +87,11 @@ class PPPServer:
         else: polls = self.session.exec(sqlmodel.select(Poll).where(Poll.pollid == pollid))
         return list(polls)
 
-    def poll_file(self, pollid: int, request: fastapi.Request, response: fastapi.Response, shuffle: bool = False):
+    def poll_file(self,
+                  pollid: int,
+                  request: fastapi.Request,
+                  response: fastapi.Response,
+                  shuffle: bool = False):
         seenit = request.cookies.get(f'seenit_poll{pollid}')
         # ic(dir(request.cookies.get(f'seenit_poll{pollid}')))
         seenit = set(seenit.split()) if seenit else set()
@@ -97,6 +105,6 @@ class PPPServer:
         response.set_cookie(key=f"seenit_poll{pollid}", value=' '.join(seenit))
         return dict(file=files[0], next=files[1:10])
 
-    def poll_review(self, Review: Review):
+    def poll_review(self, review: Review):
         self.session.add(review)
         self.session.commit
