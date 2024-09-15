@@ -29,16 +29,21 @@ class Poll(sqlmodel.SQLModel, table=True):
         with open(self.path) as inp:
             return ordset([_.strip() for _ in inp.readlines()])
 
-    def replace_dir_with_pdblist(self, datadir, suffix):
+    def replace_dir_with_pdblist(self, datadir, suffix, recurse=False):
         path = Path(self.path)
         if path.is_dir:
-            newpath = f'{datadir}/poll/{self.pollid}.pdblist'
+            newpath = f'{datadir}/poll/{self.pollid}.filelist'
             os.makedirs(os.path.dirname(newpath), exist_ok=True)
             with open(newpath, 'w') as out:
-                for root, dirs, files in os.walk(path):
-                    for name in (_ for _ in files if _.endswith(suffix)):
-                        out.write(os.path.join(root, name) + os.linesep)
+                if recurse:
+                  for root, dirs, files in os.walk(path):
+                    for fname in (_ for _ in files if _.endswith(suffix) and not _.startswith('_')):
+                        out.write(os.path.join(root, fname) + os.linesep)
+                else:
+                    for fname in [_ for _ in os.listdir(path) if _.endswith(suffix) and not _.startswith('_')]:
+                        out.write(os.path.abspath(fname) + os.linesep)
             self.path = newpath
+            print('newpoll', self.name, self.path)
         else:
             with open(self.path) as inp:
                 fnames = [os.path.realpath(_) for _ in inp]

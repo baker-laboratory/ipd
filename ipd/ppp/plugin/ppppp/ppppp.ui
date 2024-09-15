@@ -148,7 +148,7 @@
     <string>Use CurDir</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="reviewaction">
+  <widget class="QLineEdit" name="opt_review_action">
    <property name="geometry">
     <rect>
      <x>220</x>
@@ -234,7 +234,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Prettier Protein Project Pymol Plug-in Panel</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="opt_do_on_rank">
+  <widget class="QCheckBox" name="opt_do_review_action">
    <property name="geometry">
     <rect>
      <x>220</x>
@@ -292,7 +292,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Delete Option</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="cmdsearch">
+  <widget class="QLineEdit" name="opt_findcmd">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -305,10 +305,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string/>
    </property>
    <property name="placeholderText">
-    <string>Search...</string>
+    <string>Fuzzy Find...</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="pollsearch">
+  <widget class="QLineEdit" name="opt_findpoll">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -321,7 +321,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string/>
    </property>
    <property name="placeholderText">
-    <string>Search...</string>
+    <string>Fuzzy Find...</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">

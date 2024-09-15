@@ -7,6 +7,7 @@ from sqlmodel import create_engine
 def main():
     port = int(sys.argv[1])
     datadir = os.path.realpath(sys.argv[2])
+    os.makedirs(datadir, exist_ok=True)
     engine = create_engine(f'sqlite:///{datadir}/ppp.db')
     server = PPPServer(engine, datadir)
     server.app.mount("/ppp", server.app)  # your app routes will now be /app/{your-route-here}
