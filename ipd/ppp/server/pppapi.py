@@ -91,18 +91,20 @@ class PPPServer:
                   pollid: int,
                   request: fastapi.Request,
                   response: fastapi.Response,
-                  shuffle: bool = False):
-        seenit = request.cookies.get(f'seenit_poll{pollid}')
-        # ic(dir(request.cookies.get(f'seenit_poll{pollid}')))
-        seenit = set(seenit.split()) if seenit else set()
+                  shuffle: bool = False,
+                  trackseen: bool = False):
         poll = self.poll(pollid)
         assert len(poll) == 1
         files = poll[0].files
-        files -= seenit
+        if trackseen:
+            seenit = request.cookies.get(f'seenit_poll{pollid}')
+            seenit = set(seenit.split()) if seenit else set()
+            files -= seenit
         if not files: return dict(file=None, next=[])
         idx = random.randrange(len(files)) if shuffle else 0
-        seenit.add(files[idx])
-        response.set_cookie(key=f"seenit_poll{pollid}", value=' '.join(seenit))
+        if trackseen:
+            seenit.add(files[idx])
+            response.set_cookie(key=f"seenit_poll{pollid}", value=' '.join(seenit))
         return dict(file=files[0], next=files[1:10])
 
     def poll_review(self, review: Review):

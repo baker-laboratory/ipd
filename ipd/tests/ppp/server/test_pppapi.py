@@ -28,19 +28,19 @@ def test_poll():
         # print(list(poll.files)[:2])
 
     for f in polls[1].files:
-        f2 = client.get('/poll1/file').json()
+        f2 = client.get('/poll1/file?trackseen=True').json()
         assert f2['file'] == f
         assert len(f2['next']) <= 10
-    assert client.get('poll1/file').json()['file'] is None
+    assert client.get('poll1/file?trackseen=True').json()['file'] is None
 
     totne = 0
     for f in polls[2].files:
-        f2 = client.get('/poll2/file?shuffle=True').json()
+        f2 = client.get('/poll2/file?shuffle=True&trackseen=True').json()
         # ic(f2)
         totne += f2['file'] != f
         assert len(f2['next']) <= 10
     assert totne > 50
-    assert client.get('poll2/file?shuffle=True').json()['file'] is None
+    assert client.get('poll2/file?shuffle=True&trackseen=True').json()['file'] is None
 
     client.post('/poll1/review',json=dict(file='foo', user='bar', grade='C', data={}))
 
