@@ -14,7 +14,7 @@
         },
         {
             "name": "test ppp plugin",
-            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py $file 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/basic_pymol/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py $file 2>&1 | tee ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
         {
@@ -24,7 +24,7 @@
         },
         {
             "name": "test ppp server",
-            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/ppp/bin/python ipd/tests/ppp/server/test_pppapi.py $file &> ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/ppp/bin/python ipd/tests/ppp/server/test_pppapi.py $file 2>&1 | tee ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
         {

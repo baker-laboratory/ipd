@@ -17,3 +17,7 @@ proj_dir = os.path.realpath(os.path.dirname(__file__))
 
 from ipd.observer import spy, DynamicParameters
 from ipd.dev import Bunch
+
+def testpath(path):
+    return os.path.join(proj_dir, 'tests', 'data', path)
+

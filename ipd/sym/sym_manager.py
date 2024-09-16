@@ -373,6 +373,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
     def is_symmetrical(self, obj):
         if hasattr(obj, '__HAS_BEEN_SYMMETRIZED'): return True
+        if self.idx is None: return False
         if th.is_tensor(obj):
             for n in obj.shape:
                 if n == self.idx.L: return True
@@ -428,6 +429,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         return False
 
     def assert_symmetry_correct(self, thing, **kw):
+        if self.idx is None: return True
         return ipd.sym.symcheck(self, thing, **kw) if self else True
 
     def check(self, thing, **kw):

@@ -18,7 +18,7 @@
     <rect>
      <x>20</x>
      <y>210</y>
-     <width>351</width>
+     <width>231</width>
      <height>23</height>
     </rect>
    </property>
@@ -79,7 +79,7 @@
     <rect>
      <x>20</x>
      <y>160</y>
-     <width>251</width>
+     <width>231</width>
      <height>25</height>
     </rect>
    </property>
@@ -108,7 +108,7 @@
     <rect>
      <x>20</x>
      <y>190</y>
-     <width>351</width>
+     <width>221</width>
      <height>23</height>
     </rect>
    </property>
@@ -173,6 +173,32 @@
    </property>
    <property name="text">
     <string>...</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="textEdit">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>150</y>
+     <width>261</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string>Run on start</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="textEdit_2">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>210</y>
+     <width>261</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string>Run on stop</string>
    </property>
   </widget>
  </widget>

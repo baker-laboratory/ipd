@@ -6,5 +6,8 @@ build-backend = "hatchling.build"
 name = "ipd"
 version = "0.1"
 dependencies = [
+'icecream',
+'requests',
+'pydantic',
 ]
 requires-python = ">=3.8"
