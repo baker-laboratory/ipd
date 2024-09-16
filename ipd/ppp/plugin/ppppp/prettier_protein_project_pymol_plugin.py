@@ -31,7 +31,7 @@ def pipimport(pkgname):
 pipimport('requests')
 pipimport('fuzzyfinder')
 
-remote, conf, PPPPP = None, None, None
+remote, conf, ppppp = None, None, None
 SERVER_ADDR = os.environ.get('PPPSERVER', 'localhost:12345')
 CONFIG_DIR = os.path.expanduser('~/.config/ppp/')
 CONFIG_FILE = f'{CONFIG_DIR}/localconfig.yaml'
@@ -39,6 +39,61 @@ STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
 SESSION_RESTORE = f'{CONFIG_DIR}/session_restore.pse'
 PPPPP_PICKLE = f'{CONFIG_DIR}/PrettyProteinProjectPymolPluginPanel.pickle'
 SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
+
+def isfalse_notify(ok, message):
+    if not ok:
+        pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
+        return True
+
+def havestate(name):
+    if ppppp.polls.pollinprogress and name in state.polls[ppppp.polls.pollinprogress.name]: return True
+    if name in state: return True
+    if name in conf.opts: return True
+    return False
+
+def getstate(name, poll=None):
+    defaults = dict(active_cmds=state.active_cmds,
+                    review_action=conf.opts.review_action,
+                    do_review_action=conf.opts.do_review_action,
+                    findcmd=conf.opts.findcmd,
+                    shuffle=conf.opts.shuffle,
+                    prefetch=conf.opts.prefetch,
+                    reviewed=set())
+    if poll or ppppp.polls.pollinprogress:
+        poll = poll or ppppp.polls.pollinprogress.name
+        if name in state.polls[poll]:
+            print('getstate', name, poll, state.polls[poll][name])
+            return state.polls[poll][name]
+        elif name in defaults:
+            setattr(state.polls[poll], name, defaults[name])
+            print('getstate', name, poll, state.polls[poll][name])
+            return state.polls[poll][name]
+    print('getstate', name, None)
+    if name in state: return state[name]
+    if name in conf.opts: return conf.opts[name]
+    raise ValueError(f'getstate unknown state {name}')
+
+def setstate(name, val, poll=None):
+    getstate(name, poll)  # check already exists
+    if poll or ppppp.polls.pollinprogress:
+        poll = poll or ppppp.polls.pollinprogress.name
+        print('setstate', name, val, poll)
+        setattr(state[poll], name, val)
+        return
+    print('setstate', name, val, None)
+    if name in state: state[name] = val
+    if name in conf.opts: conf.opts[name] = val
+    raise ValueError(f'setstate unknown state {name}')
+
+_subject_count = 0
+
+def subject_name():
+    return 'subject%i' % _subject_count
+
+def new_subject_name():
+    global _subject_count
+    _subject_count += 1
+    return subject_name()
 
 class PPPClient:
     def __init__(self, server_addr):
@@ -59,13 +114,6 @@ class PPPClient:
     def create_poll(self, poll):
         if not poll['public']: return
         self.post('/poll', json=poll).json()
-
-remote = None
-
-def isfalse_notify(ok, message):
-    if not ok:
-        pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
-        return True
 
 class PartialPickleable(abc.ABC):
     def __getstate__(self):
@@ -91,23 +139,25 @@ class PymolFileViewer(PartialPickleable):
 
     def init_session(self, toggles):
         self.toggles = toggles
-        pymol.cmd.delete('subject')
-        pymol.cmd.load(self.fname, 'subject')
+        pymol.cmd.delete(subject_name())
+        pymol.cmd.load(self.fname, new_subject_name())
+        pymol.cmd.color('green', f'{subject_name()} and elem C')
         self.update()
 
     def update(self):
-        for t in self.toggles.cmds:
-            self.update_toggle(t)
+        for cmd in getstate('active_cmds'):
+            assert cmd in getstate('active_cmds')
+            self.run_command(conf.cmds[cmd].cmdon)
 
-    def update_toggle(self, toggle):
+    def update_toggle(self, toggle: 'ToggleCommand'):
         if toggle: self.run_command(toggle.cmdon)
         else: self.run_command(toggle.cmdoff)
 
-    def run_command(self, cmd):
-        pymol.cmd.do(cmd)
+    def run_command(self, cmd: str):
+        pymol.cmd.do(cmd.replace('$subject', subject_name()))
 
     def cleanup(self):
-        pymol.cmd.delete('subject')
+        pymol.cmd.delete(subject_name())
 
 class FileFetcher(threading.Thread):
     def __init__(self, fname, cache):
@@ -184,16 +234,25 @@ class PollInProgress():
         self.poll = poll
         self.name = poll['name']
         self.viewer = None
-        self.fnames = self.init_files(poll['path'])
         self.filecache = FileCache(self.fnames, numprefetch=7 if conf.prefetch else 0)
-        PPPPP.set_pbar(0, len(self.reviewed), len(self.fnames))
-        self.switch_to(self.index)
+        ppppp.set_pbar(0, len(getstate('reviewed', poll=self.name)), len(self.fnames))
+
+    def init_files(self, fnames):
+        if isinstance(fnames, (str, bytes)):
+            fnames = fnames_from_path(fnames)
+        # fnames = [_ for _ in fnames if _ not in state.polls.reviewed]
+        if conf.opts.shuffle: self.pbdlist = random.shuffle(fnames)
+        ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(fnames) - 1)
+        return fnames
+
+    def init_session(self):
+        if self.viewer: self.viewer.init_session(ppppp.toggles)
 
     @property
-    def reviewed(self):
-        if 'reviewed' not in state.polls[self.name]:
-            state.polls[self.name].reviewed = set()
-        return state.polls[self.name].reviewed
+    def fnames(self):
+        if 'fnames' not in state.polls[self.name]:
+            state.polls[self.name].fnames = self.init_files(self.poll['path'])
+        return state.polls[self.name].fnames
 
     @property
     def index(self):
@@ -205,16 +264,9 @@ class PollInProgress():
     def index(self, index):
         state.polls[self.name].activepollindex = index
 
-    def init_files(self, fnames):
-        if isinstance(fnames, (str, bytes)):
-            fnames = fnames_from_path(fnames)
-        # fnames = [_ for _ in fnames if _ not in state.polls.reviewed]
-        if conf.opts.shuffle: self.pbdlist = random.shuffle(fnames)
-        PPPPP.set_pbar(lb=0, val=len(self.reviewed), ub=len(fnames) - 1)
-        return fnames
-
-    def init_session(self):
-        if self.viewer: self.viewer.init_session(PPPPP.toggles)
+    def start(self):
+        ppppp.update_opts()
+        self.switch_to(self.index)
 
     def load_next(self):
         return self.switch_to(self.index + 1)
@@ -223,18 +275,18 @@ class PollInProgress():
         if index is None: index = self.index
         if delta: index += delta
         if index >= len(self.fnames): return False
-        self.viewer = PymolFileViewer(self.filecache[index], PPPPP.toggles)
+        self.viewer = PymolFileViewer(self.filecache[index], ppppp.toggles)
         self.index = index
         return True
 
     def record_review(self, grade, comment):
         if isfalse_notify(self.viewer, 'No working file!'): return
         print(f'REVIEWED: {self.viewer.fname}', flush=True)
-        pymol.cmd.delete('subject')
-        print(state)
-        self.reviewed.add(self.viewer.fname)
-        PPPPP.set_pbar(lb=0, val=len(self.reviewed), ub=len(self.fnames) - 1)
-        if not self.load_next(): PPPPP.polls.poll_finished()
+        pymol.cmd.delete(subject_name())
+        print(state.polls[self.name])
+        getstate('reviewed').add(self.viewer.fname)
+        ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(self.fnames) - 1)
+        if not self.load_next(): ppppp.polls.poll_finished()
 
     def cleanup(self):
         if self.viewer: self.viewer.cleanup()
@@ -306,7 +358,6 @@ class Polls(PartialPickleable):
             self.listwidget.addItem(f"{poll['name']} ({status})")
             item = self.listwidget.item(i)
             item.setToolTip(poll['desc'])
-            print(state)
             if state.activepoll and poll['pollid'] == filteredpolls[state.activepoll]['pollid']:
                 item.setSelected(True)
 
@@ -329,12 +380,15 @@ class Polls(PartialPickleable):
         self.pollinprogress = PollInProgress(self.polls[index])
         state.activepoll = self.pollinprogress.name
         self.current_poll_index = index
+        ppppp.toggles.update_toggle_list()
+        self.pollinprogress.start()
 
     def poll_finished(self):
         if self.pollinprogress: self.pollinprogress.cleanup()
         self.pollinprogress = None
         state.activepoll = None
-        PPPPP.set_pbar(done=True)
+        ppppp.update_opts()
+        ppppp.set_pbar(done=True)
         # self.update_poll_list()
 
     def create_poll_start(self):
@@ -403,11 +457,11 @@ class ToggleCommand(PartialPickleable):
     def widget_update(self, toggle=False):
         if toggle:
             self.widget.setCheckState(0 if self.widget.checkState() else 2)
-            if self.widget.checkState(): state.active_cmds.add(self.name.lower())
-            else: state.active_cmds.remove(self.name.lower())
-        if PPPPP.polls.pollinprogress and PPPPP.polls.pollinprogress.viewer:
+            if self.widget.checkState(): getstate('active_cmds').add(self.name)
+            else: getstate('active_cmds').remove(self.name)
+        if ppppp.polls.pollinprogress and ppppp.polls.pollinprogress.viewer:
             print('toggle update')
-            PPPPP.polls.pollinprogress.viewer.update_toggle(toggle=self)
+            ppppp.polls.pollinprogress.viewer.update_toggle(toggle=self)
 
     def __bool__(self):
         return bool(self.widget.checkState())
@@ -421,9 +475,9 @@ class ToggleCommands(PartialPickleable):
     def __init__(self):
         self.cmds = [ToggleCommand(**_) for _ in conf.cmds.values()]
         self.visible_cmds = self.cmds
-        if not state.active_cmds:
-            setattr(conf.opts, 'active_cmds', {cmd.name.lower() for cmd in self.cmds if cmd.onstart})
-            assert type(state.active_cmds) != set
+        if not getstate('active_cmds'):
+            setattr(conf.opts, 'active_cmds', {cmd.name for cmd in self.cmds if cmd.onstart})
+            assert type(getstate('active_cmds')) != set
 
     def init_session(self, listwidget):
         self.listwidget = listwidget
@@ -456,7 +510,7 @@ class ToggleCommands(PartialPickleable):
         item.setCheckState(0)
         self.cmds[-1].init_session(item)
         if item.checkState():
-            state.active_cmds.add(item.text().lower().replace(' (public)', '').replace(' (private)', ''))
+            getstate('active_cmds').add(item.text().lower().replace(' (public)', '').replace(' (private)', ''))
         if self.cmds[-1].public:
             print('TODO: send new options to server')
         else:
@@ -466,25 +520,24 @@ class ToggleCommands(PartialPickleable):
         cmds = self.cmds
         if conf.opts.findcmd:
             hits = set(fuzzyfinder.fuzzyfinder(conf.opts.findcmd.lower(), [cmd.name.lower() for cmd in cmds]))
-            hits |= state.active_cmds
+            hits |= {_.lower() for _ in getstate('active_cmds')}
             cmds = [cmd for cmd in self.cmds if cmd.name.lower() in hits]
         self.visible_cmds = cmds
         self.listwidget.clear()
         for cmd in cmds:
             self.listwidget.addItem(cmd.name)
-            cmd.init_session(self.listwidget.item(self.listwidget.count() - 1))
-            if cmd.name.lower() in state.active_cmds: cmd.widget.setCheckState(2)
-            else: cmd.widget.setCheckState(0)
+            item = self.listwidget.item(self.listwidget.count() - 1)
+            item.setToolTip(f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\nPUBLIC: {cmd.public}')
+            cmd.init_session(item)
+            cmd.widget.setCheckState(2) if cmd.name in getstate('active_cmds') else cmd.widget.setCheckState(0)
 
 class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
-    def __init__(self):
+    def init_session(self):
         self.polls = Polls()
         self.toggles = ToggleCommands()
-
-    def init_session(self):
         pymol.cmd.save(SESSION_RESTORE)
         self.setup_main_window()
-        self.setup_opts()
+        self.update_opts()
         self.toggles.init_session(self.widget.toggles)
         self.polls.init_session(self.widget.polls)
 
@@ -497,13 +550,23 @@ class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
         self.widget.button_newpoll.clicked.connect(lambda: self.polls.create_poll_start())
         self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
         self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_toggle_start())
-        self.widget.button_save_session.clicked.connect(lambda: self.save_session())
-        self.widget.button_refresh.clicked.connect(lambda: self.polls.refresh_polls())
+        self.widget.button_save.clicked.connect(lambda: self.save_session())
+        self.widget.button_load.clicked.connect(lambda: self.load_session())
+        self.widget.button_restart.clicked.connect(lambda: self.init_session())
         self.widget.button_quit.clicked.connect(self.quit)
-        pymol.cmd.set_key('left', lambda: self.polls.pollinprogress.switch_to(delta=-1))
-        pymol.cmd.set_key('right', lambda: self.polls.pollinprogress.switch_to(delta=1))
+        self.keybinds = []
+        self.add_keybind('left', 'LeftArrow', lambda: self.polls.pollinprogress.switch_to(delta=-1))
+        self.add_keybind('right', 'RightArrow', lambda: self.polls.pollinprogress.switch_to(delta=1))
 
-    def setup_opts(self):
+    def add_keybind(self, key, qkey, action):
+        if qkey:
+            keybind = pymol.Qt.QtWidgets.QShortcut(qkey, self.widget)
+            keybind.activated.connect(action)
+            self.keybinds.append(keybind)
+        pymol.cmd.set_key(key, action)
+
+    def update_opts(self):
+        print('UPDATE OPTS', ppppp.polls.pollinprogress)
         action = collections.defaultdict(lambda: lambda: None)
         action['hide_invalid'] = self.polls.update_poll_list
         action['findpoll'] = self.polls.update_poll_list
@@ -512,13 +575,13 @@ class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
             if not name.startswith('opt_'): continue
             opt = name[4:]
             if widget.__class__.__name__.endswith('QLineEdit'):
-                if opt in conf.opts: widget.setText(conf.opts[opt])
-                else: setattr(conf.opts, opt, widget.text())
-                widget.textChanged.connect(lambda _, opt=opt: (setattr(conf.opts, opt, _), action[opt]()))
+                if havestate(opt): widget.setText(getstate(opt))
+                else: setstate(opt, widget.text())
+                widget.textChanged.connect(lambda _, opt=opt: (setstate(opt, _), action[opt]()))
             elif widget.__class__.__name__.endswith('QCheckBox'):
-                if opt in conf.opts: widget.setCheckState(conf.opts[opt])
-                else: setattr(conf.opts, opt, 2 if widget.checkState() else 0)
-                widget.stateChanged.connect(lambda _, opt=opt: (setattr(conf.opts, opt, _), action[opt]()))
+                if havestate(opt): widget.setCheckState(getstate(opt))
+                else: setstate(opt, 2 if widget.checkState() else 0)
+                widget.stateChanged.connect(lambda _, opt=opt: (setstate(opt, _), action[opt]()))
             else:
                 raise ValueError(f'dont know how to use option widget type {type(v)}')
 
@@ -536,11 +599,14 @@ class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
         if val is not None: self.widget.progress.setValue(val)
 
     def save_session(self):
-        if not conf.opts.save_session: return
         conf._notify_changed()
-        with open(PPPPP_PICKLE, 'wb') as out:
-            pickle.dump(self, out)
-        print(f'PPP CONFIG SAVED, PollInProgress: {self.polls.pollinprogress}')
+        state._notify_changed()
+
+    def load_session(self):
+        conf._autoreload_check()
+        print(conf.cmds)
+        state._autoreload_check()
+        self.init_session()
 
     def quit(self):
         self.save_session()
@@ -572,7 +638,7 @@ def run(_self=None):
     os.makedirs(os.path.dirname(PPPPP_PICKLE), exist_ok=True)
     if os.path.exists(SESSION_RESTORE): os.remove(SESSION_RESTORE)
 
-    global PPPPP, conf, state, remote
+    global ppppp, conf, state, remote
     conf = read_config(CONFIG_FILE, opts={}, cmds={}, polls={})
     state = read_config(STATE_FILE, activepoll=None, active_cmds=set(), cmds={}, polls={})
     for k in [k for k, v in conf.polls.items() if v.temporary]:
@@ -583,18 +649,17 @@ def run(_self=None):
         remote = run_local_server()
     #try:
     #    with open(PPPPP_PICKLE, 'rb') as inp:
-    #        PPPPP = pickle.load(inp)
+    #        ppppp = pickle.load(inp)
     #        if not conf.opts.save_session: raise ValueError
     #        print('PrettyProteinProjectPymolPluginPanel LOADED FROM PICKLE')
     #except (FileNotFoundError, EOFError, ValueError):
-    PPPPP = PrettyProteinProjectPymolPluginPanel()
+    ppppp = PrettyProteinProjectPymolPluginPanel()
     # print('PrettyProteinProjectPymolPluginPanel FAILED TO LOAD FROM PICKLE')
-    PPPPP.init_session()
+    ppppp.init_session()
 
 def main():
     print('RUNNING main if for debugging only!')
 
-    print(conf.opts)
     while True:
         sleep(0.1)
 

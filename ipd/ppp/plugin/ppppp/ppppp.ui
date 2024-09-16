@@ -121,7 +121,7 @@
     <rect>
      <x>290</x>
      <y>60</y>
-     <width>81</width>
+     <width>121</width>
      <height>25</height>
     </rect>
    </property>
@@ -135,9 +135,9 @@
   <widget class="QPushButton" name="button_use_curdir">
    <property name="geometry">
     <rect>
-     <x>380</x>
+     <x>420</x>
      <y>60</y>
-     <width>91</width>
+     <width>131</width>
      <height>25</height>
     </rect>
    </property>
@@ -263,22 +263,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>F Tier</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="button_save_session">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>530</y>
-     <width>451</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This protein is butt ugly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="text">
-    <string>Save Prettier Protein Project Pymol Plug-in Panel Pickle to ~/.config/ppp</string>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="opt_findcmd">
    <property name="geometry">
     <rect>
@@ -316,15 +300,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>20</x>
      <y>440</y>
-     <width>51</width>
-     <height>16</height>
+     <width>61</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Source Code Pro Semibold</family>
-     <pointsize>12</pointsize>
-     <bold>true</bold>
+     <pointsize>16</pointsize>
     </font>
    </property>
    <property name="text">
@@ -386,11 +368,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="button_refresh">
+  <widget class="QPushButton" name="button_load">
    <property name="geometry">
     <rect>
-     <x>480</x>
-     <y>60</y>
+     <x>100</x>
+     <y>530</y>
      <width>71</width>
      <height>25</height>
     </rect>
@@ -399,7 +381,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might order this protein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
-    <string>Refresh</string>
+    <string>Load</string>
    </property>
   </widget>
   <widget class="QProgressBar" name="progress">
@@ -416,6 +398,38 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="value">
     <number>0</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_save">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>530</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might order this protein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_restart">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>530</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might order this protein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Restart</string>
    </property>
   </widget>
  </widget>
