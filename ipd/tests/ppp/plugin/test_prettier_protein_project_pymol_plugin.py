@@ -26,13 +26,13 @@ bigfiles = [
     # '/data/digs/projects/ml/struc2seq/data_for_complexes/datasets/PDB-2021AUG02_res_25H_homo_90_xaa_train_vol4.jsonl',
 ]
 
-def hack_test_filefetcher():
-    print('start', flush=True)
-    ff = BackgroundFileFetcher(bigfiles, shuffle=False)
-    # ff = FileFetcher(bigfiles, shuffle=False)
-    for f in ff:
-        time.sleep(1)
-        print(f, flush=True)
+# def hack_test_filefetcher():
+#     print('start', flush=True)
+#     ff = BackgroundFileFetcher(bigfiles, shuffle=False)
+#     # ff = FileFetcher(bigfiles, shuffle=False)
+#     for f in ff:
+#         time.sleep(1)
+#         print(f, flush=True)
 
 def run_pymol():
     # os.environ['QT_QPA_PLATFORM'] = 'xcb'

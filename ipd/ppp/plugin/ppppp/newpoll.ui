@@ -36,6 +36,9 @@
     </rect>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>Poll Name</string>
    </property>
   </widget>
@@ -49,6 +52,9 @@
     </rect>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>Poll Description</string>
    </property>
   </widget>
@@ -62,6 +68,9 @@
     </rect>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>Path to directory or list file</string>
    </property>
   </widget>
@@ -75,6 +84,9 @@
     </rect>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>weeks=17 days=3 hours=7 minutes=23</string>
    </property>
   </widget>

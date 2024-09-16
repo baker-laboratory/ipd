@@ -30,6 +30,7 @@ class Poll(sqlmodel.SQLModel, table=True):
             return ordset([_.strip() for _ in inp.readlines()])
 
     def replace_dir_with_pdblist(self, datadir, suffix, recurse=False):
+        # sourcery skip: extract-method
         path = Path(self.path)
         if path.is_dir:
             newpath = f'{datadir}/poll/{self.pollid}.filelist'
@@ -38,11 +39,13 @@ class Poll(sqlmodel.SQLModel, table=True):
                 if recurse:
                   for root, dirs, files in os.walk(path):
                     for fname in (_ for _ in files if _.endswith(suffix) and not _.startswith('_')):
-                        out.write(os.path.join(root, fname) + os.linesep)
+                        out.write(os.path.abspath(os.path.join(root, fname)) + os.linesep)
                 else:
                     for fname in [_ for _ in os.listdir(path) if _.endswith(suffix) and not _.startswith('_')]:
                         out.write(os.path.abspath(fname) + os.linesep)
             self.path = newpath
+            for fname in open(newpath):
+                assert os.path.exists(fname.strip())
             print('newpoll', self.name, self.path)
         else:
             with open(self.path) as inp:

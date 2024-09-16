@@ -210,7 +210,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </rect>
    </property>
    <property name="text">
-    <string>New Option...</string>
+    <string>New Command...</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
@@ -277,19 +277,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="text">
     <string>Save Prettier Protein Project Pymol Plug-in Panel Pickle to ~/.config/ppp</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="button_delopt">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>60</y>
-     <width>121</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Delete Option</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="opt_findcmd">

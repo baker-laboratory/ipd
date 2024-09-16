@@ -84,6 +84,7 @@ def helper_test_autoreload(b, b2, tmpdir):
     fname2 = f'{tmpdir}/test2.yaml'
     shutil.copyfile(fname, f'{fname2}.tmp')
     shutil.move(f'{fname2}.tmp', fname2)
+    assert_saved_ok(b)
     assert b == b2
     assert set(os.listdir(tmpdir)) == {'test2.yaml', 'test.yaml'}
 
@@ -135,6 +136,12 @@ def test_autoreload(tmpdir):
     helper_test_autoreload(b, b2, tmpdir)
     b.i = [[[17]]]
     b.i[0][0][0] = 18
+    helper_test_autoreload(b, b2, tmpdir)
+    b.bnch = Bunch()
+    b.bnch.c = 17
+    helper_test_autoreload(b, b2, tmpdir)
+    b.bnch._notify_changed('baz', 'biz')
+    helper_test_autoreload(b, b2, tmpdir)
     helper_test_autoreload(b, b2, tmpdir)
 
 

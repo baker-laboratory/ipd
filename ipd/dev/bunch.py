@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import shutil
 import hashlib
-
+import datetime
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
 class Bunch(dict):
@@ -31,50 +31,52 @@ class Bunch(dict):
         self.__dict__["_special"]["default"] = _default
         self.__dict__["_special"]["autosave"] = _autosave
         self.__dict__["_special"]["autoreload"] = _autoreload
-        self.__dict__["_special"]["justsaved"] = False
         if _autoreload:
             Path(_autoreload).touch()
-            self._special['autoreloadhash'] = hashlib.md5(open(_autoreload, 'rb').read()).hexdigest()
+            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload, 'rb').read()).hexdigest()
         self.__dict__["_special"]["parent"] = _parent
         for k in self:
             if hasattr(super(), k):
                 raise ValueError(f"{k} is a reseved name for Bunch")
 
     def _autoreload_check(self):
-        fname = self._special['autoreload']
-        if not fname or self._special['justsaved']: return
+        if not self.__dict__['_special']['autoreload']: return
         import yaml
-        newhash = hashlib.md5(open(fname, 'rb').read()).hexdigest()
-        if self._special['autoreloadhash'] == newhash: return
+        with open(self.__dict__['_special']['autoreload'], 'rb') as inp:
+            newhash = hashlib.md5(inp.read()).hexdigest()
+        # print('_autoreload_check', newhash, self.__dict__['_special']['autoreloadhash'])
+        if self.__dict__['_special']['autoreloadhash'] == newhash: return
+        self.__dict__['_special']['autoreloadhash'] = newhash
         # disable autosave
-        orig, self._special['autosave'] = self._special['autosave'], None
-        # print('RELOAD FROM FILE', fname)
-        self._special['autoreloadhash'] = newhash
-        with open(fname) as inp:
+        orig, self.__dict__['_special']['autosave'] = self.__dict__['_special']['autosave'], None
+        print('RELOAD FROM FILE', self.__dict__['_special']['autoreload'])
+        with open(self.__dict__['_special']['autoreload']) as inp:
             new = yaml.load(inp, yaml.Loader)
         super().clear()
         for k, v in new.items():
-            self[k] = v
-        self._special['autosave'] = orig
+            self[k] = make_autosave_hierarchy(v, _parent=(self, None))
+        self.__dict__['_special']['autosave'] = orig
 
-    def _notify_changed(self, k, v=None):  # sourcery skip: extract-method
-        self._special['justsaved'] = False
-        if self._special['parent']:
-            parent, selfkey = self._special['parent']
+    def _notify_changed(self, k=None, v=None):  # sourcery skip: extract-method
+        if self.__dict__['_special']['parent']:
+            parent, selfkey = self.__dict__['_special']['parent']
             return parent._notify_changed(f'{selfkey}.{k}', v)
-        if self._special['autosave']:
+        if self.__dict__['_special']['autosave']:
             import yaml
-            if isinstance(v, (list, set, tuple)):
-                self[k] = make_autosave_hierarchy(v, _parent=(self, k))
-            os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)
-            with open(self._special['autosave'] + '.tmp', 'w') as out:
+            if k:
+                k = k.split('.')[0]
+                if isinstance(v, (list, set, tuple, Bunch)):
+                    self[k] = make_autosave_hierarchy(self[k], _parent=(self,None))
+            os.makedirs(os.path.dirname(self.__dict__['_special']['autosave']), exist_ok=True)
+            with open(self.__dict__['_special']['autosave'] + '.tmp', 'w') as out:
                 yaml.dump(unmake_autosave_hierarchy(self), out)
-            shutil.move(self._special['autosave'] + '.tmp', self._special['autosave'])
-            # print('SAVE TO ', self._special['autosave'])
-            self._special['justsaved'] = True
+            shutil.move(self.__dict__['_special']['autosave'] + '.tmp', self.__dict__['_special']['autosave'])
+            with open(self.__dict__['_special']['autoreload'], 'rb') as inp:
+                self.__dict__['_special']['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()
+                # print('SAVE TO ', self.__dict__['_special']['autosave'])
 
     def default(self):
-        dflt = self._special["default"]
+        dflt = self.__dict__['_special']["default"]
         if hasattr(dflt, "__call__"):
             return dflt()
         else:
@@ -172,7 +174,7 @@ class Bunch(dict):
             return False
 
     def is_strict(self):
-        return self._special["strict_lookup"]
+        return self.__dict__['_special']["strict_lookup"]
 
     def __getitem__(self, key):
         return self.__getattr__(key)
@@ -180,7 +182,7 @@ class Bunch(dict):
     # try:
     # super().__getitem__(key)
     # except KeyError:
-    # return self._special('default')()
+    # return self.__dict__['_special']('default')()
 
     def __getattr__(self, k):
         self._autoreload_check()
@@ -188,7 +190,7 @@ class Bunch(dict):
             raise ValueError("_special is a reseved name for Bunch")
         if k == "__deepcopy__":
             return None
-        if self._special["strict_lookup"] and k not in self:
+        if self.__dict__['_special']["strict_lookup"] and k not in self:
             raise KeyError(f"Bunch is missing value for key {k}")
         try:
             # Throws exception if not in prototype chain
@@ -197,7 +199,7 @@ class Bunch(dict):
             try:
                 return super().__getitem__(k)
             except KeyError as e:
-                if self._special["strict_lookup"]:
+                if self.__dict__['_special']["strict_lookup"]:
                     raise e
                 else:
                     return self.default()
@@ -212,8 +214,8 @@ class Bunch(dict):
             try:
                 self[k] = v
                 self._notify_changed(k, v)
-            except KeyError:
-                raise AttributeError(k)
+            except KeyError as e:
+                raise AttributeError(k) from e
         else:
             object.__setattr__(self, k, v)
             self._notify_changed(k, v)
@@ -226,11 +228,15 @@ class Bunch(dict):
             try:
                 del self[k]
                 self._notify_changed(k)
-            except KeyError:
-                raise AttributeError(k)
+            except KeyError as e:
+                raise AttributeError(k) from e
         else:
             object.__delattr__(self, k)
             self._notify_changed(k)
+
+    # def __setitem__(self, k, v):
+       # super().__setitem__(k, v)
+       # self._notify_changed(k, v)
 
     def __delitem__(self, k):
         super().__delitem__(k)
@@ -254,7 +260,7 @@ class Bunch(dict):
             else:
                 kw = vars(__BUNCH_SUB_ITEMS)
         newbunch = self.copy()
-        newbunch._special = self._special
+        newbunch._special = self.__dict__['_special']
         for k, v in kw.items():
             if v is None and k in newbunch:
                 del newbunch[k]
@@ -266,7 +272,7 @@ class Bunch(dict):
     def only(self, keys):
         self._autoreload_check()
         newbunch = Bunch()
-        newbunch._special = self._special
+        newbunch._special = self.__dict__['_special']
         for k in keys:
             if k in self:
                 newbunch[k] = self[k]
@@ -275,7 +281,7 @@ class Bunch(dict):
     def without(self, *dropkeys):
         self._autoreload_check()
         newbunch = Bunch()
-        newbunch._special = self._special
+        newbunch._special = self.__dict__['_special']
         for k in self.keys():
             if k not in dropkeys:
                 newbunch[k] = self[k]
@@ -383,7 +389,7 @@ def make_autosave_hierarchy(x, _parent=None, seenit=None, _autosave=None):
         x = BunchChildSet(val, _parent=_parent)
     elif isinstance(x, (tuple, )):
         x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)
-    elif not isinstance(x, (type(None), str, int, float)):
+    elif not isinstance(x, (type(None), str, int, float, datetime.datetime, datetime.timedelta)):
         raise ValueError(f'cant convert to BunchChild type {type(x)}')
     seenit.add(id(x))
     return x
