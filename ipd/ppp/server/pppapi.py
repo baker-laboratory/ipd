@@ -115,3 +115,11 @@ class PPPServer:
     def poll_review(self, review: Review):
         self.session.add(review)
         self.session.commit
+
+def run(port, datadir, log='info'):
+    import uvicorn
+    os.makedirs(datadir, exist_ok=True)
+    engine = sqlmodel.create_engine(f'sqlite:///{datadir}/ppp.db')
+    server = PPPServer(engine, datadir)
+    server.app.mount("/ppp", server.app)  # your app routes will now be /app/{your-route-here}
+    return uvicorn.run(server.app, host="0.0.0.0", port=port, log_level=log)

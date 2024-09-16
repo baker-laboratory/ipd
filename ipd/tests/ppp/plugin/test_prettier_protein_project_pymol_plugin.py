@@ -5,7 +5,7 @@ from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import *
 
 def main():
     # hack_test_filefetcher()
-    test_ppppp()
+    run_pymol()
     print('test_ppppp DONE', flush=True)
 
 bigfiles = [
@@ -34,7 +34,7 @@ def hack_test_filefetcher():
         time.sleep(1)
         print(f, flush=True)
 
-def test_ppppp():
+def run_pymol():
     # os.environ['QT_QPA_PLATFORM'] = 'xcb'
     pymol = pytest.importorskip('pymol')
     pymol.pymol_argv = ['pymol', '-q']

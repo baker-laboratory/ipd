@@ -18,6 +18,11 @@
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
         {
+            "name": "test bunch",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/dev/test_bunch.py $file &> ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
             "name": "test ppp server",
             "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/ppp/bin/python ipd/tests/ppp/server/test_pppapi.py $file &> ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
