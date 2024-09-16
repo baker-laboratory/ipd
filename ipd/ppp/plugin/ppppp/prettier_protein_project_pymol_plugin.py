@@ -20,6 +20,7 @@ import time
 import traceback
 import yaml
 
+
 def pipimport(pkgname):
     import importlib
     try:
@@ -51,39 +52,45 @@ def havestate(name):
     if name in conf.opts: return True
     return False
 
-def getstate(name, poll=None):
-    defaults = dict(active_cmds=state.active_cmds,
-                    review_action=conf.opts.review_action,
-                    do_review_action=conf.opts.do_review_action,
-                    findcmd=conf.opts.findcmd,
-                    shuffle=conf.opts.shuffle,
-                    prefetch=conf.opts.prefetch,
-                    reviewed=set())
-    if poll or ppppp.polls.pollinprogress:
-        poll = poll or ppppp.polls.pollinprogress.name
-        if name in state.polls[poll]:
-            print('getstate', name, poll, state.polls[poll][name])
-            return state.polls[poll][name]
-        elif name in defaults:
-            setattr(state.polls[poll], name, defaults[name])
-            print('getstate', name, poll, state.polls[poll][name])
-            return state.polls[poll][name]
-    print('getstate', name, None)
-    if name in state: return state[name]
-    if name in conf.opts: return conf.opts[name]
-    raise ValueError(f'getstate unknown state {name}')
+_globalonly = {'prefetch'}
 
-def setstate(name, val, poll=None):
-    getstate(name, poll)  # check already exists
-    if poll or ppppp.polls.pollinprogress:
-        poll = poll or ppppp.polls.pollinprogress.name
-        print('setstate', name, val, poll)
-        setattr(state[poll], name, val)
-        return
-    print('setstate', name, val, None)
-    if name in state: state[name] = val
-    if name in conf.opts: conf.opts[name] = val
-    raise ValueError(f'setstate unknown state {name}')
+@ipd.dev.timed
+def getstate(name, poll=None, debug=False, indent=''):
+    _defaults = dict(reviewed=set(), pymol_view={})
+    poll = ppppp.polls.pollinprogress.name if ppppp.polls.pollinprogress else poll
+    if name not in _globalonly and poll and name in state.polls[poll]:
+        if debug: print('Get', name, state.polls[poll][name], 'from poll', poll)
+        return state.polls[poll][name]
+    else:
+        if name in _defaults:
+            val = _defaults[name]
+            if debug: print(f'{indent}Get', name, val, 'from defaults', poll)
+        elif name in state:
+            val = state[name]
+            if debug: print(f'{indent}Get', name, val, 'from state', poll)
+        elif name in conf.opts:
+            val = conf.opts[name]
+            if debug: print(f'{indent}Get', name, val, 'from opts', poll)
+        if poll:
+            print('    set pol val', val)
+            setattr(state.polls[poll], name, val)
+        return val
+    raise ValueError(findent + 'Get unknown state {name}')
+
+@ipd.dev.timed
+def setstate(name, val, poll=None, debug=False):
+    getstate(name, poll, debug=debug, indent='   ')  # check already exists
+    poll = ppppp.polls.pollinprogress.name if ppppp.polls.pollinprogress else poll
+    if name not in _globalonly and poll:
+        if debug: print('Set', name, val, 'topoll', poll)
+        dest = state.polls[poll]
+    elif name in conf.opts and name not in state:
+        dest = conf.opts
+        if debug: print('Set', name, val, 'topots', poll)
+    else:
+        dest = state
+        if debug: print('Set', name, val, 'tostate', poll)
+    setattr(dest, name, val)
 
 _subject_count = 0
 
@@ -115,6 +122,9 @@ class PPPClient:
         if not poll['public']: return
         self.post('/poll', json=poll).json()
 
+    def post_review(self, grade, comment):
+        print('POST REVIEW', grade, comment)
+
 class PartialPickleable(abc.ABC):
     def __getstate__(self):
         state = {}
@@ -145,9 +155,11 @@ class PymolFileViewer(PartialPickleable):
         self.update()
 
     def update(self):
+        pymol.cmd.reset()
         for cmd in getstate('active_cmds'):
             assert cmd in getstate('active_cmds')
             self.run_command(conf.cmds[cmd].cmdon)
+        if self.fname in (pview := getstate('pymol_view')): pymol.cmd.set_view(pview[self.fname])
 
     def update_toggle(self, toggle: 'ToggleCommand'):
         if toggle: self.run_command(toggle.cmdon)
@@ -158,6 +170,7 @@ class PymolFileViewer(PartialPickleable):
 
     def cleanup(self):
         pymol.cmd.delete(subject_name())
+        getstate('pymol_view')[self.fname] = pymol.cmd.get_view()
 
 class FileFetcher(threading.Thread):
     def __init__(self, fname, cache):
@@ -172,10 +185,22 @@ class FileFetcher(threading.Thread):
         shutil.move(self.tmpfname, self.localfname)
 
 class FileCache:
+    def __init__(self, fnames, **kw):
+        print('Basic FileCache')
+        self.fnames = fnames
+
+    def __getitem__(self, i):
+        return self.fnames[i]
+
+    def cleanup(self):
+        pass
+
+class PrefetchLocalFileCache(FileCache):
     '''
     Copies files to a conf temp directory. Will downloads files ahead of requested index in background.
     '''
     def __init__(self, fnames, numprefetch=7, path='/tmp/ppp/filecache'):
+        print('PrefetchLocalFileCache')
         self.path = path
         self.fetchers = {}
         os.makedirs(path, exist_ok=True)
@@ -234,7 +259,8 @@ class PollInProgress():
         self.poll = poll
         self.name = poll['name']
         self.viewer = None
-        self.filecache = FileCache(self.fnames, numprefetch=7 if conf.prefetch else 0)
+        Cache = PrefetchLocalFileCache if getstate('prefetch') else FileCache
+        self.filecache = Cache(self.fnames, numprefetch=7 if conf.prefetch else 0)
         ppppp.set_pbar(0, len(getstate('reviewed', poll=self.name)), len(self.fnames))
 
     def init_files(self, fnames):
@@ -245,8 +271,8 @@ class PollInProgress():
         ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(fnames) - 1)
         return fnames
 
-    def init_session(self):
-        if self.viewer: self.viewer.init_session(ppppp.toggles)
+    # def init_session(self):
+    # if self.viewer: self.viewer.init_session(ppppp.toggles)
 
     @property
     def fnames(self):
@@ -268,25 +294,24 @@ class PollInProgress():
         ppppp.update_opts()
         self.switch_to(self.index)
 
-    def load_next(self):
-        return self.switch_to(self.index + 1)
-
     def switch_to(self, index=None, delta=None):
         if index is None: index = self.index
-        if delta: index += delta
+        if delta: index = (index + delta) % len(self.fnames)
         if index >= len(self.fnames): return False
+        if self.viewer: self.viewer.cleanup()
         self.viewer = PymolFileViewer(self.filecache[index], ppppp.toggles)
         self.index = index
         return True
 
     def record_review(self, grade, comment):
         if isfalse_notify(self.viewer, 'No working file!'): return
-        print(f'REVIEWED: {self.viewer.fname}', flush=True)
+        client.post_review(grade, comment)
         pymol.cmd.delete(subject_name())
         print(state.polls[self.name])
         getstate('reviewed').add(self.viewer.fname)
         ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(self.fnames) - 1)
-        if not self.load_next(): ppppp.polls.poll_finished()
+        if len(getstate('reviewed')) == len(self.fnames): ppppp.polls.poll_finished()
+        else: switch_to(delta=1)
 
     def cleanup(self):
         if self.viewer: self.viewer.cleanup()
@@ -436,6 +461,9 @@ class Polls(PartialPickleable):
                               temporary=True),
                          temporary=True)
 
+    def cleanup(self):
+        if self.pollinprogress: self.pollinprogress.cleanup()
+
 class ToggleCommand(PartialPickleable):
     def __init__(self, name, onstart, cmdon, cmdoff, public=False):
         super(ToggleCommand, self).__init__()
@@ -531,6 +559,9 @@ class ToggleCommands(PartialPickleable):
             cmd.init_session(item)
             cmd.widget.setCheckState(2) if cmd.name in getstate('active_cmds') else cmd.widget.setCheckState(0)
 
+    def cleanup(self):
+        pass
+
 class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
     def init_session(self):
         self.polls = Polls()
@@ -547,26 +578,26 @@ class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
         self.widget.show()
         for grade in 'SABCDF':
             getattr(self.widget, f'{grade.lower()}tier').clicked.connect(partial(self.record_review, grade))
-        self.widget.button_newpoll.clicked.connect(lambda: self.polls.create_poll_start())
-        self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
-        self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_toggle_start())
-        self.widget.button_save.clicked.connect(lambda: self.save_session())
-        self.widget.button_load.clicked.connect(lambda: self.load_session())
-        self.widget.button_restart.clicked.connect(lambda: self.init_session())
+        self.widget.button_newpoll.clicked.connect(self.polls.create_poll_start)
+        self.widget.button_use_curdir.clicked.connect(self.polls.create_poll_from_curdir)
+        self.widget.button_newopt.clicked.connect(self.toggles.create_toggle_start)
+        self.widget.button_save.clicked.connect(self.save_session)
+        self.widget.button_load.clicked.connect(self.load_session)
+        self.widget.button_restart.clicked.connect(self.init_session)
         self.widget.button_quit.clicked.connect(self.quit)
         self.keybinds = []
         self.add_keybind('left', 'LeftArrow', lambda: self.polls.pollinprogress.switch_to(delta=-1))
         self.add_keybind('right', 'RightArrow', lambda: self.polls.pollinprogress.switch_to(delta=1))
 
     def add_keybind(self, key, qkey, action):
-        if qkey:
+        if qkey:  # Qt binds not workind for some reason
             keybind = pymol.Qt.QtWidgets.QShortcut(qkey, self.widget)
             keybind.activated.connect(action)
             self.keybinds.append(keybind)
         pymol.cmd.set_key(key, action)
 
     def update_opts(self):
-        print('UPDATE OPTS', ppppp.polls.pollinprogress)
+        # print('UPDATE OPTS', ppppp.polls.pollinprogress)
         action = collections.defaultdict(lambda: lambda: None)
         action['hide_invalid'] = self.polls.update_poll_list
         action['findpoll'] = self.polls.update_poll_list
@@ -609,11 +640,14 @@ class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
         self.init_session()
 
     def quit(self):
-        self.save_session()
         self.widget.hide()
+        self.polls.cleanup()
+        self.toggles.cleanup()
+        self.save_session()
         if os.path.exists(SESSION_RESTORE):
             pymol.cmd.load(SESSION_RESTORE)
             os.remove(SESSION_RESTORE)
+        ipd.dev.global_timer.report()
 
 def run_local_server(port=12345):
     pipimport('fastapi')
