@@ -11,6 +11,7 @@ class Bunch(dict):
         __arg_or_ns=None,
         _strict='__NOT_STRICT',
         _default='__NODEFALT',
+        _storedefault=True,
         _autosave=None,
         _autoreload=None,
         _parent=None,
@@ -29,6 +30,7 @@ class Bunch(dict):
             # if _default passed explicitly, and strict is not, don't be strict
             self.__dict__["_special"]["strict_lookup"] = False
         self.__dict__["_special"]["default"] = _default
+        self.__dict__["_special"]["storedefault"] = _storedefault
         self.__dict__["_special"]["autosave"] = _autosave
         self.__dict__["_special"]["autoreload"] = _autoreload
         if _autoreload:
@@ -58,25 +60,27 @@ class Bunch(dict):
         self.__dict__['_special']['autosave'] = orig
 
     def _notify_changed(self, k=None, v=None):  # sourcery skip: extract-method
-        if self.__dict__['_special']['parent']:
-            parent, selfkey = self.__dict__['_special']['parent']
+        if self._special['parent']:
+            parent, selfkey = self._special['parent']
             return parent._notify_changed(f'{selfkey}.{k}', v)
-        if self.__dict__['_special']['autosave']:
+        if self._special['autosave']:
             import yaml
             if k:
                 k = k.split('.')[0]
                 if isinstance(v, (list, set, tuple, Bunch)):
-                    self[k] = make_autosave_hierarchy(self[k], _parent=(self,None))
-            os.makedirs(os.path.dirname(self.__dict__['_special']['autosave']), exist_ok=True)
-            with open(self.__dict__['_special']['autosave'] + '.tmp', 'w') as out:
+                    self[k] = make_autosave_hierarchy(self[k], _parent=(self,None), _default=self._special['default'])
+            os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)
+            with open(self._special['autosave'] + '.tmp', 'w') as out:
                 yaml.dump(unmake_autosave_hierarchy(self), out)
-            shutil.move(self.__dict__['_special']['autosave'] + '.tmp', self.__dict__['_special']['autosave'])
-            with open(self.__dict__['_special']['autoreload'], 'rb') as inp:
-                self.__dict__['_special']['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()
+            shutil.move(self._special['autosave'] + '.tmp', self._special['autosave'])
+            with open(self._special['autoreload'], 'rb') as inp:
+                self._special['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()
                 # print('SAVE TO ', self.__dict__['_special']['autosave'])
 
     def default(self):
         dflt = self.__dict__['_special']["default"]
+        if dflt == 'bunchwithparent':
+            return Bunch(_parent=(self,None), _default=dflt)
         if hasattr(dflt, "__call__"):
             return dflt()
         else:
@@ -201,8 +205,10 @@ class Bunch(dict):
             except KeyError as e:
                 if self.__dict__['_special']["strict_lookup"]:
                     raise e
-                else:
-                    return self.default()
+                if self._special['storedefault']:
+                    self[k] = self.default()
+                    return self[k]
+                return self[k]
 
     def __setattr__(self, k, v):
         if hasattr(super(), k):
@@ -371,13 +377,13 @@ def bunchify(x):
     else:
         return x
 
-def make_autosave_hierarchy(x, _parent=None, seenit=None, _autosave=None):
+def make_autosave_hierarchy(x, _parent=None, seenit=None, _autosave=None, _default=None):
     seenit = seenit or set()
     assert id(x) not in seenit, 'x must be a Tree'
-    kw = dict(seenit=seenit, _parent=_parent)
+    kw = dict(seenit=seenit, _parent=_parent, _default=_default)
     assert _parent is None or isinstance(_parent[0], Bunch)
     if isinstance(x, dict):
-        x = Bunch(**x, _parent=_parent, _autosave=_autosave, _autoreload=_autosave)
+        x = Bunch(**x, _parent=_parent, _autosave=_autosave, _autoreload=_autosave, _default=_default)
         for k, v in x.items():
             kw['_parent'] = (x, k)
             x[k] = make_autosave_hierarchy(v, **kw)
