@@ -103,7 +103,7 @@ def test_poll(testclient, pppserver):
     assert isinstance(files[0].reviews[0], ipd.ppp.Review)
     assert isinstance(files[0].poll, ipd.ppp.Poll)
 
-    client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='foo', cmdoff='bar'))
+    client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
 
 def test_pppapi():
 

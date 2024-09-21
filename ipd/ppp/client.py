@@ -2,7 +2,9 @@ import os
 from datetime import datetime
 import functools
 import json
+import tempfile
 import ipd
+import pathlib
 from typing import Any, Optional
 
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -11,6 +13,8 @@ ordset = ipd.lazyimport('ordered_set', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 from ordered_set import OrderedSet as ordset
 from rich import print
+
+pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
 DTFMT = "%Y-%m-%dT%H:%M:%S.%f"
 
@@ -78,6 +82,11 @@ class FileSpec(pydantic.BaseModel):
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
+class PymolCMDSpecError(Exception):
+    def __init__(self, message, log):
+        super().__init__(message + os.linesep+ log)
+        self.log = log
+
 class PymolCMDSpec(pydantic.BaseModel):
     name: str
     desc: str = ''
@@ -91,6 +100,26 @@ class PymolCMDSpec(pydantic.BaseModel):
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}
 
+    @pydantic.model_validator(mode='after')
+    def check_cmds(self):
+        self._check_cmds_output = '-'*80 + os.linesep
+        self.check_cmd('cmdstart')
+        self.check_cmd('cmdon')
+        self.check_cmd('cmdoff')
+        if any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split()):
+            raise PymolCMDSpecError('bad pymol commands', self._check_cmds_output)
+        return self
+
+    def check_cmd(self, cmdname):
+        with tempfile.TemporaryDirectory() as td:
+            with open(f'{td}/stdout.log', 'w') as out:
+                with ipd.dev.redirect(stdout=out, stderr=out):
+                    pymol.cmd.do(getattr(self, cmdname), echo=False)
+            msg = pathlib.Path(f'{td}/stdout.log').read_text()
+            msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
+            self._check_cmds_output += msg
+        return self
+
 class ClientMixin(pydantic.BaseModel):
     _pppclient: Optional['PPPClient'] = None
 
@@ -102,20 +131,21 @@ class ClientMixin(pydantic.BaseModel):
         return self.dbkey
 
 def clientprop(name):
-        @property
-        @functools.lru_cache
-        def getter(self):
-            kind, attr = name.split('.')
-            val = self._pppclient.getattr(kind, self.dbkey, attr)
-            attr = attr.title()
-            g = globals()
-            if attr in g: cls = g[attr]
-            elif attr[:-1] in g: cls = g[attr[:-1]]
-            else: raise ValueError(f'unknown type {attr}')
-            if isinstance(val, list):
-                return [cls(self._pppclient, **kw) for kw in val]
-            return cls(self._pppclient, **val)
-        return getter
+    @property
+    @functools.lru_cache
+    def getter(self):
+        kind, attr = name.split('.')
+        val = self._pppclient.getattr(kind, self.dbkey, attr)
+        attr = attr.title()
+        g = globals()
+        if attr in g: cls = g[attr]
+        elif attr[:-1] in g: cls = g[attr[:-1]]
+        else: raise ValueError(f'unknown type {attr}')
+        if isinstance(val, list):
+            return [cls(self._pppclient, **kw) for kw in val]
+        return cls(self._pppclient, **val)
+
+    return getter
 
 class Poll(ClientMixin, PollSpec):
     dbkey: int
@@ -158,7 +188,7 @@ class PPPClient:
         return response.json()
 
     def upload(self, thing):
-        kind = type(thing).__name__.replace('Spec','').lower()
+        kind = type(thing).__name__.replace('Spec', '').lower()
         return self.post(f'/create/{kind}', thing)
 
         # if isinstance(thing, PollSpec): return self.create_poll(thing)
@@ -185,10 +215,9 @@ class PPPClient:
         return self.get(f'/poll{dbkey}/fids')
 
     # def create_poll(self, poll):
-        # self.post('/poll', json=json.loads(poll.json()))
+    # self.post('/poll', json=json.loads(poll.json()))
 
     def reviews_for_fname(self, fname):
         fname = fname.replace('/', '__DIRSEP__')
         rev = self.get(f'/reviews/byfname/{fname}')
         return [Review(self, **_) for _ in rev]
-

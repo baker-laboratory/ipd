@@ -39,9 +39,14 @@ class LazyModule:
         try:
             return import_module(self._name)
         except (ValueError, AssertionError, ModuleNotFoundError):
-            cmd = f'{sys.executable.replace("/bin/python","/bin/mamba")} {self._channels} {self._package}'
+
             if self._mamba:
-                subprocess.check_call(cmd.split())
+                mamba = sys.executable.replace('/bin/python', '')
+                *mamba, env = mamba.split('/')
+                # mamba = '/'.join(mamba[:-1])+'/bin/mamba'
+                mamba = 'mamba'
+                cmd = f'{mamba} activate {env} && {mamba} install {self._channels} {self._package}'
+                subprocess.check_call(cmd.split(), shell=True)
             try:
                 print('failed', cmd)
                 return import_module(self._name)
