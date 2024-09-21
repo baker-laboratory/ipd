@@ -19,10 +19,10 @@ import threading
 import time
 import traceback
 
-it = ipd.dev.pipimport('itertools', 'more_itertools')
-requests = ipd.dev.pipimport('requests')
-fuzzyfinder = ipd.dev.pipimport('fuzzyfinder')
-yaml = ipd.dev.pipimport('yaml', 'pyyaml')
+it = ipd.lazyimport('itertools', 'more_itertools', pip=True)
+requests = ipd.lazyimport('requests', pip=True)
+fuzzyfinder = ipd.lazyimport('fuzzyfinder', pip=True)
+yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 
 remote, conf, ppppp = None, None, None
 SERVER_ADDR = os.environ.get('PPPSERVER', 'localhost:12345')
@@ -32,6 +32,8 @@ STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
 SESSION_RESTORE = f'{CONFIG_DIR}/session_restore.pse'
 PPPPP_PICKLE = f'{CONFIG_DIR}/PrettyProteinProjectPymolPluginPanel.pickle'
 SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
+DEFAULTS = dict(reviewed=set(), pymol_view={}, prefetch=True, review_action='cp $file ./ppp/$poll_$grade_$filebase', do_review_action=False, findcmd='', findpoll='', shuffle=False, use_rsync=False, hide_invalid=True)
+NOT_PER_POLL = {'prefetch'}
 
 def isfalse_notify(ok, message):
     if not ok:
@@ -44,23 +46,17 @@ def havestate(name):
     if name in conf.opts: return True
     return False
 
-_globalonly = {'prefetch'}
 
 @ipd.dev.timed
 def getstate(name, poll=None, debug=False, indent=''):
-<<<<<<< HEAD
-    _defaults = dict(reviewed=set(), pymol_view={}, prefetch=True, review_action='cp $file ./ppp/$poll_$grade_$filebase', do_review_action=False, findcmd='', findpoll='', shuffle=False, use_rsync=False, hide_invalid=True)
     print(name)
-=======
-    _defaults = dict(reviewed=set(), pymol_view={})
->>>>>>> 313e0026990e417d63161183579e37830dec1123
     poll = ppppp.polls.pollinprogress.name if ppppp.polls.pollinprogress else poll
-    if name not in _globalonly and poll and name in state.polls[poll]:
+    if name not in NOT_PER_POLL and poll and name in state.polls[poll]:
         if debug: print('Get', name, state.polls[poll][name], 'from poll', poll)
         return state.polls[poll][name]
     else:
-        if name in _defaults:
-            val = _defaults[name]
+        if name in DEFAULTS:
+            val = DEFAULTS[name]
             if debug: print(f'{indent}Get', name, val, 'from defaults', poll)
         elif name in state:
             val = state[name]
@@ -78,7 +74,7 @@ def getstate(name, poll=None, debug=False, indent=''):
 def setstate(name, val, poll=None, debug=False):
     getstate(name, poll, debug=debug, indent='   ')  # check already exists
     poll = ppppp.polls.pollinprogress.name if ppppp.polls.pollinprogress else poll
-    if name not in _globalonly and poll:
+    if name not in NOT_PER_POLL and poll:
         if debug: print('Set', name, val, 'topoll', poll)
         dest = state.polls[poll]
     elif name in conf.opts and name not in state:
@@ -99,50 +95,8 @@ def new_subject_name():
     _subject_count += 1
     return subject_name()
 
-<<<<<<< HEAD
-=======
-class PPPClient:
-    def __init__(self, server_addr):
-        self.server_addr = server_addr
-        assert self.get('/').status_code == 200
-
-    def get(self, url):
-        return requests.get(f'http://{self.server_addr}/ppp{url}')
-
-    def post(self, url, **kw):
-        return requests.post(f'http://{self.server_addr}/ppp{url}', **kw)
-
-    def polls(self):
-        response = self.get('/poll')
-        assert response.status_code == 200
-        return {p['name']: p for p in response.json()}
-
-    def create_poll(self, poll):
-        if not poll['public']: return
-        self.post('/poll', json=poll).json()
-
-    def post_review(self, grade, comment):
-        print('POST REVIEW', grade, comment)
-
->>>>>>> 313e0026990e417d63161183579e37830dec1123
-class PartialPickleable(abc.ABC):
-    def __getstate__(self):
-        state = {}
-        for k, v in self.__dict__.items():
-            state[k] = None
-            with contextlib.suppress(TypeError, PicklingError):
-                pickle.dumps(v)
-                state[k] = v
-        return state
-
-    def __setstate__(self, state):
-        self.__dict__ |= state
-
-    @abc.abstractmethod
-    def init_session():
-        pass
-
-class PymolFileViewer(PartialPickleable):
+@ipd.dev.timed
+class PymolFileViewer:
     def __init__(self, fname, toggles):
         self.fname = fname
         self.init_session(toggles)
@@ -172,6 +126,7 @@ class PymolFileViewer(PartialPickleable):
         pymol.cmd.delete(subject_name())
         getstate('pymol_view')[self.fname] = pymol.cmd.get_view()
 
+@ipd.dev.timed
 class FileFetcher(threading.Thread):
     def __init__(self, fname, cache):
         super().__init__()
@@ -184,6 +139,7 @@ class FileFetcher(threading.Thread):
         shutil.copyfile(self.fname, self.tmpfname)
         shutil.move(self.tmpfname, self.localfname)
 
+@ipd.dev.timed
 class FileCache:
     def __init__(self, fnames, **kw):
         print('Basic FileCache')
@@ -195,6 +151,7 @@ class FileCache:
     def cleanup(self):
         pass
 
+@ipd.dev.timed
 class PrefetchLocalFileCache(FileCache):
     '''
     Copies files to a conf temp directory. Will downloads files ahead of requested index in background.
@@ -255,7 +212,8 @@ def fnames_from_path(fnames):
         if not all(os.path.exists(f) for f in fnames): return None
     return fnames
 
-class PollInProgress():
+@ipd.dev.timed
+class PollInProgress:
     def __init__(self, poll):
         self.poll = poll
         self.name = poll['name']
@@ -318,7 +276,8 @@ class PollInProgress():
         if self.viewer: self.viewer.cleanup()
         self.filecache.cleanup()
 
-class Polls(PartialPickleable):
+@ipd.dev.timed
+class Polls:
     def __init__(self):
         self.pollinprogress = None
         self.current_poll_index = None
@@ -384,7 +343,7 @@ class Polls(PartialPickleable):
             self.listwidget.addItem(f"{poll['name']} ({status})")
             item = self.listwidget.item(i)
             item.setToolTip(poll['desc'])
-            if state.activepoll and poll['pollid'] == filteredpolls[state.activepoll]['pollid']:
+            if state.activepoll and poll['dbkey'] == filteredpolls[state.activepoll]['dbkey']:
                 item.setSelected(True)
 
     def poll_clicked(self, item):
@@ -445,7 +404,7 @@ class Polls(PartialPickleable):
             remote.create_poll(poll)
         else:
             print('!!!!!!!!!!!!!!!!!!!!!!!!!!')
-            poll['pollid'] = f'conf{len(conf.polls)}'
+            poll['dbkey'] = f'conf{len(conf.polls)}'
             setattr(conf.polls, poll['name'], poll)
             self.refresh_polls()
         self.update_poll_list()
@@ -465,14 +424,10 @@ class Polls(PartialPickleable):
     def cleanup(self):
         if self.pollinprogress: self.pollinprogress.cleanup()
 
-class ToggleCommand(PartialPickleable):
-    def __init__(self, name, onstart, cmdon, cmdoff, public=False):
-        super(ToggleCommand, self).__init__()
-        self.name = name
-        self.onstart = onstart
-        self.cmdon = cmdon
-        self.cmdoff = cmdoff
-        self.public = public
+@ipd.dev.timed
+class ToggleCommand(ipd.ppp.PymolCMDClient):
+    def __init__(self, **kw):
+        super().__init__(**kw)
         self.status = 'public' if public else 'private'
         self.widget = None
 
@@ -500,7 +455,8 @@ def copy_to_tempdir(tempdir, fname):
     newname = os.path.join(tempdir, basename)
     return shutil.copyfile(fname, newname)
 
-class ToggleCommands(PartialPickleable):
+@ipd.dev.timed
+class ToggleCommands:
     def __init__(self):
         self.cmds = [ToggleCommand(**_) for _ in conf.cmds.values()]
         self.visible_cmds = self.cmds
@@ -563,7 +519,8 @@ class ToggleCommands(PartialPickleable):
     def cleanup(self):
         pass
 
-class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
+@ipd.dev.timed
+class PrettyProteinProjectPymolPluginPanel:
     def init_session(self):
         self.polls = Polls()
         self.toggles = ToggleCommands()
@@ -651,10 +608,10 @@ class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
         ipd.dev.global_timer.report()
 
 def run_local_server(port======\12345):
-    ipd.dev.pipimport('fastapi')
-    ipd.dev.pipimport('sqlmodel')
-    ipd.dev.pipimport('uvicorn')
-    ipd.dev.pipimport('ordered_set')
+    ipd.dev.lazyimport('fastapi')
+    ipd.dev.lazyimport('sqlmodel')
+    ipd.dev.lazyimport('uvicorn')
+    ipd.dev.lazyimport('ordered_set')
     args = dict(port=port, log='warning', datadir=os.path.expanduser('~/.config/localserver'))
     __server_thread = threading.Thread(target=ipd.ppp.server.run, kwargs=args, daemon=True)
     __server_thread.start()

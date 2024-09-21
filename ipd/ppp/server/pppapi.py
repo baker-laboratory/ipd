@@ -2,37 +2,34 @@ import os
 import functools
 import random
 from datetime import datetime, timedelta
-import fastapi
 from pathlib import Path
 from typing import Optional
-from pydantic import FilePath, DirectoryPath, validator
-import sqlmodel
-import sqlalchemy
-import pydantic
 import ipd
-from ordered_set import OrderedSet as ordset
 from icecream import ic
+
+fastapi = ipd.lazyimport('fastapi', pip=True)
+pydantic = ipd.lazyimport('pydantic', pip=True)
+sqlmodel = ipd.lazyimport('sqlmodel', pip=True)
+sqlalchemy = ipd.lazyimport('sqlalchemy', pip=True)
+ordset = ipd.lazyimport('ordered_set', pip=True)
+yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
+pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
 SESSION = None
 
-class ServerPoll(ipd.ppp.PollUpload, sqlmodel.SQLModel, table=True):
-    pollid: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
-    public: bool = sqlmodel.Field(default=False)
-    telemetry: bool = sqlmodel.Field(default=False)
-    start: datetime = sqlmodel.Field(default_factory=datetime.now)
-    end: datetime = sqlmodel.Field(default_factory=lambda: datetime.now() + timedelta(days=3))
+class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
+    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, str | int] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                 default_factory=dict)
-    files: list["File"] = sqlmodel.Relationship(back_populates="poll")
-    reviews: list["ServerReview"] = sqlmodel.Relationship(back_populates="poll")
+    attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
+                                                         default_factory=dict)
+    files: list["DBFile"] = sqlmodel.Relationship(back_populates="poll")
+    reviews: list["DBReview"] = sqlmodel.Relationship(back_populates="poll")
 
-    # TODO add fnames to database
     def replace_dir_with_pdblist(self, datadir, suffix, recurse=False):
         # sourcery skip: extract-method
         path = Path(self.path)
         if path.is_dir:
-            newpath = f'{datadir}/poll/{self.pollid}.filelist'
+            newpath = f'{datadir}/poll/{self.dbkey}.filelist'
             os.makedirs(os.path.dirname(newpath), exist_ok=True)
             with open(newpath, 'w') as out:
                 if recurse:
@@ -55,36 +52,47 @@ class ServerPoll(ipd.ppp.PollUpload, sqlmodel.SQLModel, table=True):
     def populate_files(self):
         with open(self.path) as inp:
             for line in inp:
-                file = File(pollid=self.pollid, fname=line.strip())
+                file = DBFile(polldbkey=self.dbkey, fname=line.strip())
                 SESSION.add(file.validated())
 
-class File(sqlmodel.SQLModel, table=True):
-    fileid: int | None = sqlmodel.Field(default=None, primary_key=True)
-    pollid: int | None = sqlmodel.Field(default=None, foreign_key="serverpoll.pollid")
-    poll: ServerPoll | None = sqlmodel.Relationship(back_populates="files")
-    reviews: list['ServerReview'] = sqlmodel.Relationship(back_populates='file')
-    fname: str
+class DBFile(ipd.ppp.FileSpec, sqlmodel.SQLModel, table=True):
+    dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
+    polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
+    poll: DBPoll = sqlmodel.Relationship(back_populates="files")
+    reviews: list['DBReview'] = sqlmodel.Relationship(back_populates='file')
+    props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
+    attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
+                                                         default_factory=dict)
 
     def validated(self):
         assert os.path.exists(self.fname)
         return self
 
-class ServerReview(ipd.ppp.ReviewUpload, sqlmodel.SQLModel, table=True):
-    reviewid: int | None = sqlmodel.Field(default=None, primary_key=True)
-    fileid: int | None = sqlmodel.Field(default=None, foreign_key="file.fileid")
-    pollid: int | None = sqlmodel.Field(default=None, foreign_key="serverpoll.pollid")
-    file: File | None = sqlmodel.Relationship(back_populates='reviews')
-    poll: ServerPoll | None = sqlmodel.Relationship(back_populates='reviews')
+class DBReview(ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
+    dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
+    filedbkey: int = sqlmodel.Field(default=None, foreign_key="dbfile.dbkey")
+    polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
+    file: DBFile = sqlmodel.Relationship(back_populates='reviews')
+    poll: DBPoll = sqlmodel.Relationship(back_populates='reviews')
+    props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
     attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
                                                          default_factory=dict)
+
     def __hash__(self):
-        return self.reviewid
+        return self.dbkey
 
     def validated(self):
         assert self.file
         assert self.poll
-        print(self.fname)
-        print(self.file)
+        return self
+
+class DBPymolCMD(ipd.ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
+    dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
+    props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
+    attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
+                                                         default_factory=dict)
+
+    def validated(self):
         return self
 
 class Server:
@@ -97,19 +105,22 @@ class Server:
         SESSION = self.session
         sqlmodel.SQLModel.metadata.create_all(self.engine)
         self.router = fastapi.APIRouter()
-        self.router.add_api_route("/", self.root, methods=["GET"])
-        self.router.add_api_route("/polls", self.poll, methods=["GET"])
-        self.router.add_api_route("/poll{pollid}", self.poll, methods=["GET"])
-        self.router.add_api_route("/poll", self.add_poll, methods=["POST"])
-        self.router.add_api_route("/poll{pollid}/fname", self.poll_file, methods=["GET"])
-        self.router.add_api_route("/poll{pollid}/fids", self.poll_fids, methods=["GET"])
-        self.router.add_api_route("/reviews", self.reviews, methods=["GET"])
-        self.router.add_api_route("/reviews/poll{pollid}", self.review_for_pollid, methods=["GET"])
-        self.router.add_api_route("/reviews/file{fileid}", self.review_for_fileid, methods=["GET"])
-        self.router.add_api_route("/reviews/byfname/{fname}", self.reviews_fname, methods=["GET"])
-        self.router.add_api_route("/review{reviewid}", self.review, methods=["GET"])
-        self.router.add_api_route("/poll{pollid}/review", self.post_review, methods=["POST"])
-
+        self.router.add_api_route('/', self.root, methods=['GET'])
+        self.router.add_api_route('/polls', self.polls, methods=['GET'])
+        self.router.add_api_route('/reviews', self.reviews, methods=['GET'])
+        self.router.add_api_route('/files', self.files, methods=['GET'])
+        self.router.add_api_route('/pymolcmds', self.pymolcmds, methods=['GET'])
+        self.router.add_api_route('/poll{dbkey}', self.poll, methods=['GET'])
+        self.router.add_api_route('/poll{dbkey}/fname', self.poll_file, methods=['GET'])
+        self.router.add_api_route('/poll{dbkey}/fids', self.poll_fids, methods=['GET'])
+        self.router.add_api_route('/reviews/poll{dbkey}', self.review_for_dbkey, methods=['GET'])
+        self.router.add_api_route('/reviews/file{dbkey}', self.review_for_dbkey, methods=['GET'])
+        self.router.add_api_route('/reviews/byfname/{fname}', self.reviews_fname, methods=['GET'])
+        self.router.add_api_route('/review{dbkey}', self.review, methods=['GET'])
+        self.router.add_api_route('/create/poll', self.create_poll, methods=['POST'])
+        self.router.add_api_route('/create/review', self.create_review, methods=['POST'])
+        self.router.add_api_route('/create/pymolcmd', self.create_pymolcmd, methods=['POST'])
+        self.router.add_api_route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
         self.app = fastapi.FastAPI()
         self.app.include_router(self.router)
         self.suffix = tuple('.pdb .pdb.gz .cif .bcif'.split())
@@ -117,81 +128,103 @@ class Server:
     def root(self) -> None:
         return dict(msg='Hello World')
 
-    def add_poll(self, poll: ServerPoll) -> None:
-        print(f'SERVER ADD_POL {poll.name} {poll.path}')
-        dtfmt = "%Y-%m-%dT%H:%M:%S.%f"
-        if isinstance(poll.start, str): poll.start = datetime.strptime(poll.start, dtfmt)
-        if isinstance(poll.end, str): poll.end = datetime.strptime(poll.end, dtfmt)
+    def getattr(self, thing, id, attr):
+        thingtype = globals()[f'DB{thing.title()}']
+        thing = next(self.session.exec(sqlmodel.select(thingtype).where(thingtype.dbkey == id)))
+        thingattr = getattr(thing, attr)
+        return thingattr
+
+    def fix_date(self, x):
+        if hasattr(x, 'datecreated') and isinstance(x.datecreated, str):
+            x.datecreated = datetime.strptime(x.datecreated, ipd.ppp.DTFMT)
+        if hasattr(x, 'enddate') and isinstance(x.enddate, str):
+            x.enddate = datetime.strptime(x.enddate, ipd.ppp.DTFMT)
+
+    def create_poll(self, poll: DBPoll) -> None:
+        # print(f'SERVER ADD_POL {poll.name} {poll.path}')
+        self.fix_date(poll)
         self.session.add(poll)
-        self.session.commit()  # sets pollid
+        self.session.commit()  # sets dbkey
         poll.replace_dir_with_pdblist(self.datadir, self.suffix)
         poll.populate_files()
         self.session.commit()
 
-    def poll(self, pollid, response_model=ServerPoll):
-        poll = list(self.session.exec(sqlmodel.select(ServerPoll).where(ServerPoll.pollid == pollid)))
+    def poll(self, dbkey, response_model=DBPoll):
+        poll = list(self.session.exec(sqlmodel.select(DBPoll).where(DBPoll.dbkey == dbkey)))
         return poll[0] if poll else None
 
-    def polls(self, response_model=list[ServerPoll]):
-        polls = self.session.exec(sqlmodel.select(ServerPoll))
-        return list(polls)
+    def polls(self, response_model=list[DBPoll]):
+        return list(self.session.exec(sqlmodel.select(DBPoll)))
 
-    def poll_fids(self, pollid, response_model=dict[str, int]):
-        return {f.fname: f.fileid for f in self.poll(pollid).files}
+    def files(self, response_model=list[DBFile]):
+        return list(self.session.exec(sqlmodel.select(DBFile)))
+
+    def pymolcmds(self, response_model=list[DBPymolCMD]):
+        return list(self.session.exec(sqlmodel.select(DBPymolCMD)))
+
+    def poll_fids(self, dbkey, response_model=dict[str, int]):
+        return {f.fname: f.dbkey for f in self.poll(dbkey).files}
 
     def poll_file(self,
-                  pollid: int,
+                  dbkey: int,
                   request: fastapi.Request,
                   response: fastapi.Response,
                   shuffle: bool = False,
                   trackseen: bool = False):
-        poll = self.poll(pollid)
-        files = ordset(f.fname for f in poll.files)
+        poll = self.poll(dbkey)
+        files = ordset.OrderedSet(f.fname for f in poll.files)
         if trackseen:
-            seenit = request.cookies.get(f'seenit_poll{pollid}')
+            seenit = request.cookies.get(f'seenit_poll{dbkey}')
             seenit = set(seenit.split()) if seenit else set()
             files -= seenit
         if not files: return dict(fname=None, next=[])
         idx = random.randrange(len(files)) if shuffle else 0
         if trackseen:
             seenit.add(files[idx])
-            response.set_cookie(key=f"seenit_poll{pollid}", value=' '.join(seenit))
+            response.set_cookie(key=f"seenit_poll{dbkey}", value=' '.join(seenit))
         return dict(fname=files[0], next=files[1:10])
 
-    def file(self, fileid):
-        file = list(self.session.exec(sqlmodel.select(File).where(File.fileid==fileid)))
+    def file(self, dbkey):
+        file = list(self.session.exec(sqlmodel.select(DBFile).where(DBFile.dbkey == dbkey)))
         return file[0] if file else None
 
     def reviews(self):
-        return list(self.session.exec(sqlmodel.select(ServerReview)))
+        return list(self.session.exec(sqlmodel.select(DBReview)))
 
-    def review(self, reviewid):
-        return self.session.exec(sqlmodel.select(ServerReview).where(ServerReview.reviewid == reviewid))
+    def review(self, dbkey):
+        return self.session.exec(sqlmodel.select(DBReview).where(DBReview.dbkey == dbkey))
 
-    def review_for_pollid(self, pollid):
-        return self.poll(pollid).reviews
+    def review_for_dbkey(self, dbkey):
+        return self.poll(dbkey).reviews
 
-    def review_for_fileid(self, fileid):
-        return self.file(fileid).reviews
+    def review_for_dbkey(self, dbkey):
+        return self.file(dbkey).reviews
 
     def reviews_fname(self, fname):
         fname = fname.replace('__DIRSEP__', '/')
-        files = self.session.exec(sqlmodel.select(File).where(File.fname == fname))
-        rev = ordset()
+        files = self.session.exec(sqlmodel.select(DBFile).where(DBFile.fname == fname))
+        rev = ordset.OrderedSet()
         for f in files:
             rev |= f.reviews
         return list(rev)
 
-    def post_review(self, pollid, review: ServerReview):
-        poll = self.poll(pollid)
-        review.pollid = pollid
-        fileid = [f.fileid for f in poll.files if f.fname==review.fname]
-        if not fileid: raise ValueError(f'fname {review.fname} not in poll {poll.name}, candidates: {poll.files}')
-        assert len(fileid) == 1
-        review.fileid = fileid[0]
-        self.session.add(review)
+    def create_review(self, review: DBReview):
+        poll = self.poll(review.polldbkey)
+        filedbkey = [f.dbkey for f in poll.files if f.fname == review.fname]
+        if not filedbkey:
+            raise ValueError(f'fname {review.fname} not in poll {poll.name}, candidates: {poll.files}')
+        assert len(filedbkey) == 1
+        review.filedbkey = filedbkey[0]
+        self.validate_and_add_to_db(review)
+
+    def create_pymolcmd(self, pymolcmd: DBPymolCMD):
+        self.validate_and_add_to_db(pymolcmd)
+
+    def validate_and_add_to_db(self, thing):
+        self.fix_date(thing)
+        self.session.add(thing)
         self.session.commit()
-        review.validated()
+        thing.validated()
         self.session.commit()
 
 def run(port, datadir, log='info'):

@@ -1,24 +1,31 @@
 import os
-import pydantic
-import datetime
+from datetime import datetime
 import functools
 import json
-from ordered_set import OrderedSet as ordset
 import ipd
 from typing import Any, Optional
+
+pydantic = ipd.lazyimport('pydantic', pip=True)
+rich = ipd.lazyimport('rich', 'Rich', pip=True)
+ordset = ipd.lazyimport('ordered_set', pip=True)
+yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
+from ordered_set import OrderedSet as ordset
+from rich import print
+
+DTFMT = "%Y-%m-%dT%H:%M:%S.%f"
 
 class PPPClientError(Exception):
     pass
 
-class PollUpload(pydantic.BaseModel):
-    pollid: int | None = None
+class PollSpec(pydantic.BaseModel):
     name: str = ''
     desc: str = ''
     path: str
+    user: str = 'anonymouscoward'
     public: bool = False
     telemetry: bool = False
-    start: datetime.datetime = datetime.datetime.now()
-    end: datetime.datetime = datetime.datetime.now()
+    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
+    enddate: datetime = pydantic.Field(default_factory=datetime.now)
     props: list[str] = []
     attrs: dict[str, str | int] = {}
 
@@ -36,24 +43,16 @@ class PollUpload(pydantic.BaseModel):
     def __hash__(self):
         return hash(self.path)
 
-class ClientPoll(PollUpload):
-    _client: Optional['PPPClient'] = None
-    fids: dict[str, int] | None = None
-
-    def __init__(self, client, **kw):
-        super().__init__(**kw)
-        self._client = client
-        self.fids = client.poll_fids(self.pollid)
-
-class ReviewUpload(pydantic.BaseModel):
-    reviewid: int | None = None
-    pollid: int
+class ReviewSpec(pydantic.BaseModel):
+    polldbkey: int
     fname: str
     grade: str
-    user: str = ''
+    user: str = 'anonymouscoward'
     comment: str = ''
-    seconds: int = -1
+    durationsec: int = -1
+    props: list[str] = []
     attrs: dict[str, str | int | float] = {}
+    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
 
     @pydantic.validator('grade')
     def valgrade(cls, grade):
@@ -65,62 +64,131 @@ class ReviewUpload(pydantic.BaseModel):
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
-class ClientReview(ReviewUpload):
-    _client: Optional['PPPClient'] = None
-    fids: dict[str, int] | None = None
+class FileSpec(pydantic.BaseModel):
+    polldbkey: int
+    fname: str
+    public: bool = True
+    user: str = 'anonymouscoward'
+    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
+    props: list[str] = []
+    attrs: dict[str, str | int | float] = {}
+
+    @pydantic.validator('fname')
+    def valfname(cls, fname):
+        assert os.path.exists(fname)
+        return os.path.abspath(fname)
+
+class PymolCMDSpec(pydantic.BaseModel):
+    name: str
+    desc: str = ''
+    cmdon: str
+    cmdoff: str
+    cmdstart: str = ''
+    onstart: bool = False
+    public: bool = True
+    user: str = 'anonymouscoward'
+    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
+    props: list[str] = []
+    attrs: dict[str, str | int | float] = {}
+
+class ClientMixin(pydantic.BaseModel):
+    _pppclient: Optional['PPPClient'] = None
 
     def __init__(self, client, **kw):
         super().__init__(**kw)
-        self._client = client
+        self._pppclient = client
+
+    def __hash__(self):
+        return self.dbkey
+
+def clientprop(name):
+        @property
+        @functools.lru_cache
+        def getter(self):
+            kind, attr = name.split('.')
+            val = self._pppclient.getattr(kind, self.dbkey, attr)
+            attr = attr.title()
+            g = globals()
+            if attr in g: cls = g[attr]
+            elif attr[:-1] in g: cls = g[attr[:-1]]
+            else: raise ValueError(f'unknown type {attr}')
+            if isinstance(val, list):
+                return [cls(self._pppclient, **kw) for kw in val]
+            return cls(self._pppclient, **val)
+        return getter
+
+class Poll(ClientMixin, PollSpec):
+    dbkey: int
+    files = clientprop('poll.files')
+    reviews = clientprop('poll.reviews')
+
+class Review(ClientMixin, ReviewSpec):
+    dbkey: int
+    poll = clientprop('review.poll')
+    file = clientprop('review.file')
+
+class File(ClientMixin, FileSpec):
+    dbkey: int
+    poll = clientprop('file.poll')
+    reviews = clientprop('file.reviews')
+
+class PymolCMD(ClientMixin, PymolCMDSpec):
+    pymoldbkey: int
 
 class PPPClient:
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str): self.server_addr = server_addr_or_testclient
         else: self.testclient = server_addr_or_testclient
-        assert self._get('/')['msg'] == 'Hello World'
+        assert self.get('/')['msg'] == 'Hello World'
 
-    def _get(self, url):
+    def getattr(self, thing, dbkey, attr):
+        return self.get(f'/getattr/{thing}/{dbkey}/{attr}')
+
+    def get(self, url):
         if self.testclient: response = self.testclient.get(url)
         else: response = requests.get(f'http://{self.server_addr}/ppp{url}')
-        if response.status_code != 200: raise PPPClientError(f'GET failed {url}')
+        if response.status_code != 200: raise PPPClientError(f'GET failed {url} \n {response}')
         return response.json()
 
-    def _post(self, url, **kw):
-        if self.testclient: response = self.testclient.post(url, **kw)
-        else: requests.post(f'http://{self.server_addr}/ppp{url}', **kw)
-        if response.status_code != 200: raise PPPClientError(f'POST failed {url} {kw}')
+    def post(self, url, thing):
+        json = thing.json()
+        if self.testclient: response = self.testclient.post(url, content=json)
+        else: requests.post(f'http://{self.server_addr}/ppp{url}', content=json)
+        if response.status_code != 200: raise PPPClientError(f'POST failed {url} {json} \n {response}')
         return response.json()
 
-    def post(self, thing):
-        if isinstance(thing, PollUpload): return self.create_poll(thing)
-        else: raise ValueError(f'dont know how to post {type(thing)}')
+    def upload(self, thing):
+        kind = type(thing).__name__.replace('Spec','').lower()
+        return self.post(f'/create/{kind}', thing)
+
+        # if isinstance(thing, PollSpec): return self.create_poll(thing)
+        # if isinstance(thing, ReviewSpec): return self.create_review(thing)
+        # if isinstance(thing, PymolCMDSpec): return self.create_pymolcmd(thing)
+        # else: raise ValueError(f'dont know how to post {type(thing)}')
 
     def polls(self):
-        return {p['name']: ClientPoll(self, **p) for p in self._get('/polls').json()}
-
-    def poll(self, pollid):
-        return ClientPoll(self, **self._get(f'/poll{pollid}'))
-
-    def poll_fids(self, pollid):
-        return self._get(f'/poll{pollid}/fids')
-
-    def create_poll(self, poll):
-        self._post('/poll', json=json.loads(poll.json()))
+        return [Poll(self, **p) for p in self.get('/polls')]
 
     def reviews(self):
-        return [ClientReview(self, **_) for _ in self._get('/reviews')]
+        return [Review(self, **_) for _ in self.get('/reviews')]
 
-    def reviews_for_pollid(self, pollid):
-        return [ClientReview(self, **_) for _ in self._get(f'/reviews/poll{pollid}')]
+    def files(self):
+        return [File(self, **_) for _ in self.get('/files')]
 
-    def reviews_for_fileid(self, fileid):
-        return [ClientReview(self, **_) for _ in self._get(f'/reviews/file{fileid}')]
+    def pymolcmds(self):
+        return [PymolCMD(self, **_) for _ in self.get('/pymolcmds')]
+
+    def poll(self, dbkey):
+        return Poll(self, **self.get(f'/poll{dbkey}'))
+
+    def poll_fids(self, dbkey):
+        return self.get(f'/poll{dbkey}/fids')
+
+    # def create_poll(self, poll):
+        # self.post('/poll', json=json.loads(poll.json()))
 
     def reviews_for_fname(self, fname):
         fname = fname.replace('/', '__DIRSEP__')
-        rev = self._get(f'/reviews/byfname/{fname}')
-        return [ClientReview(self, **_) for _ in rev]
+        rev = self.get(f'/reviews/byfname/{fname}')
+        return [Review(self, **_) for _ in rev]
 
-    def post_review(self, review: ReviewUpload):
-        # print('POST REVIEW', review)
-        self._post(f'/poll{review.pollid}/review', json=json.loads(review.json()))

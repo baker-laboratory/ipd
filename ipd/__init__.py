@@ -1,15 +1,16 @@
 import os
 from icecream import ic
-from ipd import dev
+from ipd.dev import lazyimport
 
-cuda = dev.LazyModule('ipd.cuda')
-fit = dev.LazyModule('ipd.fit')
 import ipd.observer
-ppp = dev.LazyModule('ipd.ppp')
-samp = dev.LazyModule('ipd.samp')
-sieve = dev.LazyModule('ipd.sieve')
-sym = dev.LazyModule('ipd.sym')
-voxel = dev.LazyModule('ipd.voxel')
+dev = lazyimport('ipd.dev')
+cuda = lazyimport('ipd.cuda')
+fit = lazyimport('ipd.fit')
+ppp = lazyimport('ipd.ppp')
+samp = lazyimport('ipd.samp')
+sieve = lazyimport('ipd.sieve')
+sym = lazyimport('ipd.sym')
+voxel = lazyimport('ipd.voxel')
 
 ic.configureOutput(includeContext=True)
 

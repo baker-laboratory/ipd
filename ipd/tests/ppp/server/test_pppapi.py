@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import create_engine
 from icecream import ic
 
-rich = ipd.dev.pipimport('rich', 'Rich')
+rich = ipd.dev.lazyimport('rich', 'Rich')
 from rich import print
 
 testclient, pppserver = None, None
@@ -30,14 +30,13 @@ def test_read_root(testclient, pppserver):
 def test_poll(testclient, pppserver):
     client = ipd.ppp.PPPClient(testclient)
 
-    assert testclient.post('/poll').status_code == 422
     path = ipd.testpath('ppppdbdir')
-    assert testclient.post('/poll', json=dict(name='foo1', desc='bar', path=path))
-    assert testclient.post('/poll', json=dict(name='foo2', desc='Nntsebar', path=path))
-    assert testclient.post('/poll',
+    assert testclient.post('/create/poll', json=dict(name='foo1', desc='bar', path=path))
+    assert testclient.post('/create/poll', json=dict(name='foo2', desc='Nntsebar', path=path))
+    assert testclient.post('/create/poll',
                            json=dict(name='foo3', desc='barntes', path=path, props=['ligand', 'multichain']))
 
-    assert testclient.get('/poll2').json()['pollid'] == 2
+    assert testclient.get('/poll2').json()['dbkey'] == 2
     polljs = testclient.get('/polls').json()
     # print(polljs)
     # polls = [ipd.ppp.Poll(**_) for _ in polljs]
@@ -68,28 +67,43 @@ def test_poll(testclient, pppserver):
     # print(poll3)
     assert 'ligand' in poll3.props
 
-    poll = ipd.ppp.PollUpload(path=path, props=['ast'])
+    poll = ipd.ppp.PollSpec(path=path, props=['ast'])
     # print(poll)
-    client.post(poll)
+    client.upload(poll)
     poll = client.poll(3)
-    assert len(poll.fids) == 3
+    assert len(poll.files) == 3
     for i in range(1, 4):
-        assert pppserver.poll(i).files[0].poll.pollid == i
+        assert pppserver.poll(i).files[0].poll.dbkey == i
 
     fname = ipd.testpath('ppppdbdir/fake1.pdb')
-    testclient.post('/poll1/review', json=dict(fname=fname, user='bar', grade='C', data={}))
+    client.upload(ipd.ppp.ReviewSpec(fname=fname, user='bar', polldbkey=1, grade='C'))
     assert testclient.get('/reviews').json()[0]['user'] == 'bar'
-    review = ipd.ppp.ReviewUpload(pollid=1, fname=fname, grade='A')
+    review = ipd.ppp.ReviewSpec(polldbkey=1, fname=fname, grade='A')
     assert review.grade == 'A'
-    client.post_review(review)
+    client.upload(review)
     assert len(client.reviews()) == 2
-    client.post_review(ipd.ppp.ReviewUpload(pollid=3, fname=fname, grade='f'))
+    client.upload(ipd.ppp.ReviewSpec(polldbkey=3, fname=fname, grade='f'))
 
     assert len(client.reviews_for_fname(fname)) == 3
-    assert len(client.reviews_for_pollid(1)) == 2
-    assert len(client.reviews_for_fileid(1)) == 2
 
+    reviews = client.reviews()
+    polls = client.polls()
+    files = client.files()
+    cmds = client.pymolcmds()
 
+    assert reviews[0].poll.dbkey==1
+    assert reviews[0].file.dbkey==1
+    assert len(polls[3].files) == 3
+
+    assert isinstance(files[0], ipd.ppp.File)
+    assert isinstance(polls[2].files[0], ipd.ppp.File)
+    assert isinstance(reviews[2].file, ipd.ppp.File)
+    assert isinstance(reviews[0], ipd.ppp.Review)
+    assert isinstance(polls[2].reviews[0], ipd.ppp.Review)
+    assert isinstance(files[0].reviews[0], ipd.ppp.Review)
+    assert isinstance(files[0].poll, ipd.ppp.Poll)
+
+    client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='foo', cmdoff='bar'))
 
 def test_pppapi():
 

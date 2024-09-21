@@ -4,24 +4,24 @@ from pathlib import Path
 from importlib import import_module
 from types import ModuleType
 from typing import List
+import subprocess
 
 class LazyModule:
-    __slots__ = ('_name', '_package')
+    __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels')
 
-    def __init__(
-        self,
-        name: str,
-        package: str = None,
-    ):
+    def __init__(self, name: str, package: str = None, pip: str | bool = False, mamba=False, channels=''):
         self._name = name
         self._package = package or name.split('.', maxsplit=1)[0]
+        self._pip = pip
+        self._mamba = mamba
+        self._channels = channels
 
     def _import_module(self) -> ModuleType:
         try:
-            return import_module(name=self._name)
+            return self._mambathenpipimport()
         except ImportError as e:
-            print('-'*80)
-            print(f'import_module({self._name}) failed, sys.path is:')
+            print('-' * 80)
+            print(f'import_module({self._name}) failed, {self._package} {self._pip} sys.path is:')
             for p in sys.path:
                 p = Path(p) / self._name.replace('.', '/')
                 print(p)
@@ -30,10 +30,36 @@ class LazyModule:
                     for f in os.listdir(p):
                         print(f'    {f}')
             print(e)
-            print('-'*80)
-            raise ImportError(f'Failed to import module: {self._name}')
-        except Exception:
-            raise ImportError(f'Failed to import module: {self._name}')
+            print('-' * 80)
+            raise ImportError(f'Failed to import module: {self._name}') from e
+        except Exception as e:
+            raise ImportError(f'Failed to import module: {self._name}') from e
+
+    def _mambathenpipimport(self):
+        try:
+            return import_module(self._name)
+        except (ValueError, AssertionError, ModuleNotFoundError):
+            cmd = f'{sys.executable.replace("/bin/python","/bin/mamba")} {self._channels} {self._package}'
+            if self._mamba:
+                subprocess.check_call(cmd.split())
+            try:
+                print('failed', cmd)
+                return import_module(self._name)
+            except (ValueError, AssertionError, ModuleNotFoundError):
+                return self._pipimport()
+
+    def _pipimport(self):
+        try:
+            return import_module(self._name)
+        except (ValueError, AssertionError, ModuleNotFoundError):
+            if self._pip and self._pip != 'user':
+                subprocess.check_call(f'{sys.executable} -mpip install {self._package}'.split())
+            try:
+                return import_module(self._name)
+            except (ValueError, AssertionError, ModuleNotFoundError):
+                if self._pip and self._pip != 'nouser':
+                    subprocess.check_call(f'{sys.executable} -mpip install --user {self._package}'.split())
+                return import_module(self._name)
 
     @property
     def _module(self) -> ModuleType:
@@ -50,3 +76,6 @@ class LazyModule:
             t=type(self).__name__,
             n=self._name,
         )
+
+def lazyimport(*a, **kw):
+    return LazyModule(*a, **kw)
