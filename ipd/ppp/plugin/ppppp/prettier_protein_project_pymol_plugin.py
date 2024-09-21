@@ -48,8 +48,12 @@ _globalonly = {'prefetch'}
 
 @ipd.dev.timed
 def getstate(name, poll=None, debug=False, indent=''):
+<<<<<<< HEAD
     _defaults = dict(reviewed=set(), pymol_view={}, prefetch=True, review_action='cp $file ./ppp/$poll_$grade_$filebase', do_review_action=False, findcmd='', findpoll='', shuffle=False, use_rsync=False, hide_invalid=True)
     print(name)
+=======
+    _defaults = dict(reviewed=set(), pymol_view={})
+>>>>>>> 313e0026990e417d63161183579e37830dec1123
     poll = ppppp.polls.pollinprogress.name if ppppp.polls.pollinprogress else poll
     if name not in _globalonly and poll and name in state.polls[poll]:
         if debug: print('Get', name, state.polls[poll][name], 'from poll', poll)
@@ -95,6 +99,32 @@ def new_subject_name():
     _subject_count += 1
     return subject_name()
 
+<<<<<<< HEAD
+=======
+class PPPClient:
+    def __init__(self, server_addr):
+        self.server_addr = server_addr
+        assert self.get('/').status_code == 200
+
+    def get(self, url):
+        return requests.get(f'http://{self.server_addr}/ppp{url}')
+
+    def post(self, url, **kw):
+        return requests.post(f'http://{self.server_addr}/ppp{url}', **kw)
+
+    def polls(self):
+        response = self.get('/poll')
+        assert response.status_code == 200
+        return {p['name']: p for p in response.json()}
+
+    def create_poll(self, poll):
+        if not poll['public']: return
+        self.post('/poll', json=poll).json()
+
+    def post_review(self, grade, comment):
+        print('POST REVIEW', grade, comment)
+
+>>>>>>> 313e0026990e417d63161183579e37830dec1123
 class PartialPickleable(abc.ABC):
     def __getstate__(self):
         state = {}
@@ -620,7 +650,7 @@ class PrettyProteinProjectPymolPluginPanel(PartialPickleable):
             os.remove(SESSION_RESTORE)
         ipd.dev.global_timer.report()
 
-def run_local_server(port=12345):
+def run_local_server(port======\12345):
     ipd.dev.pipimport('fastapi')
     ipd.dev.pipimport('sqlmodel')
     ipd.dev.pipimport('uvicorn')
