@@ -2,6 +2,7 @@ import os
 import functools
 import random
 from datetime import datetime, timedelta
+import shutil
 from pathlib import Path
 from typing import Optional
 import ipd
@@ -17,6 +18,7 @@ pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodi
 
 SESSION = None
 
+@ipd.dev.timed
 class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
@@ -29,7 +31,7 @@ class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
         # sourcery skip: extract-method
         path = Path(self.path)
         if path.is_dir:
-            newpath = f'{datadir}/poll/{self.dbkey}.filelist'
+            newpath = f'{datadir}/poll/{self.dbkey}/filelist'
             os.makedirs(os.path.dirname(newpath), exist_ok=True)
             with open(newpath, 'w') as out:
                 if recurse:
@@ -55,6 +57,12 @@ class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
                 file = DBFile(polldbkey=self.dbkey, fname=line.strip())
                 SESSION.add(file.validated())
 
+    def validated(self, server):
+        self.replace_dir_with_pdblist(server.datadir, server.suffix)
+        self.populate_files()
+        return self
+
+@ipd.dev.timed
 class DBFile(ipd.ppp.FileSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
@@ -68,6 +76,7 @@ class DBFile(ipd.ppp.FileSpec, sqlmodel.SQLModel, table=True):
         assert os.path.exists(self.fname)
         return self
 
+@ipd.dev.timed
 class DBReview(ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     filedbkey: int = sqlmodel.Field(default=None, foreign_key="dbfile.dbkey")
@@ -81,20 +90,29 @@ class DBReview(ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
     def __hash__(self):
         return self.dbkey
 
-    def validated(self):
+    def validated(self, server):
         assert self.file
         assert self.poll
+        path = os.path.join(server.datadir, 'poll', str(self.poll.dbkey), 'reviewed')
+        os.makedirs(path, exist_ok=True)
+        newfname = os.path.join(path, self.file.fname.replace('/','\\'))
+        if not os.path.exists(newfname):
+            shutil.copyfile(self.file.fname, newfname)
+        self.permafile = newfname
         return self
 
+@ipd.dev.timed
 class DBPymolCMD(ipd.ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
     attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
                                                          default_factory=dict)
 
-    def validated(self):
+    def validated(self, server):
+        assert not server.is_duplicate_cmdon(self.cmdon)
         return self
 
+@ipd.dev.timed
 class Server:
     def __init__(self, engine, datadir):
         self.engine = engine
@@ -141,13 +159,7 @@ class Server:
             x.enddate = datetime.strptime(x.enddate, ipd.ppp.DTFMT)
 
     def create_poll(self, poll: DBPoll) -> None:
-        # print(f'SERVER ADD_POL {poll.name} {poll.path}')
-        self.fix_date(poll)
-        self.session.add(poll)
-        self.session.commit()  # sets dbkey
-        poll.replace_dir_with_pdblist(self.datadir, self.suffix)
-        poll.populate_files()
-        self.session.commit()
+        self.validate_and_add_to_db(poll)
 
     def poll(self, dbkey, response_model=DBPoll):
         poll = list(self.session.exec(sqlmodel.select(DBPoll).where(DBPoll.dbkey == dbkey)))
@@ -224,8 +236,16 @@ class Server:
         self.fix_date(thing)
         self.session.add(thing)
         self.session.commit()
-        thing.validated()
+        try:
+            thing = thing.validated(self)
+        except AssertionError as e:
+            self.session.delete(thing)
+            raise e
         self.session.commit()
+
+    def is_duplicate_cmdon(self, cmdon):
+        dups = self.session.exec(sqlmodel.select(DBPymolCMD).where(DBPymolCMD.cmdon==cmdon))
+        return len(list(dups)) > 1
 
 def run(port, datadir, log='info'):
     import uvicorn

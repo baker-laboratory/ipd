@@ -210,7 +210,10 @@ def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=N
     t.checkpoint(fulllabel, autolabel=label is None)
 
 def timed_func(func, *, label=None):
-    filen = os.path.basename(func.__globals__["__file__"])
+    if '__file__' in func.__globals__:
+        filen = os.path.basename(func.__globals__["__file__"])
+    else:
+        filen = '???'
     funcn = func.__name__
 
     @functools.wraps(func)
@@ -231,9 +234,9 @@ def timed_func(func, *, label=None):
 
 def timed_class(cls, *, label=None):
     # label = label or rs
-    for k, v in cls.__dict__:
+    for k, v in cls.__dict__.items():
         if callable(v):
-            cls.__dict__[k] = timed_func()
+            setattr(cls,k, timed_func(v))
 
     return cls
 

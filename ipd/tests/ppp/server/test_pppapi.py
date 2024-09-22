@@ -1,10 +1,12 @@
 import ipd
 import tempfile
+import os
 from fastapi.testclient import TestClient
 from sqlmodel import create_engine
 from icecream import ic
 
-rich = ipd.dev.lazyimport('rich', 'Rich')
+rich = ipd.dev.lazyimport('rich', 'Rich', pip=True)
+pytest = ipd.dev.lazyimport('pytest', pip=True)
 from rich import print
 
 testclient, pppserver = None, None
@@ -14,7 +16,23 @@ def main():
         testclient, pppserver = make_tmp_clent_server(td)
         test_read_root(testclient, pppserver)
         test_poll(testclient, pppserver)
+        test_will_pymolcmds(testclient, pppserver)
         print('PASS')
+    ipd.dev.global_timer.report()
+
+@ipd.dev.timed
+def test_will_pymolcmds(testclient, pppserver):
+    client = ipd.ppp.PPPClient(testclient)
+    for sym in 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.split():
+        client.upload(
+            ipd.ppp.PymolCMDSpec(
+                name=f'sym: Make {sym.upper()}',
+                cmdstart='from wills_pymol_crap import symgen',
+                cmdon=f'symgen.make{sym}("$subject", name="sym"); delete $subject; cmd.set_name("sym", "$subject")',
+                cmdoff='remove not chain A',
+            )
+        )
+    print(client.pymolcmds())
 
 def make_tmp_clent_server(tempdir):
     engine = create_engine(f'sqlite:///{tempdir}/test.db')
@@ -29,7 +47,6 @@ def test_read_root(testclient, pppserver):
 
 def test_poll(testclient, pppserver):
     client = ipd.ppp.PPPClient(testclient)
-
     path = ipd.testpath('ppppdbdir')
     assert testclient.post('/create/poll', json=dict(name='foo1', desc='bar', path=path))
     assert testclient.post('/create/poll', json=dict(name='foo2', desc='Nntsebar', path=path))
@@ -67,7 +84,7 @@ def test_poll(testclient, pppserver):
     # print(poll3)
     assert 'ligand' in poll3.props
 
-    poll = ipd.ppp.PollSpec(path=path, props=['ast'])
+    poll = ipd.ppp.PollSpec(name='foobar', path=path, props=['ast'])
     # print(poll)
     client.upload(poll)
     poll = client.poll(3)
@@ -91,8 +108,8 @@ def test_poll(testclient, pppserver):
     files = client.files()
     cmds = client.pymolcmds()
 
-    assert reviews[0].poll.dbkey==1
-    assert reviews[0].file.dbkey==1
+    assert reviews[0].poll.dbkey == 1
+    assert reviews[0].file.dbkey == 1
     assert len(polls[3].files) == 3
 
     assert isinstance(files[0], ipd.ppp.File)
@@ -104,6 +121,12 @@ def test_poll(testclient, pppserver):
     assert isinstance(files[0].poll, ipd.ppp.Poll)
 
     client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
+    with pytest.raises(AssertionError):
+        client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
+    assert len(client.pymolcmds()) == 1
+
+    for r in reviews:
+        assert os.path.exists(r.permafile)
 
 def test_pppapi():
 

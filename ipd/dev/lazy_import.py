@@ -48,7 +48,6 @@ class LazyModule:
                 cmd = f'{mamba} activate {env} && {mamba} install {self._channels} {self._package}'
                 subprocess.check_call(cmd.split(), shell=True)
             try:
-                print('failed', cmd)
                 return import_module(self._name)
             except (ValueError, AssertionError, ModuleNotFoundError):
                 return self._pipimport()

@@ -11,6 +11,9 @@ pydantic = ipd.lazyimport('pydantic', pip=True)
 rich = ipd.lazyimport('rich', 'Rich', pip=True)
 ordset = ipd.lazyimport('ordered_set', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
+wills_pymol_crap = ipd.lazyimport('wills_pymol_crap',
+                                  'git+https://github.com/willsheffler/wills_pymol_crap',
+                                  pip=True)
 from ordered_set import OrderedSet as ordset
 from rich import print
 
@@ -21,11 +24,13 @@ DTFMT = "%Y-%m-%dT%H:%M:%S.%f"
 class PPPClientError(Exception):
     pass
 
+@ipd.dev.timed
 class PollSpec(pydantic.BaseModel):
-    name: str = ''
+    name: str
     desc: str = ''
     path: str
     user: str = 'anonymouscoward'
+    context: str = ''
     public: bool = False
     telemetry: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
@@ -47,9 +52,11 @@ class PollSpec(pydantic.BaseModel):
     def __hash__(self):
         return hash(self.path)
 
+@ipd.dev.timed
 class ReviewSpec(pydantic.BaseModel):
     polldbkey: int
     fname: str
+    permafile: str = ''
     grade: str
     user: str = 'anonymouscoward'
     comment: str = ''
@@ -68,6 +75,7 @@ class ReviewSpec(pydantic.BaseModel):
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
+@ipd.dev.timed
 class FileSpec(pydantic.BaseModel):
     polldbkey: int
     fname: str
@@ -82,11 +90,15 @@ class FileSpec(pydantic.BaseModel):
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
+@ipd.dev.timed
 class PymolCMDSpecError(Exception):
     def __init__(self, message, log):
-        super().__init__(message + os.linesep+ log)
+        super().__init__(message + os.linesep + log)
         self.log = log
 
+TOBJNUM = 0
+
+@ipd.dev.timed
 class PymolCMDSpec(pydantic.BaseModel):
     name: str
     desc: str = ''
@@ -100,13 +112,20 @@ class PymolCMDSpec(pydantic.BaseModel):
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}
 
-    @pydantic.model_validator(mode='after')
     def check_cmds(self):
-        self._check_cmds_output = '-'*80 + os.linesep
+        self._check_cmds_output = '-' * 80 + os.linesep
+        objlist = pymol.cmd.get_object_list()
+        global TOBJNUM
+        TOBJNUM += 1
+        pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{TOBJNUM}')
         self.check_cmd('cmdstart')
         self.check_cmd('cmdon')
         self.check_cmd('cmdoff')
-        if any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split()):
+        pymol.cmd.delete(f'TEST_OBJECT{TOBJNUM}')
+        if any([
+                pymol.cmd.get_object_list() != objlist,
+                any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())
+        ]):
             raise PymolCMDSpecError('bad pymol commands', self._check_cmds_output)
         return self
 
@@ -114,12 +133,16 @@ class PymolCMDSpec(pydantic.BaseModel):
         with tempfile.TemporaryDirectory() as td:
             with open(f'{td}/stdout.log', 'w') as out:
                 with ipd.dev.redirect(stdout=out, stderr=out):
-                    pymol.cmd.do(getattr(self, cmdname), echo=False)
+                    cmd = getattr(self, cmdname)
+                    cmd = cmd.replace('$subject', f'TEST_OBJECT{TOBJNUM}')
+                    print(cmd)
+                    pymol.cmd.do(cmd, echo=False)
             msg = pathlib.Path(f'{td}/stdout.log').read_text()
             msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
             self._check_cmds_output += msg
         return self
 
+@ipd.dev.timed
 class ClientMixin(pydantic.BaseModel):
     _pppclient: Optional['PPPClient'] = None
 
@@ -147,24 +170,29 @@ def clientprop(name):
 
     return getter
 
+@ipd.dev.timed
 class Poll(ClientMixin, PollSpec):
     dbkey: int
     files = clientprop('poll.files')
     reviews = clientprop('poll.reviews')
 
+@ipd.dev.timed
 class Review(ClientMixin, ReviewSpec):
     dbkey: int
     poll = clientprop('review.poll')
     file = clientprop('review.file')
 
+@ipd.dev.timed
 class File(ClientMixin, FileSpec):
     dbkey: int
     poll = clientprop('file.poll')
     reviews = clientprop('file.reviews')
 
+@ipd.dev.timed
 class PymolCMD(ClientMixin, PymolCMDSpec):
-    pymoldbkey: int
+    dbkey: int
 
+@ipd.dev.timed
 class PPPClient:
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str): self.server_addr = server_addr_or_testclient
@@ -189,6 +217,7 @@ class PPPClient:
 
     def upload(self, thing):
         kind = type(thing).__name__.replace('Spec', '').lower()
+        if kind == 'pymolcmd': thing.check_cmds()
         return self.post(f'/create/{kind}', thing)
 
         # if isinstance(thing, PollSpec): return self.create_poll(thing)
