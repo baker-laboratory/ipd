@@ -19,7 +19,6 @@ _summary_types = dict(
     median=statistics.median,
 )
 
-
 class _TimerGetter:
     def __init__(self, timer, summary):
         self.timer = timer
@@ -190,7 +189,13 @@ class Timer:
             for k, v in other.checkpoints.items():
                 self.checkpoints[k].extend(v)
 
-def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=None, funcname=None):
+def checkpoint(kw,
+               label=None,
+               funcbegin=False,
+               dont_mod_label=False,
+               filename=None,
+               clsname=None,
+               funcname=None):
     t = None
     if isinstance(kw, Timer):
         t = kw
@@ -203,13 +208,14 @@ def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=N
     func = funcname or inspect.stack()[istack][3]
     fn = filename or os.path.basename(inspect.stack()[istack][1])
     fulllabel = label
+    clsname = f'{clsname}.' if clsname else ''
     if not dont_mod_label:
-        fulllabel = f"{fn}:{func}"
+        fulllabel = f"{fn}:{clsname}{func}"
     if label:
         fulllabel += f":{label}"
     t.checkpoint(fulllabel, autolabel=label is None)
 
-def timed_func(func, *, label=None):
+def timed_func(func, *, clsname=None, label=None):
     if '__file__' in func.__globals__:
         filen = os.path.basename(func.__globals__["__file__"])
     else:
@@ -218,7 +224,10 @@ def timed_func(func, *, label=None):
 
     @functools.wraps(func)
     def wrapper(*a, **kw):
-        checkpoint(kw, label, funcbegin=True)
+        kwarg =  dict(label=label, filename=filen, clsname=clsname, funcname=funcn)
+        checkpoint(kw, funcbegin=True, **kwarg)
+        # print(func, inspect.ismethod(func), a)
+        # if inspect.ismethod(func): a = a[1:]
         # try/except removes this decorator from stack traces
         try:
             val = func(*a, **kw)
@@ -227,16 +236,17 @@ def timed_func(func, *, label=None):
             _testcapi.set_exc_info(tp, exc, tb.tb_next)
             del tp, exc, tb
             raise
-        checkpoint(kw, label, filename=filen, funcname=funcn)
+        checkpoint(kw, **kwarg)
         return val
 
     return wrapper
 
 def timed_class(cls, *, label=None):
     # label = label or rs
-    for k, v in cls.__dict__.items():
+    for k in cls.__dict__:
+        v = getattr(cls, k)
         if callable(v):
-            setattr(cls,k, timed_func(v))
+            setattr(cls, k, timed_func(v, clsname=cls.__name__))
 
     return cls
 
@@ -248,6 +258,5 @@ def timed(thing=None, *, label=None):
         return timed_class(thing, label=label)
     else:
         return timed_func(thing, label=label)
-
 
 global_timer = Timer()

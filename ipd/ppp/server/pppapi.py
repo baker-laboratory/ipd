@@ -2,6 +2,9 @@ import os
 import functools
 import random
 from datetime import datetime, timedelta
+import contextlib
+import threading
+import time
 import shutil
 from pathlib import Path
 from typing import Optional
@@ -17,6 +20,9 @@ yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
 SESSION = None
+
+class DuplicateError(Exception):
+    pass
 
 @ipd.dev.timed
 class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
@@ -95,7 +101,7 @@ class DBReview(ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
         assert self.poll
         path = os.path.join(server.datadir, 'poll', str(self.poll.dbkey), 'reviewed')
         os.makedirs(path, exist_ok=True)
-        newfname = os.path.join(path, self.file.fname.replace('/','\\'))
+        newfname = os.path.join(path, self.file.fname.replace('/', '\\'))
         if not os.path.exists(newfname):
             shutil.copyfile(self.file.fname, newfname)
         self.permafile = newfname
@@ -109,11 +115,12 @@ class DBPymolCMD(ipd.ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
                                                          default_factory=dict)
 
     def validated(self, server):
-        assert not server.is_duplicate_cmdon(self.cmdon)
+        if server.is_duplicate_cmdon(self.cmdon):
+            raise DuplicateError()
         return self
 
 @ipd.dev.timed
-class Server:
+class Backend:
     def __init__(self, engine, datadir):
         self.engine = engine
         self.datadir = datadir
@@ -158,8 +165,8 @@ class Server:
         if hasattr(x, 'enddate') and isinstance(x.enddate, str):
             x.enddate = datetime.strptime(x.enddate, ipd.ppp.DTFMT)
 
-    def create_poll(self, poll: DBPoll) -> None:
-        self.validate_and_add_to_db(poll)
+    def create_poll(self, poll: DBPoll) -> str:
+        return self.validate_and_add_to_db(poll)
 
     def poll(self, dbkey, response_model=DBPoll):
         poll = list(self.session.exec(sqlmodel.select(DBPoll).where(DBPoll.dbkey == dbkey)))
@@ -220,37 +227,65 @@ class Server:
             rev |= f.reviews
         return list(rev)
 
-    def create_review(self, review: DBReview):
+    def create_review(self, review: DBReview) -> str:
         poll = self.poll(review.polldbkey)
         filedbkey = [f.dbkey for f in poll.files if f.fname == review.fname]
         if not filedbkey:
             raise ValueError(f'fname {review.fname} not in poll {poll.name}, candidates: {poll.files}')
         assert len(filedbkey) == 1
         review.filedbkey = filedbkey[0]
-        self.validate_and_add_to_db(review)
+        return self.validate_and_add_to_db(review)
 
-    def create_pymolcmd(self, pymolcmd: DBPymolCMD):
-        self.validate_and_add_to_db(pymolcmd)
+    def create_pymolcmd(self, pymolcmd: DBPymolCMD) -> str:
+        return self.validate_and_add_to_db(pymolcmd)
 
-    def validate_and_add_to_db(self, thing):
+    def validate_and_add_to_db(self, thing) -> str:
         self.fix_date(thing)
         self.session.add(thing)
         self.session.commit()
         try:
             thing = thing.validated(self)
-        except AssertionError as e:
+        except DuplicateError as e:
             self.session.delete(thing)
+            return 'duplicate'
+        except AssertionError as e:
+            self.ssesion.delete(thing)
             raise e
         self.session.commit()
+        return ''
 
     def is_duplicate_cmdon(self, cmdon):
-        dups = self.session.exec(sqlmodel.select(DBPymolCMD).where(DBPymolCMD.cmdon==cmdon))
+        dups = self.session.exec(sqlmodel.select(DBPymolCMD).where(DBPymolCMD.cmdon == cmdon))
         return len(list(dups)) > 1
 
 def run(port, datadir, log='info'):
     import uvicorn
+    import psycopg2
+
+    class Server(uvicorn.Server):
+        def install_signal_handlers(self):
+            pass
+
+        @contextlib.contextmanager
+        def run_in_thread(self):
+            thread = threading.Thread(target=self.run)
+            thread.start()
+            try:
+                while not self.started:
+                    time.sleep(1e-3)
+                yield
+            finally:
+                self.should_exit = True
+                thread.join()
+
     os.makedirs(datadir, exist_ok=True)
-    engine = sqlmodel.create_engine(f'sqlite:///{datadir}/ppp.db')
-    server = Server(engine, datadir)
-    server.app.mount("/ppp", server.app)  # your app routes will now be /app/{your-route-here}
-    return uvicorn.run(server.app, host="0.0.0.0", port=port, log_level=log)
+    # engine = sqlmodel.create_engine(f'sqlite:///{datadir}/ppp.db')
+    engine = sqlmodel.create_engine('postgresql://sheffler@localhost:5432/ppp')
+    backend = Backend(engine, datadir)
+    backend.app.mount("/ppp", backend.app)
+    config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=log)
+    server = Server(config=config)
+    with server.run_in_thread():
+        ipd.ppp.defaults.add_defaults(f'localhost:{port}')
+        while True:
+            time.sleep(1)

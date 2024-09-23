@@ -1,0 +1,19 @@
+pymolcmds:
+- name: "option: Sidechains as Sticks"
+  cmdstart:
+    from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import ppp_pymol_get, ppp_pymol_set
+  cmdon: ppp_pymol_set('SC_REPR', 'sticks')
+- name: "option: Thin Sticks"
+  cmdon: set stick_radius, 0.1
+  cmdoff: set stick_radius, 0.15
+- name: "option: Thin Cartoons"
+  cmdon: set cartoon_oval_length, 0.8
+  cmdoff: set cartoon_oval_length, 1.5
+- name: "option: Sidechains as Lines"
+  cmdon: ppp_pymol_set('SC_REPR', 'lines')
+- name: Color By Chain
+  cmdon: util.cbc('$subject and elem C')
+  cmdoff: color green, $subject and elem C
+- name: Show HET Interactions
+  cmdon: cmd.show(ppp_pymol_get('SC_REPR'), '($subject and elem N+O) within 3.3 of ($subject and HET)')
+  cmdoff: cmd.hide(ppp_pymol_get('SC_REPR'), '($subject and elem N+O) within 3.3 of ($subject and HET)')

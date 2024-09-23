@@ -7,7 +7,6 @@ from icecream import ic
 
 rich = ipd.dev.lazyimport('rich', 'Rich', pip=True)
 pytest = ipd.dev.lazyimport('pytest', pip=True)
-from rich import print
 
 testclient, pppserver = None, None
 
@@ -17,23 +16,29 @@ def main():
         test_read_root(testclient, pppserver)
         test_poll(testclient, pppserver)
         test_will_pymolcmds(testclient, pppserver)
+        test_will_homedir_polls(testclient, pppserver)
+        test_access_all(testclient, pppserver)
         print('PASS')
     ipd.dev.global_timer.report()
 
 @ipd.dev.timed
 def test_will_pymolcmds(testclient, pppserver):
-    client = ipd.ppp.PPPClient(testclient)
-    for sym in 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.split():
-        client.upload(
-            ipd.ppp.PymolCMDSpec(
-                name=f'sym: Make {sym.upper()}',
-                cmdstart='from wills_pymol_crap import symgen',
-                cmdon=f'symgen.make{sym}("$subject", name="sym"); delete $subject; cmd.set_name("sym", "$subject")',
-                cmdoff='remove not chain A',
-            )
-        )
-    print(client.pymolcmds())
+    client = ipd.ppp.PPPClient('localhost:12345')
+    # client = ipd.ppp.PPPClient(testclient)
+    client._add_sym_cmds()
 
+@ipd.dev.timed
+def test_will_homedir_polls(testclient, pppserver):
+    client = ipd.ppp.PPPClient('localhost:12345')
+    # client = ipd.ppp.PPPClient(testclient)
+    client._recursive_add_polls('~')
+
+@ipd.dev.timed
+def test_access_all(testclient, pppserver):
+    client = ipd.ppp.PPPClient(testclient)
+    print(len(client.polls()))
+
+@ipd.dev.timed
 def make_tmp_clent_server(tempdir):
     engine = create_engine(f'sqlite:///{tempdir}/test.db')
     pppserver = ipd.ppp.server.Server(engine, tempdir)
@@ -45,6 +50,7 @@ def test_read_root(testclient, pppserver):
     assert response.status_code == 200
     assert response.json() == {"msg": "Hello World"}
 
+@ipd.dev.timed
 def test_poll(testclient, pppserver):
     client = ipd.ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
@@ -121,6 +127,8 @@ def test_poll(testclient, pppserver):
     assert isinstance(files[0].poll, ipd.ppp.Poll)
 
     client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
+    with pytest.raises(ipd.ppp.PymolCMDSpecError):
+        client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='fubar', cmdoff='hide lines'))
     with pytest.raises(AssertionError):
         client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
     assert len(client.pymolcmds()) == 1

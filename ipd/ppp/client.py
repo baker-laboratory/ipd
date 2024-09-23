@@ -8,6 +8,7 @@ import pathlib
 from typing import Any, Optional
 
 pydantic = ipd.lazyimport('pydantic', pip=True)
+requests = ipd.lazyimport('requests', pip=True)
 rich = ipd.lazyimport('rich', 'Rich', pip=True)
 ordset = ipd.lazyimport('ordered_set', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
@@ -31,10 +32,12 @@ class PollSpec(pydantic.BaseModel):
     path: str
     user: str = 'anonymouscoward'
     context: str = ''
+    cmdstart: str = ''
+    cmdstop: str = ''
     public: bool = False
     telemetry: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    enddate: datetime = pydantic.Field(default_factory=datetime.now)
+    enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DTFMT)
     props: list[str] = []
     attrs: dict[str, str | int] = {}
 
@@ -103,7 +106,7 @@ class PymolCMDSpec(pydantic.BaseModel):
     name: str
     desc: str = ''
     cmdon: str
-    cmdoff: str
+    cmdoff: str = ''
     cmdstart: str = ''
     onstart: bool = False
     public: bool = True
@@ -112,8 +115,12 @@ class PymolCMDSpec(pydantic.BaseModel):
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}
 
+    def errors(self):
+        return self._errors
+        
     def check_cmds(self):
-        self._check_cmds_output = '-' * 80 + os.linesep
+        self._check_cmds_output = '-' * 80 + os.linesep + str(self) + os.linesep + '_'*80 + os.linesep
+        self._errors = ''
         objlist = pymol.cmd.get_object_list()
         global TOBJNUM
         TOBJNUM += 1
@@ -126,7 +133,8 @@ class PymolCMDSpec(pydantic.BaseModel):
                 pymol.cmd.get_object_list() != objlist,
                 any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())
         ]):
-            raise PymolCMDSpecError('bad pymol commands', self._check_cmds_output)
+            # raise PymolCMDSpecError('bad pymol commands', self._check_cmds_output)
+            self._errors = self._check_cmds_output
         return self
 
     def check_cmd(self, cmdname):
@@ -135,8 +143,7 @@ class PymolCMDSpec(pydantic.BaseModel):
                 with ipd.dev.redirect(stdout=out, stderr=out):
                     cmd = getattr(self, cmdname)
                     cmd = cmd.replace('$subject', f'TEST_OBJECT{TOBJNUM}')
-                    print(cmd)
-                    pymol.cmd.do(cmd, echo=False)
+                    pymol.cmd.do(cmd, echo=False, log=False)
             msg = pathlib.Path(f'{td}/stdout.log').read_text()
             msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
             self._check_cmds_output += msg
@@ -152,6 +159,9 @@ class ClientMixin(pydantic.BaseModel):
 
     def __hash__(self):
         return self.dbkey
+
+    def __getitem__(self, key):
+        return getattr(self, key)
 
 def clientprop(name):
     @property
@@ -195,8 +205,10 @@ class PymolCMD(ClientMixin, PymolCMDSpec):
 @ipd.dev.timed
 class PPPClient:
     def __init__(self, server_addr_or_testclient):
-        if isinstance(server_addr_or_testclient, str): self.server_addr = server_addr_or_testclient
-        else: self.testclient = server_addr_or_testclient
+        if isinstance(server_addr_or_testclient, str):
+            self.testclient, self.server_addr = None, server_addr_or_testclient
+        else:
+            self.testclient = server_addr_or_testclient
         assert self.get('/')['msg'] == 'Hello World'
 
     def getattr(self, thing, dbkey, attr):
@@ -211,7 +223,7 @@ class PPPClient:
     def post(self, url, thing):
         json = thing.json()
         if self.testclient: response = self.testclient.post(url, content=json)
-        else: requests.post(f'http://{self.server_addr}/ppp{url}', content=json)
+        else: response = requests.post(f'http://{self.server_addr}/ppp{url}', json)
         if response.status_code != 200: raise PPPClientError(f'POST failed {url} {json} \n {response}')
         return response.json()
 
@@ -219,11 +231,6 @@ class PPPClient:
         kind = type(thing).__name__.replace('Spec', '').lower()
         if kind == 'pymolcmd': thing.check_cmds()
         return self.post(f'/create/{kind}', thing)
-
-        # if isinstance(thing, PollSpec): return self.create_poll(thing)
-        # if isinstance(thing, ReviewSpec): return self.create_review(thing)
-        # if isinstance(thing, PymolCMDSpec): return self.create_pymolcmd(thing)
-        # else: raise ValueError(f'dont know how to post {type(thing)}')
 
     def polls(self):
         return [Poll(self, **p) for p in self.get('/polls')]
@@ -236,6 +243,9 @@ class PPPClient:
 
     def pymolcmds(self):
         return [PymolCMD(self, **_) for _ in self.get('/pymolcmds')]
+
+    def pymolcmdsdict(self):
+        return self.get('/pymolcmds')
 
     def poll(self, dbkey):
         return Poll(self, **self.get(f'/poll{dbkey}'))
@@ -250,3 +260,14 @@ class PPPClient:
         fname = fname.replace('/', '__DIRSEP__')
         rev = self.get(f'/reviews/byfname/{fname}')
         return [Review(self, **_) for _ in rev]
+
+    def _add_some_cmds(self):
+        self.upload(
+            PymolCMDSpec(
+                name='sym: Make {sym.upper()}',
+                cmdstart='from wills_pymol_crap import symgen',
+                cmdon=
+                f'symgen.make{sym}("$subject", name="sym"); delete $subject; cmd.set_name("sym", "$subject")',
+                cmdoff='remove not chain A',
+            ))
+
