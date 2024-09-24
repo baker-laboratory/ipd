@@ -258,7 +258,7 @@ class Backend:
         dups = self.session.exec(sqlmodel.select(DBPymolCMD).where(DBPymolCMD.cmdon == cmdon))
         return len(list(dups)) > 1
 
-def run(port, datadir, log='info'):
+def run(port, dburl, datadir, log='info', local=False):
     import uvicorn
     import psycopg2
 
@@ -279,8 +279,10 @@ def run(port, datadir, log='info'):
                 thread.join()
 
     os.makedirs(datadir, exist_ok=True)
-    # engine = sqlmodel.create_engine(f'sqlite:///{datadir}/ppp.db')
-    engine = sqlmodel.create_engine('postgresql://sheffler@localhost:5432/ppp')
+    if local:
+        engine = sqlmodel.create_engine(f'sqlite:///{datadir}/ppp.db')
+    else:
+        engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)
     config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=log)

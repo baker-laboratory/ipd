@@ -318,9 +318,6 @@ class Polls:
         self.newpollwidget.cancel.clicked.connect(lambda: self.newpollwidget.hide())
         self.newpollwidget.ok.clicked.connect(lambda: self.create_poll_done())
         self.refresh_polls()
-        if state.activepoll:
-            if matches := [i for i, x in self.polls.items() if x.name == state.activepoll]:
-                self.poll_start(matches[0])
 
     def open_file_picker(self):
         dialog = pymol.Qt.QtWidgets.QFileDialog(self.newpollwidget)
@@ -335,6 +332,12 @@ class Polls:
     def refresh_polls(self):
         self.public_polls = {p.name: p for p in remote.polls()}
         self.allpolls = conf.polls | self.public_polls
+        if state.activepoll:
+            if state.activepoll in self.allpolls:
+                if matches := [i for i, x in self.polls.items() if x.name == state.activepoll]:
+                    self.poll_start(matches[0])
+            else:
+                state.activepoll = None
         self.pollinfo = [f"{p.name.lower()}||||{p.desc.lower()}" for p in self.allpolls.values()]
         self.update_poll_list()
 
@@ -361,6 +364,7 @@ class Polls:
     def update_poll_list(self):
         self.listwidget.clear()
         self.polls = {}
+        activepolldbkey = self.allpolls[state.activepoll].dbkey if state.activepoll in self.allpolls else None
         filteredpolls = self.filtered_poll_list()
         for i, poll in enumerate(filteredpolls.values()):
             if isinstance(poll.datecreated, str):
@@ -372,8 +376,7 @@ class Polls:
             self.listwidget.addItem(f"{poll.name} ({status})")
             item = self.listwidget.item(i)
             item.setToolTip(poll.desc)
-            if state.activepoll and poll['dbkey'] == filteredpolls[state.activepoll]['dbkey']:
-                item.setSelected(True)
+            if poll.dbkey == activepolldbkey: item.setSelected(True)
 
     def poll_clicked(self, item):
         assert self.listwidget.count() == len(self.polls)
@@ -657,12 +660,12 @@ class PrettyProteinProjectPymolPluginPanel:
         ipd.dev.global_timer.report()
 
 @profile
-def run_local_server(port=12345):
+def run_local_server(port=54321):
     ipd.dev.lazyimport('fastapi')
     ipd.dev.lazyimport('sqlmodel')
     ipd.dev.lazyimport('uvicorn')
     ipd.dev.lazyimport('ordered_set')
-    args = dict(port=port, log='warning', datadir=os.path.expanduser('~/.config/localserver'))
+    args = dict(port=port, log='warning', datadir=os.path.expanduser('~/.config/localserver'), local=True)
     __server_thread = threading.Thread(target=ipd.ppp.server.run, kwargs=args, daemon=True)
     __server_thread.start()
     # dialog should cover server start time

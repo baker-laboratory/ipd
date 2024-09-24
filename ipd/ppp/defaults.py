@@ -5,13 +5,16 @@ import logging
 import time
 
 def add_defaults(server_addr):
+    import pymol
+    pymol.cmd.set('suspend_updates', 'on')
     client = ipd.ppp.PPPClient(server_addr)
     add_builtin_cmds(client)
     add_sym_cmds(client)
-    for pref in 'abcdefghijklmnop':
-        recursive_add_polls(client, '~', pref)
-        break
-    raise AssertionError('fofo()')
+    # for pref in ['DUMMY']:
+    # for pref in 'abcdefghijklmnop':
+        # recursive_add_polls(client, '~', pref)
+        # break
+    pymol.cmd.set('suspend_updates', 'off')
 
 def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
@@ -25,7 +28,8 @@ def add_builtin_cmds(client):
                 print(spec.errors())
 
 def add_sym_cmds(client):
-        for sym in 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.split():
+        for sym in 'c2 c3 c4 c5 c6 d2 d3 tet oct icos'.split():
+        # for sym in 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.split():
             client.upload(
                 ipd.ppp.PymolCMDSpec(
                     name=f'sym: Make {sym.upper()}',
