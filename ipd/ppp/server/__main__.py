@@ -1,7 +1,6 @@
-import os
 import sys
 import argparse
-import ipd
+import subprocess
 
 parser = argparse.ArgumentParser(
     prog='Prettier Protein Project Service',
@@ -10,10 +9,19 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--port', type=int, default=12345)
 parser.add_argument('--dburl', type=str, default='postgresql://sheffler@localhost:5432/ppp')
 parser.add_argument('--datadir', type=str, default='/projects/ml/prettier_protein_project/server_data')
+parser.add_argument('--libdir', type=str, default=None)
 parser.add_argument('--loglevel', type=str, default='info')
+
+def update_libs(libdir):
+    if not libdir: return
+    subprocess.check_output(f'cd {libdir}/ipd && git pull'.split(), shell=True)
+    subprocess.check_output(f'cd {libdir}/willutil && git pull'.split(), shell=True)
+    subprocess.check_output(f'cd {libdir}/wills_pymol_crap && git pull'.split(), shell=True)
 
 def main():
     args = parser.parse_args()
+    update_libs(args.libdir)
+    import ipd
     ipd.ppp.server.run(args.port, args.dburl, args.datadir, args.loglevel)
 
 if __name__ == '__main__':
