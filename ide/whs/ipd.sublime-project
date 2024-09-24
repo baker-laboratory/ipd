@@ -2,8 +2,8 @@
 	"folders":
 	[
 		{
-			"path": "/home/sheffler/rfdsym/lib/rf2aa/lib/ipd",
-            "folder_exclude_patterns": [ "Eigen", ".benchmarks", ".git" ]
+			"path": "../..",
+			"folder_exclude_patterns": [ "Eigen", ".benchmarks", ".git" ]
 		}
 	],
 	"build_systems": [
