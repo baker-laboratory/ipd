@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Optional
 import ipd
 from icecream import ic
+import uvicorn
+import psycopg2
 
 fastapi = ipd.lazyimport('fastapi', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -258,31 +260,27 @@ class Backend:
         dups = self.session.exec(sqlmodel.select(DBPymolCMD).where(DBPymolCMD.cmdon == cmdon))
         return len(list(dups)) > 1
 
-def run(port, dburl, datadir, log='info', local=False):
-    import uvicorn
-    import psycopg2
+class Server(uvicorn.Server):
+    def install_signal_handlers(self):
+        pass
 
-    class Server(uvicorn.Server):
-        def install_signal_handlers(self):
-            pass
+    @contextlib.contextmanager
+    def run_in_thread(self):
+        thread = threading.Thread(target=self.run)
+        thread.start()
+        try:
+            while not self.started:
+                time.sleep(1e-3)
+            yield
+        finally:
+            self.should_exit = True
+            thread.join()
 
-        @contextlib.contextmanager
-        def run_in_thread(self):
-            thread = threading.Thread(target=self.run)
-            thread.start()
-            try:
-                while not self.started:
-                    time.sleep(1e-3)
-                yield
-            finally:
-                self.should_exit = True
-                thread.join()
-
+def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', log='info'):
+    datadir = os.path.abspath(os.path.expanduser(datadir))
+    dburl = dburl or f'sqlite:///{datadir}/ppp.db'
     os.makedirs(datadir, exist_ok=True)
-    if local:
-        engine = sqlmodel.create_engine(f'sqlite:///{datadir}/ppp.db')
-    else:
-        engine = sqlmodel.create_engine(dburl)
+    engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)
     config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=log)
