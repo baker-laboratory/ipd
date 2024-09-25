@@ -13,7 +13,7 @@ def main():
 
 def run_polls_stress_test():
     server, backend = ipd.ppp.server.run(12345, 'postgresql://sheffler@192.168.0.154:5432/ppp')
-    client = ipd.ppp.PPPClient('localhost:12345')
+    client = ipd.ppp.PPPClient('127.0.0.1:12345')
     polls = client.pollinfo()
     print(len(polls))
     print(polls[0])

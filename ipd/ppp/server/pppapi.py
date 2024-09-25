@@ -299,5 +299,5 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=loglevel)
     server = Server(config=config)
     server.run_in_thread()
-    ipd.ppp.defaults.add_defaults(f'localhost:{port}', **kw)
+    ipd.ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
     return server, backend

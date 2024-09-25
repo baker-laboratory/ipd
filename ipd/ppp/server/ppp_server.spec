@@ -28,4 +28,4 @@ IncludeCmd: yes
     echo updating library wills_pymol_crap
     cd /prettier_protein_project/lib/wills_pymol_crap && git pull
     cd /prettier_protein_project/server
-    /opt/mamba/bin/python -m ipd.prettier_protein_project.server --datadir /prettier_protein_project/server/data "$@"
+    /opt/mamba/bin/python -m ipd.ppp.server --datadir /prettier_protein_project/server/data "$@"

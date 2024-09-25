@@ -27,7 +27,7 @@ fuzzyfinder = ipd.lazyimport('fuzzyfinder', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 
 remote, conf, ppppp = None, None, None
-SERVER_ADDR = os.environ.get('PPPSERVER', 'localhost:12345')
+SERVER_ADDR = os.environ.get('PPPSERVER', '127.0.0.1:12345')
 CONFIG_DIR = os.path.expanduser('~/.config/ppp/')
 CONFIG_FILE = f'{CONFIG_DIR}/localconfig.yaml'
 STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
@@ -677,7 +677,7 @@ def run_local_server(port=54321):
     __server_thread.start()
     # dialog should cover server start time
     isfalse_notify(False, f"Can't connt to: {SERVER_ADDR}\nWill try to run a conf server.")
-    return ppp.PPPClient(f'localhost:{port}')
+    return ppp.PPPClient(f'127.0.0.1:{port}')
 
 @profile
 def read_config(fname, **kw):
