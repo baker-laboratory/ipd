@@ -1,8 +1,6 @@
 pymolcmds:
 - name: "option: Sidechains as Sticks"
-  cmdstart:
-    from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default;
-    ppp_pymol_add_default('SC_REPR', 'sticks');
+  cmdstart: ppp_pymol_add_default('SC_REPR', 'sticks');
   cmdon: ppp_pymol_set('SC_REPR', 'sticks')
   cmdoff: ppp_pymol_set('SC_REPR', 'lines')
 

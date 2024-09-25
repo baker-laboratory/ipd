@@ -10,7 +10,6 @@ import ipd
 from ipd import ppp
 import os
 import pickle
-from iterfzf import iterfzf
 import pymol
 import random
 import shutil
@@ -692,7 +691,9 @@ def run(_self=None):
     os.makedirs(os.path.dirname(SESSION_RESTORE), exist_ok=True)
     os.makedirs(os.path.dirname(PPPPP_PICKLE), exist_ok=True)
     if os.path.exists(SESSION_RESTORE): os.remove(SESSION_RESTORE)
-
+    pymol.cmd.do(
+        'from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default'
+    )
     global ppppp, conf, state, remote
     conf = read_config(CONFIG_FILE, opts={}, cmds={}, polls={})
     state = read_config(STATE_FILE, activepoll=None, active_cmds=set(), cmds={}, polls={})

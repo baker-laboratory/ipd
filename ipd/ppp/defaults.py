@@ -5,8 +5,12 @@ import logging
 import time
 
 def add_defaults(server_addr, stress_test_polls=False):
+    print('---------------------- ADD DEFAULTS ----------------------')
     import pymol
     pymol.cmd.set('suspend_updates', 'on')
+    pymol.cmd.do(
+        'from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default'
+    )
     client = ipd.ppp.PPPClient(server_addr)
     if not client.pymolcmds():
         add_builtin_cmds(client)
@@ -22,6 +26,7 @@ def add_defaults(server_addr, stress_test_polls=False):
                                  path=dir_,
                                  public=True))
     pymol.cmd.set('suspend_updates', 'off')
+    print('------------------- DONE ADD DEFAULTS -------------------')
 
 def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
