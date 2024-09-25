@@ -48,6 +48,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="button_delopt">
+             <property name="text">
+              <string>Delete</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="button_refresh_cmds">
              <property name="text">
               <string>Refresh</string>
@@ -86,19 +93,26 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="button_refresh_polls">
-             <property name="text">
-              <string>Refresh</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="button_use_curdir">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might order this protein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Use CurDir</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="button_delpoll">
+             <property name="text">
+              <string>Delete</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="button_refresh_polls">
+             <property name="text">
+              <string>Refresh</string>
              </property>
             </widget>
            </item>

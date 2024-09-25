@@ -40,10 +40,10 @@ class PollSpec(pydantic.BaseModel):
     desc: str = ''
     path: str
     user: str = getpass.getuser()
-    context: str = ''
     cmdstart: str = ''
     cmdstop: str = ''
     sym: str = ''
+    ligand: str = 'unknown'
     public: bool = False
     telemetry: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
@@ -54,32 +54,43 @@ class PollSpec(pydantic.BaseModel):
 
     @pydantic.model_validator(mode='after')
     def _update(self):
+        # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
         if not self.name: self.name = os.path.basename(self.path)
         self.name = self.name.title()
         if not self.desc: self.desc = f"PDBs in {self.path}"
-        if not self.sym:
+        if not self.sym or self.ligand == 'unknown':
             nchain = 1
             try:
                 global _checkobjnum
                 fname = next(filter(lambda s: s.endswith(STRUCTURE_FILE_SUFFIX), os.listdir(self.path)))
                 pymol.cmd.set('suspend_updates', 'on')
+                pyml.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
                 pymol.cmd.delete('all')
                 pymol.cmd.load(os.path.join(self.path, fname), f'TMP{_checkobjnum}')
-                pymol.cmd.remove(f'TMP{_checkobjnum} and not name ca')
-                chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_checkobjnum}').atom}
-                nchain = len(chains)
-                xyz = pymol.cmd.get_coords(f'TMP{_checkobjnum}').reshape(len(chains), -1, 3)
-                self.sym = ipd.sym.guess_symmetry(xyz)
-                pymol.cmd.delete(f'TMP{_checkobjnum}')
-                pymol.cmd.set('suspend_updates', 'off')
-                _checkobjnum += 1
+                if self.ligand == 'unknown':
+                    ligs = set()
+                    for a in pymol.cmd.get_model(f'TMP{_checkobjnum} and HET and not resn HOH').atom:
+                        ligs.add(a.resn)
+                    self.ligand = ','.join(ligs)
+                if not self.sym:
+                    pymol.cmd.remove(f'TMP{_checkobjnum} and not name ca')
+                    chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_checkobjnum}').atom}
+                    nchain = len(chains)
+                    xyz = pymol.cmd.get_coords(f'TMP{_checkobjnum}').reshape(len(chains), -1, 3)
+                    self.sym = ipd.sym.guess_symmetry(xyz)
             except ValueError as e:
-                print(os.path.join(self.path, fname))
+                # print(os.path.join(self.path, fname))
                 traceback.print_exc()
                 if nchain < 4: self.sym = 'C1'
                 else: self.sym = 'unknown'
             except (AttributeError, pymol.CmdException, gzip.BadGzipFile) as e:
                 self._errors = f'{type(e)} {e}'
+            finally:
+                pymol.cmd.delete(f'TMP{_checkobjnum}')
+                pymol.cmd.set('suspend_updates', 'off')
+                _checkobjnum += 1
+                pyml.cmd.load(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+                os.remove(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
         return self
 
     @pydantic.validator('props')

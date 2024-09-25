@@ -299,6 +299,7 @@ class PollInProgress:
             cmd = getstate('review_action').replace('$grade', review.grade)
             cmd = cmd.replace('$poll', self.poll.name.replace(' ', '_'))
             cmd = cmd.replace('$filebase', os.path.basename(self.viewer.fname))
+            cmd = cmd.replace('$file', self.viewer.fname)
         result = subprocess.check_output(cmd.split(), shell=True)
         isfalse_notify(not result, f'review action output: {result}')
         ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(self.fnames) - 1)
