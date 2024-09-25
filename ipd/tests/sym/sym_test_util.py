@@ -2,7 +2,9 @@ import functools
 import hypothesis
 from hypothesis import strategies as st
 import ipd
-import hydra
+from ipd.dev.lazy_import import lazyimport
+
+hydra = lazyimport('hydra')
 
 def hydra_sandbox(func):
     @functools.wraps(func)

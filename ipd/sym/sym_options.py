@@ -1,37 +1,40 @@
 import os
 import yaml
-import hydra
+from ipd.dev.lazy_import import lazyimport
 import willutil as wu
 import ipd
 import ipd
 from collections.abc import Sequence
-import omegaconf
 
-default_params = dict(L=None,
-                      Lasu=None,
-                      asu_to_best_frame=None,
-                      copy_main_block_template=None,
-                      fit=None,
-                      ligand_is_symmetric=None,
-                      guideposts_are_symmetric=False,
-                      max_nsub=99,
-                      center_cyclic=False,
-                      nsub=None,
-                      pseudo_cycle=None,
-                      rfsym_enabled=None,
-                      sym_enabled=True,
-                      symid='C1',
-                      subsymid=None,
-                      symmetrize_repeats=None,
-                      sympair_enabled=None,
-                      sympair_method=None,
-                      sympair_protein_only=None,
-                      fittscale=1.0,
-                      fitwclash=4.0,
-                      move_unsym_with_asu=True,
-                      motif_position='fixed',
-                      motif_copy_position_from_px0=False,
-                      )
+hydra = lazyimport('hydra')
+omegaconf = lazyimport('omegaconf')
+
+default_params = dict(
+    L=None,
+    Lasu=None,
+    asu_to_best_frame=None,
+    copy_main_block_template=None,
+    fit=None,
+    ligand_is_symmetric=None,
+    guideposts_are_symmetric=False,
+    max_nsub=99,
+    center_cyclic=False,
+    nsub=None,
+    pseudo_cycle=None,
+    rfsym_enabled=None,
+    sym_enabled=True,
+    symid='C1',
+    subsymid=None,
+    symmetrize_repeats=None,
+    sympair_enabled=None,
+    sympair_method=None,
+    sympair_protein_only=None,
+    fittscale=1.0,
+    fitwclash=4.0,
+    move_unsym_with_asu=True,
+    motif_position='fixed',
+    motif_copy_position_from_px0=False,
+)
 
 def parse(s):
     if s.isdigit(): return int(s)

@@ -4,7 +4,10 @@ import copy
 import itertools
 from icecream import ic
 import assertpy
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import numpy as np
 from itertools import repeat
 import ipd
@@ -67,9 +70,9 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def add_properties(self):
         locprops = dict(
             opt=[
-                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats',
-                'sym_enabled', 'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template',
-                'ligand_is_symmetric'
+                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame',
+                'symmetrize_repeats', 'sym_enabled', 'rfsym_enabled', 'sympair_enabled',
+                'copy_main_block_template', 'ligand_is_symmetric'
             ],
             idx=[
                 'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym',
@@ -386,7 +389,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         return self.opt._params['rf_asym_only'] is not False
 
     def multistep_adjusted_progress(self, t, T):
-        return t/T, 1/T
+        return t / T, 1 / T
         asymsteps = self.opt._params['rf_asym_only'].diffuse_steps
         assert min(asymsteps) == 0 and max(asymsteps) + 1 == len(asymsteps)
         nasymstep = max(asymsteps) + 1

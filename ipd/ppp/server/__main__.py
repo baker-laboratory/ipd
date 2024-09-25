@@ -1,7 +1,9 @@
 import os
+import time
 import sys
 import argparse
 import subprocess
+import ipd
 
 parser = argparse.ArgumentParser(
     prog='Prettier Protein Project Service',
@@ -11,12 +13,14 @@ parser.add_argument('--port', type=int, default=12345)
 parser.add_argument('--dburl', type=str, default='postgresql://sheffler@localhost:5432/ppp')
 parser.add_argument('--datadir', type=str, default=os.path.abspath('./data'))
 parser.add_argument('--loglevel', type=str, default='info')
+parser.add_argument('--stress_test_polls', action='store_true', default=False)
 
 def main():
-    args = parser.parse_args()
-    import ipd
+    args = ipd.Bunch(parser.parse_args())
     print(f'STARTING SERVER localhost:{args.port} database: {args.dburl} datadir: {args.datadir}')
-    ipd.ppp.server.run(args.port, args.dburl, args.datadir, args.loglevel)
+    ipd.ppp.server.run(**args)
+    while True:
+        time.sleep(0.1)
 
 if __name__ == '__main__':
     main()

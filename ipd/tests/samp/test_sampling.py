@@ -2,7 +2,10 @@ import numpy as np
 import pytest
 from timeit import timeit
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 from willutil import h
 import willutil as wu
 from icecream import ic
@@ -50,7 +53,7 @@ def test_randxform_angle():
     quant1 = th.quantile(ang1, th.arange(0, 1.001, 0.12, device='cuda'))
 
     xform = ipd.samp.randxform(1_000_000)
-    assert th.allclose(xform[..., 3, :3], th.zeros(1,device='cuda'))
+    assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))
     assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))
     ang2 = wu.h.angle(xform)
     quant2 = th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))
@@ -108,7 +111,7 @@ def test_randxform_large_angle():
         with wu.Timer(verbose=False) as t:
             for i in range(10):
                 xform = ipd.samp.randxform(5_000_000, orimax=maxang)
-        assert th.allclose(xform[..., 3, :3], th.zeros(1,device='cuda'))
+        assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))
 
         ang2 = wu.h.angle(xform)
@@ -119,7 +122,7 @@ def test_randxform_large_angle():
 
     for maxang in th.arange(0.1, 3.14, 0.1):
         xform = ipd.samp.randxform(100_000, orimax=maxang)
-        assert th.allclose(xform[..., 3, :3], th.zeros(1,device='cuda'))
+        assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))
         ang2 = wu.h.angle(xform)
         assert abs(maxang - ang2.max()) < 0.03
@@ -133,7 +136,7 @@ def test_randxform_large_angle():
     std = defaultdict(list)
     for i, maxang in enumerate(th.arange(0.5, 3.15, 0.01)):
         xform = ipd.samp.randxform(N, orimax=maxang)
-        assert th.allclose(xform[..., 3, :3], th.zeros(1,device='cuda'))
+        assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))
         ang2 = wu.h.angle(xform)
         avg[maxang.item()].append(float(ang2.mean()))
@@ -157,7 +160,7 @@ def test_randxform_small_angle():
         # for i in range(10):
         # xform = ipd.samp.randxform_small_cuda(N, cartsd=0.1, orisd=sd)
         xform = ipd.samp.randxform(N, cartsd=0.1, orisd=sd)
-        assert th.allclose(xform[..., 3, :3], th.zeros(1,device='cuda'))
+        assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))
 
         ang2 = wu.h.angle(xform)
@@ -214,15 +217,18 @@ def test_randxform_perf():
             'willutil',
     ]:
         if gentype == 'willutil':
+
             def func():
                 return wu.h.rand(N, dtype=th.float32, device='cuda')
         else:
             assert th.allclose(ipd.samp.randxform(1, gentype=gentype, seed=0),
                                ipd.samp.randxform(1, gentype=gentype, seed=0))
-            assert not th.allclose(ipd.samp.randxform(1, gentype=gentype), ipd.samp.randxform(1,
-                                                                                            gentype=gentype))
+            assert not th.allclose(ipd.samp.randxform(1, gentype=gentype),
+                                   ipd.samp.randxform(1, gentype=gentype))
+
             def func():
                 return ipd.samp.randxform(N, gentype=gentype, dtype=th.float32, device='cuda')
+
         t = timeit(func, number=20)
         print(f'{gentype:>30} {t:7.3f}')
 

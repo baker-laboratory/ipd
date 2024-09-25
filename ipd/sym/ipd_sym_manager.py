@@ -1,4 +1,7 @@
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 from ipd.sym.sym_manager import SymmetryManager, set_default_sym_manager
 import ipd
 import willutil as wu
@@ -14,7 +17,7 @@ class IpdSymmetryManager(SymmetryManager):
     def __init__(self, *a, idx=None, **kw):
         '''Create an IpdSymmetryManager'''
         super().__init__(*a, **kw)
-        self._symmRs = th.tensor(wu.sym.frames(self.symid)[:,:3,:3], dtype=th.float32, device=self.device)
+        self._symmRs = th.tensor(wu.sym.frames(self.symid)[:, :3, :3], dtype=th.float32, device=self.device)
         self.symmsub = th.arange(min(len(self._symmRs), self.opt.max_nsub))
         if self.symid == 'I' and self.opt.max_nsub == 4:
             self.asucen = th.as_tensor(wu.sym.canonical_asu_center('icos4')[:3], device=self.device)
@@ -42,7 +45,8 @@ class IpdSymmetryManager(SymmetryManager):
 
         assert pair is None
 
-        xyz = th.einsum('fij,raj->frai', self._symmRs[self.symmsub], xyz[:len(xyz)//self.nsub]).reshape(-1, *xyz.shape[1:])
+        xyz = th.einsum('fij,raj->frai', self._symmRs[self.symmsub],
+                        xyz[:len(xyz) // self.nsub]).reshape(-1, *xyz.shape[1:])
         return xyz
 
 set_default_sym_manager('ipd')

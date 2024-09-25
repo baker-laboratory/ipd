@@ -2,7 +2,10 @@ import inspect
 import pytest
 import copy
 from icecream import ic
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd.sym.sym_tensor as st
 import ipd
 
@@ -203,7 +206,8 @@ def test_sym_tensor():
     print('>>> t.gp')
     print(t.gp)
 
-    t = sym.tensor(['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
+    t = sym.tensor(
+        ['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
     print('>>> t.all.orig')
     print(t.all.orig)
     print('>>> t.res.orig')
@@ -222,7 +226,7 @@ def test_sym_tensor():
     print('>>> t.sliced')
     print(t.sliced)
 
-    sym.idx = [(10,0,9)]
+    sym.idx = [(10, 0, 9)]
     sym.idx.set_kind(th.zeros(10))
     print(sym.idx.all)
     t = sym.tensor(th.zeros(10, dtype=int))

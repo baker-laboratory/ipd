@@ -245,7 +245,7 @@ def timed_class(cls, *, label=None):
     # label = label or rs
     for k in cls.__dict__:
         v = getattr(cls, k)
-        if callable(v):
+        if callable(v) and not inspect.isclass(v): # skip inner classes
             setattr(cls, k, timed_func(v, clsname=cls.__name__))
 
     return cls

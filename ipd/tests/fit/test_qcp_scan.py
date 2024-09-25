@@ -1,6 +1,9 @@
 import random
 import pytest
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd
 from ipd.fit.qcp_rms import _rms
 import willutil as wu

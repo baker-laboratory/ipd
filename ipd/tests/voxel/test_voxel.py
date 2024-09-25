@@ -2,7 +2,10 @@ import math
 import pytest
 import willutil as wu
 from willutil import h
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import numpy as np
 import ipd
 from ipd.voxel.voxel_cuda import _voxel
@@ -76,7 +79,7 @@ def test_numba_vox_create():
             irad = int(math.ceil(rad[-1] / resl))
             block, thread = (len(xyz), 2 * irad + 1, 2 * irad + 1), (32, 2, 2)
             ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl,
-                                                       grid.cuda())
+                                                        grid.cuda())
 
     # wu.showme(vox)
     vox.grid = grid

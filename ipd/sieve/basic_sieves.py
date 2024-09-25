@@ -1,7 +1,9 @@
 import ipd
 from rf_diffusion.structure import get_bb_pydssp_seq_xyz_isgp_issm, assign_torch
 from willutil import h
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
 
 def generate_O(coords):
     dd = dict(device=coords.device, dtype=coords.dtype)

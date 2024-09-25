@@ -1,6 +1,10 @@
 import copy
 import dataclasses
-import torch as th
+import contextlib
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import numpy as np
 from functools import singledispatch
 from itertools import repeat
@@ -18,14 +22,16 @@ def _sym_adapt(thing, sym, isasym=None):
 def _(*a, **kw):
     return None
 
-@_sym_adapt.register(th.Tensor)
-def _(tensor, sym, isasym):
-    if all(n is None for n in tensor.names):
-        return SymAdaptTensor(tensor, sym, isasym)
-    elif 'Lsparse' in tensor.names:
-        return SymAdaptNamedSparseTensor(tensor, sym, isasym)
-    else:
-        return SymAdaptNamedDenseTensor(tensor, sym, isasym)
+with contextlib.suppress(ImportError):
+
+    @_sym_adapt.register(th.Tensor)
+    def _(tensor, sym, isasym):
+        if all(n is None for n in tensor.names):
+            return SymAdaptTensor(tensor, sym, isasym)
+        elif 'Lsparse' in tensor.names:
+            return SymAdaptNamedSparseTensor(tensor, sym, isasym)
+        else:
+            return SymAdaptNamedDenseTensor(tensor, sym, isasym)
 
 @_sym_adapt.register(np.ndarray)
 def _(ary, sym, isasym):
@@ -183,13 +189,6 @@ class SymAdaptDataclass(SymAdapt):
             #     print(f'{k:15} {[x.shape for x in v]}')
         return type(self.orig)(**symparts)
 
-@dataclasses.dataclass
-class SimpleSparseTensor:
-    val: th.Tensor
-    idx: th.Tensor
-    isidx: slice
-    kind: kind = None
-
 # @_sym_adapt.register(SimpleSparseTensor)
 # def _(sparse, sym):
 # return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
@@ -200,127 +199,138 @@ def check_isasym(tensor, sym, isasym, idx):
     if sym.Nasym in tensor.shape: return True
     assert idx is not None
 
-class SymAdaptNamedDenseTensor(SymAdapt):
-    adapts = None
+with contextlib.suppress(ImportError):
 
-    def __init__(self, tensor, sym, isasym=None):  # sourcery skip: de-morgan
-        if not ('L' in tensor.names or 'L1' in tensor.names or 'L2' in tensor.names):
-            self.kind = SymKind(ShapeKind.SCALAR, ValueKind.BASIC)
-            self.adapted = None
+    @dataclasses.dataclass
+    class SimpleSparseTensor:
+        val: th.Tensor
+        idx: th.Tensor
+        isidx: slice
+        kind: kind = None
+
+    class SymAdaptNamedDenseTensor(SymAdapt):
+        adapts = None
+
+        def __init__(self, tensor, sym, isasym=None):  # sourcery skip: de-morgan
+            if not ('L' in tensor.names or 'L1' in tensor.names or 'L2' in tensor.names):
+                self.kind = SymKind(ShapeKind.SCALAR, ValueKind.BASIC)
+                self.adapted = None
+                self.orig = tensor
+                return
+            assert 'N3' not in tensor.names, 'no support for 3D'
             self.orig = tensor
-            return
-        assert 'N3' not in tensor.names, 'no support for 3D'
-        self.orig = tensor
-        if 'L2' in tensor.names:
-            self.kind = SymKind(ShapeKind.TWODIM, ValueKind.BASIC)
-            if 'Pair' in tensor.names:
-                self.kind = SymKind(ShapeKind.TWODIM, ValueKind.PAIR)
-            self.perm = tensor.align_to('L1', 'L2', ...)
-        elif any(n.startswith('Idx') for n in tensor.names):
-            self.kind = SymKind(ShapeKind.ONEDIM, ValueKind.INDEX)
-            self.perm = tensor.align_to('L', ...)
-        elif 'XYZ' in tensor.names:
-            self.kind = SymKind(ShapeKind.ONEDIM, ValueKind.XYZ)
-            self.perm = tensor.align_to('L', ..., 'XYZ')
-        else:
-            self.kind = SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
-            self.perm = tensor.align_to('L', ...)
-        assert self.perm.shape[0] in (sym.idx.L, sym.idx.Nasym)
-        if self.perm.shape[0] == sym.idx.Nasym:
-            assert isasym is None or isasym
-            if self.kind.shapekind == ShapeKind.TWODIM:
-                newshape = (sym.idx.L**2, *self.perm.shape[2:])
-                self.adapted = th.zeros(newshape, dtype=tensor.dtype, device=tensor.device)
-                m = (sym.idx.asym[None] * sym.idx.asym[:, None]).view(-1)
-                self.adapted[m] = self.perm.rename(None).view(sym.idx.Nasym * sym.idx.Nasym,
-                                                              *self.perm.shape[2:])
-                self.adapted = self.adapted.view(sym.idx.L, sym.idx.L, *self.perm.shape[2:])
+            if 'L2' in tensor.names:
+                self.kind = SymKind(ShapeKind.TWODIM, ValueKind.BASIC)
+                if 'Pair' in tensor.names:
+                    self.kind = SymKind(ShapeKind.TWODIM, ValueKind.PAIR)
+                self.perm = tensor.align_to('L1', 'L2', ...)
+            elif any(n.startswith('Idx') for n in tensor.names):
+                self.kind = SymKind(ShapeKind.ONEDIM, ValueKind.INDEX)
+                self.perm = tensor.align_to('L', ...)
+            elif 'XYZ' in tensor.names:
+                self.kind = SymKind(ShapeKind.ONEDIM, ValueKind.XYZ)
+                self.perm = tensor.align_to('L', ..., 'XYZ')
             else:
-                newshape = (sym.idx.L, *self.perm.shape[1:])
-                self.adapted = th.zeros(newshape, dtype=tensor.dtype, device=tensor.device)
-                self.adapted[sym.idx.asym] = self.perm.rename(None)
-        else:
-            assert not isasym
-            assert self.perm.shape[0] == sym.L
-            self.adapted = self.perm.rename(None)
-        self.adapted = self.adapted.to(sym.device).to(self.orig.dtype)
+                self.kind = SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
+                self.perm = tensor.align_to('L', ...)
+            assert self.perm.shape[0] in (sym.idx.L, sym.idx.Nasym)
+            if self.perm.shape[0] == sym.idx.Nasym:
+                assert isasym is None or isasym
+                if self.kind.shapekind == ShapeKind.TWODIM:
+                    newshape = (sym.idx.L**2, *self.perm.shape[2:])
+                    self.adapted = th.zeros(newshape, dtype=tensor.dtype, device=tensor.device)
+                    m = (sym.idx.asym[None] * sym.idx.asym[:, None]).view(-1)
+                    self.adapted[m] = self.perm.rename(None).view(sym.idx.Nasym * sym.idx.Nasym,
+                                                                  *self.perm.shape[2:])
+                    self.adapted = self.adapted.view(sym.idx.L, sym.idx.L, *self.perm.shape[2:])
+                else:
+                    newshape = (sym.idx.L, *self.perm.shape[1:])
+                    self.adapted = th.zeros(newshape, dtype=tensor.dtype, device=tensor.device)
+                    self.adapted[sym.idx.asym] = self.perm.rename(None)
+            else:
+                assert not isasym
+                assert self.perm.shape[0] == sym.L
+                self.adapted = self.perm.rename(None)
+            self.adapted = self.adapted.to(sym.device).to(self.orig.dtype)
 
-    def reconstruct(self, x, **kw):
-        return x.rename(*self.perm.names).align_to(*self.orig.names).to(self.orig.device).to(
-            self.orig.dtype).rename(None)
+        def reconstruct(self, x, **kw):
+            return x.rename(*self.perm.names).align_to(*self.orig.names).to(self.orig.device).to(
+                self.orig.dtype).rename(None)
 
-class SymAdaptNamedSparseTensor(SymAdapt):
-    adapts = None
+    class SymAdaptNamedSparseTensor(SymAdapt):
+        adapts = None
 
-    def __init__(self, tensor, sym, isasym):
-        assert 'Lsparse' in tensor.names
-        assert 1 == sum(n.startswith('IdxAll') for n in tensor.names)
-        assert 'L' not in tensor.names and 'L1' not in tensor.names and 'XYZ' not in tensor.names
-        self.orig = tensor
-        self.isidx = True  # don't support XYZ and BASIC for now
-        self.kind = SymKind(ShapeKind.SPARSE, ValueKind.INDEX)
-        idxdim = [n for n in tensor.names if n.startswith('Idx')][0]
-        self.perm = tensor.align_to('Lsparse', idxdim, ...)
-        idx = self.perm[:, int(idxdim.replace('IdxAll', '').replace('Idx', ''))].rename(None).to(int)
-        # ic(idx, self.perm.shape)
-        # ic(tensor.shape, tensor.names, idxdim, idx)
-        if sym.idx.is_sym_subsequence(idx):
-            assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.L)
-            self.asym = False
-            self.adapted = SimpleSparseTensor(idx=idx, val=self.perm, isidx=self.isidx)
-            assert not isasym
-        elif sym.idx.is_asym_subsequence(idx):
-            assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.Nasym)
-            assert isasym is None or isasym
-            symidx = sym.idx.symidx(idx)
-            dd = dict(dtype=self.orig.dtype, device=sym.device)
-            symperm = th.zeros((len(symidx), *self.perm.shape[1:]), **dd)
-            symperm[:len(self.perm)] = self.perm
-            symperm.rename_(*self.perm.names)
-            self.perm = symperm
-            self.adapted = SimpleSparseTensor(idx=symidx, val=symperm, isidx=self.isidx)
-            if self.isidx: self.adapted.val[:] = sym.idx.idx_asym_to_sym[self.adapted.val.to(int).rename(None)]
-        assert len(self.adapted.idx) == len(self.adapted.val)
-        self.adapted.idx = self.adapted.idx.to(sym.device)
-        self.adapted.val = self.adapted.val.rename(None).to(sym.device).to(self.orig.dtype)
+        def __init__(self, tensor, sym, isasym):
+            assert 'Lsparse' in tensor.names
+            assert 1 == sum(n.startswith('IdxAll') for n in tensor.names)
+            assert 'L' not in tensor.names and 'L1' not in tensor.names and 'XYZ' not in tensor.names
+            self.orig = tensor
+            self.isidx = True  # don't support XYZ and BASIC for now
+            self.kind = SymKind(ShapeKind.SPARSE, ValueKind.INDEX)
+            idxdim = [n for n in tensor.names if n.startswith('Idx')][0]
+            self.perm = tensor.align_to('Lsparse', idxdim, ...)
+            idx = self.perm[:, int(idxdim.replace('IdxAll', '').replace('Idx', ''))].rename(None).to(int)
+            # ic(idx, self.perm.shape)
+            # ic(tensor.shape, tensor.names, idxdim, idx)
+            if sym.idx.is_sym_subsequence(idx):
+                assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.L)
+                self.asym = False
+                self.adapted = SimpleSparseTensor(idx=idx, val=self.perm, isidx=self.isidx)
+                assert not isasym
+            elif sym.idx.is_asym_subsequence(idx):
+                assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.Nasym)
+                assert isasym is None or isasym
+                symidx = sym.idx.symidx(idx)
+                dd = dict(dtype=self.orig.dtype, device=sym.device)
+                symperm = th.zeros((len(symidx), *self.perm.shape[1:]), **dd)
+                symperm[:len(self.perm)] = self.perm
+                symperm.rename_(*self.perm.names)
+                self.perm = symperm
+                self.adapted = SimpleSparseTensor(idx=symidx, val=symperm, isidx=self.isidx)
+                if self.isidx:
+                    self.adapted.val[:] = sym.idx.idx_asym_to_sym[self.adapted.val.to(int).rename(None)]
+            assert len(self.adapted.idx) == len(self.adapted.val)
+            self.adapted.idx = self.adapted.idx.to(sym.device)
+            self.adapted.val = self.adapted.val.rename(None).to(sym.device).to(self.orig.dtype)
 
-    def reconstruct(self, x, **kw):
-        # ic(self.perm.names, self.orig.names)
-        x = x.val.rename(*self.perm.names).align_to(*self.orig.names).rename(None)
-        return x.to(self.orig.device).to(self.orig.dtype)
+        def reconstruct(self, x, **kw):
+            # ic(self.perm.names, self.orig.names)
+            x = x.val.rename(*self.perm.names).align_to(*self.orig.names).rename(None)
+            return x.to(self.orig.device).to(self.orig.dtype)
 
-class SymAdaptNDArray(SymAdapt):
-    '''Symmetrizable ndarray'''
-    adapts = np.ndarray
+    class SymAdaptNDArray(SymAdapt):
+        '''Symmetrizable ndarray'''
+        adapts = np.ndarray
 
-    def __init__(self, x, sym, isasym=None):
-        '''handles object and str dtypes'''
-        self.orig = x
-        self.sym = sym
-        self.isasym = isasym
-        assert x.ndim > 0
+        def __init__(self, x, sym, isasym=None):
+            '''handles object and str dtypes'''
+            self.orig = x
+            self.sym = sym
+            self.isasym = isasym
+            assert x.ndim > 0
 
-    @property
-    def kind(self):
-        return SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
+        @property
+        def kind(self):
+            return SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
 
-    @property
-    def adapted(self):
-        match len(self.orig):
-            case self.sym.idx.L:
-                if self.isasym is not None: assert not self.isasym
-                new = self.orig.copy()
-            case self.sym.idx.Nasym:
-                if self.isasym is not None: assert self.isasym
-                new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
-                new[self.sym.idx.asym.cpu()] = self.orig
-            case _:
-                raise ValueError(
-                    f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
-        return new
+        @property
+        def adapted(self):
+            match len(self.orig):
+                case self.sym.idx.L:
+                    if self.isasym is not None: assert not self.isasym
+                    new = self.orig.copy()
+                case self.sym.idx.Nasym:
+                    if self.isasym is not None: assert self.isasym
+                    new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
+                    new[self.sym.idx.asym.cpu()] = self.orig
+                case _:
+                    raise ValueError(
+                        f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}'
+                    )
+            return new
 
-    def reconstruct(self, ary):
-        return ary
+        def reconstruct(self, ary):
+            return ary
 
 ########## SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
 

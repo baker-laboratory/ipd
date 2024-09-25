@@ -2,7 +2,9 @@ import pytest
 import ipd
 import willutil as wu
 from icecream import ic
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
 
 pytestmark = pytest.mark.fast
 
@@ -30,8 +32,10 @@ def helper_test_align_asu(sym, Lasu=13):
     xyz = make_test_points(Lasu, 10, cen=[1, 2, 3]).unsqueeze(1)
     xyz = sym(xyz)
     xyzs = [
-        ipd.sym.asu_to_best_frame_if_necessary(sym, th.einsum('ij,raj->rai', R, xyz), Lasu, asu_to_best_frame=True)
-        for R in sym.symmRs
+        ipd.sym.asu_to_best_frame_if_necessary(sym,
+                                               th.einsum('ij,raj->rai', R, xyz),
+                                               Lasu,
+                                               asu_to_best_frame=True) for R in sym.symmRs
     ]
     # wu.showme(xyz.squeeze(1))
     # wu.showme(xyzs[0][:Lasu].squeeze(1))

@@ -6,6 +6,19 @@
 			"folder_exclude_patterns": [ "Eigen", ".benchmarks", ".git" ]
 		}
 	],
+    "settings":
+     {
+        "PyYapf":{
+         "yapf_command": "yapf",
+         "on_save": true,
+        },
+        "project_environment": {
+            "env": {
+                "PYTHON": "/home/sheffler/sw/MambaForge/envs/ppp/bin/python",
+            },
+        },
+
+    },
 	"build_systems": [
         {
             "name": "runtest.py",

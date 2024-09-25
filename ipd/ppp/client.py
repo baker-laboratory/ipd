@@ -3,8 +3,12 @@ from datetime import datetime
 import functools
 import json
 import tempfile
+import contextlib
 import ipd
 import pathlib
+import gzip
+import getpass
+import traceback
 from typing import Any, Optional
 
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -20,32 +24,62 @@ from rich import print
 
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
-DTFMT = "%Y-%m-%dT%H:%M:%S.%f"
+STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+profile = ipd.dev.timed
+# profile = lambda f: f
 
 class PPPClientError(Exception):
     pass
 
-@ipd.dev.timed
+_checkobjnum = 0
+
+@profile
 class PollSpec(pydantic.BaseModel):
     name: str
     desc: str = ''
     path: str
-    user: str = 'anonymouscoward'
+    user: str = getpass.getuser()
     context: str = ''
     cmdstart: str = ''
     cmdstop: str = ''
+    sym: str = ''
     public: bool = False
     telemetry: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DTFMT)
+    enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
     props: list[str] = []
     attrs: dict[str, str | int] = {}
+    _errors: str = ''
 
     @pydantic.model_validator(mode='after')
     def _update(self):
         if not self.name: self.name = os.path.basename(self.path)
         self.name = self.name.title()
         if not self.desc: self.desc = f"PDBs in {self.path}"
+        if not self.sym:
+            nchain = 1
+            try:
+                global _checkobjnum
+                fname = next(filter(lambda s: s.endswith(STRUCTURE_FILE_SUFFIX), os.listdir(self.path)))
+                pymol.cmd.set('suspend_updates', 'on')
+                pymol.cmd.delete('all')
+                pymol.cmd.load(os.path.join(self.path, fname), f'TMP{_checkobjnum}')
+                pymol.cmd.remove(f'TMP{_checkobjnum} and not name ca')
+                chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_checkobjnum}').atom}
+                nchain = len(chains)
+                xyz = pymol.cmd.get_coords(f'TMP{_checkobjnum}').reshape(len(chains), -1, 3)
+                self.sym = ipd.sym.guess_symmetry(xyz)
+                pymol.cmd.delete(f'TMP{_checkobjnum}')
+                pymol.cmd.set('suspend_updates', 'off')
+                _checkobjnum += 1
+            except ValueError as e:
+                print(os.path.join(self.path, fname))
+                traceback.print_exc()
+                if nchain < 4: self.sym = 'C1'
+                else: self.sym = 'unknown'
+            except (AttributeError, pymol.CmdException, gzip.BadGzipFile) as e:
+                self._errors = f'{type(e)} {e}'
         return self
 
     @pydantic.validator('props')
@@ -55,18 +89,19 @@ class PollSpec(pydantic.BaseModel):
     def __hash__(self):
         return hash(self.path)
 
-@ipd.dev.timed
+@profile
 class ReviewSpec(pydantic.BaseModel):
     polldbkey: int
     fname: str
     permafile: str = ''
     grade: str
-    user: str = 'anonymouscoward'
+    user: str = getpass.getuser()
     comment: str = ''
     durationsec: int = -1
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
+    _errors: str = ''
 
     @pydantic.validator('grade')
     def valgrade(cls, grade):
@@ -78,22 +113,22 @@ class ReviewSpec(pydantic.BaseModel):
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
-@ipd.dev.timed
+@profile
 class FileSpec(pydantic.BaseModel):
     polldbkey: int
     fname: str
     public: bool = True
-    user: str = 'anonymouscoward'
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}
+    _errors: str = ''
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
-@ipd.dev.timed
+@profile
 class PymolCMDSpecError(Exception):
     def __init__(self, message, log):
         super().__init__(message + os.linesep + log)
@@ -101,7 +136,7 @@ class PymolCMDSpecError(Exception):
 
 TOBJNUM = 0
 
-@ipd.dev.timed
+@profile
 class PymolCMDSpec(pydantic.BaseModel):
     name: str
     desc: str = ''
@@ -110,16 +145,17 @@ class PymolCMDSpec(pydantic.BaseModel):
     cmdstart: str = ''
     onstart: bool = False
     public: bool = True
-    user: str = 'anonymouscoward'
+    user: str = getpass.getuser()
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}
+    _errors: str = ''
 
     def errors(self):
         return self._errors
-        
+
     def check_cmds(self):
-        self._check_cmds_output = '-' * 80 + os.linesep + str(self) + os.linesep + '_'*80 + os.linesep
+        self._check_cmds_output = '-' * 80 + os.linesep + str(self) + os.linesep + '_' * 80 + os.linesep
         self._errors = ''
         objlist = pymol.cmd.get_object_list()
         global TOBJNUM
@@ -149,7 +185,7 @@ class PymolCMDSpec(pydantic.BaseModel):
             self._check_cmds_output += msg
         return self
 
-@ipd.dev.timed
+@profile
 class ClientMixin(pydantic.BaseModel):
     _pppclient: Optional['PPPClient'] = None
 
@@ -162,6 +198,19 @@ class ClientMixin(pydantic.BaseModel):
 
     def __getitem__(self, key):
         return getattr(self, key)
+
+def client_obj_representer(dumper, obj):
+    data = obj.dict()
+    data['class'] = obj.__class__.__name__
+    return dumper.represent_scalar('!Pydantic', data)
+
+def client_obj_constructor(loader, node):
+    value = loader.construct_scalar(node)
+    cls = globals()[value.pop('class')]
+    return cls(**value)
+
+yaml.add_representer(ClientMixin, client_obj_representer)
+yaml.add_constructor('!Pydantic', client_obj_constructor)
 
 def clientprop(name):
     @property
@@ -180,29 +229,24 @@ def clientprop(name):
 
     return getter
 
-@ipd.dev.timed
 class Poll(ClientMixin, PollSpec):
     dbkey: int
     files = clientprop('poll.files')
     reviews = clientprop('poll.reviews')
 
-@ipd.dev.timed
 class Review(ClientMixin, ReviewSpec):
     dbkey: int
     poll = clientprop('review.poll')
     file = clientprop('review.file')
 
-@ipd.dev.timed
 class File(ClientMixin, FileSpec):
     dbkey: int
     poll = clientprop('file.poll')
     reviews = clientprop('file.reviews')
 
-@ipd.dev.timed
 class PymolCMD(ClientMixin, PymolCMDSpec):
     dbkey: int
 
-@ipd.dev.timed
 class PPPClient:
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str):
@@ -229,10 +273,16 @@ class PPPClient:
 
     def upload(self, thing):
         kind = type(thing).__name__.replace('Spec', '').lower()
-        if kind == 'pymolcmd': thing.check_cmds()
+        if kind == 'pymolcmd':
+            thing = thing.check_cmds()
+        if thing._errors: return thing._errors
         return self.post(f'/create/{kind}', thing)
 
+    def pollinfo(self):
+        return requests.get(f'http://{self.server_addr}/pollinfo').json()
+
     def polls(self):
+        # return requests.get(f'http://{self.server_addr}/ppp/polls')
         return [Poll(self, **p) for p in self.get('/polls')]
 
     def reviews(self):
@@ -270,4 +320,3 @@ class PPPClient:
                 f'symgen.make{sym}("$subject", name="sym"); delete $subject; cmd.set_name("sym", "$subject")',
                 cmdoff='remove not chain A',
             ))
-

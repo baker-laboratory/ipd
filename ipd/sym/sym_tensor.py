@@ -39,7 +39,9 @@ Shape Types:
     * Sparse2D: sparse 2D tensors
 
 
->>> import torch as th
+>>> from ipd.dev.lazy_import import lazyimport
+th = lazyimport('torch')
+
 >>> sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
 >>> sym.idx = [(10, 0, 3), (10, 5, 8)]
 >>> sym.idx.set_kind(
@@ -145,7 +147,10 @@ FullSlicedAll1DBasic([0, 1, 2, 0, 1, 2, 0, 1, 2, 7])
 import sys
 import ipd
 import willutil as wu
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 from torch import Tensor as T
 import functools
 import numpy as np

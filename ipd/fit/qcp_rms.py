@@ -3,7 +3,10 @@ This module provides a PyTorch interface to the QCP RMSD algorithm.
 
 The CUDA implementation is very fast, can compute > 100 million RMSDs per second on a single GPU.
 '''
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import torch.utils.cpp_extension
 import ipd
 from numba import cuda

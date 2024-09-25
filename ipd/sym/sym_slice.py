@@ -1,8 +1,12 @@
 from icecream import ic
 from dataclasses import dataclass
-import torch as th
 from typing import List
 import math
+import ipd
+
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
 
 @dataclass
 class SymSlice:

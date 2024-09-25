@@ -11,27 +11,23 @@ pytest = ipd.dev.lazyimport('pytest', pip=True)
 testclient, pppserver = None, None
 
 def main():
-    with tempfile.TemporaryDirectory() as td:
-        testclient, pppserver = make_tmp_clent_server(td)
-        test_read_root(testclient, pppserver)
-        test_poll(testclient, pppserver)
-        test_will_pymolcmds(testclient, pppserver)
-        test_will_homedir_polls(testclient, pppserver)
-        test_access_all(testclient, pppserver)
-        print('PASS')
+    stress_test_polls()
+    if 0:
+        with tempfile.TemporaryDirectory() as td:
+            testclient, pppserver = make_tmp_clent_server(td)
+            test_read_root(testclient, pppserver)
+            test_poll(testclient, pppserver)
+            test_access_all(testclient, pppserver)
+            print('PASS')
     ipd.dev.global_timer.report()
 
-@ipd.dev.timed
-def test_will_pymolcmds(testclient, pppserver):
-    client = ipd.ppp.PPPClient('localhost:12345')
-    # client = ipd.ppp.PPPClient(testclient)
-    client._add_sym_cmds()
-
-@ipd.dev.timed
-def test_will_homedir_polls(testclient, pppserver):
-    client = ipd.ppp.PPPClient('localhost:12345')
-    # client = ipd.ppp.PPPClient(testclient)
-    client._recursive_add_polls('~')
+def stress_test_polls():
+    backend = ipd.ppp.server.run(12345, 'postgresql://sheffler@192.168.0.154:5432/ppp')
+    backend = next(backend)
+    polls = backend.pollids()
+    # print(len(polls))
+    # print(polls[0])
+    # print(len(','.join([p.name for p in polls])))
 
 @ipd.dev.timed
 def test_access_all(testclient, pppserver):
@@ -41,7 +37,7 @@ def test_access_all(testclient, pppserver):
 @ipd.dev.timed
 def make_tmp_clent_server(tempdir):
     engine = create_engine(f'sqlite:///{tempdir}/test.db')
-    pppserver = ipd.ppp.server.Server(engine, tempdir)
+    pppserver = ipd.ppp.server.Backend(engine, tempdir)
     testclient = TestClient(pppserver.app)
     return testclient, pppserver
 
@@ -126,11 +122,9 @@ def test_poll(testclient, pppserver):
     assert isinstance(files[0].reviews[0], ipd.ppp.Review)
     assert isinstance(files[0].poll, ipd.ppp.Poll)
 
-    client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
-    with pytest.raises(ipd.ppp.PymolCMDSpecError):
-        client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='fubar', cmdoff='hide lines'))
-    with pytest.raises(AssertionError):
-        client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
+    assert not client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
+    assert client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='fubar', cmdoff='hide lines'))
+    assert client.upload(ipd.ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
     assert len(client.pymolcmds()) == 1
 
     for r in reviews:

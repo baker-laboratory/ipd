@@ -12,6 +12,7 @@ import ipd
 from icecream import ic
 import uvicorn
 import psycopg2
+from fastapi.middleware.gzip import GZipMiddleware
 
 fastapi = ipd.lazyimport('fastapi', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -23,10 +24,13 @@ pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodi
 
 SESSION = None
 
+profile = ipd.dev.timed
+# profile = lambda f: f
+
 class DuplicateError(Exception):
     pass
 
-@ipd.dev.timed
+@profile
 class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
@@ -35,7 +39,7 @@ class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
     files: list["DBFile"] = sqlmodel.Relationship(back_populates="poll")
     reviews: list["DBReview"] = sqlmodel.Relationship(back_populates="poll")
 
-    def replace_dir_with_pdblist(self, datadir, suffix, recurse=False):
+    def replace_dir_with_pdblist(self, datadir, recurse=False):
         # sourcery skip: extract-method
         path = Path(self.path)
         if path.is_dir:
@@ -44,10 +48,14 @@ class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
             with open(newpath, 'w') as out:
                 if recurse:
                     for root, dirs, files in os.walk(path):
-                        for fname in (_ for _ in files if _.endswith(suffix) and not _.startswith('_')):
+                        for fname in (_ for _ in files
+                                      if _.endswith(ipd.ppp.STRUCTURE_FILE_SUFFIX) and not _.startswith('_')):
                             out.write(os.path.abspath(os.path.join(path, root, fname)) + os.linesep)
                 else:
-                    for fname in [_ for _ in os.listdir(path) if _.endswith(suffix) and not _.startswith('_')]:
+                    for fname in [
+                            _ for _ in os.listdir(path)
+                            if _.endswith(ipd.ppp.STRUCTURE_FILE_SUFFIX) and not _.startswith('_')
+                    ]:
                         out.write(os.path.join(path, fname) + os.linesep)
             self.path = newpath
             assert os.path.getsize(newpath)
@@ -66,11 +74,11 @@ class DBPoll(ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
                 SESSION.add(file.validated())
 
     def validated(self, server):
-        self.replace_dir_with_pdblist(server.datadir, server.suffix)
+        self.replace_dir_with_pdblist(server.datadir)
         self.populate_files()
         return self
 
-@ipd.dev.timed
+@profile
 class DBFile(ipd.ppp.FileSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
@@ -84,7 +92,7 @@ class DBFile(ipd.ppp.FileSpec, sqlmodel.SQLModel, table=True):
         assert os.path.exists(self.fname)
         return self
 
-@ipd.dev.timed
+@profile
 class DBReview(ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     filedbkey: int = sqlmodel.Field(default=None, foreign_key="dbfile.dbkey")
@@ -109,7 +117,7 @@ class DBReview(ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
         self.permafile = newfname
         return self
 
-@ipd.dev.timed
+@profile
 class DBPymolCMD(ipd.ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
@@ -121,7 +129,7 @@ class DBPymolCMD(ipd.ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
             raise DuplicateError()
         return self
 
-@ipd.dev.timed
+@profile
 class Backend:
     def __init__(self, engine, datadir):
         self.engine = engine
@@ -134,6 +142,7 @@ class Backend:
         self.router = fastapi.APIRouter()
         self.router.add_api_route('/', self.root, methods=['GET'])
         self.router.add_api_route('/polls', self.polls, methods=['GET'])
+        self.router.add_api_route('/pollinfo', self.pollinfo, methods=['GET'])
         self.router.add_api_route('/reviews', self.reviews, methods=['GET'])
         self.router.add_api_route('/files', self.files, methods=['GET'])
         self.router.add_api_route('/pymolcmds', self.pymolcmds, methods=['GET'])
@@ -149,8 +158,8 @@ class Backend:
         self.router.add_api_route('/create/pymolcmd', self.create_pymolcmd, methods=['POST'])
         self.router.add_api_route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
         self.app = fastapi.FastAPI()
+        # self.app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
         self.app.include_router(self.router)
-        self.suffix = tuple('.pdb .pdb.gz .cif .bcif'.split())
 
     def root(self) -> None:
         return dict(msg='Hello World')
@@ -163,9 +172,9 @@ class Backend:
 
     def fix_date(self, x):
         if hasattr(x, 'datecreated') and isinstance(x.datecreated, str):
-            x.datecreated = datetime.strptime(x.datecreated, ipd.ppp.DTFMT)
+            x.datecreated = datetime.strptime(x.datecreated, ipd.ppp.DATETIME_FORMAT)
         if hasattr(x, 'enddate') and isinstance(x.enddate, str):
-            x.enddate = datetime.strptime(x.enddate, ipd.ppp.DTFMT)
+            x.enddate = datetime.strptime(x.enddate, ipd.ppp.DATETIME_FORMAT)
 
     def create_poll(self, poll: DBPoll) -> str:
         return self.validate_and_add_to_db(poll)
@@ -173,6 +182,10 @@ class Backend:
     def poll(self, dbkey, response_model=DBPoll):
         poll = list(self.session.exec(sqlmodel.select(DBPoll).where(DBPoll.dbkey == dbkey)))
         return poll[0] if poll else None
+
+    def pollinfo(self):
+        result = self.session.execute(sqlalchemy.text('select dbkey,name,user,"desc" from dbpoll')).fetchall()
+        return list(map(tuple, result))
 
     def polls(self, response_model=list[DBPoll]):
         return list(self.session.exec(sqlmodel.select(DBPoll)))
@@ -264,28 +277,27 @@ class Server(uvicorn.Server):
     def install_signal_handlers(self):
         pass
 
-    @contextlib.contextmanager
     def run_in_thread(self):
-        thread = threading.Thread(target=self.run)
-        thread.start()
-        try:
-            while not self.started:
-                time.sleep(1e-3)
-            yield
-        finally:
-            self.should_exit = True
-            thread.join()
+        self.thread = threading.Thread(target=self.run)
+        self.thread.start()
 
-def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', log='info'):
+    def stop(self):
+        self.should_exit = True
+        self.thread.join()
+
+@profile
+def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', **kw):
+    import pymol
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
     os.makedirs(datadir, exist_ok=True)
     engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)
-    config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=log)
+    pymol.pymol_argv = ['pymol', '-qcK']
+    pymol.finish_launching()
+    config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=loglevel)
     server = Server(config=config)
-    with server.run_in_thread():
-        ipd.ppp.defaults.add_defaults(f'localhost:{port}')
-        while True:
-            time.sleep(1)
+    server.run_in_thread()
+    ipd.ppp.defaults.add_defaults(f'localhost:{port}', **kw)
+    return server, backend

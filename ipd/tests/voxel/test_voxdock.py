@@ -1,7 +1,10 @@
 import numpy as np
 import pytest
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import willutil as wu
 from willutil import h
 from icecream import ic
@@ -37,9 +40,9 @@ def test_voxdock_ab(timer=wu.Timer()):
     # rb = ipd.voxel.VoxRB(xyz[:128], resl=1, func=ipd.cuda.ContactFunc())
 
     rb = ipd.voxel.VoxRB(xyz,
-                        resl=1,
-                        func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
-                        repulsive_only=repulsive_only)
+                         resl=1,
+                         func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
+                         repulsive_only=repulsive_only)
     # trans_score = rb.score(rb, th.eye(4), wu.h.trans(x=th.arange(40, 50, 0.1))).min()
     # ic(trans_score)
     timer.checkpoint('vox')

@@ -1,7 +1,10 @@
 from icecream import ic
 import pytest
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import hypothesis
 from hypothesis import strategies as st
 from ipd.tests.sym import symslices

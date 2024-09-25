@@ -1,6 +1,9 @@
 import pytest
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 from ipd.sym import SymAdaptTensor
 
 @pytest.mark.fast

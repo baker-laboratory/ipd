@@ -1,5 +1,8 @@
 import pytest
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd
 from icecream import ic
 import willutil as wu

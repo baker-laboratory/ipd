@@ -1,4 +1,7 @@
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd
 import willutil as wu
 from willutil import h
