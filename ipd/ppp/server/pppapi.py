@@ -290,7 +290,9 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     import pymol
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
+    if not dburl.count('://'): dburl = 'sqlite:///' + dburl
     os.makedirs(datadir, exist_ok=True)
+    print(f'creating db engine from url: "{dburl}"')
     engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)

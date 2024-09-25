@@ -46,6 +46,7 @@ class PollSpec(pydantic.BaseModel):
     ligand: str = 'unknown'
     public: bool = False
     telemetry: bool = False
+    workflow: str = 'manual'
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
     props: list[str] = []
@@ -64,7 +65,8 @@ class PollSpec(pydantic.BaseModel):
                 global _checkobjnum
                 fname = next(filter(lambda s: s.endswith(STRUCTURE_FILE_SUFFIX), os.listdir(self.path)))
                 pymol.cmd.set('suspend_updates', 'on')
-                pyml.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+                with contextlib.suppress(pymol.CmdException):
+                    pymol.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
                 pymol.cmd.delete('all')
                 pymol.cmd.load(os.path.join(self.path, fname), f'TMP{_checkobjnum}')
                 if self.ligand == 'unknown':
@@ -89,8 +91,9 @@ class PollSpec(pydantic.BaseModel):
                 pymol.cmd.delete(f'TMP{_checkobjnum}')
                 pymol.cmd.set('suspend_updates', 'off')
                 _checkobjnum += 1
-                pyml.cmd.load(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
-                os.remove(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+                with contextlib.suppress(pymol.CmdException):
+                    pymol.cmd.load(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+                    os.remove(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
         return self
 
     @pydantic.validator('props')

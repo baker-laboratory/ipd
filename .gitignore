@@ -167,3 +167,4 @@ cython_debug/
 *.sublime-workspace
 .qtcreator
 \#*
+ppp_server_data
