@@ -4,6 +4,8 @@ IncludeCmd: yes
 
 %setup
     mkdir -p $APPTAINER_ROOTFS/prettier_protein_project/lib
+    mkdir -p $APPTAINER_ROOTFS/home
+    mkdir -p $APPTAINER_ROOTFS/scratch
     touch $APPTAINER_ROOTFS/etc/localtime
     touch $APPTAINER_ROOTFS/etc/hosts
     touch $APPTAINER_ROOTFS/root/.pymolrc

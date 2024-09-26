@@ -24,8 +24,8 @@ pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodi
 
 SESSION = None
 
-profile = ipd.dev.timed
-# profile = lambda f: f
+# profile = ipd.dev.timed
+profile = lambda f: f
 
 class DuplicateError(Exception):
     pass
@@ -107,11 +107,13 @@ class DBReview(ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
         return self.dbkey
 
     def validated(self, server):
+        print('VALIDATE_REVIEW')
         assert self.file
         assert self.poll
         path = os.path.join(server.datadir, 'poll', str(self.poll.dbkey), 'reviewed')
         os.makedirs(path, exist_ok=True)
         newfname = os.path.join(path, self.file.fname.replace('/', '\\'))
+        print('MAKEPERMAFILE', newfname)
         if not os.path.exists(newfname):
             shutil.copyfile(self.file.fname, newfname)
         self.permafile = newfname
@@ -244,6 +246,7 @@ class Backend:
         return list(rev)
 
     def create_review(self, review: DBReview) -> str:
+        print('backend create_review')
         poll = self.poll(review.polldbkey)
         filedbkey = [f.dbkey for f in poll.files if f.fname == review.fname]
         if not filedbkey:

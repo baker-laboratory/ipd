@@ -26,8 +26,8 @@ pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodi
 
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
-profile = ipd.dev.timed
-# profile = lambda f: f
+# profile = ipd.dev.timed
+profile = lambda f: f
 
 class PPPClientError(Exception):
     pass
@@ -118,7 +118,7 @@ class ReviewSpec(pydantic.BaseModel):
     _errors: str = ''
 
     @pydantic.validator('grade')
-    def valgrade(cls, grade):
+    def valgrade(cls, grade, values):
         assert grade.upper() in 'SABCDF'
         return grade.upper()
 
@@ -126,6 +126,12 @@ class ReviewSpec(pydantic.BaseModel):
     def valfname(cls, fname):
         assert os.path.exists(fname)
         return os.path.abspath(fname)
+
+    @pydantic.model_validator(mode='after')
+    def checkcomment(self):
+        if self.grade == 'S' and not self.comment:
+            self._errors += 'S-tier review requires a comment!'
+        return self
 
 @profile
 class FileSpec(pydantic.BaseModel):
@@ -160,6 +166,8 @@ class PymolCMDSpec(pydantic.BaseModel):
     onstart: bool = False
     public: bool = True
     user: str = getpass.getuser()
+    ligand: str = ''
+    sym: str = ''
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}

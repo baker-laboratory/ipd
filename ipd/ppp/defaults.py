@@ -17,10 +17,11 @@ def add_defaults(server_addr, stress_test_polls=False):
         add_sym_cmds(client)
     # for pref in ['DUMMY']:
     if stress_test_polls:
-        dirs = find_pdb_dirs('~', 1, 20)
-        dirs.append('/home/sheffler/project/rfdsym/hilvert/pymol_saves')
-        dirs.append('/home/sheffler/project/rfdsym/abbas/pymol_saves')
+        dirs = find_pdb_dirs('~', 10, 20)
+        dirs.insert(0, '/home/sheffler/project/rfdsym/hilvert/pymol_saves')
+        dirs.insert(0, '/home/sheffler/project/rfdsym/abbas/pymol_saves')
         for dir_ in dirs:
+            print(f'CREATEPOLL: {dir_}')
             client.upload(
                 ipd.ppp.PollSpec(name=dir_.replace('/home/sheffler/', '/').replace('/', '__'),
                                  path=dir_,

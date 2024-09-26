@@ -8,6 +8,7 @@ import datetime
 import collections
 import ipd
 from ipd import ppp
+from io import StringIO
 import os
 import pickle
 import pymol
@@ -32,12 +33,11 @@ CONFIG_FILE = f'{CONFIG_DIR}/localconfig.yaml'
 STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
 SESSION_RESTORE = f'{CONFIG_DIR}/session_restore.pse'
 PPPPP_PICKLE = f'{CONFIG_DIR}/PrettyProteinProjectPymolPluginPanel.pickle'
-SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 TEST_STATE = {}
 DEFAULTS = dict(reviewed=set(),
                 pymol_view={},
                 prefetch=True,
-                review_action='cp $file ./ppp/$poll_$grade_$filebase',
+                review_action='cp $file $pppdir/$poll/$grade_$filebase',
                 do_review_action=False,
                 findcmd='',
                 findpoll='',
@@ -48,6 +48,10 @@ DEFAULTS = dict(reviewed=set(),
 NOT_PER_POLL = {'prefetch'}
 # profile = ipd.dev.timed
 profile = lambda f: f
+_debug_state = {'pppdir'}
+
+def notify(message):
+    pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
 
 def isfalse_notify(ok, message):
     if not ok:
@@ -68,6 +72,15 @@ def ppp_pymol_set(name, val):
     else:
         return setstate(f'pymol_{name}', val)
 
+def haveconf(k):
+    return k in conf.opt
+
+def getconf(k):
+    return conf.opt[k]
+
+def setconf(k, v):
+    return setattr(conf.opt, k, v)
+
 def havestate(name):
     if ppppp and ppppp.polls.pollinprogress and name in state.polls[ppppp.polls.pollinprogress.poll.name]:
         return True
@@ -75,21 +88,21 @@ def havestate(name):
     if name in conf.opts: return True
     return False
 
-def getstate(name, poll=None, debug=False, indent=''):
+def getstate(name, poll=None, indent=''):
     poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
     if name not in NOT_PER_POLL and poll and name in state.polls[poll]:
-        if debug: print('Get', name, state.polls[poll][name], 'from poll', poll)
+        if name in _debug_state: print('Get', name, state.polls[poll][name], 'from poll', poll)
         return state.polls[poll][name]
     else:
         if name in state:
             val = state[name]
-            if debug: print(f'{indent}Get', name, val, 'from state', poll)
+            if name in _debug_state: print(f'{indent}Get', name, val, 'from state', poll)
         elif name in conf.opts:
             val = conf.opts[name]
-            if debug: print(f'{indent}Get', name, val, 'from opts', poll)
+            if name in _debug_state: print(f'{indent}Get', name, val, 'from opts', poll)
         elif name in DEFAULTS:
             val = DEFAULTS[name]
-            if debug: print(f'{indent}Get', name, val, 'from defaults', poll)
+            if name in _debug_state: print(f'{indent}Get', name, val, 'from defaults', poll)
         else:
             raise ValueError(f'unknown state {name}')
         if poll:
@@ -99,19 +112,19 @@ def getstate(name, poll=None, debug=False, indent=''):
         return val
     raise ValueError(findent + 'Get unknown state {name}')
 
-def setstate(name, val, poll=None, debug=False):
+def setstate(name, val, poll=None):
     with contextlib.suppress(ValueError):
-        getstate(name, poll, debug=debug, indent='   ')  # check already exists
+        getstate(name, poll, indent='   ')  # check already exists
     poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
     if name not in NOT_PER_POLL and poll:
-        if debug: print('Set', name, val, 'topoll', poll)
+        if name in _debug_state: print('Set', name, val, 'topoll', poll)
         dest = state.polls[poll]
     elif name in conf.opts and name not in state:
         dest = conf.opts
-        if debug: print('Set', name, val, 'topots', poll)
+        if name in _debug_state: print('Set', name, val, 'topots', poll)
     else:
         dest = state
-        if debug: print('Set', name, val, 'tostate', poll)
+        if name in _debug_state: print('Set', name, val, 'tostate', poll)
     setattr(dest, name, val)
 
 _subject_count = 0
@@ -234,11 +247,11 @@ class PrefetchLocalFileCache(FileCache):
 
 def fnames_from_path(fnames):
     if os.path.isdir(fnames):
-        fnames = [os.path.join(fnames, _) for _ in os.listdir(fnames) if _.endswith(SUFFIX)]
+        fnames = [os.path.join(fnames, _) for _ in os.listdir(fnames) if _.endswith(ppp.STRUCTURE_FILE_SUFFIX)]
     else:
         with open(fnames) as inp:
             fnames = list(map(os.path.abspath, map(str.strip, inp)))
-        if not all(f.endswith(SUFFIX) or os.path.isdir(f) for f in fnames): return None
+        if not all(f.endswith(ppp.STRUCTURE_FILE_SUFFIX) or os.path.isdir(f) for f in fnames): return None
         if not all(os.path.exists(f) for f in fnames): return None
     return fnames
 
@@ -250,6 +263,8 @@ class PollInProgress:
         Cache = PrefetchLocalFileCache if getstate('prefetch') else FileCache
         self.filecache = Cache(self.fnames, numprefetch=7 if conf.prefetch else 0)
         ppppp.set_pbar(0, len(getstate('reviewed', poll=self.poll.name)), len(self.fnames))
+        ppppp.widget.showsym.setText(self.poll.sym)
+        ppppp.widget.showlig.setText(self.poll.ligand)
 
     def init_files(self, fnames):
         if isinstance(fnames, (str, bytes)):
@@ -287,26 +302,64 @@ class PollInProgress:
         if delta: index = (index + delta) % len(self.fnames)
         if index >= len(self.fnames): return False
         if self.viewer: self.viewer.cleanup()
+        ppppp.widget.showfile.setText(self.fnames[index])
         self.viewer = PymolFileViewer(self.filecache[index], ppppp.toggles)
         self.index = index
         return True
 
-    def review_complete(self, review):
+    def record_review(self, grade, comment):
+        review = ppp.ReviewSpec(grade=grade,
+                                comment=comment,
+                                polldbkey=self.poll.dbkey,
+                                fname=self.fnames[self.index])
+        if getstate('do_review_action') and not self.exec_review_action(review): return
+        response = remote.upload(review)
+        if isfalse_notify(not response, f'server response: {response}'): return
+        self.review_accepted(review)
+
+    def review_accepted(self, review):
         pymol.cmd.delete(subject_name())
         getstate('reviewed').add(self.viewer.fname)
-        if getstate('do_review_action'):
-            cmd = getstate('review_action').replace('$grade', review.grade)
-            cmd = cmd.replace('$poll', self.poll.name.replace(' ', '_'))
-            cmd = cmd.replace('$filebase', os.path.basename(self.viewer.fname))
-            cmd = cmd.replace('$file', self.viewer.fname)
-        result = subprocess.check_output(cmd.split(), shell=True)
-        isfalse_notify(not result, f'review action output: {result}')
         ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(self.fnames) - 1)
         if len(getstate('reviewed')) == len(self.fnames): ppppp.polls.poll_finished()
-        else: switch_to(delta=1)
+        else: self.switch_to(delta=1)
+
+    def preprocess_shell_cmd(self, cmd):
+        cmd = cmd.replace('$pppdir', os.path.abspath(os.path.expanduser(conf.opt.pppdir)))
+        cmd = cmd.replace('$poll', self.poll.name.replace(' ', '_'))
+        cmd = cmd.replace('$filebase', os.path.basename(self.fnames[self.index]))
+        cmd = cmd.replace('$file', self.viewer.fname)
+        cmds = []
+        for line in cmd.split(os.linesep):
+            for c in line.split(';'):
+                noopt = [_ for _ in c.split() if not _.startswith('-')]
+                if noopt[0] in 'cp rsync'.split():
+                    # print('MAKEDIR', os.path.expanduser(os.path.dirname(noopt[-1])))
+                    os.makedirs(os.path.expanduser(os.path.dirname(noopt[-1])), exist_ok=True)
+                    for fn in filter(lambda s: s.endswith(ppp.STRUCTURE_FILE_SUFFIX), noopt[1:-1]):
+                        assert os.path.exists(fn)
+                cmds.append(c.split())
+        return cmds
+
+    def exec_review_action(self, review):
+        cmds = self.preprocess_shell_cmd(getstate('review_action').replace('$grade', review.grade))
+        for cmd in cmds:
+            try:
+                result = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+                # print(result)
+            except subprocess.CalledProcessError as e:
+                msg = (f'on review action failed to execute:\n{" ".join(cmd)}\nRETURN CODE: '
+                       f'{e.returncode}\nOUTPUT: {e.output.decode()}\nEXCEPTION: {e.cmd}')
+                notify(msg)
+                return False
+        # return not isfalse_notify(not result, f'review action output: {result}')
+        return True
 
     def cleanup(self):
         if self.viewer: self.viewer.cleanup()
+        ppppp.widget.showfile.setText('')
+        ppppp.widget.showsym.setText('')
+        ppppp.widget.showlig.setText('')
         self.filecache.cleanup()
 
 @profile
@@ -340,18 +393,21 @@ class Polls:
     def refresh_polls(self):
         self.allpolls = remote.pollinfo() + [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand)
                                              for p in conf.polls]
-        print(self.allpolls[0])
-        assert 0
-        self.pollsearch = '\n'.join([f'{p[1]}||||{p[2]}' for p in self.allpolls])
-        self.polldesc = {p[1]: f'{p[2]}: {p[3]}' for p in self.allpolls}
-        self.allpolls = {p[1]: p[0] for p in self.allpolls}
+        self.pollsearch, self.polldesc, allpolls = [], {}, {}
+        for k, n, u, d, s, l in self.allpolls:
+            self.polldesc[n] = f'NAME: {n}\nDESCRIPTION: {d}\nSYM: {s}\nUSER: {u}\nLIG: {l}'
+            self.pollsearch.append(f'{n}||||{d} sym:{s} user:{u} lig:{l}')
+            allpolls[n] = k
+        self.allpolls = allpolls
+        self.pollsearch = '\n'.join(self.pollsearch)
         self.listwidget.clear()
         if self.listwidget.count() == 0:
-            self.listitems = []
+            self.listitems, self.listitemdict = [], {}
             for i, name in enumerate(sorted(self.allpolls)):
                 self.listwidget.addItem(name)
                 self.listitems.append(self.listwidget.item(i))
                 self.listitems[-1].setToolTip(self.polldesc[name])
+                self.listitemdict[name] = self.listitems[-1]
         self.update_poll_list()
         if state.activepoll and state.activepoll in self.allpolls:
             self.poll_start(state.activepoll)
@@ -369,12 +425,12 @@ class Polls:
 
     def update_poll_list(self):
         if not self.listitems: self.refresh_polls()
-        activepolldbkey = self.allpolls[state.activepoll] if state.activepoll in self.allpolls else None
         self.visiblepolls = self.filtered_poll_list()
+        if state.activepoll in self.listitemdict:
+            self.listitemdict[state.activepoll].setSelected(True)
         for item in self.listitems:
             hidden = item.text() not in self.visiblepolls and not item.isSelected()
             item.setHidden(hidden)
-            # if poll.dbkey == activepolldbkey: item.setSelected(True)
 
     def pollstatus(self, poll):
         if not os.path.exists(poll.path): return 'invalid'
@@ -432,7 +488,7 @@ class Polls:
         poll.path = os.path.abspath(os.path.expanduser(poll.path))
         if isfalse_notify(os.path.exists(poll.path), 'path does not exist!'): return
         if isfalse_notify(fnames_from_path(poll.path),
-                          f'contains no files with ipd.ppp.STRUCTURE_FILE_SUFFIX {SUFFIX}'):
+                          f'contains no files with sufflix {ppp.STRUCTURE_FILE_SUFFIX}'):
             return
         if poll.public:
             response = remote.upload(poll)
@@ -564,7 +620,8 @@ class ToggleCommands:
         for cmd in cmds:
             self.listwidget.addItem(cmd.name)
             item = self.listwidget.item(self.listwidget.count() - 1)
-            item.setToolTip(f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\nPUBLIC: {cmd.public}')
+            item.setToolTip(f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\n'
+                            f'PUBLIC: {cmd.public}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}')
             cmd.init_session(item)
             cmd.widget.setCheckState(2) if cmd.name in getstate('active_cmds') else cmd.widget.setCheckState(0)
 
@@ -588,7 +645,7 @@ class PrettyProteinProjectPymolPluginPanel:
                                             self.widget)
         self.widget.show()
         for grade in 'SABCDF':
-            getattr(self.widget, f'{grade.lower()}tier').clicked.connect(partial(self.record_review, grade))
+            getattr(self.widget, f'{grade.lower()}tier').clicked.connect(partial(self.grade_pressed, grade))
         self.widget.button_newpoll.clicked.connect(lambda: self.polls.create_poll_start())
         self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
         self.widget.button_refresh_polls.clicked.connect(lambda: self.polls.refresh_polls())
@@ -598,6 +655,7 @@ class PrettyProteinProjectPymolPluginPanel:
         self.widget.button_load.clicked.connect(lambda: self.load_session())
         self.widget.button_restart.clicked.connect(lambda: self.init_session())
         self.widget.button_quit.clicked.connect(lambda: self.quit())
+        self.widget.button_quitpymol.clicked.connect(lambda: self.quit(exitpymol=True))
         self.keybinds = []
         self.add_keybind('left', 'LeftArrow', lambda: self.polls.pollinprogress.switch_to(delta=-1))
         self.add_keybind('right', 'RightArrow', lambda: self.polls.pollinprogress.switch_to(delta=1))
@@ -616,29 +674,29 @@ class PrettyProteinProjectPymolPluginPanel:
         action['findpoll'] = self.polls.update_poll_list
         action['findcmd'] = self.toggles.update_toggle_list
         for name, widget in self.widget.__dict__.items():
-            if not name.startswith('opt_'): continue
-            opt = name[4:]
+            if name.startswith('opt_'):
+                opt, have, get, set_ = name[4:], havestate, getstate, setstate
+                # print('LOCALOPT', opt)
+            elif name.startswith('globalopt_'):
+                opt, have, get, set_ = name[10:], haveconf, getconf, setconf
+                # print('GLOBALOPT', opt, have, get, set)
+            else:
+                continue
             if widget.__class__.__name__.endswith('QLineEdit'):
-                if havestate(opt): widget.setText(getstate(opt))
-                else: setstate(opt, widget.text())
-                widget.textChanged.connect(lambda _, opt=opt: (setstate(opt, _), action[opt]()))
+                if have(opt): widget.setText(get(opt))
+                else: set_(opt, widget.text())
+                widget.textChanged.connect(lambda _, opt=opt, setter=set_: (setter(opt, _), action[opt]()))
             elif widget.__class__.__name__.endswith('QCheckBox'):
-                if havestate(opt): widget.setCheckState(getstate(opt))
-                else: setstate(opt, 2 if widget.checkState() else 0)
-                widget.stateChanged.connect(lambda _, opt=opt: (setstate(opt, _), action[opt]()))
+                if have(opt): widget.setCheckState(get(opt))
+                else: set_(opt, 2 if widget.checkState() else 0)
+                widget.stateChanged.connect(lambda _, opt=opt, setter=set_: (setter(opt, _), action[opt]()))
             else:
                 raise ValueError(f'dont know how to use option widget type {type(v)}')
 
-    def record_review(self, grade):
+    def grade_pressed(self, grade):
         if isfalse_notify(self.polls.pollinprogress, 'No active poll!'): return
-        review = ppp.Review(
-            grade=grade,
-            comment=self.widget.comment.toPlainText(),
-        )
-        response = self.client.upload(review)
-        if isfalse_notify(not response, f'server response: {response}'): return
-        self.widget.comment.clear()
-        self.polls.pollinprogress.review_complete(review)
+        if self.polls.pollinprogress.record_review(grade, comment=self.widget.comment.toPlainText()):
+            self.widget.comment.clear()
 
     def set_pbar(self, lb=None, val=None, ub=None, done=None):
         if done: return self.widget.progress.setProperty('enabled', False)
@@ -657,7 +715,7 @@ class PrettyProteinProjectPymolPluginPanel:
         state._autoreload_check()
         self.init_session()
 
-    def quit(self):
+    def quit(self, exitpymol=False):
         self.widget.hide()
         self.polls.cleanup()
         self.toggles.cleanup()
@@ -666,6 +724,7 @@ class PrettyProteinProjectPymolPluginPanel:
             pymol.cmd.load(SESSION_RESTORE)
             os.remove(SESSION_RESTORE)
         ipd.dev.global_timer.report()
+        if exitpymol: sys.exit()
 
 @profile
 def run_local_server(port=54321):
