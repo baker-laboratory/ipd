@@ -184,7 +184,8 @@ class Backend:
         return poll[0] if poll else None
 
     def pollinfo(self):
-        result = self.session.execute(sqlalchemy.text('select dbkey,name,user,"desc" from dbpoll')).fetchall()
+        result = self.session.execute(
+            sqlalchemy.text('select dbkey,name,user,"desc",sym,ligand from dbpoll')).fetchall()
         return list(map(tuple, result))
 
     def polls(self, response_model=list[DBPoll]):
@@ -290,13 +291,13 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     import pymol
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
-    if not dburl.count('://'): dburl = 'sqlite:///' + dburl
+    if not dburl.count('://'): dburl = f'sqlite:///{dburl}'
     os.makedirs(datadir, exist_ok=True)
     print(f'creating db engine from url: "{dburl}"')
     engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)
-    pymol.pymol_argv = ['pymol', '-qcK']
+    pymol.pymol_argv = ['pymol', '-qckK']
     pymol.finish_launching()
     config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=loglevel)
     server = Server(config=config)

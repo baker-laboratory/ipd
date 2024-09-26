@@ -338,8 +338,10 @@ class Polls:
             self.newpollwidget.path.setText(file_names[0])
 
     def refresh_polls(self):
-        self.allpolls = remote.pollinfo() + [(p.dbkey, p.name, p.user, p.desc) for p in conf.polls]
+        self.allpolls = remote.pollinfo() + [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand)
+                                             for p in conf.polls]
         print(self.allpolls[0])
+        assert 0
         self.pollsearch = '\n'.join([f'{p[1]}||||{p[2]}' for p in self.allpolls])
         self.polldesc = {p[1]: f'{p[2]}: {p[3]}' for p in self.allpolls}
         self.allpolls = {p[1]: p[0] for p in self.allpolls}
@@ -675,7 +677,7 @@ def run_local_server(port=54321):
     __server_thread = threading.Thread(target=ppp.server.run, kwargs=args, daemon=True)
     __server_thread.start()
     # dialog should cover server start time
-    isfalse_notify(False, f"Can't connt to: {SERVER_ADDR}\nWill try to run a conf server.")
+    isfalse_notify(False, f"Can't connt to: {SERVER_ADDR}\nWill try to run a local server.")
     return ppp.PPPClient(f'127.0.0.1:{port}')
 
 @profile
