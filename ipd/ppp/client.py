@@ -34,6 +34,19 @@ class PPPClientError(Exception):
 
 _checkobjnum = 0
 
+def fix_label_case(thing):
+    if isinstance(thing, dict):
+        keys, get, set = thing.keys(), thing.__getitem__, thing.__setitem__
+    elif isinstance(thing, pydantic.BaseModel):
+        keys, get, set = thing.model_fields_set, thing.__getattribute__, thing.__setattr__
+    else:
+        raise TypeError(f' fix_label_case unsupported type{type(thing)}')
+    if 'name' in keys: set('name', get('name').title())
+    if 'sym' in keys: set('sym', get('sym').lower())
+    if 'user' in keys: set('user', get('user').lower())
+    if 'workflow' in keys: set('workflow', get('workflow').lower())
+    if 'ligand' in keys: set('ligand', get('ligand').upper())
+
 @profile
 class PollSpec(pydantic.BaseModel):
     name: str
@@ -43,6 +56,7 @@ class PollSpec(pydantic.BaseModel):
     cmdstart: str = ''
     cmdstop: str = ''
     sym: str = ''
+    nchain: int = -1
     ligand: str = 'unknown'
     public: bool = False
     telemetry: bool = False
@@ -54,16 +68,18 @@ class PollSpec(pydantic.BaseModel):
     _errors: str = ''
 
     @pydantic.model_validator(mode='after')
-    def _update(self):
+    def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
+        fix_label_case(self)
         if not self.name: self.name = os.path.basename(self.path)
-        self.name = self.name.title()
         if not self.desc: self.desc = f"PDBs in {self.path}"
+        self.sym = ipd.sym.guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
         if not self.sym or self.ligand == 'unknown':
             nchain = 1
             try:
                 global _checkobjnum
-                fname = next(filter(lambda s: s.endswith(STRUCTURE_FILE_SUFFIX), os.listdir(self.path)))
+                filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
+                fname = next(filter(filt, os.listdir(self.path)))
                 pymol.cmd.set('suspend_updates', 'on')
                 with contextlib.suppress(pymol.CmdException):
                     pymol.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
@@ -77,8 +93,12 @@ class PollSpec(pydantic.BaseModel):
                 if not self.sym:
                     pymol.cmd.remove(f'TMP{_checkobjnum} and not name ca')
                     chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_checkobjnum}').atom}
-                    nchain = len(chains)
-                    xyz = pymol.cmd.get_coords(f'TMP{_checkobjnum}').reshape(len(chains), -1, 3)
+                    self.nchain = len(chains)
+                    xyz = pymol.cmd.get_coords(f'TMP{_checkobjnum}')
+                    if xyz is None:
+                        self._errors += f'pymol get_coords failed on TMP{_checkobjnum}\nfname: {fname}'
+                        return self
+                    xyz = xyz.reshape(len(chains), -1, 3)
                     self.sym = ipd.sym.guess_symmetry(xyz)
             except ValueError as e:
                 # print(os.path.join(self.path, fname))
@@ -86,7 +106,7 @@ class PollSpec(pydantic.BaseModel):
                 if nchain < 4: self.sym = 'C1'
                 else: self.sym = 'unknown'
             except (AttributeError, pymol.CmdException, gzip.BadGzipFile) as e:
-                self._errors = f'{type(e)} {e}'
+                self._errors += f'POLL error in _validated: {type(e)}\n{e}'
             finally:
                 pymol.cmd.delete(f'TMP{_checkobjnum}')
                 pymol.cmd.set('suspend_updates', 'off')
@@ -128,7 +148,8 @@ class ReviewSpec(pydantic.BaseModel):
         return os.path.abspath(fname)
 
     @pydantic.model_validator(mode='after')
-    def checkcomment(self):
+    def _validated(self):
+        fix_label_case(self)
         if self.grade == 'S' and not self.comment:
             self._errors += 'S-tier review requires a comment!'
         return self
@@ -168,6 +189,7 @@ class PymolCMDSpec(pydantic.BaseModel):
     user: str = getpass.getuser()
     ligand: str = ''
     sym: str = ''
+    nchain: str = ''
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: list[str] = []
     attrs: dict[str, str | int | float] = {}
@@ -176,16 +198,22 @@ class PymolCMDSpec(pydantic.BaseModel):
     def errors(self):
         return self._errors
 
-    def check_cmds(self):
+    @pydantic.model_validator(mode='after')
+    def _validated(self):
+        fix_label_case(self)
+        self._check_cmds()
+        return self
+
+    def _check_cmds(self):
         self._check_cmds_output = '-' * 80 + os.linesep + str(self) + os.linesep + '_' * 80 + os.linesep
         self._errors = ''
         objlist = pymol.cmd.get_object_list()
         global TOBJNUM
         TOBJNUM += 1
         pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{TOBJNUM}')
-        self.check_cmd('cmdstart')
-        self.check_cmd('cmdon')
-        self.check_cmd('cmdoff')
+        self._check_cmd('cmdstart')
+        self._check_cmd('cmdon')
+        self._check_cmd('cmdoff')
         pymol.cmd.delete(f'TEST_OBJECT{TOBJNUM}')
         if any([
                 pymol.cmd.get_object_list() != objlist,
@@ -195,7 +223,7 @@ class PymolCMDSpec(pydantic.BaseModel):
             self._errors = self._check_cmds_output
         return self
 
-    def check_cmd(self, cmdname):
+    def _check_cmd(self, cmdname):
         with tempfile.TemporaryDirectory() as td:
             with open(f'{td}/stdout.log', 'w') as out:
                 with ipd.dev.redirect(stdout=out, stderr=out):
@@ -220,6 +248,10 @@ class ClientMixin(pydantic.BaseModel):
 
     def __getitem__(self, key):
         return getattr(self, key)
+
+    def _validated(self):
+        'noop, as validation should have happened at Spec stage'
+        return self
 
 def client_obj_representer(dumper, obj):
     data = obj.dict()
@@ -280,41 +312,48 @@ class PPPClient:
     def getattr(self, thing, dbkey, attr):
         return self.get(f'/getattr/{thing}/{dbkey}/{attr}')
 
-    def get(self, url):
+    def get(self, url, **kw):
+        fix_label_case(kw)
+        query = '&'.join([f'{k}={v}' for k, v in kw.items()])
+        url = f'{url}?{query}' if query else url
+        if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
         if self.testclient: response = self.testclient.get(url)
-        else: response = requests.get(f'http://{self.server_addr}/ppp{url}')
-        if response.status_code != 200: raise PPPClientError(f'GET failed {url} \n {response}')
+        else: response = requests.get(url)
+        if response.status_code != 200:
+            raise PPPClientError(f'GET failed URL: "{url}" \n RESPONSE: "{response.reason}"')
         return response.json()
 
-    def post(self, url, thing):
+    def post(self, url, thing, **kw):
+        query = '&'.join([f'{k}={v}' for k, v in kw.items()])
+        url = f'{url}?{query}' if query else url
+        if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
+        # print('POST', url, thing)
         json = thing.json()
         if self.testclient: response = self.testclient.post(url, content=json)
-        else: response = requests.post(f'http://{self.server_addr}/ppp{url}', json)
+        else: response = requests.post(url, json)
         if response.status_code != 200: raise PPPClientError(f'POST failed {url} {json} \n {response}')
         return response.json()
 
-    def upload(self, thing):
-        kind = type(thing).__name__.replace('Spec', '').lower()
-        if kind == 'pymolcmd':
-            thing = thing.check_cmds()
+    def upload(self, thing, **kw):
+        # print('upload', type(thing), kw)
         if thing._errors: return thing._errors
-        return self.post(f'/create/{kind}', thing)
+        kind = type(thing).__name__.replace('Spec', '').lower()
+        return self.post(f'/create/{kind}', thing, **kw)
 
     def pollinfo(self):
         return requests.get(f'http://{self.server_addr}/pollinfo').json()
 
-    def polls(self):
-        # return requests.get(f'http://{self.server_addr}/ppp/polls')
-        return [Poll(self, **p) for p in self.get('/polls')]
+    def polls(self, **kw):
+        return [Poll(self, **p) for p in self.get('/polls', **kw)]
 
-    def reviews(self):
-        return [Review(self, **_) for _ in self.get('/reviews')]
+    def reviews(self, **kw):
+        return [Review(self, **_) for _ in self.get('/reviews', **kw)]
 
-    def files(self):
-        return [File(self, **_) for _ in self.get('/files')]
+    def files(self, **kw):
+        return [File(self, **_) for _ in self.get('/files', **kw)]
 
-    def pymolcmds(self):
-        return [PymolCMD(self, **_) for _ in self.get('/pymolcmds')]
+    def pymolcmds(self, **kw):
+        return [PymolCMD(self, **_) for _ in self.get('/pymolcmds', **kw)]
 
     def pymolcmdsdict(self):
         return self.get('/pymolcmds')

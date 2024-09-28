@@ -35,6 +35,7 @@ def run_pymol():
     pymol = pytest.importorskip('pymol')
     pymol.pymol_argv = ['pymol', '-q']
     pymol.finish_launching()
+    # ipd.ppp.plugin.ppppp.run()
     # from ipd.ppp.plugin.ppppp import run_ppppp_gui
     # ui = run_ppppp_gui()
     # while time.sleep(1): pass

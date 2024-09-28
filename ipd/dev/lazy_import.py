@@ -20,17 +20,18 @@ class LazyModule:
         try:
             return self._mambathenpipimport()
         except ImportError as e:
-            print('-' * 80)
-            print(f'import_module({self._name}) failed, {self._package} {self._pip} sys.path is:')
+            # print('-' * 80)
+            print(f'import_module({self._name}) failed')
+            # print({self._package} {self._pip} sys.path is:')
             for p in sys.path:
                 p = Path(p) / self._name.replace('.', '/')
-                print(p)
+                # print(p)
                 if os.path.exists(p):
                     print('WTF, path exists:')
                     for f in os.listdir(p):
                         print(f'    {f}')
-            print(e)
-            print('-' * 80)
+            # print(e)
+            # print('-' * 80)
             raise ImportError(f'Failed to import module: {self._name}') from e
         except Exception as e:
             raise ImportError(f'Failed to import module: {self._name}') from e

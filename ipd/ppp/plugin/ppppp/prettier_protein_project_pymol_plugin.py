@@ -20,13 +20,15 @@ import tempfile
 import threading
 import time
 import traceback
+from rich import print
 
 it = ipd.lazyimport('itertools', 'more_itertools', pip=True)
 requests = ipd.lazyimport('requests', pip=True)
 fuzzyfinder = ipd.lazyimport('fuzzyfinder', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 
-remote, conf, ppppp = None, None, None
+remote, state, ppppp = None, None, None
+ISGLOBALSTATE, ISPERPOLLSTATE = set(), set()
 SERVER_ADDR = os.environ.get('PPPSERVER', '127.0.0.1:12345')
 CONFIG_DIR = os.path.expanduser('~/.config/ppp/')
 CONFIG_FILE = f'{CONFIG_DIR}/localconfig.yaml'
@@ -44,11 +46,11 @@ DEFAULTS = dict(reviewed=set(),
                 shuffle=False,
                 use_rsync=False,
                 hide_invalid=True,
-                pymol_sc_repr='sticks')
-NOT_PER_POLL = {'prefetch'}
+                pymol_sc_repr='sticks',
+                activepoll=None)
 # profile = ipd.dev.timed
 profile = lambda f: f
-_debug_state = {'pppdir'}
+_debug_state = {}
 
 def notify(message):
     pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
@@ -59,103 +61,169 @@ def isfalse_notify(ok, message):
         return True
 
 def ppp_pymol_add_default(name, val):
-    DEFAULTS[f'pymol_{name}'] = val
+    DEFAULTS[f'ppp_pymol_{name}'] = val
 
 def ppp_pymol_get(name):
     if not ppppp: return TEST_STATE[name]
-    return getstate(f'pymol_{name}')
+    return state[f'ppp_pymol_{name}']
 
 def ppp_pymol_set(name, val):
-    print('PYMOLSET', name, val, ppppp)
-    if not ppppp:
-        TEST_STATE[name] = val
-    else:
-        return setstate(f'pymol_{name}', val)
+    # print('PYMOLSET', name, val, ppppp)
+    if not ppppp: TEST_STATE[name] = val
+    else: state[f'ppp_pymol_{name}'] = val
 
-def haveconf(k):
-    return k in conf.opt
+class StateManager:
+    def __init__(self, config_file, state_file):
+        self._statetype = dict(
+            activepoll='global',
+            polls='global',
+            active_cmds='perpoll',
+            reviewed='global',
+            pymol_view='perpoll',
+        )
+        self.config_file, self.state_file = config_file, state_file
+        self.load()
 
-def getconf(k):
-    return conf.opt[k]
+    def load(self):
+        self.local = read_config(
+            self.config_file,
+            opts={},
+            cmds={},
+            polls={},
+        )
+        self._localstate = read_config(
+            self.state_file,
+            activepoll=None,
+            active_cmds=set(),
+            cmds={},
+            polls={},
+            pymol_view={},
+        )
+        for k in [k for k, v in self.local.polls.items() if v.temporary]:
+            del self.local.polls[k]
 
-def setconf(k, v):
-    return setattr(conf.opt, k, v)
+    def save(self):
+        self.local._notify_changed()
+        self._localstate._notify_changed()
 
-def havestate(name):
-    if ppppp and ppppp.polls.pollinprogress and name in state.polls[ppppp.polls.pollinprogress.poll.name]:
-        return True
-    if name in state: return True
-    if name in conf.opts: return True
-    return False
+    def is_global_state(self, name):
+        return 'global' == self._statetype[name]
 
-def getstate(name, poll=None, indent=''):
-    poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
-    if name not in NOT_PER_POLL and poll and name in state.polls[poll]:
-        if name in _debug_state: print('Get', name, state.polls[poll][name], 'from poll', poll)
-        return state.polls[poll][name]
-    else:
-        if name in state:
-            val = state[name]
-            if name in _debug_state: print(f'{indent}Get', name, val, 'from state', poll)
-        elif name in conf.opts:
-            val = conf.opts[name]
-            if name in _debug_state: print(f'{indent}Get', name, val, 'from opts', poll)
-        elif name in DEFAULTS:
-            val = DEFAULTS[name]
-            if name in _debug_state: print(f'{indent}Get', name, val, 'from defaults', poll)
+    def is_per_poll_state(self, name):
+        return 'perpoll' == self._statetype[name]
+
+    def is_pymol_state(self, name):
+        return 'pymol' == self._statetype[name]
+
+    def set_state_type(self, name, statetype):
+        assert name not in self._statetype or self._statetype[name] == statetype
+        self._statetype[name] = statetype
+
+    def __contains__(self, name):
+        return self._haveperpolstate(name)
+
+    def get_per_poll(self, name, poll):
+        return self._getperpollstate(name, poll)
+
+    def get(self, name):
+        if name in _debug_state: print(f'GET {name} type {self._statetype[name]}')
+        if self.is_global_state(name):
+            if name not in self.local.opt and name in DEFAULTS:
+                setattr(self.local.opt, name, DEFAULTS[name])
+            return self.local.opt[name]
+        assert self.is_per_poll_state(name)
+        return self._getperpollstate(name)
+
+    def set(self, name, val):
+        if self.is_global_state(name):
+            return setattr(self.local.opt, name, val)
+        return self._setperpollstate(name, val)
+
+    __getitem__ = get
+    __getattr__ = get
+    __setitem__ = set
+
+    # __setattr__ = set
+
+    def _haveperpolstate(self, name):
+        if ppppp and ppppp.polls.pollinprogress and name in self._localstate.polls[
+                ppppp.polls.pollinprogress.poll.name]:
+            return True
+        if name in self._localstate: return True
+        if name in self.local.opts: return True
+        return False
+
+    def _getperpollstate(self, name, poll=None, indent=''):
+        poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
+        if poll and name in self._localstate.polls[poll]:
+            if name in _debug_state: print('Get', name, self._localstate.polls[poll][name], 'from poll', poll)
+            return self._localstate.polls[poll][name]
         else:
-            raise ValueError(f'unknown state {name}')
+            if name in self._localstate:
+                val = self._localstate[name]
+                if name in _debug_state: print(f'{indent}Get', name, val, 'from self._localstate', poll)
+            elif name in self.local.opts:
+                val = self.local.opts[name]
+                if name in _debug_state: print(f'{indent}Get', name, val, 'from opts', poll)
+            elif name in DEFAULTS:
+                val = DEFAULTS[name]
+                if name in _debug_state: print(f'{indent}Get', name, val, 'from defaults', poll)
+            else:
+                raise ValueError(f'unknown self._localstate {name}')
+            if poll:
+                if name in _debug_state: print('SET perpoll', name, '=', val)
+                setattr(self._localstate.polls[poll], name, val)
+            return val
+        raise ValueError(findent + 'Get unknown self._localstate {name}')
+
+    def _setperpollstate(self, name, val, poll=None):
+        with contextlib.suppress(ValueError):
+            self._getperpollstate(name, poll, indent='   ')  # check already exists
+        poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
         if poll:
-            print(name)
-            print('    set poll val', val)
-            setattr(state.polls[poll], name, val)
-        return val
-    raise ValueError(findent + 'Get unknown state {name}')
+            if name in _debug_state: print('Set', name, val, 'topoll', poll)
+            dest = self._localstate.polls[poll]
+        elif name in self.local.opts and name not in self._localstate:
+            dest = self.local.opts
+            if name in _debug_state: print('Set', name, val, 'topots', poll)
+        else:
+            dest = self._localstate
+            if name in _debug_state: print('Set', name, val, 'tostate', poll)
+        setattr(dest, name, val)
 
-def setstate(name, val, poll=None):
-    with contextlib.suppress(ValueError):
-        getstate(name, poll, indent='   ')  # check already exists
-    poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
-    if name not in NOT_PER_POLL and poll:
-        if name in _debug_state: print('Set', name, val, 'topoll', poll)
-        dest = state.polls[poll]
-    elif name in conf.opts and name not in state:
-        dest = conf.opts
-        if name in _debug_state: print('Set', name, val, 'topots', poll)
-    else:
-        dest = state
-        if name in _debug_state: print('Set', name, val, 'tostate', poll)
-    setattr(dest, name, val)
+class SubjectName:
+    def __init__(self):
+        self.count = 0
+        self.name = 'subject'
 
-_subject_count = 0
+    def __call__(self):
+        return f'{self.name}_{self.count}'
 
-def subject_name():
-    return 'subject%i' % _subject_count
+    def new(self, name='subject'):
+        self.count += 1
+        for sfx in ppp.STRUCTURE_FILE_SUFFIX:
+            name = name.replace(f'.{sfx}', '')
+        self.name = os.path.basename(name)
+        return self()
 
-def new_subject_name():
-    global _subject_count
-    _subject_count += 1
-    return subject_name()
+subject_name = SubjectName()
 
 @profile
 class PymolFileViewer:
-    def __init__(self, fname, toggles):
+    def __init__(self, fname, name, toggles):
         self.fname = fname
-        self.init_session(toggles)
-
-    def init_session(self, toggles):
         self.toggles = toggles
         pymol.cmd.delete(subject_name())
-        pymol.cmd.load(self.fname, new_subject_name())
+        pymol.cmd.load(self.fname, subject_name.new(name))
         pymol.cmd.color('green', f'{subject_name()} and elem C')
         self.update()
 
     def update(self):
         pymol.cmd.reset()
-        for cmd in getstate('active_cmds'):
-            assert cmd in ppppp.toggles.cmdmap
-            self.run_command(ppppp.toggles.cmdmap[cmd].cmdon)
-        if self.fname in (pview := getstate('pymol_view')): pymol.cmd.set_view(pview[self.fname])
+        for cmd in state.active_cmds:
+            assert cmd in ppppp.toggles.cmds
+            self.run_command(ppppp.toggles.cmds[cmd].cmdon)
+        if self.fname in (pview := state.pymol_view): pymol.cmd.set_view(pview[self.fname])
 
     def update_toggle(self, toggle: 'ToggleCommand'):
         if toggle: self.run_command(toggle.cmdon)
@@ -167,7 +235,7 @@ class PymolFileViewer:
 
     def cleanup(self):
         pymol.cmd.delete(subject_name())
-        getstate('pymol_view')[self.fname] = pymol.cmd.get_view()
+        state.pymol_view[self.fname] = pymol.cmd.get_view()
 
 @profile
 class FileFetcher(threading.Thread):
@@ -185,7 +253,6 @@ class FileFetcher(threading.Thread):
 @profile
 class FileCache:
     def __init__(self, fnames, **kw):
-        print('Basic FileCache')
         self.fnames = fnames
 
     def __getitem__(self, i):
@@ -197,10 +264,9 @@ class FileCache:
 @profile
 class PrefetchLocalFileCache(FileCache):
     '''
-    Copies files to a conf temp directory. Will downloads files ahead of requested index in background.
+    Copies files to a CONF temp directory. Will downloads files ahead of requested index in background.
     '''
     def __init__(self, fnames, numprefetch=7, path='/tmp/ppp/filecache'):
-        print('PrefetchLocalFileCache')
         self.path = path
         self.fetchers = {}
         os.makedirs(path, exist_ok=True)
@@ -260,9 +326,9 @@ class PollInProgress:
     def __init__(self, poll):
         self.poll = poll
         self.viewer = None
-        Cache = PrefetchLocalFileCache if getstate('prefetch') else FileCache
-        self.filecache = Cache(self.fnames, numprefetch=7 if conf.prefetch else 0)
-        ppppp.set_pbar(0, len(getstate('reviewed', poll=self.poll.name)), len(self.fnames))
+        Cache = PrefetchLocalFileCache if state.prefetch else FileCache
+        self.filecache = Cache(self.fnames, numprefetch=7 if state.prefetch else 0)
+        ppppp.set_pbar(0, len(state.get_per_poll('reviewed', poll=self.poll.name)), len(self.fnames))
         ppppp.widget.showsym.setText(self.poll.sym)
         ppppp.widget.showlig.setText(self.poll.ligand)
 
@@ -270,8 +336,8 @@ class PollInProgress:
         if isinstance(fnames, (str, bytes)):
             fnames = fnames_from_path(fnames)
         # fnames = [_ for _ in fnames if _ not in state.polls.reviewed]
-        if conf.opts.shuffle: self.pbdlist = random.shuffle(fnames)
-        ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(fnames) - 1)
+        if state.shuffle: self.pbdlist = random.shuffle(fnames)
+        ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(fnames) - 1)
         return fnames
 
     # def init_session(self):
@@ -303,7 +369,7 @@ class PollInProgress:
         if index >= len(self.fnames): return False
         if self.viewer: self.viewer.cleanup()
         ppppp.widget.showfile.setText(self.fnames[index])
-        self.viewer = PymolFileViewer(self.filecache[index], ppppp.toggles)
+        self.viewer = PymolFileViewer(self.filecache[index], self.fnames[index], ppppp.toggles)
         self.index = index
         return True
 
@@ -312,20 +378,20 @@ class PollInProgress:
                                 comment=comment,
                                 polldbkey=self.poll.dbkey,
                                 fname=self.fnames[self.index])
-        if getstate('do_review_action') and not self.exec_review_action(review): return
+        if state.do_review_action and not self.exec_review_action(review): return
         response = remote.upload(review)
         if isfalse_notify(not response, f'server response: {response}'): return
         self.review_accepted(review)
 
     def review_accepted(self, review):
         pymol.cmd.delete(subject_name())
-        getstate('reviewed').add(self.viewer.fname)
-        ppppp.set_pbar(lb=0, val=len(getstate('reviewed')), ub=len(self.fnames) - 1)
-        if len(getstate('reviewed')) == len(self.fnames): ppppp.polls.poll_finished()
+        state.reviewed.add(self.viewer.fname)
+        ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(self.fnames) - 1)
+        if len(state.reviewed) == len(self.fnames): ppppp.polls.poll_finished()
         else: self.switch_to(delta=1)
 
     def preprocess_shell_cmd(self, cmd):
-        cmd = cmd.replace('$pppdir', os.path.abspath(os.path.expanduser(conf.opt.pppdir)))
+        cmd = cmd.replace('$pppdir', os.path.abspath(os.path.expanduser(state.pppdir)))
         cmd = cmd.replace('$poll', self.poll.name.replace(' ', '_'))
         cmd = cmd.replace('$filebase', os.path.basename(self.fnames[self.index]))
         cmd = cmd.replace('$file', self.viewer.fname)
@@ -342,7 +408,7 @@ class PollInProgress:
         return cmds
 
     def exec_review_action(self, review):
-        cmds = self.preprocess_shell_cmd(getstate('review_action').replace('$grade', review.grade))
+        cmds = self.preprocess_shell_cmd(state.review_action.replace('$grade', review.grade))
         for cmd in cmds:
             try:
                 result = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
@@ -369,9 +435,9 @@ class Polls:
         self.current_poll_index = None
         self.listitems = None
 
-    def init_session(self, listwidget):
-        self.listwidget = listwidget
-        self.listwidget.itemClicked.connect(lambda a: self.poll_clicked(a))
+    def init_session(self, widget):
+        self.widget = widget
+        self.widget.itemClicked.connect(lambda a: self.poll_clicked(a))
         self.newpollwidget = pymol.Qt.QtWidgets.QDialog()
         uifile = os.path.join(os.path.dirname(__file__), 'gui_new_poll.ui')
         self.newpollwidget = pymol.Qt.utils.loadUi(uifile, self.newpollwidget)
@@ -392,38 +458,39 @@ class Polls:
 
     def refresh_polls(self):
         self.allpolls = remote.pollinfo() + [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand)
-                                             for p in conf.polls]
-        self.pollsearch, self.polldesc, allpolls = [], {}, {}
-        for k, n, u, d, s, l in self.allpolls:
-            self.polldesc[n] = f'NAME: {n}\nDESCRIPTION: {d}\nSYM: {s}\nUSER: {u}\nLIG: {l}'
-            self.pollsearch.append(f'{n}||||{d} sym:{s} user:{u} lig:{l}')
-            allpolls[n] = k
+                                             for p in state.local.polls]
+        self.pollsearchtext, self.polltooltip, allpolls = [], {}, {}
+        for key, name, user, desc, sym, lig in self.allpolls:
+            ttip = f'NAME: {name}\nDESCRIPTION: DBKEY:{key}\n{desc}\nSYM: {sym}\nUSER: {user}\nLIG: {lig}'
+            self.polltooltip[name] = ttip
+            self.pollsearchtext.append(f'{name}||||{desc} sym:{sym} user:{user} lig:{lig}')
+            allpolls[name] = key
         self.allpolls = allpolls
-        self.pollsearch = '\n'.join(self.pollsearch)
-        self.listwidget.clear()
-        if self.listwidget.count() == 0:
+        self.pollsearchtext = '\n'.join(self.pollsearchtext)
+        self.widget.clear()
+        if self.widget.count() == 0:
             self.listitems, self.listitemdict = [], {}
             for i, name in enumerate(sorted(self.allpolls)):
-                self.listwidget.addItem(name)
-                self.listitems.append(self.listwidget.item(i))
-                self.listitems[-1].setToolTip(self.polldesc[name])
+                self.widget.addItem(name)
+                self.listitems.append(self.widget.item(i))
+                self.listitems[-1].setToolTip(self.polltooltip[name])
                 self.listitemdict[name] = self.listitems[-1]
-        self.update_poll_list()
+        self.update_polls_gui()
         if state.activepoll and state.activepoll in self.allpolls:
             self.poll_start(state.activepoll)
 
     def filtered_poll_list(self):
         polls = set(self.allpolls)
-        if query := getstate('findpoll'):
+        if query := state.findpoll:
             from subprocess import Popen, PIPE
             p = Popen(['fzf', '-i', '--filter', f'{query}'], stdout=PIPE, stdin=PIPE, stderr=PIPE, text=True)
-            hits = p.communicate(input=self.pollsearch)[0]
+            hits = p.communicate(input=self.pollsearchtext)[0]
             hits = [m[:m.find('||||')] for m in hits.split('\n') if m]
             polls = set(hits)
             if self.pollinprogress: polls.add(self.pollinprogress.poll.name)
         return polls
 
-    def update_poll_list(self):
+    def update_polls_gui(self):
         if not self.listitems: self.refresh_polls()
         self.visiblepolls = self.filtered_poll_list()
         if state.activepoll in self.listitemdict:
@@ -451,7 +518,7 @@ class Polls:
         if self.pollinprogress: self.pollinprogress.cleanup()
         self.pollinprogress = PollInProgress(remote.poll(self.allpolls[name]))
         state.activepoll = self.pollinprogress.poll.name
-        ppppp.toggles.update_toggle_list()
+        ppppp.toggles.update_toggles_gui()
         self.pollinprogress.start()
 
     def poll_finished(self):
@@ -460,7 +527,7 @@ class Polls:
         state.activepoll = None
         ppppp.update_opts()
         ppppp.set_pbar(done=True)
-        # self.update_poll_list()
+        # self.update_polls_gui()
 
     def create_poll_start(self):
         self.newpollwidget.show()
@@ -494,8 +561,8 @@ class Polls:
             response = remote.upload(poll)
             isfalse_notify(not response, f'server response: {response}')
         else:
-            poll = ppp.Poll(**poll.dict(dbkey=f'conf{len(conf.polls)}'))
-            setattr(conf.polls, poll.name, poll)
+            poll = ppp.Poll(**poll.dict(dbkey=f'CONF{len(state.local.polls)}'))
+            setattr(state.local.polls, poll.name, poll)
         self.refresh_polls()
         return True
 
@@ -517,55 +584,46 @@ class Polls:
 
 @profile
 class ToggleCommand(ppp.PymolCMD):
-    def __init__(self, **kw):
+    def __init__(self, widget, **kw):
         super().__init__(remote, **kw)
+        self._widget = widget
         self._status = 'public' if self.public else 'private'
-        self._widget = None
         if self.cmdstart: pymol.cmd.do(self.cmdstart)
+        assert self.widget.text().startswith(self.name)
+        self.widget.setText(f'{self.name} ({self._status})')
+        self.widget.setFlags(self.widget.flags() | pymol.Qt.QtCore.Qt.ItemIsUserCheckable)
+        # self.widget.setCheckState(2 * int(self.onstart))
 
     @property
     def widget(self):
         return self._widget
 
-    def init_session(self, widget):
-        self._widget = widget
-        assert self._widget.text().startswith(self.name)
-        self._widget.setText(f'{self.name} ({self._status})')
-        self._widget.setFlags(self._widget.flags() | pymol.Qt.QtCore.Qt.ItemIsUserCheckable)
-        # self._widget.setCheckState(2 * int(self.onstart))
-
     def widget_update(self, toggle=False):
         if toggle:
-            self._widget.setCheckState(0 if self._widget.checkState() else 2)
-            if self._widget.checkState(): getstate('active_cmds').add(self.name)
-            else: getstate('active_cmds').remove(self.name)
+            self.widget.setCheckState(0 if self.widget.checkState() else 2)
+            if self.widget.checkState(): state.active_cmds.add(self.name)
+            else: state.active_cmds.remove(self.name)
         if ppppp.polls.pollinprogress and ppppp.polls.pollinprogress.viewer:
             print('toggle update')
             ppppp.polls.pollinprogress.viewer.update_toggle(toggle=self)
 
     def __bool__(self):
-        return bool(self._widget.checkState())
-
-def copy_to_tempdir(tempdir, fname):
-    basename = os.path.abspath(fname).replace('/', '\\')
-    newname = os.path.join(tempdir, basename)
-    return shutil.copyfile(fname, newname)
+        return bool(self.widget.checkState())
 
 @profile
 class ToggleCommands:
     def __init__(self):
-        self.listwidget = None
-        self.refresh_cmds()
-        self.visible_cmds = self.cmds
-        if not getstate('active_cmds'):
-            setattr(conf.opts, 'active_cmds', {cmd.name for cmd in self.cmds if cmd.onstart})
-            assert type(getstate('active_cmds')) != set
+        self.widget = None
+        self.listitems = []
+        self.cmds = {}
+        # self.refersh_toggle_list()
+        # self.visible_cmds = self.cmds
 
-    def init_session(self, listwidget):
-        self.listwidget = listwidget
-        self.update_toggle_list()
-        # listwidget.itemChanged.connect(lambda _: self.update_item(_))
-        self.listwidget.itemClicked.connect(lambda _: self.update_item(_, toggle=True))
+    def init_session(self, widget):
+        self.widget = widget
+        self.refersh_toggle_list()
+        # widget.itemChanged.connect(lambda _: self.update_item(_))
+        self.widget.itemClicked.connect(lambda _: self.update_item(_, toggle=True))
         self.gui_new_pymolcmd = pymol.Qt.QtWidgets.QDialog()
         self.gui_new_pymolcmd = pymol.Qt.utils.loadUi(
             os.path.join(os.path.dirname(__file__), 'gui_new_pymolcmd.ui'), self.gui_new_pymolcmd)
@@ -573,20 +631,14 @@ class ToggleCommands:
         self.gui_new_pymolcmd.ok.clicked.connect(lambda: self.create_toggle_done())
 
     def update_item(self, item, toggle=False):
-        assert len(self.visible_cmds) == self.listwidget.count()
-        self.visible_cmds[self.listwidget.indexFromItem(item).row()].widget_update(toggle)
-        self.update_toggle_list()
+        assert len(self.visible_cmds) == self.widget.count()
+        self.visible_cmds[self.widget.indexFromItem(item).row()].widget_update(toggle)
 
     def create_toggle_start(self):
         self.gui_new_pymolcmd.show()
 
-    def refresh_cmds(self):
-        self.cmds = [ToggleCommand(**_) for _ in list(conf.cmds.values()) + remote.pymolcmdsdict()]
-        self.cmdmap = {c.name: c for c in self.cmds}
-        if self.listwidget: self.update_toggle_list()
-
     def create_toggle_done(self):
-        cmd = ppp.PymolCMDSpec(
+        cmdspec = ppp.PymolCMDSpec(
             name=self.gui_new_pymolcmd.name.text(),
             cmdon=self.gui_new_pymolcmd.cmdon.text(),
             cmdoff=self.gui_new_pymolcmd.cmdoff.text(),
@@ -596,34 +648,45 @@ class ToggleCommands:
         if isfalse_notify(not cmd.errors(), cmd.errors()):
             return
         self.gui_new_pymolcmd.hide()
-        if self.cmds[-1].public:
-            client.upload(cmdspec)
+        if cmdspec.ispublic:
+            remote.upload(cmdspec)
+            cmd = remote.pymolcmd()
         else:
-            setattr(conf.cmds, cmd.name, cmd)
-        cmd = ToggleCommand(**cmd)
-        self.cmds.append(cmd)
-        self.listwidget.addItem(self.cmds[-1].name)
-        item = self.listwidget.item(self.listwidget.count() - 1)
-        item.setCheckState(0)
-        self.cmds[-1].init_session(item)
-        if item.checkState():
-            getstate('active_cmds').add(item.text().lower().replace(' (public)', '').replace(' (private)', ''))
+            setattr(state.local.cmds, cmd.name, cmd)
 
-    def update_toggle_list(self):
-        cmds = self.cmds
-        if query := getstate('findcmd'):
-            hits = set(fuzzyfinder.fuzzyfinder(query.lower(), [cmd.name.lower() for cmd in cmds]))
-            hits |= {_.lower() for _ in getstate('active_cmds')}
-            cmds = [cmd for cmd in self.cmds if cmd.name.lower() in hits]
-        self.visible_cmds = cmds
-        self.listwidget.clear()
-        for cmd in cmds:
-            self.listwidget.addItem(cmd.name)
-            item = self.listwidget.item(self.listwidget.count() - 1)
-            item.setToolTip(f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\n'
-                            f'PUBLIC: {cmd.public}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}')
-            cmd.init_session(item)
-            cmd.widget.setCheckState(2) if cmd.name in getstate('active_cmds') else cmd.widget.setCheckState(0)
+    def refersh_toggle_list(self):
+        assert self.widget is not None
+        cmdsdicts = list(state.local.cmds.values()) + remote.pymolcmdsdict()
+        if 'active_cmds' not in state:
+            state.active_cmds = {cmd['name'] for cmd in cmdsdict if cmd['onstart']}
+        self.listitems.clear()
+        self.cmds.clear()
+        for cmd in cmdsdicts:
+            self.widget.addItem(cmd['name'])
+            item = self.widget.item(self.widget.count() - 1)
+            self.listitems.append((cmd['name'], item))
+            cmd = ToggleCommand(item, **cmd)
+            item.setToolTip(f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\nNCHAIN: {cmd.nchain}'
+                            f'PUBLIC: {cmd.public}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}\nDBKEY:{cmd.dbkey}')
+            cmd.widget.setCheckState(2) if cmd.name in state.active_cmds else cmd.widget.setCheckState(0)
+            self.cmds[cmd.name] = cmd
+        self.cmdsearchtext = '\n'.join(f'{c.name}||||{c.desc} sym:{c.sym} user:{c.user} lig:{c.ligand}'
+                                       for c in self.cmds.values())
+        self.update_toggles_gui()
+
+    def filtered_toggle_list(self):
+        if not (query := state.findcmd): return set(self.cmds.keys())
+        from subprocess import Popen, PIPE
+        p = Popen(['fzf', '-i', '--filter', f'{query}'], stdout=PIPE, stdin=PIPE, stderr=PIPE, text=True)
+        hits = p.communicate(input=self.cmdsearchtext)[0]
+        hits = [m[:m.find('||||')] for m in hits.split('\n') if m]
+        return set(hits) | state.active_cmds
+
+    def update_toggles_gui(self):
+        if not self.listitems: self.refersh_toggle_list()
+        self.visible_cmds = self.filtered_toggle_list()
+        for name, item in self.listitems:
+            item.setHidden(not (name in self.visible_cmds or item.isSelected()))
 
     def cleanup(self):
         pass
@@ -649,7 +712,7 @@ class PrettyProteinProjectPymolPluginPanel:
         self.widget.button_newpoll.clicked.connect(lambda: self.polls.create_poll_start())
         self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
         self.widget.button_refresh_polls.clicked.connect(lambda: self.polls.refresh_polls())
-        self.widget.button_refresh_cmds.clicked.connect(lambda: self.toggles.refresh_cmds())
+        self.widget.button_refresh_cmds.clicked.connect(lambda: self.toggles.refersh_toggle_list())
         self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_toggle_start())
         self.widget.button_save.clicked.connect(lambda: self.save_session())
         self.widget.button_load.clicked.connect(lambda: self.load_session())
@@ -670,26 +733,22 @@ class PrettyProteinProjectPymolPluginPanel:
     def update_opts(self):
         # print('UPDATE OPTS', ppppp.polls.pollinprogress)
         action = collections.defaultdict(lambda: lambda: None)
-        action['hide_invalid'] = self.polls.update_poll_list
-        action['findpoll'] = self.polls.update_poll_list
-        action['findcmd'] = self.toggles.update_toggle_list
+        action['hide_invalid'] = self.polls.update_polls_gui
+        action['findpoll'] = self.polls.update_polls_gui
+        action['findcmd'] = self.toggles.update_toggles_gui
         for name, widget in self.widget.__dict__.items():
-            if name.startswith('opt_'):
-                opt, have, get, set_ = name[4:], havestate, getstate, setstate
-                # print('LOCALOPT', opt)
-            elif name.startswith('globalopt_'):
-                opt, have, get, set_ = name[10:], haveconf, getconf, setconf
-                # print('GLOBALOPT', opt, have, get, set)
-            else:
-                continue
+            if name.startswith('opt_'): opt, statetype = name[4:], 'perpoll'
+            elif name.startswith('globalopt_'): opt, statetype = name[10:], 'global'
+            else: continue
+            state.set_state_type(opt, statetype)
             if widget.__class__.__name__.endswith('QLineEdit'):
-                if have(opt): widget.setText(get(opt))
-                else: set_(opt, widget.text())
-                widget.textChanged.connect(lambda _, opt=opt, setter=set_: (setter(opt, _), action[opt]()))
+                if opt in state: widget.setText(state[opt])
+                else: state.set(opt, widget.text())
+                widget.textChanged.connect(lambda _, opt=opt: (state.set(opt, _), action[opt]()))
             elif widget.__class__.__name__.endswith('QCheckBox'):
-                if have(opt): widget.setCheckState(get(opt))
-                else: set_(opt, 2 if widget.checkState() else 0)
-                widget.stateChanged.connect(lambda _, opt=opt, setter=set_: (setter(opt, _), action[opt]()))
+                if opt in state: widget.setCheckState(state[opt])
+                else: state.set(opt, 2 if widget.checkState() else 0)
+                widget.stateChanged.connect(lambda _, opt=opt: (state.set(opt, _), action[opt]()))
             else:
                 raise ValueError(f'dont know how to use option widget type {type(v)}')
 
@@ -706,13 +765,10 @@ class PrettyProteinProjectPymolPluginPanel:
         if val is not None: self.widget.progress.setValue(val)
 
     def save_session(self):
-        conf._notify_changed()
-        state._notify_changed()
+        state.save()
 
     def load_session(self):
-        conf._autoreload_check()
-        print(conf.cmds)
-        state._autoreload_check()
+        state.load()
         self.init_session()
 
     def quit(self, exitpymol=False):
@@ -755,23 +811,13 @@ def run(_self=None):
     pymol.cmd.do(
         'from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default'
     )
-    global ppppp, conf, state, remote
-    conf = read_config(CONFIG_FILE, opts={}, cmds={}, polls={})
-    state = read_config(STATE_FILE, activepoll=None, active_cmds=set(), cmds={}, polls={})
-    for k in [k for k, v in conf.polls.items() if v.temporary]:
-        del conf.polls[k]
+    global ppppp, remote, state
+    state = StateManager(CONFIG_FILE, STATE_FILE)
     try:
         remote = ppp.PPPClient(SERVER_ADDR)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectionError):
         remote = run_local_server()
-    #try:
-    #    with open(PPPPP_PICKLE, 'rb') as inp:
-    #        ppppp = pickle.load(inp)
-    #        if not conf.opts.save_session: raise ValueError
-    #        print('PrettyProteinProjectPymolPluginPanel LOADED FROM PICKLE')
-    #except (FileNotFoundError, EOFError, ValueError):
     ppppp = PrettyProteinProjectPymolPluginPanel()
-    # print('PrettyProteinProjectPymolPluginPanel FAILED TO LOAD FROM PICKLE')
     ppppp.init_session()
 
 def main():

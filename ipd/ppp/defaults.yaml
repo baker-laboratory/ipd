@@ -19,7 +19,9 @@ pymolcmds:
 - name: Color By Chain
   cmdon: util.cbc('$subject and elem C')
   cmdoff: color green, $subject and elem C
+  multichain: true
 
 - name: Show HET Interactions
   cmdon: cmd.show(ppp_pymol_get('SC_REPR'), '($subject and elem N+O) within 3.3 of ($subject and HET)')
   cmdoff: cmd.hide(ppp_pymol_get('SC_REPR'), '($subject and elem N+O) within 3.3 of ($subject and HET)')
+  ligand: any
