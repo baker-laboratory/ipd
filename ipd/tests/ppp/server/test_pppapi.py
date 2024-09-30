@@ -41,6 +41,15 @@ def test_read_root(testclient, pppserver):
 def test_poll(testclient, pppserver):
     client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
+
+    client.upload(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True))
+    client.upload(ppp.PollSpec(name='usertest1pri', path=path, user='user1', ispublic=False))
+    client.upload(ppp.PollSpec(name='usertest2pub', path=path, user='user2', ispublic=True))
+    client.upload(ppp.PollSpec(name='usertest3pri', path=path, user='user3', ispublic=False))
+    assert 3 == len(client.pollinfo(user='user1'))
+    assert 2 == len(client.pollinfo(user='user2'))
+    assert 3 == len(client.pollinfo(user='user3'))
+
     response = client.upload(ppp.PollSpec(name='foo1', desc='bar', path=path))
     assert not response, response
     response = client.upload(ppp.PollSpec(name='foo2', desc='Nntsebar', path=path))
@@ -49,20 +58,18 @@ def test_poll(testclient, pppserver):
         ppp.PollSpec(name='foo3', desc='barntes', path=path, props=['ligand', 'multichain']))
     assert not response, response
 
-    print(len(client.polls()))
-    assert len(client.polls()) == 3
+    assert len(client.polls()) == 7
     assert testclient.get('/poll2').json()['dbkey'] == 2
     polljs = testclient.get('/polls').json()
     # print(polljs)
     # polls = [ppp.Poll(**_) for _ in polljs]
     polls = pppserver.polls()
-    assert len(polls) == 3
+    assert len(polls) == 7
     # for poll in polls:
     # print(poll, len(poll.files))
     # print(list(poll.files)[:2])
 
     pfiles = polls[1].files
-    print(pfiles)
     assert len(pfiles) == 3
     for f in pfiles:
         f2 = testclient.get('/poll1/fname?trackseen=True').json()
@@ -79,7 +86,7 @@ def test_poll(testclient, pppserver):
     # assert totne > 50
     assert testclient.get('poll2/fname?shuffle=True&trackseen=True').json()['fname'] is None
 
-    poll3 = client.poll(3)
+    poll3 = client.poll(7)
     # print(poll3)
     assert 'ligand' in poll3.props
 
@@ -87,8 +94,8 @@ def test_poll(testclient, pppserver):
     # print(poll)
     result = client.upload(poll)
     assert not result, result
-    assert len(client.polls()) == 4
-    poll = client.poll(4)
+    assert len(client.polls()) == 8
+    poll = client.poll(8)
     assert len(poll.files) == 3
     for i in range(1, 4):
         assert pppserver.poll(i).files[0].poll.dbkey == i

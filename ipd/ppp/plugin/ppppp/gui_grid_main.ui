@@ -284,9 +284,9 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QCheckBox" name="opt_hide_invalid">
+        <widget class="QCheckBox" name="globalopt_showallcmds">
          <property name="text">
-          <string>Hide Invalid</string>
+          <string>Show All Cmds</string>
          </property>
          <property name="checked">
           <bool>true</bool>

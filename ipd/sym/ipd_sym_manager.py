@@ -1,10 +1,10 @@
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
+wu = lazyimport('willutil')
 
 from ipd.sym.sym_manager import SymmetryManager, set_default_sym_manager
 import ipd
-import willutil as wu
 
 class IpdSymmetryManager(SymmetryManager):
     """

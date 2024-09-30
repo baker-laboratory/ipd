@@ -42,40 +42,76 @@ def fix_label_case(thing):
     else:
         raise TypeError(f' fix_label_case unsupported type{type(thing)}')
     if 'name' in keys: set('name', get('name').title())
-    if 'sym' in keys: set('sym', get('sym').lower())
+    if 'sym' in keys: set('sym', get('sym').upper())
     if 'user' in keys: set('user', get('user').lower())
     if 'workflow' in keys: set('workflow', get('workflow').lower())
     if 'ligand' in keys: set('ligand', get('ligand').upper())
 
+class SpecBase(pydantic.BaseModel):
+    ispublic: bool = True
+    telemetry: bool = True
+    user: str = ''
+    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
+    props: list[str] | str = []
+    attrs: dict[str, str | int | float] | str = {}
+    _errors: str = ''
+
+    @pydantic.validator('user')
+    def valuser(cls, user):
+        return user or getpass.getuser()
+
+    @pydantic.validator('props')
+    def valprops(cls, props):
+        if isinstance(props, str):
+            props = [p.strip() for p in props.split(',')]
+        return props
+
+    @pydantic.validator('attrs')
+    def valattrs(cls, attrs):
+        if isinstance(attrs, str):
+            attrs = {x.split('=')[0].strip(): x.split('=')[1].strip() for x in attrs.split(',')}
+        return attrs
+
+    def errors(self):
+        return self._errors
+
+    def __getitem__(self, k):
+        return getattr(self, k)
+
 @profile
-class PollSpec(pydantic.BaseModel):
+class PollSpec(SpecBase):
     name: str
     desc: str = ''
     path: str
-    user: str = getpass.getuser()
     cmdstart: str = ''
     cmdstop: str = ''
     sym: str = ''
-    nchain: int = -1
-    ligand: str = 'unknown'
-    public: bool = False
-    telemetry: bool = False
-    workflow: str = 'manual'
-    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
+    nchain: int | str = -1
+    ligand: str = ''
+    workflow: str = ''
     enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
-    props: list[str] = []
-    attrs: dict[str, str | int] = {}
-    _errors: str = ''
+    _temporary = False
+
+    @pydantic.validator('nchain')
+    def valnchain(cls, nchain):
+        return int(nchain)
+
+    @pydantic.validator('path')
+    def valpath(cls, path):
+        path = os.path.abspath(os.path.expanduser(path))
+        assert os.path.isdir(path), f'path must be directory: {path}'
+        assert [f for f in os.listdir(path)
+                if f.endswith(STRUCTURE_FILE_SUFFIX)], f'path must contain structure files: {path}'
+        return path
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
         fix_label_case(self)
         if not self.name: self.name = os.path.basename(self.path)
-        if not self.desc: self.desc = f"PDBs in {self.path}"
+        if not self.desc: self.desc = f'PDBs in {self.path}'
         self.sym = ipd.sym.guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
-        if not self.sym or self.ligand == 'unknown':
-            nchain = 1
+        if not self.sym or self.ligand == '':
             try:
                 global _checkobjnum
                 filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
@@ -85,15 +121,15 @@ class PollSpec(pydantic.BaseModel):
                     pymol.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
                 pymol.cmd.delete('all')
                 pymol.cmd.load(os.path.join(self.path, fname), f'TMP{_checkobjnum}')
-                if self.ligand == 'unknown':
+                if self.ligand == '':
                     ligs = set()
                     for a in pymol.cmd.get_model(f'TMP{_checkobjnum} and HET and not resn HOH').atom:
                         ligs.add(a.resn)
                     self.ligand = ','.join(ligs)
+                pymol.cmd.remove(f'TMP{_checkobjnum} and not name ca')
+                chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_checkobjnum}').atom}
+                self.nchain = len(chains)
                 if not self.sym:
-                    pymol.cmd.remove(f'TMP{_checkobjnum} and not name ca')
-                    chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_checkobjnum}').atom}
-                    self.nchain = len(chains)
                     xyz = pymol.cmd.get_coords(f'TMP{_checkobjnum}')
                     if xyz is None:
                         self._errors += f'pymol get_coords failed on TMP{_checkobjnum}\nfname: {fname}'
@@ -103,7 +139,7 @@ class PollSpec(pydantic.BaseModel):
             except ValueError as e:
                 # print(os.path.join(self.path, fname))
                 traceback.print_exc()
-                if nchain < 4: self.sym = 'C1'
+                if self.nchain < 4: self.sym = 'C1'
                 else: self.sym = 'unknown'
             except (AttributeError, pymol.CmdException, gzip.BadGzipFile) as e:
                 self._errors += f'POLL error in _validated: {type(e)}\n{e}'
@@ -114,6 +150,7 @@ class PollSpec(pydantic.BaseModel):
                 with contextlib.suppress(pymol.CmdException):
                     pymol.cmd.load(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
                     os.remove(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+        assert isinstance(self.nchain, int)
         return self
 
     @pydantic.validator('props')
@@ -124,18 +161,13 @@ class PollSpec(pydantic.BaseModel):
         return hash(self.path)
 
 @profile
-class ReviewSpec(pydantic.BaseModel):
+class ReviewSpec(SpecBase):
     polldbkey: int
     fname: str
     permafile: str = ''
     grade: str
-    user: str = getpass.getuser()
     comment: str = ''
     durationsec: int = -1
-    props: list[str] = []
-    attrs: dict[str, str | int | float] = {}
-    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    _errors: str = ''
 
     @pydantic.validator('grade')
     def valgrade(cls, grade, values):
@@ -155,14 +187,9 @@ class ReviewSpec(pydantic.BaseModel):
         return self
 
 @profile
-class FileSpec(pydantic.BaseModel):
+class FileSpec(SpecBase):
     polldbkey: int
     fname: str
-    public: bool = True
-    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    props: list[str] = []
-    attrs: dict[str, str | int | float] = {}
-    _errors: str = ''
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
@@ -178,25 +205,17 @@ class PymolCMDSpecError(Exception):
 TOBJNUM = 0
 
 @profile
-class PymolCMDSpec(pydantic.BaseModel):
+class PymolCMDSpec(SpecBase):
     name: str
     desc: str = ''
     cmdon: str
     cmdoff: str = ''
     cmdstart: str = ''
     onstart: bool = False
-    public: bool = True
-    user: str = getpass.getuser()
     ligand: str = ''
     sym: str = ''
-    nchain: str = ''
-    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    props: list[str] = []
-    attrs: dict[str, str | int | float] = {}
-    _errors: str = ''
-
-    def errors(self):
-        return self._errors
+    minchains: int = 1
+    maxchains: int = 999_999_999
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
@@ -207,7 +226,6 @@ class PymolCMDSpec(pydantic.BaseModel):
     def _check_cmds(self):
         self._check_cmds_output = '-' * 80 + os.linesep + str(self) + os.linesep + '_' * 80 + os.linesep
         self._errors = ''
-        objlist = pymol.cmd.get_object_list()
         global TOBJNUM
         TOBJNUM += 1
         pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{TOBJNUM}')
@@ -215,10 +233,8 @@ class PymolCMDSpec(pydantic.BaseModel):
         self._check_cmd('cmdon')
         self._check_cmd('cmdoff')
         pymol.cmd.delete(f'TEST_OBJECT{TOBJNUM}')
-        if any([
-                pymol.cmd.get_object_list() != objlist,
-                any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())
-        ]):
+        if any(
+            [any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())]):
             # raise PymolCMDSpecError('bad pymol commands', self._check_cmds_output)
             self._errors = self._check_cmds_output
         return self
@@ -245,9 +261,6 @@ class ClientMixin(pydantic.BaseModel):
 
     def __hash__(self):
         return self.dbkey
-
-    def __getitem__(self, key):
-        return getattr(self, key)
 
     def _validated(self):
         'noop, as validation should have happened at Spec stage'
@@ -340,8 +353,10 @@ class PPPClient:
         kind = type(thing).__name__.replace('Spec', '').lower()
         return self.post(f'/create/{kind}', thing, **kw)
 
-    def pollinfo(self):
-        return requests.get(f'http://{self.server_addr}/pollinfo').json()
+    def pollinfo(self, user=getpass.getuser()):
+        if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
+        print(requests.get(f'http://{self.server_addr}/pollinfo?user={user}'))
+        return requests.get(f'http://{self.server_addr}/pollinfo?user={user}').json()
 
     def polls(self, **kw):
         return [Poll(self, **p) for p in self.get('/polls', **kw)]

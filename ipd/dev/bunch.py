@@ -3,13 +3,14 @@ from pathlib import Path
 import shutil
 import hashlib
 import datetime
+
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
 class Bunch(dict):
     def __init__(
         self,
         __arg_or_ns=None,
-        _strict='__NOT_STRICT',
+        _strict='__STRICT',
         _default='__NODEFALT',
         _storedefault=True,
         _autosave=None,
@@ -24,18 +25,18 @@ class Bunch(dict):
                 super().__init__(vars(__arg_or_ns))
         self.update(kw)
         self.__dict__["_special"] = {"strict_lookup": _strict is True or _strict == "__STRICT"}
-        if _default == "__NODEFALT":
-            _default = None
-        elif _strict == "__STRICT":
-            # if _default passed explicitly, and strict is not, don't be strict
-            self.__dict__["_special"]["strict_lookup"] = False
+        if _default == "__NODEFALT": _default = None
+        # elif _strict == "__STRICT":
+        # if _default passed explicitly, and strict is not, don't be strict
+        # self.__dict__["_special"]["strict_lookup"] = False
         self.__dict__["_special"]["default"] = _default
         self.__dict__["_special"]["storedefault"] = _storedefault
         self.__dict__["_special"]["autosave"] = _autosave
         self.__dict__["_special"]["autoreload"] = _autoreload
         if _autoreload:
             Path(_autoreload).touch()
-            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload, 'rb').read()).hexdigest()
+            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload,
+                                                                           'rb').read()).hexdigest()
         self.__dict__["_special"]["parent"] = _parent
         for k in self:
             if hasattr(super(), k):
@@ -68,7 +69,9 @@ class Bunch(dict):
             if k:
                 k = k.split('.')[0]
                 if isinstance(v, (list, set, tuple, Bunch)):
-                    self[k] = make_autosave_hierarchy(self[k], _parent=(self,None), _default=self._special['default'])
+                    self[k] = make_autosave_hierarchy(self[k],
+                                                      _parent=(self, None),
+                                                      _default=self._special['default'])
             os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)
             with open(self._special['autosave'] + '.tmp', 'w') as out:
                 yaml.dump(unmake_autosave_hierarchy(self), out)
@@ -80,7 +83,9 @@ class Bunch(dict):
     def default(self):
         dflt = self.__dict__['_special']["default"]
         if dflt == 'bunchwithparent':
-            return Bunch(_parent=(self,None), _default=dflt)
+            return Bunch(_parent=(self, None),
+                         _default=dflt,
+                         _strict=self.__dict__['_special']['strict_lookup'])
         if hasattr(dflt, "__call__"):
             return dflt()
         else:
@@ -195,7 +200,7 @@ class Bunch(dict):
         if k == "__deepcopy__":
             return None
         if self.__dict__['_special']["strict_lookup"] and k not in self:
-            raise KeyError(f"Bunch is missing value for key {k}")
+            raise AttributeError(f"Bunch is missing value for key {k}")
         try:
             # Throws exception if not in prototype chain
             return object.__getattribute__(self, k)
@@ -241,8 +246,8 @@ class Bunch(dict):
             self._notify_changed(k)
 
     # def __setitem__(self, k, v):
-       # super().__setitem__(k, v)
-       # self._notify_changed(k, v)
+    # super().__setitem__(k, v)
+    # self._notify_changed(k, v)
 
     def __delitem__(self, k):
         super().__delitem__(k)
@@ -377,13 +382,18 @@ def bunchify(x):
     else:
         return x
 
-def make_autosave_hierarchy(x, _parent=None, seenit=None, _autosave=None, _default=None):
+def make_autosave_hierarchy(x, _parent=None, seenit=None, _strict=True, _autosave=None, _default=None):
     seenit = seenit or set()
     assert id(x) not in seenit, 'x must be a Tree'
-    kw = dict(seenit=seenit, _parent=_parent, _default=_default)
+    kw = dict(seenit=seenit, _parent=_parent, _default=_default, _strict=_strict)
     assert _parent is None or isinstance(_parent[0], Bunch)
     if isinstance(x, dict):
-        x = Bunch(**x, _parent=_parent, _autosave=_autosave, _autoreload=_autosave, _default=_default)
+        x = Bunch(**x,
+                  _parent=_parent,
+                  _autosave=_autosave,
+                  _autoreload=_autosave,
+                  _default=_default,
+                  _strict=_strict)
         for k, v in x.items():
             kw['_parent'] = (x, k)
             x[k] = make_autosave_hierarchy(v, **kw)
@@ -395,8 +405,8 @@ def make_autosave_hierarchy(x, _parent=None, seenit=None, _autosave=None, _defau
         x = BunchChildSet(val, _parent=_parent)
     elif isinstance(x, (tuple, )):
         x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)
-    elif not isinstance(x, (type(None), str, int, float, datetime.datetime, datetime.timedelta)):
-        raise ValueError(f'cant convert to BunchChild type {type(x)}')
+    # elif not isinstance(x, (type(None), str, int, float, datetime.datetime, datetime.timedelta)):
+    # raise ValueError(f'cant convert to BunchChild type {type(x)}')
     seenit.add(id(x))
     return x
 

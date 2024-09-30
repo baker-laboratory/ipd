@@ -6,7 +6,7 @@ import sys
 import time
 from rich import print
 
-def add_defaults(server_addr, stress_test_polls=False):
+def add_defaults(server_addr, stress_test_polls=False, **kw):
     print('---------------------- ADD DEFAULTS ----------------------')
     import pymol
     pymol.cmd.set('suspend_updates', 'on')
@@ -17,26 +17,31 @@ def add_defaults(server_addr, stress_test_polls=False):
     add_sym_cmds(client)
     if stress_test_polls: add_stresstest_polls(client)
     pymol.cmd.set('suspend_updates', 'off')
+    print(len(client.pymolcmds()))
     print('------------------- DONE ADD DEFAULTS -------------------')
 
-def add_stresstest_polls(client):
+def add_stresstest_polls(client, maxpolls=0):
     print('add_stresstest_polls start')
     if os.path.exists('/tmp/add_stresstest_polls.list'):
         dirs = [l.strip() for l in open('/tmp/add_stresstest_polls.list').readlines()]
     else:
         dirs = find_pdb_dirs('~', 1, 100)
-        dirs.insert(0, '/home/sheffler/project/rfdsym/hilvert/pymol_saves')
-        dirs.insert(0, '/home/sheffler/project/rfdsym/abbas/pymol_saves')
         with open('/tmp/add_stresstest_polls.list', 'w') as out:
             out.write(os.linesep.join(dirs))
+    manual = [
+        '/home/sheffler/project/rfdsym/hilvert/pymol_saves',
+        '/home/sheffler/project/rfdsym/abbas/pymol_saves',
+        '/home/sheffler/project/rfdsym/test_icos_T200_100res_r27_v2',
+        '/home/sheffler/project/ppp/monomers',
+    ]
     presentpolls = {p[1] for p in client.pollinfo()}
     print('add_stresstest_polls', len(dirs), len(presentpolls))
-    for dir_ in dirs:
+    for dir_ in manual + dirs[:maxpolls]:
         name = dir_.replace('/home/sheffler/', '').replace('/', ' ').title()
         if name in presentpolls:
             print('skip', name)
             continue
-        pollspec = ipd.ppp.PollSpec(name=name, path=dir_, public=True)
+        pollspec = ipd.ppp.PollSpec(name=name, path=dir_, ispublic=True)
         if err := client.upload(pollspec):
             print('create poll failed:', err)
         else:
@@ -58,10 +63,13 @@ def add_sym_cmds(client):
         cmd = ipd.ppp.PymolCMDSpec(
             name=f'sym: Make {sym.upper()}',
             cmdstart='from wills_pymol_crap import symgen',
-            cmdon=f'symgen.make{sym}("$subject", name={sym}; delete $subject; cmd.set_name({sym}, "$subject")',
+            cmdon=
+            f'symgen.make{sym}("$subject", name="{sym}"); delete $subject; cmd.set_name("{sym}", "$subject")',
             cmdoff='remove not chain A',
             sym=sym)
-        client.upload(cmd, replace=True)
+        assert not cmd.errors(), cmd.errors()
+        result = client.upload(cmd, replace=True)
+        assert not result, result
 
 def find_pdb_dirs(path, lb, ub):
     dirs = []

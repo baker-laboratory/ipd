@@ -1,8 +1,4 @@
 pymolcmds:
-- name: "option: Sidechains as Sticks"
-  cmdstart: ppp_pymol_add_default('SC_REPR', 'sticks');
-  cmdon: ppp_pymol_set('SC_REPR', 'sticks')
-  cmdoff: ppp_pymol_set('SC_REPR', 'lines')
 
 - name: "option: Thin Sticks"
   cmdon: set stick_radius, 0.1
@@ -12,6 +8,11 @@ pymolcmds:
   cmdon: set cartoon_oval_length, 0.8
   cmdoff: set cartoon_oval_length, 1.5
 
+- name: "option: Sidechains as Sticks"
+  cmdstart: ppp_pymol_add_default('SC_REPR', 'sticks');
+  cmdon: ppp_pymol_set('SC_REPR', 'sticks')
+  cmdoff: ppp_pymol_set('SC_REPR', 'lines')
+
 - name: "option: Sidechains as Lines"
   cmdon: ppp_pymol_set('SC_REPR', 'lines')
   cmdon: ppp_pymol_set('SC_REPR', 'sticks')
@@ -19,9 +20,9 @@ pymolcmds:
 - name: Color By Chain
   cmdon: util.cbc('$subject and elem C')
   cmdoff: color green, $subject and elem C
-  multichain: true
+  minchains: 2
 
 - name: Show HET Interactions
-  cmdon: cmd.show(ppp_pymol_get('SC_REPR'), '($subject and elem N+O) within 3.3 of ($subject and HET)')
-  cmdoff: cmd.hide(ppp_pymol_get('SC_REPR'), '($subject and elem N+O) within 3.3 of ($subject and HET)')
+  cmdon: cmd.show(ppp_pymol_get('SC_REPR'), 'byres ($subject and elem N+O and not name N+C+O) within 3.3 of ($subject and HET)')
+  cmdoff: cmd.hide(ppp_pymol_get('SC_REPR'), '($subject and not HET and elem N+O) within 3.3 of ($subject and HET)')
   ligand: any

@@ -1,14 +1,12 @@
 '''Symmetry checks'''
-from ipd.dev.lazy_import import lazyimport
+import ipd
 
-th = lazyimport('torch')
+th = ipd.lazyimport('torch')
+wu = ipd.lazyimport('willutil')
 
 import numpy as np
-import ipd
 import assertpy
 from ipd.sym import SymKind, ShapeKind, ValueKind
-import willutil as wu
-from willutil import h
 
 def symcheck(sym, thing, kind=None, **kw):
     thing, kind, adaptor = get_kind_and_adaptor(sym, thing, kind)
@@ -106,7 +104,7 @@ def symcheck_XYZ_1D(sym, idx, thing, **kw):
         for i in range(idx.nsub):
             # ic(i, thing.shape, sym.symmRs.shape, sym.symid, sym.nsub,idx.nsub)
             tmp1 = thing[s.beg + i * s.Lasu:s.asuend + i * s.Lasu]
-            tmp2 = h.xform(h.homog(sym.symmRs[i]), thing[s.asu])
+            tmp2 = wu.h.xform(wu.h.homog(sym.symmRs[i]), thing[s.asu])
             # ic(tmp1.shape,tmp2.shape)
             th.testing.assert_close(tmp1, tmp2.to(tmp1.dtype), atol=1e-3, rtol=1e-5, equal_nan=True)
 
@@ -215,7 +213,7 @@ def check_sym_asu(sym, xyz, symxyz, perm_ok=False, atol=1e-4):
     for i in range(sym.nsub):
         a = symxyz[masks[i]]
         b = wusym[i]
-        if perm_ok: b = wusym[th.argmin(h.norm((wusym - a).reshape(len(wusym), -1)))]
+        if perm_ok: b = wusym[th.argmin(wu.h.norm((wusym - a).reshape(len(wusym), -1)))]
         if not th.allclose(a, b, atol=1e-3, rtol=1e-5):
             print(masks[i].to(int))
             print(i, 'a', a)

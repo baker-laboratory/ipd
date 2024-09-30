@@ -1,10 +1,10 @@
 import os
 import yaml
 from ipd.dev.lazy_import import lazyimport
-import willutil as wu
-import ipd
 import ipd
 from collections.abc import Sequence
+
+wu = ipd.lazyimport('willutil')
 
 hydra = lazyimport('hydra')
 omegaconf = lazyimport('omegaconf')

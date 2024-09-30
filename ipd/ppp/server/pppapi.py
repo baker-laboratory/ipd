@@ -43,6 +43,7 @@ class DBBase:
 @profile
 class DBPoll(DBBase, ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
+    nchain: int = -1
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
     attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
                                                          default_factory=dict)
@@ -171,7 +172,9 @@ class Backend:
         for k, v in kw.items():
             op = operator.eq
             if k.endswith('not'): k, op = k[:-3], operator.ne
-            if v: statement = statement.where(op(getattr(type_, k), v))
+            if v is not None:
+                print('select where', type_, k, v)
+                statement = statement.where(op(getattr(type_, k), v))
         return list(self.session.exec(statement))
 
     def fix_date(self, x):
@@ -235,9 +238,10 @@ class Backend:
     def pymolcmds(self, dbkey: int = None, name=None, response_model=list[DBPymolCMD]):
         return self.select(DBPymolCMD, dbkey=None, name=None)
 
-    def pollinfo(self):
-        result = self.session.execute(
-            sqlalchemy.text('select dbkey,name,user,"desc",sym,ligand from dbpoll')).fetchall()
+    def pollinfo(self, user=None):
+        query = f'SELECT dbkey,name,user,"desc",sym,ligand,nchain FROM dbpoll WHERE ispublic OR user=\'{user}\';'
+        if not user: query = 'SELECT dbkey,name,user,"desc",sym,ligand FROM dbpoll'
+        result = self.session.execute(sqlalchemy.text(query)).fetchall()
         return list(map(tuple, result))
 
     def create_poll(self, poll: DBPoll, replace: bool = False) -> str:

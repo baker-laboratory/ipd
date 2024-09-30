@@ -16,14 +16,16 @@ def guess_sym_from_fnames(fnames):
             if match := matcher.search(f):
                 hits[-1].append(match.group(1))
     allhits = [hit for hit in hits[0] if all(hit in h for h in hits)]
+    # print(fnames[0], len(fnames), hits)
     if len(allhits) == 1:
-        return allhits[0]
+        return allhits[0].upper()
     return None
 
 def guess_sym_from_directory(path, suffix=('.pdb', '.pdb.gz', '.cif', '.bcif')):
     assert os.path.isdir(path)
-    if fnames := filter(lambda f: f.endswith(suffix) and f[0] != '_', os.listdir(path)):
-        return guess_sym_from_fnames(fnames)
+    if fnames := filter(lambda f: f.endswith(suffix) and f[0] != '_',
+                        [os.path.join(path, f) for f in os.listdir(path)]):
+        return guess_sym_from_fnames(list(fnames))
     else:
         return None
 
