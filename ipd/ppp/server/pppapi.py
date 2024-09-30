@@ -173,7 +173,7 @@ class Backend:
             op = operator.eq
             if k.endswith('not'): k, op = k[:-3], operator.ne
             if v is not None:
-                print('select where', type_, k, v)
+                # print('select where', type_, k, v)
                 statement = statement.where(op(getattr(type_, k), v))
         return list(self.session.exec(statement))
 

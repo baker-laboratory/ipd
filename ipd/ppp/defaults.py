@@ -36,6 +36,33 @@ def add_stresstest_polls(client, maxpolls=0):
     ]
     presentpolls = {p[1] for p in client.pollinfo()}
     print('add_stresstest_polls', len(dirs), len(presentpolls))
+    from random_word import RandomWords
+    import random
+    r = RandomWords()
+    syms = ['C1'] * 20 + 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.upper().split()
+    cmdsyms = [''] * 48 + syms
+    for i in range(1000):
+        name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
+        print('add poll', name)
+        spec = ipd.ppp.PollSpec(name=name,
+                                path='/home/sheffler/project/ppp/monomers',
+                                nchain=random.randrange(1, 9),
+                                sym=random.choice(syms),
+                                ligand=r.get_random_word()[:3])
+        if result := client.upload(spec): print(result)
+
+        # name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
+        # print('add cmd', name)
+        # spec = ipd.ppp.PymolCMDSpec(name=name,
+        #                             cmdon='show lin',
+        #                             cmdoff='hide lin',
+        #                             minchains=random.randrange(1, 9),
+        #                             maxchains=random.randrange(1, 9),
+        #                             sym=random.choice(cmdsyms),
+        #                             ligand=random.choice(['ANY', '']),
+        #                             _skipcheck=True)
+        # if result := client.upload(spec): print(result)
+
     for dir_ in manual + dirs[:maxpolls]:
         name = dir_.replace('/home/sheffler/', '').replace('/', ' ').title()
         if name in presentpolls:

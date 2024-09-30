@@ -647,8 +647,6 @@ class ToggleCommands:
         self.widget = None
         self.itemsdict = None
         self.cmds = {}
-        # self.refersh_toggle_list()
-        # self.visible_cmds = self.cmds
 
     def init_session(self, widget):
         self.widget = widget
@@ -662,7 +660,7 @@ class ToggleCommands:
         self.gui_new_pymolcmd.ok.clicked.connect(lambda: self.create_toggle_done())
 
     def update_item(self, item, toggle=False):
-        self.visible_cmds[item.text()].widget_update(toggle)
+        self.cmds[item.text()].widget_update(toggle)
 
     def create_toggle_start(self):
         self.gui_new_pymolcmd.show()
@@ -707,39 +705,35 @@ class ToggleCommands:
             cmd = ToggleCommand(item, **cmd)
             item.setToolTip(
                 f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\nNCHAIN: {cmd.minchains}-{cmd.maxchains}'
-                f'ispublic: {cmd.ispublic}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}\nDBKEY:{cmd.dbkey}')
+                f'\nispublic: {cmd.ispublic}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}\nDBKEY:{cmd.dbkey}')
             cmd.widget.setCheckState(2) if cmd.name in state.active_cmds else cmd.widget.setCheckState(0)
             self.cmds[cmd.name] = cmd
         self.cmdsearchtext = '\n'.join(f'{c.name}||||{c.desc} sym:{c.sym} user:{c.user} lig:{c.ligand}'
                                        for c in self.cmds.values())
         self.update_toggles_gui()
 
-    def filtered_toggle_list(self):
+    def filtered_cmd_list(self):
         hits = set(self.cmds.keys())
         if query := state.findcmd:
             from subprocess import Popen, PIPE
             p = Popen(['fzf', '-i', '--filter', f'{query}'], stdout=PIPE, stdin=PIPE, stderr=PIPE, text=True)
             hits = p.communicate(input=self.cmdsearchtext)[0]
             hits = [m[:m.find('||||')] for m in hits.split('\n') if m]
-        sym, ligand, nchain = '', '', -1
-        if not state.showallcmds:
+        cmds, sym, ligand, nchain = self.cmds, '', '', -1
+        if not state.showallcmds and len(hits) < 100:
             if pip := ppppp.polls.pollinprogress:
                 sym, ligand, nchain = pip.poll.sym, pip.poll.ligand, pip.poll.nchain
-            # print('filtered_toggle_list, curpoll info:', sym, ligand, nchain)
-            # print([c.sym for c in self.cmds.values()])
-            hits = filter(lambda x: self.cmds[x].sym in ('', sym), hits)
-            hits = filter(lambda x: self.cmds[x].ligand in ligand or (ligand and self.cmds[x].ligand == 'ANY'),
-                          hits)
-            if nchain > 0:
-                hits = filter(lambda x: self.cmds[x].minchains <= nchain <= self.cmds[x].maxchains, hits)
+            hits = filter(lambda x: cmds[x].sym in ('', sym), hits)
+            hits = filter(lambda x: cmds[x].ligand in ligand or (ligand and cmds[x].ligand == 'ANY'), hits)
+            if nchain > 0: hits = filter(lambda x: cmds[x].minchains <= nchain <= cmds[x].maxchains, hits)
         return set(hits) | state.active_cmds
 
     def update_toggles_gui(self):
         if self.itemsdict is None: self.refersh_toggle_list()
-        self.visible_cmds = {k: self.cmds[k] for k in self.filtered_toggle_list()}
+        visible = {k: self.cmds[k] for k in self.filtered_cmd_list()}
         for name, item in self.itemsdict.items():
             item.setCheckState(2 if name in state.active_cmds else 0)
-            item.setHidden(not (name in self.visible_cmds or item.isSelected()))
+            item.setHidden(not (name in visible or item.isSelected()))
 
     def cleanup(self):
         pass

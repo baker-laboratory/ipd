@@ -108,14 +108,15 @@ class PollSpec(SpecBase):
     def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
         fix_label_case(self)
-        if not self.name: self.name = os.path.basename(self.path)
-        if not self.desc: self.desc = f'PDBs in {self.path}'
-        self.sym = ipd.sym.guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
-        if not self.sym or self.ligand == '':
+        self.name = self.name or os.path.basename(self.path)
+        self.desc = self.desc or f'PDBs in {self.path}'
+        self.sym = self.sym or ipd.sym.guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
+        if not self.sym or not self.ligand:
             try:
                 global _checkobjnum
                 filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
                 fname = next(filter(filt, os.listdir(self.path)))
+                print('CHECKING IN PYMOL', fname)
                 pymol.cmd.set('suspend_updates', 'on')
                 with contextlib.suppress(pymol.CmdException):
                     pymol.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
@@ -216,11 +217,12 @@ class PymolCMDSpec(SpecBase):
     sym: str = ''
     minchains: int = 1
     maxchains: int = 999_999_999
+    _skipcheck: bool = False
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
         fix_label_case(self)
-        self._check_cmds()
+        if not self._skipcheck: self._check_cmds()
         return self
 
     def _check_cmds(self):
@@ -355,7 +357,9 @@ class PPPClient:
 
     def pollinfo(self, user=getpass.getuser()):
         if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
-        print(requests.get(f'http://{self.server_addr}/pollinfo?user={user}'))
+        print()
+        print(requests.get(f'http://{self.server_addr}/pollinfo?user={user}').content)
+        print()
         return requests.get(f'http://{self.server_addr}/pollinfo?user={user}').json()
 
     def polls(self, **kw):

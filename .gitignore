@@ -168,3 +168,4 @@ cython_debug/
 .qtcreator
 \#*
 ppp_server_data
+.qtc_clangd
