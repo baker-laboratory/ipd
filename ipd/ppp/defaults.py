@@ -51,18 +51,6 @@ def add_stresstest_polls(client, maxpolls=0):
                                 ligand=r.get_random_word()[:3])
         if result := client.upload(spec): print(result)
 
-        # name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
-        # print('add cmd', name)
-        # spec = ipd.ppp.PymolCMDSpec(name=name,
-        #                             cmdon='show lin',
-        #                             cmdoff='hide lin',
-        #                             minchains=random.randrange(1, 9),
-        #                             maxchains=random.randrange(1, 9),
-        #                             sym=random.choice(cmdsyms),
-        #                             ligand=random.choice(['ANY', '']),
-        #                             _skipcheck=True)
-        # if result := client.upload(spec): print(result)
-
     for dir_ in manual + dirs[:maxpolls]:
         name = dir_.replace('/home/sheffler/', '').replace('/', ' ').title()
         if name in presentpolls:

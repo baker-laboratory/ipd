@@ -665,19 +665,13 @@ class ToggleCommands:
     def create_toggle_start(self):
         self.gui_new_pymolcmd.show()
 
-    def create_toggle_done(self):
-        cmdspec = ppp.PymolCMDSpec(
-            name=self.gui_new_pymolcmd.name.text(),
-            cmdon=self.gui_new_pymolcmd.cmdon.toPlainText(),
-            cmdoff=self.gui_new_pymolcmd.cmdoff.toPlainText(),
-            cmdstart=self.gui_new_pymolcmd.cmdstart.toPlainText(),
-            sym=self.gui_new_pymolcmd.sym.text(),
-            ligand=self.gui_new_pymolcmd.ligand.text(),
-            props=self.gui_new_pymolcmd.props.toPlainText(),
-            attrs=self.gui_new_pymolcmd.attrs.toPlainText(),
-            onstart=bool(self.gui_new_pymolcmd.onstart.checkState()),
-            ispublic=bool(self.gui_new_pymolcmd.ispublic.checkState()),
-        )
+    def create_toggle_done(self):  # sourcery skip: dict-assign-update-to-union
+        if isfalse_notify(self.gui_new_pymolcmd.name.text(), 'Must provide a Name'): return
+        if isfalse_notify(self.gui_new_pymolcmd.cmdon.toPlainText(), 'Must provide a command'): return
+        fields = 'name cmdon cmdoff cmdstart sym ligand props attrs'
+        kw = {k: widget_gettext(getattr(self.gui_new_pymolcmd, k)) for k in fields.split()}
+        kw |= {k: bool(getattr(self.gui_new_pymolcmd, k).checkState()) for k in 'ispublic onstart'.split()}
+        cmdspec = ppp.PymolCMDSpec(**kw)
         if isfalse_notify(not cmdspec.errors(), cmdspec.errors()): return
         self.gui_new_pymolcmd.hide()
         if cmdspec.ispublic:

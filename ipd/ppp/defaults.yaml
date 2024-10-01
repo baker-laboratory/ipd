@@ -24,5 +24,5 @@ pymolcmds:
 
 - name: Show HET Interactions
   cmdon: cmd.show(ppp_pymol_get('SC_REPR'), 'byres ($subject and elem N+O and not name N+C+O) within 3.3 of ($subject and HET)')
-  cmdoff: cmd.hide(ppp_pymol_get('SC_REPR'), '($subject and not HET and elem N+O) within 3.3 of ($subject and HET)')
+  cmdoff: cmd.hide(ppp_pymol_get('SC_REPR'), 'byres ($subject and not HET and elem N+O) within 3.3 of ($subject and HET)')
   ligand: any

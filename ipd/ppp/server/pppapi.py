@@ -1,3 +1,4 @@
+import sys
 import os
 import functools
 import random
@@ -12,7 +13,7 @@ from typing import Optional
 import ipd
 from icecream import ic
 import uvicorn
-import psycopg2
+import signal
 from fastapi.middleware.gzip import GZipMiddleware
 
 fastapi = ipd.lazyimport('fastapi', pip=True)
@@ -296,19 +297,20 @@ class Backend:
         return list(rev)
 
 class Server(uvicorn.Server):
-    def install_signal_handlers(self):
-        pass
-
     def run_in_thread(self):
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
 
-    def stop(self):
+    def stop(self, sig, frame):
+        print('shutting down server')
         self.should_exit = True
         self.thread.join()
+        sys.exit()
 
 @profile
 def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', **kw):
+    assert os.path.exists(
+        '/home/sheffler/project/rfdsym/hilvert/pymol_saves/design_37-atomized-bb-False_pmsave.pdb')
     import pymol
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
@@ -323,5 +325,6 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     config = uvicorn.Config(backend.app, host="127.0.0.1", port=port, log_level=loglevel)
     server = Server(config=config)
     server.run_in_thread()
+    signal.signal(signal.SIGINT, server.stop)
     ipd.ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
     return server, backend
