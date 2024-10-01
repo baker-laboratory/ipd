@@ -302,7 +302,7 @@ class Backend:
             rev |= f.reviews
         return list(rev)
 
-    def have_file(self, file: ppp.FileSpec):
+    def have_file(self, file: DBFile):
         print('have_file', file.polldbkey, file.fname)
         poll = self.poll(file.polldbkey)
         newfname = self.permafname_name(poll, file.fname)
@@ -315,7 +315,7 @@ class Backend:
         newfname = os.path.join(path, fname.replace('/', '\\'))
         return newfname
 
-    def create_file(self, file: ppp.FileSpec):
+    def create_file(self, file: DBFile):
         print('MAKEpermafname', file.permafname)
         assert file.filecontent
         mode = 'wb' if file.permafname.endswith('.bcif') else 'w'
