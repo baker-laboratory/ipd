@@ -24,14 +24,12 @@ class Bunch(dict):
             except TypeError:
                 super().__init__(vars(__arg_or_ns))
         self.update(kw)
-        self.__dict__["_special"] = {"strict_lookup": _strict is True or _strict == "__STRICT"}
         if _default == "__NODEFALT": _default = None
-        # elif _strict == "__STRICT":
-        # if _default passed explicitly, and strict is not, don't be strict
-        # self.__dict__["_special"]["strict_lookup"] = False
-        self.__dict__["_special"]["default"] = _default
+        self.__dict__['_special'] = dict()
+        self.__dict__["_special"]['strict_lookup'] = _strict is True or _strict == "__STRICT"
+        self.__dict__["_special"]['default'] = _default
         self.__dict__["_special"]["storedefault"] = _storedefault
-        self.__dict__["_special"]["autosave"] = _autosave
+        self.__dict__["_special"]["autosave"] = str(_autosave)
         self.__dict__["_special"]["autoreload"] = _autoreload
         if _autoreload:
             Path(_autoreload).touch()
@@ -55,10 +53,17 @@ class Bunch(dict):
         print('RELOAD FROM FILE', self.__dict__['_special']['autoreload'])
         with open(self.__dict__['_special']['autoreload']) as inp:
             new = yaml.load(inp, yaml.Loader)
+        special = self._special
         super().clear()
         for k, v in new.items():
-            self[k] = make_autosave_hierarchy(v, _parent=(self, None))
+            self[k] = make_autosave_hierarchy(
+                v,
+                _parent=(self, None),
+                _default=self._special['default'],
+                _strict=self._special['strict_lookup'],
+            )
         self.__dict__['_special']['autosave'] = orig
+        assert self._special == special
 
     def _notify_changed(self, k=None, v=None):  # sourcery skip: extract-method
         if self._special['parent']:
@@ -80,12 +85,14 @@ class Bunch(dict):
                 self._special['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()
                 # print('SAVE TO ', self.__dict__['_special']['autosave'])
 
-    def default(self):
-        dflt = self.__dict__['_special']["default"]
+    def default(self, key):
+        dflt = self.__dict__['_special']['default']
         if dflt == 'bunchwithparent':
-            return Bunch(_parent=(self, None),
-                         _default=dflt,
-                         _strict=self.__dict__['_special']['strict_lookup'])
+            new = Bunch(_parent=(self, None),
+                        _default='bunchwithparent',
+                        _strict=self.__dict__['_special']['strict_lookup'])
+            print('new child bunch', key, new._special)
+            return new
         if hasattr(dflt, "__call__"):
             return dflt()
         else:
@@ -211,7 +218,7 @@ class Bunch(dict):
                 if self.__dict__['_special']["strict_lookup"]:
                     raise e
                 if self._special['storedefault']:
-                    self[k] = self.default()
+                    self[k] = self.default(k)
                     return self[k]
                 return self[k]
 

@@ -15,19 +15,13 @@ def add_defaults(server_addr, stress_test_polls=False, **kw):
     client = ipd.ppp.PPPClient(server_addr)
     add_builtin_cmds(client)
     add_sym_cmds(client)
-    if stress_test_polls: add_stresstest_polls(client)
+    add_polls(client, stress_test_polls)
     pymol.cmd.set('suspend_updates', 'off')
     print(len(client.pymolcmds()))
     print('------------------- DONE ADD DEFAULTS -------------------')
 
-def add_stresstest_polls(client, maxpolls=0):
+def add_polls(client, stress=False):
     print('add_stresstest_polls start')
-    if os.path.exists('/tmp/add_stresstest_polls.list'):
-        dirs = [l.strip() for l in open('/tmp/add_stresstest_polls.list').readlines()]
-    else:
-        dirs = find_pdb_dirs('~', 1, 100)
-        with open('/tmp/add_stresstest_polls.list', 'w') as out:
-            out.write(os.linesep.join(dirs))
     manual = [
         '/home/sheffler/project/rfdsym/hilvert/pymol_saves',
         '/home/sheffler/project/rfdsym/abbas/pymol_saves',
@@ -35,23 +29,30 @@ def add_stresstest_polls(client, maxpolls=0):
         '/home/sheffler/project/ppp/monomers',
     ]
     presentpolls = {p[1] for p in client.pollinfo()}
-    print('add_stresstest_polls', len(dirs), len(presentpolls))
-    from random_word import RandomWords
-    import random
-    r = RandomWords()
-    syms = ['C1'] * 20 + 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.upper().split()
-    cmdsyms = [''] * 48 + syms
-    for i in range(1000):
-        name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
-        print('add poll', name)
-        spec = ipd.ppp.PollSpec(name=name,
-                                path='/home/sheffler/project/ppp/monomers',
-                                nchain=random.randrange(1, 9),
-                                sym=random.choice(syms),
-                                ligand=r.get_random_word()[:3])
-        if result := client.upload(spec): print(result)
-
-    for dir_ in manual + dirs[:maxpolls]:
+    dirs = []
+    if stress:
+        if os.path.exists('/tmp/add_stresstest_polls.list'):
+            dirs = [l.strip() for l in open('/tmp/add_stresstest_polls.list').readlines()]
+        else:
+            dirs = find_pdb_dirs('~', 1, 100)
+            with open('/tmp/add_stresstest_polls.list', 'w') as out:
+                out.write(os.linesep.join(dirs))
+        print('add_stresstest_polls', len(dirs), len(presentpolls))
+        from random_word import RandomWords
+        import random
+        r = RandomWords()
+        syms = ['C1'] * 20 + 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.upper().split()
+        cmdsyms = [''] * 48 + syms
+        for i in range(1000):
+            name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
+            print('add poll', name)
+            spec = ipd.ppp.PollSpec(name=name,
+                                    path='/home/sheffler/project/ppp/monomers',
+                                    nchain=random.randrange(1, 9),
+                                    sym=random.choice(syms),
+                                    ligand=r.get_random_word()[:3])
+            if result := client.upload(spec): print(result)
+    for dir_ in manual + dirs:
         name = dir_.replace('/home/sheffler/', '').replace('/', ' ').title()
         if name in presentpolls:
             print('skip', name)

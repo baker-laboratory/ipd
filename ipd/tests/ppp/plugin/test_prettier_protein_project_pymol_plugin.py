@@ -1,15 +1,73 @@
+import tempfile
 import pytest
 import os
 import json
 import time
+import pytest
+from pathlib import Path
+from assertpy import assert_that as at
 from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import *
 
 def main():
-    # hack_test_filefetcher()
     # run_plugin()
-    # run_polls_stress_test()
+    with tempfile.TemporaryDirectory() as td:
+        test_state_manager(td)
     run_pymol()
     print('test_ppppp DONE', flush=True)
+
+def test_state_manager(tempdir):  # sourcery skip: extract-duplicate-method
+    conffile = Path(os.path.join(tempdir, 'conf.yaml'))
+    statefile = Path(os.path.join(tempdir, 'state.yaml'))
+    state = StateManager(conffile, statefile, debugnames={})
+    assert 'foo' not in state
+    state.foo = 'fooglobalstate'
+    at(state.foo).is_equal_to('fooglobalstate')
+    state.activepoll = 'poll1'
+    at(state.foo).is_equal_to(None)
+    state.foo = 'foopoll1'
+    at(state.foo).is_equal_to('foopoll1')
+    state.activepoll = 'poll2'
+    at(state.foo).is_equal_to(None)
+    state.foo = 'foopoll2'
+    at(state.foo).is_equal_to('foopoll2')
+    state.activepoll = 'poll1'
+    at(state.foo).is_equal_to('foopoll1')
+
+    s = statefile.read_text()
+    assert s.count('poll1') and s.count('poll2')
+    assert not s.count('activepoll')
+    statefile.write_text('''
+        active_cmds: !!set {}
+        polls:
+          poll1:
+            foo: bar
+          poll2:
+            foo: baz
+        pymol_view: {}
+        ''')
+    # print(statefile.read_text())
+    # print(state._state)
+    at(state.foo).is_equal_to('bar')
+    state.activepoll = 'poll2'
+    at(state.foo).is_equal_to('baz')
+    # print(conffile.read_text())
+    print(state.polls._special)
+    assert not state.polls.__dict__['_special']['strict_lookup']
+    conffile.write_text('''
+        cmds: {}
+        opts:
+            activepoll: poll1
+        ''')
+    at(state.activepoll).is_equal_to('poll1')
+
+    assert isinstance(state.polls, ipd.Bunch)
+    assert 'polls' in state._state
+    assert 'polls' not in state._conf
+    assert state._conf.__dict__['_special']['strict_lookup']
+    assert not state._state.__dict__['_special']['strict_lookup']
+    assert state._state.polls is state.polls
+    assert not state.polls.__dict__['_special']['strict_lookup']
+    assert isinstance(state.polls['foo bar'], ipd.Bunch)
 
 def run_polls_stress_test():
     server, backend = ipd.ppp.server.run(12345, 'postgresql://sheffler@192.168.0.154:5432/ppp')
@@ -26,9 +84,9 @@ def run_plugin():
     run()
     print('^' * 100)
     setstate('prefetch', 0)
-    assert 0 == getstate('prefetch')
+    at(0).is_equal_to(getstate('prefetch'))
     setstate('prefetch', 2)
-    assert 2 == getstate('prefetch')
+    at(2).is_equal_to(getstate('prefetch'))
 
 def run_pymol():
     # os.environ['QT_QPA_PLATFORM'] = 'xcb'

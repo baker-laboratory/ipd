@@ -10,6 +10,7 @@ import ipd
 from ipd import ppp
 from io import StringIO
 import os
+from pathlib import Path
 import pickle
 import pymol
 import random
@@ -30,7 +31,7 @@ yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 
 remote, state, ppppp = None, None, None
 ISGLOBALSTATE, ISPERPOLLSTATE = set(), set()
-SERVER_ADDR = os.environ.get('PPPSERVER', 'jojo:12345')
+SERVER_ADDR = os.environ.get('PPPSERVER', 'localhost:12345')
 CONFIG_DIR = os.path.expanduser('~/.config/ppp/')
 CONFIG_FILE = f'{CONFIG_DIR}/localconfig.yaml'
 STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
@@ -38,7 +39,6 @@ SESSION_RESTORE = f'{CONFIG_DIR}/session_restore.pse'
 PPPPP_PICKLE = f'{CONFIG_DIR}/PrettyProteinProjectPymolPluginPanel.pickle'
 TEST_STATE = {}
 DEFAULTS = dict(reviewed=set(),
-                pymol_view={},
                 prefetch=True,
                 review_action='cp $file $pppdir/$poll/$grade_$filebase',
                 do_review_action=False,
@@ -49,10 +49,10 @@ DEFAULTS = dict(reviewed=set(),
                 hide_invalid=True,
                 showallcmds=False,
                 pymol_sc_repr='sticks',
+                active_cmds=set(),
                 activepoll=None)
 # profile = ipd.dev.timed
 profile = lambda f: f
-_debug_state = {}
 
 def notify(message):
     pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
@@ -83,141 +83,116 @@ def widget_gettext(widget):
     if hasattr(widget, 'currentText'): return widget.currentText()
 
 class StateManager:
-    def __init__(self, config_file, state_file):
+    def __init__(self, config_file, state_file, debugnames=None):
         self._statetype = dict(
+            cmds='global',
             activepoll='global',
             polls='global',
             active_cmds='perpoll',
-            reviewed='global',
+            reviewed='perpoll',
             pymol_view='perpoll',
         )
-        self.config_file, self.state_file = config_file, state_file
+        self._config_file, self._state_file = config_file, state_file
+        self._debugnames = debugnames or set('active_cmds')
         self.load()
 
     def load(self):
-        self.local = self.read_config(self.config_file, opts={}, cmds={})
-        self._localstate = self.read_config(
-            self.state_file,
-            strict=False,
-            activepoll=None,
-            active_cmds=set(),
-            pymol_view={},
+        self._conf = self.read_config(
+            self._config_file,
+            _strict=True,
+            opts=dict(shuffle=False),
+            cmds={},
         )
-        self.polls = self._localstate.polls
-        assert not self.polls.__dict__['_special']['strict_lookup']
-        assert self.polls.__dict__['_special']['default'] == 'bunchwithparent'
+        self._state = self.read_config(
+            self._state_file,
+            _strict=False,
+            active_cmds=set(),
+        )
 
-    def read_config(self, fname, strict=True, **kw):
+    def read_config(self, fname, _strict, **kw):
         result = ipd.dev.Bunch(**kw)
         if os.path.exists(fname):
             with open(fname) as inp:
                 result |= ipd.Bunch(yaml.load(inp, yaml.CLoader))
-        return ipd.dev.make_autosave_hierarchy(result,
-                                               _strict=strict,
-                                               _autosave=fname,
-                                               _default='bunchwithparent')
+        kw = dict(_strict=_strict, _autosave=fname, _default='bunchwithparent')
+        return ipd.dev.make_autosave_hierarchy(result, **kw)
 
     def save(self):
-        self.local._notify_changed()
-        self._localstate._notify_changed()
+        self._conf._notify_changed()
+        self._state._notify_changed()
 
     def is_global_state(self, name):
-        return 'global' == self._statetype[name]
+        if name in self._statetype:
+            return 'global' == self._statetype[name]
+        return False
 
     def is_per_poll_state(self, name):
-        return 'perpoll' == self._statetype[name]
-
-    def is_pymol_state(self, name):
-        return 'pymol' == self._statetype[name]
+        if name in self._statetype:
+            return 'perpoll' == self._statetype[name]
+        return True
 
     def set_state_type(self, name, statetype):
         assert name not in self._statetype or self._statetype[name] == statetype
         self._statetype[name] = statetype
 
     def __contains__(self, name):
-        return self._haveperpolstate(name)
-
-    def get_per_poll(self, name, poll):
-        return self._getperpollstate(name, poll)
+        if self.activepoll and name in self._state.polls[self.activepoll]:
+            return True
+        if name in self._state: return True
+        if name in self._conf.opts: return True
+        return False
 
     def get(self, name):
-        assert name != 'polls'
-        if name in _debug_state: print(f'GET {name} type {self._statetype[name]}')
-        if self.is_global_state(name):
-            if name not in self.local.opts and name in DEFAULTS:
-                if name in _debug_state: print(f'set default {name} to self.local.opts')
-                setattr(self.local.opts, name, DEFAULTS[name])
-            if name not in self.local.opts:
-                if name in _debug_state: print(f'get {name} from self._localstate')
-                return self._localstate[name]
-            if name in _debug_state: print(f'get {name} from self.local.opts')
-            return self.local.opts[name]
+        # sourcery skip: remove-redundant-if, remove-unreachable-code
+        if name in self._debugnames: print(f'GET {name} global: {self.is_global_state(name)}')
+        if self.is_global_state(name) or not self.activepoll:
+            if name not in self._conf.opts and name in DEFAULTS:
+                if name in self._debugnames: print(f'set default {name} to self._conf.opts')
+                setattr(self._conf.opts, name, DEFAULTS[name])
+            if name not in self._conf.opts:
+                if name in self._debugnames: print(f'get {name} from self._state')
+                return self._state[name]
+            if name in self._debugnames: print(f'get {name} from self._conf.opts')
+            return self._conf.opts[name]
         assert self.is_per_poll_state(name)
-        return self._getperpollstate(name)
+        if name not in self._state.polls[self.activepoll]:
+            if name in self._conf.opts:
+                if name in self._debugnames: print(f'get {name} set from conf.opts')
+                setattr(self._state.polls[self.activepoll], name, self._conf.opts[name])
+            elif name in DEFAULTS:
+                if name in self._debugnames: print(f'get {name} set from default')
+                setattr(self._state.polls[self.activepoll], name, DEFAULTS[name])
+            else:
+                if name in self._debugnames:
+                    print(f'no attribute {name} associated with poll {self.activepoll}')
+        if name in self._state.polls[self.activepoll]:
+            if name in self._debugnames: print(f'get {name} from perpoll')
+            return self._state.polls[self.activepoll][name]
+        if name in self._debugnames: print(f'get {name} not found')
+        return None
 
     def set(self, name, val):
-        if self.is_global_state(name):
+        if self.is_global_state(name) or not self.activepoll:
             with contextlib.suppress(ValueError):
                 self.get(name)
-            if name in self.local.opts:
-                if name in _debug_state: print(f'set {name} in self.local.opts')
-                return setattr(self.local.opts, name, val)
+            if name in self._conf.opts:
+                if name in self._debugnames: print(f'set {name} in self._conf.opts')
+                return setattr(self._conf.opts, name, val)
             else:
-                if name in _debug_state: print(f'set {name} in self._localstate')
-                return setattr(self._localstate, name, val)
-        return self._setperpollstate(name, val)
+                if name in self._debugnames: print(f'set {name} in self._state')
+                return setattr(self._state, name, val)
+        if not self.activepoll:
+            raise AttributeError(f'cant set per-poll attribute {name} with no active poll')
+        if name in self._debugnames: print(f'set {name} perpoll to {val}')
+        setattr(self._state.polls[self.activepoll], name, val)
 
     __getitem__ = get
     __getattr__ = get
     __setitem__ = set
 
-    # __setattr__ = set
-
-    def _haveperpolstate(self, name):
-        if ppppp and ppppp.polls.pollinprogress and name in self._localstate.polls[
-                ppppp.polls.pollinprogress.poll.name]:
-            return True
-        if name in self._localstate: return True
-        if name in self.local.opts: return True
-        return False
-
-    def _getperpollstate(self, name, poll=None, indent=''):
-        poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
-        if poll and name in self._localstate.polls[poll]:
-            if name in _debug_state: print('Get', name, self._localstate.polls[poll][name], 'from poll', poll)
-            return self._localstate.polls[poll][name]
-        else:
-            if name in self._localstate:
-                val = self._localstate[name]
-                if name in _debug_state: print(f'{indent}Get', name, val, 'from self._localstate', poll)
-            elif name in self.local.opts:
-                val = self.local.opts[name]
-                if name in _debug_state: print(f'{indent}Get', name, val, 'from opts', poll)
-            elif name in DEFAULTS:
-                val = DEFAULTS[name]
-                if name in _debug_state: print(f'{indent}Get', name, val, 'from defaults', poll)
-            else:
-                raise ValueError(f'unknown self._localstate {name}')
-            if poll:
-                if name in _debug_state: print('SET perpoll', name, '=', val)
-                setattr(self._localstate.polls[poll], name, val)
-            return val
-        raise ValueError(findent + 'Get unknown self._localstate {name}')
-
-    def _setperpollstate(self, name, val, poll=None):
-        with contextlib.suppress(ValueError):
-            self._getperpollstate(name, poll, indent='   ')  # check already exists
-        poll = ppppp.polls.pollinprogress.poll.name if ppppp.polls.pollinprogress else poll
-        if poll:
-            if name in _debug_state: print('Set', name, val, 'topoll', poll)
-            dest = self._localstate.polls[poll]
-        elif name in self.local.opts and name not in self._localstate:
-            dest = self.local.opts
-            if name in _debug_state: print('Set', name, val, 'topots', poll)
-        else:
-            dest = self._localstate
-            if name in _debug_state: print('Set', name, val, 'tostate', poll)
-        setattr(dest, name, val)
+    def __setattr__(self, k, v):
+        if k[0] == '_': super().__setattr__(k, v)
+        else: self.set(k, v)
 
 class SubjectName:
     def __init__(self):
@@ -251,7 +226,7 @@ class PymolFileViewer:
         for cmd in state.active_cmds:
             assert cmd in ppppp.toggles.cmds
             self.run_command(ppppp.toggles.cmds[cmd].cmdon)
-        if self.fname in (pview := state.pymol_view): pymol.cmd.set_view(pview[self.fname])
+        if 'pymol_view' in state: pymol.cmd.set_view(state.pymol_view)
 
     def update_toggle(self, toggle: 'ToggleCommand'):
         if toggle: self.run_command(toggle.cmdon)
@@ -263,7 +238,7 @@ class PymolFileViewer:
 
     def cleanup(self):
         pymol.cmd.delete(subject_name())
-        state.pymol_view[self.fname] = pymol.cmd.get_view()
+        state.pymol_view = pymol.cmd.get_view()
 
 @profile
 class FileFetcher(threading.Thread):
@@ -354,36 +329,31 @@ class PollInProgress:
     def __init__(self, poll):
         self.poll = poll
         self.viewer = None
+        state.activepoll = poll.name
         Cache = PrefetchLocalFileCache if state.prefetch else FileCache
         self.filecache = Cache(self.fnames, numprefetch=7 if state.prefetch else 0)
-        ppppp.set_pbar(0, len(state.get_per_poll('reviewed', poll=self.poll.name)), len(self.fnames))
-        ppppp.widget.showsym.setText(self.poll.sym)
-        ppppp.widget.showlig.setText(self.poll.ligand)
         ppppp.toggles.update_toggles_gui()
 
     def init_files(self, fnames):
         if isinstance(fnames, (str, bytes)):
             fnames = fnames_from_path(fnames)
-        # fnames = [_ for _ in fnames if _ not in state.polls.reviewed]
         if state.shuffle: self.pbdlist = random.shuffle(fnames)
         ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(fnames) - 1)
         return fnames
 
     @property
     def fnames(self):
-        if 'fnames' not in state.polls[self.poll.name]:
-            state.polls[self.poll.name].fnames = self.init_files(self.poll.path)
-        return state.polls[self.poll.name].fnames
+        if 'files' not in state: state.fnames = self.init_files(self.poll.path)
+        return state.fnames
 
     @property
     def index(self):
-        if 'activepollindex' not in state.polls[self.poll.name]:
-            state.polls[self.poll.name].activepollindex = 0
-        return state.polls[self.poll.name].activepollindex
+        if 'activepollindex' not in state: state.activepollindex = 0
+        return state.activepollindex
 
     @index.setter
     def index(self, index):
-        state.polls[self.poll.name].activepollindex = index
+        state.activepollindex = index
 
     def start(self):
         ppppp.update_opts()
@@ -405,8 +375,8 @@ class PollInProgress:
                                 polldbkey=self.poll.dbkey,
                                 fname=self.fnames[self.index])
         if state.do_review_action and not self.exec_review_action(review): return
-        response = remote.upload(review)
-        if isfalse_notify(not response, f'server response: {response}'): return
+        response = remote.upload_review(review, self.fnames[self.index])
+        if isfalse_notify(not response, f'upload file server response: {response}'): return
         self.review_accepted(review)
 
     def review_accepted(self, review):
@@ -678,14 +648,14 @@ class ToggleCommands:
             result = remote.upload(cmdspec)
             assert not result, result
         else:
-            cmd = ppp.PymolCMD(None, dbkey=len(state.local.cmds) + 1, **cmdspec.dict())
-            setattr(state.local.cmds, cmd.name, cmd)
+            cmd = ppp.PymolCMD(None, dbkey=len(state.cmds) + 1, **cmdspec.dict())
+            setattr(state.cmds, cmd.name, cmd)
         self.refersh_toggle_list()
         self.update_toggles_gui()
 
     def refersh_toggle_list(self):
         assert self.widget is not None
-        cmdsdicts = list(state.local.cmds.values()) + remote.pymolcmdsdict()
+        cmdsdicts = list(state.cmds.values()) + remote.pymolcmdsdict()
         # print([c['name'] for c in cmdsdicts])
         if 'active_cmds' not in state:
             state.active_cmds = {cmd['name'] for cmd in cmdsdict if cmd['onstart']}

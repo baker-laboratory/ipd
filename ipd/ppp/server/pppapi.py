@@ -11,6 +11,7 @@ import operator
 from pathlib import Path
 from typing import Optional
 import ipd
+from ipd import ppp
 from icecream import ic
 import uvicorn
 import signal
@@ -42,7 +43,7 @@ class DBBase:
         return
 
 @profile
-class DBPoll(DBBase, ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
+class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     nchain: int = -1
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
@@ -53,7 +54,7 @@ class DBPoll(DBBase, ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
 
     def populate_files(self):
         assert os.path.isdir(self.path)
-        filt = lambda s: not s.startswith('_') and s.endswith(ipd.ppp.STRUCTURE_FILE_SUFFIX)
+        filt = lambda s: not s.startswith('_') and s.endswith(ppp.STRUCTURE_FILE_SUFFIX)
         if fnames := filter(filt, os.listdir(self.path)):
             for fname in fnames:
                 assert self.dbkey
@@ -76,7 +77,7 @@ class DBPoll(DBBase, ipd.ppp.PollSpec, sqlmodel.SQLModel, table=True):
             backend.session.delete(f)
 
 @profile
-class DBFile(DBBase, ipd.ppp.FileSpec, sqlmodel.SQLModel, table=True):
+class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
     poll: DBPoll = sqlmodel.Relationship(back_populates="files")
@@ -90,7 +91,7 @@ class DBFile(DBBase, ipd.ppp.FileSpec, sqlmodel.SQLModel, table=True):
         return self
 
 @profile
-class DBReview(DBBase, ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
+class DBReview(DBBase, ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     filedbkey: int = sqlmodel.Field(default=None, foreign_key="dbfile.dbkey")
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
@@ -106,17 +107,9 @@ class DBReview(DBBase, ipd.ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
     def validated_with_backend(self, backend):
         assert self.file
         assert self.poll
-        path = os.path.join(backend.datadir, 'poll', str(self.poll.dbkey), 'reviewed')
-        os.makedirs(path, exist_ok=True)
-        newfname = os.path.join(path, self.file.fname.replace('/', '\\'))
-        print('MAKEPERMAFILE', newfname)
-        if not os.path.exists(newfname):
-            shutil.copyfile(self.file.fname, newfname)
-        self.permafile = newfname
-        return self
 
 @profile
-class DBPymolCMD(DBBase, ipd.ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
+class DBPymolCMD(DBBase, ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
     attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
@@ -154,6 +147,8 @@ class Backend:
         self.router.add_api_route('/create/poll', self.create_poll, methods=['POST'])
         self.router.add_api_route('/create/review', self.create_review, methods=['POST'])
         self.router.add_api_route('/create/pymolcmd', self.create_pymolcmd, methods=['POST'])
+        self.router.add_api_route('/have/file', self.have_file, methods=['POST'])
+        self.router.add_api_route('/create/file', self.create_file, methods=['POST'])
         self.router.add_api_route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
         self.app = fastapi.FastAPI()
         # self.app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
@@ -180,9 +175,9 @@ class Backend:
 
     def fix_date(self, x):
         if hasattr(x, 'datecreated') and isinstance(x.datecreated, str):
-            x.datecreated = datetime.strptime(x.datecreated, ipd.ppp.DATETIME_FORMAT)
+            x.datecreated = datetime.strptime(x.datecreated, ppp.DATETIME_FORMAT)
         if hasattr(x, 'enddate') and isinstance(x.enddate, str):
-            x.enddate = datetime.strptime(x.enddate, ipd.ppp.DATETIME_FORMAT)
+            x.enddate = datetime.strptime(x.enddate, ppp.DATETIME_FORMAT)
 
     def validate_and_add_to_db(self, thing, replace=False) -> str:
         # print('validate_and_add_to_db', replace)
@@ -296,6 +291,26 @@ class Backend:
             rev |= f.reviews
         return list(rev)
 
+    def have_file(self, file: ppp.FileSpec):
+        print('have_file', file.polldbkey, file.fname)
+        poll = self.poll(file.polldbkey)
+        newfname = self.permafname_name(poll, file.fname)
+        return os.path.exists(newfname), newfname
+
+    def permafname_name(self, poll, fname):
+        pollname = poll.name.replace(' ', '_').replace('/', '\\')
+        path = os.path.join(self.datadir, 'poll', f'{pollname}__{poll.dbkey}', 'reviewed')
+        os.makedirs(path, exist_ok=True)
+        newfname = os.path.join(path, fname.replace('/', '\\'))
+        return newfname
+
+    def create_file(self, file: ppp.FileSpec):
+        print('MAKEpermafname', file.permafname)
+        assert file.filecontent
+        mode = 'wb' if file.permafname.endswith('.bcif') else 'w'
+        with open(file.permafname, mode) as out:
+            out.write(file.filecontent)
+
 class Server(uvicorn.Server):
     def run_in_thread(self):
         self.thread = threading.Thread(target=self.run)
@@ -326,5 +341,5 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     server = Server(config=config)
     server.run_in_thread()
     signal.signal(signal.SIGINT, server.stop)
-    ipd.ppp.defaults.add_defaults(f'0.0.0.0:{port}', **kw)
+    ppp.defaults.add_defaults(f'0.0.0.0:{port}', **kw)
     return server, backend

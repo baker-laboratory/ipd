@@ -1,7 +1,9 @@
 import ipd
 from ipd import ppp
 import tempfile
+from pathlib import Path
 import os
+import subprocess
 from fastapi.testclient import TestClient
 from sqlmodel import create_engine
 from icecream import ic
@@ -15,6 +17,7 @@ def main():
     with tempfile.TemporaryDirectory() as td:
         testclient, pppserver = make_tmp_clent_server(td)
         test_read_root(testclient, pppserver)
+        test_file_upload(testclient, pppserver)
         test_poll(testclient, pppserver)
         test_access_all(testclient, pppserver)
         print('PASS')
@@ -37,11 +40,32 @@ def test_read_root(testclient, pppserver):
     assert response.status_code == 200
     assert response.json() == {"msg": "Hello World"}
 
+def test_file_upload(testclient, pppserver):
+    client = ppp.PPPClient(testclient)
+    path = ipd.testpath('ppppdbdir')
+    client.upload(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True))
+    localfname = os.path.join(path, '1pgx.cif')
+    file = ipd.ppp.FileSpec(polldbkey=1, fname=localfname)
+    exists, newfname = client.post('/have/file', file)
+    assert not exists
+    assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
+    exists, newfname = pppserver.have_file(file)
+    assert not exists
+    assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
+    filecontent = Path(file.fname).read_text()
+    file.filecontent = filecontent
+    file.permafname = newfname
+    file = ipd.ppp.FileSpec(**file.dict())
+    # response = pppserver.create_file(file)
+    client.post('/create/file', file)
+    diff = subprocess.check_output(['diff', localfname, newfname])
+    if diff: print(f'diff {localfname} {newfname} {diff}')
+    assert not diff
+
 @ipd.dev.timed
 def test_poll(testclient, pppserver):
     client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
-
     client.upload(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True))
     client.upload(ppp.PollSpec(name='usertest1pri', path=path, user='user1', ispublic=False))
     client.upload(ppp.PollSpec(name='usertest2pub', path=path, user='user2', ispublic=True))
@@ -101,13 +125,13 @@ def test_poll(testclient, pppserver):
         assert pppserver.poll(i).files[0].poll.dbkey == i
 
     fname = ipd.testpath('ppppdbdir/1pgx.cif')
-    client.upload(ppp.ReviewSpec(fname=fname, user='bar', polldbkey=1, grade='C'))
+    client.upload_review(ppp.ReviewSpec(fname=fname, user='bar', polldbkey=1, grade='C'))
     assert testclient.get('/reviews').json()[0]['user'] == 'bar'
     review = ppp.ReviewSpec(polldbkey=1, fname=fname, grade='A')
     assert review.grade == 'A'
-    client.upload(review)
+    client.upload_review(review)
     assert len(client.reviews()) == 2
-    client.upload(ppp.ReviewSpec(polldbkey=3, fname=fname, grade='f'))
+    client.upload_review(ppp.ReviewSpec(polldbkey=3, fname=fname, grade='f'))
 
     assert len(client.reviews_for_fname(fname)) == 3
 
@@ -138,7 +162,7 @@ def test_poll(testclient, pppserver):
     assert len(client.pymolcmds()) == 1
 
     for r in reviews:
-        assert os.path.exists(r.permafile)
+        assert os.path.exists(r.permafname)
 
     print([p.name for p in client.polls()])
     print(len(client.polls(name='foo1')))

@@ -5,7 +5,7 @@ import json
 import tempfile
 import contextlib
 import ipd
-import pathlib
+from pathlib import Path
 import gzip
 import getpass
 import traceback
@@ -58,7 +58,9 @@ class SpecBase(pydantic.BaseModel):
 
     @pydantic.validator('user')
     def valuser(cls, user):
-        return user or getpass.getuser()
+        user = user or getpass.getuser()
+        assert user
+        return user
 
     @pydantic.validator('props')
     def valprops(cls, props):
@@ -165,13 +167,14 @@ class PollSpec(SpecBase):
 class ReviewSpec(SpecBase):
     polldbkey: int
     fname: str
-    permafile: str = ''
+    permafname: str = ''
     grade: str
     comment: str = ''
     durationsec: int = -1
+    filecontent: str | None = None
 
     @pydantic.validator('grade')
-    def valgrade(cls, grade, values):
+    def valgrade(cls, grade):
         assert grade.upper() in 'SABCDF'
         return grade.upper()
 
@@ -191,6 +194,8 @@ class ReviewSpec(SpecBase):
 class FileSpec(SpecBase):
     polldbkey: int
     fname: str
+    permafname: str = ''
+    filecontent: str = ''
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
@@ -248,7 +253,7 @@ class PymolCMDSpec(SpecBase):
                     cmd = getattr(self, cmdname)
                     cmd = cmd.replace('$subject', f'TEST_OBJECT{TOBJNUM}')
                     pymol.cmd.do(cmd, echo=False, log=False)
-            msg = pathlib.Path(f'{td}/stdout.log').read_text()
+            msg = Path(f'{td}/stdout.log').read_text()
             msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
             self._check_cmds_output += msg
         return self
@@ -335,7 +340,8 @@ class PPPClient:
         if self.testclient: response = self.testclient.get(url)
         else: response = requests.get(url)
         if response.status_code != 200:
-            raise PPPClientError(f'GET failed URL: "{url}" \n RESPONSE: "{response.reason}"')
+            if hasattr(response, 'reason'): response = response.reason
+            raise PPPClientError(f'GET failed URL: "{url}" \n RESPONSE: "{response}"')
         return response.json()
 
     def post(self, url, thing, **kw):
@@ -343,10 +349,10 @@ class PPPClient:
         url = f'{url}?{query}' if query else url
         if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
         # print('POST', url, thing)
-        json = thing.json()
-        if self.testclient: response = self.testclient.post(url, content=json)
-        else: response = requests.post(url, json)
-        if response.status_code != 200: raise PPPClientError(f'POST failed {url} {json} \n {response}')
+        body = thing.json()
+        if self.testclient: response = self.testclient.post(url, content=body)
+        else: response = requests.post(url, body)
+        if response.status_code != 200: raise PPPClientError(f'POST failed {url} {body} \n {response}')
         return response.json()
 
     def upload(self, thing, **kw):
@@ -355,12 +361,24 @@ class PPPClient:
         kind = type(thing).__name__.replace('Spec', '').lower()
         return self.post(f'/create/{kind}', thing, **kw)
 
+    def upload_review(self, review, fname=None):
+        fname = fname or review.fname
+        file = FileSpec(polldbkey=review.polldbkey, fname=fname)
+        print('review.fname', review.polldbkey, fname)
+        exists, permafname = self.post('/have/file', file)
+        review.permafname = permafname
+        file.permafname = permafname
+        file.filecontent = Path(fname).read_text()
+        if not exists:
+            if response := self.post('/create/file', file): return response
+        review = ReviewSpec(**review.dict())
+        return self.upload(review)
+
     def pollinfo(self, user=getpass.getuser()):
         if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
-        print()
-        print(requests.get(f'http://{self.server_addr}/pollinfo?user={user}').content)
-        print()
-        return requests.get(f'http://{self.server_addr}/pollinfo?user={user}').json()
+        response = requests.get(f'http://{self.server_addr}/pollinfo?user={user}')
+        if response.content: return response.json()
+        return []
 
     def polls(self, **kw):
         return [Poll(self, **p) for p in self.get('/polls', **kw)]
