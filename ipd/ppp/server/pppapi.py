@@ -324,8 +324,6 @@ class Server(uvicorn.Server):
 
 @profile
 def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', **kw):
-    assert os.path.exists(
-        '/home/sheffler/project/rfdsym/hilvert/pymol_saves/design_37-atomized-bb-False_pmsave.pdb')
     import pymol
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
