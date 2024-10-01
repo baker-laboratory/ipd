@@ -340,8 +340,9 @@ class PPPClient:
         if self.testclient: response = self.testclient.get(url)
         else: response = requests.get(url)
         if response.status_code != 200:
-            if hasattr(response, 'reason'): response = response.reason
-            raise PPPClientError(f'GET failed URL: "{url}" \n RESPONSE: "{response}"')
+            reason = response.reason if hasattr(response, 'reason') else '???'
+            raise PPPClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
+                                 f'REASON:   {reason}\n    CONTENT:  {response.content.decode()}')
         return response.json()
 
     def post(self, url, thing, **kw):
@@ -352,7 +353,12 @@ class PPPClient:
         body = thing.json()
         if self.testclient: response = self.testclient.post(url, content=body)
         else: response = requests.post(url, body)
-        if response.status_code != 200: raise PPPClientError(f'POST failed {url} {body} \n {response}')
+        if response.status_code != 200:
+            if len(str(body)) > 512: body = f'{body[:200]} ... {body[-200:]}'
+            reason = response.reason if hasattr(response, 'reason') else '???'
+            raise PPPClientError(f'POST failed "{url}"\n    BODY:     {body}\n    '
+                                 f'RESPONSE: {response}\n    REASON:   {reason}\n    '
+                                 f'CONTENT:  {response.content.decode()}')
         return response.json()
 
     def upload(self, thing, **kw):

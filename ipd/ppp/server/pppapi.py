@@ -154,6 +154,13 @@ class Backend:
         # self.app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
         self.app.include_router(self.router)
 
+        @self.app.exception_handler(Exception)
+        async def validation_exception_handler(request: fastapi.Request, exc: Exception):
+            print('!' * 100)
+            exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+            return fastapi.responses.JSONResponse(content=exc_str,
+                                                  status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
+
     def root(self) -> None:
         return dict(msg='Hello World')
 

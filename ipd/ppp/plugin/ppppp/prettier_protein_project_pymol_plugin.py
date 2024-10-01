@@ -69,7 +69,7 @@ def ppp_pymol_add_default(name, val, isglobal=False):
 
 def ppp_pymol_get(name):
     if not ppppp: return TEST_STATE[name]
-    print('ppp get', state[f'ppp_pymol_{name}'])
+    # print('ppp get', state[f'ppp_pymol_{name}'])
     return state[f'ppp_pymol_{name}']
 
 def ppp_pymol_set(name, val):
@@ -457,6 +457,7 @@ class Polls:
         # localpolls = [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand) for p in state.local.polls.values()]
         self.pollsearchtext, self.polltooltip, allpolls = [], {}, {}
         self.allpolls = remote.pollinfo()  #+ localpolls
+        print(allpolls)
         for key, name, user, desc, sym, lig, nchain in self.allpolls:
             ttip = f'NAME: {name}\nDESCRIPTION: DBKEY:{key}\n{desc}\nSYM: {sym}\nUSER: {user}\nLIG: {lig}\nNCHAIN: {nchain}'
             self.polltooltip[name] = ttip
