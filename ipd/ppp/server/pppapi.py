@@ -90,6 +90,10 @@ class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
         assert os.path.exists(self.fname)
         return self
 
+    @pydantic.validator('fname')
+    def valfname(cls, fname):
+        return os.path.abspath(fname)
+
 @profile
 class DBReview(DBBase, ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
     dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
