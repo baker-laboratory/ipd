@@ -30,7 +30,7 @@ yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 
 remote, state, ppppp = None, None, None
 ISGLOBALSTATE, ISPERPOLLSTATE = set(), set()
-SERVER_ADDR = os.environ.get('PPPSERVER', '127.0.0.1:12345')
+SERVER_ADDR = os.environ.get('PPPSERVER', 'jojo:12345')
 CONFIG_DIR = os.path.expanduser('~/.config/ppp/')
 CONFIG_FILE = f'{CONFIG_DIR}/localconfig.yaml'
 STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
