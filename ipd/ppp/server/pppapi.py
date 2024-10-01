@@ -322,9 +322,9 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     backend.app.mount("/ppp", backend.app)
     pymol.pymol_argv = ['pymol', '-qckK']
     pymol.finish_launching()
-    config = uvicorn.Config(backend.app, host="0.0.0.0i", port=port, log_level=loglevel)
+    config = uvicorn.Config(backend.app, host="0.0.0.0", port=port, log_level=loglevel)
     server = Server(config=config)
     server.run_in_thread()
     signal.signal(signal.SIGINT, server.stop)
-    ipd.ppp.defaults.add_defaults(f'0.0.0.0i:{port}', **kw)
+    ipd.ppp.defaults.add_defaults(f'0.0.0.0:{port}', **kw)
     return server, backend
