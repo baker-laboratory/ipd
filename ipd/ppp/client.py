@@ -9,9 +9,8 @@ from pathlib import Path
 import gzip
 import getpass
 import traceback
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
-rp = ipd.lazyimport('RestrictedPython', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
 requests = ipd.lazyimport('requests', pip=True)
 rich = ipd.lazyimport('rich', 'Rich', pip=True)
@@ -52,8 +51,8 @@ class SpecBase(pydantic.BaseModel):
     telemetry: bool = True
     user: str = ''
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    props: list[str] | str = []
-    attrs: dict[str, str | int | float] | str = {}
+    props: Union[list[str], str] = []
+    attrs: Union[dict[str, Union[str, int, float]], str] = {}
     _errors: str = ''
 
     @pydantic.validator('user')
@@ -88,7 +87,7 @@ class PollSpec(SpecBase):
     cmdstart: str = ''
     cmdstop: str = ''
     sym: str = ''
-    nchain: int | str = -1
+    nchain: Union[int, str] = -1
     ligand: str = ''
     workflow: str = ''
     enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
@@ -171,7 +170,7 @@ class ReviewSpec(SpecBase):
     grade: str
     comment: str = ''
     durationsec: int = -1
-    filecontent: str | None = None
+    filecontent: Union[str, None] = None
 
     @pydantic.validator('grade')
     def valgrade(cls, grade):

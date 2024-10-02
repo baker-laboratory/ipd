@@ -6,10 +6,12 @@ from types import ModuleType
 from typing import List
 import subprocess
 
+_skip_global_install = False
+
 class LazyModule:
     __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels')
 
-    def __init__(self, name: str, package: str = None, pip: str | bool = False, mamba=False, channels=''):
+    def __init__(self, name: str, package: str = None, pip=False, mamba=False, channels=''):
         self._name = name
         self._package = package or name.split('.', maxsplit=1)[0]
         self._pip = pip
@@ -47,23 +49,39 @@ class LazyModule:
                 # mamba = '/'.join(mamba[:-1])+'/bin/mamba'
                 mamba = 'mamba'
                 cmd = f'{mamba} activate {env} && {mamba} install {self._channels} {self._package}'
-                subprocess.check_call(cmd.split(), shell=True)
+                result = subprocess.check_call(cmd.split(), shell=True)
+                assert 'error' not in result.lower()
             try:
                 return import_module(self._name)
             except (ValueError, AssertionError, ModuleNotFoundError):
                 return self._pipimport()
 
     def _pipimport(self):
+        global _skip_global_install
         try:
             return import_module(self._name)
         except (ValueError, AssertionError, ModuleNotFoundError):
+            return
             if self._pip and self._pip != 'user':
-                subprocess.check_call(f'{sys.executable} -mpip install {self._package}'.split())
+                if not _skip_global_install:
+                    try:
+                        sys.stderr.write(f'PIPIMPORT {self._package}\n')
+                        result = subprocess.check_call(
+                            f'{sys.executable} -mpip install {self._package}'.split())
+                    except:
+                        pass
             try:
                 return import_module(self._name)
             except (ValueError, AssertionError, ModuleNotFoundError):
                 if self._pip and self._pip != 'nouser':
-                    subprocess.check_call(f'{sys.executable} -mpip install --user {self._package}'.split())
+                    _skip_global_install = True
+                    sys.stderr.write(f'PIPIMPORT --user {self._package}\n')
+                    try:
+                        result = subprocess.check_call(
+                            f'{sys.executable} -mpip install --user {self._package}'.split())
+                        sys.stderr.write(result)
+                    except:
+                        pass
                 return import_module(self._name)
 
     @property

@@ -47,8 +47,9 @@ class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     nchain: int = -1
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                         default_factory=dict)
+    attrs: dict[str, Union[str, int,
+                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
+                                                    default_factory=dict)
     files: list["DBFile"] = sqlmodel.Relationship(back_populates="poll")
     reviews: list["DBReview"] = sqlmodel.Relationship(back_populates="poll")
 
@@ -78,13 +79,14 @@ class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
 
 @profile
 class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
-    dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
+    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
     poll: DBPoll = sqlmodel.Relationship(back_populates="files")
     reviews: list['DBReview'] = sqlmodel.Relationship(back_populates='file')
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                         default_factory=dict)
+    attrs: dict[str, Union[str, int,
+                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
+                                                    default_factory=dict)
 
     def validated_with_backend(self, backend):
         assert os.path.exists(self.fname)
@@ -96,14 +98,15 @@ class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
 
 @profile
 class DBReview(DBBase, ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
-    dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
+    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     filedbkey: int = sqlmodel.Field(default=None, foreign_key="dbfile.dbkey")
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
     file: DBFile = sqlmodel.Relationship(back_populates='reviews')
     poll: DBPoll = sqlmodel.Relationship(back_populates='reviews')
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                         default_factory=dict)
+    attrs: dict[str, Union[str, int,
+                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
+                                                    default_factory=dict)
 
     def __hash__(self):
         return self.dbkey
@@ -114,10 +117,11 @@ class DBReview(DBBase, ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
 
 @profile
 class DBPymolCMD(DBBase, ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
-    dbkey: int | None = sqlmodel.Field(default=None, primary_key=True)
+    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
     props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, str | int | float] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                         default_factory=dict)
+    attrs: dict[str, Union[str, int,
+                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
+                                                    default_factory=dict)
 
     def validated_with_backend(self, backend):
         if conflicts := set(backend.select(DBPymolCMD, name=self.name, dbkeynot=self.dbkey)):
@@ -217,19 +221,19 @@ class Backend:
         self.session.commit()
         return result
 
-    def poll(self, dbkey: int, response_model=DBPoll | None):
+    def poll(self, dbkey: int, response_model=Optional[DBPoll]):
         poll = self.select(DBPoll, dbkey=dbkey)
         return poll[0] if poll else None
 
-    def file(self, dbkey: int, response_model=DBFile | None):
+    def file(self, dbkey: int, response_model=Optional[DBFile]):
         file = self.select(DBFile, dbkey=dbkey)
         return file[0] if file else None
 
-    def review(self, dbkey: int, response_model=DBReview | None):
+    def review(self, dbkey: int, response_model=Optional[DBReview]):
         review = self.select(DBReview, dbkey=dbkey)
         return review[0] if review else None
 
-    def pymolcmd(self, dbkey: int, response_model=DBPymolCMD | None):
+    def pymolcmd(self, dbkey: int, response_model=Optional[DBPymolCMD]):
         cmd = self.select(DBPymolCMD, dbkey=dbkey)
         return cmd[0] if cmd else None
 
