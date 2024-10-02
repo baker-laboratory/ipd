@@ -252,6 +252,7 @@ class PymolCMDSpec(SpecBase):
                     cmd = getattr(self, cmdname)
                     cmd = cmd.replace('$subject', f'TEST_OBJECT{TOBJNUM}')
                     pymol.cmd.do(cmd, echo=False, log=False)
+            pymol.cmd.do('delete *TMP*')
             msg = Path(f'{td}/stdout.log').read_text()
             msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
             self._check_cmds_output += msg

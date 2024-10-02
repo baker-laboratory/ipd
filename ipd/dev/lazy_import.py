@@ -61,7 +61,6 @@ class LazyModule:
         try:
             return import_module(self._name)
         except (ValueError, AssertionError, ModuleNotFoundError):
-            return
             if self._pip and self._pip != 'user':
                 if not _skip_global_install:
                     try:

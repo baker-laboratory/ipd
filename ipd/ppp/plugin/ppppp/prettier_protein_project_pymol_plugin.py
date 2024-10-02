@@ -540,8 +540,10 @@ class Polls:
         duration = ipd.dev.safe_eval('dict(' + ','.join(self.newpollwidget.duration.text().split()) + ')')
         duration = datetime.timedelta(**duration)
         duration = duration or datetime.timedelta(weeks=99999)
-        if isfalse_notify(self.newpollwidget.name.text(), 'Must provide a Name'): return
-        if isfalse_notify(os.path.exists(self.newpollwidget.path.text()), 'path must exist'): return
+        # if isfalse_notify(self.newpollwidget.name.text(), 'Must provide a Name'): return
+        if isfalse_notify(os.path.exists(os.path.expanduser(self.newpollwidget.path.text())),
+                          'path must exist'):
+            return
         if isfalse_notify(duration > datetime.timedelta(minutes=1), 'Poll expires too soon'): return
         fields = 'name path sym ligand user workflow cmdstart cmdstop props attrs'
         kw = {k: widget_gettext(getattr(self.newpollwidget, k)) for k in fields.split()}

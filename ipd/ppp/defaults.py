@@ -26,7 +26,7 @@ def add_polls(client, stress=False):
         '/home/sheffler/project/rfdsym/hilvert/pymol_saves',
         '/home/sheffler/project/rfdsym/abbas/pymol_saves',
         '/home/sheffler/project/rfdsym/test_icos_T200_100res_r27_v2',
-        '/home/sheffler/project/ppp/monomers',
+        '/home/sheffler/project/monomers',
     ]
     presentpolls = {p[1] for p in client.pollinfo()}
     dirs = []
@@ -47,7 +47,7 @@ def add_polls(client, stress=False):
             name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
             print('add poll', name)
             spec = ipd.ppp.PollSpec(name=name,
-                                    path='/home/sheffler/project/ppp/monomers',
+                                    path='/home/sheffler/project/monomers',
                                     nchain=random.randrange(1, 9),
                                     sym=random.choice(syms),
                                     ligand=r.get_random_word()[:3])

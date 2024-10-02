@@ -3,9 +3,7 @@ From: ubuntu
 IncludeCmd: yes
 
 %setup
-    mkdir -p $APPTAINER_ROOTFS/prettier_protein_project/lib
-    mkdir -p $APPTAINER_ROOTFS/home
-    mkdir -p $APPTAINER_ROOTFS/scratch
+    mkdir -p $APPTAINER_ROOTFS/ppp
     touch $APPTAINER_ROOTFS/etc/localtime
     touch $APPTAINER_ROOTFS/etc/hosts
     touch $APPTAINER_ROOTFS/root/.pymolrc
@@ -14,22 +12,21 @@ IncludeCmd: yes
     /home/sheffler/sw/Miniforge3-Linux-x86_64.sh /opt
 
 %post
+    mkdir -p /ppp/lib /ppp/data && rm -rf /ppp/lib/*
     apt update && apt install -q -y git libglib2.0-0t64
+    git clone -b ppp https://github.com/baker-laboratory/ipd /ppp/lib/ipd
+    git clone https://github.com/willsheffler/willutil /ppp/lib/willutil
+    git clone https://github.com/willsheffler/wills_pymol_crap /ppp/lib/wills_pymol_crap
     bash /opt/Miniforge3-Linux-x86_64.sh -b -p /opt/mamba
-    /opt/mamba/bin/mamba install -q -y -c schrodinger pymol-bundle sqlmodel fastapi uvicorn ordered-set pyyaml "pip<25" icecream RestrictedPython psycopg2 mysql-connector-python assertpy
-    /opt/mamba/bin/pip install -e /prettier_protein_project/lib/ipd
-    /opt/mamba/bin/pip install -e /prettier_protein_project/lib/willutil
-    /opt/mamba/bin/pip install -e /prettier_protein_project/lib/wills_pymol_crap
-    git config --global --add safe.directory /prettier_protein_project/lib/ipd
-    git config --global --add safe.directory /prettier_protein_project/lib/willutil
-    git config --global --add safe.directory /prettier_protein_project/lib/wills_pymol_crap
+    /opt/mamba/bin/mamba install -q -y -c schrodinger pymol-bundle sqlmodel fastapi[standard] uvicorn[standard] ordered-set pyyaml "pip<25" icecream RestrictedPython psycopg2 mysql-connector-python assertpy uvloop
+    for lib in ipd willutil wills_pymol_crap; do
+        /opt/mamba/bin/pip install -e /ppp/lib/$lib
+        git config --global --add safe.directory /ppp/lib/$lib
+    done
 
 %runscript
-    echo updating library ipd from github branch prettier_protein_project
-    cd /prettier_protein_project/lib/ipd && git pull
-    echo updating library willutil from github
-    cd /prettier_protein_project/lib/willutil && git pull
-    echo updating library wills_pymol_crap
-    cd /prettier_protein_project/lib/wills_pymol_crap && git pull
-    cd /prettier_protein_project/server
-    /opt/mamba/bin/python -m ipd.ppp.server --datadir /prettier_protein_project/server/data "$@"
+    for lib in ipd willutil wills_pymol_crap; do
+        echo updating library $lib
+        cd /ppp/lib/$lib && git pull
+    done
+    cd /ppp/data && /opt/mamba/bin/python -m ipd.ppp.server --datadir . "$@"

@@ -11,7 +11,7 @@ sieve = lazyimport('ipd.sieve')
 sym = lazyimport('ipd.sym')
 voxel = lazyimport('ipd.voxel')
 
-lazyimport('icecream', pip=True).ic.configureOutput(includeContext=True)
+icecream = lazyimport('icecream', pip=True).ic.configureOutput(includeContext=True)
 
 proj_dir = os.path.realpath(os.path.dirname(__file__))
 

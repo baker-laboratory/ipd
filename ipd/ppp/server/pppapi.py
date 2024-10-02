@@ -13,17 +13,17 @@ from typing import Optional
 import ipd
 from ipd import ppp
 from icecream import ic
-import uvicorn
 import signal
-from fastapi.middleware.gzip import GZipMiddleware
+from typing import Union
 
-fastapi = ipd.lazyimport('fastapi', pip=True)
+fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
 sqlmodel = ipd.lazyimport('sqlmodel', pip=True)
 sqlalchemy = ipd.lazyimport('sqlalchemy', pip=True)
 ordset = ipd.lazyimport('ordered_set', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
+uvicorn = ipd.dev.lazyimport('uvicorn', 'uvicorn[standard]', pip=True)
 
 SESSION = None
 
@@ -339,7 +339,8 @@ class Server(uvicorn.Server):
         sys.exit()
 
 @profile
-def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', **kw):
+def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', local=False, **kw):
+    from fastapi.middleware.gzip import GZipMiddleware
     import pymol
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
@@ -351,9 +352,26 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     backend.app.mount("/ppp", backend.app)
     pymol.pymol_argv = ['pymol', '-qckK']
     pymol.finish_launching()
-    config = uvicorn.Config(backend.app, host="0.0.0.0", port=port, log_level=loglevel)
+    config = uvicorn.Config(
+        backend.app,
+        host='127.0.0.1' if local else '0.0.0.0',
+        port=port,
+        log_level=loglevel,
+        reload=True,
+        reload_dirs=[
+            os.path.join(ipd.proj_dir, 'ipd/ppp'),
+            os.path.join(ipd.proj_dir, 'ipd/ppp/server'),
+        ],
+        loop='uvloop',
+    )
     server = Server(config=config)
     server.run_in_thread()
-    signal.signal(signal.SIGINT, server.stop)
-    ppp.defaults.add_defaults(f'0.0.0.0:{port}', **kw)
+    with contextlib.suppress(ValueError):
+        signal.signal(signal.SIGINT, server.stop)
+    for _ in range(5000):
+        if server.started: break
+        time.sleep(0.001)
+    else:
+        raise RuntimeError('server failed to start')
+    if not local: ppp.defaults.add_defaults(f'0.0.0.0:{port}', **kw)
     return server, backend
