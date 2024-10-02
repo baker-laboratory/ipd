@@ -14,13 +14,11 @@ pytest = ipd.dev.lazyimport('pytest', pip=True)
 testclient, pppserver = None, None
 
 def main():
-    with tempfile.TemporaryDirectory() as td:
-        testclient, pppserver = make_tmp_clent_server(td)
-        test_read_root(testclient, pppserver)
-        test_file_upload(testclient, pppserver)
-        test_poll(testclient, pppserver)
-        test_access_all(testclient, pppserver)
-        print('PASS')
+    for fn in [test_read_root, test_file_upload, test_poll, test_access_all]:
+        with tempfile.TemporaryDirectory() as td:
+            testclient, pppserver = make_tmp_clent_server(td)
+            fn(testclient, pppserver)
+    print('PASS')
     ipd.dev.global_timer.report()
 
 @ipd.dev.timed
@@ -43,7 +41,8 @@ def test_read_root(testclient, pppserver):
 def test_file_upload(testclient, pppserver):
     client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
-    if response := client.upload(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True)):
+    if response := client.upload_poll(ppp.PollSpec(name='usertest1pub', path=path, user='user1',
+                                                   ispublic=True)):
         print(response)
     localfname = os.path.join(path, '1pgx.cif')
     file = ipd.ppp.FileSpec(polldbkey=1, fname=localfname)
@@ -62,24 +61,32 @@ def test_file_upload(testclient, pppserver):
     diff = subprocess.check_output(['diff', localfname, newfname])
     if diff: print(f'diff {localfname} {newfname} {diff}')
     assert not diff
+    file.filecontent = ''
+    files = [file for _ in range(10)]
+    pppserver.create_empty_files(files)
+    poll = client.polls(name='usertest1pub')[0]
+    assert len(poll.files) == 13
+    assert len(client.files()) == 13
+    client.remove(poll)
+    assert len(client.polls()) == 0
 
 @ipd.dev.timed
 def test_poll(testclient, pppserver):
     client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
-    client.upload(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True))
-    client.upload(ppp.PollSpec(name='usertest1pri', path=path, user='user1', ispublic=False))
-    client.upload(ppp.PollSpec(name='usertest2pub', path=path, user='user2', ispublic=True))
-    client.upload(ppp.PollSpec(name='usertest3pri', path=path, user='user3', ispublic=False))
+    client.upload_poll(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True))
+    client.upload_poll(ppp.PollSpec(name='usertest1pri', path=path, user='user1', ispublic=False))
+    client.upload_poll(ppp.PollSpec(name='usertest2pub', path=path, user='user2', ispublic=True))
+    client.upload_poll(ppp.PollSpec(name='usertest3pri', path=path, user='user3', ispublic=False))
     assert 3 == len(client.pollinfo(user='user1'))
     assert 2 == len(client.pollinfo(user='user2'))
     assert 3 == len(client.pollinfo(user='user3'))
 
-    response = client.upload(ppp.PollSpec(name='foo1', desc='bar', path=path))
+    response = client.upload_poll(ppp.PollSpec(name='foo1', desc='bar', path=path))
     assert not response, response
-    response = client.upload(ppp.PollSpec(name='foo2', desc='Nntsebar', path=path))
+    response = client.upload_poll(ppp.PollSpec(name='foo2', desc='Nntsebar', path=path))
     assert not response, response
-    response = client.upload(
+    response = client.upload_poll(
         ppp.PollSpec(name='foo3', desc='barntes', path=path, props=['ligand', 'multichain']))
     assert not response, response
 
@@ -117,10 +124,12 @@ def test_poll(testclient, pppserver):
 
     poll = ppp.PollSpec(name='foobar', path=path, props=['ast'])
     # print(poll)
-    result = client.upload(poll)
+    result = client.upload_poll(poll)
     assert not result, result
     assert len(client.polls()) == 8
     poll = client.poll(8)
+    # for p in client.polls():
+    # print(p.dbkey, p.name, len(p.files))
     assert len(poll.files) == 3
     for i in range(1, 4):
         assert pppserver.poll(i).files[0].poll.dbkey == i

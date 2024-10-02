@@ -25,8 +25,6 @@ yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 uvicorn = ipd.dev.lazyimport('uvicorn', 'uvicorn[standard]', pip=True)
 
-SESSION = None
-
 # profile = ipd.dev.timed
 profile = lambda f: f
 
@@ -53,21 +51,7 @@ class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
     files: list["DBFile"] = sqlmodel.Relationship(back_populates="poll")
     reviews: list["DBReview"] = sqlmodel.Relationship(back_populates="poll")
 
-    def populate_files(self):
-        assert os.path.isdir(self.path)
-        filt = lambda s: not s.startswith('_') and s.endswith(ppp.STRUCTURE_FILE_SUFFIX)
-        if fnames := filter(filt, os.listdir(self.path)):
-            for fname in fnames:
-                assert self.dbkey
-                file = DBFile(polldbkey=self.dbkey, fname=os.path.join(self.path, fname))
-                SESSION.add(file.validated_with_backend(None))
-            return True
-        else:
-            self._errors += 'no valid filenames in dir {self.path}'
-            return False
-
     def validated_with_backend(self, backend):
-        if not self.populate_files(): return self
         if conflicts := set(backend.select(DBPoll, name=self.name, dbkeynot=self.dbkey)):
             print('conflicts', [c.name for c in conflicts])
             raise DuplicateError(f'duplicate poll {self.name}', conflicts)
@@ -133,31 +117,31 @@ class Backend:
     def __init__(self, engine, datadir):
         self.engine = engine
         self.datadir = datadir
-        self.session = sqlmodel.Session(engine)
-        global SESSION
-        assert not SESSION
-        SESSION = self.session
+        self.session = sqlmodel.Session(self.engine)
         sqlmodel.SQLModel.metadata.create_all(self.engine)
         self.router = fastapi.APIRouter()
-        self.router.add_api_route('/', self.root, methods=['GET'])
-        self.router.add_api_route('/polls', self.polls, methods=['GET'])
-        self.router.add_api_route('/pollinfo', self.pollinfo, methods=['GET'])
-        self.router.add_api_route('/reviews', self.reviews, methods=['GET'])
-        self.router.add_api_route('/files', self.files, methods=['GET'])
-        self.router.add_api_route('/pymolcmds', self.pymolcmds, methods=['GET'])
-        self.router.add_api_route('/poll{dbkey}', self.poll, methods=['GET'])
-        self.router.add_api_route('/poll{dbkey}/fname', self.poll_file, methods=['GET'])
-        self.router.add_api_route('/poll{dbkey}/fids', self.poll_fids, methods=['GET'])
-        self.router.add_api_route('/reviews/poll{dbkey}', self.review_for_dbkey, methods=['GET'])
-        self.router.add_api_route('/reviews/file{dbkey}', self.review_for_dbkey, methods=['GET'])
-        self.router.add_api_route('/reviews/byfname/{fname}', self.reviews_fname, methods=['GET'])
-        self.router.add_api_route('/review{dbkey}', self.review, methods=['GET'])
-        self.router.add_api_route('/create/poll', self.create_poll, methods=['POST'])
-        self.router.add_api_route('/create/review', self.create_review, methods=['POST'])
-        self.router.add_api_route('/create/pymolcmd', self.create_pymolcmd, methods=['POST'])
-        self.router.add_api_route('/have/file', self.have_file, methods=['POST'])
-        self.router.add_api_route('/create/file', self.create_file, methods=['POST'])
-        self.router.add_api_route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
+        route = self.router.add_api_route
+        route('/', self.root, methods=['GET'])
+        route('/create/file', self.create_file_with_content, methods=['POST'])
+        route('/create/files', self.create_empty_files, methods=['POST'])
+        route('/create/poll', self.create_poll, methods=['POST'])
+        route('/create/pymolcmd', self.create_pymolcmd, methods=['POST'])
+        route('/create/review', self.create_review, methods=['POST'])
+        route('/files', self.files, methods=['GET'])
+        route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
+        route('/have/file', self.have_file, methods=['POST'])
+        route('/pollinfo', self.pollinfo, methods=['GET'])
+        route('/polls', self.polls, methods=['GET'])
+        route('/poll{dbkey}', self.poll, methods=['GET'])
+        route('/poll{dbkey}/fids', self.poll_fids, methods=['GET'])
+        route('/poll{dbkey}/fname', self.poll_file, methods=['GET'])
+        route('/pymolcmds', self.pymolcmds, methods=['GET'])
+        route('/remove/{thing}/{dbkey}', self.remove, methods=['GET'])
+        route('/reviews', self.reviews, methods=['GET'])
+        route('/reviews/byfname/{fname}', self.reviews_fname, methods=['GET'])
+        route('/reviews/file{dbkey}', self.review_for_dbkey, methods=['GET'])
+        route('/reviews/poll{dbkey}', self.review_for_dbkey, methods=['GET'])
+        route('/review{dbkey}', self.review, methods=['GET'])
         self.app = fastapi.FastAPI()
         # self.app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
         self.app.include_router(self.router)
@@ -169,6 +153,14 @@ class Backend:
             return fastapi.responses.JSONResponse(content=exc_str,
                                                   status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
 
+    def remove(self, thing, dbkey):
+        thing = self.select(thing, dbkey=dbkey)
+        assert len(thing) == 1
+        thing = thing[0]
+        thing.clear(self)
+        self.session.delete(thing)
+        self.session.commit()
+
     def root(self) -> None:
         return dict(msg='Hello World')
 
@@ -179,6 +171,8 @@ class Backend:
         return thingattr
 
     def select(self, type_, **kw):
+        if isinstance(type_, str):
+            type_ = dict(poll=DBPoll, file=DBFile, review=DBReview, pymolcmd=DBPymolCMD)[type_]
         statement = sqlmodel.select(type_)
         for k, v in kw.items():
             op = operator.eq
@@ -203,7 +197,7 @@ class Backend:
         try:
             try:
                 thing = thing.validated_with_backend(self)
-                print('DB ADDED', thing)
+                # print('DB ADDED', thing)
             except AssertionError as e:
                 self.ssesion.delete(thing)
                 return f'error in validate_and_add_to_db: {e}'
@@ -213,7 +207,7 @@ class Backend:
                     print('DB DELETE', type(oldthing), oldthing.dbkey)
                     oldthing.clear(self)
                     self.session.delete(oldthing)
-                print('DB ADDED', thing)
+                # print('DB ADDED', thing)
             else:
                 thing.clear(self)
                 self.session.delete(thing)
@@ -308,8 +302,6 @@ class Backend:
 
     def have_file(self, file: DBFile):
         poll = self.poll(file.polldbkey)
-        print(poll)
-        print(self.polls())
         newfname = self.permafname_name(poll, file.fname)
         return os.path.exists(newfname), newfname
 
@@ -320,12 +312,18 @@ class Backend:
         newfname = os.path.join(path, fname.replace('/', '\\'))
         return newfname
 
-    def create_file(self, file: DBFile):
-        print('MAKEpermafname', file.permafname)
+    def create_file_with_content(self, file: DBFile):
         assert file.filecontent
         mode = 'wb' if file.permafname.endswith('.bcif') else 'w'
         with open(file.permafname, mode) as out:
             out.write(file.filecontent)
+
+    def create_empty_files(self, files: list[ppp.FileSpec]):
+        # print('CREATE empty files', len(files))
+        for f in files:
+            assert not f.filecontent
+            self.session.add(DBFile(**f.dict()))
+        self.session.commit()
 
 class Server(uvicorn.Server):
     def run_in_thread(self):

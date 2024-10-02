@@ -59,6 +59,7 @@ DEFAULTS = dict(reviewed=set(),
 profile = lambda f: f
 
 def notify(message):
+    print(message)
     pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
 
 def isfalse_notify(ok, message):
@@ -166,9 +167,8 @@ class StateManager:
             elif name in DEFAULTS:
                 if name in self._debugnames: print(f'get {name} set from default')
                 setattr(self._state.polls[self.activepoll], name, DEFAULTS[name])
-            else:
-                if name in self._debugnames:
-                    print(f'no attribute {name} associated with poll {self.activepoll}')
+            elif name in self._debugnames:
+                print(f'no attribute {name} associated with poll {self.activepoll}')
         if name in self._state.polls[self.activepoll]:
             if name in self._debugnames: print(f'get {name} from perpoll')
             return self._state.polls[self.activepoll][name]
@@ -188,7 +188,11 @@ class StateManager:
         if not self.activepoll:
             raise AttributeError(f'cant set per-poll attribute {name} with no active poll')
         if name in self._debugnames: print(f'set {name} perpoll to {val}')
-        setattr(self._state.polls[self.activepoll], name, val)
+        try:
+            setattr(self._state.polls[self.activepoll], name, val)
+        except AttributeError as e:
+            print(self.polls._special)
+            raise e
 
     __getitem__ = get
     __getattr__ = get
@@ -387,6 +391,7 @@ class PollInProgress:
         pymol.cmd.delete(subject_name())
         state.reviewed.add(self.viewer.fname)
         ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(self.fnames) - 1)
+        self.widget.comment.setText('')
         if len(state.reviewed) == len(self.fnames): ppppp.polls.poll_finished()
         else: self.switch_to(delta=1)
 
@@ -533,9 +538,11 @@ class Polls:
         # self.update_polls_gui()
 
     def create_poll_start(self):
+        self.newpollwidget.user.setText(getpass.getuser())
         self.newpollwidget.show()
 
     def create_poll_spec_from_gui(self):
+        print('create_poll_spec_from_gui')
         # sourcery skip: dict-assign-update-to-union
         duration = ipd.dev.safe_eval('dict(' + ','.join(self.newpollwidget.duration.text().split()) + ')')
         duration = datetime.timedelta(**duration)
@@ -552,9 +559,10 @@ class Polls:
         return self.create_poll_spec(**kw)
 
     def create_poll_autofill_button(self):
-        poll = self.create_poll_spec_from_gui()
-        for k in 'name path sym ligand user nchain'.split():
-            getattr(self.newpollwidget, k).setText(str(poll[k]))
+        print('create_poll_autofill_button')
+        if poll := self.create_poll_spec_from_gui():
+            for k in 'name path sym ligand user nchain'.split():
+                getattr(self.newpollwidget, k).setText(str(poll[k]))
 
     def create_poll_ok_button(self):
         poll = self.create_poll_spec_from_gui()
@@ -563,16 +571,17 @@ class Polls:
 
     def create_poll(self, poll: ppp.PollSpec, temporary=False):
         if not poll: return False
-        response = remote.upload(poll)
+        response = remote.upload_poll(poll)
         if isfalse_notify(not response, f'server response: {response}'): return False
         self.refresh_polls()
         return True
 
     def create_poll_spec(self, **kw):
+        print('create_poll_spec')
         try:
             return ppp.PollSpec(**kw)
         except Exception as e:
-            notify(f'create PollSpec error:\n{e}')
+            notify(f'create PollSpec error:\n{e}\n{traceback.format_exc()}')
             return None
 
     def create_poll_from_curdir(self):
@@ -640,6 +649,7 @@ class ToggleCommands:
         self.cmds[item.text()].widget_update(toggle)
 
     def create_toggle_start(self):
+        self.gui_new_pymolcmd.user.setText(getpass.getuser())
         self.gui_new_pymolcmd.show()
 
     def create_toggle_done(self):  # sourcery skip: dict-assign-update-to-union
@@ -773,8 +783,7 @@ class PrettyProteinProjectPymolPluginPanel:
 
     def grade_pressed(self, grade):
         if isfalse_notify(self.polls.pollinprogress, 'No active poll!'): return
-        if self.polls.pollinprogress.record_review(grade, comment=self.widget.comment.toPlainText()):
-            self.widget.comment.clear()
+        self.polls.pollinprogress.record_review(grade, comment=self.widget.comment.toPlainText())
 
     def set_pbar(self, lb=None, val=None, ub=None, done=None):
         if done: return self.widget.progress.setProperty('enabled', False)

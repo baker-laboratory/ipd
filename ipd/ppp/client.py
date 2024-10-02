@@ -31,7 +31,10 @@ profile = lambda f: f
 class PPPClientError(Exception):
     pass
 
-_checkobjnum = 0
+def tojson(thing):
+    if isinstance(thing, list):
+        return f'[{",".join(tojson(_) for _ in thing)}]'
+    return thing.json()
 
 def fix_label_case(thing):
     if isinstance(thing, dict):
@@ -64,13 +67,15 @@ class SpecBase(pydantic.BaseModel):
     @pydantic.validator('props')
     def valprops(cls, props):
         if isinstance(props, str):
-            props = [p.strip() for p in props.split(',')]
+            if not props.strip(): return ''
+            props = [p.strip() for p in props.strip().split(',')]
         return props
 
     @pydantic.validator('attrs')
     def valattrs(cls, attrs):
         if isinstance(attrs, str):
-            attrs = {x.split('=')[0].strip(): x.split('=')[1].strip() for x in attrs.split(',')}
+            if not attrs.strip(): return ''
+            attrs = {x.split('=')[0].strip(): x.split('=')[1].strip() for x in attrs.strip().split(',')}
         return attrs
 
     def errors(self):
@@ -78,6 +83,8 @@ class SpecBase(pydantic.BaseModel):
 
     def __getitem__(self, k):
         return getattr(self, k)
+
+_checkobjnum = 0
 
 @profile
 class PollSpec(SpecBase):
@@ -107,6 +114,7 @@ class PollSpec(SpecBase):
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
+        print('pollspec _validated')
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
         fix_label_case(self)
         self.name = self.name or os.path.basename(self.path)
@@ -117,7 +125,7 @@ class PollSpec(SpecBase):
                 global _checkobjnum
                 filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
                 fname = next(filter(filt, os.listdir(self.path)))
-                print('CHECKING IN PYMOL', fname)
+                # print('CHECKING IN PYMOL', fname)
                 pymol.cmd.set('suspend_updates', 'on')
                 with contextlib.suppress(pymol.CmdException):
                     pymol.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
@@ -350,7 +358,7 @@ class PPPClient:
         url = f'{url}?{query}' if query else url
         if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
         # print('POST', url, thing)
-        body = thing.json()
+        body = tojson(thing)
         if self.testclient: response = self.testclient.post(url, content=body)
         else: response = requests.post(url, body)
         if response.status_code != 200:
@@ -361,11 +369,26 @@ class PPPClient:
                                  f'CONTENT:  {response.content.decode()}')
         return response.json()
 
+    def remove(self, thing):
+        if isinstance(thing, Poll): return self.get(f'/remove/poll/{thing.dbkey}')
+        elif isinstance(thing, File): return self.get(f'/remove/file/{thing.dbkey}')
+        elif isinstance(thing, Review): return self.get(f'/remove/review/{thing.dbkey}')
+        elif isinstance(thing, PymolCMD): return self.get(f'/remove/pymolcmd/{thing.dbkey}')
+        else: raise ValueError('cant remove type {type(thing)}\n{thing}')
+
     def upload(self, thing, **kw):
         # print('upload', type(thing), kw)
         if thing._errors: return thing._errors
         kind = type(thing).__name__.replace('Spec', '').lower()
         return self.post(f'/create/{kind}', thing, **kw)
+
+    def upload_poll(self, poll):
+        if result := self.upload(poll): return result
+        poll = self.polls(name=poll.name)[0]
+        filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
+        fnames = filter(filt, os.listdir(poll.path))
+        files = [FileSpec(polldbkey=poll.dbkey, fname=os.path.join(poll.path, fn)) for fn in fnames]
+        return self.post('/create/files', files)
 
     def upload_review(self, review, fname=None):
         fname = fname or review.fname
