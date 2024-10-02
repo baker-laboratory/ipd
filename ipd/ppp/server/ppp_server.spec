@@ -18,7 +18,7 @@ IncludeCmd: yes
     git clone https://github.com/willsheffler/willutil /ppp/lib/willutil
     git clone https://github.com/willsheffler/wills_pymol_crap /ppp/lib/wills_pymol_crap
     bash /opt/Miniforge3-Linux-x86_64.sh -b -p /opt/mamba
-    /opt/mamba/bin/mamba install -q -y -c schrodinger pymol-bundle sqlmodel fastapi[standard] uvicorn[standard] ordered-set pyyaml "pip<25" icecream RestrictedPython psycopg2 mysql-connector-python assertpy uvloop MySQLdb
+    /opt/mamba/bin/mamba install -q -y -c schrodinger pymol-bundle sqlmodel fastapi[standard] uvicorn[standard] ordered-set pyyaml "pip<25" icecream RestrictedPython psycopg2 mysql-connector-python assertpy uvloop
     for lib in ipd willutil wills_pymol_crap; do
         /opt/mamba/bin/pip install -e /ppp/lib/$lib
         git config --global --add safe.directory /ppp/lib/$lib

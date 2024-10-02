@@ -5,7 +5,9 @@ with contextlib.suppress(ImportError):
     from pymol.plugins import addmenuitemqt
     ipd_path = os.path.realpath(os.path.dirname(__file__) + '/../../../..')
     if ipd_path not in sys.path: sys.path.append(ipd_path)
-    sys.path.append(f'/home/sheffler/project/ppp/lib/python3.{sys.version_info.minor}/site-packages')
+    newpath = f'/home/sheffler/project/ppp/lib/python3.{sys.version_info.minor}/site-packages'
+    sys.path.append(newpath)
+    print('PATH ADDED TO sys.path:', newpath)
     from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import *
 
     def __init_plugin__(app=None):
