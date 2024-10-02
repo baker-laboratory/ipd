@@ -11,6 +11,7 @@ import getpass
 import traceback
 from typing import Any, Optional
 
+rp = ipd.lazyimport('RestrictedPython', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
 requests = ipd.lazyimport('requests', pip=True)
 rich = ipd.lazyimport('rich', 'Rich', pip=True)
@@ -19,8 +20,7 @@ yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 wills_pymol_crap = ipd.lazyimport('wills_pymol_crap',
                                   'git+https://github.com/willsheffler/wills_pymol_crap',
                                   pip=True)
-from ordered_set import OrderedSet as ordset
-from rich import print
+print = rich.print
 
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 

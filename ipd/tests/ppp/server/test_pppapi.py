@@ -43,7 +43,8 @@ def test_read_root(testclient, pppserver):
 def test_file_upload(testclient, pppserver):
     client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
-    client.upload(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True))
+    if response := client.upload(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True)):
+        print(response)
     localfname = os.path.join(path, '1pgx.cif')
     file = ipd.ppp.FileSpec(polldbkey=1, fname=localfname)
     exists, newfname = client.post('/have/file', file)
@@ -168,10 +169,6 @@ def test_poll(testclient, pppserver):
     print(len(client.polls(name='foo1')))
 
     assert len(client.polls(name='foo1')) == 1
-
-def test_pppapi():
-
-    assert 0
 
 if __name__ == '__main__':
     main()

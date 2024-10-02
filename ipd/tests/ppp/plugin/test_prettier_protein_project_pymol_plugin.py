@@ -1,12 +1,12 @@
 import tempfile
-import pytest
 import os
 import json
 import time
-import pytest
 from pathlib import Path
-from assertpy import assert_that as at
 from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import *
+import ipd
+
+at = ipd.lazyimport('assertpy', pip=True).assert_that
 
 def main():
     # run_plugin()
@@ -90,7 +90,6 @@ def run_plugin():
 
 def run_pymol():
     # os.environ['QT_QPA_PLATFORM'] = 'xcb'
-    pymol = pytest.importorskip('pymol')
     pymol.pymol_argv = ['pymol', '-q']
     pymol.finish_launching()
     # ipd.ppp.plugin.ppppp.run()

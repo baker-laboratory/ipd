@@ -303,8 +303,9 @@ class Backend:
         return list(rev)
 
     def have_file(self, file: DBFile):
-        print('have_file', file.polldbkey, file.fname)
         poll = self.poll(file.polldbkey)
+        print(poll)
+        print(self.polls())
         newfname = self.permafname_name(poll, file.fname)
         return os.path.exists(newfname), newfname
 

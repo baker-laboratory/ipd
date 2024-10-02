@@ -1,8 +1,7 @@
 import os
-from icecream import ic
 from ipd.dev import lazyimport
-
 import ipd.observer
+
 dev = lazyimport('ipd.dev')
 cuda = lazyimport('ipd.cuda')
 fit = lazyimport('ipd.fit')
@@ -12,7 +11,7 @@ sieve = lazyimport('ipd.sieve')
 sym = lazyimport('ipd.sym')
 voxel = lazyimport('ipd.voxel')
 
-ic.configureOutput(includeContext=True)
+lazyimport('icecream', pip=True).ic.configureOutput(includeContext=True)
 
 proj_dir = os.path.realpath(os.path.dirname(__file__))
 
@@ -21,4 +20,3 @@ from ipd.dev import Bunch
 
 def testpath(path):
     return os.path.join(proj_dir, 'tests', 'data', path)
-
