@@ -67,7 +67,7 @@ def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
         config = yaml.load(inp, yaml.Loader)
         for cmd in config['pymolcmds']:
-            spec = ipd.ppp.PymolCMDSpec(**cmd)
+            spec = ipd.ppp.PymolCMDSpec(skip_validation=True, **cmd)
             if not spec.errors():
                 client.upload(spec, replace=True)
             else:
@@ -82,7 +82,9 @@ def add_sym_cmds(client):
             cmdon=
             f'symgen.make{sym}("$subject", name="{sym}"); delete $subject; cmd.set_name("{sym}", "$subject")',
             cmdoff='remove not chain A',
-            sym=sym)
+            sym=sym,
+            skip_validation=True,
+        )
         assert not cmd.errors(), cmd.errors()
         result = client.upload(cmd, replace=True)
         assert not result, result

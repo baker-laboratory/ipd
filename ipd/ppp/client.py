@@ -229,12 +229,15 @@ class PymolCMDSpec(SpecBase):
     sym: str = ''
     minchains: int = 1
     maxchains: int = 999_999_999
-    _skipcheck: bool = False
+    _skip_validation: bool = False
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
         fix_label_case(self)
-        if not self._skipcheck: self._check_cmds()
+        print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        print(self.name, self._skip_validation)
+        print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        if not self._skip_validation: self._check_cmds()
         return self
 
     def _check_cmds(self):

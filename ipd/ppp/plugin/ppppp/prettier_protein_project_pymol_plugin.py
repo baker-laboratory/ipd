@@ -391,7 +391,7 @@ class PollInProgress:
         pymol.cmd.delete(subject_name())
         state.reviewed.add(self.viewer.fname)
         ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(self.fnames) - 1)
-        self.widget.comment.setText('')
+        ppppp.widget.comment.setText('')
         if len(state.reviewed) == len(self.fnames): ppppp.polls.poll_finished()
         else: self.switch_to(delta=1)
 
@@ -466,7 +466,7 @@ class Polls:
         # localpolls = [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand) for p in state.local.polls.values()]
         self.pollsearchtext, self.polltooltip, allpolls = [], {}, {}
         self.allpolls = remote.pollinfo()  #+ localpolls
-        print(allpolls)
+        if not self.allpolls: return
         for key, name, user, desc, sym, lig, nchain in self.allpolls:
             ttip = f'NAME: {name}\nDESCRIPTION: DBKEY:{key}\n{desc}\nSYM: {sym}\nUSER: {user}\nLIG: {lig}\nNCHAIN: {nchain}'
             self.polltooltip[name] = ttip
