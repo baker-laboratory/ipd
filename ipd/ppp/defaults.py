@@ -15,7 +15,7 @@ def add_defaults(server_addr, stress_test_polls=False, **kw):
     client = ipd.ppp.PPPClient(server_addr)
     add_builtin_cmds(client)
     add_sym_cmds(client)
-    add_polls(client, stress_test_polls)
+    if stress_test_polls: add_polls(client, stress_test_polls)
     pymol.cmd.set('suspend_updates', 'off')
     print(len(client.pymolcmds()))
     print('------------------- DONE ADD DEFAULTS -------------------')
