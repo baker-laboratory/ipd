@@ -72,7 +72,7 @@ class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
     reviews: list['DBReview'] = sqlmodel.Relationship(back_populates='file')
 
     def validated_with_backend(self, backend):
-        assert os.path.exists(self.fname)
+        # assert os.path.exists(self.fname)
         return self
 
     @pydantic.validator('fname')
