@@ -172,6 +172,7 @@ class Backend:
         cmd = f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}'
         print(f'EXEC RAW SQL: "{cmd}"', flush=True)
         self.session.execute(sqlalchemy.text(cmd))
+        self.session.commit()
 
     def apply_db_schema_updates(self):
         tables = 'DBPoll DBFile DBReview DBPymolCMD'.split()
