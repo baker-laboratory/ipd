@@ -282,7 +282,7 @@ class Backend:
 
     def pollinfo(self, user=None):
         query = f'SELECT dbkey,name,user,"desc",sym,ligand,nchain FROM dbpoll WHERE ispublic OR user=\'{user}\';'
-        if not user: query = 'SELECT dbkey,name,user,"desc",sym,ligand FROM dbpoll'
+        if not user or user == 'admin': query = 'SELECT dbkey,name,user,"desc",sym,ligand,nchain FROM dbpoll'
         result = self.session.execute(sqlalchemy.text(query)).fetchall()
         return list(map(tuple, result))
 

@@ -62,9 +62,8 @@ class SpecBase(pydantic.BaseModel):
 
     @pydantic.validator('user')
     def valuser(cls, user):
-        user = user or getpass.getuser()
-        assert user
-        return user
+        if SERVER: return user
+        return user or getpass.getuser()
 
     @pydantic.validator('props')
     def valprops(cls, props):

@@ -36,7 +36,6 @@ wpc = ipd.lazyimport('wills_pymol_crap', 'git+https://github.com/willsheffler/wi
 wu.h
 wpc.pymol_util
 
-USER = getpass.getuser()
 remote, state, ppppp = None, None, None
 ISGLOBALSTATE, ISPERPOLLSTATE = set(), set()
 CONFIG_DIR = os.path.expanduser('~/.config/ppp/')
@@ -62,6 +61,7 @@ DEFAULTS = dict(
     activepollindex=0,
     files=set(),
     serveraddr=os.environ.get('PPPSERVER', 'ppp.ipd:12345'),
+    user=getpass.getuser(),
 )
 # profile = ipd.dev.timed
 profile = lambda f: f
@@ -105,10 +105,12 @@ class StateManager:
             reviewed='perpoll',
             pymol_view='perpoll',
             serveraddr='global',
+            user='global',
         )
         self._config_file, self._state_file = config_file, state_file
         self._debugnames = debugnames or set('active_cmds')
         self.load()
+        print(f'user: {self.user}')
         self.sanity_check()
 
     def sanity_check(self):
@@ -478,9 +480,9 @@ class ContextMenuMixin(abc.ABC):
         if item := self.widget.itemAt(event.pos()):
             thing = self.get_from_item(item)
             for name, act in self._context_menu_items().items():
-                if act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == USER)
+                if act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == state.user)
         for name, act in self._context_menu_items().items():
-            if not act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == USER)
+            if not act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == state.user)
         if selection := menu.exec_(event.globalPos()):
             try:
                 self._context_menu_items()[selection.text()].func(thing)
@@ -539,6 +541,7 @@ class Polls(ContextMenuMixin):
     def refresh_polls(self):
         # localpolls = [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand) for p in state.local.polls.values()]
         self.pollsearchtext, self.polltooltip, allpolls = [], {}, {}
+        self.listitems, self.listitemdict = [], {}
         self.allpolls = remote.pollinfo()  #+ localpolls
         if not self.allpolls: return
         for key, name, user, desc, sym, lig, nchain in self.allpolls:
@@ -550,7 +553,6 @@ class Polls(ContextMenuMixin):
         self.pollsearchtext = '\n'.join(self.pollsearchtext)
         self.widget.clear()
         if self.widget.count() == 0:
-            self.listitems, self.listitemdict = [], {}
             for i, name in enumerate(sorted(self.allpolls)):
                 self.widget.addItem(name)
                 self.listitems.append(self.widget.item(i))
@@ -612,7 +614,7 @@ class Polls(ContextMenuMixin):
         # self.update_polls_gui()
 
     def create_poll_start(self):
-        self.newpollwidget.user.setText(USER)
+        self.newpollwidget.user.setText(state.user)
         self.newpollwidget.show()
 
     def create_poll_spec_from_gui(self):
@@ -659,7 +661,7 @@ class Polls(ContextMenuMixin):
             return None
 
     def create_poll_from_curdir(self):
-        u = USER
+        u = state.user
         d = os.path.abspath('.').replace(f'/mnt/home/{u}', '~').replace(f'/home/{u}', '~')
         self.create_poll(
             self.create_poll_spec(
@@ -750,7 +752,7 @@ class ToggleCommands(ContextMenuMixin):
         self.cmds[item.text()].widget_update(toggle)
 
     def create_toggle_start(self):
-        self.gui_new_pymolcmd.user.setText(USER)
+        self.gui_new_pymolcmd.user.setText(state.user)
         self.gui_new_pymolcmd.show()
 
     def create_toggle_done(self):  # sourcery skip: dict-assign-update-to-union
