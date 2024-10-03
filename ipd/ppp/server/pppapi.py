@@ -179,7 +179,6 @@ class Backend:
             cls = globals()[table]
             for name, field in cls.__fields__.items():
                 if name not in cols[table]:
-                    print('@' * 69)
                     print('ADD NEW COLUMN',
                           table,
                           name,
@@ -371,6 +370,14 @@ class Server(uvicorn.Server):
         self.thread.join()
         sys.exit()
 
+def pymol_launch():
+    stdout = sys.stdout
+    stderr = sys.stderr
+    pymol.finish_launching(['pymol', '-xiqckK'])
+    sys.stdout = stdout
+    sys.stderr = stderr
+    pymol.cmd.set('suspend_updates', 'on')
+
 @profile
 def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', local=False, **kw):
     from fastapi.middleware.gzip import GZipMiddleware
@@ -383,19 +390,19 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)
-    pymol.pymol_argv = ['pymol', '-qckK']
-    pymol.finish_launching()
+    # if not local: pymol_launch()
     config = uvicorn.Config(
         backend.app,
         host='127.0.0.1' if local else '0.0.0.0',
         port=port,
         log_level=loglevel,
-        reload=True,
-        reload_dirs=[
-            os.path.join(ipd.proj_dir, 'ipd/ppp'),
-            os.path.join(ipd.proj_dir, 'ipd/ppp/server'),
-        ],
+        reload=False,
+        # reload_dirs=[
+        # os.path.join(ipd.proj_dir, 'ipd/ppp'),
+        # os.path.join(ipd.proj_dir, 'ipd/ppp/server'),
+        # ],
         loop='uvloop',
+        workers=9,
     )
     server = Server(config=config)
     server.run_in_thread()
@@ -406,5 +413,5 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
         time.sleep(0.001)
     else:
         raise RuntimeError('server failed to start')
-    ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
+    # ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
     return server, backend

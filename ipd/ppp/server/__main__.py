@@ -20,7 +20,7 @@ def main():
     print(f'STARTING SERVER 127.0.0.1:{args.port} database: {args.dburl} datadir: {args.datadir}')
     ipd.ppp.server.run(**args)
     while True:
-        time.sleep(0.1)
+        time.sleep(1)
 
 if __name__ == '__main__':
     main()

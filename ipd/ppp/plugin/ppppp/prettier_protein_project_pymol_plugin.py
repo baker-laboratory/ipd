@@ -597,7 +597,7 @@ class Polls(ContextMenuMixin):
         self.newpollwidget.show()
 
     def create_poll_spec_from_gui(self):
-        print('create_poll_spec_from_gui')
+        # print('create_poll_spec_from_gui')
         # sourcery skip: dict-assign-update-to-union
         duration = ipd.dev.safe_eval('dict(' + ','.join(self.newpollwidget.duration.text().split()) + ')')
         duration = datetime.timedelta(**duration)
@@ -614,7 +614,7 @@ class Polls(ContextMenuMixin):
         return self.create_poll_spec(**kw)
 
     def create_poll_autofill_button(self):
-        print('create_poll_autofill_button')
+        # print('create_poll_autofill_button')
         if poll := self.create_poll_spec_from_gui():
             for k in 'name path sym ligand user nchain'.split():
                 getattr(self.newpollwidget, k).setText(str(poll[k]))
@@ -632,7 +632,7 @@ class Polls(ContextMenuMixin):
         return True
 
     def create_poll_spec(self, **kw):
-        print('create_poll_spec')
+        # print('create_poll_spec')
         try:
             return ppp.PollSpec(**kw)
         except Exception as e:

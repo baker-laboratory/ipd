@@ -114,7 +114,6 @@ class PollSpec(SpecBase):
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
-        print('pollspec _validated')
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
         fix_label_case(self)
         self.name = self.name or os.path.basename(self.path)
@@ -238,6 +237,7 @@ class PymolCMDSpec(SpecBase):
         return self
 
     def _check_cmds(self):
+        pymol.cmd.save('/tmp/tmp_pymol_session.pse')
         self._check_cmds_output = '-' * 80 + os.linesep + str(self) + os.linesep + '_' * 80 + os.linesep
         self._errors = ''
         global TOBJNUM
@@ -247,6 +247,7 @@ class PymolCMDSpec(SpecBase):
         self._check_cmd('cmdon')
         self._check_cmd('cmdoff')
         pymol.cmd.delete(f'TEST_OBJECT{TOBJNUM}')
+        pymol.cmd.load('/tmp/tmp_pymol_session.pse')
         if any(
             [any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())]):
             # raise PymolCMDSpecError('bad pymol commands', self._check_cmds_output)

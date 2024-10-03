@@ -29,4 +29,4 @@ IncludeCmd: yes
         echo updating library $lib
         cd /ppp/lib/$lib && git pull
     done
-    cd /ppp/data && /opt/mamba/bin/python -m ipd.ppp.server --datadir . "$@"
+    cd /ppp && /opt/mamba/bin/python -m ipd.ppp.server --datadir /ppp/data "$@"
