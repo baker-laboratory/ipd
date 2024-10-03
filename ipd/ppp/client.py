@@ -9,6 +9,7 @@ from pathlib import Path
 import gzip
 import getpass
 import traceback
+import socket
 from typing import Any, Optional, Union
 
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -23,6 +24,7 @@ print = rich.print
 
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
+SERVER = 'ppp' == socket.gethostname()
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 # profile = ipd.dev.timed
@@ -106,7 +108,7 @@ class PollSpec(SpecBase):
 
     @pydantic.validator('path')
     def valpath(cls, path):
-        if not os.path.exists('/home') and not os.path.exists('/mnt/home'): return
+        if SERVER: return path
         path = os.path.abspath(os.path.expanduser(path))
         assert os.path.isdir(path), f'path must be directory: {path}'
         assert [f for f in os.listdir(path)
@@ -116,6 +118,7 @@ class PollSpec(SpecBase):
     @pydantic.model_validator(mode='after')
     def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
+        if SERVER: return self
         fix_label_case(self)
         self.name = self.name or os.path.basename(self.path)
         self.desc = self.desc or f'PDBs in {self.path}'
@@ -187,7 +190,7 @@ class ReviewSpec(SpecBase):
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
-        if not os.path.exists('/home') and not os.path.exists('/mnt/home'): return fname
+        if SERVER: return fname
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
@@ -207,7 +210,7 @@ class FileSpec(SpecBase):
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
-        if not os.path.exists('/home') and not os.path.exists('/mnt/home'): return fname
+        if SERVER: return fname
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
