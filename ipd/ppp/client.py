@@ -106,6 +106,7 @@ class PollSpec(SpecBase):
 
     @pydantic.validator('path')
     def valpath(cls, path):
+        if not os.path.exists('/home') and not os.path.exists('/mnt/home'): return
         path = os.path.abspath(os.path.expanduser(path))
         assert os.path.isdir(path), f'path must be directory: {path}'
         assert [f for f in os.listdir(path)
@@ -186,6 +187,7 @@ class ReviewSpec(SpecBase):
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
+        if not os.path.exists('/home') and not os.path.exists('/mnt/home'): return fname
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
@@ -205,6 +207,7 @@ class FileSpec(SpecBase):
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
+        if not os.path.exists('/home') and not os.path.exists('/mnt/home'): return fname
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 

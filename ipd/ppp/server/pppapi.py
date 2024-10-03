@@ -416,5 +416,5 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
         time.sleep(0.001)
     else:
         raise RuntimeError('server failed to start')
-    # ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
+    ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
     return server, backend
