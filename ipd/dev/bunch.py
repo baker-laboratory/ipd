@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import traceback
 import shutil
 import hashlib
 import datetime
@@ -50,18 +51,16 @@ class Bunch(dict):
         self.__dict__['_special']['autoreloadhash'] = newhash
         # disable autosave
         orig, self.__dict__['_special']['autosave'] = self.__dict__['_special']['autosave'], None
-        print('RELOAD FROM FILE', self.__dict__['_special']['autoreload'])
+        # print('RELOAD FROM FILE', self.__dict__['_special']['autoreload'])
         with open(self.__dict__['_special']['autoreload']) as inp:
             new = yaml.load(inp, yaml.Loader)
         special = self._special
         super().clear()
         for k, v in new.items():
-            self[k] = make_autosave_hierarchy(
-                v,
-                _parent=(self, None),
-                _default=self._special['default'],
-                _strict=self._special['strict_lookup'],
-            )
+            self[k] = make_autosave_hierarchy(v,
+                                              _parent=(self, None),
+                                              _default=self._special['default'],
+                                              _strict=self._special['strict_lookup'])
         self.__dict__['_special']['autosave'] = orig
         assert self._special == special
 
@@ -76,7 +75,8 @@ class Bunch(dict):
                 if isinstance(v, (list, set, tuple, Bunch)):
                     self[k] = make_autosave_hierarchy(self[k],
                                                       _parent=(self, None),
-                                                      _default=self._special['default'])
+                                                      _default=self._special['default'],
+                                                      _strict=self._special['strict_lookup'])
             os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)
             with open(self._special['autosave'] + '.tmp', 'w') as out:
                 yaml.dump(unmake_autosave_hierarchy(self), out)
@@ -91,7 +91,9 @@ class Bunch(dict):
             new = Bunch(_parent=(self, None),
                         _default='bunchwithparent',
                         _strict=self.__dict__['_special']['strict_lookup'])
-            print('new child bunch', key, new._special)
+            special = new._special.copy()
+            special['parent'] = id(special['parent'])
+            # print('new child bunch:', key)  #, '_special:', special)
             return new
         if hasattr(dflt, "__call__"):
             return dflt()
@@ -222,7 +224,14 @@ class Bunch(dict):
                     return self[k]
                 return self[k]
 
+    def __setitem__(self, k, v):
+        # if k == 'polls':
+        # print('set polls trace:')
+        # traceback.print_stack()
+        super().__setitem__(k, v)
+
     def __setattr__(self, k, v):
+        assert k != 'polls'
         if hasattr(super(), k):
             raise ValueError(f"{k} is a reseved name for Bunch")
         try:

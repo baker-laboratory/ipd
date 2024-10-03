@@ -59,13 +59,15 @@ DEFAULTS = dict(
     pymol_sc_repr='sticks',
     active_cmds=set(),
     activepoll=None,
+    activepollindex=0,
+    files=set(),
     serveraddr=os.environ.get('PPPSERVER', 'ppp.ipd:12345'),
 )
 # profile = ipd.dev.timed
 profile = lambda f: f
 
 def notify(message):
-    print(message)
+    print('NOTIFY:', message)
     pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
 
 def isfalse_notify(ok, message):
@@ -107,6 +109,21 @@ class StateManager:
         self._config_file, self._state_file = config_file, state_file
         self._debugnames = debugnames or set('active_cmds')
         self.load()
+        self.sanity_check()
+
+    def sanity_check(self):
+        assert self._conf._special['autosave']
+        assert self._conf._special['autoreload']
+        assert self._conf._special['strict_lookup']
+        assert self._conf._special['default'] == 'bunchwithparent'
+        assert self._state._special['autosave']
+        assert self._state._special['autoreload']
+        assert not self._state._special['strict_lookup']
+        assert self._state._special['default'] == 'bunchwithparent'
+        assert not self._state.polls._special['parent'] is self._state
+        assert not self._state.polls._special['strict_lookup']
+        assert self._state.polls._special['default'] == 'bunchwithparent'
+        # print('state sanity check pass')
 
     def load(self):
         self._conf = self.read_config(
@@ -156,6 +173,7 @@ class StateManager:
 
     def get(self, name):
         # sourcery skip: remove-redundant-if, remove-unreachable-code
+        self.sanity_check()
         if name in self._debugnames: print(f'GET {name} global: {self.is_global_state(name)}')
         if self.is_global_state(name) or not self.activepoll:
             if name not in self._conf.opts and name in DEFAULTS:
@@ -183,6 +201,7 @@ class StateManager:
         return None
 
     def set(self, name, val):
+        self.sanity_check()
         if self.is_global_state(name) or not self.activepoll:
             with contextlib.suppress(ValueError):
                 self.get(name)
@@ -358,12 +377,12 @@ class PollInProgress:
 
     @property
     def fnames(self):
-        if 'files' not in state: state.fnames = self.init_files(self.poll.path)
+        if not state.fnames: state.fnames = self.init_files(self.poll.path)
         return state.fnames
 
     @property
     def index(self):
-        if 'activepollindex' not in state: state.activepollindex = 0
+        if not state.activepollindex: state.activepollindex = 0
         return state.activepollindex
 
     @index.setter
@@ -676,7 +695,7 @@ class ToggleCommand(ppp.PymolCMD):
             if self.widget.checkState(): state.active_cmds.add(self.name)
             else: state.active_cmds.remove(self.name)
         if ppppp.polls.pollinprogress and ppppp.polls.pollinprogress.viewer:
-            print('toggle update')
+            # print('toggle update')
             ppppp.polls.pollinprogress.viewer.update_toggle(toggle=self)
 
     def __bool__(self):
@@ -685,7 +704,7 @@ class ToggleCommand(ppp.PymolCMD):
 def printed_string(thing):
     old_stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
-    print(thing)
+    # print(thing)
     sys.stdout = old_stdout
     mystdout.seek(0)
     return mystdout.read()
@@ -912,6 +931,10 @@ def run_local_server(port=54321):
     isfalse_notify(False, f"Can't connt to: {state.serveraddr}\nWill try to run a local server.")
     return ppp.PPPClient(f'127.0.0.1:{port}')
 
+def print_status():
+    print(ipd.dev.git_status('plugin code status'))
+    print(remote.get('/gitstatus/server code status/end'))
+
 @profile
 def run(_self=None):
     os.makedirs(os.path.dirname(SESSION_RESTORE), exist_ok=True)
@@ -925,6 +948,7 @@ def run(_self=None):
         remote = ppp.PPPClient(state.serveraddr)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectionError):
         remote = run_local_server()
+    print_status()
     ppppp = PrettyProteinProjectPymolPluginPanel()
     ppppp.init_session()
 

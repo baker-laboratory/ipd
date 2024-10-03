@@ -151,9 +151,11 @@ class Backend:
         route('/reviews/file{dbkey}', self.review_for_dbkey, methods=['GET'])
         route('/reviews/poll{dbkey}', self.review_for_dbkey, methods=['GET'])
         route('/review{dbkey}', self.review, methods=['GET'])
+        route('/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
         self.app = fastapi.FastAPI()
         # self.app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
         self.app.include_router(self.router)
+        ipd.dev.git_status(header='server git status', footer='end', printit=True)
 
         @self.app.exception_handler(Exception)
         async def validation_exception_handler(request: fastapi.Request, exc: Exception):
