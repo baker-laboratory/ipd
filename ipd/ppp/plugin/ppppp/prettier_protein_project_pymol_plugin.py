@@ -11,6 +11,7 @@ from ipd import ppp
 from io import StringIO
 import os
 from pathlib import Path
+import abc
 import pickle
 import pymol
 import random
@@ -20,8 +21,10 @@ import subprocess
 import sys
 import tempfile
 import threading
+import pydantic
 import time
 import traceback
+from typing import Callable, Any
 from rich import print
 
 it = ipd.lazyimport('itertools', 'more_itertools', pip=True)
@@ -33,28 +36,31 @@ wpc = ipd.lazyimport('wills_pymol_crap', 'git+https://github.com/willsheffler/wi
 wu.h
 wpc.pymol_util
 
+USER = getpass.getuser()
 remote, state, ppppp = None, None, None
 ISGLOBALSTATE, ISPERPOLLSTATE = set(), set()
-SERVER_ADDR = os.environ.get('PPPSERVER', 'localhost:12345')
 CONFIG_DIR = os.path.expanduser('~/.config/ppp/')
 CONFIG_FILE = f'{CONFIG_DIR}/localconfig.yaml'
 STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
 SESSION_RESTORE = f'{CONFIG_DIR}/session_restore.pse'
 PPPPP_PICKLE = f'{CONFIG_DIR}/PrettyProteinProjectPymolPluginPanel.pickle'
 TEST_STATE = {}
-DEFAULTS = dict(reviewed=set(),
-                prefetch=True,
-                review_action='cp $file $pppdir/$poll/$grade_$filebase',
-                do_review_action=False,
-                findcmd='',
-                findpoll='',
-                shuffle=False,
-                use_rsync=False,
-                hide_invalid=True,
-                showallcmds=False,
-                pymol_sc_repr='sticks',
-                active_cmds=set(),
-                activepoll=None)
+DEFAULTS = dict(
+    reviewed=set(),
+    prefetch=True,
+    review_action='cp $file $pppdir/$poll/$grade_$filebase',
+    do_review_action=False,
+    findcmd='',
+    findpoll='',
+    shuffle=False,
+    use_rsync=False,
+    hide_invalid=True,
+    showallcmds=False,
+    pymol_sc_repr='sticks',
+    active_cmds=set(),
+    activepoll=None,
+    serveraddr=os.environ.get('PPPSERVER', 'ppp.ipd:12345'),
+)
 # profile = ipd.dev.timed
 profile = lambda f: f
 
@@ -96,6 +102,7 @@ class StateManager:
             active_cmds='perpoll',
             reviewed='perpoll',
             pymol_view='perpoll',
+            serveraddr='global',
         )
         self._config_file, self._state_file = config_file, state_file
         self._debugnames = debugnames or set('active_cmds')
@@ -119,8 +126,8 @@ class StateManager:
         if os.path.exists(fname):
             with open(fname) as inp:
                 result |= ipd.Bunch(yaml.load(inp, yaml.CLoader))
-        kw = dict(_strict=_strict, _autosave=fname, _default='bunchwithparent')
-        return ipd.dev.make_autosave_hierarchy(result, **kw)
+        mahkw = dict(_strict=_strict, _autosave=fname, _default='bunchwithparent')
+        return ipd.dev.make_autosave_hierarchy(result, **mahkw)
 
     def save(self):
         self._conf._notify_changed()
@@ -433,12 +440,47 @@ class PollInProgress:
         ppppp.widget.showlig.setText('')
         self.filecache.cleanup()
 
+class MenuAction(pydantic.BaseModel):
+    func: Callable[Any, None]
+    owner: bool = False
+    item: bool = True
+
+class ContextMenuMixin(abc.ABC):
+    @abc.abstractmethod
+    def _context_menu_items(self):
+        'must return dict of MenuActions'
+
+    @abc.abstractmethod
+    def get_from_item(self, item):
+        'must return object represented by listitem'
+
+    def context_menu(self, event):
+        menu, thing = pymol.Qt.QtWidgets.QMenu(), None
+        if item := self.widget.itemAt(event.pos()):
+            thing = self.get_from_item(item)
+            for name, act in self._context_menu_items().items():
+                if act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == USER)
+        for name, act in self._context_menu_items().items():
+            if not act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == USER)
+        if selection := menu.exec_(event.globalPos()):
+            try:
+                self._context_menu_items()[selection.text()].func(thing)
+            except TypeError:
+                self._context_menu_items()[selection.text()].func()
+        return True
+
 @profile
-class Polls:
+class Polls(ContextMenuMixin):
     def __init__(self):
         self.pollinprogress = None
         self.current_poll_index = None
         self.listitems = None
+
+    def _context_menu_items(self):
+        return dict(details=MenuAction(func=self.poll_details),
+                    refersh=MenuAction(func=self.refresh_polls, item=False),
+                    edit=MenuAction(func=self.edit_poll, owner=True),
+                    delete=MenuAction(func=self.delete_poll, owner=True))
 
     def init_session(self, widget):
         self.widget = widget
@@ -461,6 +503,19 @@ class Polls:
             file_names = dialog.selectedFiles()
             assert len(file_names) == 1
             self.newpollwidget.path.setText(file_names[0])
+
+    def get_from_item(self, item):
+        return remote.poll(self.allpolls[item.text()])
+
+    def poll_details(self, poll):
+        notify(printed_string(poll))
+
+    def edit_poll(self, poll):
+        print('context poll edit', poll.name)
+
+    def delete_poll(self, poll):
+        remote.remove(poll)
+        self.refresh_polls()
 
     def refresh_polls(self):
         # localpolls = [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand) for p in state.local.polls.values()]
@@ -538,7 +593,7 @@ class Polls:
         # self.update_polls_gui()
 
     def create_poll_start(self):
-        self.newpollwidget.user.setText(getpass.getuser())
+        self.newpollwidget.user.setText(USER)
         self.newpollwidget.show()
 
     def create_poll_spec_from_gui(self):
@@ -585,7 +640,7 @@ class Polls:
             return None
 
     def create_poll_from_curdir(self):
-        u = getpass.getuser()
+        u = USER
         d = os.path.abspath('.').replace(f'/mnt/home/{u}', '~').replace(f'/home/{u}', '~')
         self.create_poll(
             self.create_poll_spec(
@@ -627,8 +682,16 @@ class ToggleCommand(ppp.PymolCMD):
     def __bool__(self):
         return bool(self.widget.checkState())
 
+def printed_string(thing):
+    old_stdout = sys.stdout
+    sys.stdout = mystdout = StringIO()
+    print(thing)
+    sys.stdout = old_stdout
+    mystdout.seek(0)
+    return mystdout.read()
+
 @profile
-class ToggleCommands:
+class ToggleCommands(ContextMenuMixin):
     def __init__(self):
         self.widget = None
         self.itemsdict = None
@@ -645,11 +708,30 @@ class ToggleCommands:
         self.gui_new_pymolcmd.cancel.clicked.connect(lambda: self.gui_new_pymolcmd.hide())
         self.gui_new_pymolcmd.ok.clicked.connect(lambda: self.create_toggle_done())
 
+    def _context_menu_items(self):
+        return dict(details=MenuAction(func=self.toggle_details),
+                    refersh=MenuAction(func=self.refersh_toggle_list, item=False),
+                    edit=MenuAction(func=self.edit_toggle, owner=True),
+                    delete=MenuAction(func=self.delete_toggle, owner=True))
+
+    def get_from_item(self, item):
+        return self.cmds[item.text()]
+
+    def toggle_details(self, toggle):
+        notify(printed_string(toggle))
+
+    def edit_toggle(self, toggle):
+        print('context toggle edit', toggle.name)
+
+    def delete_toggle(self, toggle):
+        remote.remove(toggle)
+        self.refersh_toggle_list()
+
     def update_item(self, item, toggle=False):
         self.cmds[item.text()].widget_update(toggle)
 
     def create_toggle_start(self):
-        self.gui_new_pymolcmd.user.setText(getpass.getuser())
+        self.gui_new_pymolcmd.user.setText(USER)
         self.gui_new_pymolcmd.show()
 
     def create_toggle_done(self):  # sourcery skip: dict-assign-update-to-union
@@ -729,18 +811,25 @@ class PrettyProteinProjectPymolPluginPanel:
         self.update_opts()
         self.toggles.init_session(self.widget.toggles)
         self.polls.init_session(self.widget.polls)
+        self.toggles.widget.installEventFilter(self.widget)
+        self.polls.widget.installEventFilter(self.widget)
 
     def setup_main_window(self):
-        self.widget = pymol.Qt.QtWidgets.QDialog()
-        self.widget = pymol.Qt.utils.loadUi(os.path.join(os.path.dirname(__file__), 'gui_grid_main.ui'),
-                                            self.widget)
+        class ContextDialog(pymol.Qt.QtWidgets.QDialog):
+            def eventFilter(self2, source, event):
+                if event.type() == pymol.Qt.QtCore.QEvent.ContextMenu:
+                    if source is self.polls.widget: return self.polls.context_menu(event)
+                    if source is self.toggles.widget: return self.toggles.context_menu(event)
+                return super().eventFilter(source, event)
+
+        self.widget = ContextDialog()
+        uifile = os.path.join(os.path.dirname(__file__), 'gui_grid_main.ui')
+        self.widget = pymol.Qt.utils.loadUi(uifile, self.widget)
         self.widget.show()
         for grade in 'SABCDF':
             getattr(self.widget, f'{grade.lower()}tier').clicked.connect(partial(self.grade_pressed, grade))
         self.widget.button_newpoll.clicked.connect(lambda: self.polls.create_poll_start())
         self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
-        self.widget.button_refresh_polls.clicked.connect(lambda: self.polls.refresh_polls())
-        self.widget.button_refresh_cmds.clicked.connect(lambda: self.toggles.refersh_toggle_list())
         self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_toggle_start())
         self.widget.button_save.clicked.connect(lambda: self.save_session())
         self.widget.button_load.clicked.connect(lambda: self.load_session())
@@ -820,7 +909,7 @@ def run_local_server(port=54321):
     __server_thread = threading.Thread(target=ppp.server.run, kwargs=args, daemon=True)
     __server_thread.start()
     # dialog should cover server start time
-    isfalse_notify(False, f"Can't connt to: {SERVER_ADDR}\nWill try to run a local server.")
+    isfalse_notify(False, f"Can't connt to: {state.serveraddr}\nWill try to run a local server.")
     return ppp.PPPClient(f'127.0.0.1:{port}')
 
 @profile
@@ -833,7 +922,7 @@ def run(_self=None):
     global ppppp, remote, state
     state = StateManager(CONFIG_FILE, STATE_FILE)
     try:
-        remote = ppp.PPPClient(SERVER_ADDR)
+        remote = ppp.PPPClient(state.serveraddr)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectionError):
         remote = run_local_server()
     ppppp = PrettyProteinProjectPymolPluginPanel()

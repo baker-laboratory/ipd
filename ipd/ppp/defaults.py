@@ -46,11 +46,13 @@ def add_polls(client, stress=False):
         for i in range(1000):
             name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
             print('add poll', name)
-            spec = ipd.ppp.PollSpec(name=name,
-                                    path='/home/sheffler/project/monomers',
-                                    nchain=random.randrange(1, 9),
-                                    sym=random.choice(syms),
-                                    ligand=r.get_random_word()[:3])
+            spec = ipd.ppp.PollSpec(
+                name=name,
+                path='/home/sheffler/project/monomers',
+                nchain=random.randrange(1, 9),
+                sym=random.choice(syms),
+                ligand=r.get_random_word()[:3],
+            )
             if result := client.upload(spec): print(result)
     for dir_ in manual + dirs:
         name = dir_.replace('/home/sheffler/', '').replace('/', ' ').title()
@@ -67,7 +69,7 @@ def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
         config = yaml.load(inp, yaml.Loader)
         for cmd in config['pymolcmds']:
-            spec = ipd.ppp.PymolCMDSpec(skip_validation=True, **cmd)
+            spec = ipd.ppp.PymolCMDSpec(cmdcheck=False, **cmd)
             if not spec.errors():
                 client.upload(spec, replace=True)
             else:
@@ -83,7 +85,7 @@ def add_sym_cmds(client):
             f'symgen.make{sym}("$subject", name="{sym}"); delete $subject; cmd.set_name("{sym}", "$subject")',
             cmdoff='remove not chain A',
             sym=sym,
-            skip_validation=True,
+            cmdcheck=False,
         )
         assert not cmd.errors(), cmd.errors()
         result = client.upload(cmd, replace=True)

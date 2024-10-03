@@ -40,14 +40,15 @@ class DBBase:
     def clear(self, backend):
         return
 
+props_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
+attrs_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
+
 @profile
 class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
+    props: list[str] = props_default()
+    attrs: dict[str, Union[str, int, float]] = attrs_default()
     nchain: int = -1
-    props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, Union[str, int,
-                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                    default_factory=dict)
     files: list["DBFile"] = sqlmodel.Relationship(back_populates="poll")
     reviews: list["DBReview"] = sqlmodel.Relationship(back_populates="poll")
 
@@ -64,13 +65,11 @@ class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
 @profile
 class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
+    props: list[str] = props_default()
+    attrs: dict[str, Union[str, int, float]] = attrs_default()
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
     poll: DBPoll = sqlmodel.Relationship(back_populates="files")
     reviews: list['DBReview'] = sqlmodel.Relationship(back_populates='file')
-    props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, Union[str, int,
-                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                    default_factory=dict)
 
     def validated_with_backend(self, backend):
         assert os.path.exists(self.fname)
@@ -83,14 +82,12 @@ class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
 @profile
 class DBReview(DBBase, ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
+    props: list[str] = props_default()
+    attrs: dict[str, Union[str, int, float]] = attrs_default()
     filedbkey: int = sqlmodel.Field(default=None, foreign_key="dbfile.dbkey")
     polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
     file: DBFile = sqlmodel.Relationship(back_populates='reviews')
     poll: DBPoll = sqlmodel.Relationship(back_populates='reviews')
-    props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, Union[str, int,
-                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                    default_factory=dict)
 
     def __hash__(self):
         return self.dbkey
@@ -102,15 +99,26 @@ class DBReview(DBBase, ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
 @profile
 class DBPymolCMD(DBBase, ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
-    props: list[str] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType), default_factory=list)
-    attrs: dict[str, Union[str, int,
-                           float]] = sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.PickleType),
-                                                    default_factory=dict)
+    props: list[str] = props_default()
+    attrs: dict[str, Union[str, int, float]] = attrs_default()
 
     def validated_with_backend(self, backend):
         if conflicts := set(backend.select(DBPymolCMD, name=self.name, dbkeynot=self.dbkey)):
             raise DuplicateError(f'duplicate pymolcmd {self.name}', conflicts)
         return self
+
+python_type_to_sqlalchemy_type = {
+    str: sqlalchemy.String,
+    int: sqlalchemy.Integer,
+    float: sqlalchemy.Float,
+    bool: sqlalchemy.Boolean,
+    # datetime.date: sqlalchemy.Date,
+    datetime: sqlalchemy.DateTime,
+    # datetime.time: sqlalchemy.Time,
+    dict: sqlalchemy.JSON,
+    list: sqlalchemy.ARRAY,
+    # decimal.Decimal: sqlalchemy.Numeric
+}
 
 @profile
 class Backend:
@@ -119,6 +127,7 @@ class Backend:
         self.datadir = datadir
         self.session = sqlmodel.Session(self.engine)
         sqlmodel.SQLModel.metadata.create_all(self.engine)
+        self.apply_db_schema_updates()
         self.router = fastapi.APIRouter()
         route = self.router.add_api_route
         route('/', self.root, methods=['GET'])
@@ -148,10 +157,36 @@ class Backend:
 
         @self.app.exception_handler(Exception)
         async def validation_exception_handler(request: fastapi.Request, exc: Exception):
-            print('!' * 100)
             exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+            print('!' * 69)
+            print(exc_str)
+            print('!' * 69)
             return fastapi.responses.JSONResponse(content=exc_str,
                                                   status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    def _add_db_column(self, table_name, column):
+        column_name = column.compile(dialect=self.engine.dialect)
+        column_type = column.type.compile(self.engine.dialect)
+        cmd = f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}'
+        print(f'EXEC RAW SQL: "{cmd}"', flush=True)
+        self.session.execute(sqlalchemy.text(cmd))
+
+    def apply_db_schema_updates(self):
+        tables = 'DBPoll DBFile DBReview DBPymolCMD'.split()
+        getcols = lambda table: self.session.execute(sqlalchemy.text(f'select * from {table}')).keys()
+        cols = {table: getcols(table.lower()) for table in tables}
+        for table in tables:
+            cls = globals()[table]
+            for name, field in cls.__fields__.items():
+                if name not in cols[table]:
+                    print('@' * 69)
+                    print('ADD NEW COLUMN',
+                          table,
+                          name,
+                          python_type_to_sqlalchemy_type[field.annotation],
+                          flush=True)
+                    column = sqlalchemy.Column(name, python_type_to_sqlalchemy_type[field.annotation])
+                    self._add_db_column(table.lower(), column)
 
     def remove(self, thing, dbkey):
         thing = self.select(thing, dbkey=dbkey)

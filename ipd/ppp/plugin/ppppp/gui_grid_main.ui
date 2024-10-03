@@ -87,7 +87,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Prettier Protein Project Pymol Plug-in Panel</string>
+        <string>Prettier Protein Project Pymol Picker Plug-in Panel</string>
        </property>
       </widget>
      </item>
@@ -107,26 +107,6 @@
              </property>
              <property name="text">
               <string>New Command...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_delopt">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;delete the selected command. will only delete from the server if you are the same user who created it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Delete</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_refresh_cmds">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;get new command list from the server&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Refresh</string>
              </property>
             </widget>
            </item>
@@ -190,26 +170,6 @@
                </property>
                <property name="text">
                 <string>Use Dir...</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="button_delpoll">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;delete the selected poll. will only delete poll from the server if you are the creator&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Delete</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="button_refresh_polls">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;reload polls from the server&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Refresh</string>
                </property>
               </widget>
              </item>

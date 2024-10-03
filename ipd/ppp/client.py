@@ -67,14 +67,14 @@ class SpecBase(pydantic.BaseModel):
     @pydantic.validator('props')
     def valprops(cls, props):
         if isinstance(props, str):
-            if not props.strip(): return ''
+            if not props.strip(): return []
             props = [p.strip() for p in props.strip().split(',')]
         return props
 
     @pydantic.validator('attrs')
     def valattrs(cls, attrs):
         if isinstance(attrs, str):
-            if not attrs.strip(): return ''
+            if not attrs.strip(): return {}
             attrs = {x.split('=')[0].strip(): x.split('=')[1].strip() for x in attrs.strip().split(',')}
         return attrs
 
@@ -229,15 +229,12 @@ class PymolCMDSpec(SpecBase):
     sym: str = ''
     minchains: int = 1
     maxchains: int = 999_999_999
-    _skip_validation: bool = False
+    cmdcheck: bool = True
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
         fix_label_case(self)
-        print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-        print(self.name, self._skip_validation)
-        print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-        if not self._skip_validation: self._check_cmds()
+        if self.cmdcheck: self._check_cmds()
         return self
 
     def _check_cmds(self):
@@ -335,8 +332,10 @@ class PymolCMD(ClientMixin, PymolCMDSpec):
 class PPPClient:
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str):
+            print('PPPClient: connecting to server', server_addr_or_testclient)
             self.testclient, self.server_addr = None, server_addr_or_testclient
         else:
+            print('PPPClient: using testclient')
             self.testclient = server_addr_or_testclient
         assert self.get('/')['msg'] == 'Hello World'
 
@@ -429,6 +428,9 @@ class PPPClient:
 
     def poll(self, dbkey):
         return Poll(self, **self.get(f'/poll{dbkey}'))
+
+    def pymolcmd(self, dbkey):
+        return PymolCMD(self, **self.get(f'/pymolcmd{dbkey}'))
 
     def poll_fids(self, dbkey):
         return self.get(f'/poll{dbkey}/fids')
