@@ -7,8 +7,9 @@ def redirect(stdout=sys.stdout, stderr=sys.stderr):
     _out, _err = sys.stdout, sys.stderr
     try:
         sys.stdout.flush(), sys.stderr.flush()
+        if stderr == 'stdout': stderr = stdout
         sys.stdout, sys.stderr = stdout, stderr
-        yield None
+        yield stdout, stderr
     finally:
         sys.stdout.flush(), sys.stderr.flush()
         sys.stdout, sys.stderr = _out, _err

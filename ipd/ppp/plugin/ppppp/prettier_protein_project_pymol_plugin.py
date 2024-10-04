@@ -1,32 +1,21 @@
-from _pickle import PicklingError
-from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from icecream import ic
-import abc
-import contextlib
 import datetime
 import collections
 import ipd
 from ipd import ppp
-from io import StringIO
 import os
-from pathlib import Path
-import abc
-import pickle
 import pymol
 import random
-import shutil
 import getpass
 import subprocess
 from subprocess import check_output
 import sys
-import tempfile
-import threading
 import pydantic
 import time
 import traceback
-from typing import Callable, Any
 from rich import print
+from ipd.qt import MenuAction as CTXM, notify, isfalse_notify
 
 it = ipd.lazyimport('itertools', 'more_itertools', pip=True)
 requests = ipd.lazyimport('requests', pip=True)
@@ -45,36 +34,9 @@ STATE_FILE = f'{CONFIG_DIR}/localstate.yaml'
 SESSION_RESTORE = f'{CONFIG_DIR}/session_restore.pse'
 PPPPP_PICKLE = f'{CONFIG_DIR}/PrettyProteinProjectPymolPluginPanel.pickle'
 TEST_STATE = {}
-DEFAULTS = dict(
-    reviewed=set(),
-    prefetch=7,
-    review_action='cp $file $pppdir/$poll/$grade_$filebase',
-    do_review_action=False,
-    findcmd='',
-    findpoll='',
-    shuffle=False,
-    use_rsync=False,
-    hide_invalid=True,
-    showallcmds=False,
-    pymol_sc_repr='sticks',
-    active_cmds=set(),
-    activepoll=None,
-    activepollindex=0,
-    files=set(),
-    serveraddr=os.environ.get('PPPSERVER', 'ppp.ipd:12345'),
-    user=getpass.getuser(),
-)
+
 # profile = ipd.dev.timed
 profile = lambda f: f
-
-def notify(message):
-    print('NOTIFY:', message)
-    pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
-
-def isfalse_notify(ok, message):
-    if not ok:
-        pymol.Qt.QtWidgets.QMessageBox.warning(None, "Warning", message)
-        return True
 
 def ppp_pymol_add_default(name, val, isglobal=False):
     name = f'ppp_pymol_{name}'
@@ -96,140 +58,6 @@ def widget_gettext(widget):
     if hasattr(widget, 'toPlainText'): return widget.toPlainText()
     if hasattr(widget, 'currentText'): return widget.currentText()
 
-class StateManager:
-    def __init__(self, config_file, state_file, debugnames=None):
-        self._statetype = dict(
-            cmds='global',
-            activepoll='global',
-            polls='global',
-            active_cmds='perpoll',
-            reviewed='perpoll',
-            pymol_view='perpoll',
-            serveraddr='global',
-            user='global',
-        )
-        self._config_file, self._state_file = config_file, state_file
-        self._debugnames = debugnames or set('active_cmds')
-        self.load()
-        self.sanity_check()
-
-    def sanity_check(self):
-        assert self._conf._special['autosave']
-        assert self._conf._special['autoreload']
-        assert self._conf._special['strict_lookup']
-        assert self._conf._special['default'] == 'bunchwithparent'
-        assert self._state._special['autosave']
-        assert self._state._special['autoreload']
-        assert not self._state._special['strict_lookup']
-        assert self._state._special['default'] == 'bunchwithparent'
-        # assert self._state.polls._special['parent'] is self._state
-        assert not self._state.polls._special['strict_lookup']
-        assert self._state.polls._special['default'] == 'bunchwithparent'
-        # print('state sanity check pass')
-
-    def load(self):
-        self._conf = self.read_config(
-            self._config_file,
-            _strict=True,
-            opts=dict(shuffle=False),
-            cmds={},
-        )
-        self._state = self.read_config(
-            self._state_file,
-            _strict=False,
-            active_cmds=set(),
-        )
-
-    def read_config(self, fname, _strict, **kw):
-        result = ipd.dev.Bunch(**kw)
-        if os.path.exists(fname):
-            with open(fname) as inp:
-                result |= ipd.Bunch(yaml.load(inp, yaml.CLoader))
-        mahkw = dict(_strict=_strict, _autosave=fname, _default='bunchwithparent')
-        return ipd.dev.make_autosave_hierarchy(result, **mahkw)
-
-    def save(self):
-        self._conf._notify_changed()
-        self._state._notify_changed()
-
-    def is_global_state(self, name):
-        if name in self._statetype:
-            return 'global' == self._statetype[name]
-        return False
-
-    def is_per_poll_state(self, name):
-        if name in self._statetype:
-            return 'perpoll' == self._statetype[name]
-        return True
-
-    def set_state_type(self, name, statetype):
-        assert name not in self._statetype or self._statetype[name] == statetype
-        self._statetype[name] = statetype
-
-    def __contains__(self, name):
-        if self.activepoll and name in self._state.polls[self.activepoll]:
-            return True
-        if name in self._state: return True
-        if name in self._conf.opts: return True
-        return False
-
-    def get(self, name):
-        # sourcery skip: remove-redundant-if, remove-unreachable-code
-        self.sanity_check()
-        if name in self._debugnames: print(f'GET {name} global: {self.is_global_state(name)}')
-        if self.is_global_state(name) or not self.activepoll:
-            if name not in self._conf.opts and name in DEFAULTS:
-                if name in self._debugnames: print(f'set default {name} to self._conf.opts')
-                setattr(self._conf.opts, name, DEFAULTS[name])
-            if name not in self._conf.opts:
-                if name in self._debugnames: print(f'get {name} from self._state')
-                return self._state[name]
-            if name in self._debugnames: print(f'get {name} from self._conf.opts')
-            return self._conf.opts[name]
-        assert self.is_per_poll_state(name)
-        if name not in self._state.polls[self.activepoll]:
-            if name in self._conf.opts:
-                if name in self._debugnames: print(f'get {name} set from conf.opts')
-                setattr(self._state.polls[self.activepoll], name, self._conf.opts[name])
-            elif name in DEFAULTS:
-                if name in self._debugnames: print(f'get {name} set from default')
-                setattr(self._state.polls[self.activepoll], name, DEFAULTS[name])
-            elif name in self._debugnames:
-                print(f'no attribute {name} associated with poll {self.activepoll}')
-        if name in self._state.polls[self.activepoll]:
-            if name in self._debugnames: print(f'get {name} from perpoll')
-            return self._state.polls[self.activepoll][name]
-        if name in self._debugnames: print(f'get {name} not found')
-        return None
-
-    def set(self, name, val):
-        self.sanity_check()
-        if self.is_global_state(name) or not self.activepoll:
-            with contextlib.suppress(ValueError):
-                self.get(name)
-            if name in self._conf.opts:
-                if name in self._debugnames: print(f'set {name} in self._conf.opts')
-                return setattr(self._conf.opts, name, val)
-            else:
-                if name in self._debugnames: print(f'set {name} in self._state')
-                return setattr(self._state, name, val)
-        if not self.activepoll:
-            raise AttributeError(f'cant set per-poll attribute {name} with no active poll')
-        if name in self._debugnames: print(f'set {name} perpoll to {val}')
-        try:
-            setattr(self._state.polls[self.activepoll], name, val)
-        except AttributeError as e:
-            print(self.polls._special)
-            raise e
-
-    __getitem__ = get
-    __getattr__ = get
-    __setitem__ = set
-
-    def __setattr__(self, k, v):
-        if k[0] == '_': super().__setattr__(k, v)
-        else: self.set(k, v)
-
 class SubjectName:
     def __init__(self):
         self.count = 0
@@ -247,7 +75,6 @@ class SubjectName:
 
 subject_name = SubjectName()
 
-@profile
 class PymolFileViewer:
     def __init__(self, fname, name, toggles):
         self.fname = fname
@@ -276,93 +103,12 @@ class PymolFileViewer:
         pymol.cmd.delete(subject_name())
         state.pymol_view = pymol.cmd.get_view()
 
-@profile
-class FileFetcher(threading.Thread):
-    def __init__(self, fname, cache):
-        super().__init__()
-        self.fname = fname
-        self.localfname = cache.tolocal(fname)
-        self.tmpfname = f'{self.localfname}.tmp'
-        self.start()
-
-    def run(self):
-        if os.path.exists(self.localfname): return
-        if os.path.exists(self.fname):
-            shutil.copyfile(self.fname, self.tmpfname)
-        else:
-            out = check_output(f'rsync digs:{self.fname} {self.tmpfname}'.split(), stderr=subprocess.STDOUT)
-            print('rsynced')
-            if out.lower().count(b'error'): notify(out)
-        shutil.move(self.tmpfname, self.localfname)
-
-@profile
-class FileCache:
-    def __init__(self, fnames, **kw):
-        self.fnames = fnames
-
-    def __getitem__(self, i):
-        return self.fnames[i]
-
-    def cleanup(self):
-        pass
-
-@profile
-class PrefetchLocalFileCache(FileCache):
-    '''
-    Copies files to a CONF temp directory. Will downloads files ahead of requested index in background.
-    '''
-    def __init__(self, fnames, numprefetch=7, path='/tmp/ppp/filecache'):
-        self.path = path
-        self.fetchers = {}
-        os.makedirs(path, exist_ok=True)
-        self.available = set(os.listdir(path))
-        self.fnames = fnames
-        self.numprefetch = numprefetch
-        self[0]
-
-    def update_fetchers(self):
-        done = {k for k, v in self.fetchers.items() if not v.is_alive()}
-        self.available |= done
-        for k in done:
-            del self.fetchers[k]
-
-    def prefetch(self, fname):
-        if isinstance(fname, list):
-            assert all(self.prefetch(f) for f in fname)
-        if fname in self.available or fname in self.fetchers: return True
-        self.update_fetchers()
-        if len(self.fetchers) > 10: return False
-        self.fetchers[fname] = FileFetcher(fname, self)
-        return True
-
-    def tolocal(self, fname):
-        slash = '\\'
-        return f"{self.path}/{fname.replace('/',slash)}"
-
-    def __getitem__(self, index):
-        assert self.prefetch(self.fnames[index])
-        for i in range(min(self.numprefetch, len(self.fnames) - index - 1)):
-            self.prefetch(self.fnames[index + i + 1])
-        localfname = self.tolocal(self.fnames[index])
-        for _ in range(100):
-            self.update_fetchers()
-            if self.fnames[index] in self.available:
-                return localfname
-            time.sleep(0.1)
-        isfalse_notify(os.path.exists(localfname))
-
-    def cleanup(self):
-        self.update_fetchers()
-        for f in self.fetchers:
-            f.killed = True
-
-@profile
 class PollInProgress:
     def __init__(self, poll):
         self.poll = poll
         self.viewer = None
         state.activepoll = poll.name
-        Cache = PrefetchLocalFileCache if state.prefetch else FileCache
+        Cache = ipd.dev.PrefetchLocalFileCache if state.prefetch else ipd.devFileCache
         self.filecache = Cache(self.fnames, numprefetch=7 if state.prefetch else 0)
         ppppp.toggles.update_toggles_gui()
         ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(self.fnames) - 1)
@@ -457,53 +203,23 @@ class PollInProgress:
         ppppp.widget.showlig.setText('')
         self.filecache.cleanup()
 
-class MenuAction(pydantic.BaseModel):
-    func: Callable[Any, None]
-    owner: bool = False
-    item: bool = True
-
-class ContextMenuMixin(abc.ABC):
-    @abc.abstractmethod
-    def _context_menu_items(self):
-        'must return dict of MenuActions'
-
-    @abc.abstractmethod
-    def get_from_item(self, item):
-        'must return object represented by listitem'
-
-    def context_menu(self, event):
-        menu, thing = pymol.Qt.QtWidgets.QMenu(), None
-        if item := self.widget.itemAt(event.pos()):
-            thing = self.get_from_item(item)
-            for name, action in self._context_menu_items().items():
-                if action.item:
-                    menu.addAction(name).setEnabled(not action.owner or state.user in (thing.user, 'admin'))
-        for name, action in self._context_menu_items().items():
-            if not action.item:
-                menu.addAction(name).setEnabled(not action.owner or state.user in (thing.user, 'admin'))
-        if selection := menu.exec_(event.globalPos()):
-            try:
-                self._context_menu_items()[selection.text()].func(thing)
-            except TypeError:
-                self._context_menu_items()[selection.text()].func()
-        return True
-
-@profile
-class Polls(ContextMenuMixin):
-    def __init__(self):
+class Polls(ipd.qt.ContextMenuMixin):
+    def __init__(self, state):
+        self.state = state
         self.pollinprogress = None
         self.current_poll_index = None
         self.listitems = None
+        self.Qt = pymol.Qt
 
     def _context_menu_items(self):
         shufstr = "shuffle {'off' if state.polls[item.text()].shuffle else 'on'}"
         return {
-            'details': MenuAction(func=self.poll_details),
-            'refersh': MenuAction(func=self.refresh_polls, item=False),
-            'edit': MenuAction(func=self.edit_poll, owner=True),
-            'delete': MenuAction(func=self.delete_poll, owner=True),
-            'shuffle on/off': MenuAction(func=self.shuffle_poll, item=True),
-            'prefetch on/off': MenuAction(func=self.prefetch_poll, item=True),
+            'details': CTXM(func=lambda cmd: ipd.qt.notify(cmd)),
+            'refersh': CTXM(func=self.refresh_polls, item=False),
+            'edit': CTXM(func=self.edit_poll, owner=True),
+            'delete': CTXM(func=self.delete_poll, owner=True),
+            'shuffle on/off': CTXM(func=self.shuffle_poll, item=True),
+            'prefetch on/off': CTXM(func=self.prefetch_poll, item=True),
         }
 
     def init_session(self, widget):
@@ -530,9 +246,6 @@ class Polls(ContextMenuMixin):
 
     def get_from_item(self, item):
         return remote.poll(self.allpolls[item.text()])
-
-    def poll_details(self, poll):
-        notify(printed_string(poll))
 
     def shuffle_poll(self, poll):
         if poll: state.polls[poll.name].shuffle = not state.polls[poll.name].shuffle
@@ -691,7 +404,6 @@ class Polls(ContextMenuMixin):
     def cleanup(self):
         if self.pollinprogress: self.pollinprogress.cleanup()
 
-@profile
 class ToggleCommand(ppp.PymolCMD):
     def __init__(self, widget, **kw):
         super().__init__(remote, **kw)
@@ -716,17 +428,10 @@ class ToggleCommand(ppp.PymolCMD):
     def __bool__(self):
         return bool(self.widget.checkState())
 
-def printed_string(thing):
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    print(thing)
-    sys.stdout = old_stdout
-    mystdout.seek(0)
-    return mystdout.read()
-
-@profile
-class ToggleCommands(ContextMenuMixin):
-    def __init__(self):
+class ToggleCommands(ipd.qt.ContextMenuMixin):
+    def __init__(self, state):
+        self.state = state
+        self.Qt = pymol.Qt
         self.widget = None
         self.itemsdict = None
         self.cmds = {}
@@ -743,16 +448,15 @@ class ToggleCommands(ContextMenuMixin):
         self.gui_new_pymolcmd.ok.clicked.connect(lambda: self.create_toggle_done())
 
     def _context_menu_items(self):
-        return dict(details=MenuAction(func=self.toggle_details),
-                    refersh=MenuAction(func=self.refersh_toggle_list, item=False),
-                    edit=MenuAction(func=self.edit_toggle, owner=True),
-                    delete=MenuAction(func=self.delete_toggle, owner=True))
+        return {
+            'details': CTXM(func=lambda cmd: ipd.qt.notify(cmd)),
+            'refersh': CTXM(func=self.refersh_toggle_list, item=False),
+            'edit': CTXM(func=self.edit_toggle, owner=True),
+            'delete': CTXM(func=self.delete_toggle, owner=True),
+        }
 
     def get_from_item(self, item):
         return self.cmds[item.text()]
-
-    def toggle_details(self, toggle):
-        notify(printed_string(toggle))
 
     def edit_toggle(self, toggle):
         print('context toggle edit', toggle.name)
@@ -835,11 +539,13 @@ class ToggleCommands(ContextMenuMixin):
     def cleanup(self):
         pass
 
-@profile
 class PrettyProteinProjectPymolPluginPanel:
+    def __init__(self, state):
+        self.state = state
+
     def init_session(self):
-        self.polls = Polls()
-        self.toggles = ToggleCommands()
+        self.polls = Polls(self.state)
+        self.toggles = ToggleCommands(self.state)
         pymol.cmd.save(SESSION_RESTORE)
         self.setup_main_window()
         self.update_opts()
@@ -933,7 +639,6 @@ class PrettyProteinProjectPymolPluginPanel:
         ipd.dev.global_timer.report()
         if exitpymol: sys.exit()
 
-@profile
 def run_local_server(port=54321):
     ipd.dev.lazyimport('fastapi')
     ipd.dev.lazyimport('sqlmodel')
@@ -950,22 +655,50 @@ def print_status():
     print(ipd.dev.git_status('plugin code status'))
     print(remote.get('/gitstatus/server code status/end'))
 
-@profile
 def run(_self=None):
+    state_defaults = dict(
+        reviewed=set(),
+        prefetch=7,
+        review_action='cp $file $pppdir/$poll/$grade_$filebase',
+        do_review_action=False,
+        findcmd='',
+        findpoll='',
+        shuffle=False,
+        use_rsync=False,
+        hide_invalid=True,
+        showallcmds=False,
+        pymol_sc_repr='sticks',
+        active_cmds=set(),
+        activepoll=None,
+        activepollindex=0,
+        files=set(),
+        serveraddr=os.environ.get('PPPSERVER', 'ppp.ipd:12345'),
+        user=getpass.getuser(),
+    )
+    state_types = dict(
+        cmds='global',
+        activepoll='global',
+        polls='global',
+        active_cmds='perpoll',
+        reviewed='perpoll',
+        pymol_view='perpoll',
+        serveraddr='global',
+        user='global',
+    )
     os.makedirs(os.path.dirname(SESSION_RESTORE), exist_ok=True)
     os.makedirs(os.path.dirname(PPPPP_PICKLE), exist_ok=True)
     if os.path.exists(SESSION_RESTORE): os.remove(SESSION_RESTORE)
     pymol.cmd.do('from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin '
                  'import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default')
     global ppppp, remote, state
-    state = StateManager(CONFIG_FILE, STATE_FILE)
+    state = ipd.dev.StateManager(CONFIG_FILE, STATE_FILE, state_types, state_defaults)
     print(f'user: {state.user}')
     try:
         remote = ppp.PPPClient(state.serveraddr)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectionError):
         remote = run_local_server()
     print_status()
-    ppppp = PrettyProteinProjectPymolPluginPanel()
+    ppppp = PrettyProteinProjectPymolPluginPanel(state)
     ppppp.init_session()
 
 def main():
