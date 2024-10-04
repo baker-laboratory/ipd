@@ -13,6 +13,7 @@ import getpass
 import traceback
 import socket
 from typing import Any, Optional, Union
+from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
 
 pydantic = ipd.lazyimport('pydantic', pip=True)
 requests = ipd.lazyimport('requests', pip=True)
@@ -146,7 +147,7 @@ class PollSpec(SpecBase):
         if self.path.startswith('digs:'): return self
         self.name = self.name or os.path.basename(self.path)
         self.desc = self.desc or f'PDBs in {self.path}'
-        self.sym = self.sym or ipd.sym.guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
+        self.sym = self.sym or guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
         if not self.sym or not self.ligand:
             try:
                 global _checkobjnum
@@ -172,7 +173,7 @@ class PollSpec(SpecBase):
                         self._errors += f'pymol get_coords failed on TMP{_checkobjnum}\nfname: {fname}'
                         return self
                     xyz = xyz.reshape(len(chains), -1, 3)
-                    self.sym = ipd.sym.guess_symmetry(xyz)
+                    self.sym = guess_symmetry(xyz)
             except ValueError as e:
                 # print(os.path.join(self.path, fname))
                 traceback.print_exc()
