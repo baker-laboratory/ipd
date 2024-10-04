@@ -479,9 +479,11 @@ class ContextMenuMixin(abc.ABC):
         if item := self.widget.itemAt(event.pos()):
             thing = self.get_from_item(item)
             for name, act in self._context_menu_items().items():
-                if act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == state.user)
+                if act.item:
+                    menu.addAction(name).setEnabled(not act.owner or state.user in (thing.user, 'admin'))
         for name, act in self._context_menu_items().items():
-            if not act.item: menu.addAction(name).setEnabled(not act.owner or thing.user == state.user)
+            if not act.item:
+                menu.addAction(name).setEnabled(not act.owner or state.user in (thing.user, 'admin'))
         if selection := menu.exec_(event.globalPos()):
             try:
                 self._context_menu_items()[selection.text()].func(thing)
@@ -705,7 +707,7 @@ class ToggleCommand(ppp.PymolCMD):
 def printed_string(thing):
     old_stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
-    # print(thing)
+    print(thing)
     sys.stdout = old_stdout
     mystdout.seek(0)
     return mystdout.read()
