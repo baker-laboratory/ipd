@@ -24,7 +24,7 @@ print = rich.print
 
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
-SERVER = False
+SERVER = 'ppp' == socket.gethostname()
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 # profile = ipd.dev.timed
@@ -54,7 +54,7 @@ def fix_label_case(thing):
 class SpecBase(pydantic.BaseModel):
     ispublic: bool = True
     telemetry: bool = True
-    user: str = ''
+    user: str
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: Union[list[str], str] = []
     attrs: Union[dict[str, Union[str, int, float]], str] = {}
@@ -62,9 +62,9 @@ class SpecBase(pydantic.BaseModel):
 
     @pydantic.validator('user')
     def valuser(cls, user):
+        assert user
         assert user != 'services'
-        if SERVER: return user
-        return user or getpass.getuser()
+        return user
 
     @pydantic.validator('props')
     def valprops(cls, props):
