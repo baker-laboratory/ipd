@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import contextlib
 import threading
 import time
+import socket
 import shutil
 import operator
 from pathlib import Path
@@ -385,6 +386,7 @@ def pymol_launch():
 def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', local=False, **kw):
     from fastapi.middleware.gzip import GZipMiddleware
     import pymol
+    ppp.SERVER = True
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
     if not dburl.count('://'): dburl = f'sqlite:///{dburl}'
@@ -417,4 +419,5 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
     else:
         raise RuntimeError('server failed to start')
     ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
+    print('server', socket.gethostname())
     return server, backend

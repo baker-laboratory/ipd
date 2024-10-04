@@ -24,10 +24,7 @@ print = rich.print
 
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
-SERVER = 'ppp' == socket.gethostname()
-
-print(SERVER, socket.gethostname())
-
+SERVER = False
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 # profile = ipd.dev.timed
