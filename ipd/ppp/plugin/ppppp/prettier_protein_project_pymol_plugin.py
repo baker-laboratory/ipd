@@ -365,11 +365,11 @@ class PollInProgress:
         Cache = PrefetchLocalFileCache if state.prefetch else FileCache
         self.filecache = Cache(self.fnames, numprefetch=7 if state.prefetch else 0)
         ppppp.toggles.update_toggles_gui()
+        ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(self.fnames) - 1)
 
     def init_files(self):
         fnames = [f.fname for f in self.poll.files]
         if state.shuffle: self.pbdlist = random.shuffle(fnames)
-        ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(fnames) - 1)
         return fnames
 
     @property
