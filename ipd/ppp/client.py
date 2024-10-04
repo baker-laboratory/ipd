@@ -27,7 +27,7 @@ print = rich.print
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
 SERVER = 'ppp' == socket.gethostname()
-REMOTE_MODE = os.path.exists('/net/scratch/sheffler')
+REMOTE_MODE = not os.path.exists('/net/scratch/sheffler')
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 # profile = ipd.dev.timed
