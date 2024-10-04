@@ -62,6 +62,7 @@ class SpecBase(pydantic.BaseModel):
 
     @pydantic.validator('user')
     def valuser(cls, user):
+        assert user != 'services'
         if SERVER: return user
         return user or getpass.getuser()
 
@@ -411,7 +412,7 @@ class PPPClient:
         review = ReviewSpec(**review.dict())
         return self.upload(review)
 
-    def pollinfo(self, user=getpass.getuser()):
+    def pollinfo(self, user=None):
         if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
         response = requests.get(f'http://{self.server_addr}/pollinfo?user={user}')
         if response.content: return response.json()

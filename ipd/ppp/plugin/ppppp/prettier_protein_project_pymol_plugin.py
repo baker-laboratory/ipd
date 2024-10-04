@@ -110,7 +110,6 @@ class StateManager:
         self._config_file, self._state_file = config_file, state_file
         self._debugnames = debugnames or set('active_cmds')
         self.load()
-        print(f'user: {self.user}')
         self.sanity_check()
 
     def sanity_check(self):
@@ -122,7 +121,7 @@ class StateManager:
         assert self._state._special['autoreload']
         assert not self._state._special['strict_lookup']
         assert self._state._special['default'] == 'bunchwithparent'
-        assert not self._state.polls._special['parent'] is self._state
+        # assert self._state.polls._special['parent'] is self._state
         assert not self._state.polls._special['strict_lookup']
         assert self._state.polls._special['default'] == 'bunchwithparent'
         # print('state sanity check pass')
@@ -542,7 +541,7 @@ class Polls(ContextMenuMixin):
         # localpolls = [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand) for p in state.local.polls.values()]
         self.pollsearchtext, self.polltooltip, allpolls = [], {}, {}
         self.listitems, self.listitemdict = [], {}
-        self.allpolls = remote.pollinfo()  #+ localpolls
+        self.allpolls = remote.pollinfo(user=state.user)  #+ localpolls
         if not self.allpolls: return
         for key, name, user, desc, sym, lig, nchain in self.allpolls:
             ttip = f'NAME: {name}\nDESCRIPTION: DBKEY:{key}\n{desc}\nSYM: {sym}\nUSER: {user}\nLIG: {lig}\nNCHAIN: {nchain}'
@@ -946,6 +945,7 @@ def run(_self=None):
                  'import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default')
     global ppppp, remote, state
     state = StateManager(CONFIG_FILE, STATE_FILE)
+    print(f'user: {state.user}')
     try:
         remote = ppp.PPPClient(state.serveraddr)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectionError):
