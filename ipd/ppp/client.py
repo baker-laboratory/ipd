@@ -75,16 +75,27 @@ class SpecBase(pydantic.BaseModel):
 
     @pydantic.validator('props')
     def valprops(cls, props):
-        if isinstance(props, str):
-            if not props.strip(): return []
-            props = [p.strip() for p in props.strip().split(',')]
+        if isinstance(props, (set, list)): return props
+        try:
+            props = ipd.dev.safe_eval(props)
+        except (NameError, SyntaxError):
+            if isinstance(props, str):
+                if not props.strip(): return []
+                props = [p.strip() for p in props.strip().split(',')]
         return props
 
     @pydantic.validator('attrs')
     def valattrs(cls, attrs):
-        if isinstance(attrs, str):
-            if not attrs.strip(): return {}
-            attrs = {x.split('=')[0].strip(): x.split('=')[1].strip() for x in attrs.strip().split(',')}
+        if isinstance(attrs, dict): return attrs
+        try:
+            attas = ipd.dev.safe_eval(attrs)
+        except (NameError, SyntaxError):
+            if isinstance(attrs, str):
+                if not attrs.strip(): return {}
+                attrs = {
+                    x.split('=').split(':')[0].strip(): x.split('=').split(':')[1].strip()
+                    for x in attrs.strip().split(',')
+                }
         return attrs
 
     def errors(self):

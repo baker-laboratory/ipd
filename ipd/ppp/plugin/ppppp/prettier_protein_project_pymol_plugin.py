@@ -40,7 +40,7 @@ profile = lambda f: f
 
 def ppp_pymol_add_default(name, val, isglobal=False):
     name = f'ppp_pymol_{name}'
-    DEFAULTS[name] = val
+    state._defaults[name] = val
     if state: state._statetype[name] = 'global' if isglobal else 'perpoll'
 
 def ppp_pymol_get(name):
@@ -212,6 +212,7 @@ class Polls(ipd.qt.ContextMenuMixin):
             'details': CTXM(func=lambda cmd: ipd.qt.notify(cmd)),
             'refersh': CTXM(func=self.refresh_polls, item=False),
             'edit': CTXM(func=self.edit_poll, owner=True),
+            'clone': CTXM(func=self.clone_poll),
             'delete': CTXM(func=self.delete_poll, owner=True),
             'shuffle on/off': CTXM(func=self.shuffle_poll, item=True),
         }
@@ -238,7 +239,7 @@ class Polls(ipd.qt.ContextMenuMixin):
             assert len(file_names) == 1
             self.newpollwidget.path.setText(file_names[0])
 
-    def get_from_item(self, item):
+    def _get_from_item(self, item):
         return remote.poll(self.allpolls[item.text()])
 
     def shuffle_poll(self, poll):
@@ -246,7 +247,15 @@ class Polls(ipd.qt.ContextMenuMixin):
         else: state._conf.shuffle = not state._conf.shuffle
 
     def edit_poll(self, poll):
-        print('context poll edit', poll.name)
+        self.update_gui_from_poll(poll)
+        self.show_newpoll_widget('Edit Poll')
+        self._edit_poll = True
+
+    def clone_poll(self, poll):
+        self.update_gui_from_poll(poll)
+        self.newpollwidget.name = f'Copy of {poll.name}'
+        self.newpollwidget.title.setText('Clone Poll')
+        self.newpollwidget.show()
 
     def delete_poll(self, poll):
         if state.activepoll == poll.name:
@@ -332,6 +341,7 @@ class Polls(ipd.qt.ContextMenuMixin):
     def create_poll_start(self):
         self.newpollwidget.user.setText(state.user)
         self.newpollwidget.show()
+        self._edit_poll = False
 
     def create_poll_spec_from_gui(self):
         # print('create_poll_spec_from_gui')
@@ -350,6 +360,13 @@ class Polls(ipd.qt.ContextMenuMixin):
         kw['enddate'] = datetime.datetime.now() + duration
         return self.create_poll_spec(**kw)
 
+    def update_gui_from_poll(self, poll):
+        for k in 'name path sym ligand user cmdstart cmdstop props attrs nchain'.split():
+            val = str(poll[k]) if poll[k] else ''
+            ipd.qt.widget_settext(getattr(self.newpollwidget, k), val)
+        for k in 'ispublic telemetry'.split():
+            getattr(self.newpollwidget, k).setCheckState(2 * poll[k])
+
     def create_poll_autofill_button(self):
         # print('create_poll_autofill_button')
         if poll := self.create_poll_spec_from_gui():
@@ -360,6 +377,9 @@ class Polls(ipd.qt.ContextMenuMixin):
         poll = self.create_poll_spec_from_gui()
         if self.create_poll(poll):
             self.newpollwidget.hide()
+            self.newpollwidget.ok.setText('Ok')
+            self.newpollwidget.title.setText('Create New Poll')
+            self._edit_poll = False
 
     def create_poll(self, poll: ppp.PollSpec, temporary=False):
         if not poll: return False
@@ -377,6 +397,7 @@ class Polls(ipd.qt.ContextMenuMixin):
             return None
 
     def create_poll_from_curdir(self):
+        self._edit_poll = False
         u = state.user
         d = os.path.abspath('.').replace(f'/mnt/home/{u}', '~').replace(f'/home/{u}', '~')
         self.create_poll(
@@ -445,7 +466,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             'delete': CTXM(func=self.delete_toggle, owner=True),
         }
 
-    def get_from_item(self, item):
+    def _get_from_item(self, item):
         return self.cmds[item.text()]
 
     def edit_toggle(self, toggle):
@@ -567,15 +588,12 @@ class PrettyProteinProjectPymolPluginPanel:
         self.widget.button_quit.clicked.connect(lambda: self.quit())
         self.widget.button_quitpymol.clicked.connect(lambda: self.quit(exitpymol=True))
         self.keybinds = []
-        self.add_keybind('pgup', 'LeftArrow', lambda: self.polls.pollinprogress.switch_to(delta=-1))
-        self.add_keybind('pgdn', 'RightArrow', lambda: self.polls.pollinprogress.switch_to(delta=1))
-
-    def add_keybind(self, key, qkey, action):
-        if qkey:  # Qt binds not workind for some reason
-            keybind = pymol.Qt.QtWidgets.QShortcut(qkey, self.widget)
-            keybind.activated.connect(action)
-            self.keybinds.append(keybind)
-        pymol.cmd.set_key(key, action)
+        pymol.cmd.set_key('pgup', lambda: self.polls.pollinprogress.switch_to(delta=-1))
+        pymol.cmd.set_key('pgdn', lambda: self.polls.pollinprogress.switch_to(delta=1))
+        pymol.cmd.set_key('F1', partial(self.grade_pressed, 'superlike'))
+        pymol.cmd.set_key('F2', partial(self.grade_pressed, 'like'))
+        pymol.cmd.set_key('F3', partial(self.grade_pressed, 'dislike'))
+        pymol.cmd.set_key('F4', partial(self.grade_pressed, 'hate'))
 
     def update_opts(self):
         # print('UPDATE OPTS', ppppp.polls.pollinprogress)
@@ -683,8 +701,8 @@ def run(_self=None):
         remote = ppp.PPPClient(state.serveraddr)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectionError):
         remote = run_local_server()
-    # print(ipd.dev.git_status('plugin code status'))
-    # print(remote.get('/gitstatus/server code status/end'))
+    print(ipd.dev.git_status('plugin code status'))
+    print(remote.get('/gitstatus/server code status/end'))
     ppppp = PrettyProteinProjectPymolPluginPanel(state)
     ppppp.init_session()
 

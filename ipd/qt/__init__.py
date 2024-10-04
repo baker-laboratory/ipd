@@ -7,6 +7,12 @@ def widget_gettext(widget):
     if hasattr(widget, 'text'): return widget.text()
     if hasattr(widget, 'toPlainText'): return widget.toPlainText()
     if hasattr(widget, 'currentText'): return widget.currentText()
+    raise ValueError(f'cant get text from widget {widget}')
+
+def widget_settext(widget, text):
+    if hasattr(widget, 'setText'): return widget.setText(text)
+    if hasattr(widget, 'setPlainText'): return widget.setPlainText(text)
+    raise ValueError(f'cant set text from widget {widget}')
 
 def notify(message):
     message = printed_string(message)

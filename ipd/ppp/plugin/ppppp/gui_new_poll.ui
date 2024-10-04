@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1108</width>
-    <height>904</height>
+    <width>567</width>
+    <height>576</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,9 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,10,0,0">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,8,4,0">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="title">
        <property name="font">
         <font>
          <family>Source Code Pro Semibold</family>
@@ -235,7 +235,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>32</height>
+           <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -260,7 +260,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>32</height>
+           <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -285,7 +285,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>32</height>
+           <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -310,7 +310,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>32</height>
+           <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
