@@ -53,11 +53,6 @@ def ppp_pymol_set(name, val):
     if not ppppp: TEST_STATE[name] = val
     else: state[f'ppp_pymol_{name}'] = val
 
-def widget_gettext(widget):
-    if hasattr(widget, 'text'): return widget.text()
-    if hasattr(widget, 'toPlainText'): return widget.toPlainText()
-    if hasattr(widget, 'currentText'): return widget.currentText()
-
 class SubjectName:
     def __init__(self):
         self.count = 0
@@ -219,7 +214,6 @@ class Polls(ipd.qt.ContextMenuMixin):
             'edit': CTXM(func=self.edit_poll, owner=True),
             'delete': CTXM(func=self.delete_poll, owner=True),
             'shuffle on/off': CTXM(func=self.shuffle_poll, item=True),
-            'prefetch on/off': CTXM(func=self.prefetch_poll, item=True),
         }
 
     def init_session(self, widget):
@@ -250,10 +244,6 @@ class Polls(ipd.qt.ContextMenuMixin):
     def shuffle_poll(self, poll):
         if poll: state.polls[poll.name].shuffle = not state.polls[poll.name].shuffle
         else: state._conf.shuffle = not state._conf.shuffle
-
-    def prefetch_poll(self, poll):
-        if poll: state.polls[poll.name].prefetch = not state.polls[poll.name].prefetch
-        else: state._conf.prefetch = not state._conf.prefetch
 
     def edit_poll(self, poll):
         print('context poll edit', poll.name)
@@ -355,7 +345,7 @@ class Polls(ipd.qt.ContextMenuMixin):
         # return
         if isfalse_notify(duration > datetime.timedelta(minutes=1), 'Poll expires too soon'): return
         fields = 'name path sym ligand user workflow cmdstart cmdstop props attrs'
-        kw = {k: widget_gettext(getattr(self.newpollwidget, k)) for k in fields.split()}
+        kw = {k: ipd.qt.widget_gettext(getattr(self.newpollwidget, k)) for k in fields.split()}
         kw |= {k: bool(getattr(self.newpollwidget, k).checkState()) for k in 'ispublic telemetry'.split()}
         kw['enddate'] = datetime.datetime.now() + duration
         return self.create_poll_spec(**kw)
@@ -476,7 +466,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
         if isfalse_notify(self.gui_new_pymolcmd.name.text(), 'Must provide a Name'): return
         if isfalse_notify(self.gui_new_pymolcmd.cmdon.toPlainText(), 'Must provide a command'): return
         fields = 'name cmdon cmdoff cmdstart sym ligand props attrs'
-        kw = {k: widget_gettext(getattr(self.gui_new_pymolcmd, k)) for k in fields.split()}
+        kw = {k: ipd.qt.widget_gettext(getattr(self.gui_new_pymolcmd, k)) for k in fields.split()}
         kw |= {k: bool(getattr(self.gui_new_pymolcmd, k).checkState()) for k in 'ispublic onstart'.split()}
         cmdspec = ppp.PymolCMDSpec(**kw)
         if isfalse_notify(not cmdspec.errors(), cmdspec.errors()): return
@@ -651,10 +641,6 @@ def run_local_server(port=54321):
     isfalse_notify(False, f"Can't connt to: {state.serveraddr}\nWill try to run a local server.")
     return ppp.PPPClient(f'127.0.0.1:{port}')
 
-def print_status():
-    print(ipd.dev.git_status('plugin code status'))
-    print(remote.get('/gitstatus/server code status/end'))
-
 def run(_self=None):
     state_defaults = dict(
         reviewed=set(),
@@ -697,7 +683,8 @@ def run(_self=None):
         remote = ppp.PPPClient(state.serveraddr)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectionError):
         remote = run_local_server()
-    print_status()
+    # print(ipd.dev.git_status('plugin code status'))
+    # print(remote.get('/gitstatus/server code status/end'))
     ppppp = PrettyProteinProjectPymolPluginPanel(state)
     ppppp.init_session()
 

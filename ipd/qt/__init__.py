@@ -3,6 +3,11 @@ from ipd.dev import lazyimport, printed_string
 
 Qt = lazyimport('pymol.Qt')
 
+def widget_gettext(widget):
+    if hasattr(widget, 'text'): return widget.text()
+    if hasattr(widget, 'toPlainText'): return widget.toPlainText()
+    if hasattr(widget, 'currentText'): return widget.currentText()
+
 def notify(message):
     message = printed_string(message)
     print('NOTIFY:', message)
