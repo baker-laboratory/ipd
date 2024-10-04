@@ -18,6 +18,7 @@ import random
 import shutil
 import getpass
 import subprocess
+from subprocess import check_output
 import sys
 import tempfile
 import threading
@@ -46,7 +47,7 @@ PPPPP_PICKLE = f'{CONFIG_DIR}/PrettyProteinProjectPymolPluginPanel.pickle'
 TEST_STATE = {}
 DEFAULTS = dict(
     reviewed=set(),
-    prefetch=True,
+    prefetch=7,
     review_action='cp $file $pppdir/$poll/$grade_$filebase',
     do_review_action=False,
     findcmd='',
@@ -261,7 +262,7 @@ class PymolFileViewer:
         for cmd in state.active_cmds:
             assert cmd in ppppp.toggles.cmds
             self.run_command(ppppp.toggles.cmds[cmd].cmdon)
-        if 'pymol_view' in state: pymol.cmd.set_view(state.pymol_view)
+        if state.pymol_view: pymol.cmd.set_view(state.pymol_view)
 
     def update_toggle(self, toggle: 'ToggleCommand'):
         if toggle: self.run_command(toggle.cmdon)
@@ -285,7 +286,13 @@ class FileFetcher(threading.Thread):
         self.start()
 
     def run(self):
-        shutil.copyfile(self.fname, self.tmpfname)
+        if os.path.exists(self.localfname): return
+        if os.path.exists(self.fname):
+            shutil.copyfile(self.fname, self.tmpfname)
+        else:
+            out = check_output(f'rsync digs:{self.fname} {self.tmpfname}'.split(), stderr=subprocess.STDOUT)
+            print('rsynced')
+            if out.lower().count(b'error'): notify(out)
         shutil.move(self.tmpfname, self.localfname)
 
 @profile
@@ -349,16 +356,6 @@ class PrefetchLocalFileCache(FileCache):
         for f in self.fetchers:
             f.killed = True
 
-def fnames_from_path(fnames):
-    if os.path.isdir(fnames):
-        fnames = [os.path.join(fnames, _) for _ in os.listdir(fnames) if _.endswith(ppp.STRUCTURE_FILE_SUFFIX)]
-    else:
-        with open(fnames) as inp:
-            fnames = list(map(os.path.abspath, map(str.strip, inp)))
-        if not all(f.endswith(ppp.STRUCTURE_FILE_SUFFIX) or os.path.isdir(f) for f in fnames): return None
-        if not all(os.path.exists(f) for f in fnames): return None
-    return fnames
-
 @profile
 class PollInProgress:
     def __init__(self, poll):
@@ -369,16 +366,15 @@ class PollInProgress:
         self.filecache = Cache(self.fnames, numprefetch=7 if state.prefetch else 0)
         ppppp.toggles.update_toggles_gui()
 
-    def init_files(self, fnames):
-        if isinstance(fnames, (str, bytes)):
-            fnames = fnames_from_path(fnames)
+    def init_files(self):
+        fnames = [f.fname for f in self.poll.files]
         if state.shuffle: self.pbdlist = random.shuffle(fnames)
         ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(fnames) - 1)
         return fnames
 
     @property
     def fnames(self):
-        if not state.fnames: state.fnames = self.init_files(self.poll.path)
+        if not state.fnames: state.fnames = self.init_files()
         return state.fnames
 
     @property
@@ -440,10 +436,11 @@ class PollInProgress:
         return cmds
 
     def exec_review_action(self, review):
+        if review.grade in ('dislike', 'hate'): return True
         cmds = self.preprocess_shell_cmd(state.review_action.replace('$grade', review.grade))
         for cmd in cmds:
             try:
-                result = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+                result = check_output(cmd, stderr=subprocess.STDOUT)
                 # print(result)
             except subprocess.CalledProcessError as e:
                 msg = (f'on review action failed to execute:\n{" ".join(cmd)}\nRETURN CODE: '
@@ -478,12 +475,12 @@ class ContextMenuMixin(abc.ABC):
         menu, thing = pymol.Qt.QtWidgets.QMenu(), None
         if item := self.widget.itemAt(event.pos()):
             thing = self.get_from_item(item)
-            for name, act in self._context_menu_items().items():
-                if act.item:
-                    menu.addAction(name).setEnabled(not act.owner or state.user in (thing.user, 'admin'))
-        for name, act in self._context_menu_items().items():
-            if not act.item:
-                menu.addAction(name).setEnabled(not act.owner or state.user in (thing.user, 'admin'))
+            for name, action in self._context_menu_items().items():
+                if action.item:
+                    menu.addAction(name).setEnabled(not action.owner or state.user in (thing.user, 'admin'))
+        for name, action in self._context_menu_items().items():
+            if not action.item:
+                menu.addAction(name).setEnabled(not action.owner or state.user in (thing.user, 'admin'))
         if selection := menu.exec_(event.globalPos()):
             try:
                 self._context_menu_items()[selection.text()].func(thing)
@@ -499,10 +496,15 @@ class Polls(ContextMenuMixin):
         self.listitems = None
 
     def _context_menu_items(self):
-        return dict(details=MenuAction(func=self.poll_details),
-                    refersh=MenuAction(func=self.refresh_polls, item=False),
-                    edit=MenuAction(func=self.edit_poll, owner=True),
-                    delete=MenuAction(func=self.delete_poll, owner=True))
+        shufstr = "shuffle {'off' if state.polls[item.text()].shuffle else 'on'}"
+        return {
+            'details': MenuAction(func=self.poll_details),
+            'refersh': MenuAction(func=self.refresh_polls, item=False),
+            'edit': MenuAction(func=self.edit_poll, owner=True),
+            'delete': MenuAction(func=self.delete_poll, owner=True),
+            'shuffle on/off': MenuAction(func=self.shuffle_poll, item=True),
+            'prefetch on/off': MenuAction(func=self.prefetch_poll, item=True),
+        }
 
     def init_session(self, widget):
         self.widget = widget
@@ -532,10 +534,20 @@ class Polls(ContextMenuMixin):
     def poll_details(self, poll):
         notify(printed_string(poll))
 
+    def shuffle_poll(self, poll):
+        if poll: state.polls[poll.name].shuffle = not state.polls[poll.name].shuffle
+        else: state._conf.shuffle = not state._conf.shuffle
+
+    def prefetch_poll(self, poll):
+        if poll: state.polls[poll.name].prefetch = not state.polls[poll.name].prefetch
+        else: state._conf.prefetch = not state._conf.prefetch
+
     def edit_poll(self, poll):
         print('context poll edit', poll.name)
 
     def delete_poll(self, poll):
+        if state.activepoll == poll.name:
+            state.activepoll = None
         remote.remove(poll)
         self.refresh_polls()
 
@@ -625,9 +637,9 @@ class Polls(ContextMenuMixin):
         duration = datetime.timedelta(**duration)
         duration = duration or datetime.timedelta(weeks=99999)
         # if isfalse_notify(self.newpollwidget.name.text(), 'Must provide a Name'): return
-        if isfalse_notify(os.path.exists(os.path.expanduser(self.newpollwidget.path.text())),
-                          'path must exist'):
-            return
+        # if isfalse_notify(os.path.exists(os.path.expanduser(self.newpollwidget.path.text())),
+        # 'path must exist'):
+        # return
         if isfalse_notify(duration > datetime.timedelta(minutes=1), 'Poll expires too soon'): return
         fields = 'name path sym ligand user workflow cmdstart cmdstop props attrs'
         kw = {k: widget_gettext(getattr(self.newpollwidget, k)) for k in fields.split()}
@@ -848,14 +860,14 @@ class PrettyProteinProjectPymolPluginPanel:
         uifile = os.path.join(os.path.dirname(__file__), 'gui_grid_main.ui')
         self.widget = pymol.Qt.utils.loadUi(uifile, self.widget)
         self.widget.show()
-        for grade in 'SABCDF':
-            getattr(self.widget, f'{grade.lower()}tier').clicked.connect(partial(self.grade_pressed, grade))
+        for grade in 'superlike like dislike hate'.split():
+            getattr(self.widget, grade).clicked.connect(partial(self.grade_pressed, grade))
         self.widget.button_newpoll.clicked.connect(lambda: self.polls.create_poll_start())
         self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
         self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_toggle_start())
-        self.widget.button_save.clicked.connect(lambda: self.save_session())
-        self.widget.button_load.clicked.connect(lambda: self.load_session())
-        self.widget.button_restart.clicked.connect(lambda: self.init_session())
+        # self.widget.button_save.clicked.connect(lambda: self.save_session())
+        # self.widget.button_load.clicked.connect(lambda: self.load_session())
+        # self.widget.button_restart.clicked.connect(lambda: self.init_session())
         self.widget.button_quit.clicked.connect(lambda: self.quit())
         self.widget.button_quitpymol.clicked.connect(lambda: self.quit(exitpymol=True))
         self.keybinds = []

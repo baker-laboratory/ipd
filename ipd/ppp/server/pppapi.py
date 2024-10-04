@@ -44,6 +44,27 @@ class DBBase:
 props_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
 attrs_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
 
+def check_ghost_poll_and_file(backend):
+    if not backend.select(DBPoll, dbkey=666):
+        backend.session.add(
+            DBPoll(name='Ghost Poll',
+                   desc='Reviews point here when their poll gets deleted',
+                   path='Ghost Dir',
+                   user='admin',
+                   dbkey=666,
+                   ispublic=False))
+        backend.session.commit()
+    if not backend.select(DBFile, dbkey=666):
+        backend.session.add(
+            DBFile(name='Ghost File',
+                   desc='Reviews point here when their orig file gets deleted. Use the review\'s permafname',
+                   fname='Ghost File',
+                   user='admin',
+                   dbkey=666,
+                   polldbkey=666,
+                   ispublic=False))
+        backend.session.commit()
+
 @profile
 class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
     dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
@@ -60,6 +81,11 @@ class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
         return self
 
     def clear(self, backend):
+        check_ghost_poll_and_file(backend)
+        for r in backend.select(DBReview, polldbkey=self.dbkey):
+            r.polldbkey = 666
+            r.filedbkey = 666
+        backend.session.commit()
         for f in backend.select(DBFile, polldbkey=self.dbkey):
             backend.session.delete(f)
 
@@ -282,13 +308,15 @@ class Backend:
         return self.select(DBPymolCMD, dbkey=None, name=None)
 
     def pollinfo(self, user=None):
-        query = f'SELECT dbkey,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll WHERE ispublic OR user=\'{user}\';'
+        print(f'server pollinfo {user}')
+        query = f'SELECT dbkey,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll WHERE ispublic OR dbpoll.user=\'{user}\';'
         if not user or user == 'admin':
             query = 'SELECT dbkey,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll'
         result = self.session.execute(sqlalchemy.text(query)).fetchall()
         return list(map(tuple, result))
 
     def create_poll(self, poll: DBPoll, replace: bool = False) -> str:
+        print('create_poll', poll)
         return self.validate_and_add_to_db(poll, replace)
 
     def create_review(self, review: DBReview, replace: bool = False) -> str:
@@ -360,7 +388,7 @@ class Backend:
     def create_empty_files(self, files: list[ppp.FileSpec]):
         # print('CREATE empty files', len(files))
         for f in files:
-            assert not f.filecontent
+            assert not f.filecontent.strip()
             self.session.add(DBFile(**f.dict()))
         self.session.commit()
 
@@ -419,6 +447,8 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
         time.sleep(0.001)
     else:
         raise RuntimeError('server failed to start')
+    ppp.set_server(True)
+    check_ghost_poll_and_file(backend)
     ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
     print('server', socket.gethostname())
     return server, backend

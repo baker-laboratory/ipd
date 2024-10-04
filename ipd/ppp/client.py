@@ -4,6 +4,8 @@ import functools
 import json
 import tempfile
 import contextlib
+import subprocess
+from subprocess import check_output
 import ipd
 from pathlib import Path
 import gzip
@@ -25,10 +27,16 @@ print = rich.print
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 
 SERVER = 'ppp' == socket.gethostname()
+REMOTE_MODE = os.path.exists('/net/scratch/sheffler')
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 # profile = ipd.dev.timed
 profile = lambda f: f
+
+def set_server(isserver):
+    global SERVER
+    SERVER = isserver
+    print('SERVER MODE')
 
 class PPPClientError(Exception):
     pass
@@ -54,7 +62,7 @@ def fix_label_case(thing):
 class SpecBase(pydantic.BaseModel):
     ispublic: bool = True
     telemetry: bool = True
-    user: str
+    user: str = ''
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: Union[list[str], str] = []
     attrs: Union[dict[str, Union[str, int, float]], str] = {}
@@ -62,9 +70,8 @@ class SpecBase(pydantic.BaseModel):
 
     @pydantic.validator('user')
     def valuser(cls, user):
-        assert user
         assert user != 'services'
-        return user
+        return user or getpass.getuser()
 
     @pydantic.validator('props')
     def valprops(cls, props):
@@ -108,18 +115,24 @@ class PollSpec(SpecBase):
 
     @pydantic.validator('path')
     def valpath(cls, path):
+        print('valpath', path)
         if SERVER: return path
+        if digs := path.startswith('digs:'): path = path[5:]
         path = os.path.abspath(os.path.expanduser(path))
-        assert os.path.isdir(path), f'path must be directory: {path}'
-        assert [f for f in os.listdir(path)
-                if f.endswith(STRUCTURE_FILE_SUFFIX)], f'path must contain structure files: {path}'
-        return path
+        if digs or not os.path.exists(path):
+            assert check_output(['rsync', f'digs:{path}']), f'path {path} must exist locally or on digs'
+        else:
+            assert os.path.isdir(path), f'path must be directory: {path}'
+        return f'digs:{path}' if digs else path
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
+        print('poll _validated')
         if SERVER: return self
+        print('poll _validated not server')
         fix_label_case(self)
+        if self.path.startswith('digs:'): return self
         self.name = self.name or os.path.basename(self.path)
         self.desc = self.desc or f'PDBs in {self.path}'
         self.sym = self.sym or ipd.sym.guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
@@ -185,8 +198,8 @@ class ReviewSpec(SpecBase):
 
     @pydantic.validator('grade')
     def valgrade(cls, grade):
-        assert grade.upper() in 'SABCDF'
-        return grade.upper()
+        assert grade in 'like superlike dislike hate'.split()
+        return grade
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
@@ -210,9 +223,10 @@ class FileSpec(SpecBase):
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
-        if SERVER: return fname
-        assert os.path.exists(fname)
-        return os.path.abspath(fname)
+        if SERVER or REMOTE_MODE: return fname
+        fname = os.path.abspath(fname)
+        assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
+        return fname
 
 @profile
 class PymolCMDSpecError(Exception):
@@ -392,11 +406,21 @@ class PPPClient:
         return self.post(f'/create/{kind}', thing, **kw)
 
     def upload_poll(self, poll):
-        if result := self.upload(poll): return result
-        poll = self.polls(name=poll.name)[0]
+        # digs:/home/sheffler/project/rfdsym/hilvert/pymol_saves
+        if digs := poll.path.startswith('digs:'):
+            lines = check_output(['rsync', f'{poll.path}/*']).decode().splitlines()
+            poll.path = poll.path[5:]
+            fnames = [os.path.join(poll.path, l.split()[4]) for l in lines]
+        else:
+            assert os.path.isdir(poll.path)
+            fnames = [os.path.join(poll.path, f) for f in os.listdir(poll.path)]
         filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
-        fnames = filter(filt, os.listdir(poll.path))
-        files = [FileSpec(polldbkey=poll.dbkey, fname=os.path.join(poll.path, fn)) for fn in fnames]
+        fnames = list(filter(filt, fnames))
+        assert fnames, f'path must contain structure files: {poll.path}'
+        if errors := self.upload(poll): return errors
+        poll = self.polls(name=poll.name)[0]
+        construct = FileSpec.construct if digs else FileSpec
+        files = [construct(polldbkey=poll.dbkey, fname=fn, user=getpass.getuser()) for fn in fnames]
         return self.post('/create/files', files)
 
     def upload_review(self, review, fname=None):
@@ -413,6 +437,7 @@ class PPPClient:
         return self.upload(review)
 
     def pollinfo(self, user=None):
+        print(f'client pollinfo {user}')
         if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
         response = requests.get(f'http://{self.server_addr}/pollinfo?user={user}')
         if response.content: return response.json()
