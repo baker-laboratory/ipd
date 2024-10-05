@@ -299,6 +299,16 @@ class PymolCMDSpec(SpecBase):
             self._check_cmds_output += msg
         return self
 
+class FlowStepSpec(SpecBase):
+    name: str
+    desc: str = ''
+    cmdnames: list[str] = []
+
+class WorkflowSpec(SpecBase):
+    name: str
+    desc: str = ''
+    steps: list[FlowStepSpec]
+
 @profile
 class ClientMixin(pydantic.BaseModel):
     _pppclient: Optional['PPPClient'] = None

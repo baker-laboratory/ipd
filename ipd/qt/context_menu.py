@@ -9,6 +9,9 @@ class MenuAction(pydantic.BaseModel):
     item: bool = True
 
 class ContextMenuMixin(abc.ABC):
+    def _install_event_filter(self, parent):
+        self.widget.installEventFilter(parent)
+
     @abc.abstractmethod
     def _context_menu_items(self):
         'must return dict of MenuActions'

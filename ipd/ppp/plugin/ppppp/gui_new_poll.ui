@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewPoll</class>
- <widget class="QDialog" name="NewPoll">
+ <class>PPPPPNewPoll</class>
+ <widget class="QDialog" name="PPPPPNewPoll">
   <property name="geometry">
    <rect>
     <x>0</x>

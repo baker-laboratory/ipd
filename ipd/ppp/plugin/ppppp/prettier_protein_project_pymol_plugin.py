@@ -14,7 +14,9 @@ import sys
 import pydantic
 import time
 import traceback
+import threading
 from rich import print
+from typing import Any
 from ipd.qt import MenuAction, notify, isfalse_notify
 
 it = ipd.lazyimport('itertools', 'more_itertools', pip=True)
@@ -199,8 +201,10 @@ class PollInProgress:
         self.filecache.cleanup()
 
 class Polls(ipd.qt.ContextMenuMixin):
-    def __init__(self, state):
+    def __init__(self, parent, state, remote):
+        self.parent = parent
         self.state = state
+        self.remote = remote
         self.pollinprogress = None
         self.current_poll_index = None
         self.listitems = None
@@ -219,6 +223,7 @@ class Polls(ipd.qt.ContextMenuMixin):
 
     def init_session(self, widget):
         self.widget = widget
+        self._install_event_filter(self.parent.widget)
         self.widget.itemClicked.connect(lambda a: self.poll_clicked(a))
         self.newpollwidget = pymol.Qt.QtWidgets.QDialog()
         uifile = os.path.join(os.path.dirname(__file__), 'gui_new_poll.ui')
@@ -408,17 +413,14 @@ class Polls(ipd.qt.ContextMenuMixin):
         u = state.user
         d = os.path.abspath('.').replace(f'/mnt/home/{u}', '~').replace(f'/home/{u}', '~')
         self.create_poll(
-            self.create_poll_spec(
-                name=f"Files in {d.replace('/',' ')} ({u})",
-                desc='The poll for lazy people',
-                path=d,
-                user=state.user,
-                ispublic=False,
-                telemetry=False,
-                start=None,
-                end=None,
-                _temporary=True,
-            ))
+            self.create_poll_spec(name=f"Files in {d.replace('/',' ')} ({u})",
+                                  desc='The poll for lazy people',
+                                  path=d,
+                                  user=state.user,
+                                  ispublic=False,
+                                  telemetry=False,
+                                  start=None,
+                                  end=None))
 
     def cleanup(self):
         if self.pollinprogress: self.pollinprogress.cleanup()
@@ -448,8 +450,10 @@ class ToggleCommand(ppp.PymolCMD):
         return bool(self.widget.checkState())
 
 class ToggleCommands(ipd.qt.ContextMenuMixin):
-    def __init__(self, state):
+    def __init__(self, parent, state, remote):
+        self.parent = parent
         self.state = state
+        self.remote = remote
         self.Qt = pymol.Qt
         self.widget = None
         self.itemsdict = None
@@ -457,7 +461,8 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
 
     def init_session(self, widget):
         self.widget = widget
-        self.refersh_command_list()
+        self._install_event_filter(self.parent.widget)
+        self.refresh_command_list()
         # widget.itemChanged.connect(lambda _: self.update_item(_))
         self.widget.itemClicked.connect(lambda _: self.update_item(_, toggle=True))
         self.newcmdwidget = pymol.Qt.QtWidgets.QDialog()
@@ -468,7 +473,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
     def _context_menu_items(self):
         return {
             'details': MenuAction(func=lambda cmd: ipd.qt.notify(cmd)),
-            'refersh': MenuAction(func=self.refersh_command_list, item=False),
+            'refersh': MenuAction(func=self.refresh_command_list, item=False),
             'edit': MenuAction(func=self.edit_command_start, owner=True),
             'clone': MenuAction(func=self.clone_command_start),
             'delete': MenuAction(func=self.delete_command, owner=True),
@@ -498,7 +503,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
 
     def delete_command(self, toggle):
         remote.remove(toggle)
-        self.refersh_command_list()
+        self.refresh_command_list()
 
     def update_item(self, item, toggle=False):
         self.cmds[item.text()].widget_update(toggle)
@@ -535,15 +540,15 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             cmd = ppp.PymolCMD(None, dbkey=len(state.cmds) + 1, **cmdspec.dict())
             setattr(state.cmds, cmd.name, cmd)
         self.newcmdwidget.hide()
-        self.refersh_command_list()
+        self.refresh_command_list()
         return True
 
-    def refersh_command_list(self):
+    def refresh_command_list(self):
         assert self.widget is not None
-        cmdsdicts = list(state.cmds.values()) + remote.pymolcmdsdict()
+        cmdsdicts = list(self.state.cmds.values()) + remote.pymolcmdsdict()
         # print([c['name'] for c in cmdsdicts])
-        if 'active_cmds' not in state:
-            state.active_cmds = {cmd['name'] for cmd in cmdsdict if cmd['onstart']}
+        if 'active_cmds' not in self.state:
+            self.state.active_cmds = {cmd['name'] for cmd in cmdsdicts if cmd['onstart']}
         self.itemsdict = {}
         self.widget.clear()
         for cmd in cmdsdicts:
@@ -555,7 +560,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             item.setToolTip(
                 f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\nNCHAIN: {cmd.minchains}-{cmd.maxchains}'
                 f'\nispublic: {cmd.ispublic}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}\nDBKEY:{cmd.dbkey}')
-            cmd.widget.setCheckState(2) if cmd.name in state.active_cmds else cmd.widget.setCheckState(0)
+            cmd.widget.setCheckState(2) if cmd.name in self.state.active_cmds else cmd.widget.setCheckState(0)
             self.cmds[cmd.name] = cmd
         self.cmdsearchtext = '\n'.join(f'{c.name}||||{c.desc} sym:{c.sym} user:{c.user} lig:{c.ligand}'
                                        for c in self.cmds.values())
@@ -563,44 +568,100 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
 
     def filtered_cmd_list(self):
         hits = set(self.cmds.keys())
-        if query := state.findcmd:
+        if query := self.state.findcmd:
             from subprocess import Popen, PIPE
             p = Popen(['fzf', '-i', '--filter', f'{query}'], stdout=PIPE, stdin=PIPE, stderr=PIPE, text=True)
             hits = p.communicate(input=self.cmdsearchtext)[0]
             hits = [m[:m.find('||||')] for m in hits.split('\n') if m]
         cmds, sym, ligand, nchain = self.cmds, '', '', -1
-        if not state.showallcmds and len(hits) < 100:
+        if not self.state.showallcmds and len(hits) < 100:
             if pip := ppppp.polls.pollinprogress:
                 sym, ligand, nchain = pip.poll.sym, pip.poll.ligand, pip.poll.nchain
             hits = filter(lambda x: cmds[x].sym in ('', sym), hits)
             hits = filter(lambda x: cmds[x].ligand in ligand or (ligand and cmds[x].ligand == 'ANY'), hits)
             if nchain > 0: hits = filter(lambda x: cmds[x].minchains <= nchain <= cmds[x].maxchains, hits)
-        return set(hits) | state.active_cmds
+        return set(hits) | self.state.active_cmds
 
     def update_commands_gui(self):
-        if self.itemsdict is None: self.refersh_command_list()
+        if self.itemsdict is None: self.refresh_command_list()
         visible = {k: self.cmds[k] for k in self.filtered_cmd_list()}
         for name, item in self.itemsdict.items():
-            item.setCheckState(2 if name in state.active_cmds else 0)
+            item.setCheckState(2 if name in self.state.active_cmds else 0)
             item.setHidden(not (name in visible or item.isSelected()))
 
     def cleanup(self):
         pass
 
+class FlowStepGui(ppp.FlowStepSpec):
+    widget: Any
+
+class WorkflowGui(ppp.WorkflowSpec):
+    steps: list[FlowStepGui]
+
+class Workflows(ToggleCommands):
+    def __init__(self, parent, state, remote):
+        self.sharedstate = state
+        state = ipd.Bunch(_strict=False, cmds={}, active_cmds=set())
+        super().__init__(parent, state, remote)
+        uifile = os.path.join(os.path.dirname(__file__), 'gui_workflows.ui')
+        self.newflowwidget = pymol.Qt.QtWidgets.QDialog()
+        self.newflowwidget = pymol.Qt.utils.loadUi(uifile, self.newflowwidget)
+        self.newflowwidget.button_create.clicked.connect(lambda: self.create_flow_done())
+        self.newflowwidget.button_newstep.clicked.connect(lambda: self.new_flow_step())
+        self.stepsw = pymol.Qt.QtWidgets.QWidget()
+        self.steps = pymol.Qt.QtWidgets.QVBoxLayout()
+        self.steps.setContentsMargins(0, 0, 0, 0)
+        self.stepsw.setLayout(self.steps)
+        self.newflowwidget.scroll.setWidget(self.stepsw)
+        self.widget = self.newflowwidget.cmdlist
+
+    def new_flow_step(self):
+        print('new flow step')
+        # uifile = os.path.join(os.path.dirname(__file__), 'gui_workflow_step.ui')
+        # stepwidget = pymol.Qt.utils.loadUi(uifile, self.newflowwidget)
+        stepwidget = pymol.Qt.QtWidgets.QWidget()
+        stepwidget.setLayout(pymol.Qt.QtWidgets.QVBoxLayout())
+        stepwidget.layout().setContentsMargins(0, 0, 0, 0)
+        top = pymol.Qt.QtWidgets.QHBoxLayout(objectName='top')
+        stepwidget.layout().addLayout(top)
+        rem = pymol.Qt.QtWidgets.QPushButton('Remove', objectName='remove')
+        top.addWidget(rem)
+        name = pymol.Qt.QtWidgets.QLineEdit('', objectName='name', placeholderText='Step Name')
+        top.addWidget(name)
+        stepwidget.layout().addWidget(pymol.Qt.QtWidgets.QListWidget(objectName='cmds'))
+        self.steps.addWidget(stepwidget)
+
+    def create_flow_start(self):
+        print('create flow start')
+        # for i in reversed(range(1, self.newflowwidget.steps.count())):
+        # ic(i, self.newflowwidget.steps.count())
+        # self.newflowwidget.steps.itemAt(i).newflowwidget().deleteLatter()
+        # self.newflowwidget.steps.clear()
+        self.refresh_command_list()
+        self.newflowwidget.show()
+
+    def flow_from_gui():
+        print('flow flow_from_gui')
+
+    def create_flow_done(self):
+        print('create flow done')
+        flow = self.flow_from_gui()
+        self.newflowwidget.hide()
+
 class PrettyProteinProjectPymolPluginPanel:
-    def __init__(self, state):
+    def __init__(self, state, remote):
         self.state = state
+        self.remote = remote
 
     def init_session(self):
-        self.polls = Polls(self.state)
-        self.toggles = ToggleCommands(self.state)
         pymol.cmd.save(SESSION_RESTORE)
         self.setup_main_window()
+        self.toggles = ToggleCommands(self, self.state, self.remote)
+        self.polls = Polls(self, self.state, self.remote)
         self.update_opts()
         self.toggles.init_session(self.widget.toggles)
         self.polls.init_session(self.widget.polls)
-        self.toggles.widget.installEventFilter(self.widget)
-        self.polls.widget.installEventFilter(self.widget)
+        self.workflows = Workflows(self, self.state, self.remote)
 
     def setup_main_window(self):
         class ContextDialog(pymol.Qt.QtWidgets.QDialog):
@@ -610,9 +671,8 @@ class PrettyProteinProjectPymolPluginPanel:
                     if source is self.toggles.widget: return self.toggles.context_menu(event)
                 return super().eventFilter(source, event)
 
-        self.widget = ContextDialog()
         uifile = os.path.join(os.path.dirname(__file__), 'gui_grid_main.ui')
-        self.widget = pymol.Qt.utils.loadUi(uifile, self.widget)
+        self.widget = pymol.Qt.utils.loadUi(uifile, ContextDialog())
         self.widget.show()
         for grade in 'superlike like dislike hate'.split():
             getattr(self.widget, grade).clicked.connect(partial(self.grade_pressed, grade))
@@ -620,6 +680,7 @@ class PrettyProteinProjectPymolPluginPanel:
         self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
         self.widget.button_use_dir.clicked.connect(lambda: self.polls.open_file_picker(public=0))
         self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_command_start())
+        self.widget.button_newflow.clicked.connect(lambda: self.workflows.create_flow_start())
         # self.widget.button_save.clicked.connect(lambda: self.save_session())
         # self.widget.button_load.clicked.connect(lambda: self.load_session())
         # self.widget.button_restart.clicked.connect(lambda: self.init_session())
@@ -742,7 +803,7 @@ def run(_self=None):
         remote = run_local_server()
     print(ipd.dev.git_status('plugin code status'))
     print(remote.get('/gitstatus/server code status/end'))
-    ppppp = PrettyProteinProjectPymolPluginPanel(state)
+    ppppp = PrettyProteinProjectPymolPluginPanel(state, remote)
     ppppp.init_session()
 
 def main():
