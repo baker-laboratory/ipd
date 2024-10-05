@@ -112,6 +112,9 @@
            <property name="text">
             <string>Is Public?</string>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>

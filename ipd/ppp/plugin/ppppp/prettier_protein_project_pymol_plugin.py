@@ -15,7 +15,7 @@ import pydantic
 import time
 import traceback
 from rich import print
-from ipd.qt import MenuAction as CTXM, notify, isfalse_notify
+from ipd.qt import MenuAction, notify, isfalse_notify
 
 it = ipd.lazyimport('itertools', 'more_itertools', pip=True)
 requests = ipd.lazyimport('requests', pip=True)
@@ -86,7 +86,7 @@ class PymolFileViewer:
             self.run_command(ppppp.toggles.cmds[cmd].cmdon)
         if state.pymol_view: pymol.cmd.set_view(state.pymol_view)
 
-    def update_toggle(self, toggle: 'ToggleCommand'):
+    def update_command(self, toggle: 'ToggleCommand'):
         if toggle: self.run_command(toggle.cmdon)
         else: self.run_command(toggle.cmdoff)
 
@@ -105,7 +105,7 @@ class PollInProgress:
         state.activepoll = poll.name
         Cache = ipd.dev.PrefetchLocalFileCache if state.prefetch else ipd.devFileCache
         self.filecache = Cache(self.fnames, numprefetch=7 if state.prefetch else 0)
-        ppppp.toggles.update_toggles_gui()
+        ppppp.toggles.update_commands_gui()
         ppppp.set_pbar(lb=0, val=len(state.reviewed), ub=len(self.fnames) - 1)
 
     def init_files(self):
@@ -209,12 +209,12 @@ class Polls(ipd.qt.ContextMenuMixin):
     def _context_menu_items(self):
         shufstr = "shuffle {'off' if state.polls[item.text()].shuffle else 'on'}"
         return {
-            'details': CTXM(func=lambda cmd: ipd.qt.notify(cmd)),
-            'refersh': CTXM(func=self.refresh_polls, item=False),
-            'edit': CTXM(func=self.edit_poll, owner=True),
-            'clone': CTXM(func=self.clone_poll),
-            'delete': CTXM(func=self.delete_poll, owner=True),
-            'shuffle on/off': CTXM(func=self.shuffle_poll, item=True),
+            'details': MenuAction(func=lambda cmd: ipd.qt.notify(cmd)),
+            'refersh': MenuAction(func=self.refresh_polls, item=False),
+            'edit': MenuAction(func=self.edit_poll_start, owner=True),
+            'clone': MenuAction(func=self.clone_poll_start),
+            'delete': MenuAction(func=self.delete_poll, owner=True),
+            'shuffle on/off': MenuAction(func=self.shuffle_poll, item=True),
         }
 
     def init_session(self, widget):
@@ -226,10 +226,9 @@ class Polls(ipd.qt.ContextMenuMixin):
         self.newpollwidget.openfiledialog.clicked.connect(lambda: self.open_file_picker())
         self.newpollwidget.cancel.clicked.connect(lambda: self.newpollwidget.hide())
         self.newpollwidget.autofill.clicked.connect(lambda: self.create_poll_autofill_button())
-        self.newpollwidget.ok.clicked.connect(lambda: self.create_poll_ok_button())
         self.refresh_polls()
 
-    def open_file_picker(self):
+    def open_file_picker(self, public=None):
         dialog = pymol.Qt.QtWidgets.QFileDialog(self.newpollwidget)
         dialog.setFileMode(pymol.Qt.QtWidgets.QFileDialog.Directory)
         dialog.setDirectory(os.path.expanduser('~'))
@@ -237,7 +236,9 @@ class Polls(ipd.qt.ContextMenuMixin):
         if dialog.exec_():
             file_names = dialog.selectedFiles()
             assert len(file_names) == 1
+            if public is not None: self.newpollwidget.ispublic.setCheckState(public * 2)
             self.newpollwidget.path.setText(file_names[0])
+            self.newpollwidget.show()
 
     def _get_from_item(self, item):
         return remote.poll(self.allpolls[item.text()])
@@ -246,20 +247,28 @@ class Polls(ipd.qt.ContextMenuMixin):
         if poll: state.polls[poll.name].shuffle = not state.polls[poll.name].shuffle
         else: state._conf.shuffle = not state._conf.shuffle
 
-    def edit_poll(self, poll):
+    def edit_poll_start(self, poll):
         self.update_gui_from_poll(poll)
-        self.show_newpoll_widget('Edit Poll')
-        self._edit_poll = True
-
-    def clone_poll(self, poll):
-        self.update_gui_from_poll(poll)
-        self.newpollwidget.name = f'Copy of {poll.name}'
-        self.newpollwidget.title.setText('Clone Poll')
+        self.newpollwidget.title.setText('Edit Poll')
+        self.newpollwidget.ok.setText('Edit Poll')
+        self.newpollwidget.ok.clicked.connect(lambda: self.edit_poll_done(poll))
         self.newpollwidget.show()
 
+    def edit_poll_done(self, origpoll):
+        poll = self.create_poll_spec_from_gui()
+        if self.create_poll(poll):
+            self.newpollwidget.hide()
+            self.delete_poll(origpoll)
+
+    def clone_poll_start(self, poll):
+        self.update_gui_from_poll(poll)
+        self.newpollwidget.name.setText(f'Clone of {poll.name}')
+        self.newpollwidget.title.setText('Clone Poll')
+        self.newpollwidget.show()
+        self.newpollwidget.ok.clicked.connect(lambda: self.create_poll_ok_button())
+
     def delete_poll(self, poll):
-        if state.activepoll == poll.name:
-            state.activepoll = None
+        if state.activepoll == poll.name: state.activepoll = None
         remote.remove(poll)
         self.refresh_polls()
 
@@ -327,7 +336,7 @@ class Polls(ipd.qt.ContextMenuMixin):
         poll = remote.poll(self.allpolls[name])
         self.pollinprogress = PollInProgress(poll)
         state.activepoll = self.pollinprogress.poll.name
-        ppppp.toggles.update_toggles_gui()
+        ppppp.toggles.update_commands_gui()
         self.pollinprogress.start()
 
     def poll_finished(self):
@@ -341,7 +350,9 @@ class Polls(ipd.qt.ContextMenuMixin):
     def create_poll_start(self):
         self.newpollwidget.user.setText(state.user)
         self.newpollwidget.show()
-        self._edit_poll = False
+        self.newpollwidget.ok.clicked.connect(lambda: self.create_poll_ok_button())
+        self.newpollwidget.ok.setText('Ok')
+        self.newpollwidget.title.setText('Create New Poll')
 
     def create_poll_spec_from_gui(self):
         # print('create_poll_spec_from_gui')
@@ -377,9 +388,6 @@ class Polls(ipd.qt.ContextMenuMixin):
         poll = self.create_poll_spec_from_gui()
         if self.create_poll(poll):
             self.newpollwidget.hide()
-            self.newpollwidget.ok.setText('Ok')
-            self.newpollwidget.title.setText('Create New Poll')
-            self._edit_poll = False
 
     def create_poll(self, poll: ppp.PollSpec, temporary=False):
         if not poll: return False
@@ -397,7 +405,6 @@ class Polls(ipd.qt.ContextMenuMixin):
             return None
 
     def create_poll_from_curdir(self):
-        self._edit_poll = False
         u = state.user
         d = os.path.abspath('.').replace(f'/mnt/home/{u}', '~').replace(f'/home/{u}', '~')
         self.create_poll(
@@ -405,6 +412,7 @@ class Polls(ipd.qt.ContextMenuMixin):
                 name=f"Files in {d.replace('/',' ')} ({u})",
                 desc='The poll for lazy people',
                 path=d,
+                user=state.user,
                 ispublic=False,
                 telemetry=False,
                 start=None,
@@ -434,7 +442,7 @@ class ToggleCommand(ppp.PymolCMD):
             else: state.active_cmds.remove(self.name)
         if ppppp.polls.pollinprogress and ppppp.polls.pollinprogress.viewer:
             # print('toggle update')
-            ppppp.polls.pollinprogress.viewer.update_toggle(toggle=self)
+            ppppp.polls.pollinprogress.viewer.update_command(toggle=self)
 
     def __bool__(self):
         return bool(self.widget.checkState())
@@ -449,59 +457,88 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
 
     def init_session(self, widget):
         self.widget = widget
-        self.refersh_toggle_list()
+        self.refersh_command_list()
         # widget.itemChanged.connect(lambda _: self.update_item(_))
         self.widget.itemClicked.connect(lambda _: self.update_item(_, toggle=True))
-        self.gui_new_pymolcmd = pymol.Qt.QtWidgets.QDialog()
-        self.gui_new_pymolcmd = pymol.Qt.utils.loadUi(
-            os.path.join(os.path.dirname(__file__), 'gui_new_pymolcmd.ui'), self.gui_new_pymolcmd)
-        self.gui_new_pymolcmd.cancel.clicked.connect(lambda: self.gui_new_pymolcmd.hide())
-        self.gui_new_pymolcmd.ok.clicked.connect(lambda: self.create_toggle_done())
+        self.newcmdwidget = pymol.Qt.QtWidgets.QDialog()
+        self.newcmdwidget = pymol.Qt.utils.loadUi(
+            os.path.join(os.path.dirname(__file__), 'gui_new_pymolcmd.ui'), self.newcmdwidget)
+        self.newcmdwidget.cancel.clicked.connect(lambda: self.newcmdwidget.hide())
 
     def _context_menu_items(self):
         return {
-            'details': CTXM(func=lambda cmd: ipd.qt.notify(cmd)),
-            'refersh': CTXM(func=self.refersh_toggle_list, item=False),
-            'edit': CTXM(func=self.edit_toggle, owner=True),
-            'delete': CTXM(func=self.delete_toggle, owner=True),
+            'details': MenuAction(func=lambda cmd: ipd.qt.notify(cmd)),
+            'refersh': MenuAction(func=self.refersh_command_list, item=False),
+            'edit': MenuAction(func=self.edit_command_start, owner=True),
+            'clone': MenuAction(func=self.clone_command_start),
+            'delete': MenuAction(func=self.delete_command, owner=True),
         }
 
     def _get_from_item(self, item):
         return self.cmds[item.text()]
 
-    def edit_toggle(self, toggle):
-        print('context toggle edit', toggle.name)
+    def edit_command_start(self, toggle):
+        self.update_gui_from_cmd(toggle)
+        self.newcmdwidget.title.setText('Edit Command')
+        self.newcmdwidget.ok.setText('Edit Command')
+        self.newcmdwidget.ok.clicked.connect(lambda: self.edit_command_done(toggle))
+        self.newcmdwidget.show()
 
-    def delete_toggle(self, toggle):
+    def edit_command_done(self, origcmd):
+        toggle = self.create_poll_spec_from_gui()
+        if self.create_poll(toggle):
+            self.delete_command(origcmd)
+
+    def clone_command_start(self, cmd):
+        self.update_gui_from_cmd(cmd)
+        self.newcmdwidget.name.setText(f'Clone of {cmd.name}')
+        self.newcmdwidget.title.setText('Clone Command')
+        self.newcmdwidget.show()
+        self.newcmdwidget.ok.clicked.connect(lambda: self.create_command_done())
+
+    def delete_command(self, toggle):
         remote.remove(toggle)
-        self.refersh_toggle_list()
+        self.refersh_command_list()
 
     def update_item(self, item, toggle=False):
         self.cmds[item.text()].widget_update(toggle)
 
-    def create_toggle_start(self):
-        self.gui_new_pymolcmd.user.setText(state.user)
-        self.gui_new_pymolcmd.show()
+    def create_command_start(self):
+        self.newcmdwidget.user.setText(state.user)
+        self.newcmdwidget.title.setText('Create New PymolCMD')
+        self.newcmdwidget.ok.setText('Create CMD')
+        self.newcmdwidget.show()
+        self.newcmdwidget.ok.clicked.connect(lambda: self.create_command_done())
 
-    def create_toggle_done(self):  # sourcery skip: dict-assign-update-to-union
-        if isfalse_notify(self.gui_new_pymolcmd.name.text(), 'Must provide a Name'): return
-        if isfalse_notify(self.gui_new_pymolcmd.cmdon.toPlainText(), 'Must provide a command'): return
+    def update_gui_from_cmd(self, cmd):
+        for k in 'name cmdon cmdoff cmdstart sym ligand props attrs'.split():
+            val = str(cmd[k]) if cmd[k] else ''
+            ipd.qt.widget_settext(getattr(self.newcmdwidget, k), val)
+        for k in 'ispublic onstart'.split():
+            getattr(self.newcmdwidget, k).setCheckState(2 * cmd[k])
+
+    def create_cmdspec_from_gui(self):  # sourcery skip: dict-assign-update-to-union
+        if isfalse_notify(self.newcmdwidget.name.text(), 'Must provide a Name'): return
+        if isfalse_notify(self.newcmdwidget.cmdon.toPlainText(), 'Must provide a command'): return
         fields = 'name cmdon cmdoff cmdstart sym ligand props attrs'
-        kw = {k: ipd.qt.widget_gettext(getattr(self.gui_new_pymolcmd, k)) for k in fields.split()}
-        kw |= {k: bool(getattr(self.gui_new_pymolcmd, k).checkState()) for k in 'ispublic onstart'.split()}
-        cmdspec = ppp.PymolCMDSpec(**kw)
+        kw = {k: ipd.qt.widget_gettext(getattr(self.newcmdwidget, k)) for k in fields.split()}
+        kw |= {k: bool(getattr(self.newcmdwidget, k).checkState()) for k in 'ispublic onstart'.split()}
+        return ppp.PymolCMDSpec(**kw)
+
+    def create_command_done(self):
+        cmdspec = self.create_cmdspec_from_gui()
         if isfalse_notify(not cmdspec.errors(), cmdspec.errors()): return
-        self.gui_new_pymolcmd.hide()
         if cmdspec.ispublic:
             result = remote.upload(cmdspec)
             assert not result, result
         else:
             cmd = ppp.PymolCMD(None, dbkey=len(state.cmds) + 1, **cmdspec.dict())
             setattr(state.cmds, cmd.name, cmd)
-        self.refersh_toggle_list()
-        self.update_toggles_gui()
+        self.newcmdwidget.hide()
+        self.refersh_command_list()
+        return True
 
-    def refersh_toggle_list(self):
+    def refersh_command_list(self):
         assert self.widget is not None
         cmdsdicts = list(state.cmds.values()) + remote.pymolcmdsdict()
         # print([c['name'] for c in cmdsdicts])
@@ -522,7 +559,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             self.cmds[cmd.name] = cmd
         self.cmdsearchtext = '\n'.join(f'{c.name}||||{c.desc} sym:{c.sym} user:{c.user} lig:{c.ligand}'
                                        for c in self.cmds.values())
-        self.update_toggles_gui()
+        self.update_commands_gui()
 
     def filtered_cmd_list(self):
         hits = set(self.cmds.keys())
@@ -540,8 +577,8 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             if nchain > 0: hits = filter(lambda x: cmds[x].minchains <= nchain <= cmds[x].maxchains, hits)
         return set(hits) | state.active_cmds
 
-    def update_toggles_gui(self):
-        if self.itemsdict is None: self.refersh_toggle_list()
+    def update_commands_gui(self):
+        if self.itemsdict is None: self.refersh_command_list()
         visible = {k: self.cmds[k] for k in self.filtered_cmd_list()}
         for name, item in self.itemsdict.items():
             item.setCheckState(2 if name in state.active_cmds else 0)
@@ -581,7 +618,8 @@ class PrettyProteinProjectPymolPluginPanel:
             getattr(self.widget, grade).clicked.connect(partial(self.grade_pressed, grade))
         self.widget.button_newpoll.clicked.connect(lambda: self.polls.create_poll_start())
         self.widget.button_use_curdir.clicked.connect(lambda: self.polls.create_poll_from_curdir())
-        self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_toggle_start())
+        self.widget.button_use_dir.clicked.connect(lambda: self.polls.open_file_picker(public=0))
+        self.widget.button_newopt.clicked.connect(lambda: self.toggles.create_command_start())
         # self.widget.button_save.clicked.connect(lambda: self.save_session())
         # self.widget.button_load.clicked.connect(lambda: self.load_session())
         # self.widget.button_restart.clicked.connect(lambda: self.init_session())
@@ -599,9 +637,9 @@ class PrettyProteinProjectPymolPluginPanel:
         # print('UPDATE OPTS', ppppp.polls.pollinprogress)
         action = collections.defaultdict(lambda: lambda: None)
         action['hide_invalid'] = self.polls.update_polls_gui
-        action['showallcmds'] = self.toggles.update_toggles_gui
+        action['showallcmds'] = self.toggles.update_commands_gui
         action['findpoll'] = self.polls.update_polls_gui
-        action['findcmd'] = self.toggles.update_toggles_gui
+        action['findcmd'] = self.toggles.update_commands_gui
         for name, widget in self.widget.__dict__.items():
             if name.startswith('opt_'): opt, statetype = name[4:], 'perpoll'
             elif name.startswith('globalopt_'): opt, statetype = name[10:], 'global'
@@ -661,6 +699,7 @@ def run_local_server(port=54321):
 
 def run(_self=None):
     state_defaults = dict(
+        ispublic=True,
         reviewed=set(),
         prefetch=7,
         review_action='cp $file $pppdir/$poll/$grade_$filebase',
