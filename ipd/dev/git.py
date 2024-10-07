@@ -3,8 +3,8 @@ import subprocess
 import ipd
 
 def git_status(header=None, footer=None, printit=False):
-    srcdir = '/projects/services/ppp/lib/ipd'
-    # with ipd.dev.cd(ipd.proj_dir):
+    # srcdir = '/projects/services/ppp/lib/ipd'
+    srcdir = ipd.proj_dir
     with ipd.dev.cd(srcdir):
         s = ''
         if header: s += f'{f" {header} ":@^80}\n'

@@ -12,6 +12,7 @@ import ipd
 from ipd import ppp
 import signal
 from typing import Union
+from ipd.ppp.server.dbmodels import (DBPoll, DBFile, DBReview, DBPymolCMD, DuplicateError)
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -25,20 +26,18 @@ uvicorn = ipd.dev.lazyimport('uvicorn', 'uvicorn[standard]', pip=True)
 # profile = ipd.dev.timed
 profile = lambda f: f
 
-class DuplicateError(Exception):
-    def __init__(self, msg, conflict):
-        super().__init__(msg)
-        self.conflict = conflict
-
-class DBBase:
-    def __hash__(self):
-        return self.dbkey
-
-    def clear(self, backend):
-        return
-
-props_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
-attrs_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
+python_type_to_sqlalchemy_type = {
+    str: sqlalchemy.String,
+    int: sqlalchemy.Integer,
+    float: sqlalchemy.Float,
+    bool: sqlalchemy.Boolean,
+    # datetime.date: sqlalchemy.Date,
+    datetime: sqlalchemy.DateTime,
+    # datetime.time: sqlalchemy.Time,
+    dict: sqlalchemy.JSON,
+    list: sqlalchemy.ARRAY,
+    # decimal.Decimal: sqlalchemy.Numeric
+}
 
 def check_ghost_poll_and_file(backend):
     if not backend.select(DBPoll, dbkey=666):
@@ -60,88 +59,6 @@ def check_ghost_poll_and_file(backend):
                    polldbkey=666,
                    ispublic=False))
         backend.session.commit()
-
-@profile
-class DBPoll(DBBase, ppp.PollSpec, sqlmodel.SQLModel, table=True):
-    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
-    props: list[str] = props_default()
-    attrs: dict[str, Union[str, int, float]] = attrs_default()
-    nchain: int = -1
-    files: list["DBFile"] = sqlmodel.Relationship(back_populates="poll")
-    reviews: list["DBReview"] = sqlmodel.Relationship(back_populates="poll")
-
-    def validated_with_backend(self, backend):
-        if conflicts := set(backend.select(DBPoll, name=self.name, dbkeynot=self.dbkey)):
-            print('conflicts', [c.name for c in conflicts])
-            raise DuplicateError(f'duplicate poll {self.name}', conflicts)
-        return self
-
-    def clear(self, backend):
-        check_ghost_poll_and_file(backend)
-        for r in backend.select(DBReview, polldbkey=self.dbkey):
-            r.polldbkey = 666
-            r.filedbkey = 666
-        backend.session.commit()
-        for f in backend.select(DBFile, polldbkey=self.dbkey):
-            backend.session.delete(f)
-
-@profile
-class DBFile(DBBase, ppp.FileSpec, sqlmodel.SQLModel, table=True):
-    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
-    props: list[str] = props_default()
-    attrs: dict[str, Union[str, int, float]] = attrs_default()
-    polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
-    poll: DBPoll = sqlmodel.Relationship(back_populates="files")
-    reviews: list['DBReview'] = sqlmodel.Relationship(back_populates='file')
-
-    def validated_with_backend(self, backend):
-        # assert os.path.exists(self.fname)
-        return self
-
-    @pydantic.validator('fname')
-    def valfname(cls, fname):
-        return os.path.abspath(fname)
-
-@profile
-class DBReview(DBBase, ppp.ReviewSpec, sqlmodel.SQLModel, table=True):
-    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
-    props: list[str] = props_default()
-    attrs: dict[str, Union[str, int, float]] = attrs_default()
-    filedbkey: int = sqlmodel.Field(default=None, foreign_key="dbfile.dbkey")
-    polldbkey: int = sqlmodel.Field(default=None, foreign_key="dbpoll.dbkey")
-    file: DBFile = sqlmodel.Relationship(back_populates='reviews')
-    poll: DBPoll = sqlmodel.Relationship(back_populates='reviews')
-
-    def __hash__(self):
-        return self.dbkey
-
-    def validated_with_backend(self, backend):
-        assert self.file
-        assert self.poll
-
-@profile
-class DBPymolCMD(DBBase, ppp.PymolCMDSpec, sqlmodel.SQLModel, table=True):
-    dbkey: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
-    props: list[str] = props_default()
-    attrs: dict[str, Union[str, int, float]] = attrs_default()
-
-    def validated_with_backend(self, backend):
-        if conflicts := set(backend.select(DBPymolCMD, name=self.name, dbkeynot=self.dbkey)):
-            raise DuplicateError(f'duplicate pymolcmd {self.name}', conflicts)
-        return self
-
-python_type_to_sqlalchemy_type = {
-    str: sqlalchemy.String,
-    int: sqlalchemy.Integer,
-    float: sqlalchemy.Float,
-    bool: sqlalchemy.Boolean,
-    # datetime.date: sqlalchemy.Date,
-    datetime: sqlalchemy.DateTime,
-    # datetime.time: sqlalchemy.Time,
-    dict: sqlalchemy.JSON,
-    list: sqlalchemy.ARRAY,
-    # decimal.Decimal: sqlalchemy.Numeric
-}
 
 @profile
 class Backend:
