@@ -1,9 +1,6 @@
 import ipd
 import os
 import yaml
-import logging
-import sys
-import time
 from rich import print
 
 def add_defaults(server_addr, stress_test_polls=False, **kw):
@@ -42,7 +39,7 @@ def add_polls(client, stress=False):
         import random
         r = RandomWords()
         syms = ['C1'] * 20 + 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.upper().split()
-        cmdsyms = [''] * 48 + syms
+        [''] * 48 + syms
         for i in range(1000):
             name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
             print('add poll', name)

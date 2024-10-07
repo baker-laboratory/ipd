@@ -26,11 +26,11 @@ class Bunch(dict):
                 super().__init__(vars(__arg_or_ns))
         self.update(kw)
         if _default == "__NODEFALT": _default = None
-        self.__dict__['_special'] = dict()
+        self.__dict__['_special'] = {}
         self.__dict__["_special"]['strict_lookup'] = _strict is True or _strict == "__STRICT"
         self.__dict__["_special"]['default'] = _default
         self.__dict__["_special"]["storedefault"] = _storedefault
-        self.__dict__["_special"]["autosave"] = str(_autosave)
+        self.__dict__["_special"]["autosave"] = str(_autosave) if _autosave else None
         self.__dict__["_special"]["autoreload"] = _autoreload
         if _autoreload:
             Path(_autoreload).touch()
@@ -69,6 +69,7 @@ class Bunch(dict):
             parent, selfkey = self._special['parent']
             return parent._notify_changed(f'{selfkey}.{k}', v)
         if self._special['autosave']:
+            ic(self._special['autosave'])
             import yaml
             if k:
                 k = k.split('.')[0]

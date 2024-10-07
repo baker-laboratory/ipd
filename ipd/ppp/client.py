@@ -1,10 +1,8 @@
 import os
 from datetime import datetime
 import functools
-import json
 import tempfile
 import contextlib
-import subprocess
 from subprocess import check_output
 import ipd
 from pathlib import Path
@@ -12,7 +10,7 @@ import gzip
 import getpass
 import traceback
 import socket
-from typing import Any, Optional, Union
+from typing import Optional, Union
 from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
 
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -89,7 +87,7 @@ class SpecBase(pydantic.BaseModel):
     def valattrs(cls, attrs):
         if isinstance(attrs, dict): return attrs
         try:
-            attas = ipd.dev.safe_eval(attrs)
+            ipd.dev.safe_eval(attrs)
         except (NameError, SyntaxError):
             if isinstance(attrs, str):
                 if not attrs.strip(): return {}
@@ -174,7 +172,7 @@ class PollSpec(SpecBase):
                         return self
                     xyz = xyz.reshape(len(chains), -1, 3)
                     self.sym = guess_symmetry(xyz)
-            except ValueError as e:
+            except ValueError:
                 # print(os.path.join(self.path, fname))
                 traceback.print_exc()
                 if self.nchain < 4: self.sym = 'C1'
@@ -259,7 +257,7 @@ class PymolCMDSpec(SpecBase):
     ligand: str = ''
     sym: str = ''
     minchains: int = 1
-    maxchains: int = 999_999_999
+    maxchains: int = 9999
     cmdcheck: bool = True
 
     @pydantic.model_validator(mode='after')

@@ -1,19 +1,15 @@
 import sys
 import os
-import functools
 import random
-from datetime import datetime, timedelta
+from datetime import datetime
 import contextlib
 import threading
 import time
 import socket
-import shutil
 import operator
-from pathlib import Path
 from typing import Optional
 import ipd
 from ipd import ppp
-from icecream import ic
 import signal
 from typing import Union
 
@@ -413,8 +409,6 @@ def pymol_launch():
 
 @profile
 def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', local=False, **kw):
-    from fastapi.middleware.gzip import GZipMiddleware
-    import pymol
     ppp.SERVER = True
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
