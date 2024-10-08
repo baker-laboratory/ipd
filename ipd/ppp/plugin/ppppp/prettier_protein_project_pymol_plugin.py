@@ -141,7 +141,7 @@ class PollInProgress:
     def record_review(self, grade, comment):
         review = ppp.ReviewSpec(grade=grade,
                                 comment=comment,
-                                polldbkey=self.poll.dbkey,
+                                pollid=self.poll.id,
                                 fname=self.fnames[self.index])
         if state.do_review_action and not self.exec_review_action(review): return
         response = remote.upload_review(review, self.fnames[self.index])
@@ -272,7 +272,7 @@ class Polls(ipd.qt.ContextMenuMixin):
         self.refresh_polls()
 
     def refresh_polls(self):
-        # localpolls = [(p.dbkey, p.name, p.user, p.desc, p.sym, p.ligand) for p in state.local.polls.values()]
+        # localpolls = [(p.id, p.name, p.user, p.desc, p.sym, p.ligand) for p in state.local.polls.values()]
         self.pollsearchtext, self.polltooltip, allpolls = [], {}, {}
         self.listitems, self.listitemdict = [], {}
         self.allpolls = remote.pollinfo(user=state.user)  #+ localpolls

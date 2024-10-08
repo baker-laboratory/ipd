@@ -45,7 +45,7 @@ def test_file_upload(testclient, pppserver):
                                                    ispublic=True)):
         print(response)
     localfname = os.path.join(path, '1pgx.cif')
-    file = ipd.ppp.FileSpec(polldbkey=1, fname=localfname)
+    file = ipd.ppp.FileSpec(pollid=1, fname=localfname)
     exists, newfname = client.post('/have/file', file)
     assert not exists
     assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
@@ -91,7 +91,7 @@ def test_poll(testclient, pppserver):
     assert not response, response
 
     assert len(client.polls()) == 7
-    assert testclient.get('/poll2').json()['dbkey'] == 2
+    assert testclient.get('/poll2').json()['id'] == 2
     polljs = testclient.get('/polls').json()
     # print(polljs)
     # polls = [ppp.Poll(**_) for _ in polljs]
@@ -129,19 +129,19 @@ def test_poll(testclient, pppserver):
     assert len(client.polls()) == 8
     poll = client.poll(8)
     # for p in client.polls():
-    # print(p.dbkey, p.name, len(p.files))
+    # print(p.id, p.name, len(p.files))
     assert len(poll.files) == 3
     for i in range(1, 4):
-        assert pppserver.poll(i).files[0].poll.dbkey == i
+        assert pppserver.poll(i).files[0].poll.id == i
 
     fname = ipd.testpath('ppppdbdir/1pgx.cif')
-    client.upload_review(ppp.ReviewSpec(fname=fname, user='bar', polldbkey=1, grade='C'))
+    client.upload_review(ppp.ReviewSpec(fname=fname, user='bar', pollid=1, grade='C'))
     assert testclient.get('/reviews').json()[0]['user'] == 'bar'
-    review = ppp.ReviewSpec(polldbkey=1, fname=fname, grade='A')
+    review = ppp.ReviewSpec(pollid=1, fname=fname, grade='A')
     assert review.grade == 'A'
     client.upload_review(review)
     assert len(client.reviews()) == 2
-    client.upload_review(ppp.ReviewSpec(polldbkey=3, fname=fname, grade='f'))
+    client.upload_review(ppp.ReviewSpec(pollid=3, fname=fname, grade='f'))
 
     assert len(client.reviews_for_fname(fname)) == 3
 
@@ -150,8 +150,8 @@ def test_poll(testclient, pppserver):
     files = client.files()
     cmds = client.pymolcmds()
 
-    assert reviews[0].poll.dbkey == 1
-    assert reviews[0].file.dbkey == 2
+    assert reviews[0].poll.id == 1
+    assert reviews[0].file.id == 2
     print(len(polls))
     for p in polls:
         print(p)

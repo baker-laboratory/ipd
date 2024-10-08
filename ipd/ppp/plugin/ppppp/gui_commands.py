@@ -126,7 +126,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             result = self.remote.upload(cmdspec)
             assert not result, result
         else:
-            cmd = ipd.ppp.PymolCMD(None, dbkey=len(self.state.cmds) + 1, **cmdspec.dict())
+            cmd = ipd.ppp.PymolCMD(None, id=len(self.state.cmds) + 1, **cmdspec.dict())
             setattr(self.state.cmds, cmd.name, cmd)
         self.newcmdwidget.hide()
         self.refresh_command_list()
@@ -148,7 +148,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             cmd = ToggleCommand(item, self.parent, **cmd)
             item.setToolTip(
                 f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\nNCHAIN: {cmd.minchains}-{cmd.maxchains}'
-                f'\nispublic: {cmd.ispublic}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}\nDBKEY:{cmd.dbkey}')
+                f'\nispublic: {cmd.ispublic}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}\nDBKEY:{cmd.id}')
             cmd.widget.setCheckState(2) if cmd.name in self.state.active_cmds else cmd.widget.setCheckState(0)
             self.cmds[cmd.name] = cmd
         self.cmdsearchtext = '\n'.join(f'{c.name}||||{c.desc} sym:{c.sym} user:{c.user} lig:{c.ligand}'

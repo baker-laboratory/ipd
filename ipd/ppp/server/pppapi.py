@@ -40,23 +40,23 @@ python_type_to_sqlalchemy_type = {
 }
 
 def check_ghost_poll_and_file(backend):
-    if not backend.select(DBPoll, dbkey=666):
+    if not backend.select(DBPoll, id=666):
         backend.session.add(
             DBPoll(name='Ghost Poll',
                    desc='Reviews point here when their poll gets deleted',
                    path='Ghost Dir',
                    user='admin',
-                   dbkey=666,
+                   id=666,
                    ispublic=False))
         backend.session.commit()
-    if not backend.select(DBFile, dbkey=666):
+    if not backend.select(DBFile, id=666):
         backend.session.add(
             DBFile(name='Ghost File',
                    desc='Reviews point here when their orig file gets deleted. Use the review\'s permafname',
                    fname='Ghost File',
                    user='admin',
-                   dbkey=666,
-                   polldbkey=666,
+                   id=666,
+                   pollid=666,
                    ispublic=False))
         backend.session.commit()
 
@@ -81,16 +81,16 @@ class Backend:
         route('/have/file', self.have_file, methods=['POST'])
         route('/pollinfo', self.pollinfo, methods=['GET'])
         route('/polls', self.polls, methods=['GET'])
-        route('/poll{dbkey}', self.poll, methods=['GET'])
-        route('/poll{dbkey}/fids', self.poll_fids, methods=['GET'])
-        route('/poll{dbkey}/fname', self.poll_file, methods=['GET'])
+        route('/poll{id}', self.poll, methods=['GET'])
+        route('/poll{id}/fids', self.poll_fids, methods=['GET'])
+        route('/poll{id}/fname', self.poll_file, methods=['GET'])
         route('/pymolcmds', self.pymolcmds, methods=['GET'])
-        route('/remove/{thing}/{dbkey}', self.remove, methods=['GET'])
+        route('/remove/{thing}/{id}', self.remove, methods=['GET'])
         route('/reviews', self.reviews, methods=['GET'])
         route('/reviews/byfname/{fname}', self.reviews_fname, methods=['GET'])
-        route('/reviews/file{dbkey}', self.review_for_dbkey, methods=['GET'])
-        route('/reviews/poll{dbkey}', self.review_for_dbkey, methods=['GET'])
-        route('/review{dbkey}', self.review, methods=['GET'])
+        route('/reviews/file{id}', self.review_for_id, methods=['GET'])
+        route('/reviews/poll{id}', self.review_for_id, methods=['GET'])
+        route('/review{id}', self.review, methods=['GET'])
         route('/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
         self.app = fastapi.FastAPI()
         # self.app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
@@ -130,8 +130,8 @@ class Backend:
                     column = sqlalchemy.Column(name, python_type_to_sqlalchemy_type[field.annotation])
                     self._add_db_column(table.lower(), column)
 
-    def remove(self, thing, dbkey):
-        thing = self.select(thing, dbkey=dbkey)
+    def remove(self, thing, id):
+        thing = self.select(thing, id=id)
         assert len(thing) == 1
         thing = thing[0]
         thing.clear(self)
@@ -143,7 +143,7 @@ class Backend:
 
     def getattr(self, thing, id, attr):
         thingtype = globals()[f'DB{thing.title()}']
-        thing = next(self.session.exec(sqlmodel.select(thingtype).where(thingtype.dbkey == id)))
+        thing = next(self.session.exec(sqlmodel.select(thingtype).where(thingtype.id == id)))
         thingattr = getattr(thing, attr)
         return thingattr
 
@@ -181,7 +181,7 @@ class Backend:
         except DuplicateError as e:
             if replace:
                 for oldthing in e.conflict:
-                    print('DB DELETE', type(oldthing), oldthing.dbkey)
+                    print('DB DELETE', type(oldthing), oldthing.id)
                     oldthing.clear(self)
                     self.session.delete(oldthing)
                 # print('DB ADDED', thing)
@@ -192,39 +192,39 @@ class Backend:
         self.session.commit()
         return result
 
-    def poll(self, dbkey: int, response_model=Optional[DBPoll]):
-        poll = self.select(DBPoll, dbkey=dbkey)
+    def poll(self, id: int, response_model=Optional[DBPoll]):
+        poll = self.select(DBPoll, id=id)
         return poll[0] if poll else None
 
-    def file(self, dbkey: int, response_model=Optional[DBFile]):
-        file = self.select(DBFile, dbkey=dbkey)
+    def file(self, id: int, response_model=Optional[DBFile]):
+        file = self.select(DBFile, id=id)
         return file[0] if file else None
 
-    def review(self, dbkey: int, response_model=Optional[DBReview]):
-        review = self.select(DBReview, dbkey=dbkey)
+    def review(self, id: int, response_model=Optional[DBReview]):
+        review = self.select(DBReview, id=id)
         return review[0] if review else None
 
-    def pymolcmd(self, dbkey: int, response_model=Optional[DBPymolCMD]):
-        cmd = self.select(DBPymolCMD, dbkey=dbkey)
+    def pymolcmd(self, id: int, response_model=Optional[DBPymolCMD]):
+        cmd = self.select(DBPymolCMD, id=id)
         return cmd[0] if cmd else None
 
-    def polls(self, dbkey: int = None, name=None, response_model=list[DBPoll]):
-        return self.select(DBPoll, dbkey=dbkey, name=name)
+    def polls(self, id: int = None, name=None, response_model=list[DBPoll]):
+        return self.select(DBPoll, id=id, name=name)
 
-    def files(self, dbkey: int = None, response_model=list[DBFile]):
-        return self.select(DBFile, dbkey=dbkey)
+    def files(self, id: int = None, response_model=list[DBFile]):
+        return self.select(DBFile, id=id)
 
-    def reviews(self, dbkey: int = None, name=None, response_model=list[DBReview]):
-        return self.select(DBReview, dbkey=dbkey, name=name)
+    def reviews(self, id: int = None, name=None, response_model=list[DBReview]):
+        return self.select(DBReview, id=id, name=name)
 
-    def pymolcmds(self, dbkey: int = None, name=None, response_model=list[DBPymolCMD]):
-        return self.select(DBPymolCMD, dbkey=None, name=None)
+    def pymolcmds(self, id: int = None, name=None, response_model=list[DBPymolCMD]):
+        return self.select(DBPymolCMD, id=None, name=None)
 
     def pollinfo(self, user=None):
         print(f'server pollinfo {user}')
-        query = f'SELECT dbkey,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll WHERE ispublic OR dbpoll.user=\'{user}\';'
+        query = f'SELECT id,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll WHERE ispublic OR dbpoll.user=\'{user}\';'
         if not user or user == 'admin':
-            query = 'SELECT dbkey,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll'
+            query = 'SELECT id,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll'
         result = self.session.execute(sqlalchemy.text(query)).fetchall()
         return list(map(tuple, result))
 
@@ -234,43 +234,43 @@ class Backend:
 
     def create_review(self, review: DBReview, replace: bool = False) -> str:
         # print('backend create_review')
-        poll = self.poll(review.polldbkey)
-        filedbkey = [f.dbkey for f in poll.files if f.fname == review.fname]
-        if not filedbkey: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.files}'
-        review.filedbkey = filedbkey[0]
+        poll = self.poll(review.pollid)
+        fileid = [f.id for f in poll.files if f.fname == review.fname]
+        if not fileid: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.files}'
+        review.fileid = fileid[0]
         return self.validate_and_add_to_db(review, replace)
 
     def create_pymolcmd(self, pymolcmd: DBPymolCMD, replace: bool = False) -> str:
         # print('backend create_pymolcmd replace:', replace)
         return self.validate_and_add_to_db(pymolcmd, replace)
 
-    def poll_fids(self, dbkey, response_model=dict[str, int]):
-        return {f.fname: f.dbkey for f in self.poll(dbkey).files}
+    def poll_fids(self, id, response_model=dict[str, int]):
+        return {f.fname: f.id for f in self.poll(id).files}
 
     def poll_file(self,
-                  dbkey: int,
+                  id: int,
                   request: fastapi.Request,
                   response: fastapi.Response,
                   shuffle: bool = False,
                   trackseen: bool = False):
-        poll = self.poll(dbkey)
+        poll = self.poll(id)
         files = ordset.OrderedSet(f.fname for f in poll.files)
         if trackseen:
-            seenit = request.cookies.get(f'seenit_poll{dbkey}')
+            seenit = request.cookies.get(f'seenit_poll{id}')
             seenit = set(seenit.split()) if seenit else set()
             files -= seenit
         if not files: return dict(fname=None, next=[])
         idx = random.randrange(len(files)) if shuffle else 0
         if trackseen:
             seenit.add(files[idx])
-            response.set_cookie(key=f"seenit_poll{dbkey}", value=' '.join(seenit))
+            response.set_cookie(key=f"seenit_poll{id}", value=' '.join(seenit))
         return dict(fname=files[0], next=files[1:10])
 
-    def review_for_dbkey(self, dbkey):
-        return self.poll(dbkey).reviews
+    def review_for_id(self, id):
+        return self.poll(id).reviews
 
-    def review_for_dbkey(self, dbkey):
-        return self.file(dbkey).reviews
+    def review_for_id(self, id):
+        return self.file(id).reviews
 
     def reviews_fname(self, fname):
         fname = fname.replace('__DIRSEP__', '/')
@@ -281,13 +281,13 @@ class Backend:
         return list(rev)
 
     def have_file(self, file: DBFile):
-        poll = self.poll(file.polldbkey)
+        poll = self.poll(file.pollid)
         newfname = self.permafname_name(poll, file.fname)
         return os.path.exists(newfname), newfname
 
     def permafname_name(self, poll, fname):
         pollname = poll.name.replace(' ', '_').replace('/', '\\')
-        path = os.path.join(self.datadir, 'poll', f'{pollname}__{poll.dbkey}', 'reviewed')
+        path = os.path.join(self.datadir, 'poll', f'{pollname}__{poll.id}', 'reviewed')
         os.makedirs(path, exist_ok=True)
         newfname = os.path.join(path, fname.replace('/', '\\'))
         return newfname

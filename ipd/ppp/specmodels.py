@@ -166,7 +166,7 @@ class PollSpec(SpecBase):
         return hash(self.path)
 
 class ReviewSpec(SpecBase):
-    polldbkey: int
+    pollid: int
     fname: str
     permafname: str = ''
     grade: str
@@ -193,8 +193,16 @@ class ReviewSpec(SpecBase):
             self._errors += 'S-tier review requires a comment!'
         return self
 
+class ReviewStepSpec(SpecBase):
+    reviewid: int
+    flowstepid: int
+    task: dict[str, Union[str, int, float]]
+    grade: str
+    comment: str = ''
+    durationsec: int = -1
+
 class FileSpec(SpecBase):
-    polldbkey: int
+    pollid: int
     fname: str
     permafname: str = ''
     filecontent: str = ''
@@ -266,16 +274,13 @@ class PymolCMDSpec(SpecBase):
 class FlowStepSpec(SpecBase):
     name: str
     index: int
-    taskgen: str
-    cmdnames: list[str]
-    workflowname: str
-    instructions: ''
+    taskgen: dict[str, Union[str, int, float]] = {}
+    instructions: str = ''
 
 class WorkflowSpec(SpecBase):
     name: str
     desc: str = ''
     ordering: str
-    steps: list[FlowStepSpec]
 
     @pydantic.field_validator('ordering')
     def check_ordering(ordering):

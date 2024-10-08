@@ -12,8 +12,8 @@ import traceback
 import socket
 from typing import Optional, Union
 from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
-from ipd.ppp.specmodels import (PollSpec, ReviewSpec, FileSpec, PymolCMDSpecError, PymolCMDSpec, FlowStepSpec,
-                                WorkflowSpec, fix_label_case)
+from ipd.ppp.specmodels import (PollSpec, ReviewSpec, ReviewStepSpec, FileSpec, PymolCMDSpecError,
+                                PymolCMDSpec, FlowStepSpec, WorkflowSpec, fix_label_case)
 import pydantic
 
 requests = ipd.lazyimport('requests', pip=True)
@@ -48,7 +48,7 @@ class ClientMixin(pydantic.BaseModel):
         self._pppclient = client
 
     def __hash__(self):
-        return self.dbkey
+        return self.id
 
     def _validated(self):
         'noop, as validation should have happened at Spec stage'
@@ -72,7 +72,7 @@ def clientprop(name):
     @functools.lru_cache
     def getter(self):
         kind, attr = name.split('.')
-        val = self._pppclient.getattr(kind, self.dbkey, attr)
+        val = self._pppclient.getattr(kind, self.id, attr)
         attr = attr.title()
         g = globals()
         if attr in g: cls = g[attr]
@@ -85,33 +85,43 @@ def clientprop(name):
     return getter
 
 class Poll(ClientMixin, PollSpec):
-    dbkey: int
+    id: int
     files = clientprop('poll.files')
     reviews = clientprop('poll.reviews')
     workflow = clientprop('poll.workflow')
 
 class Review(ClientMixin, ReviewSpec):
-    dbkey: int
+    id: int
     poll = clientprop('review.poll')
     file = clientprop('review.file')
+    workflow = clientprop('review.workflow')
+    steps = clientprop('review.steps')
+
+class ReviewStep(ClientMixin, ReviewStepSpec):
+    id: int
+    review = clientprop('reviewstep.review')
+    flowstep = clientprop('reviewstep.flowstep')
 
 class File(ClientMixin, FileSpec):
-    dbkey: int
+    id: int
     poll = clientprop('file.poll')
     reviews = clientprop('file.reviews')
 
 class PymolCMD(ClientMixin, PymolCMDSpec):
-    dbkey: int
+    id: int
+    flowsteps = clientprop('pymolcmd.flowsteps')
 
 class FlowStep(ClientMixin, FlowStepSpec):
-    dbkey: int
+    id: int
     cmds = clientprop('flowstep.cmds')
     workflow = clientprop('flowstep.workflow')
+    reviews = clientprop('flowstep.reviews')
 
-class WorkflowSpec(SpecBase):
-    dbkey: int
+class Workflow(ClientMixin, WorkflowSpec):
+    id: int
     steps = clientprop('workflow.steps')
-    steps = clientprop('workflow.polls')
+    polls = clientprop('workflow.polls')
+    reviews = clientprop('workflow.reviews')
 
 class PPPClient:
     def __init__(self, server_addr_or_testclient):
@@ -123,8 +133,8 @@ class PPPClient:
             self.testclient = server_addr_or_testclient
         assert self.get('/')['msg'] == 'Hello World'
 
-    def getattr(self, thing, dbkey, attr):
-        return self.get(f'/getattr/{thing}/{dbkey}/{attr}')
+    def getattr(self, thing, id, attr):
+        return self.get(f'/getattr/{thing}/{id}/{attr}')
 
     def get(self, url, **kw):
         fix_label_case(kw)
@@ -156,10 +166,10 @@ class PPPClient:
         return response.json()
 
     def remove(self, thing):
-        if isinstance(thing, Poll): return self.get(f'/remove/poll/{thing.dbkey}')
-        elif isinstance(thing, File): return self.get(f'/remove/file/{thing.dbkey}')
-        elif isinstance(thing, Review): return self.get(f'/remove/review/{thing.dbkey}')
-        elif isinstance(thing, PymolCMD): return self.get(f'/remove/pymolcmd/{thing.dbkey}')
+        if isinstance(thing, Poll): return self.get(f'/remove/poll/{thing.id}')
+        elif isinstance(thing, File): return self.get(f'/remove/file/{thing.id}')
+        elif isinstance(thing, Review): return self.get(f'/remove/review/{thing.id}')
+        elif isinstance(thing, PymolCMD): return self.get(f'/remove/pymolcmd/{thing.id}')
         else: raise ValueError('cant remove type {type(thing)}\n{thing}')
 
     def upload(self, thing, **kw):
@@ -183,13 +193,13 @@ class PPPClient:
         if errors := self.upload(poll): return errors
         poll = self.polls(name=poll.name)[0]
         construct = FileSpec.construct if digs else FileSpec
-        files = [construct(polldbkey=poll.dbkey, fname=fn, user=getpass.getuser()) for fn in fnames]
+        files = [construct(pollid=poll.id, fname=fn, user=getpass.getuser()) for fn in fnames]
         return self.post('/create/files', files)
 
     def upload_review(self, review, fname=None):
         fname = fname or review.fname
-        file = FileSpec(polldbkey=review.polldbkey, fname=fname)
-        print('review.fname', review.polldbkey, fname)
+        file = FileSpec(pollid=review.pollid, fname=fname)
+        print('review.fname', review.pollid, fname)
         exists, permafname = self.post('/have/file', file)
         review.permafname = permafname
         file.permafname = permafname
@@ -221,14 +231,14 @@ class PPPClient:
     def pymolcmdsdict(self):
         return self.get('/pymolcmds')
 
-    def poll(self, dbkey):
-        return Poll(self, **self.get(f'/poll{dbkey}'))
+    def poll(self, id):
+        return Poll(self, **self.get(f'/poll{id}'))
 
-    def pymolcmd(self, dbkey):
-        return PymolCMD(self, **self.get(f'/pymolcmd{dbkey}'))
+    def pymolcmd(self, id):
+        return PymolCMD(self, **self.get(f'/pymolcmd{id}'))
 
-    def poll_fids(self, dbkey):
-        return self.get(f'/poll{dbkey}/fids')
+    def poll_fids(self, id):
+        return self.get(f'/poll{id}/fids')
 
     # def create_poll(self, poll):
     # self.post('/poll', json=json.loads(poll.json()))
