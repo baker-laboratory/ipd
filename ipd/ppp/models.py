@@ -84,9 +84,8 @@ class PollSpec(SpecBase):
     sym: str = ''
     nchain: Union[int, str] = -1
     ligand: str = ''
-    workflowname: str = ''
+    workflowid: int = 1
     enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
-    _temporary = False
 
     @pydantic.validator('nchain')
     def valnchain(cls, nchain):
@@ -171,9 +170,10 @@ class ReviewSpec(SpecBase):
     permafname: str = ''
     grade: str
     comment: str = ''
-    flowstepname: str = ''
+    fileid: int
+    pollid: int
+    workflowid: int = 1
     durationsec: int = -1
-    filecontent: Union[str, None] = None
 
     @pydantic.validator('grade')
     def valgrade(cls, grade):
@@ -272,6 +272,7 @@ class PymolCMDSpec(SpecBase):
         return self
 
 class FlowStepSpec(SpecBase):
+    workflowid: int
     name: str
     index: int
     taskgen: dict[str, Union[str, int, float]] = {}
@@ -279,11 +280,18 @@ class FlowStepSpec(SpecBase):
 
 class WorkflowSpec(SpecBase):
     name: str
-    desc: str = ''
-    ordering: str
+    desc: str
+    ordering: str = 'Manual'
 
     @pydantic.field_validator('ordering')
     def check_ordering(ordering):
-        allowed = ['parallel', 'parallel-steps', 'sequential', 'gridview']
+        allowed = ['Manual', 'Parallel', 'Parallel Steps', 'Sequential', 'Grid View']
         assert ordering in allowed, f'bad ordering {ordering}, must be one of {allowed}'
         return ordering
+
+class UserSpec(SpecBase):
+    username: str
+    fullname: str = ''
+
+class GroupSpec(SpecBase):
+    name: str

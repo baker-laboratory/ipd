@@ -12,7 +12,9 @@ import ipd
 from ipd import ppp
 import signal
 from typing import Union
-from ipd.ppp.server.dbmodels import (DBPoll, DBFile, DBReview, DBPymolCMD, DuplicateError)
+from ipd.ppp.server.dbmodels import (DBPoll, DBFile, DBReview, DBReviewStep, DBPymolCMDFlowStepLink,
+                                     DBPymolCMD, DBFlowStep, DBWorkflow, DBUserUserLink, DBUserGroupLink,
+                                     DBUser, DBGroup, DuplicateError)
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -42,11 +44,17 @@ python_type_to_sqlalchemy_type = {
 def check_ghost_poll_and_file(backend):
     if not backend.select(DBPoll, id=666):
         backend.session.add(
+            DBWorkflow(name='Manual',
+                       desc='The default workflow. No steps, no automation.',
+                       ordering='manual',
+                       id=1))
+        backend.session.add(
             DBPoll(name='Ghost Poll',
                    desc='Reviews point here when their poll gets deleted',
                    path='Ghost Dir',
                    user='admin',
                    id=666,
+                   workflowid=1,
                    ispublic=False))
         backend.session.commit()
     if not backend.select(DBFile, id=666):
