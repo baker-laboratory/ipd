@@ -35,6 +35,7 @@ def fix_label_case(thing):
 class SpecBase(pydantic.BaseModel):
     ispublic: bool = True
     telemetry: bool = False
+    ghost: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: Union[list[str], str] = []
     attrs: Union[dict[str, Union[str, int, float]], str] = {}
@@ -89,12 +90,21 @@ class WithUserSpec(SpecBase):
 
     @pydantic.validator('userid')
     def valuserid(userid):
+        # print('VALUSER', userid)
         if isinstance(userid, str):
             client = ipd.ppp.get_hack_fixme_global_client()
-            if not client: return userid
-            if user := client.user(name=userid): return user.id
+            assert client, 'client unavailable'
+            if user := client.user(name=userid):
+                # print('FOUNDUSER', user.name, user.id)
+                return user.id
+            # print('MISSING USER', userid)
             raise ValueError(f'unknown user "{userid}"')
         return int(userid)
+
+    @pydantic.model_validator(mode='after')
+    def validate(self):
+        assert isinstance(self.userid, int), 'userid must be an int after validation'
+        return self
 
 class PollSpec(WithUserSpec, StrictFields):
     name: str
@@ -156,31 +166,37 @@ class PollFileSpec(SpecBase, StrictFields):
 
 class ReviewSpec(WithUserSpec, StrictFields):
     pollid: int
-    fname: str
-    permafname: str = ''
     grade: str
     comment: str = ''
-    fileid: int
-    pollid: int
-    workflowid: int = 1
+    pollfileid: Union[str, int]
+    workflowid: Union[str, int] = pydantic.Field(default='Manual', validate_default=True)
     durationsec: int = -1
+
+    @pydantic.validator('workflowid')
+    def valflowid(workflowid):
+        if isinstance(workflowid, str):
+            client = ipd.ppp.get_hack_fixme_global_client()
+            if not client: return workflowid
+            if workflow := client.workflow(name=workflowid): return workflow.id
+            raise ValueError(f'unknown workflow "{workflowid}"')
+        return int(workflowid)
 
     @pydantic.validator('grade')
     def valgrade(cls, grade):
-        assert grade in 'like superlike dislike hate'.split()
+        vals = 'like superlike dislike hate'.split()
+        assert grade in vals, f'grade {grade} not in allowed: {vals}'
         return grade
-
-    @pydantic.validator('fname')
-    def valfname(cls, fname):
-        if _SERVERMODE: return fname
-        assert os.path.exists(fname)
-        return os.path.abspath(fname)
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
-        fix_label_case(self)
-        if self.grade == 'S' and not self.comment:
-            self._errors += 'S-tier review requires a comment!'
+        if isinstance(self.pollfileid, str):
+            client = ipd.ppp.get_hack_fixme_global_client()
+            if pfile := client.pollfile(pollid=self.pollid, fname=self.pollfileid):
+                self.pollfileid = pfile.id
+            else:
+                raise ValueError(f'unknown poll file "{self.pollfileid}" in poll {self.pollid}')
+        if self.grade == 'superlike' and not self.comment:
+            self._errors += 'Super-Like requires a comment!'
         return self
 
 class ReviewStepSpec(SpecBase, StrictFields):
@@ -316,3 +332,14 @@ def PymolCMDSpec_validate_command(command, cmdname):
         msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
         command._check_cmds_output += msg
     return command
+
+spec_model = dict(poll=PollSpec,
+                  pollfile=PollFileSpec,
+                  review=ReviewSpec,
+                  reviewstep=ReviewStepSpec,
+                  pymolcmd=PymolCMDSpec,
+                  flowstep=FlowStepSpec,
+                  workflow=WorkflowSpec,
+                  user=UserSpec,
+                  group=GroupSpec)
+assert not any(name.endswith('s') for name in spec_model)

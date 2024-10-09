@@ -1,8 +1,8 @@
 """init dbschema 0.2
 
-Revision ID: b346900b5a26
+Revision ID: ef7dc204e4c6
 Revises: 
-Create Date: 2024-10-08 20:00:02.067262
+Create Date: 2024-10-09 11:42:09.334724
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'b346900b5a26'
+revision: str = 'ef7dc204e4c6'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,6 +23,7 @@ def upgrade() -> None:
     op.create_table('dbuser',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('fullname', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
@@ -34,6 +35,7 @@ def upgrade() -> None:
     op.create_table('dbgroup',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
@@ -46,6 +48,7 @@ def upgrade() -> None:
     op.create_table('dbpymolcmd',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
@@ -75,6 +78,7 @@ def upgrade() -> None:
     op.create_table('dbworkflow',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
@@ -89,6 +93,7 @@ def upgrade() -> None:
     op.create_table('dbflowstep',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('index', sa.Integer(), nullable=False),
@@ -104,6 +109,7 @@ def upgrade() -> None:
     op.create_table('dbpoll',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
@@ -133,6 +139,7 @@ def upgrade() -> None:
     op.create_table('dbpollfile',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('props', sa.JSON(), nullable=True),
     sa.Column('attrs', sa.JSON(), nullable=True),
@@ -154,20 +161,19 @@ def upgrade() -> None:
     op.create_table('dbreview',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
-    sa.Column('fname', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('permafname', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('grade', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('comment', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('durationsec', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('props', sa.JSON(), nullable=True),
     sa.Column('attrs', sa.JSON(), nullable=True),
-    sa.Column('fileid', sa.Integer(), nullable=False),
+    sa.Column('pollfileid', sa.Integer(), nullable=False),
     sa.Column('pollid', sa.Integer(), nullable=False),
     sa.Column('workflowid', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['fileid'], ['dbpollfile.id'], ),
+    sa.ForeignKeyConstraint(['pollfileid'], ['dbpollfile.id'], ),
     sa.ForeignKeyConstraint(['pollid'], ['dbpoll.id'], ),
     sa.ForeignKeyConstraint(['userid'], ['dbuser.id'], ),
     sa.ForeignKeyConstraint(['workflowid'], ['dbworkflow.id'], ),
@@ -176,6 +182,7 @@ def upgrade() -> None:
     op.create_table('dbreviewstep',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
     sa.Column('telemetry', sa.Boolean(), nullable=False),
+    sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('props', sa.JSON(), nullable=True),
     sa.Column('attrs', sa.JSON(), nullable=True),

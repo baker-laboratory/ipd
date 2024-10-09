@@ -3,11 +3,13 @@ import ipd
 from ipd import ppp
 import tempfile
 from pathlib import Path
+import traceback
 import os
 import subprocess
 from fastapi.testclient import TestClient
 from sqlmodel import create_engine
 from icecream import ic
+import pydantic
 
 rich = ipd.dev.lazyimport('rich', 'Rich', pip=True)
 pytest = ipd.dev.lazyimport('pytest', pip=True)
@@ -20,7 +22,14 @@ def main():
         with tempfile.TemporaryDirectory() as td:
             print('=' * 20, fn, '=' * 20)
             server, backend, testclient = make_tmp_clent_server(td)
-            fn(testclient, backend)
+            try:
+                fn(testclient, backend)
+            except pydantic.ValidationError as e:
+                print(e)
+                rich.print(e.errors())
+                print(traceback.format_exc())
+                server.stop()
+                return False
             server.stop()
     print('PASS')
     ipd.dev.global_timer.report()
@@ -143,18 +152,19 @@ def test_poll(testclient, backend):
         assert backend.poll(dict(id=i)).pollfiles[0].poll.id == i
 
     fname = ipd.testpath('ppppdbdir/1pgx.cif')
-    client.upload_review(
-        ppp.ReviewSpec(fname=fname,
-                       userid='test',
-                       pollid=poll.id,
-                       fileid=poll.pollfiles[0].id,
-                       grade='dislike'))
-    assert client.reviews()[0].user.name == 'test'
-    review = ppp.ReviewSpec(pollid=1, fname=fname, grade='superlike')
+    client.newuser(name='reviewer')
+    # print([p.name for p in client.users()])
+    # print(client.user(name='reviewer'))
+    client.newreview(userid='reviewer', pollid=poll.id, pollfileid=fname, workflowid=1, grade='dislike')
+    assert client.reviews()[0].user.name == 'reviewer'
+    # print('\n'.join([f'{f.pollid} {f.fname}' for f in client.pollfiles()]))
+    review = ppp.ReviewSpec(pollid=2, pollfileid=fname, grade='superlike', comment='foobar')
     assert review.grade == 'superlike'
-    client.upload_review(review)
+    result = client.upload_review(review)
+    assert not result, result
+    # rich.print(client.reviews())
     assert len(client.reviews()) == 2
-    client.upload_review(ppp.ReviewSpec(pollid=3, fname=fname, grade='f'))
+    client.upload_review(ppp.ReviewSpec(pollid=3, pollfileid=fname, grade='hate'))
 
     assert len(client.reviews_for_fname(fname)) == 3
 

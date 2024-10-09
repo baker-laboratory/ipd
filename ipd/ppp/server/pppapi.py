@@ -15,8 +15,7 @@ import ipd
 from ipd import ppp
 import signal
 from rich import print
-from ipd.ppp.server.dbmodels import (DBPoll, DBPollFile, DBReview, DBReviewStep, DBPymolCMD, DBWorkflow,
-                                     DBFlowStep, DBUser, DBGroup, DuplicateError)
+from ipd.ppp.server.dbmodels import *
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -28,19 +27,6 @@ pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodi
 uvicorn = ipd.dev.lazyimport('uvicorn', 'uvicorn[standard]', pip=True)
 # profile = ipd.dev.timed
 profile = lambda f: f
-
-dbmodels = dict(
-    poll=DBPoll,
-    review=DBReview,
-    reviewstep=DBReviewStep,
-    pollfile=DBPollFile,
-    pymolcmd=DBPymolCMD,
-    flowstep=DBFlowStep,
-    workflow=DBWorkflow,
-    user=DBUser,
-    group=DBGroup,
-)
-assert not any(name.endswith('s') for name in dbmodels)
 
 python_type_to_sqlalchemy_type = {
     str: sqlalchemy.String,
@@ -64,7 +50,7 @@ class Backend:
         sqlmodel.SQLModel.metadata.create_all(self.engine)
         self.router = fastapi.APIRouter()
         route = self.router.add_api_route
-        for model in dbmodels:
+        for model in backend_model:
             route(f'/{model}', getattr(self, model), methods=['GET'])
             route(f'/{model}s', getattr(self, f'{model}s'), methods=['GET'])
             route(f'/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
@@ -96,9 +82,11 @@ class Backend:
                                                   status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     def remove(self, thing, id):
-        thing = self.select(thing, id=id)
-        assert len(thing) == 1
-        thing = thing[0]
+        thing = self.select(thing, id=id, _single=True)
+        thing.ghost = True
+
+    def actually_remove(self, thing, id):
+        thing = self.select(thing, id=id, _single=True)
         thing.clear(self)
         self.session.delete(thing)
         self.session.commit()
@@ -107,14 +95,16 @@ class Backend:
         return dict(msg='Hello World')
 
     def getattr(self, thing, id, attr):
-        cls = dbmodels[thing]
+        cls = backend_model[thing]
         thing = next(self.session.exec(sqlmodel.select(cls).where(cls.id == id)))
+        if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
         thingattr = getattr(thing, attr)
+        if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
         return thingattr
 
-    def select(self, cls, _count: bool = False, **kw):
+    def select(self, cls, _count: bool = False, _single=False, **kw):
         # print('select', cls, kw)
-        if isinstance(cls, str): cls = dbmodels[cls]
+        if isinstance(cls, str): cls = backend_model[cls]
         selection = sqlalchemy.func.count(cls.id) if _count else cls
         statement = sqlmodel.select(selection)
         for k, v in kw.items():
@@ -123,8 +113,13 @@ class Backend:
             if v is not None:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
+        statement = statement.where(getattr(cls, 'ghost') == False)
         if _count: return int(self.session.exec(statement).one())
-        return list(self.session.exec(statement))
+        thing = list(self.session.exec(statement))
+        if _single:
+            assert len(thing) == 1
+            thing = thing[0]
+        return thing
 
     def fix_date(self, x):
         if hasattr(x, 'datecreated') and isinstance(x.datecreated, str):
@@ -158,7 +153,7 @@ class Backend:
         return result
 
     def useridmap(self):
-        query = 'SELECT id,name FROM dbuser'
+        query = 'SELECT id,name FROM dbuser WHERE NOT dbuser.ghost'
         idname = self.session.execute(sqlalchemy.text(query)).fetchall()
         return dict(idname), {name: id for id, name in idname}
 
@@ -166,18 +161,19 @@ class Backend:
         # print(f'server pollinfo {user}')
         query = ('SELECT dbpoll.id,dbpoll.name,dbuser.name,dbpoll.desc,dbpoll.sym,dbpoll.ligand,'
                  'dbpoll.nchain FROM dbpoll JOIN dbuser ON dbpoll.userid==dbuser.id')
-        if user and user != 'admin': query += f' WHERE dbpoll.ispublic OR dbuser.name="{user}"'
+        if user and user != 'admin':
+            query += f' WHERE NOT dbpoll.ghost AND (dbpoll.ispublic OR dbuser.name="{user}")'
         result = self.session.execute(sqlalchemy.text(f'{query};')).fetchall()
         result = list(map(tuple, result))
         return result
 
-    def create_review(self, review: DBReview, replace: bool = False) -> str:
-        # print('backend create_review')
-        poll = self.poll(dict(id=review.pollid))
-        fileid = [f.id for f in poll.pollfiles if f.fname == review.fname]
-        if not fileid: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.pollfiles}'
-        review.fileid = fileid[0]
-        return self.validate_and_add_to_db(review, replace)
+    # def create_review(self, review: DBReview, replace: bool = False) -> str:
+    # print('backend create_review')
+    # poll = self.poll(dict(id=review.pollid))
+    # fileid = [f.id for f in poll.pollfiles if f.fname == review.fname]
+    # if not fileid: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.pollfiles}'
+    # review.fileid = fileid[0]
+    # return self.validate_and_add_to_db(review, replace)
 
     # def poll_fids(self, id, response_model=dict[str, int]):
     # return {f.fname: f.id for f in self.poll(id).pollfiles}
@@ -238,7 +234,7 @@ class Backend:
 # in sync. Any name or name suffixed with 's'
 # that is in clientmodels, above, will get /name from the server and turn the result(s) into
 # the appropriate client model type, list of such types for plural, or None.
-for _name, _cls in dbmodels.items():
+for _name, _cls in backend_model.items():
 
     def make_funcs_forcing_closure_over_name_cls(name=_name, cls=_cls):
         def create(self, model: cls, replace: bool = False) -> str:

@@ -26,19 +26,6 @@ REMOTE_MODE = not os.path.exists('/net/scratch/sheffler')
 # profile = ipd.dev.timed
 profile = lambda f: f
 
-clientmodels = dict(
-    poll=ppp.Poll,
-    review=ppp.Review,
-    reviewstep=ppp.ReviewStep,
-    pollfile=ppp.PollFile,
-    pymolcmd=ppp.PymolCMD,
-    flowstep=ppp.FlowStep,
-    workflow=ppp.Workflow,
-    user=ppp.User,
-    group=ppp.Group,
-)
-assert not any(name.endswith('s') for name in clientmodels)
-
 class PPPClientError(Exception):
     pass
 
@@ -85,7 +72,7 @@ class PPPClient:
         if self.testclient: response = self.testclient.post(url, content=body)
         else: response = requests.post(url, body)
         if response.status_code != 200:
-            if len(str(body)) > 512: body = f'{body[:200]} ... {body[-200:]}'
+            if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
             reason = response.reason if hasattr(response, 'reason') else '???'
             raise PPPClientError(f'POST failed "{url}"\n    BODY:     {body}\n    '
                                  f'RESPONSE: {response}\n    REASON:   {reason}\n    '
@@ -123,14 +110,12 @@ class PPPClient:
         files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
         return self.post('/create/pollfiles', files)
 
-    def upload_review(self, review, fname=None):
-        fname = fname or review.fname
-        file = ppp.PollFileSpec(pollid=review.pollid, fname=fname)
-        print('review.fname', review.pollid, fname)
+    def upload_review(self, review):
+        file = self.pollfile(pollid=review.pollid, id=review.pollfileid)
+        print('review fname', review.pollid, file.fname)
         exists, permafname = self.get('/have/pollfile', fname=file.fname, pollid=file.pollid)
-        review.permafname = permafname
         file.permafname = permafname
-        file.filecontent = Path(fname).read_text()
+        file.filecontent = Path(file.fname).read_text()
         if not exists:
             if response := self.post('/create/pollfilecontents', file): return response
         review = ppp.ReviewSpec(**review.dict())
@@ -156,23 +141,16 @@ class PPPClient:
         rev = self.get(f'/reviews/byfname/{fname}')
         return [pppp.Review(self, **_) for _ in rev]
 
-    def _add_some_cmds(self):
-        self.upload(
-            ppp.PymolCMDSpec(
-                name='sym: Make {sym.upper()}',
-                cmdstart='from wills_pymol_crap import symgen',
-                cmdon=
-                f'symgen.make{sym}("$subject", name="sym"); delete $subject; cmd.set_name("sym", "$subject")',
-                cmdoff='remove not chain A',
-            ))
-
 # Generic interface for accessing models from the server. Any name or name suffixed with 's'
-# that is in clientmodels, above, will get /name from the server and turn the result(s) into
+# that is in frontend_model, above, will get /name from the server and turn the result(s) into
 # the appropriate client model type, list of such types for plural, or None.
 
-for _name, _cls in clientmodels.items():
+for _name, _cls in ipd.ppp.frontend_model.items():
 
     def make_funcs_forcing_closure_over_cls_name(cls=_cls, name=_name):
+        def new(self, **kw) -> str:
+            return self.upload(ipd.ppp.spec_model[name](**kw))
+
         def count(self, **kw) -> int:
             return self.get(f'/n{name}s', **kw)
 
@@ -183,9 +161,10 @@ for _name, _cls in clientmodels.items():
             result = self.get(f'/{name}', **kw)
             return cls(self, **result) if result else None
 
-        return single, multi, count
+        return single, multi, count, new
 
-    single, multi, count = make_funcs_forcing_closure_over_cls_name()
+    single, multi, count, new = make_funcs_forcing_closure_over_cls_name()
     setattr(PPPClient, _name, single)
     setattr(PPPClient, f'{_name}s', multi)
     setattr(PPPClient, f'n{_name}s', count)
+    setattr(PPPClient, f'new{_name}', new)

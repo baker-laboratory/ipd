@@ -15,7 +15,7 @@ def ensure_init_db(backend):
             ipd.ppp.server.DBWorkflow(
                 name='Manual',
                 desc='The default workflow. No steps, no automation.',
-                ordering='manual',
+                ordering='Manual',
                 userid=adminid,
                 id=1,
             ))

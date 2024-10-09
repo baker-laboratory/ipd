@@ -13,6 +13,7 @@ yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 print = rich.print
 
 class ClientMixin(pydantic.BaseModel):
+    id: int
     _pppclient: Optional['PPPClient'] = None
 
     def __init__(self, pppclient, **kw):
@@ -40,50 +41,33 @@ yaml.add_representer(ClientMixin, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
 class Poll(ClientMixin, PollSpec):
-    id: int
-    dbprops: tuple[str] = ('pollfiles', 'reviews', 'workflow', 'user')
+    _dbprops: tuple[str] = ('pollfiles', 'reviews', 'workflow', 'user')
 
 class PollFile(ClientMixin, PollFileSpec):
-    id: int
-    dbprops: tuple[str] = ('poll', 'reviews')
+    _dbprops: tuple[str] = ('poll', 'reviews')
 
 class Review(ClientMixin, ReviewSpec):
-    id: int
-    dbprops: tuple[str] = ('poll', 'pollfile', 'workflow', 'steps', 'user')
+    _dbprops: tuple[str] = ('poll', 'pollfile', 'workflow', 'steps', 'user')
 
 class ReviewStep(ClientMixin, ReviewStepSpec):
-    id: int
-    dbprops: tuple[str] = ('review', 'flowstep')
+    _dbprops: tuple[str] = ('review', 'flowstep')
 
 class PymolCMD(ClientMixin, PymolCMDSpec):
-    id: int
-    dbprops: tuple[str] = ('flowsteps', 'user')
+    _dbprops: tuple[str] = ('flowsteps', 'user')
 
 class FlowStep(ClientMixin, FlowStepSpec):
-    id: int
-    dbprops: tuple[str] = ('cmds', 'workflow', 'reviews')
+    _dbprops: tuple[str] = ('pymolcmds', 'workflow', 'reviews')
 
 class Workflow(ClientMixin, WorkflowSpec):
-    id: int
-    dbprops: tuple[str] = ('steps', 'polls', 'reviews', 'user')
+    _dbprops: tuple[str] = ('steps', 'polls', 'reviews', 'user')
 
 class User(ClientMixin, UserSpec):
-    id: int
-    dbprops: tuple[str] = ('followers', 'following', 'groups', 'polls', 'reviews', 'pymolcmds', 'workflows')
+    _dbprops: tuple[str] = ('followers', 'following', 'groups', 'polls', 'reviews', 'pymolcmds', 'workflows')
 
 class Group(ClientMixin, GroupSpec):
-    id: int
-    dbprops: tuple[str] = ('user', 'users')
+    _dbprops: tuple[str] = ('user', 'users')
 
-models = dict(poll=Poll,
-              pollfile=PollFile,
-              review=Review,
-              reviewstep=ReviewStep,
-              pymolcmd=PymolCMD,
-              flowstep=FlowStep,
-              workflow=Workflow,
-              user=User,
-              group=Group)
+frontend_model = {name: globals()[spec.__name__[:-4]] for name, spec in ipd.ppp.spec_model.items()}
 
 def clientprop(name):
     @property
@@ -91,8 +75,9 @@ def clientprop(name):
     def getter(self):
         kind, attr = name.split('.')
         val = self._pppclient.getattr(kind, self.id, attr)
-        if attr in models: cls = models[attr]
-        elif attr.rstrip('s') in models: cls = models[attr[:-1]]
+        if val is None: raise AttributeError(f'kind {kind} id {self.id} attr {attr} is None')
+        if attr in frontend_model: cls = frontend_model[attr]
+        elif attr.rstrip('s') in frontend_model: cls = frontend_model[attr[:-1]]
         else: raise ValueError(f'unknown type {attr}')
         if isinstance(val, list):
             return [cls(self._pppclient, **kw) for kw in val]
@@ -100,7 +85,7 @@ def clientprop(name):
 
     return getter
 
-for cls in (Poll, Review, ReviewStep, PollFile, PymolCMD, FlowStep, Workflow, User, Group):
+for cls in frontend_model.values():
     name = cls.__name__.lower()
-    for prop in cls.model_fields['dbprops'].default:
+    for prop in cls._dbprops.default:
         setattr(cls, prop, clientprop(f'{name}.{prop}'))
