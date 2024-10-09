@@ -8,6 +8,7 @@ import getpass
 from typing import Union
 
 requests = ipd.lazyimport('requests', pip=True)
+fastapi = ipd.lazyimport('fastapi', pip=True)
 rich = ipd.lazyimport('rich', 'Rich', pip=True)
 ordset = ipd.lazyimport('ordered_set', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
@@ -51,7 +52,7 @@ class PPPClient:
         if isinstance(server_addr_or_testclient, str):
             print('PPPClient: connecting to server', server_addr_or_testclient)
             self.testclient, self.server_addr = None, server_addr_or_testclient
-        else:
+        elif isinstance(fastapi.testclient.TestClient):
             print('PPPClient: using testclient')
             self.testclient = server_addr_or_testclient
         assert self.get('/')['msg'] == 'Hello World'
@@ -66,8 +67,9 @@ class PPPClient:
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
         if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
-        if self.testclient: response = self.testclient.get(url)
-        else: response = requests.get(url)
+        if self.testclient:
+            return self.testclient.get(url)
+        response = requests.get(url)
         if response.status_code != 200:
             reason = response.reason if hasattr(response, 'reason') else '???'
             raise PPPClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
@@ -118,24 +120,23 @@ class PPPClient:
         if errors := self.upload(poll): return errors
         poll = self.polls(name=poll.name)[0]
         construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
-        files = [construct(pollid=poll.id, fname=fn, user=getpass.getuser()) for fn in fnames]
+        files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
         return self.post('/create/pollfiles', files)
 
     def upload_review(self, review, fname=None):
         fname = fname or review.fname
         file = ppp.PollFileSpec(pollid=review.pollid, fname=fname)
         print('review.fname', review.pollid, fname)
-        exists, permafname = self.post('/have/pollfile', file)
+        exists, permafname = self.get('/have/pollfile', fname=file.fname, pollid=file.pollid)
         review.permafname = permafname
         file.permafname = permafname
-        file.pollfilecontent = Path(fname).read_text()
+        file.filecontent = Path(fname).read_text()
         if not exists:
-            if response := self.post('/create/pollfile', file): return response
+            if response := self.post('/create/pollfilecontents', file): return response
         review = ppp.ReviewSpec(**review.dict())
         return self.upload(review)
 
     def pollinfo(self, user=None):
-        print(f'client pollinfo {user}')
         if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
         response = requests.get(f'http://{self.server_addr}/pollinfo?user={user}')
         if response.content: return response.json()
@@ -172,6 +173,9 @@ class PPPClient:
 for _name, _cls in clientmodels.items():
 
     def make_funcs_forcing_closure_over_cls_name(cls=_cls, name=_name):
+        def count(self, **kw) -> int:
+            return self.get(f'/n{name}s', **kw)
+
         def multi(self, **kw) -> list[cls]:
             return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
 
@@ -179,8 +183,9 @@ for _name, _cls in clientmodels.items():
             result = self.get(f'/{name}', **kw)
             return cls(self, **result) if result else None
 
-        return single, multi
+        return single, multi, count
 
-    single, multi = make_funcs_forcing_closure_over_cls_name()
+    single, multi, count = make_funcs_forcing_closure_over_cls_name()
     setattr(PPPClient, _name, single)
     setattr(PPPClient, f'{_name}s', multi)
+    setattr(PPPClient, f'n{_name}s', count)

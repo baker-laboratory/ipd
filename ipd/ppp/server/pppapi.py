@@ -14,6 +14,7 @@ from typing import Optional, Annotated
 import ipd
 from ipd import ppp
 import signal
+from rich import print
 from ipd.ppp.server.dbmodels import (DBPoll, DBPollFile, DBReview, DBReviewStep, DBPymolCMD, DBWorkflow,
                                      DBFlowStep, DBUser, DBGroup, DuplicateError)
 
@@ -25,7 +26,6 @@ ordset = ipd.lazyimport('ordered_set', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 uvicorn = ipd.dev.lazyimport('uvicorn', 'uvicorn[standard]', pip=True)
-
 # profile = ipd.dev.timed
 profile = lambda f: f
 
@@ -67,22 +67,18 @@ class Backend:
         for model in dbmodels:
             route(f'/{model}', getattr(self, model), methods=['GET'])
             route(f'/{model}s', getattr(self, f'{model}s'), methods=['GET'])
+            route(f'/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
+            route(f'/create/{model}', getattr(self, f'create_{model}'), methods=['POST'])
         route('/', self.root, methods=['GET'])
-        route('/create/pollfile', self.create_file_with_content, methods=['POST'])
+        route('/create/pollfilecontents', self.create_file_with_content, methods=['POST'])
         route('/create/pollfiles', self.create_empty_files, methods=['POST'])
-        route('/create/poll', self.create_poll, methods=['POST'])
-        route('/create/pymolcmd', self.create_pymolcmd, methods=['POST'])
-        route('/create/review', self.create_review, methods=['POST'])
         route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
-        route('/have/pollfile', self.have_file, methods=['POST'])
+        route('/have/pollfile', self.have_pollfile, methods=['GET'])
         route('/pollinfo', self.pollinfo, methods=['GET'])
         # route('/poll{id}', self.poll, methods=['GET'])
-        route('/poll{id}/fids', self.poll_fids, methods=['GET'])
-        route('/poll{id}/fname', self.poll_file, methods=['GET'])
+        # route('/poll{id}/fids', self.poll_fids, methods=['GET'])
+        # route('/poll{id}/fname', self.poll_file, methods=['GET'])
         route('/remove/{thing}/{id}', self.remove, methods=['GET'])
-        route('/reviews/byfname/{fname}', self.reviews_fname, methods=['GET'])
-        route('/reviews/pollfile{id}', self.review_for_id, methods=['GET'])
-        route('/reviews/poll{id}', self.review_for_id, methods=['GET'])
         route('/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
         self.app = fastapi.FastAPI()
         self.app.include_router(self.router)
@@ -116,17 +112,18 @@ class Backend:
         thingattr = getattr(thing, attr)
         return thingattr
 
-    def select(self, type_, **kw):
-        # print('select', type_, kw)
-        if isinstance(type_, str):
-            type_ = dict(poll=DBPoll, file=DBPollFile, review=DBReview, pymolcmd=DBPymolCMD)[type_]
-        statement = sqlmodel.select(type_)
+    def select(self, cls, _count: bool = False, **kw):
+        # print('select', cls, kw)
+        if isinstance(cls, str): cls = dbmodels[cls]
+        selection = sqlalchemy.func.count(cls.id) if _count else cls
+        statement = sqlmodel.select(selection)
         for k, v in kw.items():
             op = operator.eq
             if k.endswith('not'): k, op = k[:-3], operator.ne
             if v is not None:
-                # print('select where', type_, k, v)
-                statement = statement.where(op(getattr(type_, k), v))
+                # print('select where', cls, k, v)
+                statement = statement.where(op(getattr(cls, k), v))
+        if _count: return int(self.session.exec(statement).one())
         return list(self.session.exec(statement))
 
     def fix_date(self, x):
@@ -160,57 +157,49 @@ class Backend:
         self.session.commit()
         return result
 
-    def pollinfo(self, user=None):
-        print(f'server pollinfo {user}')
-        query = f'SELECT id,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll WHERE ispublic OR dbpoll.user=\'{user}\';'
-        if not user or user == 'admin':
-            query = 'SELECT id,name,dbpoll.user,"desc",sym,ligand,nchain FROM dbpoll'
-        result = self.session.execute(sqlalchemy.text(query)).fetchall()
-        return list(map(tuple, result))
+    def useridmap(self):
+        query = 'SELECT id,name FROM dbuser'
+        idname = self.session.execute(sqlalchemy.text(query)).fetchall()
+        return dict(idname), {name: id for id, name in idname}
 
-    def create_poll(self, poll: DBPoll, replace: bool = False) -> str:
-        print('create_poll', poll)
-        return self.validate_and_add_to_db(poll, replace)
+    def pollinfo(self, user=None):
+        # print(f'server pollinfo {user}')
+        query = ('SELECT dbpoll.id,dbpoll.name,dbuser.name,dbpoll.desc,dbpoll.sym,dbpoll.ligand,'
+                 'dbpoll.nchain FROM dbpoll JOIN dbuser ON dbpoll.userid==dbuser.id')
+        if user and user != 'admin': query += f' WHERE dbpoll.ispublic OR dbuser.name="{user}"'
+        result = self.session.execute(sqlalchemy.text(f'{query};')).fetchall()
+        result = list(map(tuple, result))
+        return result
 
     def create_review(self, review: DBReview, replace: bool = False) -> str:
         # print('backend create_review')
-        poll = self.poll(review.pollid)
+        poll = self.poll(dict(id=review.pollid))
         fileid = [f.id for f in poll.pollfiles if f.fname == review.fname]
         if not fileid: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.pollfiles}'
-        review.pollfileid = fileid[0]
+        review.fileid = fileid[0]
         return self.validate_and_add_to_db(review, replace)
 
-    def create_pymolcmd(self, pymolcmd: DBPymolCMD, replace: bool = False) -> str:
-        # print('backend create_pymolcmd replace:', replace)
-        return self.validate_and_add_to_db(pymolcmd, replace)
-
-    def poll_fids(self, id, response_model=dict[str, int]):
-        return {f.fname: f.id for f in self.poll(id).pollfiles}
-
-    def poll_file(self,
-                  id: int,
-                  request: fastapi.Request,
-                  response: fastapi.Response,
-                  shuffle: bool = False,
-                  trackseen: bool = False):
-        poll = self.poll(id)
-        files = ordset.OrderedSet(f.fname for f in poll.pollfiles)
-        if trackseen:
-            seenit = request.cookies.get(f'seenit_poll{id}')
-            seenit = set(seenit.split()) if seenit else set()
-            files -= seenit
-        if not files: return dict(fname=None, next=[])
-        idx = random.randrange(len(files)) if shuffle else 0
-        if trackseen:
-            seenit.add(files[idx])
-            response.set_cookie(key=f"seenit_poll{id}", value=' '.join(seenit))
-        return dict(fname=files[0], next=files[1:10])
-
-    def review_for_id(self, id):
-        return self.poll(id).reviews
-
-    def review_for_id(self, id):
-        return self.pollfile(id).reviews
+    # def poll_fids(self, id, response_model=dict[str, int]):
+    # return {f.fname: f.id for f in self.poll(id).pollfiles}
+#
+# def poll_file(self,
+# id: int,
+# request: fastapi.Request,
+# response: fastapi.Response,
+# shuffle: bool = False,
+# trackseen: bool = False):
+# poll = self.poll(id)
+# files = ordset.OrderedSet(f.fname for f in poll.pollfiles)
+# if trackseen:
+# seenit = request.cookies.get(f'seenit_poll{id}')
+# seenit = set(seenit.split()) if seenit else set()
+# files -= seenit
+# if not files: return dict(fname=None, next=[])
+# idx = random.randrange(len(files)) if shuffle else 0
+# if trackseen:
+# seenit.add(files[idx])
+# response.set_cookie(key=f"seenit_poll{id}", value=' '.join(seenit))
+# return dict(fname=files[0], next=files[1:10])
 
     def reviews_fname(self, fname):
         fname = fname.replace('__DIRSEP__', '/')
@@ -220,9 +209,9 @@ class Backend:
             rev |= f.reviews
         return list(rev)
 
-    def have_file(self, file: DBPollFile):
-        poll = self.poll(file.pollid)
-        newfname = self.permafname_name(poll, file.fname)
+    def have_pollfile(self, pollid: int, fname: str):
+        poll = self.poll(dict(id=pollid))
+        newfname = self.permafname_name(poll, fname)
         return os.path.exists(newfname), newfname
 
     def permafname_name(self, poll, fname):
@@ -233,15 +222,15 @@ class Backend:
         return newfname
 
     def create_file_with_content(self, file: DBPollFile):
-        assert file.pollfilecontent
+        assert file.filecontent
         mode = 'wb' if file.permafname.endswith('.bcif') else 'w'
         with open(file.permafname, mode) as out:
-            out.write(file.pollfilecontent)
+            out.write(file.filecontent)
 
     def create_empty_files(self, files: list[ppp.PollFileSpec]):
         # print('CREATE empty files', len(files))
         for f in files:
-            assert not f.pollfilecontent.strip()
+            assert not f.filecontent.strip()
             self.session.add(DBPollFile(**f.dict()))
         self.session.commit()
 
@@ -252,6 +241,15 @@ class Backend:
 for _name, _cls in dbmodels.items():
 
     def make_funcs_forcing_closure_over_name_cls(name=_name, cls=_cls):
+        def create(self, model: cls, replace: bool = False) -> str:
+            return self.validate_and_add_to_db(model, replace)
+
+        def count(self, kw=None, request: fastapi.Request = None, response_model=list[cls]):
+            # print('route', name, cls, kw, request, flush=True)
+            if request: return self.select(cls, _count=True, **request.query_params)
+            elif kw: return self.select(cls, _count=True, **kw)
+            else: return self.select(cls, _count=True)
+
         def multi(self, kw=None, request: fastapi.Request = None, response_model=list[cls]):
             # print('route', name, cls, kw, request, flush=True)
             if request: return self.select(cls, **request.query_params)
@@ -266,22 +264,25 @@ for _name, _cls in dbmodels.items():
             assert len(result) <= 1
             return result[0] if result else None
 
-        return multi, single
+        return multi, single, count, create
 
-    multi, single = make_funcs_forcing_closure_over_name_cls()
+    multi, single, count, create = make_funcs_forcing_closure_over_name_cls()
     setattr(Backend, _name, single)
     setattr(Backend, f'{_name}s', multi)
+    setattr(Backend, f'n{_name}s', count)
+    if not hasattr(Backend, f'create_{_name}'):
+        setattr(Backend, f'create_{_name}', create)
 
 class Server(uvicorn.Server):
     def run_in_thread(self):
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
 
-    def stop(self, sig, frame):
+    def stop(self, *_):
         print('shutting down server')
         self.should_exit = True
         self.thread.join()
-        sys.exit()
+        # sys.exit()
 
 def pymol_launch():
     stdout = sys.stdout
@@ -330,4 +331,4 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='wa
     assert ipd.ppp.get_hack_fixme_global_client()
     ppp.server.defaults.add_defaults(**kw)
     print('server', socket.gethostname())
-    return server, backend
+    return server, backend, client

@@ -6,8 +6,9 @@ from rich import print
 def ensure_init_db(backend):
     if not backend.users():
         backend.session.add(ipd.ppp.server.DBUser(name='admin'))
-        backend.session.add(ipd.ppp.server.DBUser(name='default'))
+        backend.session.add(ipd.ppp.server.DBUser(name='sheffler'))
         backend.session.add(ipd.ppp.server.DBUser(name='anonymous_coward'))
+        backend.session.add(ipd.ppp.server.DBUser(name='test'))
         backend.session.commit()
         adminid = backend.user(dict(name='admin')).id
         backend.session.add(
@@ -24,23 +25,21 @@ def ensure_init_db(backend):
                 desc='Reviews point here when their poll gets deleted',
                 path='Ghost Dir',
                 userid=adminid,
-                id=666,
+                id=1,
                 workflowid=1,
                 ispublic=False,
             ))
         backend.session.commit()
-        backend.session.add(
-            ipd.ppp.server.DBPollFile(
-                fname='Ghost PollFile',
-                id=666,
-                pollid=666,
-                ispublic=False,
-            ))
+        backend.session.add(ipd.ppp.server.DBPollFile(
+            fname='Ghost PollFile',
+            id=1,
+            pollid=1,
+            ispublic=False,
+        ))
         backend.session.commit()
-        print('added default users, poll and file')
 
 def add_defaults(stress_test_polls=False, **kw):
-    print('---------------------- ADD DEFAULTS ----------------------')
+    print('ADD DEFAULTS')
     import pymol
     pymol.cmd.set('suspend_updates', 'on')
     pymol.cmd.do('from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin '
@@ -50,8 +49,8 @@ def add_defaults(stress_test_polls=False, **kw):
     add_sym_cmds(client)
     if stress_test_polls: add_polls(client, stress_test_polls)
     pymol.cmd.set('suspend_updates', 'off')
-    print(len(client.pymolcmds()))
-    print('------------------- DONE ADD DEFAULTS -------------------')
+    # print(len(client.pymolcmds()))
+    # print('------------------- DONE ADD DEFAULTS -------------------')
 
 def add_polls(client, stress=False):
     print('add_stresstest_polls start')
@@ -102,7 +101,7 @@ def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
         config = yaml.load(inp, yaml.Loader)
         for cmd in config['pymolcmds']:
-            spec = ipd.ppp.PymolCMDSpec(cmdcheck=False, userid='default', **cmd)
+            spec = ipd.ppp.PymolCMDSpec(cmdcheck=False, userid='sheffler', **cmd)
             if not spec.errors():
                 client.upload(spec)
             else:
@@ -119,7 +118,7 @@ def add_sym_cmds(client):
             cmdoff='remove not chain A',
             sym=sym,
             cmdcheck=False,
-            userid='default')
+            userid='sheffler')
         assert not cmd.errors(), cmd.errors()
         result = client.upload(cmd)
         # assert not result, result

@@ -44,7 +44,7 @@ class DBPoll(DBWithUser, ppp.PollSpec, table=True):
     props: Props = list_default()
     attrs: Attrs = dict_default()
     nchain: int = -1
-    files: list['DBPollFile'] = Relationship(back_populates='poll')
+    pollfiles: list['DBPollFile'] = Relationship(back_populates='poll')
     reviews: list['DBReview'] = Relationship(back_populates='poll')
     workflowid: int = Field(foreign_key='dbworkflow.id')
     workflow: 'DBWorkflow' = Relationship(back_populates='polls')
@@ -68,7 +68,7 @@ class DBPollFile(DBBase, ppp.PollFileSpec, table=True):
     props: Props = list_default()
     attrs: Attrs = dict_default()
     pollid: int = Field(default=None, foreign_key='dbpoll.id')
-    poll: DBPoll = Relationship(back_populates='files')
+    poll: DBPoll = Relationship(back_populates='pollfiles')
     reviews: list['DBReview'] = Relationship(back_populates='file')
 
     @pydantic.validator('fname')

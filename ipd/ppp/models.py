@@ -114,7 +114,7 @@ class PollSpec(WithUserSpec, StrictFields):
 
     @pydantic.validator('path')
     def valpath(cls, path):
-        print('valpath', path)
+        # print('valpath', path)
         if _SERVERMODE: return path
         if digs := path.startswith('digs:'): path = path[5:]
         path = os.path.abspath(os.path.expanduser(path))
