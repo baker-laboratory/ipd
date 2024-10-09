@@ -1,35 +1,42 @@
 import os
-from datetime import datetime
-import functools
-import tempfile
-import contextlib
 from subprocess import check_output
 import ipd
+import functools
+from ipd import ppp
 from pathlib import Path
-import gzip
 import getpass
-import traceback
-import socket
-from typing import Optional, Union
-from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
-
-import pydantic
+from typing import Union
 
 requests = ipd.lazyimport('requests', pip=True)
 rich = ipd.lazyimport('rich', 'Rich', pip=True)
 ordset = ipd.lazyimport('ordered_set', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
-wills_pymol_crap = ipd.lazyimport('wills_pymol_crap',
-                                  'git+https://github.com/willsheffler/wills_pymol_crap',
-                                  pip=True)
+_wpcgit = 'git+https://github.com/willsheffler/wills_pymol_crap'
+wills_pymol_crap = ipd.lazyimport('wills_pymol_crap', _wpcgit, pip=True)
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 print = rich.print
 
-from ipd.ppp.clientmodels import Poll, Review, ReviewStep, File, PymolCMD, FlowStep, Workflow, User, Group
+_GLOBAL_CLIENT = None
+
+def get_hack_fixme_global_client():
+    return _GLOBAL_CLIENT
 
 REMOTE_MODE = not os.path.exists('/net/scratch/sheffler')
 # profile = ipd.dev.timed
 profile = lambda f: f
+
+clientmodels = dict(
+    poll=ppp.Poll,
+    review=ppp.Review,
+    reviewstep=ppp.ReviewStep,
+    pollfile=ppp.PollFile,
+    pymolcmd=ppp.PymolCMD,
+    flowstep=ppp.FlowStep,
+    workflow=ppp.Workflow,
+    user=ppp.User,
+    group=ppp.Group,
+)
+assert not any(name.endswith('s') for name in clientmodels)
 
 class PPPClientError(Exception):
     pass
@@ -48,6 +55,8 @@ class PPPClient:
             print('PPPClient: using testclient')
             self.testclient = server_addr_or_testclient
         assert self.get('/')['msg'] == 'Hello World'
+        global _GLOBAL_CLIENT
+        _GLOBAL_CLIENT = self  #there should be a better way to do this
 
     def getattr(self, thing, id, attr):
         return self.get(f'/getattr/{thing}/{id}/{attr}')
@@ -82,10 +91,10 @@ class PPPClient:
         return response.json()
 
     def remove(self, thing):
-        if isinstance(thing, Poll): return self.get(f'/remove/poll/{thing.id}')
-        elif isinstance(thing, File): return self.get(f'/remove/file/{thing.id}')
-        elif isinstance(thing, Review): return self.get(f'/remove/review/{thing.id}')
-        elif isinstance(thing, PymolCMD): return self.get(f'/remove/pymolcmd/{thing.id}')
+        if isinstance(thing, ppp.Poll): return self.get(f'/remove/poll/{thing.id}')
+        elif isinstance(thing, ppp.PollFile): return self.get(f'/remove/pollfile/{thing.id}')
+        elif isinstance(thing, pppp.Review): return self.get(f'/remove/review/{thing.id}')
+        elif isinstance(thing, ppp.PymolCMD): return self.get(f'/remove/pymolcmd/{thing.id}')
         else: raise ValueError('cant remove type {type(thing)}\n{thing}')
 
     def upload(self, thing, **kw):
@@ -108,21 +117,21 @@ class PPPClient:
         assert fnames, f'path must contain structure files: {poll.path}'
         if errors := self.upload(poll): return errors
         poll = self.polls(name=poll.name)[0]
-        construct = FileSpec.construct if digs else FileSpec
+        construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
         files = [construct(pollid=poll.id, fname=fn, user=getpass.getuser()) for fn in fnames]
-        return self.post('/create/files', files)
+        return self.post('/create/pollfiles', files)
 
     def upload_review(self, review, fname=None):
         fname = fname or review.fname
-        file = FileSpec(pollid=review.pollid, fname=fname)
+        file = ppp.PollFileSpec(pollid=review.pollid, fname=fname)
         print('review.fname', review.pollid, fname)
-        exists, permafname = self.post('/have/file', file)
+        exists, permafname = self.post('/have/pollfile', file)
         review.permafname = permafname
         file.permafname = permafname
-        file.filecontent = Path(fname).read_text()
+        file.pollfilecontent = Path(fname).read_text()
         if not exists:
-            if response := self.post('/create/file', file): return response
-        review = ReviewSpec(**review.dict())
+            if response := self.post('/create/pollfile', file): return response
+        review = ppp.ReviewSpec(**review.dict())
         return self.upload(review)
 
     def pollinfo(self, user=None):
@@ -132,26 +141,8 @@ class PPPClient:
         if response.content: return response.json()
         return []
 
-    def polls(self, **kw):
-        return [Poll(self, **p) for p in self.get('/polls', **kw)]
-
-    def reviews(self, **kw):
-        return [Review(self, **_) for _ in self.get('/reviews', **kw)]
-
-    def files(self, **kw):
-        return [File(self, **_) for _ in self.get('/files', **kw)]
-
-    def pymolcmds(self, **kw):
-        return [PymolCMD(self, **_) for _ in self.get('/pymolcmds', **kw)]
-
     def pymolcmdsdict(self):
         return self.get('/pymolcmds')
-
-    def poll(self, id):
-        return Poll(self, **self.get(f'/poll{id}'))
-
-    def pymolcmd(self, id):
-        return PymolCMD(self, **self.get(f'/pymolcmd{id}'))
 
     def poll_fids(self, id):
         return self.get(f'/poll{id}/fids')
@@ -162,14 +153,34 @@ class PPPClient:
     def reviews_for_fname(self, fname):
         fname = fname.replace('/', '__DIRSEP__')
         rev = self.get(f'/reviews/byfname/{fname}')
-        return [Review(self, **_) for _ in rev]
+        return [pppp.Review(self, **_) for _ in rev]
 
     def _add_some_cmds(self):
         self.upload(
-            PymolCMDSpec(
+            ppp.PymolCMDSpec(
                 name='sym: Make {sym.upper()}',
                 cmdstart='from wills_pymol_crap import symgen',
                 cmdon=
                 f'symgen.make{sym}("$subject", name="sym"); delete $subject; cmd.set_name("sym", "$subject")',
                 cmdoff='remove not chain A',
             ))
+
+# Generic interface for accessing models from the server. Any name or name suffixed with 's'
+# that is in clientmodels, above, will get /name from the server and turn the result(s) into
+# the appropriate client model type, list of such types for plural, or None.
+
+for _name, _cls in clientmodels.items():
+
+    def make_funcs_forcing_closure_over_cls_name(cls=_cls, name=_name):
+        def multi(self, **kw) -> list[cls]:
+            return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
+
+        def single(self, **kw) -> Union[cls, None]:
+            result = self.get(f'/{name}', **kw)
+            return cls(self, **result) if result else None
+
+        return single, multi
+
+    single, multi = make_funcs_forcing_closure_over_cls_name()
+    setattr(PPPClient, _name, single)
+    setattr(PPPClient, f'{_name}s', multi)

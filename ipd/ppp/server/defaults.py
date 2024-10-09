@@ -3,13 +3,49 @@ import os
 import yaml
 from rich import print
 
-def add_defaults(server_addr, stress_test_polls=False, **kw):
+def ensure_init_db(backend):
+    if not backend.users():
+        backend.session.add(ipd.ppp.server.DBUser(name='admin'))
+        backend.session.add(ipd.ppp.server.DBUser(name='default'))
+        backend.session.add(ipd.ppp.server.DBUser(name='anonymous_coward'))
+        backend.session.commit()
+        adminid = backend.user(dict(name='admin')).id
+        backend.session.add(
+            ipd.ppp.server.DBWorkflow(
+                name='Manual',
+                desc='The default workflow. No steps, no automation.',
+                ordering='manual',
+                userid=adminid,
+                id=1,
+            ))
+        backend.session.add(
+            ipd.ppp.server.DBPoll(
+                name='Ghost Poll',
+                desc='Reviews point here when their poll gets deleted',
+                path='Ghost Dir',
+                userid=adminid,
+                id=666,
+                workflowid=1,
+                ispublic=False,
+            ))
+        backend.session.commit()
+        backend.session.add(
+            ipd.ppp.server.DBPollFile(
+                fname='Ghost PollFile',
+                id=666,
+                pollid=666,
+                ispublic=False,
+            ))
+        backend.session.commit()
+        print('added default users, poll and file')
+
+def add_defaults(stress_test_polls=False, **kw):
     print('---------------------- ADD DEFAULTS ----------------------')
     import pymol
     pymol.cmd.set('suspend_updates', 'on')
     pymol.cmd.do('from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin '
                  'import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default')
-    client = ipd.ppp.PPPClient(server_addr)
+    client = ipd.ppp.get_hack_fixme_global_client()
     add_builtin_cmds(client)
     add_sym_cmds(client)
     if stress_test_polls: add_polls(client, stress_test_polls)
@@ -66,9 +102,9 @@ def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
         config = yaml.load(inp, yaml.Loader)
         for cmd in config['pymolcmds']:
-            spec = ipd.ppp.PymolCMDSpec(cmdcheck=False, user='default', **cmd)
+            spec = ipd.ppp.PymolCMDSpec(cmdcheck=False, userid='default', **cmd)
             if not spec.errors():
-                client.upload(spec, replace=True)
+                client.upload(spec)
             else:
                 print(spec.errors())
                 assert 0, 'cmd errors'
@@ -83,11 +119,10 @@ def add_sym_cmds(client):
             cmdoff='remove not chain A',
             sym=sym,
             cmdcheck=False,
-            user='default',
-        )
+            userid='default')
         assert not cmd.errors(), cmd.errors()
-        result = client.upload(cmd, replace=True)
-        assert not result, result
+        result = client.upload(cmd)
+        # assert not result, result
 
 def find_pdb_dirs(path, lb, ub):
     dirs = []

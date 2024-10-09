@@ -1,7 +1,7 @@
 import os
 import pymol
 import ipd
-from ipd.qt import MenuAction, notify, isfalse_notify
+from ipd.qt import MenuAction, isfalse_notify
 
 _startup_cmds_done = set()
 
@@ -98,7 +98,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
         self.cmds[item.text()].widget_update(toggle)
 
     def create_command_start(self):
-        self.newcmdwidget.user.setText(state.user)
+        self.newcmdwidget.user.setText(self.state.user)
         self.newcmdwidget.title.setText('Create New PymolCMD')
         self.newcmdwidget.ok.setText('Create CMD')
         self.newcmdwidget.show()

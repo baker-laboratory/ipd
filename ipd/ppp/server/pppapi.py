@@ -1,20 +1,21 @@
 import sys
 import os
+import asyncio
 import random
 from datetime import datetime
 import contextlib
 import threading
 import time
+import traceback
+import functools
 import socket
 import operator
-from typing import Optional
+from typing import Optional, Annotated
 import ipd
 from ipd import ppp
 import signal
-from typing import Union
-from ipd.ppp.server.dbmodels import (DBPoll, DBFile, DBReview, DBReviewStep, DBPymolCMDFlowStepLink,
-                                     DBPymolCMD, DBFlowStep, DBWorkflow, DBUserUserLink, DBUserGroupLink,
-                                     DBUser, DBGroup, DuplicateError)
+from ipd.ppp.server.dbmodels import (DBPoll, DBPollFile, DBReview, DBReviewStep, DBPymolCMD, DBWorkflow,
+                                     DBFlowStep, DBUser, DBGroup, DuplicateError)
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -27,6 +28,19 @@ uvicorn = ipd.dev.lazyimport('uvicorn', 'uvicorn[standard]', pip=True)
 
 # profile = ipd.dev.timed
 profile = lambda f: f
+
+dbmodels = dict(
+    poll=DBPoll,
+    review=DBReview,
+    reviewstep=DBReviewStep,
+    pollfile=DBPollFile,
+    pymolcmd=DBPymolCMD,
+    flowstep=DBFlowStep,
+    workflow=DBWorkflow,
+    user=DBUser,
+    group=DBGroup,
+)
+assert not any(name.endswith('s') for name in dbmodels)
 
 python_type_to_sqlalchemy_type = {
     str: sqlalchemy.String,
@@ -41,33 +55,6 @@ python_type_to_sqlalchemy_type = {
     # decimal.Decimal: sqlalchemy.Numeric
 }
 
-def check_ghost_poll_and_file(backend):
-    if not backend.select(DBPoll, id=666):
-        backend.session.add(
-            DBWorkflow(name='Manual',
-                       desc='The default workflow. No steps, no automation.',
-                       ordering='manual',
-                       id=1))
-        backend.session.add(
-            DBPoll(name='Ghost Poll',
-                   desc='Reviews point here when their poll gets deleted',
-                   path='Ghost Dir',
-                   user='admin',
-                   id=666,
-                   workflowid=1,
-                   ispublic=False))
-        backend.session.commit()
-    if not backend.select(DBFile, id=666):
-        backend.session.add(
-            DBFile(name='Ghost File',
-                   desc='Reviews point here when their orig file gets deleted. Use the review\'s permafname',
-                   fname='Ghost File',
-                   user='admin',
-                   id=666,
-                   pollid=666,
-                   ispublic=False))
-        backend.session.commit()
-
 @profile
 class Backend:
     def __init__(self, engine, datadir):
@@ -75,68 +62,42 @@ class Backend:
         self.datadir = datadir
         self.session = sqlmodel.Session(self.engine)
         sqlmodel.SQLModel.metadata.create_all(self.engine)
-        self.apply_db_schema_updates()
         self.router = fastapi.APIRouter()
         route = self.router.add_api_route
+        for model in dbmodels:
+            route(f'/{model}', getattr(self, model), methods=['GET'])
+            route(f'/{model}s', getattr(self, f'{model}s'), methods=['GET'])
         route('/', self.root, methods=['GET'])
-        route('/create/file', self.create_file_with_content, methods=['POST'])
-        route('/create/files', self.create_empty_files, methods=['POST'])
+        route('/create/pollfile', self.create_file_with_content, methods=['POST'])
+        route('/create/pollfiles', self.create_empty_files, methods=['POST'])
         route('/create/poll', self.create_poll, methods=['POST'])
         route('/create/pymolcmd', self.create_pymolcmd, methods=['POST'])
         route('/create/review', self.create_review, methods=['POST'])
-        route('/files', self.files, methods=['GET'])
         route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
-        route('/have/file', self.have_file, methods=['POST'])
+        route('/have/pollfile', self.have_file, methods=['POST'])
         route('/pollinfo', self.pollinfo, methods=['GET'])
-        route('/polls', self.polls, methods=['GET'])
-        route('/poll{id}', self.poll, methods=['GET'])
+        # route('/poll{id}', self.poll, methods=['GET'])
         route('/poll{id}/fids', self.poll_fids, methods=['GET'])
         route('/poll{id}/fname', self.poll_file, methods=['GET'])
-        route('/pymolcmds', self.pymolcmds, methods=['GET'])
         route('/remove/{thing}/{id}', self.remove, methods=['GET'])
-        route('/reviews', self.reviews, methods=['GET'])
         route('/reviews/byfname/{fname}', self.reviews_fname, methods=['GET'])
-        route('/reviews/file{id}', self.review_for_id, methods=['GET'])
+        route('/reviews/pollfile{id}', self.review_for_id, methods=['GET'])
         route('/reviews/poll{id}', self.review_for_id, methods=['GET'])
-        route('/review{id}', self.review, methods=['GET'])
         route('/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
         self.app = fastapi.FastAPI()
-        # self.app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
         self.app.include_router(self.router)
-        ipd.dev.git_status(header='server git status', footer='end', printit=True)
+        # ipd.dev.git_status(header='server git status', footer='end', printit=True)
+        ppp.server.defaults.ensure_init_db(self)
 
         @self.app.exception_handler(Exception)
-        async def validation_exception_handler(request: fastapi.Request, exc: Exception):
+        def validation_exception_handler(request: fastapi.Request, exc: Exception):
             exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
-            print('!' * 69)
+            print('!' * 80)
             print(exc_str)
-            print('!' * 69)
+            print('!' * 80)
+            result = f'{"!"*80}\n{exc_str}\nSTACK:\n{traceback.format_exc()}\n{"!"*80}'
             return fastapi.responses.JSONResponse(content=exc_str,
                                                   status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
-
-    def _add_db_column(self, table_name, column):
-        column_name = column.compile(dialect=self.engine.dialect)
-        column_type = column.type.compile(self.engine.dialect)
-        cmd = f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}'
-        print(f'EXEC RAW SQL: "{cmd}"', flush=True)
-        self.session.execute(sqlalchemy.text(cmd))
-        self.session.commit()
-
-    def apply_db_schema_updates(self):
-        tables = 'DBPoll DBFile DBReview DBPymolCMD'.split()
-        getcols = lambda table: self.session.execute(sqlalchemy.text(f'select * from {table}')).keys()
-        cols = {table: getcols(table.lower()) for table in tables}
-        for table in tables:
-            cls = globals()[table]
-            for name, field in cls.__fields__.items():
-                if name not in cols[table]:
-                    print('ADD NEW COLUMN',
-                          table,
-                          name,
-                          python_type_to_sqlalchemy_type[field.annotation],
-                          flush=True)
-                    column = sqlalchemy.Column(name, python_type_to_sqlalchemy_type[field.annotation])
-                    self._add_db_column(table.lower(), column)
 
     def remove(self, thing, id):
         thing = self.select(thing, id=id)
@@ -150,14 +111,15 @@ class Backend:
         return dict(msg='Hello World')
 
     def getattr(self, thing, id, attr):
-        thingtype = globals()[f'DB{thing.title()}']
-        thing = next(self.session.exec(sqlmodel.select(thingtype).where(thingtype.id == id)))
+        cls = dbmodels[thing]
+        thing = next(self.session.exec(sqlmodel.select(cls).where(cls.id == id)))
         thingattr = getattr(thing, attr)
         return thingattr
 
     def select(self, type_, **kw):
+        # print('select', type_, kw)
         if isinstance(type_, str):
-            type_ = dict(poll=DBPoll, file=DBFile, review=DBReview, pymolcmd=DBPymolCMD)[type_]
+            type_ = dict(poll=DBPoll, file=DBPollFile, review=DBReview, pymolcmd=DBPymolCMD)[type_]
         statement = sqlmodel.select(type_)
         for k, v in kw.items():
             op = operator.eq
@@ -182,51 +144,21 @@ class Backend:
         try:
             try:
                 thing = thing.validated_with_backend(self)
-                # print('DB ADDED', thing)
             except AssertionError as e:
                 self.ssesion.delete(thing)
                 return f'error in validate_and_add_to_db: {e}'
         except DuplicateError as e:
             if replace:
                 for oldthing in e.conflict:
-                    print('DB DELETE', type(oldthing), oldthing.id)
+                    print('server deleted', type(oldthing), oldthing.name3)
                     oldthing.clear(self)
                     self.session.delete(oldthing)
-                # print('DB ADDED', thing)
             else:
                 thing.clear(self)
                 self.session.delete(thing)
                 result = 'duplicate'
         self.session.commit()
         return result
-
-    def poll(self, id: int, response_model=Optional[DBPoll]):
-        poll = self.select(DBPoll, id=id)
-        return poll[0] if poll else None
-
-    def file(self, id: int, response_model=Optional[DBFile]):
-        file = self.select(DBFile, id=id)
-        return file[0] if file else None
-
-    def review(self, id: int, response_model=Optional[DBReview]):
-        review = self.select(DBReview, id=id)
-        return review[0] if review else None
-
-    def pymolcmd(self, id: int, response_model=Optional[DBPymolCMD]):
-        cmd = self.select(DBPymolCMD, id=id)
-        return cmd[0] if cmd else None
-
-    def polls(self, id: int = None, name=None, response_model=list[DBPoll]):
-        return self.select(DBPoll, id=id, name=name)
-
-    def files(self, id: int = None, response_model=list[DBFile]):
-        return self.select(DBFile, id=id)
-
-    def reviews(self, id: int = None, name=None, response_model=list[DBReview]):
-        return self.select(DBReview, id=id, name=name)
-
-    def pymolcmds(self, id: int = None, name=None, response_model=list[DBPymolCMD]):
-        return self.select(DBPymolCMD, id=None, name=None)
 
     def pollinfo(self, user=None):
         print(f'server pollinfo {user}')
@@ -243,9 +175,9 @@ class Backend:
     def create_review(self, review: DBReview, replace: bool = False) -> str:
         # print('backend create_review')
         poll = self.poll(review.pollid)
-        fileid = [f.id for f in poll.files if f.fname == review.fname]
-        if not fileid: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.files}'
-        review.fileid = fileid[0]
+        fileid = [f.id for f in poll.pollfiles if f.fname == review.fname]
+        if not fileid: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.pollfiles}'
+        review.pollfileid = fileid[0]
         return self.validate_and_add_to_db(review, replace)
 
     def create_pymolcmd(self, pymolcmd: DBPymolCMD, replace: bool = False) -> str:
@@ -253,7 +185,7 @@ class Backend:
         return self.validate_and_add_to_db(pymolcmd, replace)
 
     def poll_fids(self, id, response_model=dict[str, int]):
-        return {f.fname: f.id for f in self.poll(id).files}
+        return {f.fname: f.id for f in self.poll(id).pollfiles}
 
     def poll_file(self,
                   id: int,
@@ -262,7 +194,7 @@ class Backend:
                   shuffle: bool = False,
                   trackseen: bool = False):
         poll = self.poll(id)
-        files = ordset.OrderedSet(f.fname for f in poll.files)
+        files = ordset.OrderedSet(f.fname for f in poll.pollfiles)
         if trackseen:
             seenit = request.cookies.get(f'seenit_poll{id}')
             seenit = set(seenit.split()) if seenit else set()
@@ -278,17 +210,17 @@ class Backend:
         return self.poll(id).reviews
 
     def review_for_id(self, id):
-        return self.file(id).reviews
+        return self.pollfile(id).reviews
 
     def reviews_fname(self, fname):
         fname = fname.replace('__DIRSEP__', '/')
-        files = self.session.exec(sqlmodel.select(DBFile).where(DBFile.fname == fname))
+        files = self.session.exec(sqlmodel.select(DBPollFile).where(DBPollFile.fname == fname))
         rev = ordset.OrderedSet()
         for f in files:
             rev |= f.reviews
         return list(rev)
 
-    def have_file(self, file: DBFile):
+    def have_file(self, file: DBPollFile):
         poll = self.poll(file.pollid)
         newfname = self.permafname_name(poll, file.fname)
         return os.path.exists(newfname), newfname
@@ -300,18 +232,45 @@ class Backend:
         newfname = os.path.join(path, fname.replace('/', '\\'))
         return newfname
 
-    def create_file_with_content(self, file: DBFile):
-        assert file.filecontent
+    def create_file_with_content(self, file: DBPollFile):
+        assert file.pollfilecontent
         mode = 'wb' if file.permafname.endswith('.bcif') else 'w'
         with open(file.permafname, mode) as out:
-            out.write(file.filecontent)
+            out.write(file.pollfilecontent)
 
-    def create_empty_files(self, files: list[ppp.FileSpec]):
+    def create_empty_files(self, files: list[ppp.PollFileSpec]):
         # print('CREATE empty files', len(files))
         for f in files:
-            assert not f.filecontent.strip()
-            self.session.add(DBFile(**f.dict()))
+            assert not f.pollfilecontent.strip()
+            self.session.add(DBPollFile(**f.dict()))
         self.session.commit()
+
+# Autogen getter methods. Yes, this is better than 20 boilerplate functions that must be kept
+# in sync. Any name or name suffixed with 's'
+# that is in clientmodels, above, will get /name from the server and turn the result(s) into
+# the appropriate client model type, list of such types for plural, or None.
+for _name, _cls in dbmodels.items():
+
+    def make_funcs_forcing_closure_over_name_cls(name=_name, cls=_cls):
+        def multi(self, kw=None, request: fastapi.Request = None, response_model=list[cls]):
+            # print('route', name, cls, kw, request, flush=True)
+            if request: return self.select(cls, **request.query_params)
+            elif kw: return self.select(cls, **kw)
+            else: return self.select(cls)
+
+        def single(self, kw=None, request: fastapi.Request = None, response_model=Optional[cls]):
+            # print('route', name, cls, kw, request, flush=True)
+            if request: result = self.select(cls, **request.query_params)
+            elif kw: result = self.select(cls, **kw)
+            else: result = self.select(cls)
+            assert len(result) <= 1
+            return result[0] if result else None
+
+        return multi, single
+
+    multi, single = make_funcs_forcing_closure_over_name_cls()
+    setattr(Backend, _name, single)
+    setattr(Backend, f'{_name}s', multi)
 
 class Server(uvicorn.Server):
     def run_in_thread(self):
@@ -333,8 +292,8 @@ def pymol_launch():
     pymol.cmd.set('suspend_updates', 'on')
 
 @profile
-def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='info', local=False, **kw):
-    ppp.SERVER = True
+def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='warning', local=False, **kw):
+    from rich import print
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
     if not dburl.count('://'): dburl = f'sqlite:///{dburl}'
@@ -366,8 +325,9 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='in
         time.sleep(0.001)
     else:
         raise RuntimeError('server failed to start')
-    ppp.set_server(True)
-    check_ghost_poll_and_file(backend)
-    ppp.defaults.add_defaults(f'127.0.0.1:{port}', **kw)
+    ppp.set_servermode(True)
+    client = ppp.PPPClient(f'127.0.0.1:{port}')
+    assert ipd.ppp.get_hack_fixme_global_client()
+    ppp.server.defaults.add_defaults(**kw)
     print('server', socket.gethostname())
     return server, backend

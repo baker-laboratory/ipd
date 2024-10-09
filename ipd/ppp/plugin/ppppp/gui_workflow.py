@@ -4,7 +4,6 @@ import ipd
 from ipd.ppp.plugin.ppppp.gui_commands import ToggleCommands
 from typing import Any
 from ipd.qt import MenuAction, isfalse_notify
-from icecream import ic
 
 class FlowStepGui(ipd.ppp.FlowStepSpec):
     widget: Any

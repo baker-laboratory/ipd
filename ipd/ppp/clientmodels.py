@@ -1,19 +1,8 @@
-import os
-from datetime import datetime
 import functools
-import tempfile
-import contextlib
-from subprocess import check_output
 import ipd
-from pathlib import Path
-import gzip
-import getpass
-import traceback
-import socket
-from typing import Optional, Union
-from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
-from ipd.ppp.models import (PollSpec, ReviewSpec, ReviewStepSpec, FileSpec, PymolCMDSpecError, PymolCMDSpec,
-                            FlowStepSpec, WorkflowSpec, UserSpec, GroupSpec, fix_label_case)
+from typing import Optional
+from ipd.ppp.models import (PollSpec, ReviewSpec, ReviewStepSpec, PollFileSpec, PymolCMDSpec, FlowStepSpec,
+                            WorkflowSpec, UserSpec, GroupSpec)
 import pydantic
 
 requests = ipd.lazyimport('requests', pip=True)
@@ -26,9 +15,9 @@ print = rich.print
 class ClientMixin(pydantic.BaseModel):
     _pppclient: Optional['PPPClient'] = None
 
-    def __init__(self, client, **kw):
+    def __init__(self, pppclient, **kw):
         super().__init__(**kw)
-        self._pppclient = client
+        self._pppclient = pppclient
 
     def __hash__(self):
         return self.id
@@ -52,14 +41,13 @@ yaml.add_constructor('!Pydantic', client_obj_constructor)
 
 def clientprop(name):
     @property
-    @functools.lru_cache
+    # @functools.lru_cache
     def getter(self):
         kind, attr = name.split('.')
         val = self._pppclient.getattr(kind, self.id, attr)
         attr = attr.title()
-        g = globals()
-        if attr in g: cls = g[attr]
-        elif attr[:-1] in g: cls = g[attr[:-1]]
+        if attr in globals(): cls = globals()[attr]
+        elif attr[:-1] in globals(): cls = globals()[attr[:-1]]
         else: raise ValueError(f'unknown type {attr}')
         if isinstance(val, list):
             return [cls(self._pppclient, **kw) for kw in val]
@@ -69,30 +57,33 @@ def clientprop(name):
 
 class Poll(ClientMixin, PollSpec):
     id: int
-    files = clientprop('poll.files')
+    files = clientprop('poll.pollfiles')
     reviews = clientprop('poll.reviews')
     workflow = clientprop('poll.workflow')
+    user = clientprop('poll.user')
+
+class PollFile(ClientMixin, PollFileSpec):
+    id: int
+    poll = clientprop('file.poll')
+    reviews = clientprop('file.reviews')
 
 class Review(ClientMixin, ReviewSpec):
     id: int
     poll = clientprop('review.poll')
-    file = clientprop('review.file')
+    file = clientprop('review.pollfile')
     workflow = clientprop('review.workflow')
     steps = clientprop('review.steps')
+    user = clientprop('review.user')
 
 class ReviewStep(ClientMixin, ReviewStepSpec):
     id: int
     review = clientprop('reviewstep.review')
     flowstep = clientprop('reviewstep.flowstep')
 
-class File(ClientMixin, FileSpec):
-    id: int
-    poll = clientprop('file.poll')
-    reviews = clientprop('file.reviews')
-
 class PymolCMD(ClientMixin, PymolCMDSpec):
     id: int
     flowsteps = clientprop('pymolcmd.flowsteps')
+    user = clientprop('pymolcmd.user')
 
 class FlowStep(ClientMixin, FlowStepSpec):
     id: int
@@ -105,13 +96,19 @@ class Workflow(ClientMixin, WorkflowSpec):
     steps = clientprop('workflow.steps')
     polls = clientprop('workflow.polls')
     reviews = clientprop('workflow.reviews')
+    user = clientprop('workflow.user')
 
 class User(ClientMixin, UserSpec):
     id: int
     followers = clientprop('user.followers')
     following = clientprop('user.following')
     groups = clientprop('user.groups')
+    polls = clientprop('user.polls')
+    reviews = clientprop('user.reviews')
+    pymolcmds = clientprop('user.pymolcmds')
+    workflows = clientprop('user.workflows')
 
 class Group(ClientMixin, GroupSpec):
     id: int
+    user = clientprop('groupo.user')
     users = clientprop('group.users')

@@ -2,18 +2,25 @@ from datetime import datetime
 from typing import Union
 import getpass
 import socket
+import contextlib
 import os
+import ipd
+import tempfile
+from pathlib import Path
 from ipd.dev.lazy_import import lazyimport
+from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
 
 pydantic = lazyimport('pydantic', pip=True)
+pymol = lazyimport('pymol')
+
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
-SERVER = 'ppp' == socket.gethostname()
+_SERVERMODE = 'ppp' == socket.gethostname()
 
-def set_server(isserver):
-    global SERVER
-    SERVER = isserver
-    print('SERVER MODE')
+def set_servermode(isserver):
+    global _SERVERMODE
+    _SERVERMODE = isserver
+    print('_SERVERMODE MODE')
 
 def fix_label_case(thing):
     if isinstance(thing, dict):
@@ -22,25 +29,16 @@ def fix_label_case(thing):
         keys, get, set = thing.model_fields_set, thing.__getattribute__, thing.__setattr__
     else:
         raise TypeError(f' fix_label_case unsupported type{type(thing)}')
-    if 'name' in keys: set('name', get('name').title())
     if 'sym' in keys: set('sym', get('sym').upper())
-    if 'user' in keys: set('user', get('user').lower())
-    if 'workflow' in keys: set('workflow', get('workflow').lower())
     if 'ligand' in keys: set('ligand', get('ligand').upper())
 
 class SpecBase(pydantic.BaseModel):
     ispublic: bool = True
-    telemetry: bool = True
-    user: str = ''
+    telemetry: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
     props: Union[list[str], str] = []
     attrs: Union[dict[str, Union[str, int, float]], str] = {}
     _errors: str = ''
-
-    @pydantic.validator('user')
-    def valuser(cls, user):
-        assert user != 'services'
-        return user or getpass.getuser()
 
     @pydantic.validator('props')
     def valprops(cls, props):
@@ -57,7 +55,7 @@ class SpecBase(pydantic.BaseModel):
     def valattrs(cls, attrs):
         if isinstance(attrs, dict): return attrs
         try:
-            ipd.dev.safe_eval(attrs)
+            attrs = ipd.dev.safe_eval(attrs)
         except (NameError, SyntaxError):
             if isinstance(attrs, str):
                 if not attrs.strip(): return {}
@@ -73,9 +71,32 @@ class SpecBase(pydantic.BaseModel):
     def __getitem__(self, k):
         return getattr(self, k)
 
-_checkobjnum = 0
+class StrictFields:
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
 
-class PollSpec(SpecBase):
+        def new_init(self, pppclient=None, id=None, **data):
+            for name in data:
+                if name not in cls.__fields__:
+                    raise TypeError(f"{cls} Invalid field name: {name}")
+            data |= dict(pppclient=pppclient, id=id)
+            super(cls, self).__init__(**data)
+
+        cls.__init__ = new_init
+
+class WithUserSpec(SpecBase):
+    userid: Union[str, int] = pydantic.Field(default='anonymous_coward', validate_default=True)
+
+    @pydantic.validator('userid')
+    def valuserid(userid):
+        if isinstance(userid, str):
+            client = ipd.ppp.get_hack_fixme_global_client()
+            if not client: return userid
+            if user := client.user(name=userid): return user.id
+            raise ValueError(f'unknown user "{userid}"')
+        return int(userid)
+
+class PollSpec(WithUserSpec, StrictFields):
     name: str
     desc: str = ''
     path: str
@@ -94,7 +115,7 @@ class PollSpec(SpecBase):
     @pydantic.validator('path')
     def valpath(cls, path):
         print('valpath', path)
-        if SERVER: return path
+        if _SERVERMODE: return path
         if digs := path.startswith('digs:'): path = path[5:]
         path = os.path.abspath(os.path.expanduser(path))
         if digs or not os.path.exists(path):
@@ -106,65 +127,34 @@ class PollSpec(SpecBase):
     @pydantic.model_validator(mode='after')
     def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
-        print('poll _validated')
-        if SERVER: return self
+        if _SERVERMODE: return self  # client does validation
         print('poll _validated not server')
         fix_label_case(self)
         if self.path.startswith('digs:'): return self
         self.name = self.name or os.path.basename(self.path)
         self.desc = self.desc or f'PDBs in {self.path}'
         self.sym = self.sym or guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
-        if not self.sym or not self.ligand:
-            try:
-                global _checkobjnum
-                filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
-                fname = next(filter(filt, os.listdir(self.path)))
-                # print('CHECKING IN PYMOL', fname)
-                pymol.cmd.set('suspend_updates', 'on')
-                with contextlib.suppress(pymol.CmdException):
-                    pymol.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
-                pymol.cmd.delete('all')
-                pymol.cmd.load(os.path.join(self.path, fname), f'TMP{_checkobjnum}')
-                if self.ligand == '':
-                    ligs = set()
-                    for a in pymol.cmd.get_model(f'TMP{_checkobjnum} and HET and not resn HOH').atom:
-                        ligs.add(a.resn)
-                    self.ligand = ','.join(ligs)
-                pymol.cmd.remove(f'TMP{_checkobjnum} and not name ca')
-                chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_checkobjnum}').atom}
-                self.nchain = len(chains)
-                if not self.sym:
-                    xyz = pymol.cmd.get_coords(f'TMP{_checkobjnum}')
-                    if xyz is None:
-                        self._errors += f'pymol get_coords failed on TMP{_checkobjnum}\nfname: {fname}'
-                        return self
-                    xyz = xyz.reshape(len(chains), -1, 3)
-                    self.sym = guess_symmetry(xyz)
-            except ValueError:
-                # print(os.path.join(self.path, fname))
-                traceback.print_exc()
-                if self.nchain < 4: self.sym = 'C1'
-                else: self.sym = 'unknown'
-            except (AttributeError, pymol.CmdException, gzip.BadGzipFile) as e:
-                self._errors += f'POLL error in _validated: {type(e)}\n{e}'
-            finally:
-                pymol.cmd.delete(f'TMP{_checkobjnum}')
-                pymol.cmd.set('suspend_updates', 'off')
-                _checkobjnum += 1
-                with contextlib.suppress(pymol.CmdException):
-                    pymol.cmd.load(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
-                    os.remove(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
-        assert isinstance(self.nchain, int)
+        self = PollSpec_get_structure_properties(self)
+        print('poll _validated done')
         return self
-
-    @pydantic.validator('props')
-    def _valprops(cls, v):
-        return list(v)
 
     def __hash__(self):
         return hash(self.path)
 
-class ReviewSpec(SpecBase):
+class PollFileSpec(SpecBase, StrictFields):
+    pollid: int
+    fname: str
+    permafname: str = ''
+    filecontent: str = ''
+
+    @pydantic.validator('fname')
+    def valfname(cls, fname):
+        if _SERVERMODE or REMOTE_MODE: return fname
+        fname = os.path.abspath(fname)
+        assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
+        return fname
+
+class ReviewSpec(WithUserSpec, StrictFields):
     pollid: int
     fname: str
     permafname: str = ''
@@ -182,7 +172,7 @@ class ReviewSpec(SpecBase):
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
-        if SERVER: return fname
+        if _SERVERMODE: return fname
         assert os.path.exists(fname)
         return os.path.abspath(fname)
 
@@ -193,26 +183,13 @@ class ReviewSpec(SpecBase):
             self._errors += 'S-tier review requires a comment!'
         return self
 
-class ReviewStepSpec(SpecBase):
+class ReviewStepSpec(SpecBase, StrictFields):
     reviewid: int
     flowstepid: int
     task: dict[str, Union[str, int, float]]
     grade: str
     comment: str = ''
     durationsec: int = -1
-
-class FileSpec(SpecBase):
-    pollid: int
-    fname: str
-    permafname: str = ''
-    filecontent: str = ''
-
-    @pydantic.validator('fname')
-    def valfname(cls, fname):
-        if SERVER or REMOTE_MODE: return fname
-        fname = os.path.abspath(fname)
-        assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
-        return fname
 
 class PymolCMDSpecError(Exception):
     def __init__(self, message, log):
@@ -221,7 +198,7 @@ class PymolCMDSpecError(Exception):
 
 TOBJNUM = 0
 
-class PymolCMDSpec(SpecBase):
+class PymolCMDSpec(WithUserSpec, StrictFields):
     name: str
     desc: str = ''
     cmdon: str
@@ -237,48 +214,10 @@ class PymolCMDSpec(SpecBase):
     @pydantic.model_validator(mode='after')
     def _validated(self):
         fix_label_case(self)
-        if self.cmdcheck: self._check_cmds()
+        if self.cmdcheck: PymolCMDSpec_validate_commands(self)
         return self
 
-    def _check_cmds(self):
-        pymol.cmd.save('/tmp/tmp_pymol_session.pse')
-        self._check_cmds_output = '-' * 80 + os.linesep + str(self) + os.linesep + '_' * 80 + os.linesep
-        self._errors = ''
-        global TOBJNUM
-        TOBJNUM += 1
-        pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{TOBJNUM}')
-        self._check_cmd('cmdstart')
-        self._check_cmd('cmdon')
-        self._check_cmd('cmdoff')
-        pymol.cmd.delete(f'TEST_OBJECT{TOBJNUM}')
-        pymol.cmd.load('/tmp/tmp_pymol_session.pse')
-        if any(
-            [any(self._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())]):
-            # raise PymolCMDSpecError('bad pymol commands', self._check_cmds_output)
-            self._errors = self._check_cmds_output
-        return self
-
-    def _check_cmd(self, cmdname):
-        with tempfile.TemporaryDirectory() as td:
-            with open(f'{td}/stdout.log', 'w') as out:
-                with ipd.dev.redirect(stdout=out, stderr=out):
-                    cmd = getattr(self, cmdname)
-                    cmd = cmd.replace('$subject', f'TEST_OBJECT{TOBJNUM}')
-                    pymol.cmd.do(cmd, echo=False, log=False)
-            pymol.cmd.do('delete *TMP*')
-            msg = Path(f'{td}/stdout.log').read_text()
-            msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
-            self._check_cmds_output += msg
-        return self
-
-class FlowStepSpec(SpecBase):
-    workflowid: int
-    name: str
-    index: int
-    taskgen: dict[str, Union[str, int, float]] = {}
-    instructions: str = ''
-
-class WorkflowSpec(SpecBase):
+class WorkflowSpec(WithUserSpec, StrictFields):
     name: str
     desc: str
     ordering: str = 'Manual'
@@ -289,9 +228,91 @@ class WorkflowSpec(SpecBase):
         assert ordering in allowed, f'bad ordering {ordering}, must be one of {allowed}'
         return ordering
 
+class FlowStepSpec(SpecBase, StrictFields):
+    workflowid: int
+    name: str
+    index: int
+    taskgen: dict[str, Union[str, int, float]] = {}
+    instructions: str = ''
+
 class UserSpec(SpecBase):
-    username: str
+    name: str
     fullname: str = ''
 
-class GroupSpec(SpecBase):
+class GroupSpec(WithUserSpec, StrictFields):
     name: str
+
+_PML = 0
+
+def PollSpec_get_structure_properties(poll):
+    if not poll.sym or not poll.ligand:
+        try:
+            global _PML
+            filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
+            fname = next(filter(filt, os.listdir(poll.path)))
+            # print('CHECKING IN PYMOL', fname)
+            pymol.cmd.set('suspend_updates', 'on')
+            with contextlib.suppress(pymol.CmdException):
+                pymol.cmd.save(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+            pymol.cmd.delete('all')
+            pymol.cmd.load(os.path.join(poll.path, fname), f'TMP{_PML}')
+            if poll.ligand == '':
+                ligs = {a.resn for a in pymol.cmd.get_model(f'TMP{_PML} and HET and not resn HOH').atom}
+                poll.ligand = ','.join(ligs)
+            pymol.cmd.remove(f'TMP{_PML} and not name ca')
+            chains = {a.chain for a in pymol.cmd.get_model(f'TMP{_PML}').atom}
+            poll.nchain = len(chains)
+            if not poll.sym:
+                xyz = pymol.cmd.get_coords(f'TMP{_PML}')
+                if xyz is None:
+                    poll._errors += f'pymol get_coords failed on TMP{_PML}\nfname: {fname}'
+                    return poll
+                xyz = xyz.reshape(len(chains), -1, 3)
+                poll.sym = guess_symmetry(xyz)
+        except ValueError:
+            # print(os.path.join(poll.path, fname))
+            traceback.print_exc()
+            if poll.nchain < 4: poll.sym = 'C1'
+            else: poll.sym = 'unknown'
+        except (AttributeError, pymol.CmdException, gzip.BadGzipPollFile) as e:
+            poll._errors += f'POLL error in _validated: {type(e)}\n{e}'
+        finally:
+            pymol.cmd.delete(f'TMP{_PML}')
+            pymol.cmd.set('suspend_updates', 'off')
+            _PML += 1
+            with contextlib.suppress(pymol.CmdException):
+                pymol.cmd.load(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+                os.remove(os.path.expanduser('~/.config/ppp/poll_check_save.pse'))
+    assert isinstance(poll.nchain, int)
+    return poll
+
+def PymolCMDSpec_validate_commands(command):
+    pymol.cmd.save('/tmp/tmp_pymol_session.pse')
+    command._check_cmds_output = '-' * 80 + os.linesep + str(command) + os.linesep + '_' * 80 + os.linesep
+    command._errors = ''
+    global TOBJNUM
+    TOBJNUM += 1
+    pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{TOBJNUM}')
+    PymolCMDSpec_validate_command(command, 'cmdstart')
+    PymolCMDSpec_validate_command(command, 'cmdon')
+    PymolCMDSpec_validate_command(command, 'cmdoff')
+    pymol.cmd.delete(f'TEST_OBJECT{TOBJNUM}')
+    pymol.cmd.load('/tmp/tmp_pymol_session.pse')
+    if any(
+        [any(command._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())]):
+        # raise PymolCMDSpecError('bad pymol commands', command._check_cmds_output)
+        command._errors = command._check_cmds_output
+    return command
+
+def PymolCMDSpec_validate_command(command, cmdname):
+    with tempfile.TemporaryDirectory() as td:
+        with open(f'{td}/stdout.log', 'w') as out:
+            with ipd.dev.redirect(stdout=out, stderr=out):
+                cmd = getattr(command, cmdname)
+                cmd = cmd.replace('$subject', f'TEST_OBJECT{TOBJNUM}')
+                pymol.cmd.do(cmd, echo=False, log=False)
+        pymol.cmd.do('delete *TMP*')
+        msg = Path(f'{td}/stdout.log').read_text()
+        msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
+        command._check_cmds_output += msg
+    return command

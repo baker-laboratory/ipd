@@ -1,3 +1,4 @@
+import sys
 import ipd
 from ipd import ppp
 import tempfile
@@ -11,34 +12,41 @@ from icecream import ic
 rich = ipd.dev.lazyimport('rich', 'Rich', pip=True)
 pytest = ipd.dev.lazyimport('pytest', pip=True)
 
-testclient, pppserver = None, None
+testclient, backend = None, None
 
 def main():
+    test_spec_basics()
     for fn in [test_read_root, test_file_upload, test_poll, test_access_all]:
         with tempfile.TemporaryDirectory() as td:
-            testclient, pppserver = make_tmp_clent_server(td)
-            fn(testclient, pppserver)
+            testclient, backend = make_tmp_clent_server(td)
+            fn(testclient, backend)
     print('PASS')
     ipd.dev.global_timer.report()
 
-@ipd.dev.timed
-def test_access_all(testclient, pppserver):
+def test_spec_basics():
+    with pytest.raises(TypeError):
+        ppp.PollSpec(name='foo', path='.', user='foo', ntisearien=1)
+
+def test_access_all(testclient, backend):
     client = ppp.PPPClient(testclient)
     print(len(client.polls()))
 
-@ipd.dev.timed
 def make_tmp_clent_server(tempdir):
-    engine = create_engine(f'sqlite:///{tempdir}/test.db')
-    pppserver = ppp.server.Backend(engine, tempdir)
-    testclient = TestClient(pppserver.app)
-    return testclient, pppserver
+    # engine = create_engine(f'sqlite:///{tempdir}/test.db')
+    # backend = ppp.server.Backend(engine, tempdir)
+    # testclient = TestClient(backend.app)
+    # server, backend = ipd.ppp.server.run(port=12345, dburl='postgresql://localhost/ppp')
+    server, backend = ipd.ppp.server.run(port=12345, dburl=f'sqlite:///{tempdir}/test.db')
+    testclient = ipd.ppp.PPPClient('localhost:12345')
+    ppp.server.defaults.ensure_init_db(backend)
+    return testclient, backend
 
-def test_read_root(testclient, pppserver):
+def test_read_root(testclient, backend):
     response = testclient.get("/")
     assert response.status_code == 200
     assert response.json() == {"msg": "Hello World"}
 
-def test_file_upload(testclient, pppserver):
+def test_file_upload(testclient, backend):
     client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
     if response := client.upload_poll(ppp.PollSpec(name='usertest1pub', path=path, user='user1',
@@ -49,29 +57,28 @@ def test_file_upload(testclient, pppserver):
     exists, newfname = client.post('/have/file', file)
     assert not exists
     assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
-    exists, newfname = pppserver.have_file(file)
+    exists, newfname = backend.have_file(file)
     assert not exists
     assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
     filecontent = Path(file.fname).read_text()
     file.filecontent = filecontent
     file.permafname = newfname
     file = ipd.ppp.FileSpec(**file.dict())
-    # response = pppserver.create_file(file)
+    # response = backend.create_file(file)
     client.post('/create/file', file)
     diff = subprocess.check_output(['diff', localfname, newfname])
     if diff: print(f'diff {localfname} {newfname} {diff}')
     assert not diff
     file.filecontent = ''
     files = [file for _ in range(10)]
-    pppserver.create_empty_files(files)
+    backend.create_empty_files(files)
     poll = client.polls(name='usertest1pub')[0]
     assert len(poll.files) == 13
     assert len(client.files()) == 13
     client.remove(poll)
     assert len(client.polls()) == 0
 
-@ipd.dev.timed
-def test_poll(testclient, pppserver):
+def test_poll(testclient, backend):
     client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
     client.upload_poll(ppp.PollSpec(name='usertest1pub', path=path, user='user1', ispublic=True))
@@ -95,7 +102,7 @@ def test_poll(testclient, pppserver):
     polljs = testclient.get('/polls').json()
     # print(polljs)
     # polls = [ppp.Poll(**_) for _ in polljs]
-    polls = pppserver.polls()
+    polls = backend.polls()
     assert len(polls) == 7
     # for poll in polls:
     # print(poll, len(poll.files))
@@ -132,7 +139,7 @@ def test_poll(testclient, pppserver):
     # print(p.id, p.name, len(p.files))
     assert len(poll.files) == 3
     for i in range(1, 4):
-        assert pppserver.poll(i).files[0].poll.id == i
+        assert backend.poll(i).files[0].poll.id == i
 
     fname = ipd.testpath('ppppdbdir/1pgx.cif')
     client.upload_review(ppp.ReviewSpec(fname=fname, user='bar', pollid=1, grade='C'))
