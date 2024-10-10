@@ -66,10 +66,7 @@ def test_file_upload(testclient, backend):
     localfname = os.path.join(path, '1pgx.cif')
     file = ipd.ppp.PollFileSpec(pollid=2, fname=localfname)
     exists, newfname = client.get('/have/pollfile', fname=file.fname, pollid=client.npolls())
-    print('new', file.fname)
-    for f in client.pollfiles():
-        print(f.fname)
-    assert exists == (file.fname in [f.fname for f in client.pollfiles()])
+    assert file.fname in [f.fname for f in client.pollfiles()]
     assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
     exists, newfname = backend.have_pollfile(fname=localfname, pollid=client.npolls())
     assert exists == (file.fname in [f.fname for f in client.pollfiles()])
@@ -161,24 +158,24 @@ def test_poll(testclient, backend):
     client.newuser(name='reviewer')
     # print([p.name for p in client.users()])
     # print(client.user(name='reviewer'))
-    client.newreview(userid='reviewer', pollid=poll.id, pollfileid=fname, workflowid=1, grade='dislike')
+    rev = client.newreview(userid='reviewer', pollid=poll.id, pollfileid=fname, workflowid=1, grade='dislike')
     assert client.reviews()[0].user.name == 'reviewer'
+    assert os.path.exists(rev.pollfile.permafname)
     # print('\n'.join([f'{f.pollid} {f.fname}' for f in client.pollfiles()]))
     review = ppp.ReviewSpec(pollid=2, pollfileid=fname, grade='superlike', comment='foobar')
     assert review.grade == 'superlike'
     result = client.upload_review(review)
-    assert not result, result
+    assert isinstance(result, ipd.ppp.Review)
     # rich.print(client.reviews())
     assert len(client.reviews()) == 2
-    result = client.upload_review(ppp.ReviewSpec(pollid=3, pollfileid=fname, grade='hate'))
-    assert not result, result
+    result = client.upload(ppp.ReviewSpec(pollid=3, pollfileid=fname, grade='hate'))
+    assert isinstance(result, ipd.ppp.Review)
 
     assert 1 == len(client.pollfile(id=poll.id, fname=fname).reviews)
     assert 3 == len(list(it.chain(*(f.reviews for f in client.pollfiles(fname=fname)))))
     reviews = client.reviews()
     polls = client.polls()
     files = client.pollfiles()
-    cmds = client.pymolcmds()
 
     assert reviews[0].poll.id == 8
     assert reviews[0].pollfile.id == 28
@@ -190,14 +187,6 @@ def test_poll(testclient, backend):
     assert isinstance(polls[2].reviews[0], ppp.Review)
     assert isinstance(files[1].poll, ppp.Poll)
 
-    assert not client.upload(
-        ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines', userid='test'))
-    assert client.upload(ppp.PymolCMDSpec(name='test2', cmdon='fubar', cmdoff='hide lines',
-                                          userid='test')).count('NameError')
-    assert client.upload(ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines',
-                                          userid='test')).count('duplicate')
-    assert len(client.pymolcmds(user='test')) == 1
-
     for r in reviews:
         print('permafname', r.pollfile.permafname)
         print(r.pollfile)
@@ -207,6 +196,19 @@ def test_poll(testclient, backend):
     print(len(client.polls(name='foo1')))
 
     assert len(client.polls(name='foo1')) == 1
+
+    result = client.upload(
+        ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines', userid='test'))
+    assert isinstance(result, ppp.PymolCMD)
+    result = client.upload(ppp.PymolCMDSpec(name='test2', cmdon='fubar', cmdoff='hide lines',
+                                            userid='test')).count('NameError')
+    print(result)
+    result = client.upload(
+        ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines',
+                         userid='test')).count('duplicate')
+    print(result)
+
+    assert len(client.pymolcmds(user='test')) == 1
 
 if __name__ == '__main__':
     main()

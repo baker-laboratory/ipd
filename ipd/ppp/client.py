@@ -90,12 +90,16 @@ class PPPClient:
         thingname = thing.__class__.__name__.replace('Spec', '').lower()
         return self.get(f'/remove/{thingname}/{thing.id}')
 
-    def upload(self, thing, **kw):
+    def upload(self, thing, _custom=True, **kw):
+        if _custom and isinstance(thing, ipd.ppp.PollSpec): return self.upload_poll(thing)
+        if _custom and isinstance(thing, ipd.ppp.ReviewSpec): return self.upload_review(thing)
         thing = thing.spec()
         # print('upload', type(thing), kw)
         if thing._errors: return thing._errors
         kind = type(thing).__name__.replace('Spec', '').lower()
-        return self.post(f'/create/{kind}', thing, **kw)
+        result = self.post(f'/create/{kind}', thing, **kw)
+        if not result.isdigit(): return result
+        return ipd.ppp.frontend_model[kind](self, **self.get(f'/{kind}', id=result))
 
     def upload_poll(self, poll):
         poll = poll.spec()
@@ -110,28 +114,27 @@ class PPPClient:
         filt = lambda s: not s.startswith('_') and s.endswith(ipd.ppp.STRUCTURE_FILE_SUFFIX)
         fnames = list(filter(filt, fnames))
         assert fnames, f'path must contain structure files: {poll.path}'
-        if errors := self.upload(poll): return errors
-        poll = self.polls(name=poll.name)[0]
+        poll = self.upload(poll, _custom=False)
         construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
         files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
         return self.post('/create/pollfiles', files)
 
     def upload_review(self, review):
+        print('=================================================================')
         review = review.spec()
         file = self.pollfile(pollid=review.pollid, id=review.pollfileid)
         print('review fname', review.pollid, file.fname)
         exists, permafname = self.get('/have/pollfile', fname=file.fname, pollid=file.pollid)
         assert permafname
         file.permafname = permafname
-        fileid = file.id
-        file = file.spec()
+        file, fileid = file.spec(), file.id
         assert self.pollfile(id=fileid).permafname == permafname
-        print(fileid, permafname)
+        print('id/perma', fileid, permafname)
         file.filecontent = Path(file.fname).read_text()
         if not exists:
             if response := self.post('/create/pollfilecontents', file): return response
         review = ppp.ReviewSpec(**review.dict())
-        return self.upload(review)
+        return self.upload(review, _custom=False)
 
     def pollinfo(self, user=None):
         if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()

@@ -146,7 +146,7 @@ class Backend:
         self.fix_date(thing)
         self.session.add(thing)
         self.session.commit()
-        result = ''
+        result = str(thing.id)
         try:
             try:
                 thing = thing.validated_with_backend(self)
