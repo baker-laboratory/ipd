@@ -1,3 +1,4 @@
+import itertools as it
 import sys
 import ipd
 from ipd import ppp
@@ -99,6 +100,11 @@ def test_poll(testclient, backend):
     # client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
     client.upload(ppp.UserSpec(name='test1'))
+
+    assert client.user(name='test1').fullname == ''
+    client.user(name='test1').fullname = 'fulllname'
+    assert client.user(name='test1').fullname == 'fulllname'
+
     client.upload(ppp.UserSpec(name='test2'))
     client.upload(ppp.UserSpec(name='test3'))
     client.upload_poll(ppp.PollSpec(name='usertest1pub', path=path, userid='test1', ispublic=True))
@@ -164,38 +170,38 @@ def test_poll(testclient, backend):
     assert not result, result
     # rich.print(client.reviews())
     assert len(client.reviews()) == 2
-    client.upload_review(ppp.ReviewSpec(pollid=3, pollfileid=fname, grade='hate'))
+    result = client.upload_review(ppp.ReviewSpec(pollid=3, pollfileid=fname, grade='hate'))
+    assert not result, result
 
-    assert len(client.reviews_for_fname(fname)) == 3
-
+    assert 1 == len(client.pollfile(id=poll.id, fname=fname).reviews)
+    assert 3 == len(list(it.chain(*(f.reviews for f in client.pollfiles(fname=fname)))))
     reviews = client.reviews()
     polls = client.polls()
-    files = client.files()
+    files = client.pollfiles()
     cmds = client.pymolcmds()
 
-    assert reviews[0].poll.id == 1
-    assert reviews[0].file.id == 2
-    print(len(polls))
-    for p in polls:
-        print(p)
-    assert len(polls[3].files) == 3
+    assert reviews[0].poll.id == 8
+    assert reviews[0].pollfile.id == 28
 
-    assert isinstance(files[0], ppp.File)
-    assert isinstance(polls[2].files[0], ppp.File)
-    assert isinstance(reviews[2].file, ppp.File)
+    assert isinstance(files[0], ppp.PollFile)
+    assert isinstance(polls[2].pollfiles[0], ppp.PollFile)
+    assert isinstance(reviews[2].pollfile, ppp.PollFile)
     assert isinstance(reviews[0], ppp.Review)
     assert isinstance(polls[2].reviews[0], ppp.Review)
-    assert isinstance(files[1].reviews[0], ppp.Review)
     assert isinstance(files[1].poll, ppp.Poll)
 
-    assert not client.upload(ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines'))
-    assert client.upload(ppp.PymolCMDSpec(name='test2', cmdon='fubar', cmdoff='hide lines')).count('NameError')
-    assert client.upload(ppp.PymolCMDSpec(name='test', cmdon='show lines',
-                                          cmdoff='hide lines')).count('duplicate')
-    assert len(client.pymolcmds()) == 1
+    assert not client.upload(
+        ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines', userid='test'))
+    assert client.upload(ppp.PymolCMDSpec(name='test2', cmdon='fubar', cmdoff='hide lines',
+                                          userid='test')).count('NameError')
+    assert client.upload(ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines',
+                                          userid='test')).count('duplicate')
+    assert len(client.pymolcmds(user='test')) == 1
 
     for r in reviews:
-        assert os.path.exists(r.permafname)
+        print('permafname', r.pollfile.permafname)
+        print(r.pollfile)
+        assert os.path.exists(r.pollfile.permafname)
 
     print([p.name for p in client.polls()])
     print(len(client.polls(name='foo1')))

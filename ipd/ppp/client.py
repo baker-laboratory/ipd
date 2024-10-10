@@ -32,6 +32,8 @@ class PPPClientError(Exception):
 def tojson(thing):
     if isinstance(thing, list):
         return f'[{",".join(tojson(_) for _ in thing)}]'
+    if isinstance(thing, str):
+        return thing
     return thing.json()
 
 class PPPClient:
@@ -48,6 +50,10 @@ class PPPClient:
 
     def getattr(self, thing, id, attr):
         return self.get(f'/getattr/{thing}/{id}/{attr}')
+
+    def setattr(self, thing, attr, val):
+        thingtype = thing.__class__.__name__.lower()
+        return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
 
     def get(self, url, **kw):
         ipd.ppp.fix_label_case(kw)
@@ -80,19 +86,19 @@ class PPPClient:
         return response.json()
 
     def remove(self, thing):
-        if isinstance(thing, ppp.Poll): return self.get(f'/remove/poll/{thing.id}')
-        elif isinstance(thing, ppp.PollFile): return self.get(f'/remove/pollfile/{thing.id}')
-        elif isinstance(thing, pppp.Review): return self.get(f'/remove/review/{thing.id}')
-        elif isinstance(thing, ppp.PymolCMD): return self.get(f'/remove/pymolcmd/{thing.id}')
-        else: raise ValueError('cant remove type {type(thing)}\n{thing}')
+        assert isinstance(thing, ipd.ppp.SpecBase), f'cant remove type {thing.__class__.__name__}'
+        thingname = thing.__class__.__name__.replace('Spec', '').lower()
+        return self.get(f'/remove/{thingname}/{thing.id}')
 
     def upload(self, thing, **kw):
+        thing = thing.spec()
         # print('upload', type(thing), kw)
         if thing._errors: return thing._errors
         kind = type(thing).__name__.replace('Spec', '').lower()
         return self.post(f'/create/{kind}', thing, **kw)
 
     def upload_poll(self, poll):
+        poll = poll.spec()
         # digs:/home/sheffler/project/rfdsym/hilvert/pymol_saves
         if digs := poll.path.startswith('digs:'):
             lines = check_output(['rsync', f'{poll.path}/*']).decode().splitlines()
@@ -111,10 +117,16 @@ class PPPClient:
         return self.post('/create/pollfiles', files)
 
     def upload_review(self, review):
+        review = review.spec()
         file = self.pollfile(pollid=review.pollid, id=review.pollfileid)
         print('review fname', review.pollid, file.fname)
         exists, permafname = self.get('/have/pollfile', fname=file.fname, pollid=file.pollid)
+        assert permafname
         file.permafname = permafname
+        fileid = file.id
+        file = file.spec()
+        assert self.pollfile(id=fileid).permafname == permafname
+        print(fileid, permafname)
         file.filecontent = Path(file.fname).read_text()
         if not exists:
             if response := self.post('/create/pollfilecontents', file): return response

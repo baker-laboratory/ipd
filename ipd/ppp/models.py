@@ -72,9 +72,12 @@ class SpecBase(pydantic.BaseModel):
     def __getitem__(self, k):
         return getattr(self, k)
 
+    def spec(self):
+        return self
+
 class StrictFields:
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
+    def __init_subclass__(cls, **kw):
+        super().__init_subclass__(**kw)
 
         def new_init(self, pppclient=None, id=None, **data):
             for name in data:
@@ -85,7 +88,7 @@ class StrictFields:
 
         cls.__init__ = new_init
 
-class WithUserSpec(SpecBase):
+class _SpecWithUser(SpecBase):
     userid: Union[str, int] = pydantic.Field(default='anonymous_coward', validate_default=True)
 
     @pydantic.validator('userid')
@@ -106,7 +109,7 @@ class WithUserSpec(SpecBase):
         assert isinstance(self.userid, int), 'userid must be an int after validation'
         return self
 
-class PollSpec(WithUserSpec, StrictFields):
+class PollSpec(_SpecWithUser, StrictFields):
     name: str
     desc: str = ''
     path: str
@@ -151,11 +154,17 @@ class PollSpec(WithUserSpec, StrictFields):
     def __hash__(self):
         return hash(self.path)
 
+class FileKindSpec(SpecBase, StrictFields):
+    kind: str
+
 class PollFileSpec(SpecBase, StrictFields):
     pollid: int
     fname: str
+    tag: str = ''
     permafname: str = ''
     filecontent: str = ''
+    parentid: Union[int, None] = None
+    filekindid: Union[int, None] = None
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
@@ -164,7 +173,7 @@ class PollFileSpec(SpecBase, StrictFields):
         assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
         return fname
 
-class ReviewSpec(WithUserSpec, StrictFields):
+class ReviewSpec(_SpecWithUser, StrictFields):
     pollid: int
     grade: str
     comment: str = ''
@@ -212,9 +221,7 @@ class PymolCMDSpecError(Exception):
         super().__init__(message + os.linesep + log)
         self.log = log
 
-TOBJNUM = 0
-
-class PymolCMDSpec(WithUserSpec, StrictFields):
+class PymolCMDSpec(_SpecWithUser, StrictFields):
     name: str
     desc: str = ''
     cmdon: str
@@ -233,7 +240,7 @@ class PymolCMDSpec(WithUserSpec, StrictFields):
         if self.cmdcheck: PymolCMDSpec_validate_commands(self)
         return self
 
-class WorkflowSpec(WithUserSpec, StrictFields):
+class WorkflowSpec(_SpecWithUser, StrictFields):
     name: str
     desc: str
     ordering: str = 'Manual'
@@ -255,7 +262,7 @@ class UserSpec(SpecBase):
     name: str
     fullname: str = ''
 
-class GroupSpec(WithUserSpec, StrictFields):
+class GroupSpec(_SpecWithUser, StrictFields):
     name: str
 
 _PML = 0
@@ -306,13 +313,13 @@ def PymolCMDSpec_validate_commands(command):
     pymol.cmd.save('/tmp/tmp_pymol_session.pse')
     command._check_cmds_output = '-' * 80 + os.linesep + str(command) + os.linesep + '_' * 80 + os.linesep
     command._errors = ''
-    global TOBJNUM
-    TOBJNUM += 1
-    pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{TOBJNUM}')
+    global _PML
+    _PML += 1
+    pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{_PML}')
     PymolCMDSpec_validate_command(command, 'cmdstart')
     PymolCMDSpec_validate_command(command, 'cmdon')
     PymolCMDSpec_validate_command(command, 'cmdoff')
-    pymol.cmd.delete(f'TEST_OBJECT{TOBJNUM}')
+    pymol.cmd.delete(f'TEST_OBJECT{_PML}')
     pymol.cmd.load('/tmp/tmp_pymol_session.pse')
     if any(
         [any(command._check_cmds_output.lower().count(err) for err in 'error unknown unrecognized'.split())]):
@@ -325,7 +332,7 @@ def PymolCMDSpec_validate_command(command, cmdname):
         with open(f'{td}/stdout.log', 'w') as out:
             with ipd.dev.redirect(stdout=out, stderr=out):
                 cmd = getattr(command, cmdname)
-                cmd = cmd.replace('$subject', f'TEST_OBJECT{TOBJNUM}')
+                cmd = cmd.replace('$subject', f'TEST_OBJECT{_PML}')
                 pymol.cmd.do(cmd, echo=False, log=False)
         pymol.cmd.do('delete *TMP*')
         msg = Path(f'{td}/stdout.log').read_text()
@@ -333,13 +340,8 @@ def PymolCMDSpec_validate_command(command, cmdname):
         command._check_cmds_output += msg
     return command
 
-spec_model = dict(poll=PollSpec,
-                  pollfile=PollFileSpec,
-                  review=ReviewSpec,
-                  reviewstep=ReviewStepSpec,
-                  pymolcmd=PymolCMDSpec,
-                  flowstep=FlowStepSpec,
-                  workflow=WorkflowSpec,
-                  user=UserSpec,
-                  group=GroupSpec)
+spec_model = {
+    name.replace('Spec', '').lower(): cls
+    for name, cls in globals().items() if name.endswith('Spec')
+}
 assert not any(name.endswith('s') for name in spec_model)

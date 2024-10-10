@@ -55,10 +55,12 @@ class Backend:
             route(f'/{model}s', getattr(self, f'{model}s'), methods=['GET'])
             route(f'/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
             route(f'/create/{model}', getattr(self, f'create_{model}'), methods=['POST'])
+
         route('/', self.root, methods=['GET'])
         route('/create/pollfilecontents', self.create_file_with_content, methods=['POST'])
         route('/create/pollfiles', self.create_empty_files, methods=['POST'])
         route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
+        route('/setattr/{thing}/{id}/{attr}', self.setattr, methods=['POST'])
         route('/have/pollfile', self.have_pollfile, methods=['GET'])
         route('/pollinfo', self.pollinfo, methods=['GET'])
         # route('/poll{id}', self.poll, methods=['GET'])
@@ -94,15 +96,26 @@ class Backend:
     def root(self) -> None:
         return dict(msg='Hello World')
 
-    def getattr(self, thing, id, attr):
+    def getattr(self, thing, id: int, attr):
         cls = backend_model[thing]
-        thing = next(self.session.exec(sqlmodel.select(cls).where(cls.id == id)))
+        thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
         thingattr = getattr(thing, attr)
         if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
         return thingattr
 
-    def select(self, cls, _count: bool = False, _single=False, **kw):
+    async def setattr(self, request: fastapi.Request, thing: str, id: int, attr: str):
+        cls = backend_model[thing]
+        thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
+        if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
+        assert thing.model_fields[attr].annotation in (int, float, str)
+        body = (await request.body()).decode()
+        # print(type(thing), body)
+        setattr(thing, attr, body)
+        self.session.add(thing)
+        self.session.commit()
+
+    def select(self, cls, _count: bool = False, _single=False, user=None, **kw):
         # print('select', cls, kw)
         if isinstance(cls, str): cls = backend_model[cls]
         selection = sqlalchemy.func.count(cls.id) if _count else cls
@@ -113,6 +126,7 @@ class Backend:
             if v is not None:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
+        if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)
         statement = statement.where(getattr(cls, 'ghost') == False)
         if _count: return int(self.session.exec(statement).one())
         thing = list(self.session.exec(statement))

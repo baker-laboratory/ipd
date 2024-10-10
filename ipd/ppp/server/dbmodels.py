@@ -64,12 +64,24 @@ class DBPoll(_DBWithUser, ppp.PollSpec, table=True):
         for f in backend.select(DBPollFile, pollid=self.id):
             backend.session.delete(f)
 
+class DBFileKind(_DBWithUser, ppp.FileKindSpec, table=True):
+    props: _Props = _list_default()
+    attrs: _Attrs = _dict_default()
+    pollfiles: list['DBPollFile'] = Relationship(back_populates='filekind')
+
 class DBPollFile(_DBBase, ppp.PollFileSpec, table=True):
     props: _Props = _list_default()
     attrs: _Attrs = _dict_default()
     pollid: int = Field(default=None, foreign_key='dbpoll.id')
     poll: DBPoll = Relationship(back_populates='pollfiles')
+    filekindid: Optional[int] = Field(default=None, foreign_key='dbfilekind.id', nullable=True)
+    filekind: DBFileKind = Relationship(back_populates='pollfiles')
     reviews: list['DBReview'] = Relationship(back_populates='pollfile')
+    parentid: Optional[int] = Field(default=None, foreign_key='dbpollfile.id', nullable=True)
+    parent: Optional['DBPollFile'] = Relationship(back_populates='children',
+                                                  sa_relationship_kwargs=dict(cascade="all",
+                                                                              remote_side='DBPollFile.id'))
+    children: list['DBPollFile'] = Relationship(back_populates='parent')
 
     @pydantic.validator('fname')
     def valfname(cls, fname):

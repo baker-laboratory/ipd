@@ -1,8 +1,6 @@
 import functools
 import ipd
 from typing import Optional
-from ipd.ppp.models import (PollSpec, ReviewSpec, ReviewStepSpec, PollFileSpec, PymolCMDSpec, FlowStepSpec,
-                            WorkflowSpec, UserSpec, GroupSpec)
 import pydantic
 
 requests = ipd.lazyimport('requests', pip=True)
@@ -27,6 +25,11 @@ class ClientMixin(pydantic.BaseModel):
         'noop, as validation should have happened at Spec stage'
         return self
 
+    def __setattr__(self, name, val):
+        assert name != 'id', 'cant set id via client'
+        if self._pppclient: return self._pppclient.setattr(self, name, val)
+        super().__setattr__(name, val)
+
 def client_obj_representer(dumper, obj):
     data = obj.dict()
     data['class'] = obj.__class__.__name__
@@ -40,31 +43,34 @@ def client_obj_constructor(loader, node):
 yaml.add_representer(ClientMixin, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
-class Poll(ClientMixin, PollSpec):
+class Poll(ClientMixin, ipd.ppp.PollSpec):
     _dbprops: tuple[str] = ('pollfiles', 'reviews', 'workflow', 'user')
 
-class PollFile(ClientMixin, PollFileSpec):
-    _dbprops: tuple[str] = ('poll', 'reviews')
+class FileKind(ClientMixin, ipd.ppp.FileKindSpec):
+    _dbprops: tuple[str] = ('pollfiles')
 
-class Review(ClientMixin, ReviewSpec):
+class PollFile(ClientMixin, ipd.ppp.PollFileSpec):
+    _dbprops: tuple[str] = ('poll', 'reviews', 'filekind', 'parent', 'children')
+
+class Review(ClientMixin, ipd.ppp.ReviewSpec):
     _dbprops: tuple[str] = ('poll', 'pollfile', 'workflow', 'steps', 'user')
 
-class ReviewStep(ClientMixin, ReviewStepSpec):
+class ReviewStep(ClientMixin, ipd.ppp.ReviewStepSpec):
     _dbprops: tuple[str] = ('review', 'flowstep')
 
-class PymolCMD(ClientMixin, PymolCMDSpec):
+class PymolCMD(ClientMixin, ipd.ppp.PymolCMDSpec):
     _dbprops: tuple[str] = ('flowsteps', 'user')
 
-class FlowStep(ClientMixin, FlowStepSpec):
+class FlowStep(ClientMixin, ipd.ppp.FlowStepSpec):
     _dbprops: tuple[str] = ('pymolcmds', 'workflow', 'reviews')
 
-class Workflow(ClientMixin, WorkflowSpec):
+class Workflow(ClientMixin, ipd.ppp.WorkflowSpec):
     _dbprops: tuple[str] = ('steps', 'polls', 'reviews', 'user')
 
-class User(ClientMixin, UserSpec):
+class User(ClientMixin, ipd.ppp.UserSpec):
     _dbprops: tuple[str] = ('followers', 'following', 'groups', 'polls', 'reviews', 'pymolcmds', 'workflows')
 
-class Group(ClientMixin, GroupSpec):
+class Group(ClientMixin, ipd.ppp.GroupSpec):
     _dbprops: tuple[str] = ('user', 'users')
 
 frontend_model = {name: globals()[spec.__name__[:-4]] for name, spec in ipd.ppp.spec_model.items()}
@@ -80,7 +86,7 @@ def clientprop(name):
         elif attr.rstrip('s') in frontend_model: cls = frontend_model[attr[:-1]]
         else: raise ValueError(f'unknown type {attr}')
         if isinstance(val, list):
-            return [cls(self._pppclient, **kw) for kw in val]
+            return tuple(cls(self._pppclient, **kw) for kw in val)
         return cls(self._pppclient, **val)
 
     return getter
@@ -89,3 +95,11 @@ for cls in frontend_model.values():
     name = cls.__name__.lower()
     for prop in cls._dbprops.default:
         setattr(cls, prop, clientprop(f'{name}.{prop}'))
+
+    def make_funcs_forcing_closure_over_clsspec(clsspec=ipd.ppp.spec_model[name]):
+        def spec(self):
+            return clsspec(**self.dict())
+
+        return spec
+
+    cls.spec = make_funcs_forcing_closure_over_clsspec()
