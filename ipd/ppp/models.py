@@ -20,7 +20,7 @@ _SERVERMODE = 'ppp' == socket.gethostname()
 def set_servermode(isserver):
     global _SERVERMODE
     _SERVERMODE = isserver
-    print('_SERVERMODE MODE')
+    # print('_SERVERMODE MODE')
 
 def fix_label_case(thing):
     if isinstance(thing, dict):

@@ -39,10 +39,10 @@ def tojson(thing):
 class PPPClient:
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str):
-            print('PPPClient: connecting to server', server_addr_or_testclient)
+            # print('PPPClient: connecting to server', server_addr_or_testclient)
             self.testclient, self.server_addr = None, server_addr_or_testclient
         elif isinstance(fastapi.testclient.TestClient):
-            print('PPPClient: using testclient')
+            # print('PPPClient: using testclient')
             self.testclient = server_addr_or_testclient
         assert self.get('/')['msg'] == 'Hello World'
         global _GLOBAL_CLIENT
@@ -98,7 +98,7 @@ class PPPClient:
         if thing._errors: return thing._errors
         kind = type(thing).__name__.replace('Spec', '').lower()
         result = self.post(f'/create/{kind}', thing, **kw)
-        if not result.isdigit(): return result
+        if isinstance(result, str): return result
         return ipd.ppp.frontend_model[kind](self, **self.get(f'/{kind}', id=result))
 
     def upload_poll(self, poll):
@@ -117,19 +117,17 @@ class PPPClient:
         poll = self.upload(poll, _custom=False)
         construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
         files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
-        return self.post('/create/pollfiles', files)
+        assert not self.post('/create/pollfiles', files)
+        return poll
 
     def upload_review(self, review):
-        print('=================================================================')
         review = review.spec()
         file = self.pollfile(pollid=review.pollid, id=review.pollfileid)
-        print('review fname', review.pollid, file.fname)
         exists, permafname = self.get('/have/pollfile', fname=file.fname, pollid=file.pollid)
         assert permafname
         file.permafname = permafname
         file, fileid = file.spec(), file.id
         assert self.pollfile(id=fileid).permafname == permafname
-        print('id/perma', fileid, permafname)
         file.filecontent = Path(file.fname).read_text()
         if not exists:
             if response := self.post('/create/pollfilecontents', file): return response

@@ -20,7 +20,7 @@ class _DBBase(SQLModel):
     def __hash__(self):
         return self.id
 
-    def clear(self, backend):
+    def clear(self, backend, ghost=True):
         return
 
     def validated_with_backend(self, backend):
@@ -44,25 +44,20 @@ class DBPoll(_DBWithUser, ppp.PollSpec, table=True):
     props: _Props = _list_default()
     attrs: _Attrs = _dict_default()
     nchain: int = -1
+    name: str = Field(sa_column_kwargs={"unique": True})
     pollfiles: list['DBPollFile'] = Relationship(back_populates='poll')
     reviews: list['DBReview'] = Relationship(back_populates='poll')
-    workflowid: int = Field(foreign_key='dbworkflow.id')
+    workflowid: int = Field(foreign_key='dbworkflow.id', default=1)
     workflow: 'DBWorkflow' = Relationship(back_populates='polls')
     user: 'DBUser' = Relationship(back_populates='polls')
 
-    def validated_with_backend(self, backend):
-        if conflicts := set(backend.select(DBPoll, name=self.name, idnot=self.id)):
-            print('conflicts', [c.name for c in conflicts])
-            raise DuplicateError(f'duplicate poll {self.name}', conflicts)
-        return self
-
-    def clear(self, backend):
+    def clear(self, backend, ghost=True):
         for r in backend.select(DBReview, pollid=self.id):
-            r.pollid = 666
-            r.pollfileid = 666
+            if not ghost: r.pollid, r.pollfileid = 1, 1
         backend.session.commit()
         for f in backend.select(DBPollFile, pollid=self.id):
-            backend.session.delete(f)
+            if ghost: f.ghost = True
+            else: backend.session.delete(f)
 
 class DBFileKind(_DBWithUser, ppp.FileKindSpec, table=True):
     props: _Props = _list_default()
@@ -113,15 +108,11 @@ class DBPymolCMDFlowStepLink(SQLModel, table=True):
     flowstepid: int | None = Field(default=None, foreign_key='dbflowstep.id', primary_key=True)
 
 class DBPymolCMD(_DBWithUser, ppp.PymolCMDSpec, table=True):
+    name: str = Field(sa_column_kwargs={"unique": True})
     props: _Props = _list_default()
     attrs: _Attrs = _dict_default()
     flowsteps: list['DBFlowStep'] = Relationship(back_populates='cmds', link_model=DBPymolCMDFlowStepLink)
     user: 'DBUser' = Relationship(back_populates='cmds')
-
-    def validated_with_backend(self, backend):
-        if conflicts := set(backend.select(DBPymolCMD, name=self.name, idnot=self.id)):
-            raise DuplicateError(f'duplicate pymolcmd {self.name}', conflicts)
-        return self
 
 class DBFlowStep(_DBBase, ppp.FlowStepSpec, table=True):
     props: _Props = _list_default()
@@ -133,6 +124,7 @@ class DBFlowStep(_DBBase, ppp.FlowStepSpec, table=True):
     reviews: list['DBReviewStep'] = Relationship(back_populates='flowstep')
 
 class DBWorkflow(_DBWithUser, ppp.WorkflowSpec, table=True):
+    name: str = Field(sa_column_kwargs={"unique": True})
     props: _Props = _list_default()
     attrs: _Attrs = _dict_default()
     flowsteps: list['DBFlowStep'] = Relationship(back_populates='workflow')
@@ -149,6 +141,7 @@ class DBUserGroupLink(SQLModel, table=True):
     groupid: int | None = Field(default=None, foreign_key='dbgroup.id', primary_key=True)
 
 class DBUser(_DBBase, ppp.UserSpec, table=True):
+    name: str = Field(sa_column_kwargs={"unique": True})
     props: _Props = _list_default()
     attrs: _Attrs = _dict_default()
     groups: list['DBGroup'] = Relationship(back_populates='users', link_model=DBUserGroupLink)
@@ -175,6 +168,7 @@ class DBUser(_DBBase, ppp.UserSpec, table=True):
     ownedgroups: list['DBGroup'] = Relationship(back_populates='user')
 
 class DBGroup(_DBWithUser, ppp.GroupSpec, table=True):
+    name: str = Field(sa_column_kwargs={"unique": True})
     props: _Props = _list_default()
     attrs: _Attrs = _dict_default()
     users: list['DBUser'] = Relationship(back_populates='groups', link_model=DBUserGroupLink)

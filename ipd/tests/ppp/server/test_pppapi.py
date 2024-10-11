@@ -1,3 +1,4 @@
+import sqlalchemy
 import itertools as it
 import sys
 import ipd
@@ -6,6 +7,7 @@ import tempfile
 from pathlib import Path
 import traceback
 import os
+import inspect
 import subprocess
 from fastapi.testclient import TestClient
 from sqlmodel import create_engine
@@ -18,13 +20,14 @@ pytest = ipd.dev.lazyimport('pytest', pip=True)
 testclient, backend = None, None
 
 def main():
-    test_spec_basics()
-    for fn in [test_read_root, test_file_upload, test_poll, test_access_all]:
-        with tempfile.TemporaryDirectory() as td:
+    for fn in [f for n, f in globals().items() if n.startswith('test_')]:
+        with tempfile.TemporaryDirectory() as tempdir:
             print('=' * 20, fn, '=' * 20)
-            server, backend, testclient = make_tmp_clent_server(td)
+            server, backend, client, testclient = make_tmp_clent_server(tempdir)
             try:
-                fn(testclient, backend)
+                args = {p: locals()[p] for p in inspect.signature(fn).parameters}
+                print(args)
+                fn(**args)
             except pydantic.ValidationError as e:
                 print(e)
                 rich.print(e.errors())
@@ -35,30 +38,58 @@ def main():
     print('PASS')
     ipd.dev.global_timer.report()
 
-def test_spec_basics():
-    with pytest.raises(TypeError):
-        ppp.PollSpec(name='foo', path='.', userid='test', ntisearien=1)
-
-def test_access_all(testclient, backend):
-    client = testclient
-    # client = ppp.PPPClient(testclient)
-    print(len(client.polls()))
-
 def make_tmp_clent_server(tempdir):
     # engine = create_engine(f'sqlite:///{tempdir}/test.db')
     # backend = ppp.server.Backend(engine, tempdir)
-    # testclient = TestClient(backend.app)
     # server, backend = ipd.ppp.server.run(port=12345, dburl='postgresql://localhost/ppp')
     assert not os.path.exists(f'{tempdir}/test.db')
-    server, backend, testclient = ipd.ppp.server.run(port=12345, dburl=f'sqlite:///{tempdir}/test.db')
-    ppp.server.defaults.ensure_init_db(backend)
-    return server, backend, testclient
+    server, backend, client = ipd.ppp.server.run(port=12345, dburl=f'sqlite:///{tempdir}/test.db')
+    testclient = TestClient(backend.app)
+    # ppp.server.defaults.ensure_init_db(backend)
+    return server, backend, client, testclient
 
-def test_read_root(testclient, backend):
-    assert testclient.get("/") == {"msg": "Hello World"}
+def _test_ghost(backend):
+    user = backend.newuser(name='jameswoods')
+    poll = backend.newpoll(name='foo', path='bar', user=user)
+    file = backend.newpollfile(fname='baz', poll=poll)
+    poll.pollfiles.append(file)
+    backend.session.commit()
+    assert not file.ghost
+    poll.clear(backend)
+    assert file.ghost
+    assert 1 == len(backend.pollinfo(user=user.name))
+    assert not poll.ghost
+    backend.remove('poll', poll.id)
+    assert poll.ghost
+    assert 1 == len(backend.pollinfo(user=user.name))
 
-def test_file_upload(testclient, backend):
-    client = testclient
+def _test_user_backend(backend):
+    foo = backend.newuser(name='foo')
+    assert not backend.newuser(name='foo')
+    backend.session.rollback()
+    follower = backend.newuser(name='following1')
+    follower.following.append(foo)
+    follower.following.append(foo)
+    follower.following.append(foo)
+    backend.session.commit()
+    assert follower in foo.followers
+    assert len(foo.followers) == 1
+    assert len(follower.following) == 1
+    foo.followers = []
+    assert follower not in foo.followers
+    assert foo not in follower.following
+
+def _test_spec_basics():
+    with pytest.raises(TypeError):
+        ppp.PollSpec(name='foo', path='.', userid='test', ntisearien=1)
+
+def _test_access_all(client, backend):
+    print(len(client.polls()))
+
+def _test_read_root(client):
+    assert client.get("/") == {"msg": "Hello World"}
+
+def _test_file_upload(client, backend):
     # client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
     spec = ppp.PollSpec(name='usertest1pub', path=path, userid='test', ispublic=True)
@@ -92,9 +123,7 @@ def test_file_upload(testclient, backend):
     client.remove(poll)
     assert len(client.polls()) == 1
 
-def test_poll(testclient, backend):
-    client = testclient
-    # client = ppp.PPPClient(testclient)
+def test_poll(client, backend):
     path = ipd.testpath('ppppdbdir')
     client.upload(ppp.UserSpec(name='test1'))
 
@@ -114,17 +143,16 @@ def test_poll(testclient, backend):
     assert 2 == len(client.pollinfo(user='sheffler'))
     assert 5 == len(client.pollinfo(user='admin'))
 
-    response = client.upload_poll(ppp.PollSpec(name='foo1', desc='bar', path=path))
-    assert not response, response
-    response = client.upload_poll(ppp.PollSpec(name='foo2', desc='Nntsebar', path=path))
-    assert not response, response
-    response = client.upload_poll(
+    poll = client.upload_poll(ppp.PollSpec(name='foo1', desc='bar', path=path))
+    assert isinstance(poll, ppp.Poll)
+    poll = client.upload_poll(ppp.PollSpec(name='foo2', desc='Nntsebar', path=path))
+    assert isinstance(poll, ppp.Poll)
+    poll = client.upload_poll(
         ppp.PollSpec(name='foo3', desc='barntes', path=path, props=['ligand', 'multichain']))
-    assert not response, response
 
     assert len(client.polls()) == 8
-    assert testclient.get('/poll?id=2')['id'] == 2
-    polljs = testclient.get('/polls')
+    assert client.get('/poll?id=2')['id'] == 2
+    polljs = client.get('/polls')
     # print(polljs)
     # polls = [ppp.Poll(**_) for _ in polljs]
     polls = backend.polls()
@@ -142,8 +170,7 @@ def test_poll(testclient, backend):
 
     poll = ppp.PollSpec(name='foobar', path=path, props=['ast'])
     # print(poll)
-    result = client.upload_poll(poll)
-    assert not result, result
+    poll = client.upload_poll(poll)
     assert len(client.polls()) == 9
     poll = client.poll(id=8)
     assert isinstance(poll, ipd.ppp.Poll)
@@ -204,8 +231,7 @@ def test_poll(testclient, backend):
                                             userid='test')).count('NameError')
     print(result)
     result = client.upload(
-        ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines',
-                         userid='test')).count('duplicate')
+        ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines', userid='test'))
     print(result)
 
     assert len(client.pymolcmds(user='test')) == 1

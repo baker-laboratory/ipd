@@ -1,8 +1,8 @@
 """init dbschema 0.2
 
-Revision ID: e619b88afe18
+Revision ID: 45ddf74346d4
 Revises: 
-Create Date: 2024-10-10 16:18:31.435718
+Create Date: 2024-10-10 22:16:47.732597
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e619b88afe18'
+revision: str = '45ddf74346d4'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,12 +25,13 @@ def upgrade() -> None:
     sa.Column('telemetry', sa.Boolean(), nullable=False),
     sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
-    sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('fullname', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('props', sa.JSON(), nullable=True),
     sa.Column('attrs', sa.JSON(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('dbfilekind',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
@@ -52,11 +53,12 @@ def upgrade() -> None:
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('props', sa.JSON(), nullable=True),
     sa.Column('attrs', sa.JSON(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['userid'], ['dbuser.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('dbpymolcmd',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
@@ -65,6 +67,8 @@ def upgrade() -> None:
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('props', sa.JSON(), nullable=True),
+    sa.Column('attrs', sa.JSON(), nullable=True),
     sa.Column('desc', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('cmdon', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('cmdoff', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
@@ -76,10 +80,9 @@ def upgrade() -> None:
     sa.Column('maxchains', sa.Integer(), nullable=False),
     sa.Column('cmdcheck', sa.Boolean(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('props', sa.JSON(), nullable=True),
-    sa.Column('attrs', sa.JSON(), nullable=True),
     sa.ForeignKeyConstraint(['userid'], ['dbuser.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('dbuseruserlink',
     sa.Column('followerid', sa.Integer(), nullable=False),
@@ -94,14 +97,15 @@ def upgrade() -> None:
     sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
-    sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('desc', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('ordering', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('props', sa.JSON(), nullable=True),
     sa.Column('attrs', sa.JSON(), nullable=True),
     sa.ForeignKeyConstraint(['userid'], ['dbuser.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('dbflowstep',
     sa.Column('ispublic', sa.Boolean(), nullable=False),
@@ -125,22 +129,23 @@ def upgrade() -> None:
     sa.Column('ghost', sa.Boolean(), nullable=False),
     sa.Column('datecreated', sa.DateTime(), nullable=False),
     sa.Column('userid', sa.Integer(), nullable=False),
-    sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('desc', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('path', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('cmdstart', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('cmdstop', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('sym', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('ligand', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('enddate', sa.DateTime(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('props', sa.JSON(), nullable=True),
     sa.Column('attrs', sa.JSON(), nullable=True),
     sa.Column('nchain', sa.Integer(), nullable=False),
+    sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('workflowid', sa.Integer(), nullable=False),
+    sa.Column('enddate', sa.DateTime(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['userid'], ['dbuser.id'], ),
     sa.ForeignKeyConstraint(['workflowid'], ['dbworkflow.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('dbusergrouplink',
     sa.Column('userid', sa.Integer(), nullable=False),

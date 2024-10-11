@@ -39,7 +39,7 @@ def ensure_init_db(backend):
         backend.session.commit()
 
 def add_defaults(stress_test_polls=False, **kw):
-    print('ADD DEFAULTS')
+    # print('ADD DEFAULTS')
     import pymol
     pymol.cmd.set('suspend_updates', 'on')
     pymol.cmd.do('from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin '

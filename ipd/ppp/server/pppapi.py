@@ -55,7 +55,6 @@ class Backend:
             route(f'/{model}s', getattr(self, f'{model}s'), methods=['GET'])
             route(f'/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
             route(f'/create/{model}', getattr(self, f'create_{model}'), methods=['POST'])
-
         route('/', self.root, methods=['GET'])
         route('/create/pollfilecontents', self.create_file_with_content, methods=['POST'])
         route('/create/pollfiles', self.create_empty_files, methods=['POST'])
@@ -131,8 +130,8 @@ class Backend:
         if _count: return int(self.session.exec(statement).one())
         thing = list(self.session.exec(statement))
         if _single:
-            assert len(thing) == 1
-            thing = thing[0]
+            assert len(thing) < 2
+            thing = thing[0] if thing else None
         return thing
 
     def fix_date(self, x):
@@ -141,30 +140,20 @@ class Backend:
         if hasattr(x, 'enddate') and isinstance(x.enddate, str):
             x.enddate = datetime.strptime(x.enddate, ppp.DATETIME_FORMAT)
 
-    def validate_and_add_to_db(self, thing, replace=False) -> str:
+    def validate_and_add_to_db(self, thing) -> Union[str, int]:
         # print('validate_and_add_to_db', replace)
         self.fix_date(thing)
-        self.session.add(thing)
-        self.session.commit()
-        result = str(thing.id)
         try:
-            try:
-                thing = thing.validated_with_backend(self)
-            except AssertionError as e:
-                self.ssesion.delete(thing)
-                return f'error in validate_and_add_to_db: {e}'
-        except DuplicateError as e:
-            if replace:
-                for oldthing in e.conflict:
-                    print('server deleted', type(oldthing), oldthing.name3)
-                    oldthing.clear(self)
-                    self.session.delete(oldthing)
-            else:
-                thing.clear(self)
-                self.session.delete(thing)
-                result = 'duplicate'
-        self.session.commit()
-        return result
+            thing = thing.validated_with_backend(self)
+        except AssertionError as e:
+            return f'error in validate_and_add_to_db: {e}'
+        try:
+            self.session.add(thing)
+            self.session.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            self.session.rollback()
+            return str(e)
+        return thing.id
 
     def useridmap(self):
         query = 'SELECT id,name FROM dbuser WHERE NOT dbuser.ghost'
@@ -251,10 +240,19 @@ class Backend:
 for _name, _cls in backend_model.items():
 
     def make_funcs_forcing_closure_over_name_cls(name=_name, cls=_cls):
-        def create(self, model: cls, replace: bool = False) -> str:
-            return self.validate_and_add_to_db(model, replace)
+        def create(self, model: cls) -> Union[str, int]:
+            return self.validate_and_add_to_db(model)
 
-        def count(self, kw=None, request: fastapi.Request = None, response_model=list[cls]):
+        def new(self, **kw) -> Union[str, int]:
+            for k, v in kw.copy().items():
+                if k in ipd.ppp.server.backend_model:
+                    kw[f'{k}id'] = v.id
+                    del kw[k]
+            model = ipd.ppp.server.backend_model[name](**kw)
+            newid = getattr(self, f'create_{name}')(model)
+            return getattr(self, f'i{name}')(newid)
+
+        def count(self, kw=None, request: fastapi.Request = None, response_model=int):
             # print('route', name, cls, kw, request, flush=True)
             if request: return self.select(cls, _count=True, **request.query_params)
             elif kw: return self.select(cls, _count=True, **kw)
@@ -268,18 +266,22 @@ for _name, _cls in backend_model.items():
 
         def single(self, kw=None, request: fastapi.Request = None, response_model=Optional[cls]):
             # print('route', name, cls, kw, request, flush=True)
-            if request: result = self.select(cls, **request.query_params)
-            elif kw: result = self.select(cls, **kw)
-            else: result = self.select(cls)
-            assert len(result) <= 1
-            return result[0] if result else None
+            if request: return self.select(cls, _single=True, **request.query_params)
+            elif kw: return self.select(cls, _single=True, **kw)
+            else: return self.select(cls, _single=True)
 
-        return multi, single, count, create
+        def singleid(self, id) -> Union[cls, None]:
+            print(cls, id)
+            return self.select(cls, id=id, _single=True)
 
-    multi, single, count, create = make_funcs_forcing_closure_over_name_cls()
+        return multi, single, singleid, count, create, new
+
+    multi, single, singleid, count, create, new = make_funcs_forcing_closure_over_name_cls()
     setattr(Backend, _name, single)
+    setattr(Backend, f'i{_name}', singleid)
     setattr(Backend, f'{_name}s', multi)
     setattr(Backend, f'n{_name}s', count)
+    setattr(Backend, f'new{_name}', new)
     if not hasattr(Backend, f'create_{_name}'):
         setattr(Backend, f'create_{_name}', create)
 
@@ -309,7 +311,7 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='wa
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
     if not dburl.count('://'): dburl = f'sqlite:///{dburl}'
     os.makedirs(datadir, exist_ok=True)
-    print(f'creating db engine from url: "{dburl}"')
+    # print(f'creating db engine from url: "{dburl}"')
     engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)
@@ -340,5 +342,5 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='wa
     client = ppp.PPPClient(f'127.0.0.1:{port}')
     assert ipd.ppp.get_hack_fixme_global_client()
     ppp.server.defaults.add_defaults(**kw)
-    print('server', socket.gethostname())
+    # print('server', socket.gethostname())
     return server, backend, client
