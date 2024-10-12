@@ -27,7 +27,9 @@ class ClientMixin(pydantic.BaseModel):
 
     def __setattr__(self, name, val):
         assert name != 'id', 'cant set id via client'
-        if self._pppclient: return self._pppclient.setattr(self, name, val)
+        if self._pppclient and name[0] != '_':
+            result = self._pppclient.setattr(self, name, val)
+            assert not result, result
         super().__setattr__(name, val)
 
 def client_obj_representer(dumper, obj):

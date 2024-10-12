@@ -2,7 +2,7 @@ import os
 from typing import Optional
 import ipd
 from ipd import ppp
-from typing import Union, Self
+from typing import Union, Optional
 
 pydantic = ipd.lazyimport('pydantic', pip=True)
 sqlmodel = ipd.lazyimport('sqlmodel', pip=True)._import_module()

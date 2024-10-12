@@ -17,7 +17,8 @@ class PollInProgress:
         self.remote = remote
         self.viewer = None
         self.state.activepoll = poll.name
-        Cache = ipd.dev.PrefetchLocalPollFileCache if self.state.prefetch else ipd.devPollFileCache
+        Cache = ipd.dev.PrefetchLocalFileCache if self.state.prefetch else ipd.dev.FileCache
+        ipd.qt.isfalse_notify(self.fnames, f'Poll {self.poll.name} {self.poll.path} has no files')
         self.filecache = Cache(self.fnames, numprefetch=7 if self.state.prefetch else 0)
         self.root.toggles.update_commands_gui()
         self.root.set_pbar(lb=0, val=len(self.state.reviewed), ub=len(self.fnames) - 1)
@@ -158,7 +159,7 @@ class Polls(ipd.qt.ContextMenuMixin):
         }
 
     def _get_from_item(self, item):
-        return self.remote.poll(self.allpolls[item.text()])
+        return self.remote.poll(id=self.allpolls[item.text()])
 
     def shuffle_poll(self, poll):
         if poll: self.state.polls[poll.name].shuffle = not self.state.polls[poll.name].shuffle
@@ -187,6 +188,7 @@ class Polls(ipd.qt.ContextMenuMixin):
     def delete_poll(self, poll):
         if self.state.activepoll == poll.name: self.state.activepoll = None
         self.remote.remove(poll)
+        if len(self.listitems) == 1: self.listitems.pop().setSelected(False)
         self.refresh_polls()
 
     def refresh_polls(self):
@@ -195,6 +197,8 @@ class Polls(ipd.qt.ContextMenuMixin):
         self.listitems, self.listitemdict = [], {}
         self.allpolls = self.remote.pollinfo(user=self.state.user)  #+ localpolls
         if not self.allpolls: return
+        print(self.remote.polls(_ghost=True))
+        print('pollinfo', self.allpolls)
         for key, name, user, desc, sym, lig, nchain in self.allpolls:
             ttip = f'NAME: {name}\nDESCRIPTION: DBKEY:{key}\n{desc}\nSYM: {sym}\nUSER: {user}\nLIG: {lig}\nNCHAIN: {nchain}'
             self.polltooltip[name] = ttip
@@ -250,7 +254,7 @@ class Polls(ipd.qt.ContextMenuMixin):
     def poll_start(self, name):
         assert name in self.allpolls
         if self.pollinprogress: self.pollinprogress.cleanup()
-        poll = self.remote.poll(self.allpolls[name])
+        poll = self.remote.poll(id=self.allpolls[name])
         self.pollinprogress = PollInProgress(self.root, self.state, self.remote, poll)
         self.state.activepoll = self.pollinprogress.poll.name
         self.root.toggles.update_commands_gui()
@@ -314,9 +318,12 @@ class Polls(ipd.qt.ContextMenuMixin):
         return True
 
     def create_poll_spec(self, **kw):
-        # print('create_poll_spec')
+        kw['userid'] = kw['user']
+        del kw['user']
         try:
-            return ppp.PollSpec(**kw)
+            spec = ppp.PollSpec(**kw)
+            assert isinstance(spec, ppp.PollSpec)
+            return spec
         except Exception as e:
             notify(f'create PollSpec error:\n{e}\n{traceback.format_exc()}')
             return None
@@ -325,14 +332,14 @@ class Polls(ipd.qt.ContextMenuMixin):
         u = self.state.user
         d = os.path.abspath('.').replace(f'/mnt/home/{u}', '~').replace(f'/home/{u}', '~')
         self.create_poll(
-            self.create_poll_spec(name=f"PollFiles in {d.replace('/',' ')} ({u})",
-                                  desc='The poll for lazy people',
-                                  path=d,
-                                  user=self.state.user,
-                                  ispublic=False,
-                                  telemetry=False,
-                                  start=None,
-                                  end=None))
+            self.create_poll_spec(
+                name=f"PollFiles in {d.replace('/',' ')} ({u})",
+                desc='The poll for lazy people',
+                path=d,
+                user=self.state.user,
+                ispublic=False,
+                telemetry=False,
+            ))
 
     def cleanup(self):
         if self.pollinprogress: self.pollinprogress.cleanup()

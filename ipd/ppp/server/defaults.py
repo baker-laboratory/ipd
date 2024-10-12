@@ -28,14 +28,17 @@ def ensure_init_db(backend):
                 id=1,
                 workflowid=1,
                 ispublic=False,
+                ghost=True,
             ))
         backend.session.commit()
-        backend.session.add(ipd.ppp.server.DBPollFile(
-            fname='Ghost PollFile',
-            id=1,
-            pollid=1,
-            ispublic=False,
-        ))
+        backend.session.add(
+            ipd.ppp.server.DBPollFile(
+                fname='Ghost PollFile',
+                id=1,
+                pollid=1,
+                ispublic=False,
+                ghost=True,
+            ))
         backend.session.commit()
 
 def add_defaults(stress_test_polls=False, **kw):

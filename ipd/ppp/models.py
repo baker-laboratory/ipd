@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 import getpass
 import socket
 import contextlib
 import os
+from subprocess import check_output
 import ipd
 import tempfile
 from pathlib import Path
@@ -33,6 +34,7 @@ def fix_label_case(thing):
     if 'ligand' in keys: set('ligand', get('ligand').upper())
 
 class SpecBase(pydantic.BaseModel):
+    id: Optional[int] = None
     ispublic: bool = True
     telemetry: bool = False
     ghost: bool = False
@@ -78,6 +80,9 @@ class SpecBase(pydantic.BaseModel):
 class StrictFields:
     def __init_subclass__(cls, **kw):
         super().__init_subclass__(**kw)
+        init_cls = cls.__init__.__qualname__.split('.')[-2]
+        # if cls has explicit __init__, don't everride
+        if init_cls == cls.__name__: return
 
         def new_init(self, pppclient=None, id=None, **data):
             for name in data:
@@ -125,30 +130,34 @@ class PollSpec(_SpecWithUser, StrictFields):
     def valnchain(cls, nchain):
         return int(nchain)
 
-    @pydantic.validator('path')
-    def valpath(cls, path):
+    def valpath(self, path):
         # print('valpath', path)
-        if _SERVERMODE: return path
+        if self.ghost or _SERVERMODE: return path
         if digs := path.startswith('digs:'): path = path[5:]
         path = os.path.abspath(os.path.expanduser(path))
         if digs or not os.path.exists(path):
             assert check_output(['rsync', f'digs:{path}']), f'path {path} must exist locally or on digs'
+            print('TODO: check for struct files')
         else:
             assert os.path.isdir(path), f'path must be directory: {path}'
+            files = list(filter(lambda s: s.endswith(STRUCTURE_FILE_SUFFIX), os.listdir(path)))
+            assert files, f'no files in {path} end with {STRUCTURE_FILE_SUFFIX}'
         return f'digs:{path}' if digs else path
 
     @pydantic.model_validator(mode='after')
     def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
-        if _SERVERMODE: return self  # client does validation
-        print('poll _validated not server')
+        # if _SERVERMODE: return self  # client does validation
+        # print('poll _validated not server')
+        if self.id is not None: return self
         fix_label_case(self)
         if self.path.startswith('digs:'): return self
         self.name = self.name or os.path.basename(self.path)
         self.desc = self.desc or f'PDBs in {self.path}'
         self.sym = self.sym or guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
+        self.path = valpath(self.path)
         self = PollSpec_get_structure_properties(self)
-        print('poll _validated done')
+        # print('poll _validated done')
         return self
 
     def __hash__(self):
@@ -168,7 +177,7 @@ class PollFileSpec(SpecBase, StrictFields):
 
     @pydantic.validator('fname')
     def valfname(cls, fname):
-        if _SERVERMODE or REMOTE_MODE: return fname
+        if _SERVERMODE or ipd.ppp.REMOTE_MODE: return fname
         fname = os.path.abspath(fname)
         assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
         return fname

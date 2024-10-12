@@ -85,6 +85,9 @@ class Backend:
     def remove(self, thing, id):
         thing = self.select(thing, id=id, _single=True)
         thing.ghost = True
+        self.session.add(thing)
+        self.session.commit()
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
 
     def actually_remove(self, thing, id):
         thing = self.select(thing, id=id, _single=True)
@@ -114,8 +117,8 @@ class Backend:
         self.session.add(thing)
         self.session.commit()
 
-    def select(self, cls, _count: bool = False, _single=False, user=None, **kw):
-        # print('select', cls, kw)
+    def select(self, cls, _count: bool = False, _single=False, user=None, _ghost=False, **kw):
+        print('select', cls, kw)
         if isinstance(cls, str): cls = backend_model[cls]
         selection = sqlalchemy.func.count(cls.id) if _count else cls
         statement = sqlmodel.select(selection)
@@ -126,7 +129,7 @@ class Backend:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
         if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)
-        statement = statement.where(getattr(cls, 'ghost') == False)
+        if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)
         if _count: return int(self.session.exec(statement).one())
         thing = list(self.session.exec(statement))
         if _single:
@@ -161,44 +164,24 @@ class Backend:
         return dict(idname), {name: id for id, name in idname}
 
     def pollinfo(self, user=None):
-        # print(f'server pollinfo {user}')
-        query = ('SELECT dbpoll.id,dbpoll.name,dbuser.name,dbpoll.desc,dbpoll.sym,dbpoll.ligand,'
-                 'dbpoll.nchain FROM dbpoll JOIN dbuser ON dbpoll.userid==dbuser.id')
+        query = ('SELECT TB.id,TB.name AS name,dbuser.name AS user,TB.desc,TB.sym,TB.ligand,'
+                 'TB.nchain FROM TB JOIN dbuser ON TB.userid = dbuser.id')
+        return self._get_table_info(query, user, 'dbpoll')
+
+    def cmdinfo(self, user=None):
+        query = ('SELECT TB.id,TB.name AS name,dbuser.name AS user,TB.desc,TB.sym,TB.ligand,'
+                 'TB.minchains,TB.maxchains FROM TB JOIN dbuser ON TB.userid = dbuser.id')
+        return self._get_table_info(query, user, 'dbpymolcmd')
+
+    def _get_table_info(self, query, user, table):
+        if user == 'None': user = None
         if user and user != 'admin':
-            query += f' WHERE NOT dbpoll.ghost AND (dbpoll.ispublic OR dbuser.name="{user}")'
+            query += f' WHERE NOT TB.ghost AND (TB.ispublic OR dbuser.name = \'{user}\')'
+        query = query.replace('TB', table)
+        print(query)
         result = self.session.execute(sqlalchemy.text(f'{query};')).fetchall()
-        result = list(map(tuple, result))
+        result = list(map(list, result))
         return result
-
-    # def create_review(self, review: DBReview, replace: bool = False) -> str:
-    # print('backend create_review')
-    # poll = self.poll(dict(id=review.pollid))
-    # fileid = [f.id for f in poll.pollfiles if f.fname == review.fname]
-    # if not fileid: return f'fname {review.fname} not in poll {poll.name}, candidates: {poll.pollfiles}'
-    # review.fileid = fileid[0]
-    # return self.validate_and_add_to_db(review, replace)
-
-    # def poll_fids(self, id, response_model=dict[str, int]):
-    # return {f.fname: f.id for f in self.poll(id).pollfiles}
-#
-# def poll_file(self,
-# id: int,
-# request: fastapi.Request,
-# response: fastapi.Response,
-# shuffle: bool = False,
-# trackseen: bool = False):
-# poll = self.poll(id)
-# files = ordset.OrderedSet(f.fname for f in poll.pollfiles)
-# if trackseen:
-# seenit = request.cookies.get(f'seenit_poll{id}')
-# seenit = set(seenit.split()) if seenit else set()
-# files -= seenit
-# if not files: return dict(fname=None, next=[])
-# idx = random.randrange(len(files)) if shuffle else 0
-# if trackseen:
-# seenit.add(files[idx])
-# response.set_cookie(key=f"seenit_poll{id}", value=' '.join(seenit))
-# return dict(fname=files[0], next=files[1:10])
 
     def reviews_fname(self, fname):
         fname = fname.replace('__DIRSEP__', '/')
@@ -210,6 +193,7 @@ class Backend:
 
     def have_pollfile(self, pollid: int, fname: str):
         poll = self.poll(dict(id=pollid))
+        assert poll, f'invalid pollid {pollid} {self.npolls()}'
         newfname = self.permafname_name(poll, fname)
         return os.path.exists(newfname), newfname
 
@@ -222,6 +206,7 @@ class Backend:
 
     def create_file_with_content(self, file: DBPollFile):
         assert file.filecontent
+        assert file.permafname
         mode = 'wb' if file.permafname.endswith('.bcif') else 'w'
         with open(file.permafname, mode) as out:
             out.write(file.filecontent)
@@ -233,7 +218,7 @@ class Backend:
             self.session.add(DBPollFile(**f.dict()))
         self.session.commit()
 
-# Autogen getter methods. Yes, this is better than 20 boilerplate functions that must be kept
+# Autogen getter methods. Yes, this is better than lots of boilerplate functions that must be kept
 # in sync. Any name or name suffixed with 's'
 # that is in clientmodels, above, will get /name from the server and turn the result(s) into
 # the appropriate client model type, list of such types for plural, or None.
@@ -271,7 +256,6 @@ for _name, _cls in backend_model.items():
             else: return self.select(cls, _single=True)
 
         def singleid(self, id) -> Union[cls, None]:
-            print(cls, id)
             return self.select(cls, id=id, _single=True)
 
         return multi, single, singleid, count, create, new
@@ -291,7 +275,7 @@ class Server(uvicorn.Server):
         self.thread.start()
 
     def stop(self, *_):
-        print('shutting down server')
+        # print('shutting down server')
         self.should_exit = True
         self.thread.join()
         # sys.exit()
@@ -311,7 +295,7 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='wa
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
     if not dburl.count('://'): dburl = f'sqlite:///{dburl}'
     os.makedirs(datadir, exist_ok=True)
-    # print(f'creating db engine from url: "{dburl}"')
+    # print(f'creating db engine from url: \'{dburl}\'')
     engine = sqlmodel.create_engine(dburl)
     backend = Backend(engine, datadir)
     backend.app.mount("/ppp", backend.app)

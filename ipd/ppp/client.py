@@ -115,6 +115,7 @@ class PPPClient:
         fnames = list(filter(filt, fnames))
         assert fnames, f'path must contain structure files: {poll.path}'
         poll = self.upload(poll, _custom=False)
+        if ipd.qt.isfalse_notify(not isinstance(poll, str), poll): return
         construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
         files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
         assert not self.post('/create/pollfiles', files)
@@ -124,8 +125,8 @@ class PPPClient:
         review = review.spec()
         file = self.pollfile(pollid=review.pollid, id=review.pollfileid)
         exists, permafname = self.get('/have/pollfile', fname=file.fname, pollid=file.pollid)
-        assert permafname
         file.permafname = permafname
+        assert file.permafname
         file, fileid = file.spec(), file.id
         assert self.pollfile(id=fileid).permafname == permafname
         file.filecontent = Path(file.fname).read_text()

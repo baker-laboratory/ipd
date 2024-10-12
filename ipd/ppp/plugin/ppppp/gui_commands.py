@@ -134,24 +134,24 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
 
     def refresh_command_list(self):
         assert self.widget is not None
-        cmdsdicts = list(self.state.cmds.values()) + self.remote.pymolcmdsdict()
+        cmds = self.remote.pymolcmds()
         # print([c['name'] for c in cmdsdicts])
         if 'active_cmds' not in self.state:
-            self.state.active_cmds = {cmd['name'] for cmd in cmdsdicts if cmd['onstart']}
+            self.state.active_cmds = {cmd.name for cmd in cmds if cmd.onstart}
         self.itemsdict = {}
         self.widget.clear()
-        for cmd in cmdsdicts:
+        for cmd in cmds:
             self.widget.addItem(cmd['name'])
             item = self.widget.item(self.widget.count() - 1)
             item.setFlags(item.flags() | pymol.Qt.QtCore.Qt.ItemIsUserCheckable)
-            self.itemsdict[cmd['name']] = item
-            cmd = ToggleCommand(item, self.parent, **cmd)
+            self.itemsdict[cmd.name] = item
+            cmd = ToggleCommand(item, self.parent, **cmd.model_dump())
             item.setToolTip(
                 f'NAME: {cmd.name}\nON: {cmd.cmdon}\nOFF: {cmd.cmdoff}\nNCHAIN: {cmd.minchains}-{cmd.maxchains}'
                 f'\nispublic: {cmd.ispublic}\nSYM: {cmd.sym}\nLIG:{cmd.ligand}\nDBKEY:{cmd.id}')
             cmd.widget.setCheckState(2) if cmd.name in self.state.active_cmds else cmd.widget.setCheckState(0)
             self.cmds[cmd.name] = cmd
-        self.cmdsearchtext = '\n'.join(f'{c.name}||||{c.desc} sym:{c.sym} user:{c.user} lig:{c.ligand}'
+        self.cmdsearchtext = '\n'.join(f'{c.name}||||{c.desc} sym:{c.sym} user:{c.user.name} lig:{c.ligand}'
                                        for c in self.cmds.values())
         self.update_commands_gui()
 

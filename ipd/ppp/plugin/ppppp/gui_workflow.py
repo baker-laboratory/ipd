@@ -63,7 +63,6 @@ class WorkflowStepCmdList(ipd.qt.ContextMenuMixin):
 class WorkflowStepGui:
     def __init__(self, creator):
         self.creator = creator
-        print('new flow step')
         # uifile = os.path.join(os.path.dirname(__file__), 'gui_workflow_step.ui')
         # stepwidget = pymol.Qt.utils.loadUi(uifile, self.newflowwidget)
         self.widget = pymol.Qt.QtWidgets.QWidget(objectName='box')
