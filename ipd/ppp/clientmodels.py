@@ -2,6 +2,7 @@ import functools
 import ipd
 from typing import Optional
 import pydantic
+import uuid
 
 requests = ipd.lazyimport('requests', pip=True)
 rich = ipd.lazyimport('rich', 'Rich', pip=True)
@@ -11,7 +12,7 @@ yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
 print = rich.print
 
 class ClientMixin(pydantic.BaseModel):
-    id: int
+    id: uuid.UUID
     _pppclient: Optional['PPPClient'] = None
 
     def __init__(self, pppclient, **kw):

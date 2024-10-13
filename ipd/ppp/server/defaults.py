@@ -1,44 +1,42 @@
-import ipd
+from ipd import ppp
 import os
 import yaml
+import uuid
 from rich import print
 
 def ensure_init_db(backend):
     if not backend.users():
-        backend.session.add(ipd.ppp.server.DBUser(name='admin'))
-        backend.session.add(ipd.ppp.server.DBUser(name='sheffler'))
-        backend.session.add(ipd.ppp.server.DBUser(name='anonymous_coward'))
-        backend.session.add(ipd.ppp.server.DBUser(name='test'))
+        backend.session.add(ppp.server.DBUser.from_spec(ppp.UserSpec(name='admin')))
+        backend.session.add(ppp.server.DBUser.from_spec(ppp.UserSpec(name='sheffler')))
+        backend.session.add(ppp.server.DBUser.from_spec(ppp.UserSpec(name='anonymous_coward')))
+        backend.session.add(ppp.server.DBUser.from_spec(ppp.UserSpec(name='test')))
         backend.session.commit()
-        adminid = backend.user(dict(name='admin')).id
-        backend.session.add(
-            ipd.ppp.server.DBWorkflow(
-                name='Manual',
-                desc='The default workflow. No steps, no automation.',
-                ordering='Manual',
-                userid=adminid,
-                id=1,
-            ))
-        backend.session.add(
-            ipd.ppp.server.DBPoll(
-                name='Ghost Poll',
-                desc='Reviews point here when their poll gets deleted',
-                path='Ghost Dir',
-                userid=adminid,
-                id=1,
-                workflowid=1,
-                ispublic=False,
-                ghost=True,
-            ))
+        flowspec = ppp.WorkflowSpec(
+            name='Manual',
+            desc='The default workflow. No steps, no automation.',
+            ordering='Manual',
+            userid='admin',
+        )
+        backend.session.add(ppp.server.DBWorkflow.from_spec(flowspec))
         backend.session.commit()
-        backend.session.add(
-            ipd.ppp.server.DBPollFile(
-                fname='Ghost PollFile',
-                id=1,
-                pollid=1,
-                ispublic=False,
-                ghost=True,
-            ))
+        pollspec = ppp.PollSpec(
+            name='Ghost Poll',
+            desc='Reviews point here when their poll gets deleted',
+            path='Ghost Dir',
+            userid='admin',
+            workflowid='Manual',
+            ispublic=False,
+            ghost=True,
+        )
+        backend.session.add(ppp.server.DBPoll.from_spec(pollspec))
+        backend.session.commit()
+        filespec = ppp.PollFileSpec(
+            fname='Ghost PollFile',
+            pollid='Ghost Poll',
+            ispublic=False,
+            ghost=True,
+        )
+        backend.session.add(ppp.server.DBPollFile.from_spec(filespec))
         backend.session.commit()
 
 def add_defaults(stress_test_polls=False, **kw):
@@ -47,7 +45,7 @@ def add_defaults(stress_test_polls=False, **kw):
     pymol.cmd.set('suspend_updates', 'on')
     pymol.cmd.do('from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin '
                  'import ppp_pymol_get, ppp_pymol_set, ppp_pymol_add_default')
-    client = ipd.ppp.get_hack_fixme_global_client()
+    client = ppp.get_hack_fixme_global_client()
     add_builtin_cmds(client)
     add_sym_cmds(client)
     if stress_test_polls: add_polls(client, stress_test_polls)
@@ -81,7 +79,7 @@ def add_polls(client, stress=False):
         for i in range(1000):
             name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
             print('add poll', name)
-            spec = ipd.ppp.PollSpec(
+            spec = ppp.PollSpec(
                 name=name,
                 path='/home/sheffler/project/monomers',
                 nchain=random.randrange(1, 9),
@@ -94,7 +92,7 @@ def add_polls(client, stress=False):
         if name in presentpolls:
             print('skip', name)
             continue
-        pollspec = ipd.ppp.PollSpec(name=name, path=dir_, ispublic=True)
+        pollspec = ppp.PollSpec(name=name, path=dir_, ispublic=True)
         if err := client.upload(pollspec):
             print('create poll failed:', err)
         else:
@@ -104,7 +102,7 @@ def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
         config = yaml.load(inp, yaml.Loader)
         for cmd in config['pymolcmds']:
-            spec = ipd.ppp.PymolCMDSpec(cmdcheck=False, userid='sheffler', **cmd)
+            spec = ppp.PymolCMDSpec(cmdcheck=False, userid='sheffler', **cmd)
             if not spec.errors():
                 client.upload(spec)
             else:
@@ -113,7 +111,7 @@ def add_builtin_cmds(client):
 
 def add_sym_cmds(client):
     for sym in 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.split():
-        cmd = ipd.ppp.PymolCMDSpec(
+        cmd = ppp.PymolCMDSpec(
             name=f'sym: Make {sym.upper()}',
             cmdstart='from wills_pymol_crap import symgen',
             cmdon=

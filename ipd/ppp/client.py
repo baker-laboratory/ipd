@@ -3,6 +3,7 @@ from subprocess import check_output
 import ipd
 import functools
 from ipd import ppp
+import uuid
 from pathlib import Path
 import getpass
 from typing import Union
@@ -98,8 +99,11 @@ class PPPClient:
         if thing._errors: return thing._errors
         kind = type(thing).__name__.replace('Spec', '').lower()
         result = self.post(f'/create/{kind}', thing, **kw)
-        if isinstance(result, str): return result
-        return ipd.ppp.frontend_model[kind](self, **self.get(f'/{kind}', id=result))
+        try:
+            result = uuid.UUID(result)
+            return ipd.ppp.frontend_model[kind](self, **self.get(f'/{kind}', id=result))
+        except ValueError:
+            return result
 
     def upload_poll(self, poll):
         poll = poll.spec()
@@ -118,7 +122,9 @@ class PPPClient:
         if ipd.qt.isfalse_notify(not isinstance(poll, str), poll): return
         construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
         files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
-        assert not self.post('/create/pollfiles', files)
+        if result := self.post('/create/pollfiles', files):
+            self.remove(poll)
+            assert 0, result
         return poll
 
     def upload_review(self, review):
@@ -130,9 +136,11 @@ class PPPClient:
         file, fileid = file.spec(), file.id
         assert self.pollfile(id=fileid).permafname == permafname
         file.filecontent = Path(file.fname).read_text()
+        assert file.filecontent
         if not exists:
             if response := self.post('/create/pollfilecontents', file): return response
-        review = ppp.ReviewSpec(**review.dict())
+        review = review.spec()
+        print(review)
         return self.upload(review, _custom=False)
 
     def pollinfo(self, user=None):

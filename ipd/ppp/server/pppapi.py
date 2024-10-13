@@ -6,6 +6,7 @@ from datetime import datetime
 import contextlib
 import threading
 import time
+from uuid import UUID
 import traceback
 import functools
 import socket
@@ -27,6 +28,16 @@ pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodi
 uvicorn = ipd.dev.lazyimport('uvicorn', 'uvicorn[standard]', pip=True)
 # profile = ipd.dev.timed
 profile = lambda f: f
+
+_SERVERMODE = 'ppp' == socket.gethostname()
+
+def servermode():
+    return _SERVERMODE
+
+def set_servermode(isserver):
+    global _SERVERMODE
+    _SERVERMODE = isserver
+    # print('_SERVERMODE MODE')
 
 python_type_to_sqlalchemy_type = {
     str: sqlalchemy.String,
@@ -70,7 +81,6 @@ class Backend:
         self.app = fastapi.FastAPI()
         self.app.include_router(self.router)
         # ipd.dev.git_status(header='server git status', footer='end', printit=True)
-        ppp.server.defaults.ensure_init_db(self)
 
         @self.app.exception_handler(Exception)
         def validation_exception_handler(request: fastapi.Request, exc: Exception):
@@ -98,7 +108,7 @@ class Backend:
     def root(self) -> None:
         return dict(msg='Hello World')
 
-    def getattr(self, thing, id: int, attr):
+    def getattr(self, thing, id: UUID, attr):
         cls = backend_model[thing]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
@@ -106,7 +116,7 @@ class Backend:
         if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
         return thingattr
 
-    async def setattr(self, request: fastapi.Request, thing: str, id: int, attr: str):
+    async def setattr(self, request: fastapi.Request, thing: str, id: UUID, attr: str):
         cls = backend_model[thing]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
@@ -118,13 +128,14 @@ class Backend:
         self.session.commit()
 
     def select(self, cls, _count: bool = False, _single=False, user=None, _ghost=False, **kw):
-        print('select', cls, kw)
+        # print('select', cls, kw)
         if isinstance(cls, str): cls = backend_model[cls]
         selection = sqlalchemy.func.count(cls.id) if _count else cls
         statement = sqlmodel.select(selection)
         for k, v in kw.items():
             op = operator.eq
             if k.endswith('not'): k, op = k[:-3], operator.ne
+            if k.endswith('id') and isinstance(v, str): v = UUID(v)
             if v is not None:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
@@ -146,17 +157,10 @@ class Backend:
     def validate_and_add_to_db(self, thing) -> Union[str, int]:
         # print('validate_and_add_to_db', replace)
         self.fix_date(thing)
-        try:
-            thing = thing.validated_with_backend(self)
-        except AssertionError as e:
-            return f'error in validate_and_add_to_db: {e}'
-        try:
-            self.session.add(thing)
-            self.session.commit()
-        except sqlalchemy.exc.IntegrityError as e:
-            self.session.rollback()
-            return str(e)
-        return thing.id
+        thing = thing.validated_with_backend(self)
+        self.session.add(thing)
+        self.session.commit()
+        return str(thing.id)
 
     def useridmap(self):
         query = 'SELECT id,name FROM dbuser WHERE NOT dbuser.ghost'
@@ -178,7 +182,7 @@ class Backend:
         if user and user != 'admin':
             query += f' WHERE NOT TB.ghost AND (TB.ispublic OR dbuser.name = \'{user}\')'
         query = query.replace('TB', table)
-        print(query)
+        # print(query)
         result = self.session.execute(sqlalchemy.text(f'{query};')).fetchall()
         result = list(map(list, result))
         return result
@@ -191,7 +195,7 @@ class Backend:
             rev |= f.reviews
         return list(rev)
 
-    def have_pollfile(self, pollid: int, fname: str):
+    def have_pollfile(self, pollid: UUID, fname: str):
         poll = self.poll(dict(id=pollid))
         assert poll, f'invalid pollid {pollid} {self.npolls()}'
         newfname = self.permafname_name(poll, fname)
@@ -213,9 +217,9 @@ class Backend:
 
     def create_empty_files(self, files: list[ppp.PollFileSpec]):
         # print('CREATE empty files', len(files))
-        for f in files:
-            assert not f.filecontent.strip()
-            self.session.add(DBPollFile(**f.dict()))
+        for file in files:
+            assert not file.filecontent.strip()
+            self.session.add(DBPollFile(**file.dict()))
         self.session.commit()
 
 # Autogen getter methods. Yes, this is better than lots of boilerplate functions that must be kept
@@ -235,6 +239,7 @@ for _name, _cls in backend_model.items():
                     del kw[k]
             model = ipd.ppp.server.backend_model[name](**kw)
             newid = getattr(self, f'create_{name}')(model)
+
             return getattr(self, f'i{name}')(newid)
 
         def count(self, kw=None, request: fastapi.Request = None, response_model=int):
@@ -255,7 +260,7 @@ for _name, _cls in backend_model.items():
             elif kw: return self.select(cls, _single=True, **kw)
             else: return self.select(cls, _single=True)
 
-        def singleid(self, id) -> Union[cls, None]:
+        def singleid(self, id: str) -> Union[cls, None]:
             return self.select(cls, id=id, _single=True)
 
         return multi, single, singleid, count, create, new
@@ -289,7 +294,15 @@ def pymol_launch():
     pymol.cmd.set('suspend_updates', 'on')
 
 @profile
-def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='warning', local=False, **kw):
+def run(
+    port,
+    dburl=None,
+    datadir='~/.config/ppp/localserver/data',
+    loglevel='warning',
+    local=False,
+    workers=1,
+    **kw,
+):
     from rich import print
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
@@ -311,7 +324,7 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='wa
         # os.path.join(ipd.proj_dir, 'ipd/ppp/server'),
         # ],
         loop='uvloop',
-        workers=9,
+        workers=workers,
     )
     server = Server(config=config)
     server.run_in_thread()
@@ -322,9 +335,10 @@ def run(port, dburl=None, datadir='~/.config/ppp/localserver/data', loglevel='wa
         time.sleep(0.001)
     else:
         raise RuntimeError('server failed to start')
-    ppp.set_servermode(True)
+    set_servermode(True)
     client = ppp.PPPClient(f'127.0.0.1:{port}')
     assert ipd.ppp.get_hack_fixme_global_client()
+    ppp.server.defaults.ensure_init_db(backend)
     ppp.server.defaults.add_defaults(**kw)
     # print('server', socket.gethostname())
     return server, backend, client

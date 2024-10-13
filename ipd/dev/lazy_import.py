@@ -8,6 +8,8 @@ import subprocess
 
 _skip_global_install = False
 
+_warned = set()
+
 class LazyModule:
     __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels')
 
@@ -22,9 +24,12 @@ class LazyModule:
         try:
             return self._mambathenpipimport()
         except ImportError as e:
-            print(f'import_module({self._name}) failed')
-            for p in sys.path:
-                print(p)
+            msg = f'lazy import of module {self._name} failed, continuing without {self._name} support'
+            if msg not in _warned:
+                print(msg)
+                _warned.add(msg)
+            # for p in sys.path:
+            # print(p)
             raise ImportError(f'Failed to import module: {self._name}') from e
         except Exception as e:
             raise ImportError(f'Failed to import module: {self._name}') from e

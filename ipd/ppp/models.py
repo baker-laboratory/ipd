@@ -1,9 +1,9 @@
 from datetime import datetime
-from typing import Union, Optional
+from typing import Union, Optional, Callable, Annotated, get_type_hints, Type, Any
 import getpass
-import socket
 import contextlib
 import os
+import uuid
 from subprocess import check_output
 import ipd
 import tempfile
@@ -16,12 +16,39 @@ pymol = lazyimport('pymol')
 
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
-_SERVERMODE = 'ppp' == socket.gethostname()
 
-def set_servermode(isserver):
-    global _SERVERMODE
-    _SERVERMODE = isserver
-    # print('_SERVERMODE MODE')
+_RefType = Optional[Union[uuid.UUID, str, None]]
+
+def _label_field(cls):
+    if hasattr(cls, '_label'): return cls._label.default
+    return 'name'
+
+def validate_ref(val: Union[uuid.UUID, str], valinfo):
+    if hasattr(val, 'id'): return val.id
+    with contextlib.suppress(TypeError, ValueError, AttributeError):
+        return uuid.UUID(val)
+    specname = valinfo.config['title']
+    if not specname.endswith('Spec'): specname += 'Spec'
+    cls = globals()[specname]
+    field = cls.model_fields[valinfo.field_name]
+    typehint = field.annotation
+    assert typehint == _RefType
+    refcls = field.metadata[1]
+    if isinstance(refcls, str):
+        if not refcls.endswith('Spec'): refcls += 'Spec'
+        refcls = globals()[refcls]
+    if isinstance(val, str):
+        client = ipd.ppp.get_hack_fixme_global_client()
+        assert client, 'client unavailable'
+        refclsname = refcls.__name__.replace('Spec', '').lower()
+        if not (ref := getattr(client, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
+            raise ValueError(f'unknown {refcls.__name__[:-4]} named "{val}"')
+        val = ref.id
+    return val
+
+class Ref(type):
+    def __class_getitem__(cls, T):
+        return Annotated[Annotated[_RefType, pydantic.BeforeValidator(validate_ref)], T]
 
 def fix_label_case(thing):
     if isinstance(thing, dict):
@@ -34,7 +61,7 @@ def fix_label_case(thing):
     if 'ligand' in keys: set('ligand', get('ligand').upper())
 
 class SpecBase(pydantic.BaseModel):
-    id: Optional[int] = None
+    id: uuid.UUID = pydantic.Field(default_factory=uuid.uuid4)
     ispublic: bool = True
     telemetry: bool = False
     ghost: bool = False
@@ -43,7 +70,7 @@ class SpecBase(pydantic.BaseModel):
     attrs: Union[dict[str, Union[str, int, float]], str] = {}
     _errors: str = ''
 
-    @pydantic.validator('props')
+    @pydantic.field_validator('props')
     def valprops(cls, props):
         if isinstance(props, (set, list)): return props
         try:
@@ -54,7 +81,7 @@ class SpecBase(pydantic.BaseModel):
                 props = [p.strip() for p in props.strip().split(',')]
         return props
 
-    @pydantic.validator('attrs')
+    @pydantic.field_validator('attrs')
     def valattrs(cls, attrs):
         if isinstance(attrs, dict): return attrs
         try:
@@ -68,14 +95,22 @@ class SpecBase(pydantic.BaseModel):
                 }
         return attrs
 
+    def _copy_with_newid(self):
+        return self.__class__(**{**self.model_dump(), 'id': uuid.uuid4()})
+
     def errors(self):
         return self._errors
 
     def __getitem__(self, k):
         return getattr(self, k)
 
+    def __setitem__(self, k, v):
+        return setattr(self, k, v)
+
     def spec(self):
         return self
+
+_ = SpecBase()
 
 class StrictFields:
     def __init_subclass__(cls, **kw):
@@ -84,35 +119,17 @@ class StrictFields:
         # if cls has explicit __init__, don't everride
         if init_cls == cls.__name__: return
 
-        def new_init(self, pppclient=None, id=None, **data):
+        def __strict_init__(self, pppclient=None, **data):
             for name in data:
                 if name not in cls.__fields__:
                     raise TypeError(f"{cls} Invalid field name: {name}")
-            data |= dict(pppclient=pppclient, id=id)
+            data |= dict(pppclient=pppclient)
             super(cls, self).__init__(**data)
 
-        cls.__init__ = new_init
+        cls.__init__ = __strict_init__
 
 class _SpecWithUser(SpecBase):
-    userid: Union[str, int] = pydantic.Field(default='anonymous_coward', validate_default=True)
-
-    @pydantic.validator('userid')
-    def valuserid(userid):
-        # print('VALUSER', userid)
-        if isinstance(userid, str):
-            client = ipd.ppp.get_hack_fixme_global_client()
-            assert client, 'client unavailable'
-            if user := client.user(name=userid):
-                # print('FOUNDUSER', user.name, user.id)
-                return user.id
-            # print('MISSING USER', userid)
-            raise ValueError(f'unknown user "{userid}"')
-        return int(userid)
-
-    @pydantic.model_validator(mode='after')
-    def validate(self):
-        assert isinstance(self.userid, int), 'userid must be an int after validation'
-        return self
+    userid: Ref['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
 
 class PollSpec(_SpecWithUser, StrictFields):
     name: str
@@ -123,16 +140,15 @@ class PollSpec(_SpecWithUser, StrictFields):
     sym: str = ''
     nchain: Union[int, str] = -1
     ligand: str = ''
-    workflowid: int = 1
+    workflowid: Ref['WorkflowSpec'] = None
     enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
 
-    @pydantic.validator('nchain')
+    @pydantic.field_validator('nchain')
     def valnchain(cls, nchain):
         return int(nchain)
 
     def valpath(self, path):
-        # print('valpath', path)
-        if self.ghost or _SERVERMODE: return path
+        if self.ghost or ipd.ppp.server.servermode(): return path
         if digs := path.startswith('digs:'): path = path[5:]
         path = os.path.abspath(os.path.expanduser(path))
         if digs or not os.path.exists(path):
@@ -147,15 +163,15 @@ class PollSpec(_SpecWithUser, StrictFields):
     @pydantic.model_validator(mode='after')
     def _validated(self):
         # sourcery skip: merge-duplicate-blocks, remove-redundant-if, set-comprehension, split-or-ifs
-        # if _SERVERMODE: return self  # client does validation
+        # if ipd.ppp.server.servermode(): return self  # client does validation
         # print('poll _validated not server')
         if self.id is not None: return self
         fix_label_case(self)
         if self.path.startswith('digs:'): return self
+        self.path = self.valpath(self.path)
         self.name = self.name or os.path.basename(self.path)
         self.desc = self.desc or f'PDBs in {self.path}'
         self.sym = self.sym or guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
-        self.path = valpath(self.path)
         self = PollSpec_get_structure_properties(self)
         # print('poll _validated done')
         return self
@@ -167,30 +183,30 @@ class FileKindSpec(SpecBase, StrictFields):
     kind: str
 
 class PollFileSpec(SpecBase, StrictFields):
-    pollid: int
+    pollid: Ref['PollSpec']
     fname: str
     tag: str = ''
     permafname: str = ''
     filecontent: str = ''
-    parentid: Union[int, None] = None
-    filekindid: Union[int, None] = None
+    parentid: Ref['PollFileSpec'] = None
+    filekindid: Ref['FileKindSpec'] = None
 
-    @pydantic.validator('fname')
+    @pydantic.field_validator('fname')
     def valfname(cls, fname):
-        if _SERVERMODE or ipd.ppp.REMOTE_MODE: return fname
+        if ipd.ppp.server.servermode() or ipd.ppp.REMOTE_MODE: return fname
         fname = os.path.abspath(fname)
         assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
         return fname
 
 class ReviewSpec(_SpecWithUser, StrictFields):
-    pollid: int
+    pollid: uuid.UUID
     grade: str
     comment: str = ''
-    pollfileid: Union[str, int]
-    workflowid: Union[str, int] = pydantic.Field(default='Manual', validate_default=True)
+    pollfileid: Ref['PollFileSpec']
+    workflowid: Ref['WorkflowSpec'] = pydantic.Field(default='Manual', validate_default=True)
     durationsec: int = -1
 
-    @pydantic.validator('workflowid')
+    @pydantic.field_validator('workflowid')
     def valflowid(workflowid):
         if isinstance(workflowid, str):
             client = ipd.ppp.get_hack_fixme_global_client()
@@ -199,7 +215,7 @@ class ReviewSpec(_SpecWithUser, StrictFields):
             raise ValueError(f'unknown workflow "{workflowid}"')
         return int(workflowid)
 
-    @pydantic.validator('grade')
+    @pydantic.field_validator('grade')
     def valgrade(cls, grade):
         vals = 'like superlike dislike hate'.split()
         assert grade in vals, f'grade {grade} not in allowed: {vals}'
@@ -218,8 +234,8 @@ class ReviewSpec(_SpecWithUser, StrictFields):
         return self
 
 class ReviewStepSpec(SpecBase, StrictFields):
-    reviewid: int
-    flowstepid: int
+    reviewid: Ref['ReviewSpec']
+    flowstepid: Ref['FlowStepSpec']
     task: dict[str, Union[str, int, float]]
     grade: str
     comment: str = ''
@@ -261,7 +277,7 @@ class WorkflowSpec(_SpecWithUser, StrictFields):
         return ordering
 
 class FlowStepSpec(SpecBase, StrictFields):
-    workflowid: int
+    workflowid: Ref['WorkflowSpec']
     name: str
     index: int
     taskgen: dict[str, Union[str, int, float]] = {}

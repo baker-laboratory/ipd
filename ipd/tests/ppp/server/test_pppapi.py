@@ -14,6 +14,7 @@ from sqlmodel import create_engine
 from icecream import ic
 import pydantic
 import pytest
+import rich
 # from rich import print
 
 def main():
@@ -75,7 +76,7 @@ def make_tmp_clent_server(tempdir):
     # backend = ppp.server.Backend(engine, tempdir)
     # server, backend = ipd.ppp.server.run(port=12345, dburl='postgresql://localhost/ppp')
     assert not os.path.exists(f'{tempdir}/test.db')
-    server, backend, client = ipd.ppp.server.run(port=12346, dburl=f'sqlite:///{tempdir}/test.db')
+    server, backend, client = ipd.ppp.server.run(port=12346, dburl=f'sqlite:///{tempdir}/test.db', workers=1)
     testclient = TestClient(backend.app)
     # ppp.server.defaults.ensure_init_db(backend)
     return server, backend, client, testclient
@@ -93,11 +94,12 @@ def test_ghost(backend):
     assert not poll.ghost
     backend.remove('poll', poll.id)
     assert poll.ghost
-    assert 1 == len(backend.pollinfo(user=user.name))
+    assert 0 == len(backend.pollinfo(user=user.name))
 
 def test_user_backend(backend):
     foo = backend.newuser(name='foo')
-    assert not backend.newuser(name='foo')
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        backend.newuser(name='foo')
     backend.session.rollback()
     follower = backend.newuser(name='following1')
     follower.following.append(foo)
@@ -127,13 +129,13 @@ def test_file_upload(client, backend):
     spec = ppp.PollSpec(name='usertest1pub', path=path, userid='test', ispublic=True)
     if response := client.upload_poll(spec): print(response)
     localfname = os.path.join(path, '1pgx.cif')
-    file = ipd.ppp.PollFileSpec(pollid=2, fname=localfname)
+    file = ipd.ppp.PollFileSpec(pollid=spec.id, fname=localfname)
     poll = client.upload(ipd.ppp.PollSpec(name='foo', path='.'))
     assert isinstance(poll, ipd.ppp.Poll), poll
-    exists, newfname = client.get('/have/pollfile', fname=file.fname, pollid=client.npolls())
+    exists, newfname = client.get('/have/pollfile', fname=file.fname, pollid=client.polls()[-1].id)
     assert file.fname in [f.fname for f in client.pollfiles()]
     assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
-    exists, newfname = backend.have_pollfile(fname=localfname, pollid=client.npolls())
+    exists, newfname = backend.have_pollfile(fname=localfname, pollid=client.polls()[-1].id)
     # print(exists, f'"{newfname}"')
     assert newfname.endswith('\\ipd\\tests\\data\\ppppdbdir\\1pgx.cif')
     filecontent = Path(localfname).read_text()
@@ -148,7 +150,7 @@ def test_file_upload(client, backend):
     assert not diff
     os.remove(newfname)
     file.filecontent = ''
-    files = [file for _ in range(10)]
+    files = [file._copy_with_newid() for _ in range(10)]
     backend.create_empty_files(files)
     poll = client.polls(name='usertest1pub')[0]
     print(client.npollfiles())
@@ -187,7 +189,6 @@ def test_poll(client, backend):
         ppp.PollSpec(name='foo3', desc='barntes', path=path, props=['ligand', 'multichain']))
 
     assert len(client.polls()) == 7
-    assert client.get('/poll?id=2')['id'] == 2
     polljs = client.get('/polls')
     # print(polljs)
     # polls = [ppp.Poll(**_) for _ in polljs]
@@ -199,7 +200,7 @@ def test_poll(client, backend):
     pfiles = polls[1].pollfiles
     assert len(pfiles) == 4
 
-    poll3 = client.poll(id=8)
+    poll3 = client.polls()[6]
     # print(poll3)
     assert 'ligand' in poll3.props
 
@@ -207,21 +208,23 @@ def test_poll(client, backend):
     # print(poll)
     poll = client.upload_poll(poll)
     assert len(client.polls()) == 8
-    poll = client.poll(id=8)
+    poll = client.polls()[6]
     assert isinstance(poll, ipd.ppp.Poll)
     # for p in client.polls():
     # print(p.id, p.name, len(p.files))
     assert len(poll.pollfiles) == 4
     assert isinstance(poll.pollfiles[0], ipd.ppp.PollFile)
-    print([p.id for p in backend.polls()])
-    for i in range(2, 5):
-        assert backend.poll(dict(id=i)).pollfiles[0].poll.id == i
 
     fname = ipd.testpath('ppppdbdir/1pgx.cif')
     client.newuser(name='reviewer')
     # print([p.name for p in client.users()])
     # print(client.user(name='reviewer'))
-    rev = client.newreview(userid='reviewer', pollid=poll.id, pollfileid=fname, workflowid=1, grade='dislike')
+    rev = client.newreview(userid='reviewer',
+                           pollid=poll.id,
+                           pollfileid=poll.pollfiles[1],
+                           workflowid='Manual',
+                           grade='dislike')
+    print(rev)
     assert client.reviews()[0].user.name == 'reviewer'
     assert os.path.exists(rev.pollfile.permafname)
     # print('\n'.join([f'{f.pollid} {f.fname}' for f in client.pollfiles()]))
