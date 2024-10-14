@@ -4,6 +4,7 @@ import random
 import pytest
 import torch as th
 import ipd
+pytest.importorskip('ipd.fit.qcp_rms_cuda')
 from ipd.fit.qcp_rms import _rms
 import willutil as wu
 from willutil import h

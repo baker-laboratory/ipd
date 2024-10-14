@@ -6,6 +6,8 @@ import willutil as wu
 from willutil import h
 from icecream import ic
 
+pytest.importorskip('ipd.voxel.voxel_cuda')
+
 def main():
     test_voxdock_ab()
     test_voxdock_c3()

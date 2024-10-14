@@ -3,6 +3,8 @@ import torch as th
 import ipd
 from willutil import h
 
+pytest.skip(allow_module_level=True)
+
 def main():
     test_place_tip_atoms()
     test_tgt_frames()

@@ -279,7 +279,9 @@ class SymAdaptNamedSparseTensor(SymAdapt):
             symperm.rename_(*self.perm.names)
             self.perm = symperm
             self.adapted = SimpleSparseTensor(idx=symidx, val=symperm, isidx=self.isidx)
-            if self.isidx: self.adapted.val[:] = sym.idx.idx_asym_to_sym[self.adapted.val.to(int).rename(None)]
+            if self.isidx:
+                self.adapted.val[:] = sym.idx.idx_asym_to_sym[self.adapted.val.to(int).rename(None)]
+        else: raise ValueError(f'tensor {tensor.shape} not sym or asym compatible')
         assert len(self.adapted.idx) == len(self.adapted.val)
         self.adapted.idx = self.adapted.idx.to(sym.device)
         self.adapted.val = self.adapted.val.rename(None).to(sym.device).to(self.orig.dtype)

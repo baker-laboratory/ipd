@@ -7,6 +7,8 @@ from willutil import h
 import willutil as wu
 from icecream import ic
 
+pytest.importorskip('ipd.samp.samp_cuda')
+
 def main():
     # fitsd()
     test_randxform_cen()

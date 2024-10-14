@@ -3,7 +3,6 @@ import torch as th
 import numpy as np
 import ipd
 import assertpy
-import toolz
 from ipd.sym import SymKind, ShapeKind, ValueKind
 import willutil as wu
 from willutil import h

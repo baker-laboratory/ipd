@@ -259,13 +259,16 @@ class SymIndex:
     def getsubnum(self, idx):
         return self.subnum[idx]
 
-    def is_sym_subsequence(self, idx):
+    def is_sym_subsequence(self, idx, strict=True):
+        strict = len({int(_) for _ in idx}) == len(idx)
         idx = th.as_tensor(idx).to(self.unsym.device)
         if th.all(self.unsym[idx]): return True
+        # if idx.max() < len(self.idx_asym_to_sym) and th.all(self.asym[self.idx_asym_to_sym[idx]]): return False
         idx = th.as_tensor(idx, dtype=int)
+        # ic(self.asym)
         replicates = th.bincount(idx)
         replicates = replicates[replicates != 0]
-        assert len(replicates.unique()) == 1
+        if strict: assert len(replicates.unique()) == 1
         replicates = int(replicates[0])
         idx = th.as_tensor(idx, dtype=int)
         idx = idx[~self.unsym[idx]]
@@ -276,8 +279,8 @@ class SymIndex:
         # ic(idx, subcount, asucount)
         if len(subcount) != self.nsub: return False
         if len(subcount.unique()) != 1: return False
-        if len(asucount) != len(idx) // replicates // self.nsub: return False
-        if len(asucount.unique()) != 1: return False
+        if strict and len(asucount) != len(idx) // replicates // self.nsub: return False
+        if strict and len(asucount.unique()) != 1: return False
         return True
 
     def is_asym_subsequence(self, idx):

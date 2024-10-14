@@ -5,6 +5,7 @@ from willutil import h
 import torch as th
 import numpy as np
 import ipd
+pytest.importorskip('ipd.voxel.voxel_cuda')
 from ipd.voxel.voxel_cuda import _voxel
 import random
 from icecream import ic

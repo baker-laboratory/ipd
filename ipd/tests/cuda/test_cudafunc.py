@@ -2,6 +2,8 @@ import pytest
 import ipd
 import torch as th
 
+pytest.importorskip('ipd.voxel.voxel_cuda')
+
 def main():
     test_cudafunc_clash()
     test_cudafunc_contact_10()
