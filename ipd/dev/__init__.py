@@ -22,3 +22,4 @@ from ipd.dev.git import *
 from ipd.dev.toggle import *
 from ipd.dev.state import *
 from ipd.dev.filefetch import *
+from ipd.dev.apimeta import *

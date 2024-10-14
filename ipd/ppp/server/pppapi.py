@@ -1,22 +1,18 @@
 import sys
 import os
-import asyncio
-import random
 from datetime import datetime
 import contextlib
 import threading
 import time
 from uuid import UUID
 import traceback
-import functools
 import socket
 import operator
-from typing import Optional, Annotated
 import ipd
 from ipd import ppp
 import signal
 from rich import print
-from ipd.ppp.server.dbmodels import *
+from ipd.ppp.dbmodels import *
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -53,19 +49,14 @@ python_type_to_sqlalchemy_type = {
 }
 
 @profile
-class Backend:
+class Backend(ipd.dev.FastapiModelBackend, models=backend_model):
     def __init__(self, engine, datadir):
+        super().__init__()
         self.engine = engine
         self.datadir = datadir
         self.session = sqlmodel.Session(self.engine)
         sqlmodel.SQLModel.metadata.create_all(self.engine)
-        self.router = fastapi.APIRouter()
         route = self.router.add_api_route
-        for model in backend_model:
-            route(f'/{model}', getattr(self, model), methods=['GET'])
-            route(f'/{model}s', getattr(self, f'{model}s'), methods=['GET'])
-            route(f'/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
-            route(f'/create/{model}', getattr(self, f'create_{model}'), methods=['POST'])
         route('/', self.root, methods=['GET'])
         route('/create/pollfilecontents', self.create_file_with_content, methods=['POST'])
         route('/create/pollfiles', self.create_empty_files, methods=['POST'])
@@ -113,7 +104,7 @@ class Backend:
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
         thingattr = getattr(thing, attr)
-        if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
+        # if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
         return thingattr
 
     async def setattr(self, request: fastapi.Request, thing: str, id: UUID, attr: str):
@@ -155,7 +146,7 @@ class Backend:
             x.enddate = datetime.strptime(x.enddate, ppp.DATETIME_FORMAT)
 
     def validate_and_add_to_db(self, thing) -> Union[str, int]:
-        # print('validate_and_add_to_db', replace)
+        # print('validate_and_add_to_db', thing)
         self.fix_date(thing)
         thing = thing.validated_with_backend(self)
         self.session.add(thing)
@@ -222,58 +213,6 @@ class Backend:
             self.session.add(DBPollFile(**file.dict()))
         self.session.commit()
 
-# Autogen getter methods. Yes, this is better than lots of boilerplate functions that must be kept
-# in sync. Any name or name suffixed with 's'
-# that is in clientmodels, above, will get /name from the server and turn the result(s) into
-# the appropriate client model type, list of such types for plural, or None.
-for _name, _cls in backend_model.items():
-
-    def make_funcs_forcing_closure_over_name_cls(name=_name, cls=_cls):
-        def create(self, model: cls) -> Union[str, int]:
-            return self.validate_and_add_to_db(model)
-
-        def new(self, **kw) -> Union[str, int]:
-            for k, v in kw.copy().items():
-                if k in ipd.ppp.server.backend_model:
-                    kw[f'{k}id'] = v.id
-                    del kw[k]
-            model = ipd.ppp.server.backend_model[name](**kw)
-            newid = getattr(self, f'create_{name}')(model)
-
-            return getattr(self, f'i{name}')(newid)
-
-        def count(self, kw=None, request: fastapi.Request = None, response_model=int):
-            # print('route', name, cls, kw, request, flush=True)
-            if request: return self.select(cls, _count=True, **request.query_params)
-            elif kw: return self.select(cls, _count=True, **kw)
-            else: return self.select(cls, _count=True)
-
-        def multi(self, kw=None, request: fastapi.Request = None, response_model=list[cls]):
-            # print('route', name, cls, kw, request, flush=True)
-            if request: return self.select(cls, **request.query_params)
-            elif kw: return self.select(cls, **kw)
-            else: return self.select(cls)
-
-        def single(self, kw=None, request: fastapi.Request = None, response_model=Optional[cls]):
-            # print('route', name, cls, kw, request, flush=True)
-            if request: return self.select(cls, _single=True, **request.query_params)
-            elif kw: return self.select(cls, _single=True, **kw)
-            else: return self.select(cls, _single=True)
-
-        def singleid(self, id: str) -> Union[cls, None]:
-            return self.select(cls, id=id, _single=True)
-
-        return multi, single, singleid, count, create, new
-
-    multi, single, singleid, count, create, new = make_funcs_forcing_closure_over_name_cls()
-    setattr(Backend, _name, single)
-    setattr(Backend, f'i{_name}', singleid)
-    setattr(Backend, f'{_name}s', multi)
-    setattr(Backend, f'n{_name}s', count)
-    setattr(Backend, f'new{_name}', new)
-    if not hasattr(Backend, f'create_{_name}'):
-        setattr(Backend, f'create_{_name}', create)
-
 class Server(uvicorn.Server):
     def run_in_thread(self):
         self.thread = threading.Thread(target=self.run)
@@ -303,7 +242,6 @@ def run(
     workers=1,
     **kw,
 ):
-    from rich import print
     datadir = os.path.abspath(os.path.expanduser(datadir))
     dburl = dburl or f'sqlite:///{datadir}/ppp.db'
     if not dburl.count('://'): dburl = f'sqlite:///{dburl}'

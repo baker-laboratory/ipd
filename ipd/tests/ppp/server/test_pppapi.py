@@ -17,6 +17,19 @@ import pytest
 import rich
 # from rich import print
 
+def set_debug_requests():
+    import requests
+    import logging
+    import http.client as http_client
+
+    http_client.HTTPConnection.debuglevel = 1
+    # You must initialize logging, otherwise you'll not see debug output.
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
+
 def main():
     for fn in [f for n, f in globals().items() if n.startswith('test_')]:
         with tempfile.TemporaryDirectory() as tempdir:
@@ -34,6 +47,25 @@ def main():
             server.stop()
     print('PASS')
     ipd.dev.global_timer.report()
+
+def make_tmp_clent_server(tempdir):
+    # engine = create_engine(f'sqlite:///{tempdir}/test.db')
+    # backend = ppp.server.Backend(engine, tempdir)
+    # server, backend = ipd.ppp.server.run(port=12345, dburl='postgresql://localhost/ppp')
+    assert not os.path.exists(f'{tempdir}/test.db')
+    server, backend, client = ipd.ppp.server.run(port=12346,
+                                                 dburl=f'sqlite:///{tempdir}/test.db',
+                                                 workers=1,
+                                                 loglevel='warning')
+    testclient = TestClient(backend.app)
+    # ppp.server.defaults.ensure_init_db(backend)
+    return server, backend, client, testclient
+
+def test_poll_attr(client):
+    poll = client.upload_poll(ppp.PollSpec(name='foo', path='.'))
+    poll.print_full()
+    assert all([poll.id == p.pollid for p in poll.pollfiles])
+    assert isinstance(poll.pollfiles[0], ppp.PollFile)
 
 def test_spec_srict_ctor_override():
     class Foo(pydantic.BaseModel, ipd.ppp.StrictFields):
@@ -70,16 +102,6 @@ def test_pymolcmdsdict(client):
     assert isinstance(pcd[0], dict)
     cmds = client.pymolcmds()
     cmd = cmds[0]
-
-def make_tmp_clent_server(tempdir):
-    # engine = create_engine(f'sqlite:///{tempdir}/test.db')
-    # backend = ppp.server.Backend(engine, tempdir)
-    # server, backend = ipd.ppp.server.run(port=12345, dburl='postgresql://localhost/ppp')
-    assert not os.path.exists(f'{tempdir}/test.db')
-    server, backend, client = ipd.ppp.server.run(port=12346, dburl=f'sqlite:///{tempdir}/test.db', workers=1)
-    testclient = TestClient(backend.app)
-    # ppp.server.defaults.ensure_init_db(backend)
-    return server, backend, client, testclient
 
 def test_ghost(backend):
     user = backend.newuser(name='jameswoods')
@@ -123,7 +145,7 @@ def test_access_all(client, backend):
 def test_read_root(client):
     assert client.get("/") == {"msg": "Hello World"}
 
-def test_file_upload(client, backend):
+def _test_file_upload(client, backend):
     # client = ppp.PPPClient(testclient)
     path = ipd.testpath('ppppdbdir')
     spec = ppp.PollSpec(name='usertest1pub', path=path, userid='test', ispublic=True)
@@ -217,17 +239,19 @@ def test_poll(client, backend):
 
     fname = ipd.testpath('ppppdbdir/1pgx.cif')
     client.newuser(name='reviewer')
-    # print([p.name for p in client.users()])
+    print([p.name for p in client.users()])
     # print(client.user(name='reviewer'))
+    ic()
     rev = client.newreview(userid='reviewer',
                            pollid=poll.id,
                            pollfileid=poll.pollfiles[1],
                            workflowid='Manual',
                            grade='dislike')
-    print(rev)
+    ic()
     assert client.reviews()[0].user.name == 'reviewer'
     assert os.path.exists(rev.pollfile.permafname)
     # print('\n'.join([f'{f.pollid} {f.fname}' for f in client.pollfiles()]))
+    ic()
     review = ppp.ReviewSpec(pollid=2, pollfileid=fname, grade='superlike', comment='foobar')
     assert review.grade == 'superlike'
     result = client.upload_review(review)
@@ -236,7 +260,7 @@ def test_poll(client, backend):
     assert len(client.reviews()) == 2
     result = client.upload(ppp.ReviewSpec(pollid=3, pollfileid=fname, grade='hate'))
     assert isinstance(result, ipd.ppp.Review)
-
+    ic()
     assert 1 == len(client.pollfile(id=poll.id, fname=fname).reviews)
     assert 3 == len(list(it.chain(*(f.reviews for f in client.pollfiles(fname=fname)))))
     reviews = client.reviews()

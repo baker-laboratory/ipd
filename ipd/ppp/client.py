@@ -1,12 +1,9 @@
 import os
 from subprocess import check_output
 import ipd
-import functools
 from ipd import ppp
 import uuid
 from pathlib import Path
-import getpass
-from typing import Union
 
 requests = ipd.lazyimport('requests', pip=True)
 fastapi = ipd.lazyimport('fastapi', pip=True)
@@ -37,7 +34,7 @@ def tojson(thing):
         return thing
     return thing.json()
 
-class PPPClient:
+class PPPClient(ipd.dev.ModelFrontend, models=ipd.ppp.client_model):
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str):
             # print('PPPClient: connecting to server', server_addr_or_testclient)
@@ -74,10 +71,11 @@ class PPPClient:
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
         if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
-        # print('POST', url, thing)
         body = tojson(thing)
+        print('POST', url, type(thing))
         if self.testclient: response = self.testclient.post(url, content=body)
         else: response = requests.post(url, body)
+        ic(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
             reason = response.reason if hasattr(response, 'reason') else '???'
@@ -91,22 +89,25 @@ class PPPClient:
         thingname = thing.__class__.__name__.replace('Spec', '').lower()
         return self.get(f'/remove/{thingname}/{thing.id}')
 
-    def upload(self, thing, _custom=True, **kw):
-        if _custom and isinstance(thing, ipd.ppp.PollSpec): return self.upload_poll(thing)
-        if _custom and isinstance(thing, ipd.ppp.ReviewSpec): return self.upload_review(thing)
-        thing = thing.spec()
+    def upload(self, thing, _dispatch_on_type=True, **kw):
+        if _dispatch_on_type and isinstance(thing, ipd.ppp.PollSpec): return self.upload_poll(thing)
+        if _dispatch_on_type and isinstance(thing, ipd.ppp.ReviewSpec): return self.upload_review(thing)
+        thing = thing.to_spec()
         # print('upload', type(thing), kw)
-        if thing._errors: return thing._errors
+        if thing._errors:
+            return thing._errors
         kind = type(thing).__name__.replace('Spec', '').lower()
+        ic(kind)
         result = self.post(f'/create/{kind}', thing, **kw)
+        ic(result)
         try:
             result = uuid.UUID(result)
-            return ipd.ppp.frontend_model[kind](self, **self.get(f'/{kind}', id=result))
+            return ipd.ppp.client_model[kind](self, **self.get(f'/{kind}', id=result))
         except ValueError:
             return result
 
     def upload_poll(self, poll):
-        poll = poll.spec()
+        poll = poll.to_spec()
         # digs:/home/sheffler/project/rfdsym/hilvert/pymol_saves
         if digs := poll.path.startswith('digs:'):
             lines = check_output(['rsync', f'{poll.path}/*']).decode().splitlines()
@@ -118,7 +119,7 @@ class PPPClient:
         filt = lambda s: not s.startswith('_') and s.endswith(ipd.ppp.STRUCTURE_FILE_SUFFIX)
         fnames = list(filter(filt, fnames))
         assert fnames, f'path must contain structure files: {poll.path}'
-        poll = self.upload(poll, _custom=False)
+        poll = self.upload(poll, _dispatch_on_type=False)
         if ipd.qt.isfalse_notify(not isinstance(poll, str), poll): return
         construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
         files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
@@ -128,20 +129,25 @@ class PPPClient:
         return poll
 
     def upload_review(self, review):
-        review = review.spec()
+        review = review.to_spec()
         file = self.pollfile(pollid=review.pollid, id=review.pollfileid)
         exists, permafname = self.get('/have/pollfile', fname=file.fname, pollid=file.pollid)
         file.permafname = permafname
         assert file.permafname
-        file, fileid = file.spec(), file.id
+        file, fileid = file.to_spec(), file.id
         assert self.pollfile(id=fileid).permafname == permafname
         file.filecontent = Path(file.fname).read_text()
         assert file.filecontent
         if not exists:
             if response := self.post('/create/pollfilecontents', file): return response
-        review = review.spec()
-        print(review)
-        return self.upload(review, _custom=False)
+        review = review.to_spec()
+        # print(self.user(id=review.userid))
+        # print(self.poll(id=review.pollid))
+        # print(self.pollfile(id=review.pollfileid))
+        # print(self.workflow(id=review.workflowid))
+        # assert 0
+        result = self.upload(review, _dispatch_on_type=False)
+        return result
 
     def pollinfo(self, user=None):
         if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
@@ -162,31 +168,3 @@ class PPPClient:
         fname = fname.replace('/', '__DIRSEP__')
         rev = self.get(f'/reviews/byfname/{fname}')
         return [pppp.Review(self, **_) for _ in rev]
-
-# Generic interface for accessing models from the server. Any name or name suffixed with 's'
-# that is in frontend_model, above, will get /name from the server and turn the result(s) into
-# the appropriate client model type, list of such types for plural, or None.
-
-for _name, _cls in ipd.ppp.frontend_model.items():
-
-    def make_funcs_forcing_closure_over_cls_name(cls=_cls, name=_name):
-        def new(self, **kw) -> str:
-            return self.upload(ipd.ppp.spec_model[name](**kw))
-
-        def count(self, **kw) -> int:
-            return self.get(f'/n{name}s', **kw)
-
-        def multi(self, **kw) -> list[cls]:
-            return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
-
-        def single(self, **kw) -> Union[cls, None]:
-            result = self.get(f'/{name}', **kw)
-            return cls(self, **result) if result else None
-
-        return single, multi, count, new
-
-    single, multi, count, new = make_funcs_forcing_closure_over_cls_name()
-    setattr(PPPClient, _name, single)
-    setattr(PPPClient, f'{_name}s', multi)
-    setattr(PPPClient, f'n{_name}s', count)
-    setattr(PPPClient, f'new{_name}', new)

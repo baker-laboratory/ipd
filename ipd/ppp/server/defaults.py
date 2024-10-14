@@ -1,7 +1,6 @@
 from ipd import ppp
 import os
 import yaml
-import uuid
 from rich import print
 
 def ensure_init_db(backend):

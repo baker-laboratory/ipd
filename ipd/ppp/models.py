@@ -1,132 +1,20 @@
 from datetime import datetime
-from typing import Union, Optional, Callable, Annotated, get_type_hints, Type, Any
-import getpass
+from typing import Union
 import contextlib
 import os
-import uuid
 from subprocess import check_output
 import ipd
 import tempfile
 from pathlib import Path
 from ipd.dev.lazy_import import lazyimport
 from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
+from ipd.dev.apimeta import Ref, SpecBase, StrictFields
 
 pydantic = lazyimport('pydantic', pip=True)
 pymol = lazyimport('pymol')
 
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
-
-_RefType = Optional[Union[uuid.UUID, str, None]]
-
-def _label_field(cls):
-    if hasattr(cls, '_label'): return cls._label.default
-    return 'name'
-
-def validate_ref(val: Union[uuid.UUID, str], valinfo):
-    if hasattr(val, 'id'): return val.id
-    with contextlib.suppress(TypeError, ValueError, AttributeError):
-        return uuid.UUID(val)
-    specname = valinfo.config['title']
-    if not specname.endswith('Spec'): specname += 'Spec'
-    cls = globals()[specname]
-    field = cls.model_fields[valinfo.field_name]
-    typehint = field.annotation
-    assert typehint == _RefType
-    refcls = field.metadata[1]
-    if isinstance(refcls, str):
-        if not refcls.endswith('Spec'): refcls += 'Spec'
-        refcls = globals()[refcls]
-    if isinstance(val, str):
-        client = ipd.ppp.get_hack_fixme_global_client()
-        assert client, 'client unavailable'
-        refclsname = refcls.__name__.replace('Spec', '').lower()
-        if not (ref := getattr(client, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
-            raise ValueError(f'unknown {refcls.__name__[:-4]} named "{val}"')
-        val = ref.id
-    return val
-
-class Ref(type):
-    def __class_getitem__(cls, T):
-        return Annotated[Annotated[_RefType, pydantic.BeforeValidator(validate_ref)], T]
-
-def fix_label_case(thing):
-    if isinstance(thing, dict):
-        keys, get, set = thing.keys(), thing.__getitem__, thing.__setitem__
-    elif isinstance(thing, pydantic.BaseModel):
-        keys, get, set = thing.model_fields_set, thing.__getattribute__, thing.__setattr__
-    else:
-        raise TypeError(f' fix_label_case unsupported type{type(thing)}')
-    if 'sym' in keys: set('sym', get('sym').upper())
-    if 'ligand' in keys: set('ligand', get('ligand').upper())
-
-class SpecBase(pydantic.BaseModel):
-    id: uuid.UUID = pydantic.Field(default_factory=uuid.uuid4)
-    ispublic: bool = True
-    telemetry: bool = False
-    ghost: bool = False
-    datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    props: Union[list[str], str] = []
-    attrs: Union[dict[str, Union[str, int, float]], str] = {}
-    _errors: str = ''
-
-    @pydantic.field_validator('props')
-    def valprops(cls, props):
-        if isinstance(props, (set, list)): return props
-        try:
-            props = ipd.dev.safe_eval(props)
-        except (NameError, SyntaxError):
-            if isinstance(props, str):
-                if not props.strip(): return []
-                props = [p.strip() for p in props.strip().split(',')]
-        return props
-
-    @pydantic.field_validator('attrs')
-    def valattrs(cls, attrs):
-        if isinstance(attrs, dict): return attrs
-        try:
-            attrs = ipd.dev.safe_eval(attrs)
-        except (NameError, SyntaxError):
-            if isinstance(attrs, str):
-                if not attrs.strip(): return {}
-                attrs = {
-                    x.split('=').split(':')[0].strip(): x.split('=').split(':')[1].strip()
-                    for x in attrs.strip().split(',')
-                }
-        return attrs
-
-    def _copy_with_newid(self):
-        return self.__class__(**{**self.model_dump(), 'id': uuid.uuid4()})
-
-    def errors(self):
-        return self._errors
-
-    def __getitem__(self, k):
-        return getattr(self, k)
-
-    def __setitem__(self, k, v):
-        return setattr(self, k, v)
-
-    def spec(self):
-        return self
-
-_ = SpecBase()
-
-class StrictFields:
-    def __init_subclass__(cls, **kw):
-        super().__init_subclass__(**kw)
-        init_cls = cls.__init__.__qualname__.split('.')[-2]
-        # if cls has explicit __init__, don't everride
-        if init_cls == cls.__name__: return
-
-        def __strict_init__(self, pppclient=None, **data):
-            for name in data:
-                if name not in cls.__fields__:
-                    raise TypeError(f"{cls} Invalid field name: {name}")
-            data |= dict(pppclient=pppclient)
-            super(cls, self).__init__(**data)
-
-        cls.__init__ = __strict_init__
 
 class _SpecWithUser(SpecBase):
     userid: Ref['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
@@ -199,21 +87,12 @@ class PollFileSpec(SpecBase, StrictFields):
         return fname
 
 class ReviewSpec(_SpecWithUser, StrictFields):
-    pollid: uuid.UUID
+    pollid: Ref['PollSpec']
     grade: str
     comment: str = ''
     pollfileid: Ref['PollFileSpec']
     workflowid: Ref['WorkflowSpec'] = pydantic.Field(default='Manual', validate_default=True)
     durationsec: int = -1
-
-    @pydantic.field_validator('workflowid')
-    def valflowid(workflowid):
-        if isinstance(workflowid, str):
-            client = ipd.ppp.get_hack_fixme_global_client()
-            if not client: return workflowid
-            if workflow := client.workflow(name=workflowid): return workflow.id
-            raise ValueError(f'unknown workflow "{workflowid}"')
-        return int(workflowid)
 
     @pydantic.field_validator('grade')
     def valgrade(cls, grade):
@@ -364,6 +243,16 @@ def PymolCMDSpec_validate_command(command, cmdname):
         msg = cmdname.upper() + os.linesep + msg + '-' * 80 + os.linesep
         command._check_cmds_output += msg
     return command
+
+def fix_label_case(thing):
+    if isinstance(thing, dict):
+        keys, get, set = thing.keys(), thing.__getitem__, thing.__setitem__
+    elif isinstance(thing, pydantic.BaseModel):
+        keys, get, set = thing.model_fields_set, thing.__getattribute__, thing.__setattr__
+    else:
+        raise TypeError(f' fix_label_case unsupported type{type(thing)}')
+    if 'sym' in keys: set('sym', get('sym').upper())
+    if 'ligand' in keys: set('ligand', get('ligand').upper())
 
 spec_model = {
     name.replace('Spec', '').lower(): cls

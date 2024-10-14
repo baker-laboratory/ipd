@@ -1,13 +1,6 @@
-import datetime
-import ipd
 from ipd import ppp
 import os
 import pymol
-import random
-import subprocess
-from subprocess import check_output
-import traceback
-from ipd.qt import MenuAction, notify, isfalse_notify
 
 class SubjectName:
     def __init__(self):
