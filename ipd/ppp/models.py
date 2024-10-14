@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 from ipd.dev.lazy_import import lazyimport
 from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
-from ipd.dev.apimeta import Ref, SpecBase, StrictFields
+from ipd.dev.apimeta import ModelReference, SpecBase, StrictFields
 
 pydantic = lazyimport('pydantic', pip=True)
 pymol = lazyimport('pymol')
@@ -17,7 +17,7 @@ STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 
 class _SpecWithUser(SpecBase):
-    userid: Ref['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
+    userid: ModelReference['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
 
 class PollSpec(_SpecWithUser, StrictFields):
     name: str
@@ -28,7 +28,7 @@ class PollSpec(_SpecWithUser, StrictFields):
     sym: str = ''
     nchain: Union[int, str] = -1
     ligand: str = ''
-    workflowid: Ref['WorkflowSpec'] = None
+    workflowid: ModelReference['WorkflowSpec'] = None
     enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
 
     @pydantic.field_validator('nchain')
@@ -68,16 +68,16 @@ class PollSpec(_SpecWithUser, StrictFields):
         return hash(self.path)
 
 class FileKindSpec(SpecBase, StrictFields):
-    kind: str
+    filekind: str
 
 class PollFileSpec(SpecBase, StrictFields):
-    pollid: Ref['PollSpec']
+    pollid: ModelReference['PollSpec']
     fname: str
     tag: str = ''
     permafname: str = ''
     filecontent: str = ''
-    parentid: Ref['PollFileSpec'] = None
-    filekindid: Ref['FileKindSpec'] = None
+    parentid: ModelReference['PollFileSpec'] = None
+    filekindid: ModelReference['FileKindSpec'] = None
 
     @pydantic.field_validator('fname')
     def valfname(cls, fname):
@@ -87,11 +87,11 @@ class PollFileSpec(SpecBase, StrictFields):
         return fname
 
 class ReviewSpec(_SpecWithUser, StrictFields):
-    pollid: Ref['PollSpec']
+    pollid: ModelReference['PollSpec']
     grade: str
     comment: str = ''
-    pollfileid: Ref['PollFileSpec']
-    workflowid: Ref['WorkflowSpec'] = pydantic.Field(default='Manual', validate_default=True)
+    pollfileid: ModelReference['PollFileSpec']
+    workflowid: ModelReference['WorkflowSpec'] = pydantic.Field(default='Manual', validate_default=True)
     durationsec: int = -1
 
     @pydantic.field_validator('grade')
@@ -113,8 +113,8 @@ class ReviewSpec(_SpecWithUser, StrictFields):
         return self
 
 class ReviewStepSpec(SpecBase, StrictFields):
-    reviewid: Ref['ReviewSpec']
-    flowstepid: Ref['FlowStepSpec']
+    reviewid: ModelReference['ReviewSpec']
+    flowstepid: ModelReference['FlowStepSpec']
     task: dict[str, Union[str, int, float]]
     grade: str
     comment: str = ''
@@ -156,7 +156,7 @@ class WorkflowSpec(_SpecWithUser, StrictFields):
         return ordering
 
 class FlowStepSpec(SpecBase, StrictFields):
-    workflowid: Ref['WorkflowSpec']
+    workflowid: ModelReference['WorkflowSpec']
     name: str
     index: int
     taskgen: dict[str, Union[str, int, float]] = {}

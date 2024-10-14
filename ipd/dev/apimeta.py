@@ -16,8 +16,9 @@ import rich
 import tempfile
 from pathlib import Path
 import ipd
+from icecream import ic
 
-_RefType = Optional[Union[uuid.UUID, str, None]]
+_ModelRefType = Optional[Union[uuid.UUID, str]]
 
 def _label_field(cls):
     if hasattr(cls, '_label'): return cls._label.default
@@ -33,7 +34,7 @@ def validate_ref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
     cls = spec_namespace[specname]
     field = cls.model_fields[valinfo.field_name]
     typehint = field.annotation
-    assert typehint == _RefType
+    assert typehint == _ModelRefType
     refcls = field.metadata[1]
     if isinstance(refcls, str):
         if not refcls.endswith('Spec'): refcls += 'Spec'
@@ -48,11 +49,11 @@ def validate_ref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
     # print(cls, refcls, val)
     return val
 
-class Ref(type):
+class ModelReference(type):
     def __class_getitem__(cls, T):
         outerns = inspect.currentframe().f_back.f_globals
         validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: validate_ref(x, y, outerns))
-        return Annotated[Annotated[_RefType, validator], T]
+        return Annotated[Annotated[_ModelRefType, validator], T]
 
 class SpecBase(pydantic.BaseModel):
     id: uuid.UUID = pydantic.Field(default_factory=uuid.uuid4)
@@ -181,6 +182,7 @@ def make_client_models(spec_models, backend_models):
                 propkind = proptype.__name__
             if hasattr(propkind, '__forward_arg__'):
                 propkind = propkind.__forward_arg__
+            if not isinstance(propkind, str): propkind = propkind.__name__
             props[propname] = propkind.replace('DB', '').lower()
         client_models[kind] = type(clsname, (ClientModelBase, clsspec), {}, backend_props=props)
     return client_models
@@ -277,8 +279,11 @@ class DBBase(sqlmodel.SQLModel, SpecBase):
                 # print(name, self[name])
                 if name == 'id' and self[name] is None: self[name] = uuid.uuid4()
                 elif isinstance(self[name], str):
-                    self[name] = uuid.UUID(self[name])
-                    # print('success')
+                    try:
+                        self[name] = uuid.UUID(self[name])
+                    except ValueError as e:
+                        raise ValueError(f'bad UUID string "{self[name]}"') from e
+                        # print('success')
         return self
 
     def to_spec(self):
@@ -355,8 +360,9 @@ def add_backend_model_properties(backendcls, models):
     for _name, _cls in models.items():
 
         def make_funcs_forcing_closure_over_name_cls(name=_name, cls=_cls):
-            def create(self, model: cls) -> Union[str, int]:
-                ic(model.__class__)
+            def create(self, model: dict) -> Union[str, int]:
+                # model = cls.parse_obj(model)
+                if isinstance(model, dict): model = cls(**model)
                 return self.validate_and_add_to_db(model)
 
             def new(self, **kw) -> Union[str, int]:
@@ -366,8 +372,7 @@ def add_backend_model_properties(backendcls, models):
                         del kw[k]
                 model = models[name](**kw)
                 newid = getattr(self, f'create_{name}')(model)
-
-                return getattr(self, f'i{name}')(newid)
+                return getattr(self, f'i{name}')(newid, _ghost=True)
 
             def count(self, kw=None, request: fastapi.Request = None, response_model=int):
                 # print('route', name, cls, kw, request, flush=True)
@@ -387,8 +392,9 @@ def add_backend_model_properties(backendcls, models):
                 elif kw: return self.select(cls, _single=True, **kw)
                 else: return self.select(cls, _single=True)
 
-            def singleid(self, id: str) -> Union[cls, None]:
-                return self.select(cls, id=id, _single=True)
+            def singleid(self, id: str, **kw) -> Union[cls, None]:
+                assert id
+                return self.select(cls, id=id, _single=True, **kw)
 
             return multi, single, singleid, count, create, new
 

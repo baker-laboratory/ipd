@@ -10,33 +10,32 @@ def ensure_init_db(backend):
         backend.session.add(ppp.server.DBUser.from_spec(ppp.UserSpec(name='anonymous_coward')))
         backend.session.add(ppp.server.DBUser.from_spec(ppp.UserSpec(name='test')))
         backend.session.commit()
-        flowspec = ppp.WorkflowSpec(
+        admin = backend.user(dict(name='admin'))
+        assert admin
+        flow = backend.newworkflow(
             name='Manual',
             desc='The default workflow. No steps, no automation.',
             ordering='Manual',
-            userid='admin',
+            userid=admin.id,
         )
-        backend.session.add(ppp.server.DBWorkflow.from_spec(flowspec))
-        backend.session.commit()
-        pollspec = ppp.PollSpec(
+        assert flow
+        poll = backend.newpoll(
             name='Ghost Poll',
             desc='Reviews point here when their poll gets deleted',
             path='Ghost Dir',
-            userid='admin',
-            workflowid='Manual',
+            userid=admin.id,
+            workflowid=flow.id,
             ispublic=False,
             ghost=True,
         )
-        backend.session.add(ppp.server.DBPoll.from_spec(pollspec))
-        backend.session.commit()
-        filespec = ppp.PollFileSpec(
+        assert poll
+        file = backend.newpollfile(
             fname='Ghost PollFile',
-            pollid='Ghost Poll',
+            pollid=poll.id,
             ispublic=False,
             ghost=True,
         )
-        backend.session.add(ppp.server.DBPollFile.from_spec(filespec))
-        backend.session.commit()
+        assert file
 
 def add_defaults(stress_test_polls=False, **kw):
     # print('ADD DEFAULTS')

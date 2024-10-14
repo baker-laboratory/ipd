@@ -26,8 +26,8 @@ class DBPoll(_DBWithUser, ppp.PollSpec, table=True):
     name: str = Field(sa_column_kwargs={"unique": True})
     pollfiles: list['DBPollFile'] = Relationship(back_populates='poll')
     reviews: list['DBReview'] = Relationship(back_populates='poll')
-    workflowid: uuid.UUID = Field(foreign_key='dbworkflow.id', nullable=True)
-    workflow: 'DBWorkflow' = Relationship(back_populates='polls')
+    workflowid: Optional[uuid.UUID] = Field(foreign_key='dbworkflow.id', nullable=True)
+    workflow: Optional['DBWorkflow'] = Relationship(back_populates='polls')
     user: 'DBUser' = Relationship(back_populates='polls')
 
     def clear(self, backend, ghost=True):
@@ -49,7 +49,7 @@ class DBPollFile(DBBase, ppp.PollFileSpec, table=True):
     pollid: uuid.UUID = Field(default=None, foreign_key='dbpoll.id')
     poll: DBPoll = Relationship(back_populates='pollfiles')
     filekindid: Optional[uuid.UUID] = Field(default=None, foreign_key='dbfilekind.id', nullable=True)
-    filekind: DBFileKind = Relationship(back_populates='pollfiles')
+    filekind: Optional[DBFileKind] = Relationship(back_populates='pollfiles')
     reviews: list['DBReview'] = Relationship(back_populates='pollfile')
     parentid: Optional[uuid.UUID] = Field(default=None, foreign_key='dbpollfile.id', nullable=True)
     parent: Optional['DBPollFile'] = Relationship(back_populates='children',
@@ -64,7 +64,7 @@ class DBPollFile(DBBase, ppp.PollFileSpec, table=True):
 class DBReview(_DBWithUser, ppp.ReviewSpec, table=True):
     props: Props = props_default()
     attrs: Attrs = attrs_default()
-    pollfileid: uuid.UUID = Field(default=None, foreign_key='dbpollfile.id')
+    pollfileid: uuid.UUID = Field(foreign_key='dbpollfile.id')
     pollfile: DBPollFile = Relationship(back_populates='reviews')
     pollid: uuid.UUID = Field(default=None, foreign_key='dbpoll.id')
     poll: DBPoll = Relationship(back_populates='reviews')

@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 import traceback
 import os
+import json
 import inspect
 import subprocess
 from fastapi.testclient import TestClient
@@ -49,17 +50,93 @@ def main():
     ipd.dev.global_timer.report()
 
 def make_tmp_clent_server(tempdir):
+    server, backend, client, testclient = None, None, None, None
     # engine = create_engine(f'sqlite:///{tempdir}/test.db')
     # backend = ppp.server.Backend(engine, tempdir)
     # server, backend = ipd.ppp.server.run(port=12345, dburl='postgresql://localhost/ppp')
     assert not os.path.exists(f'{tempdir}/test.db')
     server, backend, client = ipd.ppp.server.run(port=12346,
                                                  dburl=f'sqlite:///{tempdir}/test.db',
-                                                 workers=1,
+                                                 woerkers=1,
                                                  loglevel='warning')
     testclient = TestClient(backend.app)
-    # ppp.server.defaults.ensure_init_db(backend)
+    ppp.server.defaults.ensure_init_db(backend)
+    # client = ipd.ppp.PPPClient('localhost:12345')
     return server, backend, client, testclient
+
+def _test_post_hang():
+    # only hangs if pollfileid is a string... any string
+    import requests
+    url = 'http://localhost:12346/ppp/create/review'
+    # body = '''{"id":"40d493e7-fb18-44b5-be1c-a5154ad0c4d8","ispublic":true,"telemetry":false,"ghost":false,"datecreated":"2024-10-13T23:16:57.436648","props":[],"attrs":{},"userid":"24c41db4-7e45-4265-b666-71f477955a01","pollid":"7cf6d8f5-f9d1-4563-99f7-1a95d429dd68","grade":"dislike","comment":"","pollfileid":"2bbfa731-949f-4dfe-8119-94fdae221b8e"}'''
+    body = '''{"pollfileid":""}'''
+    # ic(url, body)
+    response = requests.post(url, body)
+    assert response.content.count(b'bad UUID string')
+
+def test_pollfiles(client):
+    poll = client.newpoll(name='polio', path=ipd.testpath('ppppdbdir'))
+    for f in poll.pollfiles:
+        assert f == client.pollfile(pollid=poll.id, fname=f.fname)
+
+def test_review(client):
+    poll = client.newpoll(name='polio', path=ipd.testpath('ppppdbdir'))
+    poll2 = client.newpoll(name='polio2', path=ipd.testpath('ppppdbdir'))
+    poll3 = client.newpoll(name='polio3', path=ipd.testpath('ppppdbdir'))
+    file = poll.pollfiles[-1]
+    client.newuser(name='reviewer')
+    print([p.name for p in client.users()])
+    # print(client.user(name='reviewer'))
+    ic()
+    rev = client.newreview(userid='reviewer',
+                           pollid=poll.id,
+                           pollfileid=file.id,
+                           workflowid='Manual',
+                           grade='dislike')
+    ic()
+    assert client.reviews()[0].user.name == 'reviewer'
+    assert os.path.exists(rev.pollfile.permafname)
+    # print('\n'.join([f'{f.pollid} {f.fname}' for f in client.pollfiles()]))
+    ic()
+    polls = client.polls()
+    review = ppp.ReviewSpec(pollid=polls[2].id,
+                            pollfileid=polls[2].pollfiles[2].id,
+                            grade='superlike',
+                            comment='foobar')
+    assert review.grade == 'superlike'
+    result = client.upload_review(review)
+    assert isinstance(result, ipd.ppp.Review)
+    # rich.print(client.reviews())
+    assert len(client.reviews()) == 2
+    result = client.upload(ppp.ReviewSpec(pollid=poll2.id, pollfileid=poll2.pollfiles[3].id, grade='hate'))
+    assert isinstance(result, ipd.ppp.Review)
+    ic()
+    assert file.fname in [f.fname for f in poll.pollfiles]
+    assert client.poll(id=poll.id)
+    assert client.pollfile(pollid=poll.id, fname=poll.pollfiles[1].fname)
+    print(len(client.pollfile(pollid=poll.id, fname=file.fname).reviews))
+    assert 1 == len(client.pollfile(pollid=poll.id, fname=file.fname).reviews)
+    assert 2 == len(list(it.chain(*(f.reviews for f in client.pollfiles(fname=file.fname)))))
+    reviews = client.reviews()
+    polls = client.polls()
+    files = client.pollfiles()
+
+    for i, p in enumerate(client.polls()):
+        print(i, len(p.reviews))
+    assert isinstance(files[0], ppp.PollFile)
+    assert isinstance(polls[2].pollfiles[0], ppp.PollFile)
+    assert isinstance(reviews[2].pollfile, ppp.PollFile)
+    assert isinstance(reviews[0], ppp.Review)
+    assert isinstance(polls[1].reviews[0], ppp.Review)
+    assert isinstance(files[1].poll, ppp.Poll)
+
+    for r in reviews:
+        # print('permafname', r.pollfile.permafname)
+        # print(r.pollfile)
+        assert os.path.exists(r.pollfile.permafname)
+
+    # print([p.name for p in client.polls()])
+    # print(len(client.polls(name='foo1')))
 
 def test_poll_attr(client):
     poll = client.upload_poll(ppp.PollSpec(name='foo', path='.'))
@@ -106,7 +183,8 @@ def test_pymolcmdsdict(client):
 def test_ghost(backend):
     user = backend.newuser(name='jameswoods')
     poll = backend.newpoll(name='foo', path='bar', user=user)
-    file = backend.newpollfile(fname='baz', poll=poll)
+    print(backend.newpollfile)
+    file = backend.newpollfile(fname='baz', pollid=poll.id)
     poll.pollfiles.append(file)
     backend.session.commit()
     assert not file.ghost
@@ -237,65 +315,15 @@ def test_poll(client, backend):
     assert len(poll.pollfiles) == 4
     assert isinstance(poll.pollfiles[0], ipd.ppp.PollFile)
 
-    fname = ipd.testpath('ppppdbdir/1pgx.cif')
-    client.newuser(name='reviewer')
-    print([p.name for p in client.users()])
-    # print(client.user(name='reviewer'))
-    ic()
-    rev = client.newreview(userid='reviewer',
-                           pollid=poll.id,
-                           pollfileid=poll.pollfiles[1],
-                           workflowid='Manual',
-                           grade='dislike')
-    ic()
-    assert client.reviews()[0].user.name == 'reviewer'
-    assert os.path.exists(rev.pollfile.permafname)
-    # print('\n'.join([f'{f.pollid} {f.fname}' for f in client.pollfiles()]))
-    ic()
-    review = ppp.ReviewSpec(pollid=2, pollfileid=fname, grade='superlike', comment='foobar')
-    assert review.grade == 'superlike'
-    result = client.upload_review(review)
-    assert isinstance(result, ipd.ppp.Review)
-    # rich.print(client.reviews())
-    assert len(client.reviews()) == 2
-    result = client.upload(ppp.ReviewSpec(pollid=3, pollfileid=fname, grade='hate'))
-    assert isinstance(result, ipd.ppp.Review)
-    ic()
-    assert 1 == len(client.pollfile(id=poll.id, fname=fname).reviews)
-    assert 3 == len(list(it.chain(*(f.reviews for f in client.pollfiles(fname=fname)))))
-    reviews = client.reviews()
-    polls = client.polls()
-    files = client.pollfiles()
-
-    assert reviews[0].poll.id == 8
-    assert reviews[0].pollfile.id == 28
-    for i, p in enumerate(client.polls()):
-        print(i, len(p.reviews))
-    assert isinstance(files[0], ppp.PollFile)
-    assert isinstance(polls[2].pollfiles[0], ppp.PollFile)
-    assert isinstance(reviews[2].pollfile, ppp.PollFile)
-    assert isinstance(reviews[0], ppp.Review)
-    assert isinstance(polls[1].reviews[0], ppp.Review)
-    assert isinstance(files[1].poll, ppp.Poll)
-
-    for r in reviews:
-        # print('permafname', r.pollfile.permafname)
-        # print(r.pollfile)
-        assert os.path.exists(r.pollfile.permafname)
-
-    # print([p.name for p in client.polls()])
-    # print(len(client.polls(name='foo1')))
-
-    assert len(client.polls(name='foo1')) == 1
-
     result = client.upload(
         ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines', userid='test'))
     assert isinstance(result, ppp.PymolCMD)
     result = client.upload(ppp.PymolCMDSpec(name='test2', cmdon='fubar', cmdoff='hide lines',
                                             userid='test')).count('NameError')
     # print(result)
-    result = client.upload(
-        ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines', userid='test'))
+    with pytest.raises(ipd.ppp.PPPClientError):
+        result = client.upload(
+            ppp.PymolCMDSpec(name='test', cmdon='show lines', cmdoff='hide lines', userid='test'))
     # print(result)
 
     assert len(client.pymolcmds(user='test')) == 1

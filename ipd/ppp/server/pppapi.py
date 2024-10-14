@@ -27,6 +27,9 @@ profile = lambda f: f
 
 _SERVERMODE = 'ppp' == socket.gethostname()
 
+class BackendError(Exception):
+    pass
+
 def servermode():
     return _SERVERMODE
 
@@ -72,6 +75,8 @@ class Backend(ipd.dev.FastapiModelBackend, models=backend_model):
         self.app = fastapi.FastAPI()
         self.app.include_router(self.router)
         # ipd.dev.git_status(header='server git status', footer='end', printit=True)
+        set_servermode(True)
+        ppp.server.defaults.ensure_init_db(self)
 
         @self.app.exception_handler(Exception)
         def validation_exception_handler(request: fastapi.Request, exc: Exception):
@@ -132,12 +137,16 @@ class Backend(ipd.dev.FastapiModelBackend, models=backend_model):
                 statement = statement.where(op(getattr(cls, k), v))
         if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)
         if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)
-        if _count: return int(self.session.exec(statement).one())
-        thing = list(self.session.exec(statement))
-        if _single:
-            assert len(thing) < 2
-            thing = thing[0] if thing else None
-        return thing
+        # print(statement)
+        # if statement._get_embedded_bindparams():
+        # print({p.key: p.value for p in statement._get_embedded_bindparams()})
+        result = self.session.exec(statement)
+        try:
+            if _count: return int(result.one())
+            elif _single: return result.one()
+            else: return list(result)
+        except sqlalchemy.exc.NoResultFound:
+            raise BackendError(f'No {cls.__name__} results for query {kw}')
 
     def fix_date(self, x):
         if hasattr(x, 'datecreated') and isinstance(x.datecreated, str):
@@ -145,13 +154,16 @@ class Backend(ipd.dev.FastapiModelBackend, models=backend_model):
         if hasattr(x, 'enddate') and isinstance(x.enddate, str):
             x.enddate = datetime.strptime(x.enddate, ppp.DATETIME_FORMAT)
 
-    def validate_and_add_to_db(self, thing) -> Union[str, int]:
-        # print('validate_and_add_to_db', thing)
+    def validate_and_add_to_db(self, thing) -> Optional[str]:
         self.fix_date(thing)
         thing = thing.validated_with_backend(self)
         self.session.add(thing)
-        self.session.commit()
-        return str(thing.id)
+        try:
+            self.session.commit()
+            return str(thing.id)
+        except sqlalchemy.exc.IntegrityError as e:
+            self.session.rollback()
+            raise e
 
     def useridmap(self):
         query = 'SELECT id,name FROM dbuser WHERE NOT dbuser.ghost'
@@ -240,6 +252,7 @@ def run(
     loglevel='warning',
     local=False,
     workers=1,
+    background=True,
     **kw,
 ):
     datadir = os.path.abspath(os.path.expanduser(datadir))
@@ -264,19 +277,23 @@ def run(
         loop='uvloop',
         workers=workers,
     )
-    server = Server(config=config)
-    server.run_in_thread()
-    with contextlib.suppress(ValueError):
-        signal.signal(signal.SIGINT, server.stop)
-    for _ in range(5000):
-        if server.started: break
-        time.sleep(0.001)
+    if background:
+        server = Server(config=config)
+        server.run_in_thread()
+        with contextlib.suppress(ValueError):
+            signal.signal(signal.SIGINT, server.stop)
+        for _ in range(5000):
+            if server.started: break
+            time.sleep(0.001)
+        else:
+            raise RuntimeError('server failed to start')
+        client = ppp.PPPClient(f'127.0.0.1:{port}')
+        assert ipd.ppp.get_hack_fixme_global_client()
+        ppp.server.defaults.add_defaults(**kw)
+        # print('server', socket.gethostname())
+        return server, backend, client
     else:
-        raise RuntimeError('server failed to start')
-    set_servermode(True)
-    client = ppp.PPPClient(f'127.0.0.1:{port}')
-    assert ipd.ppp.get_hack_fixme_global_client()
-    ppp.server.defaults.ensure_init_db(backend)
-    ppp.server.defaults.add_defaults(**kw)
-    # print('server', socket.gethostname())
-    return server, backend, client
+        server = uvicorn.Server(config)
+        import pdb
+        pdb.set_trace()
+        server.run()

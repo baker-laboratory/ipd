@@ -4,6 +4,7 @@ import ipd
 from ipd import ppp
 import uuid
 from pathlib import Path
+from icecream import ic
 
 requests = ipd.lazyimport('requests', pip=True)
 fastapi = ipd.lazyimport('fastapi', pip=True)
@@ -72,10 +73,10 @@ class PPPClient(ipd.dev.ModelFrontend, models=ipd.ppp.client_model):
         url = f'{url}?{query}' if query else url
         if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
         body = tojson(thing)
-        print('POST', url, type(thing))
+        # print('POST', url, type(thing), body)
         if self.testclient: response = self.testclient.post(url, content=body)
         else: response = requests.post(url, body)
-        ic(response)
+        # ic(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
             reason = response.reason if hasattr(response, 'reason') else '???'
@@ -97,9 +98,9 @@ class PPPClient(ipd.dev.ModelFrontend, models=ipd.ppp.client_model):
         if thing._errors:
             return thing._errors
         kind = type(thing).__name__.replace('Spec', '').lower()
-        ic(kind)
+        # ic(kind)
         result = self.post(f'/create/{kind}', thing, **kw)
-        ic(result)
+        # ic(result)
         try:
             result = uuid.UUID(result)
             return ipd.ppp.client_model[kind](self, **self.get(f'/{kind}', id=result))
