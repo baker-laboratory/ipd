@@ -138,7 +138,7 @@ class SymAdaptMap(SymAdapt):
     def reconstruct(self, canonicals):
         return type(self.orig)(canonicals)
 
-class SymAdaptDataclass(SymAdapt):
+class SymAdaptDataClass(SymAdapt):
     '''
     Base class for adapting dataclasses. All fields must be sym-adaptable and all tensor fields must have intepretable shapes, or dim names via add_tensor_dim_names
     '''
@@ -156,7 +156,7 @@ class SymAdaptDataclass(SymAdapt):
         #     else: print(f'{f.name:15} {[x.shape for x in v]}')
         self.orig.add_tensor_dim_names()
         d = {f.name: getattr(self.orig, f.name) for f in dataclasses.fields(self.orig)}  # no deepcopy
-        # print(f'SymAdaptDataclass.adapted: {self.orig.__class__.__name__}')
+        # print(f'SymAdaptDataClass.adapted: {self.orig.__class__.__name__}')
         for k in d:
             if th.is_tensor(d[k]): d[k] = d[k].rename(*d[k].names)  # shallow copy that keeps names
         self.orig.remove_tensor_dim_names()
@@ -171,7 +171,7 @@ class SymAdaptDataclass(SymAdapt):
         self.adapted = d
 
     def reconstruct(self, symparts, **kw):
-        # print(f'SymAdaptDataclass.reconstruct {self.orig.__class__.__name__}')
+        # print(f'SymAdaptDataClass.reconstruct {self.orig.__class__.__name__}')
         for k, v in symparts.items():
             if v is None: continue
             if isinstance(v, SimpleSparseTensor):

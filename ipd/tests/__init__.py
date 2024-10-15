@@ -4,6 +4,7 @@ import willutil as wu
 import numpy as np
 import torch
 import ipd
+from ipd.tests import sym
 
 def make_deterministic(seed=0):
     random.seed(seed)
@@ -15,7 +16,7 @@ def make_deterministic(seed=0):
         torch.backends.cudnn.benchmark = False
 
 def path(fname):
-    return os.path.realpath(f'{ipd.proj_dir}/tests/data/{fname}')
+    return os.path.realpath(f'{ipd.projdir}/tests/data/{fname}')
 
 def load(fname):
     return wu.load(path(fname))

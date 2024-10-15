@@ -30,13 +30,13 @@ class SieveManager:
             else: # assume is parameter
                 self.opt.parse_dynamic_param(key, conf['sieve'][key], overwrite=True)
 
-    def apply_sieves(self, t, xyz, indep, sym, **kw):
+    def apply_sieves(self, t, xyz, indep, **kw):
         if not self.sieves: return
         if not self.opt.enabled: return
         cache = {}
         progress = 1.0 - t / self.conf.diffuser.T
-        xyz = sym.asym(xyz)
-        indep = sym.asym(indep)
+        xyz = ipd.symmetrize.asym(xyz)
+        indep = ipd.symmetrize.asym(indep)
         # print("APPLY SIEVES")
         for sieve in self.sieves:
             if not sieve(progress=progress, indep=indep, xyz=xyz, cache=cache, **kw):

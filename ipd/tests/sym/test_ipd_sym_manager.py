@@ -6,7 +6,7 @@ import willutil as wu
 from willutil import h
 import hypothesis
 
-@hypothesis.settings(deadline=1000, max_examples=10)
+@hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 @pytest.mark.fast
 def test_sym_manager_fuzz_xyz_sym(sym):

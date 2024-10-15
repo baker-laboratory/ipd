@@ -1,3 +1,4 @@
+import sys
 import contextlib
 from abc import ABC, abstractmethod, ABCMeta
 import copy
@@ -7,7 +8,6 @@ import assertpy
 import torch as th
 import numpy as np
 from itertools import repeat
-import ipd
 import ipd
 import willutil as wu
 from willutil import h
@@ -67,9 +67,9 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def add_properties(self):
         locprops = dict(
             opt=[
-                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats',
-                'sym_enabled', 'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template',
-                'ligand_is_symmetric'
+                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame',
+                'symmetrize_repeats', 'sym_enabled', 'rfsym_enabled', 'sympair_enabled',
+                'copy_main_block_template', 'ligand_is_symmetric'
             ],
             idx=[
                 'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym',
@@ -388,7 +388,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         return self.opt._params['rf_asym_only'] is not False
 
     def multistep_adjusted_progress(self, t, T):
-        return t/T, 1/T
+        return t / T, 1 / T
         asymsteps = self.opt._params['rf_asym_only'].diffuse_steps
         assert min(asymsteps) == 0 and max(asymsteps) + 1 == len(asymsteps)
         nasymstep = max(asymsteps) + 1
@@ -551,7 +551,10 @@ def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **k
     global _default_sym_manager
     kind = kind or opt.get(kind, None) or _default_sym_manager
     if opt.symid == 'C1': kind = 'C1'
-    return _sym_managers[kind](opt, device=device)
+    sym = _sym_managers[kind](opt, device=device)
+    ipd.sym.set_symmetry(sym)
+    assert ipd.symmetrize is sym
+    return sym
 
 def check_sym_manager(sym, *a, **kw):
     '''Check if a symmetry manager is valid, and create one if it is not'''
