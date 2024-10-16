@@ -12,7 +12,10 @@ import ipd
 from ipd import ppp
 import signal
 from rich import print
-from ipd.ppp.dbmodels import *
+from ipd.ppp.dbmodels import backend_models
+
+for cls in backend_models.values():
+    globals()[cls.__name__] = cls
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -27,9 +30,6 @@ profile = lambda f: f
 
 _SERVERMODE = 'ppp' == socket.gethostname()
 
-class BackendError(Exception):
-    pass
-
 def servermode():
     return _SERVERMODE
 
@@ -38,132 +38,24 @@ def set_servermode(isserver):
     _SERVERMODE = isserver
     # print('_SERVERMODE MODE')
 
-python_type_to_sqlalchemy_type = {
-    str: sqlalchemy.String,
-    int: sqlalchemy.Integer,
-    float: sqlalchemy.Float,
-    bool: sqlalchemy.Boolean,
-    # datetime.date: sqlalchemy.Date,
-    datetime: sqlalchemy.DateTime,
-    # datetime.time: sqlalchemy.Time,
-    dict: sqlalchemy.JSON,
-    list: sqlalchemy.ARRAY,
-    # decimal.Decimal: sqlalchemy.Numeric
-}
-
 @profile
-class Backend(ipd.dev.FastapiModelBackend, models=backend_model):
+class PPPBackend(ipd.crud.backend.FastapiModelBackend, backend_models=backend_models):
     def __init__(self, engine, datadir):
-        super().__init__()
-        self.engine = engine
+        super().__init__(engine)
         self.datadir = datadir
-        self.session = sqlmodel.Session(self.engine)
-        sqlmodel.SQLModel.metadata.create_all(self.engine)
         route = self.router.add_api_route
         route('/', self.root, methods=['GET'])
         route('/create/pollfilecontents', self.create_file_with_content, methods=['POST'])
         route('/create/pollfiles', self.create_empty_files, methods=['POST'])
-        route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
-        route('/setattr/{thing}/{id}/{attr}', self.setattr, methods=['POST'])
         route('/have/pollfile', self.have_pollfile, methods=['GET'])
         route('/pollinfo', self.pollinfo, methods=['GET'])
-        # route('/poll{id}', self.poll, methods=['GET'])
-        # route('/poll{id}/fids', self.poll_fids, methods=['GET'])
-        # route('/poll{id}/fname', self.poll_file, methods=['GET'])
-        route('/remove/{thing}/{id}', self.remove, methods=['GET'])
         route('/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
-        self.app = fastapi.FastAPI()
         self.app.include_router(self.router)
-        # ipd.dev.git_status(header='server git status', footer='end', printit=True)
         set_servermode(True)
         ppp.server.defaults.ensure_init_db(self)
 
-        @self.app.exception_handler(Exception)
-        def validation_exception_handler(request: fastapi.Request, exc: Exception):
-            exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
-            print('!' * 80)
-            print(exc_str)
-            print('!' * 80)
-            result = f'{"!"*80}\n{exc_str}\nSTACK:\n{traceback.format_exc()}\n{"!"*80}'
-            return fastapi.responses.JSONResponse(content=exc_str,
-                                                  status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
-
-    def remove(self, thing, id):
-        thing = self.select(thing, id=id, _single=True)
-        thing.ghost = True
-        self.session.add(thing)
-        self.session.commit()
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
-
-    def actually_remove(self, thing, id):
-        thing = self.select(thing, id=id, _single=True)
-        thing.clear(self)
-        self.session.delete(thing)
-        self.session.commit()
-
     def root(self) -> None:
         return dict(msg='Hello World')
-
-    def getattr(self, thing, id: UUID, attr):
-        cls = backend_model[thing]
-        thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
-        if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
-        thingattr = getattr(thing, attr)
-        # if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
-        return thingattr
-
-    async def setattr(self, request: fastapi.Request, thing: str, id: UUID, attr: str):
-        cls = backend_model[thing]
-        thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
-        if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
-        assert thing.model_fields[attr].annotation in (int, float, str)
-        body = (await request.body()).decode()
-        # print(type(thing), body)
-        setattr(thing, attr, body)
-        self.session.add(thing)
-        self.session.commit()
-
-    def select(self, cls, _count: bool = False, _single=False, user=None, _ghost=False, **kw):
-        # print('select', cls, kw)
-        if isinstance(cls, str): cls = backend_model[cls]
-        selection = sqlalchemy.func.count(cls.id) if _count else cls
-        statement = sqlmodel.select(selection)
-        for k, v in kw.items():
-            op = operator.eq
-            if k.endswith('not'): k, op = k[:-3], operator.ne
-            if k.endswith('id') and isinstance(v, str): v = UUID(v)
-            if v is not None:
-                # print('select where', cls, k, v)
-                statement = statement.where(op(getattr(cls, k), v))
-        if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)
-        if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)
-        # print(statement)
-        # if statement._get_embedded_bindparams():
-        # print({p.key: p.value for p in statement._get_embedded_bindparams()})
-        result = self.session.exec(statement)
-        try:
-            if _count: return int(result.one())
-            elif _single: return result.one()
-            else: return list(result)
-        except sqlalchemy.exc.NoResultFound:
-            raise BackendError(f'No {cls.__name__} results for query {kw}')
-
-    def fix_date(self, x):
-        if hasattr(x, 'datecreated') and isinstance(x.datecreated, str):
-            x.datecreated = datetime.strptime(x.datecreated, ppp.DATETIME_FORMAT)
-        if hasattr(x, 'enddate') and isinstance(x.enddate, str):
-            x.enddate = datetime.strptime(x.enddate, ppp.DATETIME_FORMAT)
-
-    def validate_and_add_to_db(self, thing) -> Optional[str]:
-        self.fix_date(thing)
-        thing = thing.validated_with_backend(self)
-        self.session.add(thing)
-        try:
-            self.session.commit()
-            return str(thing.id)
-        except sqlalchemy.exc.IntegrityError as e:
-            self.session.rollback()
-            raise e
 
     def useridmap(self):
         query = 'SELECT id,name FROM dbuser WHERE NOT dbuser.ghost'
@@ -261,7 +153,7 @@ def run(
     os.makedirs(datadir, exist_ok=True)
     # print(f'creating db engine from url: \'{dburl}\'')
     engine = sqlmodel.create_engine(dburl)
-    backend = Backend(engine, datadir)
+    backend = PPPBackend(engine, datadir)
     backend.app.mount("/ppp", backend.app)
     # if not local: pymol_launch()
     config = uvicorn.Config(

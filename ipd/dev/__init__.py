@@ -3,6 +3,12 @@ import contextlib
 from ipd.dev.contexts import *
 from ipd.dev.safe_eval import *
 
+def get_all_annotations(cls):
+    annotations = {}
+    for base in cls.__mro__[::-1]:
+        annotations |= getattr(base, '__annotations__', {})
+    return annotations
+
 def fstr(template):
     return safe_eval(f'f"""{template}"""')
 
@@ -22,4 +28,5 @@ from ipd.dev.git import *
 from ipd.dev.toggle import *
 from ipd.dev.state import *
 from ipd.dev.filefetch import *
-from ipd.dev.apimeta import *
+
+apimeta = lazyimport('ipd.dev.apimeta')

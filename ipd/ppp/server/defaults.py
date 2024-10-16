@@ -32,7 +32,6 @@ def ensure_init_db(backend):
         file = backend.newpollfile(
             fname='Ghost PollFile',
             pollid=poll.id,
-            ispublic=False,
             ghost=True,
         )
         assert file
@@ -62,29 +61,7 @@ def add_polls(client, stress=False):
     presentpolls = {p[1] for p in client.pollinfo()}
     dirs = []
     if stress:
-        if os.path.exists('/tmp/add_stresstest_polls.list'):
-            dirs = [l.strip() for l in open('/tmp/add_stresstest_polls.list').readlines()]
-        else:
-            dirs = find_pdb_dirs('~', 1, 100)
-            with open('/tmp/add_stresstest_polls.list', 'w') as out:
-                out.write(os.linesep.join(dirs))
-        print('add_stresstest_polls', len(dirs), len(presentpolls))
-        from random_word import RandomWords
-        import random
-        r = RandomWords()
-        syms = ['C1'] * 20 + 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.upper().split()
-        [''] * 48 + syms
-        for i in range(1000):
-            name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
-            print('add poll', name)
-            spec = ppp.PollSpec(
-                name=name,
-                path='/home/sheffler/project/monomers',
-                nchain=random.randrange(1, 9),
-                sym=random.choice(syms),
-                ligand=r.get_random_word()[:3],
-            )
-            if result := client.upload(spec): print(result)
+        dirs = make_stress_test(presentpolls, client)
     for dir_ in manual + dirs:
         name = dir_.replace('/home/sheffler/', '').replace('/', ' ').title()
         if name in presentpolls:
@@ -96,11 +73,37 @@ def add_polls(client, stress=False):
         else:
             print(pollspec)
 
+def make_stress_test(presentpolls, client):
+    if os.path.exists('/tmp/add_stresstest_polls.list'):
+        result = [l.strip() for l in open('/tmp/add_stresstest_polls.list').readlines()]
+    else:
+        result = find_pdb_dirs('~', 1, 100)
+        with open('/tmp/add_stresstest_polls.list', 'w') as out:
+            out.write(os.linesep.join(result))
+    print('add_stresstest_polls', len(result), len(presentpolls))
+    from random_word import RandomWords
+    import random
+    r = RandomWords()
+    syms = ['C1'] * 20 + 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.upper().split()
+    [''] * 48 + syms
+    for i in range(1000):
+        name = f'FUZZ{i:06} ' + ' '.join([r.get_random_word() for _ in range(random.randrange(1, 9))])
+        print('add poll', name)
+        spec = ppp.PollSpec(
+            name=name,
+            path='/home/sheffler/project/monomers',
+            nchain=random.randrange(1, 9),
+            sym=random.choice(syms),
+            ligand=r.get_random_word()[:3],
+        )
+        if result := client.upload(spec): print(result)
+    return result
+
 def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
         config = yaml.load(inp, yaml.Loader)
         for cmd in config['pymolcmds']:
-            spec = ppp.PymolCMDSpec(cmdcheck=False, userid='sheffler', **cmd)
+            spec = ppp.PymolCMDSpec(userid='sheffler', cmdcheck=False, **cmd)
             if not spec.errors():
                 client.upload(spec)
             else:

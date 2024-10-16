@@ -3,6 +3,7 @@ from ipd.dev import lazyimport
 import ipd.observer
 
 dev = lazyimport('ipd.dev')
+crud = lazyimport('ipd.crud')
 cuda = lazyimport('ipd.cuda')
 fit = lazyimport('ipd.fit')
 ppp = lazyimport('ipd.ppp')
@@ -21,3 +22,6 @@ from ipd.dev import Bunch
 
 def testpath(path):
     return os.path.join(proj_dir, 'tests', 'data', path)
+
+STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"

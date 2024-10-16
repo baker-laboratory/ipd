@@ -87,7 +87,7 @@ class PollInProgress:
                 if noopt[0] in 'cp rsync'.split():
                     # print('MAKEDIR', os.path.expanduser(os.path.dirname(noopt[-1])))
                     os.makedirs(os.path.expanduser(os.path.dirname(noopt[-1])), exist_ok=True)
-                    for fn in filter(lambda s: s.endswith(ppp.STRUCTURE_FILE_SUFFIX), noopt[1:-1]):
+                    for fn in filter(lambda s: s.endswith(ipd.STRUCTURE_FILE_SUFFIX), noopt[1:-1]):
                         assert os.path.exists(fn)
                 cmds.append(c.split())
         return cmds

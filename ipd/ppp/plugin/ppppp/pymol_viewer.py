@@ -12,7 +12,7 @@ class SubjectName:
 
     def new(self, name='subject'):
         self.count += 1
-        for sfx in ppp.STRUCTURE_FILE_SUFFIX:
+        for sfx in ipd.STRUCTURE_FILE_SUFFIX:
             name = name.replace(sfx, '')
         self.name = os.path.basename(name)
         return self()

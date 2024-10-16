@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, Annotated
 import contextlib
 import os
 from subprocess import check_output
@@ -8,28 +8,27 @@ import tempfile
 from pathlib import Path
 from ipd.dev.lazy_import import lazyimport
 from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
-from ipd.dev.apimeta import ModelReference, SpecBase, StrictFields
+from ipd.crud import ModelRef, Unique
 
 pydantic = lazyimport('pydantic', pip=True)
 pymol = lazyimport('pymol')
 
-STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
-DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+class _SpecWithUser(ipd.crud.SpecBase):
+    userid: ModelRef['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
+    ispublic: bool = True
+    telemetry: bool = False
 
-class _SpecWithUser(SpecBase):
-    userid: ModelReference['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
-
-class PollSpec(_SpecWithUser, StrictFields):
-    name: str
+class PollSpec(_SpecWithUser):
+    name: Unique[str]
     desc: str = ''
     path: str
     cmdstart: str = ''
     cmdstop: str = ''
     sym: str = ''
-    nchain: Union[int, str] = -1
+    nchain: int = -1
     ligand: str = ''
-    workflowid: ModelReference['WorkflowSpec'] = None
-    enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', DATETIME_FORMAT)
+    workflowid: ModelRef['WorkflowSpec'] = None
+    enddate: datetime = datetime.strptime('9999-01-01T01:01:01.1', ipd.DATETIME_FORMAT)
 
     @pydantic.field_validator('nchain')
     def valnchain(cls, nchain):
@@ -44,8 +43,8 @@ class PollSpec(_SpecWithUser, StrictFields):
             print('TODO: check for struct files')
         else:
             assert os.path.isdir(path), f'path must be directory: {path}'
-            files = list(filter(lambda s: s.endswith(STRUCTURE_FILE_SUFFIX), os.listdir(path)))
-            assert files, f'no files in {path} end with {STRUCTURE_FILE_SUFFIX}'
+            files = list(filter(lambda s: s.endswith(ipd.STRUCTURE_FILE_SUFFIX), os.listdir(path)))
+            assert files, f'no files in {path} end with {ipd.STRUCTURE_FILE_SUFFIX}'
         return f'digs:{path}' if digs else path
 
     @pydantic.model_validator(mode='after')
@@ -59,7 +58,7 @@ class PollSpec(_SpecWithUser, StrictFields):
         self.path = self.valpath(self.path)
         self.name = self.name or os.path.basename(self.path)
         self.desc = self.desc or f'PDBs in {self.path}'
-        self.sym = self.sym or guess_sym_from_directory(self.path, suffix=STRUCTURE_FILE_SUFFIX)
+        self.sym = self.sym or guess_sym_from_directory(self.path, suffix=ipd.STRUCTURE_FILE_SUFFIX)
         self = PollSpec_get_structure_properties(self)
         # print('poll _validated done')
         return self
@@ -67,17 +66,17 @@ class PollSpec(_SpecWithUser, StrictFields):
     def __hash__(self):
         return hash(self.path)
 
-class FileKindSpec(SpecBase, StrictFields):
+class FileKindSpec(ipd.crud.SpecBase):
     filekind: str
 
-class PollFileSpec(SpecBase, StrictFields):
-    pollid: ModelReference['PollSpec']
+class PollFileSpec(ipd.crud.SpecBase):
+    pollid: ModelRef['PollSpec']
     fname: str
     tag: str = ''
     permafname: str = ''
     filecontent: str = ''
-    parentid: ModelReference['PollFileSpec'] = None
-    filekindid: ModelReference['FileKindSpec'] = None
+    parentid: ModelRef['PollFileSpec', 'children'] = None
+    filekindid: ModelRef['FileKindSpec'] = None
 
     @pydantic.field_validator('fname')
     def valfname(cls, fname):
@@ -86,12 +85,12 @@ class PollFileSpec(SpecBase, StrictFields):
         assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
         return fname
 
-class ReviewSpec(_SpecWithUser, StrictFields):
-    pollid: ModelReference['PollSpec']
+class ReviewSpec(_SpecWithUser):
+    pollid: ModelRef['PollSpec']
     grade: str
     comment: str = ''
-    pollfileid: ModelReference['PollFileSpec']
-    workflowid: ModelReference['WorkflowSpec'] = pydantic.Field(default='Manual', validate_default=True)
+    pollfileid: ModelRef['PollFileSpec']
+    workflowid: ModelRef['WorkflowSpec'] = pydantic.Field(default='Manual', validate_default=True)
     durationsec: int = -1
 
     @pydantic.field_validator('grade')
@@ -112,9 +111,9 @@ class ReviewSpec(_SpecWithUser, StrictFields):
             self._errors += 'Super-Like requires a comment!'
         return self
 
-class ReviewStepSpec(SpecBase, StrictFields):
-    reviewid: ModelReference['ReviewSpec']
-    flowstepid: ModelReference['FlowStepSpec']
+class ReviewStepSpec(ipd.crud.SpecBase):
+    reviewid: ModelRef['ReviewSpec']
+    flowstepid: ModelRef['FlowStepSpec']
     task: dict[str, Union[str, int, float]]
     grade: str
     comment: str = ''
@@ -125,8 +124,8 @@ class PymolCMDSpecError(Exception):
         super().__init__(message + os.linesep + log)
         self.log = log
 
-class PymolCMDSpec(_SpecWithUser, StrictFields):
-    name: str
+class PymolCMDSpec(_SpecWithUser):
+    name: Unique[str]
     desc: str = ''
     cmdon: str
     cmdoff: str = ''
@@ -144,8 +143,8 @@ class PymolCMDSpec(_SpecWithUser, StrictFields):
         if self.cmdcheck: PymolCMDSpec_validate_commands(self)
         return self
 
-class WorkflowSpec(_SpecWithUser, StrictFields):
-    name: str
+class WorkflowSpec(_SpecWithUser):
+    name: Unique[str]
     desc: str
     ordering: str = 'Manual'
 
@@ -155,19 +154,25 @@ class WorkflowSpec(_SpecWithUser, StrictFields):
         assert ordering in allowed, f'bad ordering {ordering}, must be one of {allowed}'
         return ordering
 
-class FlowStepSpec(SpecBase, StrictFields):
-    workflowid: ModelReference['WorkflowSpec']
-    name: str
+class FlowStepSpec(ipd.crud.SpecBase):
+    workflowid: ModelRef['WorkflowSpec']
+    name: Unique[str]
     index: int
     taskgen: dict[str, Union[str, int, float]] = {}
     instructions: str = ''
 
-class UserSpec(SpecBase):
-    name: str
+class UserSpec(ipd.crud.SpecBase):
+    name: Unique[str]
     fullname: str = ''
+    # followers: list['UserSpec']
+    # following: list['UserSpec']
+    # groups: list['GroupSpec']
 
-class GroupSpec(_SpecWithUser, StrictFields):
-    name: str
+class GroupSpec(_SpecWithUser):
+    name: Unique[str]
+    userid: ModelRef['UserSpec', 'ownedgroups'] = pydantic.Field(default='anonymous_coward',
+                                                                 validate_default=True)
+    # users: list['UserSpec']
 
 _PML = 0
 
@@ -175,7 +180,7 @@ def PollSpec_get_structure_properties(poll):
     if not poll.sym or not poll.ligand:
         try:
             global _PML
-            filt = lambda s: not s.startswith('_') and s.endswith(STRUCTURE_FILE_SUFFIX)
+            filt = lambda s: not s.startswith('_') and s.endswith(ipd.STRUCTURE_FILE_SUFFIX)
             fname = next(filter(filt, os.listdir(poll.path)))
             # print('CHECKING IN PYMOL', fname)
             pymol.cmd.set('suspend_updates', 'on')
@@ -254,8 +259,8 @@ def fix_label_case(thing):
     if 'sym' in keys: set('sym', get('sym').upper())
     if 'ligand' in keys: set('ligand', get('ligand').upper())
 
-spec_model = {
+spec_models = {
     name.replace('Spec', '').lower(): cls
     for name, cls in globals().items() if name.endswith('Spec')
 }
-assert not any(name.endswith('s') for name in spec_model)
+assert not any(name.endswith('s') for name in spec_models)

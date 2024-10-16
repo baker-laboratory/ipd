@@ -25,18 +25,9 @@ REMOTE_MODE = not os.path.exists('/net/scratch/sheffler')
 # profile = ipd.dev.timed
 profile = lambda f: f
 
-class PPPClientError(Exception):
-    pass
-
-def tojson(thing):
-    if isinstance(thing, list):
-        return f'[{",".join(tojson(_) for _ in thing)}]'
-    if isinstance(thing, str):
-        return thing
-    return thing.json()
-
-class PPPClient(ipd.dev.ModelFrontend, models=ipd.ppp.client_model):
+class PPPClient(ipd.crud.frontend.ModelFrontend, models=ipd.ppp.client_models):
     def __init__(self, server_addr_or_testclient):
+        super().__init__()
         if isinstance(server_addr_or_testclient, str):
             # print('PPPClient: connecting to server', server_addr_or_testclient)
             self.testclient, self.server_addr = None, server_addr_or_testclient
@@ -46,66 +37,6 @@ class PPPClient(ipd.dev.ModelFrontend, models=ipd.ppp.client_model):
         assert self.get('/')['msg'] == 'Hello World'
         global _GLOBAL_CLIENT
         _GLOBAL_CLIENT = self  #there should be a better way to do this
-
-    def getattr(self, thing, id, attr):
-        return self.get(f'/getattr/{thing}/{id}/{attr}')
-
-    def setattr(self, thing, attr, val):
-        thingtype = thing.__class__.__name__.lower()
-        return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
-
-    def get(self, url, **kw):
-        ipd.ppp.fix_label_case(kw)
-        query = '&'.join([f'{k}={v}' for k, v in kw.items()])
-        url = f'{url}?{query}' if query else url
-        if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
-        if self.testclient:
-            return self.testclient.get(url)
-        response = requests.get(url)
-        if response.status_code != 200:
-            reason = response.reason if hasattr(response, 'reason') else '???'
-            raise PPPClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
-                                 f'REASON:   {reason}\n    CONTENT:  {response.content.decode()}')
-        return response.json()
-
-    def post(self, url, thing, **kw):
-        query = '&'.join([f'{k}={v}' for k, v in kw.items()])
-        url = f'{url}?{query}' if query else url
-        if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
-        body = tojson(thing)
-        # print('POST', url, type(thing), body)
-        if self.testclient: response = self.testclient.post(url, content=body)
-        else: response = requests.post(url, body)
-        # ic(response)
-        if response.status_code != 200:
-            if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
-            reason = response.reason if hasattr(response, 'reason') else '???'
-            raise PPPClientError(f'POST failed "{url}"\n    BODY:     {body}\n    '
-                                 f'RESPONSE: {response}\n    REASON:   {reason}\n    '
-                                 f'CONTENT:  {response.content.decode()}')
-        return response.json()
-
-    def remove(self, thing):
-        assert isinstance(thing, ipd.ppp.SpecBase), f'cant remove type {thing.__class__.__name__}'
-        thingname = thing.__class__.__name__.replace('Spec', '').lower()
-        return self.get(f'/remove/{thingname}/{thing.id}')
-
-    def upload(self, thing, _dispatch_on_type=True, **kw):
-        if _dispatch_on_type and isinstance(thing, ipd.ppp.PollSpec): return self.upload_poll(thing)
-        if _dispatch_on_type and isinstance(thing, ipd.ppp.ReviewSpec): return self.upload_review(thing)
-        thing = thing.to_spec()
-        # print('upload', type(thing), kw)
-        if thing._errors:
-            return thing._errors
-        kind = type(thing).__name__.replace('Spec', '').lower()
-        # ic(kind)
-        result = self.post(f'/create/{kind}', thing, **kw)
-        # ic(result)
-        try:
-            result = uuid.UUID(result)
-            return ipd.ppp.client_model[kind](self, **self.get(f'/{kind}', id=result))
-        except ValueError:
-            return result
 
     def upload_poll(self, poll):
         poll = poll.to_spec()
@@ -117,7 +48,7 @@ class PPPClient(ipd.dev.ModelFrontend, models=ipd.ppp.client_model):
         else:
             assert os.path.isdir(poll.path)
             fnames = [os.path.join(poll.path, f) for f in os.listdir(poll.path)]
-        filt = lambda s: not s.startswith('_') and s.endswith(ipd.ppp.STRUCTURE_FILE_SUFFIX)
+        filt = lambda s: not s.startswith('_') and s.endswith(ipd.STRUCTURE_FILE_SUFFIX)
         fnames = list(filter(filt, fnames))
         assert fnames, f'path must contain structure files: {poll.path}'
         poll = self.upload(poll, _dispatch_on_type=False)
