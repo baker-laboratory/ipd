@@ -63,6 +63,15 @@ class PollSpec(_SpecWithUser):
         # print('poll _validated done')
         return self
 
+    @ipd.crud.backend_method
+    def clear(self, backend, ghost=True):
+        for r in backend.select(DBReview, pollid=self.id):
+            if not ghost: r.pollid, r.pollfileid = 1, 1
+        backend.session.commit()
+        for f in backend.select(DBPollFile, pollid=self.id):
+            if ghost: f.ghost = True
+            else: backend.session.delete(f)
+
     def __hash__(self):
         return hash(self.path)
 
@@ -166,13 +175,13 @@ class UserSpec(ipd.crud.SpecBase):
     fullname: str = ''
     # followers: list['UserSpec']
     # following: list['UserSpec']
-    # groups: list['GroupSpec']
+    groups: list['GroupSpec']
 
 class GroupSpec(_SpecWithUser):
     name: Unique[str]
+    users: list['UserSpec']
     userid: ModelRef['UserSpec', 'ownedgroups'] = pydantic.Field(default='anonymous_coward',
                                                                  validate_default=True)
-    # users: list['UserSpec']
 
 _PML = 0
 
@@ -264,3 +273,10 @@ spec_models = {
     for name, cls in globals().items() if name.endswith('Spec')
 }
 assert not any(name.endswith('s') for name in spec_models)
+
+# these two lines replace about 500... woo
+backend_models = ipd.crud.backend.make_backend_models(spec_models)
+client_models = ipd.crud.frontend.make_client_models(spec_models, backend_models)
+for kind in spec_models:
+    globals()[backend_models[kind].__name__] = backend_models[kind]
+    globals()[client_models[kind].__name__] = client_models[kind]

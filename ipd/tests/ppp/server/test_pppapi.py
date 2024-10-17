@@ -1,4 +1,5 @@
-import sqlalchemy
+import ipd.ppp.models
+
 import itertools as it
 import sys
 import ipd
@@ -32,10 +33,12 @@ def set_debug_requests():
     requests_log.propagate = True
 
 def main():
-    for fn in [f for n, f in globals().items() if n.startswith('test_')]:
-        with tempfile.TemporaryDirectory() as tempdir:
+    with tempfile.TemporaryDirectory() as tempdir:
+        server, backend, client, testclient = make_tmp_clent_server(tempdir)
+        for fn in [f for n, f in globals().items() if n.startswith('test_')]:
+            backend._clear_all_data_for_testing_only()
+            ipd.ppp.server.defaults.add_defaults()
             print('=' * 20, fn, '=' * 20)
-            server, backend, client, testclient = make_tmp_clent_server(tempdir)
             try:
                 args = {p: locals()[p] for p in inspect.signature(fn).parameters}
                 fn(**args)
@@ -45,7 +48,7 @@ def main():
                 print(traceback.format_exc())
                 server.stop()
                 return False
-            server.stop()
+        server.stop()
     print('PASS')
     ipd.dev.global_timer.report()
 
@@ -188,6 +191,7 @@ def test_ghost(backend):
     poll.pollfiles.append(file)
     backend.session.commit()
     assert not file.ghost
+    print(poll.clear)
     poll.clear(backend)
     assert file.ghost
     assert 1 == len(backend.pollinfo(user=user.name))

@@ -11,8 +11,8 @@ import operator
 import ipd
 from ipd import ppp
 import signal
-from rich import print
-from ipd.ppp.dbmodels import backend_models
+import rich
+from ipd.ppp.models import backend_models
 
 for cls in backend_models.values():
     globals()[cls.__name__] = cls
@@ -52,6 +52,9 @@ class PPPBackend(ipd.crud.backend.FastapiModelBackend, backend_models=backend_mo
         route('/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
         self.app.include_router(self.router)
         set_servermode(True)
+
+    def initdb(self):
+        super().initdb()
         ppp.server.defaults.ensure_init_db(self)
 
     def root(self) -> None:

@@ -16,7 +16,7 @@ if config.config_file_name is not None:
 
 from sqlmodel import SQLModel
 
-from ipd.ppp.dbmodels import *
+from ipd.ppp.models import backend_models
 
 target_metadata = SQLModel.metadata
 

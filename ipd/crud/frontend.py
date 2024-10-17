@@ -1,4 +1,5 @@
 import contextlib
+import functools
 import inspect
 import ipd
 import os
@@ -73,6 +74,10 @@ class SpecBase(pydantic.BaseModel):
     def kind(cls):
         return cls.__spec__.__name__.replace('Spec', '').lower()
 
+    @classmethod
+    def layer(cls):
+        return layerof(cls)
+
     @pydantic.field_validator('props')
     def valprops(cls, props):
         if isinstance(props, (set, list)): return props
@@ -82,7 +87,6 @@ class SpecBase(pydantic.BaseModel):
             if isinstance(props, str):
                 if not props.strip(): return []
                 props = [p.strip() for p in props.strip().split(',')]
-        return props
 
     @pydantic.field_validator('attrs')
     def valattrs(cls, attrs):
@@ -131,20 +135,16 @@ class SpecBase(pydantic.BaseModel):
                 # for p in prop:
                 # if p.id not in seenit: p.print_full(seenit, depth)
 
-def make_client_models(spec_models, backend_models):
+def make_client_models(spec_models, backend_models, remote_props):
     client_models = {}
-    for kind, clsspec in spec_models.items():
+    for kind, spec in spec_models.items():
         clsdb = backend_models[kind]
-        assert clsspec.__name__.endswith('Spec')
-        clsname = clsspec.__name__[:-4]
-        dbprops = set(clsdb.__dict__) | set(clsdb.model_fields)
-        specprops = set(clsspec.__dict__) | set(clsspec.model_fields)
-        propnames = {s for s in dbprops - specprops if not s.startswith('_')}
-        props = {}
-        for propname in propnames:
+        clsname = spec.__name__[:-4]
+        body, props = {}, {}
+        for propname in remote_props[kind]:
             if propname in clsdb.model_fields:
                 proptype = clsdb.model_fields[propname].annotation
-                print(clsspec, propname)
+                print(spec, propname)
                 assert 0
             elif propname in clsdb.__annotations__:
                 proptype = typing.get_args(clsdb.__annotations__[propname])[0]
@@ -160,7 +160,11 @@ def make_client_models(spec_models, backend_models):
                 propkind = propkind.__forward_arg__
             if not isinstance(propkind, str): propkind = propkind.__name__
             props[propname] = propkind.replace('DB', '').lower()
-        client_models[kind] = type(clsname, (ClientModelBase, clsspec), {}, backend_props=props)
+        for name, member in spec.__dict__.copy().items():
+            if hasattr(member, '__layer__') and member.__layer__ == 'client':
+                body[name] = member
+                delattr(spec, name)
+        client_models[kind] = type(clsname, (ClientModelBase, spec), body, backend_props=props)
     return client_models
 
 class ClientModelBase(pydantic.BaseModel):
@@ -230,7 +234,7 @@ class ModelFrontend:
         super().__init_subclass__(**kw)
         cls.__models__ = models
         cls.__modelspecs__ = {name: mdl.__spec__ for name, mdl in models.items()}
-        _add_client_model_properties(cls)
+        CLIENT(cls)
 
     def getattr(self, thing, id, attr):
         return self.get(f'/getattr/{thing}/{id}/{attr}')
@@ -292,7 +296,7 @@ class ModelFrontend:
         except ValueError:
             return result
 
-def _add_client_model_properties(clientcls):
+def CLIENT(clientcls):
     '''
       Generic interface for accessing models from the server. Any name or name suffixed with 's'
       that is in frontend_model, above, will get /name from the server and turn the result(s) into
@@ -300,7 +304,7 @@ def _add_client_model_properties(clientcls):
       '''
     for _name, _cls in clientcls.__models__.items():
 
-        def make_funcs_forcing_closure_over_cls_name(cls=_cls, name=_name):
+        def MAKEMETHOD(cls=_cls, name=_name):
             def new(self, **kw) -> str:
                 return self.upload(cls.__spec__(**kw))
 
@@ -316,7 +320,7 @@ def _add_client_model_properties(clientcls):
 
             return single, multi, count, new
 
-        single, multi, count, new = make_funcs_forcing_closure_over_cls_name()
+        single, multi, count, new = MAKEMETHOD()
         setattr(clientcls, _name, single)
         setattr(clientcls, f'{_name}s', multi)
         setattr(clientcls, f'n{_name}s', count)
@@ -352,3 +356,22 @@ def _validate_ref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
         val = ref.id
     # print(cls, refcls, val)
     return val
+
+def model_method(func, layer):
+    @functools.wraps(func)
+    def wrapper(self, *a, **kw):
+        err = f'{inspect.signature(func)} only valid in {layer} model, not {self.__class__.__name__}'
+        assert self.layer() == layer, err
+        func(self, *a, **kw)
+
+    wrapper.__layer__ = layer
+    return wrapper
+
+def spec_method(func):
+    return model_method(func, 'spec')
+
+def client_method(func):
+    return model_method(func, 'client')
+
+def backend_method(func):
+    return model_method(func, 'backend')

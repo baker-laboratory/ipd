@@ -1,14 +1,26 @@
-import os
-from typing import Optional
-import ipd
-from ipd import ppp
-from ipd.crud.backend import BackendModelBase, Props, Attrs, props_default, attrs_default
-from typing import Union
-import uuid
+# from ipd.ppp.models import *
 
-backend_models = ipd.crud.backend.make_backend_models(ipd.ppp.spec_models)
-for cls in backend_models.values():
-    globals()[cls.__name__] = cls
+# def DBPoll_clear(self, backend, ghost=True):
+#     for r in backend.select(DBReview, pollid=self.id):
+#         if not ghost: r.pollid, r.pollfileid = 1, 1
+#     backend.session.commit()
+#     for f in backend.select(DBPollFile, pollid=self.id):
+#         if ghost: f.ghost = True
+#         else: backend.session.delete(f)
+
+# backend_models['poll'].clear = DBPoll_clear
+
+# import os
+# from typing import Optional
+# import ipd
+# from ipd import ppp
+# from ipd.crud.backend import BackendModelBase, Props, Attrs, props_default, attrs_default
+# from typing import Union
+# import uuid
+
+# backend_models = ipd.crud.backend.make_backend_models(ipd.ppp.spec_models)
+# for cls in backend_models.values():
+#     globals()[cls.__name__] = cls
 
 # pydantic = ipd.lazyimport('pydantic', pip=True)
 # sqlmodel = ipd.lazyimport('sqlmodel', pip=True)._import_module()
@@ -145,14 +157,14 @@ for cls in backend_models.values():
 #     user: 'DBUser' = Relationship(back_populates='ownedgroups')
 
 # backend_models = {name: globals()[f'DB{spec.__name__[:-4]}'] for name, spec in ipd.ppp.spec_models.items()}
-client_models = ipd.crud.frontend.make_client_models(ipd.ppp.spec_models, backend_models)
+# client_models = ipd.crud.frontend.make_client_models(ipd.ppp.spec_models, backend_models)
 
-def DBPoll_clear(self, backend, ghost=True):
-    for r in backend.select(DBReview, pollid=self.id):
-        if not ghost: r.pollid, r.pollfileid = 1, 1
-    backend.session.commit()
-    for f in backend.select(DBPollFile, pollid=self.id):
-        if ghost: f.ghost = True
-        else: backend.session.delete(f)
+# def DBPoll_clear(self, backend, ghost=True):
+#     for r in backend.select(DBReview, pollid=self.id):
+#         if not ghost: r.pollid, r.pollfileid = 1, 1
+#     backend.session.commit()
+#     for f in backend.select(DBPollFile, pollid=self.id):
+#         if ghost: f.ghost = True
+#         else: backend.session.delete(f)
 
-backend_models['poll'].clear = DBPoll_clear
+# backend_models['poll'].clear = DBPoll_clear
