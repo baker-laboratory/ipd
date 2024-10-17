@@ -41,8 +41,8 @@ pydantic_field_args = ('default default_factory alias alias_priority validation_
 class BackendError(Exception):
     pass
 
-def make_backend_model_base(SQLModel=sqlmodel.SQLModel):
-    class BackendModelBase(SQLModel, SpecBase):
+def make_backend_model_base(SQL=sqlmodel.SQLModel):
+    class BackendModelBase(SQL, SpecBase):
         id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
 
         def clear(self, backend, ghost=True):
@@ -64,27 +64,35 @@ def make_backend_model_base(SQLModel=sqlmodel.SQLModel):
 
     return BackendModelBase
 
-class FastapiModelBackend:
-    def __init_subclass__(cls, backend_models, **kw):
+class BackendBase:
+    def __init_subclass__(cls, models, SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
-        cls.__backend_models__ = backend_models
-        cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in backend_models.items()}
-        BACKEND(cls, backend_models)
+        backend_info = ipd.crud.backend.make_backend_models(models, SQL)
+        cls.__backend_models__, cls.__remoteprops__, cls.__trimspecs__ = backend_info
+        cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in cls.__backend_models__.items()}
+        BACKEND(cls)
 
     def __init__(self, engine):
+        if isinstance(engine, str) and '://' not in engine: engine = f'sqlite:///{engine}'
+        if isinstance(engine, str): engine = engine = sqlmodel.create_engine(engine)
         self.engine = engine
         self.session = sqlmodel.Session(self.engine)
         self.router = fastapi.APIRouter()
         self.app = fastapi.FastAPI()
-        route = self.router.add_api_route
+        self.route = self.router.add_api_route
         for model in self.__backend_models__:
-            route(f'/{model}', getattr(self, model), methods=['GET'])
-            route(f'/{model}s', getattr(self, f'{model}s'), methods=['GET'])
-            route(f'/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
-            route(f'/create/{model}', getattr(self, f'create_{model}'), methods=['POST'])
-        route('/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
-        route('/setattr/{thing}/{id}/{attr}', self.setattr, methods=['POST'])
-        route('/remove/{thing}/{id}', self.remove, methods=['GET'])
+            self.route(f'/api/{model}', getattr(self, model), methods=['GET'])
+            self.route(f'/api/{model}s', getattr(self, f'{model}s'), methods=['GET'])
+            self.route(f'/api/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
+            self.route(f'/api/create/{model}', getattr(self, f'create_{model}'), methods=['POST'])
+        self.route('/api/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
+        self.route('/api/setattr/{thing}/{id}/{attr}', self.setattr, methods=['POST'])
+        self.route('/api/remove/{thing}/{id}', self.remove, methods=['GET'])
+        self.route('/api/remove/{thing}/{id}', self.remove, methods=['GET'])
+        self.route('/api/gitstatus', ipd.dev.git_status, methods=['GET'])
+        self.route('/api/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
+        self.init_routes()
+        self.app.include_router(self.router)
         self.initdb()
 
         @self.app.exception_handler(Exception)
@@ -101,6 +109,9 @@ class FastapiModelBackend:
 
     def initdb(self):
         sqlmodel.SQLModel.metadata.create_all(self.engine)
+
+    def init_routes(self):
+        pass
 
     def iserror(self, thing):
         return isinstance(thing, fastapi.responses.Response) and thing.status_code != 200
@@ -188,53 +199,52 @@ class FastapiModelBackend:
             self.session.rollback()
             return self.handle_error(e)
 
-def BACKEND(backendcls, backend_models):
+def BACKEND(backendcls):
     '''
     Autogen getter methods. Yes, this is better than lots of boilerplate functions that must be kept
     in sync. Any name or name suffixed with 's'
     that is in clientmodels, above, will get /name from the server and turn the result(s) into
     the appropriate client model type, list of such types for plural, or None.
-    for _name, _cls in backend_models.items():
     '''
-    for _name, _cls in backend_models.items():
+    for _name, _dbcls in backendcls.__backend_models__.items():
 
-        def MAKEMETHOD(name=_name, cls=_cls):
+        def MAKEMETHOD(name=_name, dbcls=_dbcls):
             def create(self, model: dict) -> typing.Union[str, int]:
-                # model = cls.parse_obj(model)
-                if isinstance(model, dict): model = cls(**model)
+                # model = dbcls.parse_obj(model)
+                if isinstance(model, dict): model = dbcls(**model)
                 return self.validate_and_add_to_db(model)
 
             def new(self, **kw) -> typing.Union[str, int]:
                 for k, v in kw.copy().items():
-                    if k in backend_models:
+                    if k in dbcls.__sibling_models__:
                         kw[f'{k}id'] = v.id
                         del kw[k]
-                model = backend_models[name](**kw)
+                model = dbcls(**kw)
                 newid = getattr(self, f'create_{name}')(model)
                 if self.iserror(newid): return newid
                 return getattr(self, f'i{name}')(newid, _ghost=True)
 
             def count(self, kw=None, request: fastapi.Request = None, response_model=int):
-                # print('route', name, cls, kw, request, flush=True)
-                if request: return self.select(cls, _count=True, **request.query_params)
-                elif kw: return self.select(cls, _count=True, **kw)
-                else: return self.select(cls, _count=True)
+                # print('route', name, dbcls, kw, request, flush=True)
+                if request: return self.select(dbcls, _count=True, **request.query_params)
+                elif kw: return self.select(dbcls, _count=True, **kw)
+                else: return self.select(dbcls, _count=True)
 
-            def multi(self, kw=None, request: fastapi.Request = None, response_model=list[cls]):
-                # print('route', name, cls, kw, request, flush=True)
-                if request: return self.select(cls, **request.query_params)
-                elif kw: return self.select(cls, **kw)
-                else: return self.select(cls)
+            def multi(self, kw=None, request: fastapi.Request = None, response_model=list[dbcls]):
+                # print('route', name, dbcls, kw, request, flush=True)
+                if request: return self.select(dbcls, **request.query_params)
+                elif kw: return self.select(dbcls, **kw)
+                else: return self.select(dbcls)
 
-            def single(self, kw=None, request: fastapi.Request = None, response_model=typing.Optional[cls]):
-                # print('route', name, cls, kw, request, flush=True)
-                if request: return self.select(cls, _single=True, **request.query_params)
-                elif kw: return self.select(cls, _single=True, **kw)
-                else: return self.select(cls, _single=True)
+            def single(self, kw=None, request: fastapi.Request = None, response_model=typing.Optional[dbcls]):
+                # print('route', name, dbcls, kw, request, flush=True)
+                if request: return self.select(dbcls, _single=True, **request.query_params)
+                elif kw: return self.select(dbcls, _single=True, **kw)
+                else: return self.select(dbcls, _single=True)
 
-            def singleid(self, id: str, **kw) -> typing.Union[cls, None]:
+            def singleid(self, id: str, **kw) -> typing.Union[dbcls, None]:
                 assert id
-                return self.select(cls, id=id, _single=True, **kw)
+                return self.select(dbcls, id=id, _single=True, **kw)
 
             return multi, single, singleid, count, create, new
 
@@ -259,15 +269,15 @@ def allfields(model):
             fields |= base.model_fields
     return fields
 
-def copy_model(cls, clsname):
-    fields = {}
+def copy_model(cls, clsname) -> typing.Type[pydantic.BaseModel]:
+    fields, funcs = {}, {}
     for name, f in cls.model_fields.items():
         fields[name] = (f.annotation, pydantic.Field(**{k: getattr(f, k) for k in pydantic_field_args}))
-    return pydantic.create_model(clsname, **fields)
+    return pydantic.create_model(clsname, __validators__=funcs, __base__=cls.__bases__, **fields)
 
-def make_backend_models(spec_models, SQLModel=sqlmodel.SQLModel):
-    print('make_backend_models')
-    BackendModelBase = make_backend_model_base(SQLModel)
+def make_backend_models(spec_models, SQL=sqlmodel.SQLModel):
+    # print('make_backend_models')
+    BackendModelBase = make_backend_model_base(SQL)
     body = {kind: {} for kind in spec_models}
     anno = {kind: {} for kind in spec_models}
     remove_fields = {kind: [] for kind in spec_models}
@@ -278,6 +288,8 @@ def make_backend_models(spec_models, SQLModel=sqlmodel.SQLModel):
     dbclsname |= {cls.__name__: 'DB' + cls.__name__.replace('Spec', '') for cls in spec_models.values()}
     specns = {cls.__name__: cls for cls in spec_models.values()}
     for kind, spec in spec_models.items():
+        assert kind == spec.__name__[:-4].lower()
+        # print('make_backend_models', kind, spec.__name__)
         body[kind]['props'] = props_default()
         body[kind]['attrs'] = attrs_default()
         anno[kind]['props'] = Props
@@ -297,10 +309,10 @@ def make_backend_models(spec_models, SQLModel=sqlmodel.SQLModel):
                 optional = field.default is None
                 idanno = typing.Optional[UUID] if optional else UUID
                 refanno = typing.Optional[refname] if optional else refname
-                reffield = sqlmodel.Relationship(back_populates=f'{link}')
+                kw = {}
                 if dbclsname[kind] == refname:
-                    # self reference needs direction specified
-                    kw = dict(cascade="all", remote_side=f'{dbclsname[kind]}.id')
+                    kw = {'sa_relationship_kwargs': dict(cascade="all", remote_side=f'{dbclsname[kind]}.id')}
+                reffield = sqlmodel.Relationship(back_populates=f'{link}', **kw)
                 idfield = sqlmodel.Field(foreign_key=f'{refname.lower()}.id')
                 if optional:
                     idfield = sqlmodel.Field(foreign_key=f'{refname.lower()}.id', nullable=True, default=None)
@@ -308,7 +320,6 @@ def make_backend_models(spec_models, SQLModel=sqlmodel.SQLModel):
                 anno[kind][attr] = idanno
                 body[kind][attr[:-2]] = reffield
                 anno[kind][attr[:-2]] = refanno
-                remote_props[kind].append(attr[:-2])
                 # print(kind, attr, anno[kind][attr], 'foreign_key', refname.lower() + '.id')
                 # print(kind, attr[:-2], anno[kind][attr[:-2]], 'Rel. backpop', link)
                 refkind = refname.replace('DB', '').lower()
@@ -319,6 +330,7 @@ def make_backend_models(spec_models, SQLModel=sqlmodel.SQLModel):
                     if len(refmeta) != 2 or refmeta[1] != spec.__name__:
                         err = f'{kind}.{attr} linked {refkind}.{link} must be list["{refspec.__name__}"]'
                         raise TypeError(err)
+
                 # print(refkind, link, list[dbclsname[kind]], 'Rel. backpop', attr[:-2])
                 body[refkind][link] = sqlmodel.Relationship(back_populates=attr[:-2])
                 anno[refkind][link] = list[dbclsname[kind]]
@@ -341,15 +353,17 @@ def make_backend_models(spec_models, SQLModel=sqlmodel.SQLModel):
         assert len(ends) == 2, f'links of order > 2 not supported, {pair}, {link}'
         linkname = f'{str.join("",pair).replace("Spec", "")}{link.title()}Link'
         (kind1, attr1, refname1), (kind2, attr2, refname2) = ends
+        # print(pair, link, ends)
         assert refname1 in pair and refname2 in pair
         linkbody = {
-            f'{kind1}id': sqlmodel.Field(default=None, primary_key=True, foreign_key=f'db{kind1}.id'),
-            f'{kind2}id': sqlmodel.Field(default=None, primary_key=True, foreign_key=f'db{kind2}.id'),
+            f'{attr1}id': sqlmodel.Field(default=None, primary_key=True, foreign_key=f'db{kind1}.id'),
+            f'{attr2}id': sqlmodel.Field(default=None, primary_key=True, foreign_key=f'db{kind2}.id'),
         }
-        linkanno = {f'{kind1}id': typing.Optional[UUID], f'{kind2}id': typing.Optional[UUID]}
+        linkanno = {f'{attr1}id': typing.Optional[UUID], f'{attr2}id': typing.Optional[UUID]}
         linkbody['__annotations__'] = linkanno
         # rich.print(linkbody)
-        linkcls = type(linkname, (SQLModel, ), linkbody, table=True)
+        # print(kind1, kind2)
+        linkcls = type(linkname, (SQL, ), linkbody, table=True)
         linktables[linkname] = linkcls
         kinds, attrs, refnames = zip(*ends)
         for i, (kind, attr, refname) in enumerate(zip(kinds, attrs, refnames)):
@@ -365,32 +379,32 @@ def make_backend_models(spec_models, SQLModel=sqlmodel.SQLModel):
             # print(f'{kind} {attr} : {anno[kind][attr]} = Relationship({kw})')
 
     # build the models
-    models = {}
-    for kind, origspec in spec_models.items():
-        spec = copy_model(origspec, f'{origspec.__name__}Trim')
+    models, remote_props, trimspecs = {}, {}, {}
+    for kind, spec in spec_models.items():
+        trimspec = copy_model(spec, f'{spec.__name__}Trim')
         attrs = set(spec_models[kind].model_fields) - set(body[kind])
         attrs = attrs - {'ispublic', 'ghost', 'datecreated', 'telemetry', 'id'}
-        # print(kind, attrs)
-        # for attr in body[kind]:
-        # print(f'    {attr:12} {str(anno[kind][attr]):20} {body[kind][attr]}')
-        for name, member in spec.__dict__.copy().items():
+        for name, member in trimspec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'backend':
                 body[kind][name] = member
-                delattr(spec, name)
+                delattr(trimspec, name)
         body[kind]['__annotations__'] = anno[kind]
         for attr in remove_fields[kind] + list(body[kind]):
-            if attr in spec.model_fields: del spec.model_fields[attr]
-            if hasattr(spec, attr): delattr(spec, attr)
-        # print(spec.model_fields.keys())
-        models[kind] = type(dbclsname[kind], (BackendModelBase, spec), body[kind], table=True)
-        print('spec diff', kind, origspec.model_fields.keys())
-        print('spec diff', kind, spec.model_fields.keys())
+            print(kind, 'remove', attr)
+            if attr in trimspec.model_fields: del trimspec.model_fields[attr]
+            if hasattr(trimspec, attr): delattr(trimspec, attr)
 
-    remote_props = {}
-    for kind in spec_models:
+        dbcls = type(dbclsname[kind], (BackendModelBase, trimspec), body[kind], table=True)
+        dbcls.__spec__ = spec
+        spec.__backend_model__ = dbcls
+        dbcls.__sibling_models__ = models
+        models[kind] = dbcls
+        trimspecs[kind] = trimspec
         remote_props[kind] = {k for k, v in body[kind].items() if isinstance(v, RelationshipInfo)}
+        # hacky, add classes to the namespace that creates the inheriting class
+        inspect.currentframe().f_back.f_back.f_globals[dbcls.__name__] = dbcls
 
-    return models, linktables, remote_props
+    return models, remote_props, trimspecs
 
 if False:
     filekindid: Optional[uuid.UUID] = Field(default=None, foreign_key='dbfilekind.id', nullable=True)

@@ -30,3 +30,5 @@ from ipd.dev.state import *
 from ipd.dev.filefetch import *
 
 apimeta = lazyimport('ipd.dev.apimeta')
+
+from ipd.dev.timer import timed as profile

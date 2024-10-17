@@ -1,9 +1,10 @@
+import ipd.dev
 from ipd import ppp
 import os
 import yaml
 from rich import print
 
-@ppp.profile
+@ipd.dev.profile
 def ensure_init_db(backend):
     if not backend.users():
         backend.session.add(ppp.server.DBUser.from_spec(ppp.UserSpec(name='admin')))
@@ -37,7 +38,7 @@ def ensure_init_db(backend):
         )
         assert file
 
-@ppp.profile
+@ipd.dev.profile
 def add_defaults(stress_test_polls=False, **kw):
     # print('ADD DEFAULTS')
     import pymol
@@ -52,7 +53,7 @@ def add_defaults(stress_test_polls=False, **kw):
     # print(len(client.pymolcmds()))
     # print('------------------- DONE ADD DEFAULTS -------------------')
 
-@ppp.profile
+@ipd.dev.profile
 def add_polls(client, stress=False):
     print('add_stresstest_polls start')
     manual = [
@@ -76,7 +77,7 @@ def add_polls(client, stress=False):
         else:
             print(pollspec)
 
-@ppp.profile
+@ipd.dev.profile
 def make_stress_test(presentpolls, client):
     if os.path.exists('/tmp/add_stresstest_polls.list'):
         result = [l.strip() for l in open('/tmp/add_stresstest_polls.list').readlines()]
@@ -103,7 +104,7 @@ def make_stress_test(presentpolls, client):
         if result := client.upload(spec): print(result)
     return result
 
-@ppp.profile
+@ipd.dev.profile
 def add_builtin_cmds(client):
     with open(__file__.replace('.py', '.yaml')) as inp:
         config = yaml.load(inp, yaml.Loader)
@@ -115,7 +116,7 @@ def add_builtin_cmds(client):
                 print(spec.errors())
                 assert 0, 'cmd errors'
 
-@ppp.profile
+@ipd.dev.profile
 def add_sym_cmds(client):
     for sym in 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.split():
         cmd = ppp.PymolCMDSpec(
@@ -131,7 +132,7 @@ def add_sym_cmds(client):
         result = client.upload(cmd)
         # assert not result, result
 
-@ppp.profile
+@ipd.dev.profile
 def find_pdb_dirs(path, lb, ub):
     dirs = []
     for dir_, _, files in os.walk(os.path.expanduser(path)):

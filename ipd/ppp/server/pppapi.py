@@ -12,10 +12,6 @@ import ipd
 from ipd import ppp
 import signal
 import rich
-from ipd.ppp.models import backend_models
-
-for cls in backend_models.values():
-    globals()[cls.__name__] = cls
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -39,19 +35,18 @@ def set_servermode(isserver):
     # print('_SERVERMODE MODE')
 
 @profile
-class PPPBackend(ipd.crud.backend.FastapiModelBackend, backend_models=backend_models):
+class PPPBackend(ipd.crud.backend.BackendBase, models=ipd.ppp.spec_models):
     def __init__(self, engine, datadir):
         super().__init__(engine)
         self.datadir = datadir
-        route = self.router.add_api_route
-        route('/', self.root, methods=['GET'])
-        route('/create/pollfilecontents', self.create_file_with_content, methods=['POST'])
-        route('/create/pollfiles', self.create_empty_files, methods=['POST'])
-        route('/have/pollfile', self.have_pollfile, methods=['GET'])
-        route('/pollinfo', self.pollinfo, methods=['GET'])
-        route('/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
-        self.app.include_router(self.router)
         set_servermode(True)
+
+    def init_routes(self):
+        self.route('/api', self.root, methods=['GET'])
+        self.route('/api/create/pollfilecontents', self.create_file_with_content, methods=['POST'])
+        self.route('/api/create/pollfiles', self.create_empty_files, methods=['POST'])
+        self.route('/api/have/pollfile', self.have_pollfile, methods=['GET'])
+        self.route('/api/pollinfo', self.pollinfo, methods=['GET'])
 
     def initdb(self):
         super().initdb()
@@ -106,7 +101,7 @@ class PPPBackend(ipd.crud.backend.FastapiModelBackend, backend_models=backend_mo
         newfname = os.path.join(path, fname.replace('/', '\\'))
         return newfname
 
-    def create_file_with_content(self, file: DBPollFile):
+    def create_file_with_content(self, file: 'DBPollFile'):
         assert file.filecontent
         assert file.permafname
         mode = 'wb' if file.permafname.endswith('.bcif') else 'w'

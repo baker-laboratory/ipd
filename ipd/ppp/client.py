@@ -2,6 +2,7 @@ import os
 from subprocess import check_output
 import ipd
 from ipd import ppp
+from ipd.ppp.server.pppapi import PPPBackend
 import uuid
 from pathlib import Path
 from icecream import ic
@@ -25,15 +26,9 @@ REMOTE_MODE = not os.path.exists('/net/scratch/sheffler')
 # profile = ipd.dev.timed
 profile = lambda f: f
 
-class PPPClient(ipd.crud.frontend.ModelFrontend, models=ipd.ppp.client_models):
+class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
     def __init__(self, server_addr_or_testclient):
-        super().__init__()
-        if isinstance(server_addr_or_testclient, str):
-            # print('PPPClient: connecting to server', server_addr_or_testclient)
-            self.testclient, self.server_addr = None, server_addr_or_testclient
-        elif isinstance(fastapi.testclient.TestClient):
-            # print('PPPClient: using testclient')
-            self.testclient = server_addr_or_testclient
+        super().__init__(server_addr_or_testclient)
         assert self.get('/')['msg'] == 'Hello World'
         global _GLOBAL_CLIENT
         _GLOBAL_CLIENT = self  #there should be a better way to do this

@@ -1,4 +1,5 @@
 import contextlib
+import fastapi
 import functools
 import inspect
 import ipd
@@ -72,7 +73,9 @@ class SpecBase(pydantic.BaseModel):
 
     @classmethod
     def kind(cls):
-        return cls.__spec__.__name__.replace('Spec', '').lower()
+        if cls.__name__.endswith('Spec'): return cls.__name__.replace('Spec', '').lower()
+        if cls.__name__.startswith('DB'): return cls.__name__.replace('DB', '').lower()
+        return cls.__name__.lower()
 
     @classmethod
     def layer(cls):
@@ -135,9 +138,10 @@ class SpecBase(pydantic.BaseModel):
                 # for p in prop:
                 # if p.id not in seenit: p.print_full(seenit, depth)
 
-def make_client_models(spec_models, backend_models, remote_props):
+def make_client_models(spec_models, trimspecs, backend_models, remote_props):
     client_models = {}
     for kind, spec in spec_models.items():
+        trimspec = trimspecs[kind]
         clsdb = backend_models[kind]
         clsname = spec.__name__[:-4]
         body, props = {}, {}
@@ -164,12 +168,20 @@ def make_client_models(spec_models, backend_models, remote_props):
             if hasattr(member, '__layer__') and member.__layer__ == 'client':
                 body[name] = member
                 delattr(spec, name)
-        client_models[kind] = type(clsname, (ClientModelBase, spec), body, backend_props=props)
+        print('make_client_models', spec)
+        clcls = type(clsname, (ClientModelBase, trimspec), body, backend_props=props)
+        clcls.__spec__ = spec
+        clcls.__backend_model__ = clsdb
+        spec.__frontend_model__ = clcls
+        clsdb.__frontend_model__ = clcls
+        client_models[kind] = clcls
+        # print(clsname, clcls.__name__, clcls)
+        # inspect.currentframe().f_back.f_back.f_globals[clcls.__name__] = clcls
+
     return client_models
 
 class ClientModelBase(pydantic.BaseModel):
-    id: uuid.UUID
-    _client: 'ModelFrontend' = None
+    _client: 'ClientBase' = None
     __sibling_models__: dict[str, 'ClientModelBase'] = {}
 
     def __init_subclass__(cls, backend_props=(), siblings=(), **kw):
@@ -229,12 +241,20 @@ def client_obj_constructor(loader, node):
 yaml.add_representer(ClientModelBase, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
-class ModelFrontend:
-    def __init_subclass__(cls, models, **kw):
+class ClientBase:
+    def __init_subclass__(cls, backend, **kw):
         super().__init_subclass__(**kw)
-        cls.__models__ = models
-        cls.__modelspecs__ = {name: mdl.__spec__ for name, mdl in models.items()}
+        cls.__backend_models__ = backend.__backend_models__
+        cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in cls.__backend_models__.items()}
+        cls.__client_models__ = make_client_models(cls.__spec_models__, backend.__trimspecs__,
+                                                   cls.__backend_models__, backend.__remoteprops__)
         CLIENT(cls)
+
+    def __init__(self, server_addr_or_testclient):
+        if isinstance(server_addr_or_testclient, str):
+            self.testclient, self.server_addr = None, server_addr_or_testclient
+        elif isinstance(server_addr_or_testclient, fastapi.testclient.TestClient):
+            self.testclient, self.server_addr = server_addr_or_testclient, None
 
     def getattr(self, thing, id, attr):
         return self.get(f'/getattr/{thing}/{id}/{attr}')
@@ -247,10 +267,11 @@ class ModelFrontend:
         ipd.ppp.fix_label_case(kw)
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
-        if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
         if self.testclient:
-            return self.testclient.get(url)
-        response = requests.get(url)
+            response = self.testclient.get(f'/api{url}')
+        else:
+            url = f'http://{self.server_addr}/api{url}'
+            response = requests.get(url)
         if response.status_code != 200:
             reason = response.reason if hasattr(response, 'reason') else '???'
             raise ClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
@@ -260,11 +281,13 @@ class ModelFrontend:
     def post(self, url, thing, **kw):
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
-        if not self.testclient: url = f'http://{self.server_addr}/ppp{url}'
         body = tojson(thing)
-        # print('POST', url, type(thing), body)
-        if self.testclient: response = self.testclient.post(url, content=body)
-        else: response = requests.post(url, body)
+        if self.testclient:
+            url = f'/api{url}'
+            response = self.testclient.post(url, content=body)
+        else:
+            url = f'http://{self.server_addr}/api{url}'
+            response = requests.post(url, body)
         # ic(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
@@ -292,7 +315,7 @@ class ModelFrontend:
         # ic(result)
         try:
             result = uuid.UUID(result)
-            return ipd.ppp.client_models[kind](self, **self.get(f'/{kind}', id=result))
+            return self.__client_models__[kind](self, **self.get(f'/{kind}', id=result))
         except ValueError:
             return result
 
@@ -302,7 +325,7 @@ def CLIENT(clientcls):
       that is in frontend_model, above, will get /name from the server and turn the result(s) into
       the appropriate client model type, list of such types for plural, or None.
       '''
-    for _name, _cls in clientcls.__models__.items():
+    for _name, _cls in clientcls.__client_models__.items():
 
         def MAKEMETHOD(cls=_cls, name=_name):
             def new(self, **kw) -> str:

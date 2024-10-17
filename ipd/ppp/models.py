@@ -173,13 +173,13 @@ class FlowStepSpec(ipd.crud.SpecBase):
 class UserSpec(ipd.crud.SpecBase):
     name: Unique[str]
     fullname: str = ''
-    # followers: list['UserSpec']
-    # following: list['UserSpec']
-    groups: list['GroupSpec']
+    followers: list['UserSpec'] = []
+    following: list['UserSpec'] = []
+    groups: list['GroupSpec'] = []
 
 class GroupSpec(_SpecWithUser):
     name: Unique[str]
-    users: list['UserSpec']
+    users: list['UserSpec'] = []
     userid: ModelRef['UserSpec', 'ownedgroups'] = pydantic.Field(default='anonymous_coward',
                                                                  validate_default=True)
 
@@ -273,10 +273,3 @@ spec_models = {
     for name, cls in globals().items() if name.endswith('Spec')
 }
 assert not any(name.endswith('s') for name in spec_models)
-
-# these two lines replace about 500... woo
-backend_models = ipd.crud.backend.make_backend_models(spec_models)
-client_models = ipd.crud.frontend.make_client_models(spec_models, backend_models)
-for kind in spec_models:
-    globals()[backend_models[kind].__name__] = backend_models[kind]
-    globals()[client_models[kind].__name__] = client_models[kind]
