@@ -34,6 +34,7 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         _GLOBAL_CLIENT = self  #there should be a better way to do this
 
     def upload_poll(self, poll):
+        print('upload_poll')
         poll = poll.to_spec()
         # digs:/home/sheffler/project/rfdsym/hilvert/pymol_saves
         if digs := poll.path.startswith('digs:'):
@@ -43,7 +44,7 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         else:
             assert os.path.isdir(poll.path)
             fnames = [os.path.join(poll.path, f) for f in os.listdir(poll.path)]
-        filt = lambda s: not s.startswith('_') and s.endswith(ipd.STRUCTURE_FILE_SUFFIX)
+        filt = lambda s: not s.startswith('_') and s.endswith(ipd.STRUCTURE_FILE_SUFFIX) and os.stat(s).st_size
         fnames = list(filter(filt, fnames))
         assert fnames, f'path must contain structure files: {poll.path}'
         poll = self.upload(poll, _dispatch_on_type=False)
@@ -77,10 +78,7 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         return result
 
     def pollinfo(self, user=None):
-        if self.testclient: return self.testclient.get(f'/pollinfo?user={user}').json()
-        response = requests.get(f'http://{self.server_addr}/pollinfo?user={user}')
-        if response.content: return response.json()
-        return []
+        return self.get(f'/pollinfo?user={user}')
 
     def pymolcmdsdict(self):
         return self.get('/pymolcmds')
@@ -95,3 +93,19 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         fname = fname.replace('/', '__DIRSEP__')
         rev = self.get(f'/reviews/byfname/{fname}')
         return [pppp.Review(self, **_) for _ in rev]
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# the backend models come from here
+# class DBProll
+# class DBFileKind
+# class DBPollFile
+# class DBReview
+# class DBReviewStep
+# class DBPymolCMD
+# class DBWorkflow
+# class DBFlowStep
+# class DBUser
+# class DBGroup
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+for cls in PPPClient.__client_models__.values():
+    globals()[cls.__name__] = cls

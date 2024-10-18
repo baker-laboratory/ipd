@@ -72,6 +72,7 @@ class PPPBackend(ipd.crud.backend.BackendBase, models=ipd.ppp.spec_models):
 
     def _get_table_info(self, query, user, table):
         if user == 'None': user = None
+        if user: assert self.buser(name=user)
         if user and user != 'admin':
             query += f' WHERE NOT TB.ghost AND (TB.ispublic OR dbuser.name = \'{user}\')'
         query = query.replace('TB', table)
@@ -114,6 +115,23 @@ class PPPBackend(ipd.crud.backend.BackendBase, models=ipd.ppp.spec_models):
             assert not file.filecontent.strip()
             self.session.add(DBPollFile(**file.dict()))
         self.session.commit()
+        poll = self.poll(dict(id=files[0].pollid))
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# the client models come from here
+# class DBPoll
+# class DBFileKind
+# class DBPollFile
+# class DBReview
+# class DBReviewStep
+# class DBPymolCMD
+# class DBWorkflow
+# class DBFlowStep
+# class DBUser
+# class DBGroup
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+for cls in PPPBackend.__backend_models__.values():
+    globals()[cls.__name__] = cls
 
 class Server(uvicorn.Server):
     def run_in_thread(self):

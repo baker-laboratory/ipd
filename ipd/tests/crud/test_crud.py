@@ -12,11 +12,12 @@ import tempfile
 
 def main():
     for fn in (
-            # test_many2many_sanity_check,
-            # test_many2many_basic,
-            # test_one2many_parent,
-            # test_many2many_parent,
-            test_user_group, ):
+            test_many2many_sanity_check,
+            test_many2many_basic,
+            test_one2many_parent,
+            test_many2many_parent,
+            test_user_group,
+    ):
         with tempfile.TemporaryDirectory() as tempdir:
             fn(tempdir)
     print('test_crud PASS')
@@ -76,7 +77,8 @@ def test_user_group(tempdir):
 
     client.upload(UserZSpec(name='boo'))
     a, b, c, d = client.userzs()
-    a.followers.append(b)
+    assert a.name == 'foo'
+    # a.followers.append(b)
 
 def test_many2many_basic(tempdir):
     LocalSQLModel = create_new_sqlmodel_base()

@@ -84,23 +84,21 @@ def test_pollfiles(client):
 
 def test_review(client):
     poll = client.newpoll(name='polio', path=ipd.testpath('ppppdbdir'))
+    assert poll.pollfiles
     poll2 = client.newpoll(name='polio2', path=ipd.testpath('ppppdbdir'))
     poll3 = client.newpoll(name='polio3', path=ipd.testpath('ppppdbdir'))
-    file = poll.pollfiles[-1]
+    file = next(iter(poll.pollfiles))
     client.newuser(name='reviewer')
     print([p.name for p in client.users()])
     # print(client.user(name='reviewer'))
-    ic()
     rev = client.newreview(userid='reviewer',
                            pollid=poll.id,
                            pollfileid=file.id,
                            workflowid='Manual',
                            grade='dislike')
-    ic()
     assert client.reviews()[0].user.name == 'reviewer'
     assert os.path.exists(rev.pollfile.permafname)
     # print('\n'.join([f'{f.pollid} {f.fname}' for f in client.pollfiles()]))
-    ic()
     polls = client.polls()
     review = ppp.ReviewSpec(pollid=polls[2].id,
                             pollfileid=polls[2].pollfiles[2].id,
@@ -111,15 +109,15 @@ def test_review(client):
     assert isinstance(result, ipd.ppp.Review)
     # rich.print(client.reviews())
     assert len(client.reviews()) == 2
-    result = client.upload(ppp.ReviewSpec(pollid=poll2.id, pollfileid=poll2.pollfiles[3].id, grade='hate'))
+    result = client.upload(ppp.ReviewSpec(pollid=poll2.id, pollfileid=poll2.pollfiles[2].id, grade='hate'))
     assert isinstance(result, ipd.ppp.Review)
-    ic()
     assert file.fname in [f.fname for f in poll.pollfiles]
     assert client.poll(id=poll.id)
-    assert client.pollfile(pollid=poll.id, fname=poll.pollfiles[1].fname)
+    assert client.pollfile(pollid=poll.id, fname=poll.pollfiles[0].fname)
     print(len(client.pollfile(pollid=poll.id, fname=file.fname).reviews))
     assert 1 == len(client.pollfile(pollid=poll.id, fname=file.fname).reviews)
-    assert 2 == len(list(it.chain(*(f.reviews for f in client.pollfiles(fname=file.fname)))))
+    assert 3 == len(client.reviews())
+    assert 1 == len(list(it.chain(*(f.reviews for f in client.pollfiles(fname=file.fname)))))
     reviews = client.reviews()
     polls = client.polls()
     files = client.pollfiles()
@@ -143,7 +141,9 @@ def test_review(client):
 
 def test_poll_attr(client):
     poll = client.upload_poll(ppp.PollSpec(name='foo', path='.'))
-    poll.print_full()
+    # poll.print_full()
+    # print(type(poll.id), type(poll.pollfiles[0].pollid))
+    # print(poll.id == poll.pollfiles[0].pollid)
     assert all(poll.id == p.pollid for p in poll.pollfiles)
     assert isinstance(poll.pollfiles[0], ppp.PollFile)
 
@@ -172,8 +172,15 @@ def test_setattr(client):
     assert user.fullname == 'baz'
 
 def test_pollinfo(client, backend):
-    binfo = backend.pollinfo()
-    info = client.pollinfo()
+    backend.newpoll(name='foo', path='.', ispublic=True, user=backend.newuser(name='foo'))
+    backend.newpoll(name='bar', path='.', ispublic=False, user=backend.newuser(name='bar'))
+    backend.newpoll(name='baz', path='.', ispublic=True, user=backend.newuser(name='baz'))
+    assert len(backend.polls()) == 3
+    assert len(backend.pollinfo(user='foo')) == 2
+    assert len(backend.pollinfo(user='bar')) == 3
+    assert len(backend.pollinfo(user='baz')) == 2
+    binfo = backend.pollinfo(user='admin')
+    info = client.pollinfo(user='admin')
     assert binfo == info
 
 def test_pymolcmdsdict(client):
@@ -303,7 +310,7 @@ def test_poll(client, backend):
     # print(list(poll.files)[:2])
 
     pfiles = polls[1].pollfiles
-    assert len(pfiles) == 4
+    assert len(pfiles) == 3
 
     poll3 = client.polls()[6]
     # print(poll3)
@@ -317,7 +324,7 @@ def test_poll(client, backend):
     assert isinstance(poll, ipd.ppp.Poll)
     # for p in client.polls():
     # print(p.id, p.name, len(p.files))
-    assert len(poll.pollfiles) == 4
+    assert len(poll.pollfiles) == 3
     assert isinstance(poll.pollfiles[0], ipd.ppp.PollFile)
 
     result = client.upload(

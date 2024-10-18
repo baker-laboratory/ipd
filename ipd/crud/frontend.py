@@ -1,6 +1,8 @@
 import contextlib
+from datetime import datetime
 import fastapi
 import functools
+from icecream import ic
 import inspect
 import ipd
 import os
@@ -10,8 +12,7 @@ import rich
 import uuid
 import typing
 import yaml
-from datetime import datetime
-from icecream import ic
+import sys
 from typing import Union, Optional, Callable, Annotated, get_type_hints, Type, Any
 
 class ClientError(Exception):
@@ -27,7 +28,7 @@ def tojson(thing):
 class ModelRef(type):
     def __class_getitem__(cls, T):
         outerns = inspect.currentframe().f_back.f_globals
-        validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: _validate_ref(x, y, outerns))
+        validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: process_modelref(x, y, outerns))
         return Annotated[Annotated[_ModelRefType, validator], T]
 
 class Unique(type):
@@ -123,7 +124,7 @@ class SpecBase(pydantic.BaseModel):
         seenit.add(self.id)
         fields = list(self.model_fields)
         depth += 1
-        if hasattr(self, '__backend_props__'): fields += self.__backend_props__
+        if hasattr(self, '__remote_props__'): fields += self.__remote_props__
         print(self.__class__.__name__)
         for field in sorted(fields):
             prop = getattr(self, field)
@@ -138,13 +139,23 @@ class SpecBase(pydantic.BaseModel):
                 # for p in prop:
                 # if p.id not in seenit: p.print_full(seenit, depth)
 
-def make_client_models(spec_models, trimspecs, backend_models, remote_props):
+class UploadOnMutateList(ipd.dev.Instrumented, list):
+    def __init__(self, client, kind, attr, val):
+        super().__init__(val)
+        self.client, self.kind, self.attr = client, kind, attr
+
+    def __on_change__(self):
+        client.setattr(self.kind, self.attr, list(self))
+
+def make_client_models(clientcls, trimspecs, remote_props):
+    spec_models = clientcls.__spec_models__
+    backend_models = clientcls.__backend_models__
     client_models = {}
     for kind, spec in spec_models.items():
         trimspec = trimspecs[kind]
         clsdb = backend_models[kind]
         clsname = spec.__name__[:-4]
-        body, props = {}, {}
+        body, props = {'__annotations__': {}}, {}
         for propname in remote_props[kind]:
             if propname in clsdb.model_fields:
                 proptype = clsdb.model_fields[propname].annotation
@@ -168,15 +179,20 @@ def make_client_models(spec_models, trimspecs, backend_models, remote_props):
             if hasattr(member, '__layer__') and member.__layer__ == 'client':
                 body[name] = member
                 delattr(spec, name)
-        print('make_client_models', spec)
-        clcls = type(clsname, (ClientModelBase, trimspec), body, backend_props=props)
+        for attr, field in spec.model_fields.copy().items():
+            if attr.endswith('id'):
+                optional = field.default is None
+                body['__annotations__'][attr] = Optional[uuid.UUID] if optional else uuid.UUID
+                del trimspec.model_fields[attr]
+        clcls = type(clsname, (ClientModelBase, trimspec), body, remote_props=props)
+        # for k, v in clcls.model_fields.items():
+        # print(clsname, k, v.annotation)
         clcls.__spec__ = spec
         clcls.__backend_model__ = clsdb
         spec.__frontend_model__ = clcls
         clsdb.__frontend_model__ = clcls
         client_models[kind] = clcls
-        # print(clsname, clcls.__name__, clcls)
-        # inspect.currentframe().f_back.f_back.f_globals[clcls.__name__] = clcls
+        setattr(sys.modules[clientcls.__module__], clcls.__name__, clcls)
 
     return client_models
 
@@ -184,31 +200,35 @@ class ClientModelBase(pydantic.BaseModel):
     _client: 'ClientBase' = None
     __sibling_models__: dict[str, 'ClientModelBase'] = {}
 
-    def __init_subclass__(cls, backend_props=(), siblings=(), **kw):
+    def __init_subclass__(cls, remote_props=(), siblings=(), **kw):
         super().__init_subclass__(**kw)
-        if not backend_props: return
-        cls.__backend_props__ = backend_props
+        if not remote_props: return
+        cls.__remote_props__ = remote_props
         cls.__sibling_models__[cls.kind()] = cls
-        for attr, kind in cls.__backend_props__.items():
+        for attr, kind in cls.__remote_props__.items():
 
-            def form_closure(_cls=cls, _attr=attr, _kind=kind):
-                @property
+            def make_client_remote_model_property_closure(_cls=cls, _attr=attr, _kind=kind):
+                # print('client prop', cls.__name__, attr, kind)
+
                 def getter(self):
                     val = self._client.getattr(_cls.kind(), self.id, _attr)
-                    if val is None: return val
-                    # raise AttributeError(f'kind {_cls.kind()} id {self.id} attr {_attr} is None')
-                    if _kind in self.__sibling_models__:
+                    if val is None:
+                        return val
+                        # raise AttributeError(f'kind {_cls.kind()} id {self.id} attr {_attr} is None')
+                    elif _kind in self.__sibling_models__:
                         attrcls = self.__sibling_models__[_kind]
                     else:
                         raise ValueError(f'unknown type {_kind}')
                     if isinstance(val, list):
-                        return tuple(attrcls(self._client, **kw) for kw in val)
+                        val = (attrcls(self._client, **kw) for kw in val)
+                        return UploadOnMutateList(self, _kind, _attr, val)
                     return attrcls(self._client, **val)
 
                 return getter
 
-            getter = form_closure()
-            setattr(cls, attr, getter)
+            getter = make_client_remote_model_property_closure()
+            getter.__qualname__ = f'{cls.__name__}.{attr}'
+            setattr(cls, attr, property(getter))
 
     def __init__(self, client, **kw):
         super().__init__(**kw)
@@ -246,9 +266,8 @@ class ClientBase:
         super().__init_subclass__(**kw)
         cls.__backend_models__ = backend.__backend_models__
         cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in cls.__backend_models__.items()}
-        cls.__client_models__ = make_client_models(cls.__spec_models__, backend.__trimspecs__,
-                                                   cls.__backend_models__, backend.__remoteprops__)
-        CLIENT(cls)
+        cls.__client_models__ = make_client_models(cls, backend.__trimspecs__, backend.__remoteprops__)
+        add_basic_client_model_methods(cls)
 
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str):
@@ -295,7 +314,10 @@ class ClientBase:
             raise ClientError(f'POST failed "{url}"\n    BODY:     {body}\n    '
                               f'RESPONSE: {response}\n    REASON:   {reason}\n    '
                               f'CONTENT:  {response.content.decode()}')
-        return response.json()
+        response = response.json()
+        with contextlib.suppress((TypeError, ValueError)):
+            return uuid.UUID(response)
+        return response
 
     def remove(self, thing):
         assert isinstance(thing, ipd.ppp.SpecBase), f'cant remove type {thing.__class__.__name__}'
@@ -303,8 +325,8 @@ class ClientBase:
         return self.get(f'/remove/{thingname}/{thing.id}')
 
     def upload(self, thing, _dispatch_on_type=True, **kw):
-        if _dispatch_on_type and isinstance(thing, ipd.ppp.PollSpec): return self.upload_poll(thing)
-        if _dispatch_on_type and isinstance(thing, ipd.ppp.ReviewSpec): return self.upload_review(thing)
+        if _dispatch_on_type and hasattr(self, f'upload_{thing.kind()}'):
+            return getattr(self, f'upload_{thing.kind()}')(thing, **kw)
         thing = thing.to_spec()
         # print('upload', type(thing), kw)
         if thing._errors:
@@ -312,14 +334,14 @@ class ClientBase:
         kind = type(thing).__name__.replace('Spec', '').lower()
         # ic(kind)
         result = self.post(f'/create/{kind}', thing, **kw)
-        # ic(result)
         try:
-            result = uuid.UUID(result)
-            return self.__client_models__[kind](self, **self.get(f'/{kind}', id=result))
-        except ValueError:
+            newthing = self.get(f'/{kind}', id=result)
+            newthing = self.__client_models__[kind](self, **newthing)
+            return newthing
+        except ValueError as e:
             return result
 
-def CLIENT(clientcls):
+def add_basic_client_model_methods(clientcls):
     '''
       Generic interface for accessing models from the server. Any name or name suffixed with 's'
       that is in frontend_model, above, will get /name from the server and turn the result(s) into
@@ -327,7 +349,7 @@ def CLIENT(clientcls):
       '''
     for _name, _cls in clientcls.__client_models__.items():
 
-        def MAKEMETHOD(cls=_cls, name=_name):
+        def make_basic_client_model_methods_closure(cls=_cls, name=_name):
             def new(self, **kw) -> str:
                 return self.upload(cls.__spec__(**kw))
 
@@ -343,7 +365,11 @@ def CLIENT(clientcls):
 
             return single, multi, count, new
 
-        single, multi, count, new = MAKEMETHOD()
+        single, multi, count, new = make_basic_client_model_methods_closure()
+        single.__qualname__ = f'{clientcls.__name__}.{_name}'
+        multi.__qualname__ = f'{clientcls.__name__}.{_name}s'
+        count.__qualname__ = f'{clientcls.__name__}.n{_name}s'
+        new.__qualname__ = f'{clientcls.__name__}.new{_name}'
         setattr(clientcls, _name, single)
         setattr(clientcls, f'{_name}s', multi)
         setattr(clientcls, f'n{_name}s', count)
@@ -355,7 +381,7 @@ def _label_field(cls):
     if hasattr(cls, '_label'): return cls._label.default
     return 'name'
 
-def _validate_ref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
+def process_modelref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
     if hasattr(val, 'id'): return val.id
     with contextlib.suppress(TypeError, ValueError, AttributeError):

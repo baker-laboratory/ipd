@@ -65,10 +65,10 @@ class PollSpec(_SpecWithUser):
 
     @ipd.crud.backend_method
     def clear(self, backend, ghost=True):
-        for r in backend.select(DBReview, pollid=self.id):
+        for r in backend.select(backend.DBReview, pollid=self.id):
             if not ghost: r.pollid, r.pollfileid = 1, 1
         backend.session.commit()
-        for f in backend.select(DBPollFile, pollid=self.id):
+        for f in backend.select(backend.DBPollFile, pollid=self.id):
             if ghost: f.ghost = True
             else: backend.session.delete(f)
 

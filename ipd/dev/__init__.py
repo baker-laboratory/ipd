@@ -22,6 +22,7 @@ def printed_string(thing):
         return strio.read()
 
 from ipd.dev.bunch import *
+from ipd.dev.instrumented import *
 from ipd.dev.lazy_import import *
 from ipd.dev.timer import *
 from ipd.dev.git import *

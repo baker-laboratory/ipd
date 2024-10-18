@@ -16,6 +16,7 @@ import sqlalchemy
 import sqlmodel
 from sqlmodel import Field
 from sqlmodel.main import RelationshipInfo
+import sys
 import traceback
 import typing
 from uuid import UUID, uuid4
@@ -67,10 +68,13 @@ def make_backend_model_base(SQL=sqlmodel.SQLModel):
 class BackendBase:
     def __init_subclass__(cls, models, SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
-        backend_info = ipd.crud.backend.make_backend_models(models, SQL)
+        cls.__spec_models__ = models
+        backend_info = ipd.crud.backend.make_backend_models(cls, SQL)
         cls.__backend_models__, cls.__remoteprops__, cls.__trimspecs__ = backend_info
         cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in cls.__backend_models__.items()}
-        BACKEND(cls)
+        add_basic_backend_model_methods(cls)
+        for dbcls in cls.__backend_models__.values():
+            setattr(cls, dbcls.__name__, dbcls)
 
     def __init__(self, engine):
         if isinstance(engine, str) and '://' not in engine: engine = f'sqlite:///{engine}'
@@ -199,7 +203,7 @@ class BackendBase:
             self.session.rollback()
             return self.handle_error(e)
 
-def BACKEND(backendcls):
+def add_basic_backend_model_methods(backendcls):
     '''
     Autogen getter methods. Yes, this is better than lots of boilerplate functions that must be kept
     in sync. Any name or name suffixed with 's'
@@ -208,7 +212,7 @@ def BACKEND(backendcls):
     '''
     for _name, _dbcls in backendcls.__backend_models__.items():
 
-        def MAKEMETHOD(name=_name, dbcls=_dbcls):
+        def make_basic_backend_model_methods_closure(name=_name, dbcls=_dbcls):
             def create(self, model: dict) -> typing.Union[str, int]:
                 # model = dbcls.parse_obj(model)
                 if isinstance(model, dict): model = dbcls(**model)
@@ -242,17 +246,39 @@ def BACKEND(backendcls):
                 elif kw: return self.select(dbcls, _single=True, **kw)
                 else: return self.select(dbcls, _single=True)
 
+            def bcount(self, count=count, **kw) -> int:
+                return count(self, kw)
+
+            def bmulti(self, multi=multi, **kw) -> list[dbcls]:
+                return multi(self, kw)
+
+            def bsingle(self, single=single, **kw) -> typing.Optional[dbcls]:
+                return single(self, kw)
+
             def singleid(self, id: str, **kw) -> typing.Union[dbcls, None]:
                 assert id
                 return self.select(dbcls, id=id, _single=True, **kw)
 
-            return multi, single, singleid, count, create, new
+            return multi, single, singleid, count, create, new, bcount, bmulti, bsingle
 
-        multi, single, singleid, count, create, new = MAKEMETHOD()
-        setattr(backendcls, _name, single)
+        funcs = make_basic_backend_model_methods_closure()
+        multi, single, singleid, count, create, new, bcount, bmulti, bsingle = funcs
+        singleid.__qualname__ = f'{backendcls.__name__}.i{_name}'
+        single.__qualname__ = f'{backendcls.__name__}.{_name}'
+        multi.__qualname__ = f'{backendcls.__name__}.{_name}s'
+        count.__qualname__ = f'{backendcls.__name__}.n{_name}s'
+        bsingle.__qualname__ = f'{backendcls.__name__}.b{_name}'
+        bmulti.__qualname__ = f'{backendcls.__name__}.b{_name}s'
+        bcount.__qualname__ = f'{backendcls.__name__}.bn{_name}s'
+        new.__qualname__ = f'{backendcls.__name__}.new{_name}'
+        create.__qualname__ = f'{backendcls.__name__}.create_{_name}'
         setattr(backendcls, f'i{_name}', singleid)
+        setattr(backendcls, _name, single)
         setattr(backendcls, f'{_name}s', multi)
         setattr(backendcls, f'n{_name}s', count)
+        setattr(backendcls, f'b{_name}', bsingle)
+        setattr(backendcls, f'b{_name}s', bmulti)
+        setattr(backendcls, f'bn{_name}s', bcount)
         setattr(backendcls, f'new{_name}', new)
         if not hasattr(backendcls, f'create_{_name}'):
             setattr(backendcls, f'create_{_name}', create)
@@ -269,13 +295,16 @@ def allfields(model):
             fields |= base.model_fields
     return fields
 
-def copy_model(cls, clsname) -> typing.Type[pydantic.BaseModel]:
+def copy_model_cls(cls, clsname) -> typing.Type[pydantic.BaseModel]:
     fields, funcs = {}, {}
     for name, f in cls.model_fields.items():
         fields[name] = (f.annotation, pydantic.Field(**{k: getattr(f, k) for k in pydantic_field_args}))
-    return pydantic.create_model(clsname, __validators__=funcs, __base__=cls.__bases__, **fields)
+    newcls = pydantic.create_model(clsname, __validators__=funcs, __base__=cls.__bases__, **fields)
+    # newcls.__annotations__ = cls.__annotations__
+    return newcls
 
-def make_backend_models(spec_models, SQL=sqlmodel.SQLModel):
+def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
+    spec_models = backendcls.__spec_models__
     # print('make_backend_models')
     BackendModelBase = make_backend_model_base(SQL)
     body = {kind: {} for kind in spec_models}
@@ -307,8 +336,6 @@ def make_backend_models(spec_models, SQL=sqlmodel.SQLModel):
                 if isinstance(refname, tuple): refname, link = refname
                 refname = dbclsname[refname]
                 optional = field.default is None
-                idanno = typing.Optional[UUID] if optional else UUID
-                refanno = typing.Optional[refname] if optional else refname
                 kw = {}
                 if dbclsname[kind] == refname:
                     kw = {'sa_relationship_kwargs': dict(cascade="all", remote_side=f'{dbclsname[kind]}.id')}
@@ -317,9 +344,10 @@ def make_backend_models(spec_models, SQL=sqlmodel.SQLModel):
                 if optional:
                     idfield = sqlmodel.Field(foreign_key=f'{refname.lower()}.id', nullable=True, default=None)
                 body[kind][attr] = idfield
-                anno[kind][attr] = idanno
+                anno[kind][attr] = typing.Optional[UUID] if optional else UUID
                 body[kind][attr[:-2]] = reffield
-                anno[kind][attr[:-2]] = refanno
+                anno[kind][attr[:-2]] = typing.Optional[refname] if optional else refname
+                # if attr == 'pollid':
                 # print(kind, attr, anno[kind][attr], 'foreign_key', refname.lower() + '.id')
                 # print(kind, attr[:-2], anno[kind][attr[:-2]], 'Rel. backpop', link)
                 refkind = refname.replace('DB', '').lower()
@@ -379,59 +407,43 @@ def make_backend_models(spec_models, SQL=sqlmodel.SQLModel):
             # print(f'{kind} {attr} : {anno[kind][attr]} = Relationship({kw})')
 
     # build the models
-    models, remote_props, trimspecs = {}, {}, {}
+    backend_models, remote_props, trimspecs = {}, {}, {}
     for kind, spec in spec_models.items():
-        trimspec = copy_model(spec, f'{spec.__name__}Trim')
-        attrs = set(spec_models[kind].model_fields) - set(body[kind])
-        attrs = attrs - {'ispublic', 'ghost', 'datecreated', 'telemetry', 'id'}
-        for name, member in trimspec.__dict__.copy().items():
+        for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'backend':
-                body[kind][name] = member
-                delattr(trimspec, name)
-        body[kind]['__annotations__'] = anno[kind]
+                body[kind][name] = member.__wrapped__
+                delattr(spec, name)
+        trimspec = copy_model_cls(spec, f'{spec.__name__}Trim')
+        attrs = set(spec_models[kind].model_fields) - set(body[kind])
+        attrs = attrs - {'ispublic', 'ghost', 'datecreated', 'telemetry', 'id', '__annotations__'}
         for attr in remove_fields[kind] + list(body[kind]):
-            print(kind, 'remove', attr)
-            if attr in trimspec.model_fields: del trimspec.model_fields[attr]
-            if hasattr(trimspec, attr): delattr(trimspec, attr)
+            # if attr[0] == '_': continue
+            # print(kind, 'remove', attr)
+            ano = trimspec.__annotations__.get(attr, None)
+            ano = ano or trimspec.model_fields.get(attr, None)
+            ano = getattr(ano, '__origin__', None)
+            if ano == list:
+                if attr in trimspec.model_fields: del trimspec.model_fields[attr]
+                if hasattr(trimspec, attr): delattr(trimspec, attr)
+                if attr in trimspec.__annotations__: del trimspec.__annotations__[attr]
 
+        body[kind]['__annotations__'] = anno[kind]
         dbcls = type(dbclsname[kind], (BackendModelBase, trimspec), body[kind], table=True)
         dbcls.__spec__ = spec
         spec.__backend_model__ = dbcls
-        dbcls.__sibling_models__ = models
-        models[kind] = dbcls
+        dbcls.__sibling_models__ = backend_models
+        backend_models[kind] = dbcls
         trimspecs[kind] = trimspec
         remote_props[kind] = {k for k, v in body[kind].items() if isinstance(v, RelationshipInfo)}
-        # hacky, add classes to the namespace that creates the inheriting class
-        inspect.currentframe().f_back.f_back.f_globals[dbcls.__name__] = dbcls
+        setattr(sys.modules[backendcls.__module__], dbcls.__name__, dbcls)
 
-    return models, remote_props, trimspecs
+    # update namespace of @backend_method functions
+    for dbcls in backend_models.values():
+        for name, member in dbcls.__dict__.items():
+            if hasattr(member, '__layer__') and member.__layer__ == 'backend':
+                member.__module__ = backendcls.__module__
+                for dbcls2 in backend_models.values():
+                    member.__globals__[dbcls2.__name__] = dbcls2
+                    assert dbcls2.__name__ in getattr(dbcls, name).__globals__
 
-if False:
-    filekindid: Optional[uuid.UUID] = Field(default=None, foreign_key='dbfilekind.id', nullable=True)
-    filekind: Optional[DBFileKind] = Relationship(back_populates='pollfiles')
-    parentid: Optional[uuid.UUID] = Field(default=None, foreign_key='dbpollfile.id', nullable=True)
-    parent: Optional['DBPollFile'] = Relationship(back_populates='children',
-                                                  sa_relationship_kwargs=dict(cascade="all",
-                                                                              remote_side='DBPollFile.id'))
-    workflowid: uuid.UUID = Field(foreign_key='dbworkflow.id', nullable=True)
-    flowstepid: uuid.UUID = Field(default=None, foreign_key='dbflowstep.id')
-    workflowid: uuid.UUID = Field(foreign_key='dbworkflow.id')
-
-    Relationship(back_populates='cmds', link_model=DBPymolCMDFlowStepLink)
-    Relationship(back_populates='filekind')
-    Relationship(
-        back_populates='following',
-        link_model=DBUserUserLink,
-        sa_relationship_kwargs=dict(
-            primaryjoin="DBUser.id==DBUserUserLink.followerid",
-            secondaryjoin="DBUser.id==DBUserUserLink.followingid",
-        ),
-    )
-    Relationship(
-        back_populates='followers',
-        link_model=DBUserUserLink,
-        sa_relationship_kwargs=dict(
-            primaryjoin="DBUser.id==DBUserUserLink.followingid",
-            secondaryjoin="DBUser.id==DBUserUserLink.followerid",
-        ),
-    )
+    return backend_models, remote_props, trimspecs
