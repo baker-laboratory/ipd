@@ -22,7 +22,7 @@
 	"build_systems": [
         {
             "name": "test ppp plugin",
-            "shell_cmd": "cd$folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/pymol/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/pymol/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py 2>&1 | tee ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
         {

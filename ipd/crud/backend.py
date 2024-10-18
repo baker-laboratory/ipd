@@ -7,6 +7,7 @@ from icecream import ic
 import inspect
 import ipd
 from ipd.crud.frontend import SpecBase, _ModelRefType
+import json
 import operator
 import os
 from pathlib import Path
@@ -89,10 +90,10 @@ class BackendBase:
             self.route(f'/api/{model}s', getattr(self, f'{model}s'), methods=['GET'])
             self.route(f'/api/n{model}s', getattr(self, f'n{model}s'), methods=['GET'])
             self.route(f'/api/create/{model}', getattr(self, f'create_{model}'), methods=['POST'])
-        self.route('/api/getattr/{thing}/{id}/{attr}', self.getattr, methods=['GET'])
-        self.route('/api/setattr/{thing}/{id}/{attr}', self.setattr, methods=['POST'])
-        self.route('/api/remove/{thing}/{id}', self.remove, methods=['GET'])
-        self.route('/api/remove/{thing}/{id}', self.remove, methods=['GET'])
+        self.route('/api/getattr/{kind}/{id}/{attr}', self.getattr, methods=['GET'])
+        self.route('/api/setattr/{kind}/{id}/{attr}', self.setattr, methods=['POST'])
+        self.route('/api/remove/{kind}/{id}', self.remove, methods=['GET'])
+        self.route('/api/remove/{kind}/{id}', self.remove, methods=['GET'])
         self.route('/api/gitstatus', ipd.dev.git_status, methods=['GET'])
         self.route('/api/gitstatus/{header}/{footer}', ipd.dev.git_status, methods=['GET'])
         self.init_routes()
@@ -129,35 +130,42 @@ class BackendBase:
         return fastapi.responses.JSONResponse(content=exc_str,
                                               status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-    def remove(self, thing, id):
-        thing = self.select(thing, id=id, _single=True)
+    def remove(self, kind, id):
+        thing = self.select(kind, id=id, _single=True)
         thing.ghost = True
         self.session.add(thing)
         self.session.commit()
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
 
-    def actually_remove(self, thing, id):
-        thing = self.select(thing, id=id, _single=True)
+    def actually_remove(self, kind, id):
+        thing = self.select(kind, id=id, _single=True)
         thing.clear(self)
         self.session.delete(thing)
         self.session.commit()
 
-    def getattr(self, thing, id: UUID, attr):
-        cls = self.__backend_models__[thing]
+    def getattr(self, kind, id: UUID, attr):
+        cls = self.__backend_models__[kind]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
         thingattr = getattr(thing, attr)
         # if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
         return thingattr
 
-    async def setattr(self, request: fastapi.Request, thing: str, id: UUID, attr: str):
-        cls = self.__backend_models__[thing]
+    async def setattr(self, request: fastapi.Request, kind: str, id: UUID, attr: str):
+        cls = self.__backend_models__[kind]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
-        assert thing.model_fields[attr].annotation in (int, float, str)
+        if attr in thing.model_fields:
+            assert thing.model_fields[attr].annotation in (int, float, str, UUID)
         body = (await request.body()).decode()
-        # print(type(thing), body)
-        setattr(thing, attr, body)
+        with contextlib.suppress((AttributeError, ValueError)):
+            body = UUID(body)
+        try:
+            body = [UUID(id) for id in body[1:-1].split(',')]
+            body = list(map(getattr(self, f'i{kind}'), body))
+            setattr(thing, attr, body)
+        except (ValueError, TypeError):
+            setattr(thing, attr, body)
         self.session.add(thing)
         self.session.commit()
 
@@ -367,10 +375,11 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
                 anno[kind][attr] = Attrs
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:
                 args = typing.get_args(field.annotation)
-                # print(kind, attr, args)
+                print(kind, attr, args)
                 if args[0] in specnames or args[0] in spec_models.values():
                     assert len(args) < 3
                     if len(args) == 2: refname, link = args
+                    elif isinstance(args[0], str): refname, link = args[0], 'DEFAULT'
                     else: refname, link = args[0].__name__, 'DEFAULT'
                     if not isinstance(refname, str): refname = refname.__name__
                     links[tuple(sorted([spec.__name__, refname])), link].append((kind, attr, refname))

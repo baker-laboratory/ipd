@@ -140,7 +140,7 @@ def test_review(client):
     # print(len(client.polls(name='foo1')))
 
 def test_poll_attr(client):
-    poll = client.upload_poll(ppp.PollSpec(name='foo', path='.'))
+    poll = client.upload_poll(ppp.PollSpec(name='foo', path=ipd.testpath('ppppdbdir')))
     # poll.print_full()
     # print(type(poll.id), type(poll.pollfiles[0].pollid))
     # print(poll.id == poll.pollfiles[0].pollid)

@@ -15,9 +15,9 @@ class Instrumented:
                 func = tomodify[fn]
 
                 @functools.wraps(func)
-                def wrap(*a, **kw):
-                    result = func(*a, **kw)
-                    getattr(cls, '__on_change__')(result)
+                def wrap(self, *a, __wrappedfunc__=func, **kw):
+                    result = __wrappedfunc__(self, *a, **kw)
+                    getattr(cls, '__on_change__')(self, result)
                     return result
 
                 setattr(cls, fn, wrap)

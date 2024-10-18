@@ -6,12 +6,10 @@ from subprocess import check_output
 import ipd
 import tempfile
 from pathlib import Path
-from ipd.dev.lazy_import import lazyimport
-from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
+import ipd.ppp
+import pydantic
 from ipd.crud import ModelRef, Unique
-
-pydantic = lazyimport('pydantic', pip=True)
-pymol = lazyimport('pymol')
+from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
 
 class _SpecWithUser(ipd.crud.SpecBase):
     userid: ModelRef['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
@@ -228,6 +226,7 @@ def PollSpec_get_structure_properties(poll):
     return poll
 
 def PymolCMDSpec_validate_commands(command):
+    import pymol
     pymol.cmd.save('/tmp/tmp_pymol_session.pse')
     command._check_cmds_output = '-' * 80 + os.linesep + str(command) + os.linesep + '_' * 80 + os.linesep
     command._errors = ''
@@ -246,6 +245,7 @@ def PymolCMDSpec_validate_commands(command):
     return command
 
 def PymolCMDSpec_validate_command(command, cmdname):
+    import pymol
     with tempfile.TemporaryDirectory() as td:
         with open(f'{td}/stdout.log', 'w') as out:
             with ipd.dev.redirect(stdout=out, stderr=out):

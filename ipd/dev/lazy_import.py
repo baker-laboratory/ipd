@@ -20,7 +20,7 @@ class LazyModule:
         self._mamba = mamba
         self._channels = channels
 
-    def _import_module(self) -> ModuleType:
+    def now(self) -> ModuleType:
         try:
             return self._mambathenpipimport()
         except ImportError as e:
@@ -81,7 +81,7 @@ class LazyModule:
 
     @property
     def _module(self) -> ModuleType:
-        return sys.modules.get(self._name) or self._import_module()
+        return sys.modules.get(self._name) or self.now()
 
     def __getattr__(self, name: str):
         return getattr(self._module, name)

@@ -9,6 +9,7 @@ from typing import Optional, Type
 import uuid
 import rich
 import tempfile
+from uuid import uuid4, UUID
 
 def main():
     for fn in (
@@ -48,6 +49,8 @@ def test_user_group(tempdir):
     class UserZSpec(ipd.crud.SpecBase):
         name: ipd.crud.Unique[str]
         fullname: str = ''
+        number: int = 0
+        someid: UUID = pydantic.Field(default_factory=uuid4)
         followers: list['UserZSpec'] = []
         following: list['UserZSpec'] = []
         groups: list['GroupZSpec'] = []
@@ -59,12 +62,8 @@ def test_user_group(tempdir):
                                                                                validate_default=True)
 
     models = dict(userz=UserZSpec, groupz=GroupZSpec)
-
-    class MyBackend(ipd.crud.BackendBase, models=models):
-        pass
-
-    class MyClient(ipd.crud.ClientBase, backend=MyBackend):
-        pass
+    MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models)
+    MyClient = type('MyClient', (ipd.crud.ClientBase, ), {}, backend=MyBackend)
 
     backend = MyBackend(f'{tempdir}/test.db')
     print('backend.newuserz', backend.newuserz(name='foo'))
@@ -78,23 +77,34 @@ def test_user_group(tempdir):
     client.upload(UserZSpec(name='boo'))
     a, b, c, d = client.userzs()
     assert a.name == 'foo'
-    # a.followers.append(b)
+    assert b.fullname == ''
+    b.fullname = 'foo bar baz'
+    assert b.fullname == 'foo bar baz'
+    c.number = 7
+    assert c.number == 7
+    oldid, newid = d.someid, uuid4()
+    d.someid = newid
+    assert d.someid == newid
+    assert newid != oldid
+    a.followers.extend([b, c, d])
+    assert a in b.following
+    assert a in c.following
+    assert a in d.following
 
 def test_many2many_basic(tempdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class UserCSpec(ipd.crud.SpecBase):
-        id: uuid.UUID = pydantic.Field(default_factory=uuid.uuid4)
+        id: UUID = pydantic.Field(default_factory=uuid4)
         groups: list['GroupCSpec'] = []
 
     class GroupCSpec(ipd.crud.SpecBase):
-        id: uuid.UUID = pydantic.Field(default_factory=uuid.uuid4)
+        id: UUID = pydantic.Field(default_factory=uuid4)
         users: list['UserCSpec'] = []
 
-    spec_models = dict(userc=UserCSpec, groupc=GroupCSpec)
-    backend_models, props, trim = ipd.crud.backend.make_backend_models(spec_models, LocalSQLModel)
-    client_models = ipd.crud.frontend.make_client_models(spec_models, trim, backend_models, props)
-    helper_test_users_groups(tempdir, LocalSQLModel, backend_models['userc'], backend_models['groupc'])
+    models = dict(userc=UserCSpec, groupc=GroupCSpec)
+    MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
+    helper_test_users_groups(tempdir, LocalSQLModel, MyBackend.DBUserC, MyBackend.DBGroupC)
 
 def test_one2many_parent(tempdir):
     LocalSQLModel = create_new_sqlmodel_base()
@@ -102,13 +112,12 @@ def test_one2many_parent(tempdir):
     class ParentChildSpec(ipd.crud.SpecBase):
         parentid: ipd.crud.ModelRef['ParentChildSpec', 'children'] = None
 
-    spec_models = dict(parentchild=ParentChildSpec)
-    backend_models, props, trim = ipd.crud.backend.make_backend_models(spec_models, LocalSQLModel)
-    client_models = ipd.crud.frontend.make_client_models(spec_models, trim, backend_models, props)
+    models = dict(parentchild=ParentChildSpec)
+    MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
     session = helper_create_db(tempdir, LocalSQLModel)
-    a = backend_models['parentchild']()
-    b = backend_models['parentchild']()
-    c = backend_models['parentchild']()
+    a = MyBackend.DBParentChild()
+    b = MyBackend.DBParentChild()
+    c = MyBackend.DBParentChild()
     session.add(a)
     session.add(b)
     session.add(c)
@@ -131,14 +140,13 @@ def test_many2many_parent(tempdir):
         followers: list['UserBSpec'] = []
         following: list['UserBSpec'] = []
 
-    spec_models = dict(userb=UserBSpec)
-    backend_models, props, trim = ipd.crud.backend.make_backend_models(spec_models, LocalSQLModel)
-    client_models = ipd.crud.frontend.make_client_models(spec_models, trim, backend_models, props)
+    models = dict(userb=UserBSpec)
+    MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
     session = helper_create_db(tempdir, LocalSQLModel)
-    a = backend_models['userb']()
-    b = backend_models['userb']()
-    c = backend_models['userb']()
-    d = backend_models['userb']()
+    a = MyBackend.DBUserB(name='a')
+    b = MyBackend.DBUserB(name='b')
+    c = MyBackend.DBUserB(name='c')
+    d = MyBackend.DBUserB(name='b')
     session.add(a)
     session.add(b)
     session.add(d)
@@ -164,15 +172,15 @@ def test_many2many_sanity_check(tempdir):
 
     linkbody = dict(useraid=sqlmodel.Field(default=None, foreign_key='dbusera.id', primary_key=True),
                     groupaid=sqlmodel.Field(default=None, foreign_key='dbgroupa.id', primary_key=True),
-                    __annotations__=dict(useraid=Optional[uuid.UUID], groupaid=Optional[uuid.UUID]))
+                    __annotations__=dict(useraid=Optional[UUID], groupaid=Optional[UUID]))
     Link = type('LinkA', (LocalSQLModel, ), linkbody, table=True)
-    userbody = dict(id=sqlmodel.Field(primary_key=True, default_factory=uuid.uuid4),
+    userbody = dict(id=sqlmodel.Field(primary_key=True, default_factory=uuid4),
                     groups=sqlmodel.Relationship(back_populates='users', link_model=Link),
-                    __annotations__=dict(id=uuid.UUID, groups=list['DBGroupA']))
+                    __annotations__=dict(id=UUID, groups=list['DBGroupA']))
     DBUserA = type('DBUserA', (LocalSQLModel, ), userbody, table=True)
-    groupbody = dict(id=sqlmodel.Field(primary_key=True, default_factory=uuid.uuid4),
+    groupbody = dict(id=sqlmodel.Field(primary_key=True, default_factory=uuid4),
                      users=sqlmodel.Relationship(back_populates='groups', link_model=Link),
-                     __annotations__=dict(id=uuid.UUID, users=list['DBUserA']))
+                     __annotations__=dict(id=UUID, users=list['DBUserA']))
     DBGroupA = type('DBGroupA', (LocalSQLModel, ), groupbody, table=True)
     # print('Link')
     # rich.print(linkbody)

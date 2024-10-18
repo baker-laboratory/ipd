@@ -19,11 +19,9 @@ class ClientError(Exception):
     pass
 
 def tojson(thing):
-    if isinstance(thing, list):
-        return f'[{",".join(tojson(_) for _ in thing)}]'
-    if isinstance(thing, str):
-        return thing
-    return thing.json()
+    if isinstance(thing, list): return f'[{",".join(tojson(_) for _ in thing)}]'
+    if hasattr(thing, 'json'): return thing.json()
+    return str(thing)
 
 class ModelRef(type):
     def __class_getitem__(cls, T):
@@ -140,12 +138,12 @@ class SpecBase(pydantic.BaseModel):
                 # if p.id not in seenit: p.print_full(seenit, depth)
 
 class UploadOnMutateList(ipd.dev.Instrumented, list):
-    def __init__(self, client, kind, attr, val):
+    def __init__(self, thing, attr, val):
         super().__init__(val)
-        self.client, self.kind, self.attr = client, kind, attr
+        self.thing, self.attr = thing, attr
 
-    def __on_change__(self):
-        client.setattr(self.kind, self.attr, list(self))
+    def __on_change__(self, thing):
+        self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self])
 
 def make_client_models(clientcls, trimspecs, remote_props):
     spec_models = clientcls.__spec_models__
@@ -221,7 +219,7 @@ class ClientModelBase(pydantic.BaseModel):
                         raise ValueError(f'unknown type {_kind}')
                     if isinstance(val, list):
                         val = (attrcls(self._client, **kw) for kw in val)
-                        return UploadOnMutateList(self, _kind, _attr, val)
+                        return UploadOnMutateList(self, _attr, val)
                     return attrcls(self._client, **val)
 
                 return getter
