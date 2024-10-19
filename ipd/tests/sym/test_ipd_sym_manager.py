@@ -1,4 +1,6 @@
 import pytest
+
+pytest.importorskip('torch')
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')

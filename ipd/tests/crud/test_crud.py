@@ -1,10 +1,15 @@
+import pytest
+
+pytest.importorskip('sqlmodel')
+pytest.importorskip('fastapi')
 import copy
 from fastapi.testclient import TestClient
 import ipd
 import pydantic
-import sqlmodel
+import sqlmodel.pool
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import registry
 from typing import Optional, Type
 import uuid
 import rich
@@ -12,39 +17,37 @@ import tempfile
 from uuid import uuid4, UUID
 
 def main():
-    for fn in (
-            test_many2many_sanity_check,
-            test_many2many_basic,
-            test_one2many_parent,
-            test_many2many_parent,
-            test_user_group,
-    ):
-        with tempfile.TemporaryDirectory() as tempdir:
-            fn(tempdir)
+    for k, v in globals().copy().items():
+        if not k.startswith('test_'): continue
+        with tempfile.TemporaryDirectory() as td:
+            v(td)
     print('test_crud PASS')
 
 def create_new_sqlmodel_base() -> Type[sqlmodel.SQLModel]:
-    mapper_registry = sqlalchemy.orm.registry()
-    Base = mapper_registry.generate_base()
-    Base.registry._class_registry.clear()
+    # mapper_registry = sqlalchemy.orm.registry()
+    # Base = mapper_registry.generate_base()
+    # Base.registry._class_registry.clear()
 
-    class NewBase(sqlmodel.SQLModel):
-        __abstract__ = True  # This marks it as an abstract class, so it won't create its own table
-        metadata = Base.metadata
-        _sa_registry = copy.deepcopy(sqlmodel.SQLModel._sa_registry)
-
-    NewBase._sa_registry._class_registry.clear()
+    # __abstract__ = True  # This marks it as an abstract class, so it won't create its own table
+    # metadata = Base.metadata
+    # _sa_registry = copy.deepcopy(sqlmodel.SQLModel._sa_registry)
+    NewBase = type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
+    # NewBase._sa_registry._class_registry.clear()
 
     return NewBase
 
-def test_user_group(tempdir):
+@pytest.mark.fast
+def test_user_group(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class _SpecWithUser(ipd.crud.SpecBase):
-        userid: ipd.crud.ModelRef['UserSpec'] = pydantic.Field(default='anonymous_coward',
-                                                               validate_default=True)
+        userid: ipd.crud.ModelRef['UserZSpec'] = pydantic.Field(default='anonymous_coward',
+                                                                validate_default=True)
         ispublic: bool = True
         telemetry: bool = False
+
+    class PollZSpec(_SpecWithUser):
+        pass
 
     class UserZSpec(ipd.crud.SpecBase):
         name: ipd.crud.Unique[str]
@@ -61,11 +64,11 @@ def test_user_group(tempdir):
         userid: ipd.crud.ModelRef['UserZSpec', 'ownedgroups'] = pydantic.Field(default='anonymous_coward',
                                                                                validate_default=True)
 
-    models = dict(userz=UserZSpec, groupz=GroupZSpec)
+    models = dict(pollz=PollZSpec, userz=UserZSpec, groupz=GroupZSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models)
     MyClient = type('MyClient', (ipd.crud.ClientBase, ), {}, backend=MyBackend)
 
-    backend = MyBackend(f'{tempdir}/test.db')
+    backend = MyBackend(f'sqlite:///{tmpdir}/test.db')
     print('backend.newuserz', backend.newuserz(name='foo'))
     print('backend.newuserz', backend.newuserz(name='bar'))
     print('backend.newuserz', backend.newuserz(name='baz'))
@@ -91,7 +94,8 @@ def test_user_group(tempdir):
     assert a in c.following
     assert a in d.following
 
-def test_many2many_basic(tempdir):
+@pytest.mark.fast
+def test_many2many_basic(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class UserCSpec(ipd.crud.SpecBase):
@@ -104,9 +108,10 @@ def test_many2many_basic(tempdir):
 
     models = dict(userc=UserCSpec, groupc=GroupCSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
-    helper_test_users_groups(tempdir, LocalSQLModel, MyBackend.DBUserC, MyBackend.DBGroupC)
+    helper_test_users_groups(tmpdir, LocalSQLModel, MyBackend.DBUserC, MyBackend.DBGroupC)
 
-def test_one2many_parent(tempdir):
+@pytest.mark.fast
+def test_one2many_parent(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class ParentChildSpec(ipd.crud.SpecBase):
@@ -114,7 +119,7 @@ def test_one2many_parent(tempdir):
 
     models = dict(parentchild=ParentChildSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
-    session = helper_create_db(tempdir, LocalSQLModel)
+    session = helper_create_db(tmpdir, LocalSQLModel)
     a = MyBackend.DBParentChild()
     b = MyBackend.DBParentChild()
     c = MyBackend.DBParentChild()
@@ -133,7 +138,8 @@ def test_one2many_parent(tempdir):
     assert c.parent.id == b.id
     assert c.id == b.children[0].id
 
-def test_many2many_parent(tempdir):
+@pytest.mark.fast
+def test_many2many_parent(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class UserBSpec(ipd.crud.SpecBase):
@@ -142,7 +148,7 @@ def test_many2many_parent(tempdir):
 
     models = dict(userb=UserBSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
-    session = helper_create_db(tempdir, LocalSQLModel)
+    session = helper_create_db(tmpdir, LocalSQLModel)
     a = MyBackend.DBUserB(name='a')
     b = MyBackend.DBUserB(name='b')
     c = MyBackend.DBUserB(name='c')
@@ -167,7 +173,8 @@ def test_many2many_parent(tempdir):
     assert c.id in {_.id for _ in b.followers}
     assert d.id in {_.id for _ in b.followers}
 
-def test_many2many_sanity_check(tempdir):
+@pytest.mark.fast
+def test_many2many_sanity_check(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     linkbody = dict(useraid=sqlmodel.Field(default=None, foreign_key='dbusera.id', primary_key=True),
@@ -188,18 +195,22 @@ def test_many2many_sanity_check(tempdir):
     # rich.print(userbody)
     # print('Group')
     # rich.print(groupbody)
-    helper_test_users_groups(tempdir, LocalSQLModel, DBUserA, DBGroupA)
+    helper_test_users_groups(tmpdir, LocalSQLModel, DBUserA, DBGroupA)
 
-def helper_create_db(tempdir, LocalSQLModel):
-    engine = sqlmodel.create_engine(f'sqlite:///{tempdir}/test.db')
+def helper_create_db(tmpdir, LocalSQLModel):
+    engine = sqlmodel.create_engine(
+        f'sqlite:///{tmpdir}/test.db',
+        # connect_args={"check_same_thread": False},
+        # poolclass=sqlmodel.pool.StaticPool,
+    )
     print('metadata id', id(LocalSQLModel.metadata))
     LocalSQLModel.metadata.create_all(engine)
     session = sqlmodel.Session(engine)
     return (session)
 
-def helper_test_users_groups(tempdir, LocalSQLModel, dbusertype, dbgrouptype):
+def helper_test_users_groups(tmpdir, LocalSQLModel, dbusertype, dbgrouptype):
     # print(dbgrouptype.__table__.columns)
-    session = helper_create_db(tempdir, LocalSQLModel)
+    session = helper_create_db(tmpdir, LocalSQLModel)
     users = [dbusertype() for _ in range(10)]
     groups = [dbgrouptype() for _ in range(10)]
     users[0].groups.append(groups[2])

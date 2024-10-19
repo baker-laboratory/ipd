@@ -215,6 +215,7 @@ def test_randxform_perf():
             'curandStateXORWOW_t',
             'ipd',
     ]:
+        if gentype == 'ipd':
 
             def func():
                 return ipd.h.rand(N, dtype=th.float32, device='cuda')

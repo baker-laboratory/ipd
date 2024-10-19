@@ -1,9 +1,8 @@
 import time
 import pytest
 import statistics
-from willutil import Timer
-import willutil as wu
-
+import ipd
+from ipd.dev import Timer
 
 def allclose(a, b, atol):
     if isinstance(a, float):
@@ -12,7 +11,6 @@ def allclose(a, b, atol):
         if abs(a - b) > atol:
             return False
     return True
-
 
 @pytest.mark.skip
 def test_timer():
@@ -38,26 +36,24 @@ def test_timer():
     with pytest.raises(ValueError):
         timer.report_dict(order="oarenstoiaen")
 
-
 def aaaa(timer=None):
-    wu.checkpoint(timer, funcbegin=True)
+    ipd.dev.checkpoint(timer, funcbegin=True)
     time.sleep(0.2)
-    wu.checkpoint(timer)
-
+    ipd.dev.checkpoint(timer)
 
 ##@timed
 def bbbb(**kw):
     time.sleep(0.2)
 
-
+@pytest.mark.fast
 def test_auto():
     t = Timer()
     aaaa(t)
     areport = t.report(printme=False, scale=0)
 
     t = Timer()
-    kw = wu.Bunch(timer=t)
-    wu.checkpoint(t)
+    kw = ipd.Bunch(timer=t)
+    ipd.dev.checkpoint(t)
     bbbb(**kw)
     breport = t.report(printme=False, scale=0)
 
@@ -65,7 +61,6 @@ def test_auto():
     print(breport.replace("bbbb", "aaaa"))
     # print(breport.replace('bbbb', 'aaaa'))
     # assert areport.strip() == breport.replace('bbbb', 'aaaa').strip()
-
 
 @pytest.mark.skip
 def test_summary():
@@ -94,7 +89,6 @@ def test_summary():
 
     with pytest.raises(ValueError):
         timer.report(summary=1)
-
 
 if __name__ == "__main__":
     test_auto()

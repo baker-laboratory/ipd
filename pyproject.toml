@@ -6,6 +6,8 @@ build-backend = "hatchling.build"
 name = "ipd"
 version = "0.1"
 dependencies = [
+'hydra-core',
+'hypothesis',
 'icecream',
 'requests',
 'pydantic',

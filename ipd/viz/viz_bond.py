@@ -16,4 +16,4 @@ def show_bonds(xyz, bonds, colors=None, **kw):
         if i == j: continue
         cgo += wu.viz.cgo_cyl(xyz[i], xyz[j], 0.1, colors[i], colors[j])
 
-    return wu.Bunch(cgo=cgo)
+    return ipd.Bunch(cgo=cgo)

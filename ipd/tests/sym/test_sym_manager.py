@@ -1,4 +1,6 @@
 import pytest
+
+pytest.importorskip('torch')
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
@@ -55,6 +57,7 @@ def test_sym_manager_fuzz_fill_from_contiguous(sym):
     smask = idx.sub.max(dim=0).values
     assert th.all(test[smask, smask] == -1)
 
+@pytest.mark.fast
 def test_sym_manager_string_2slice():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
     sym.idx = [(8, 0, 3), (8, 4, 7)]
@@ -62,6 +65,7 @@ def test_sym_manager_string_2slice():
     assertpy.assert_that(sym('adeh')).is_equal_to('aaadeeeh')
     sym.check('aaadeeeh')
 
+@pytest.mark.fast
 def test_sym_manager_1d_2slice():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
     sym.idx = [(8, 0, 3), (8, 4, 7)]
@@ -69,6 +73,7 @@ def test_sym_manager_1d_2slice():
     assert th.all(sym(t([1, 2, 3, 4, 5, 6, 7, 8])) == t([1, 1, 1, 4, 5, 5, 5, 8]))
     assert th.all(sym(t([1, 4, 5, 8])) == t([1, 1, 1, 4, 5, 5, 5, 8]))
 
+@pytest.mark.fast
 def test_sym_manager_2d_2slice():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2', '+sym.Lasu=1'])
     n = 10
@@ -99,22 +104,26 @@ def test_sym_manager_2d_2slice():
          [0, 0, 91, 92, 0, 0, 0, 0, 96, 97, 98, 0, 0], [143, 144, 0, 0, 147, 148, 149, 150, 0, 0, 0, 154, 155],
          [156, 157, 0, 0, 160, 161, 162, 163, 0, 0, 0, 167, 168]]).to(sym.device))
 
+@pytest.mark.fast
 def test_sym_manager_string():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
     sym.idx = [(4, 0, 3)]
     assert sym('abbb') == 'aaab'
     assert sym('ab') == 'aaab'
 
+@pytest.mark.fast
 def test_sym_manager_list():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
     sym.idx = [(4, 0, 3)]
     assert sym(['abbb', 'bbcc', 'foo', 'bar']) == ['abbb', 'abbb', 'abbb', 'bar']
 
+@pytest.mark.fast
 def test_sym_manager_dict():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=c3', '+sym.Lasu=1'])
     sym.idx = [(4, 0, 3)]
     assert sym(dict(a='abcd')) == dict(a='aaad')
 
+@pytest.mark.fast
 def test_sym_manager_contiguous():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
     sym.idx = [(4, 0, 3)]
@@ -123,6 +132,7 @@ def test_sym_manager_contiguous():
     adapted, contig, Lasu = sym.to_contiguous(thing)
     assert th.all(sym.fill_from_contiguous(thing, adapted, contig) == m)
 
+@pytest.mark.fast
 def test_sym_asu_seq():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=C2',
@@ -154,6 +164,7 @@ def test_sym_asu_seq():
     assert len(asu) == 10
     assert all(asu == seq[:10])
 
+@pytest.mark.fast
 def test_sym_asu_xyz():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=c3',
@@ -202,6 +213,7 @@ def test_sym_asu_xyz():
     s = sym(xyz[0, :19, 0])
     assert s.shape == (39, 3)
 
+@pytest.mark.fast
 def test_sym_slices():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=c3',
@@ -223,6 +235,7 @@ def test_sym_slices():
     assert th.allclose(xyz[sym.idx.asym], symxyz[sym.idx.asym])
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz)
 
+@pytest.mark.fast
 def test_sym_pair():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=c3',
@@ -239,10 +252,12 @@ def test_sym_pair():
 
     sym.assert_symmetry_correct(sympair)
 
+@pytest.mark.fast
 def test_create_test_sym_manager():
     assert ipd.sym.create_sym_manager().symid == 'C1'
     assert ipd.sym.create_sym_manager(symid='c3').symid == 'C3'
 
+@pytest.mark.fast
 def test_atom_on_axis():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3'])
     sym.idx = [(4, 0, 3)]

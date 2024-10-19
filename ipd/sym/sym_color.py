@@ -1,5 +1,6 @@
-import torch as th
 import ipd
+
+th = ipd.lazyimport('torch')
 
 def make_sequential_colors(colors):
     '''
@@ -21,9 +22,9 @@ def make_sequential_colors(colors):
 
 def symslices_from_colors(
     nsub: int,
-    colors: th.Tensor,
+    colors: 'th.Tensor',
     isasu: bool = True,
-    Lasu: th.Tensor = None,
+    Lasu: 'th.Tensor' = None,
     recolor: bool = True,
 ):
     '''
@@ -50,7 +51,7 @@ def symslices_from_colors(
     '''
     ignore = colors < 0
     # if th.any(ignore) and isasu:
-        # raise NotImplementedError('ignoring negative colors not implemented for isasu=True')
+    # raise NotImplementedError('ignoring negative colors not implemented for isasu=True')
     if recolor: colors = make_sequential_colors(colors)
     if Lasu is None: Lasu = th.full((colors[-1] + 1, ), -1)
     if isasu:

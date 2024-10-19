@@ -14,7 +14,7 @@ from pathlib import Path
 import pydantic
 import rich
 import sqlalchemy
-import sqlmodel
+import sqlmodel.pool
 from sqlmodel import Field
 from sqlmodel.main import RelationshipInfo
 import sys
@@ -78,6 +78,8 @@ class BackendBase:
             setattr(cls, dbcls.__name__, dbcls)
 
     def __init__(self, engine):
+        memkw = dict(connect_args={"check_same_thread": False}, poolclass=sqlmodel.pool.StaticPool)
+        if engine == '<memory>': engine = sqlmodel.create_engine('sqlite://', **memkw)
         if isinstance(engine, str) and '://' not in engine: engine = f'sqlite:///{engine}'
         if isinstance(engine, str): engine = engine = sqlmodel.create_engine(engine)
         self.engine = engine

@@ -520,7 +520,7 @@ def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), 
 
 def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
     """angle will override nfold"""
-    # if isinstance(axis, wu.Bunch):
+    # if isinstance(axis, ipd.Bunch):
     #   bunch = axis
     #   axis = bunch.axis
     #   if angle is None: angle = bunch.angle

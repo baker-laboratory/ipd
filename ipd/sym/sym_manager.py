@@ -11,8 +11,8 @@ from itertools import repeat
 import ipd
 from ipd.sym.sym_adapt import _sym_adapt
 from ipd.sym import ShapeKind, ValueKind
-th = lazyimport('torch')
 
+th = lazyimport('torch')
 
 class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     """
@@ -30,7 +30,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self.device = device or ('cuda' if th.cuda.is_available() else 'cpu')
         self.skip_keys = set()
         self._idx = None
-        self._post_init_args = wu.Bunch(kw)
+        self._post_init_args = ipd.Bunch(kw)
         self._frames = None
         self.add_properties()
         self.init(**kw)
@@ -116,7 +116,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         elif thing.kind.shapekind == ShapeKind.SEQUENCE:
             result = thing.reconstruct([self(x, **kw) for x in thing.adapted])
         elif thing.kind.shapekind == ShapeKind.MAPPING:
-            result = thing.reconstruct(wu.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
+            result = thing.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
         elif thing.kind.shapekind == ShapeKind.SCALAR:
             result = thing.orig
         else:
@@ -134,7 +134,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return xyz if pair is None else (xyz, pair)
 
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
-        kw = wu.Bunch(kw)
+        kw = ipd.Bunch(kw)
         origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
@@ -502,7 +502,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     @frames.setter
     def frames(self, frames):
         assert frames.shape[-2:] == (4, 4) and frames.ndim == 3
-        self._frames = th.as_tensor(frames,device=self.device, dtype=th.float32)
+        self._frames = th.as_tensor(frames, device=self.device, dtype=th.float32)
         self.opt.nsub = len(frames)
 
 class C1SymmetryManager(SymmetryManager):

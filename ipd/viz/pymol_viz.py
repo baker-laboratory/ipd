@@ -5,28 +5,29 @@ import numpy as np
 import time
 import functools
 import typing
-import willutil as wu
+import ipd
+import contextlib
 from collections import defaultdict
 from icecream import ic
 from functools import singledispatch
-from willutil.viz.viz_deco import pymol_frame
-#
-# from deferred_import import deferred_import
-#
-# # pymol = deferred_import('pymol')
-# # cgo = deferred_import('pymol.cgo')
-# # cmd = deferred_import('pymol.cmd')
+import ipd
+from ipd.viz.viz_deco import pymol_frame
+
+wu = ipd.dev.lazyimport('willutil')
+pymol = ipd.dev.lazyimport('pymol')
+cgo = ipd.dev.lazyimport('pymol.cgo')
+cmd = ipd.dev.lazyimport('pymol.cmd')
 try:
     import pymol
     from pymol import cgo, cmd
 except ImportError:
     pass
-from willutil.viz.pymol_cgo import *
-from willutil.sym.symfit import RelXformInfo
-import willutil.viz.primitives as prim
-from willutil.sym.spacegroup_util import tounitcellpts
+from ipd.viz.pymol_cgo import *
+# from ipd.sym.symfit import RelXformInfo
+import ipd.viz.primitives as prim
+# from ipd.sym.spacegroup_util import tounitcellpts
 
-_showme_state = wu.Bunch(
+_showme_state = ipd.Bunch(
     launched=0,
     seenit=defaultdict(lambda: -1),
     _nsymops=0,
@@ -72,99 +73,99 @@ def _(
     pymol.cmd.set_view(v)
     return None
 
-@pymol_load.register(RelXformInfo)
-def _(
-    toshow,
-    name="xrel",
-    state=_showme_state,
-    col="bycx",
-    showframes=True,
-    center=np.array([0, 0, 0, 1]),
-    scalefans=None,
-    fixedfansize=1,
-    expand=1.0,
-    fuzz=0,
-    make_cgo_only=False,
-    cyc_ang_match_tol=0.1,
-    axislen=20,
-    usefitaxis=False,
-    axisrad=0.1,
-    helicalrad=None,
-    addtocgo=None,
-    **kw,
-):
-    state._nsymops += 1
-    v = pymol.cmd.get_view()
+# @pymol_load.register(RelXformInfo)
+# def _(
+#     toshow,
+#     name="xrel",
+#     state=_showme_state,
+#     col="bycx",
+#     showframes=True,
+#     center=np.array([0, 0, 0, 1]),
+#     scalefans=None,
+#     fixedfansize=1,
+#     expand=1.0,
+#     fuzz=0,
+#     make_cgo_only=False,
+#     cyc_ang_match_tol=0.1,
+#     axislen=20,
+#     usefitaxis=False,
+#     axisrad=0.1,
+#     helicalrad=None,
+#     addtocgo=None,
+#     **kw,
+# ):
+#     state._nsymops += 1
+#     v = pymol.cmd.get_view()
 
-    ang = toshow.ang
-    if np.isclose(ang, np.pi * 4 / 5, atol=1e-4):
-        ang /= 2
-    if col == "bycx":
-        if False:
-            pass
-        elif np.isclose(ang, np.pi * 2 / 2, atol=cyc_ang_match_tol):
-            col = [1, 1, 0]
-        elif np.isclose(ang, np.pi * 2 / 3, atol=cyc_ang_match_tol):
-            col = [0, 1, 1]
-        elif np.isclose(ang, np.pi * 2 / 4, atol=cyc_ang_match_tol):
-            col = [1, 0, 1]
-        elif np.isclose(ang, np.pi * 2 / 5, atol=cyc_ang_match_tol):
-            col = [1, 0, 1]
-        elif np.isclose(ang, np.pi * 2 / 6, atol=cyc_ang_match_tol):
-            col = [1, 0, 1]
-        else:
-            col = [0.5, 0.5, 0.5]
-    elif col == "random":
-        col = np.random.rand(3) / 2 + 0.5
-        # col = (1, 1, 1)
-    # cen = (toshow.framecen - center) * expand + center
-    cen = toshow.framecen
+#     ang = toshow.ang
+#     if np.isclose(ang, np.pi * 4 / 5, atol=1e-4):
+#         ang /= 2
+#     if col == "bycx":
+#         if False:
+#             pass
+#         elif np.isclose(ang, np.pi * 2 / 2, atol=cyc_ang_match_tol):
+#             col = [1, 1, 0]
+#         elif np.isclose(ang, np.pi * 2 / 3, atol=cyc_ang_match_tol):
+#             col = [0, 1, 1]
+#         elif np.isclose(ang, np.pi * 2 / 4, atol=cyc_ang_match_tol):
+#             col = [1, 0, 1]
+#         elif np.isclose(ang, np.pi * 2 / 5, atol=cyc_ang_match_tol):
+#             col = [1, 0, 1]
+#         elif np.isclose(ang, np.pi * 2 / 6, atol=cyc_ang_match_tol):
+#             col = [1, 0, 1]
+#         else:
+#             col = [0.5, 0.5, 0.5]
+#     elif col == "random":
+#         col = np.random.rand(3) / 2 + 0.5
+#         # col = (1, 1, 1)
+#     # cen = (toshow.framecen - center) * expand + center
+#     cen = toshow.framecen
 
-    mycgo = list()
+#     mycgo = list()
 
-    if showframes:
-        pymol_visualize_xforms(toshow.frames, state, addtocgo=mycgo, **kw)
+#     if showframes:
+#         pymol_visualize_xforms(toshow.frames, state, addtocgo=mycgo, **kw)
 
-    cen1 = toshow.frames[0, :, 3]
-    cen2 = toshow.frames[1, :, 3]
-    axis = toshow.cenaxis if usefitaxis else toshow.axs
+#     cen1 = toshow.frames[0, :, 3]
+#     cen2 = toshow.frames[1, :, 3]
+#     axis = toshow.cenaxis if usefitaxis else toshow.axs
 
-    if abs(toshow.ang) < 1e-6:
-        mycgo += cgo_cyl(cen1, cen2, 0.01, col=(1, 0, 0))
-        mycgo += cgo_sphere(cen=(cen1 + cen2) / 2, rad=0.1, col=(1, 1, 1))
-    else:
-        c1 = cen + axis * axislen / 2
-        c2 = cen - axis * axislen / 2
-        if "isect_sphere" in toshow:
-            mycgo += cgo_sphere(toshow.closest_to_cen, rad=0.2, col=col)
-            mycgo += cgo_sphere(toshow.isect_sphere, rad=0.2, col=col)
-            mycgo += cgo_fan(axis, toshow.isect_sphere, rad=0.5, arc=2 * np.pi, col=col)
-            c1 = cen
-            c2 = toshow.isect_sphere
+#     if abs(toshow.ang) < 1e-6:
+#         mycgo += cgo_cyl(cen1, cen2, 0.01, col=(1, 0, 0))
+#         mycgo += cgo_sphere(cen=(cen1 + cen2) / 2, rad=0.1, col=(1, 1, 1))
+#     else:
+#         c1 = cen + axis * axislen / 2
+#         c2 = cen - axis * axislen / 2
+#         if "isect_sphere" in toshow:
+#             mycgo += cgo_sphere(toshow.closest_to_cen, rad=0.2, col=col)
+#             mycgo += cgo_sphere(toshow.isect_sphere, rad=0.2, col=col)
+#             mycgo += cgo_fan(axis, toshow.isect_sphere, rad=0.5, arc=2 * np.pi, col=col)
+#             c1 = cen
+#             c2 = toshow.isect_sphere
 
-        helicalrad = helicalrad or 3 * axisrad
+#         helicalrad = helicalrad or 3 * axisrad
 
-        mycgo += cgo_cyl(c1, c2, axisrad, col=col)
-        mycgo += cgo_cyl(cen + axis * toshow.hel / 2, cen - axis * toshow.hel / 2, helicalrad, col=col)
-        shift = fuzz * (np.random.rand() - 0.5)
-        mycgo += cgo_fan(
-            axis,
-            cen + axis * shift,
-            fixedfansize if fixedfansize else toshow.rad * scalefans,
-            arc=ang,
-            col=col,
-            startpoint=cen1,
-        )
+#         mycgo += cgo_cyl(c1, c2, axisrad, col=col)
+#         mycgo += cgo_cyl(cen + axis * toshow.hel / 2, cen - axis * toshow.hel / 2, helicalrad, col=col)
+#         shift = fuzz * (np.random.rand() - 0.5)
+#         mycgo += cgo_fan(
+#             axis,
+#             cen + axis * shift,
+#             fixedfansize if fixedfansize else toshow.rad * scalefans,
+#             arc=ang,
+#             col=col,
+#             startpoint=cen1,
+#         )
 
-    if addtocgo is None:
-        pymol.cmd.load_cgo(mycgo, "symops%i" % state._nsymops)
-        pymol.cmd.set_view(v)
-    else:
-        addtocgo.extend(mycgo)
+#     if addtocgo is None:
+#         pymol.cmd.load_cgo(mycgo, "symops%i" % state._nsymops)
+#         pymol.cmd.set_view(v)
+#     else:
+#         addtocgo.extend(mycgo)
 
-    if make_cgo_only:
-        return mycgo
-    return None
+#     if make_cgo_only:
+#         return mycgo
+#     return None
 
 @pymol_load.register(dict)
 def _(
@@ -190,7 +191,7 @@ def pymol_viz_list(
     topcolors=[],
     **kw,
 ):
-    kw = wu.Bunch(kw)
+    kw = ipd.Bunch(kw)
 
     if iscgo(toshow):
         pymol.cmd.load_cgo(toshow, name)
@@ -248,7 +249,7 @@ def pymol_load_npndarray(
     elif len(shape) > 2 and shape[-2:] == (4, 4):
         return pymol_visualize_xforms(toshow, state=state, **kw)
     elif shape == (4, ) or len(shape) == 2 and shape[-1] in (3, 4):
-        return show_ndarray_point_or_vec(wu.homog.hpoint(toshow), state=state, **kw)
+        return show_ndarray_point_or_vec(ipd.homog.hpoint(toshow), state=state, **kw)
     else:
         raise NotImplementedError(f"cant understand np.ndarray type {type(toshow)} shape {toshow.shape}")
 
@@ -335,7 +336,7 @@ def pymol_visualize_xforms(
         showneg=False,
         **kw,
 ):
-    kw = wu.Bunch(kw)
+    kw = ipd.Bunch(kw)
     if perturb != 0:
         raise NotImplementedError
 
@@ -361,7 +362,7 @@ def pymol_visualize_xforms(
     y0 = [0, xyzlen[1], 0, 1]
     z0 = [0, 0, xyzlen[2], 1]
     if randpos > 0:
-        rr = wu.homog.rand_xform()
+        rr = ipd.homog.rand_xform()
         rr[:3, 3] *= randpos
         c0 = rr @ c0
         x0 = rr @ x0
@@ -435,7 +436,7 @@ def pymol_visualize_xforms(
         for ix, xform in enumerate(xforms):
             mycgo += cgo_cyl(center, xform[:, 3], rays, col=col1)
 
-    return wu.Bunch(cgo=mycgo)
+    return ipd.Bunch(cgo=mycgo)
 
 def show_ndarray_lines(
     toshow,
@@ -483,7 +484,7 @@ def cgo_frame_points(frames, scale, showpts, scaleptrad=1, **kw):
         for p, r, c in zip(*showpts):
             if i == 0:
                 ic(p)
-            cgo += cgo_sphere(scale * wu.hxform(frame, p), rad=scale * scaleptrad * r, col=c)
+            cgo += cgo_sphere(scale * ipd.homog.hxform(frame, p), rad=scale * scaleptrad * r, col=c)
 
     return cgo
 
@@ -604,12 +605,13 @@ def show_ndarray_point_or_vec(
     scale=1,
     **kw,
 ):
-    kw = wu.Bunch(kw)
-    import torch as th
-    if isinstance(toshow, th.Tensor):
-        toshow = toshow.cpu().detach().numpy()
+    kw = ipd.Bunch(kw)
+    with contextlib.suppress(ImportError):
+        import torch as th
+        if isinstance(toshow, th.Tensor):
+            toshow = toshow.cpu().detach().numpy()
     if toshow.shape[-1] == 3:
-        toshow = wu.hpoint(toshow)
+        toshow = ipd.homog.hpoint(toshow)
     # if isinstance(col, typing.Hashable) and col in get_color_dict():
     # col = get_color_dict()[col]
     # if col is None:
@@ -621,9 +623,9 @@ def show_ndarray_point_or_vec(
     elif toshow.ndim == 4:
         toshow = toshow.reshape(toshow.shape[0], -1, toshow.shape[-1])
     if kind == "vec":
-        toshow = wu.hvec(toshow)
+        toshow = ipd.homog.hvec(toshow)
     elif kind == "point":
-        toshow = wu.homog.hpoint(toshow)
+        toshow = ipd.homog.hpoint(toshow)
     else:
         toshow = np.array(toshow)
     if isinstance(col, tuple) and isinstance(col[0], (int, float)):
@@ -648,7 +650,7 @@ def show_ndarray_point_or_vec(
             else:
                 raise NotImplementedError
 
-    return wu.Bunch(cgo=cgo, colors=colors)
+    return ipd.Bunch(cgo=cgo, colors=colors)
 
 @pymol_frame
 def show_array_ncacoh(
@@ -661,14 +663,14 @@ def show_array_ncacoh(
     fname = tmpdir + "/" + name + ".pdb"
     assert toshow.shape[-2:] in [(5, 3), (5, 4)]
     if toshow.shape[-1] == 3:
-        toshow = wu.hpoint(toshow)
+        toshow = ipd.homog.hpoint(toshow)
     # ic(toshow.shape)
 
     wu.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', 'name N+CA+C')
-    return wu.Bunch(pymol_object=name)
+    return ipd.Bunch(pymol_object=name)
 
 @pymol_frame
 def show_ndarray_n_ca_c(
@@ -681,7 +683,7 @@ def show_ndarray_n_ca_c(
     fname = tmpdir + "/" + name + ".pdb"
     assert toshow.shape[-2:] in [(3, 3), (3, 4)]
     if toshow.shape[-1] == 3:
-        toshow = wu.hpoint(toshow)
+        toshow = ipd.homog.hpoint(toshow)
     # ic(toshow.shape)
 
     wu.dumppdb(fname, toshow)
@@ -689,7 +691,7 @@ def show_ndarray_n_ca_c(
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', f'{name} and name N+CA+C')
-    return wu.Bunch(pymol_object=name)
+    return ipd.Bunch(pymol_object=name)
 
 def iscgo(maybecgo):
     return isinstance(maybecgo[0], float)

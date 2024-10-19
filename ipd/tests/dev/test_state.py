@@ -1,3 +1,4 @@
+import pytest
 import ipd
 import os
 from assertpy import assert_that as at
@@ -10,7 +11,8 @@ def main():
         test_state_manager(td)
     print('test_state DONE', flush=True)
 
-def test_state_manager(tempdir):  # sourcery skip: extract-duplicate-method
+@pytest.mark.fast
+def test_state_manager(tmpdir):  # sourcery skip: extract-duplicate-method
     state_defaults = dict(
         reviewed=set(),
         prefetch=7,
@@ -38,8 +40,8 @@ def test_state_manager(tempdir):  # sourcery skip: extract-duplicate-method
         serveraddr='global',
         user='global',
     )
-    conffile = Path(os.path.join(tempdir, 'conf.yaml'))
-    statefile = Path(os.path.join(tempdir, 'state.yaml'))
+    conffile = Path(os.path.join(tmpdir, 'conf.yaml'))
+    statefile = Path(os.path.join(tmpdir, 'state.yaml'))
     state = ipd.dev.StateManager(conffile, statefile, state_types, state_defaults, debugnames={})
     assert 'foo' not in state
     state.foo = 'fooglobalstate'

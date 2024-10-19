@@ -1,4 +1,6 @@
 import pytest
+
+pytest.importorskip('torch')
 import torch as th
 import rf_diffusion as rfd
 import rf2aa as rf
@@ -77,4 +79,3 @@ if __name__ == '__main__':
     test_make_sequential_colors()
     test_symslices_from_colors_one()
     test_symslices_from_colors_fuzz()
-

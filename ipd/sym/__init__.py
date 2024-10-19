@@ -17,6 +17,3 @@ sym_tensor = LazyModule('ipd.sym.sym_tensor')
 def set_symmetry(sym):
     global symmetrize
     symmetrize = sym
-
-from ipd.sym.sym_factory import create_sym_manager
-set_symmetry(create_sym_manager())
