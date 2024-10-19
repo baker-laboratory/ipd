@@ -4,6 +4,7 @@ from subprocess import check_output
 import time
 import shutil
 import os
+from ipd.qt import isfalse_notify
 
 class FileFetcher(threading.Thread):
     def __init__(self, fname, cache):

@@ -2,9 +2,6 @@ import copy
 import dataclasses
 import contextlib
 from ipd.dev.lazy_import import lazyimport
-
-th = lazyimport('torch')
-
 import numpy as np
 from functools import singledispatch
 from itertools import repeat
@@ -12,6 +9,8 @@ from abc import ABC, ABCMeta, abstractmethod
 from collections.abc import Sequence, Mapping
 import ipd
 from ipd.sym.sym_kind import SymKind, ShapeKind, ValueKind
+
+th = lazyimport('torch')
 
 @singledispatch
 def _sym_adapt(thing, sym, isasym=None):

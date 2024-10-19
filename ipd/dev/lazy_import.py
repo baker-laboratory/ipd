@@ -8,6 +8,8 @@ import subprocess
 
 _skip_global_install = False
 
+_warned = set()
+
 class LazyModule:
     __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels')
 
@@ -18,22 +20,16 @@ class LazyModule:
         self._mamba = mamba
         self._channels = channels
 
-    def _import_module(self) -> ModuleType:
+    def now(self) -> ModuleType:
         try:
             return self._mambathenpipimport()
         except ImportError as e:
-            # print('-' * 80)
-            print(f'import_module({self._name}) failed')
-            # print({self._package} {self._pip} sys.path is:')
-            for p in sys.path:
-                p = Path(p) / self._name.replace('.', '/')
-                # print(p)
-                if os.path.exists(p):
-                    print('WTF, path exists:')
-                    for f in os.listdir(p):
-                        print(f'    {f}')
-            # print(e)
-            # print('-' * 80)
+            msg = f'lazy import of module {self._name} failed, continuing without {self._name} support'
+            if msg not in _warned:
+                print(msg)
+                _warned.add(msg)
+            # for p in sys.path:
+            # print(p)
             raise ImportError(f'Failed to import module: {self._name}') from e
         except Exception as e:
             raise ImportError(f'Failed to import module: {self._name}') from e
@@ -85,7 +81,7 @@ class LazyModule:
 
     @property
     def _module(self) -> ModuleType:
-        return sys.modules.get(self._name) or self._import_module()
+        return sys.modules.get(self._name) or self.now()
 
     def __getattr__(self, name: str):
         return getattr(self._module, name)

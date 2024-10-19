@@ -9,5 +9,7 @@ dependencies = [
 'icecream',
 'requests',
 'pydantic',
+'numpy',
+'assertpy', 
 ]
 requires-python = ">=3.8"

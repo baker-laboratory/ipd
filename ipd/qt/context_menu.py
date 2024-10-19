@@ -21,12 +21,13 @@ class ContextMenuMixin(abc.ABC):
         'must return object represented by listitem'
 
     def _action_is_allowed(self, thing, action):
-        return not action.owner or self.state.user in (thing.user, 'admin')
+        return not action.owner or self.state.user in (thing.user.name, 'admin')
 
     def context_menu(self, event):
         menu, thing = self.Qt.QtWidgets.QMenu(), None
         if item := self.widget.itemAt(event.pos()):
             thing = self._get_from_item(item)
+            assert thing and not isinstance(thing, str), thing
             for name, action in self._context_menu_items().items():
                 if action.item:
                     menu.addAction(name).setEnabled(self._action_is_allowed(thing, action))

@@ -9,8 +9,8 @@ import ipd
 at = ipd.lazyimport('assertpy', pip=True).assert_that
 
 def main():
-    # run_plugin()
     run_pymol()
+    # run_plugin_standalone()
     print('test_ppppp DONE', flush=True)
 
 def run_polls_stress_test():
@@ -22,7 +22,7 @@ def run_polls_stress_test():
     ipd.dev.global_timer.report()
     server.stop()
 
-def run_plugin():
+def run_plugin_standalone():
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     run()
@@ -32,12 +32,9 @@ def run_pymol():
     # os.environ['QT_QPA_PLATFORM'] = 'xcb'
     pymol.pymol_argv = ['pymol', '-q']
     pymol.finish_launching()
+    # time.sleep(1)
+    # pymol.cmd.do('plugin_load ppppp')
     # ipd.ppp.plugin.ppppp.run()
-    # from ipd.ppp.plugin.ppppp import run_ppppp_gui
-    # ui = run_ppppp_gui()
-    # while time.sleep(1): pass
-    # assert 0
-    # from ipd.pymol import ppppp
 
 if __name__ == '__main__':
     main()

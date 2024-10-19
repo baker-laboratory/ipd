@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import os
 import sys
+import io
 
 @contextmanager
 def redirect(stdout=sys.stdout, stderr=sys.stderr):
@@ -8,6 +9,8 @@ def redirect(stdout=sys.stdout, stderr=sys.stderr):
     try:
         sys.stdout.flush(), sys.stderr.flush()
         if stderr == 'stdout': stderr = stdout
+        if stdout is None: stdout = io.StringIO()
+        if stderr is None: stderr = io.StringIO()
         sys.stdout, sys.stderr = stdout, stderr
         yield stdout, stderr
     finally:
