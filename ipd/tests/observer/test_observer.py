@@ -18,18 +18,18 @@ class ObserverTest(ipd.observer.Observer):
 
 @pytest.mark.fast
 def test_observer():
-    agent = ipd.spy[ObserverTest]
+    agent = ipd.hub[ObserverTest]
     assert not agent.foobar_called
-    ipd.spy.blah(check_is_registered_method=False)
+    ipd.hub.blah(check_is_registered_method=False)
     with pytest.raises(ipd.observer.ObserverError):
-      ipd.spy.blah(strict=True)
+      ipd.hub.blah(strict=True)
     assert not agent.foobar_called
-    ipd.spy.foobar()
+    ipd.hub.foobar()
     assert agent.foobar_called
-    ipd.spy.idx(7)
+    ipd.hub.idx(7)
     assert agent.idx_called == 7
     assert ObserverTest() is ObserverTest()
-    assert ObserverTest() is ipd.spy[ObserverTest]
+    assert ObserverTest() is ipd.hub[ObserverTest]
 
 if __name__ == '__main__':
     test_observer()

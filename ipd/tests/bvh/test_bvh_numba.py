@@ -4,7 +4,7 @@ import os
 from numba import cuda
 import torch as th
 from icecream import ic
-import willutil as wu
+import ipd as ipd
 import ipd
 
 def main():
@@ -16,7 +16,7 @@ def main():
     return
 
     os.environ['NUMBA_ENABLE_CUDASIM'] = '0'
-    t = wu.Timer()
+    t = ipd.dev.Timer()
     s = 0
     for i in range(10000):
         # N = 8_388_608 +0
@@ -25,8 +25,8 @@ def main():
         t.checkpoint('none')
         x1 = ipd.samp.randxform(N)
         # x2 = ipd.samp.randxform(N)
-        # x1 = wu.h.rand(N, device='cuda')
-        # x2 = wu.h.rand(N, device='cuda')
+        # x1 = ipd.h.rand(N, device='cuda')
+        # x2 = ipd.h.rand(N, device='cuda')
         s += x1[-1,-1,-1] #+ x2[-1,-1,-1]
         t.checkpoint('randxform')
         continue

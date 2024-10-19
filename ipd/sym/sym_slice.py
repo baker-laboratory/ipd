@@ -131,6 +131,7 @@ class SymIndex:
         '''
         self.nsub = nsub
         self.orig_input = slices
+        if isinstance(slices, int): slices = [slices]
         self.slices = [SymSlice.make_symslice(s) for s in slices]
         self.slices[0].fit = True  # assume fit should always be checked on the first slice
         for s in self.slices:

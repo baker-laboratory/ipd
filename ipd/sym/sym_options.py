@@ -30,6 +30,7 @@ default_params = dict(
     sym_enabled=True,
     symid='C1',
     symmetrize_repeats=None,
+    sym_input_file=None,
     sympair_enabled=None,
     sympair_method=None,
     sympair_protein_only=None,
@@ -46,7 +47,7 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     '''
     Reads all options in conf.sym, and anything in extra_params
     '''
-    kw = wu.Bunch(kw)
+    kw = ipd.Bunch(kw)
     if conf is None:
         try:
             path = '../../../../rf_diffusion/config/inference/sym.yaml'

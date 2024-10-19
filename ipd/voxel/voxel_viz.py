@@ -23,7 +23,7 @@ if 'pymol' in sys.modules:
     @wu.viz.pymol_frame
     @wu.viz.pymol_load.register(ipd.voxel.VoxRB)
     def pymol_load_VoxRB(rb, name='Voxel', sym=None, **kw):
-        kw = wu.Bunch(kw)
+        kw = ipd.Bunch(kw)
         kw.set_if_missing('sphere', 1)
         xyz = wu.h.xform(rb._vizpos.cpu(), rb.xyz.cpu())
         if xyz.ndim ==2: xyz = xyz[None]

@@ -66,21 +66,21 @@ class Subject:
     def __getitem__(self, cls):
         return self._observers[cls]
 
-spy = Subject()
+hub = Subject()
 
 class ObserverMeta(abc.ABCMeta):
-    '''This metaclass registers all subclasses of Observer with the spy Subject'''
+    '''This metaclass registers all subclasses of Observer with the hub Subject'''
     def __init__(cls, name, bases, dct):
         super().__init__(name, bases, dct)
         if cls.__name__ != 'Observer':
-            spy._register_instance(cls())
+            hub._register_instance(cls())
 
 class Observer(abc.ABC, metaclass=ObserverMeta):
     '''
     Base class for all Observers, must define set_config and use it to configure themselves
 
-    A single instance of each subclass of Observer will be created and registered by the spy
-    Subject. These instances will be accessible via spy[MyObserver]. For example, defining
+    A single instance of each subclass of Observer will be created and registered by the hub
+    Subject. These instances will be accessible via hub[MyObserver]. For example, defining
 
     >>> class MyObserver(Observer):
     ...     def set_config(self, conf):
@@ -88,8 +88,8 @@ class Observer(abc.ABC, metaclass=ObserverMeta):
     ...     def thing_I_react_to(self, arg1, arg2, methodname):
     ...         print(f'{self} reacting to thing_I_react_to with {arg1} and {arg2}')
 
-    will cause ipd.spy.thing_I_react_to(1,2) to call it's instance of thing_I_react_to
-    the instance can be accessed via ipd.spy[MyObserver] or MyObserver()
+    will cause ipd.hub.thing_I_react_to(1,2) to call it's instance of thing_I_react_to
+    the instance can be accessed via ipd.hub[MyObserver] or MyObserver()
     '''
     _instances = dict()
 

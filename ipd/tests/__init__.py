@@ -1,6 +1,6 @@
 import os
 import random
-import willutil as wu
+import ipd as ipd
 import numpy as np
 import torch
 import ipd
@@ -19,6 +19,6 @@ def path(fname):
     return os.path.realpath(f'{ipd.projdir}/tests/data/{fname}')
 
 def load(fname):
-    return wu.load(path(fname))
+    return ipd.load(path(fname))
 
 __all__ = ['sym', 'make_deterministic', 'path', 'load']

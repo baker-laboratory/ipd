@@ -1,7 +1,7 @@
 import pytest
 import torch as th
 import ipd
-from willutil import h
+from ipd import h
 
 pytest.skip(allow_module_level=True)
 
@@ -61,8 +61,8 @@ def test_hypercone_samp():
     # ic(h.angle(x).max()*180/th.pi)
     # ic(h.angle(x[idx]).max()*180/th.pi)
     # ic(x.shape)
-    # wu.showme(x, xyzlen=(3, 3, 3), showneg=0)
-    # wu.showme(x[idx], xyzlen=(3, 3, 3), showneg=0)
+    # ipd.showme(x, xyzlen=(3, 3, 3), showneg=0)
+    # ipd.showme(x[idx], xyzlen=(3, 3, 3), showneg=0)
 
     #  double spacing = sqrt(3.0)*reslang;
     #  int const n1 = std::ceil(long_tol/spacing);
@@ -99,10 +99,10 @@ def test_tip_atom_target():
     # tgtres = [8]
     tgt = ipd.samp.TipAtomTarget.from_pdb(fname, tgtres, clashthresh=2.0)
 
-    # wu.save((tgt.don, tgt.acc), '/home/sheffler/project/neorifgen/dna_example.pickle')
+    # ipd.save((tgt.don, tgt.acc), '/home/sheffler/project/neorifgen/dna_example.pickle')
     refdon, refacc = ipd.tests.load('ref/dna_example')
-    # wu.showme(tgt)
-    # wu.showme(tgt.vox.xyz, sphere=0.3)
+    # ipd.showme(tgt)
+    # ipd.showme(tgt.vox.xyz, sphere=0.3)
     # import pymol
     # pymol.cmd.load(fname)
     # pymol.cmd.show('line')

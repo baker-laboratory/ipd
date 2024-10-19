@@ -1,7 +1,6 @@
 import math
 import pytest
-import willutil as wu
-from willutil import h
+from ipd import h
 import torch as th
 import numpy as np
 import ipd
@@ -26,10 +25,10 @@ def main():
     test_Voxel_class()
     test_Voxel_score_symcheck_perf()
 
-    wu.global_timer.report()
+    ipd.global_timer.report()
     print('test_voxel DONE')
 
-@wu.timed
+@ipd.timed
 def Voxel_score_converse():
     th.manual_seed(2)
     np.random.seed(2)
@@ -41,10 +40,10 @@ def Voxel_score_converse():
     sc1 = vox1.score(xyz2, xyzpos=x)
     sc2 = vox2.score(xyz1, voxpos=x)
     ic(sc1[0], sc2[0])
-    # wu.viz.scatter(sc1.cpu(),sc2.cpu())
+    # ipd.viz.scatter(sc1.cpu(),sc2.cpu())
     # assert 0
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_boundscheck():
     xyz = make_test_points(100, 30, 200)
@@ -58,18 +57,18 @@ def test_Voxel_score_boundscheck():
     # print(th.quantile(sc, th.linspace(0,1,7,device='cuda')))
     print(sc.min(), th.sum(sc == 0) / len(sc))
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_numba_vox_create():
     xyz = th.rand(1000, 3, device='cuda') * 90 + 5
     rad, resl = th.tensor([3, 4], device='cuda', dtype=th.float32), 1
     vox = ipd.voxel.Voxel(xyz)
 
-    with wu.Timer():
+    with ipd.dev.Timer():
         for i in range(10):
             vox = ipd.voxel.Voxel(xyz)
 
-    with wu.Timer():
+    with ipd.dev.Timer():
         for i in range(10):
             lb = xyz.min(0).values - rad[-1] - resl
             ub = xyz.max(0).values + rad[-1] + resl
@@ -79,9 +78,9 @@ def test_numba_vox_create():
             ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl,
                                                        grid.cuda())
 
-    # wu.showme(vox)
+    # ipd.showme(vox)
     vox.grid = grid
-    # wu.showme(vox)
+    # ipd.showme(vox)
     assert th.allclose(vox.lb, lb)
     assert th.allclose(vox.grid, grid, atol=1e-3)
 
@@ -98,7 +97,7 @@ def make_test_points(npts, bound, ngen=None):
     xyz = xyz[:npts]
     return xyz
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_create_voxel_grid_clash():
     xyz = make_test_points(1000, 50)
@@ -108,9 +107,9 @@ def test_create_voxel_grid_clash():
     assert th.allclose(xyz, xyzorig)
     nsamp = 100
     mintime = 9e9
-    ttot = wu.Timer(verbose=False, start=False)
+    ttot = ipd.dev.Timer(verbose=False, start=False)
     for i in range(nsamp + 1):
-        with wu.Timer(verbose=False) as t:
+        with ipd.dev.Timer(verbose=False) as t:
             ttot.start()
             vox, _lb = _voxel.create_voxel_grid(
                 xyz=xyz,
@@ -130,7 +129,7 @@ def test_create_voxel_grid_clash():
     )
     assert mintime < 0.01
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_create_voxel_grid_contact():
     xyz = make_test_points(1000, 50)
@@ -140,10 +139,10 @@ def test_create_voxel_grid_contact():
     assert th.allclose(xyz, xyzorig)
     nsamp = 100
     mintime = 9e9
-    ttot = wu.Timer(verbose=False, start=False)
+    ttot = ipd.dev.Timer(verbose=False, start=False)
     func = ipd.cuda.ContactFunc()
     for i in range(nsamp + 1):
-        with wu.Timer(verbose=False) as t:
+        with ipd.dev.Timer(verbose=False) as t:
             ttot.start()
             vox, _lb = _voxel.create_voxel_grid(
                 xyz=xyz,
@@ -163,7 +162,7 @@ def test_create_voxel_grid_contact():
     )
     assert mintime < 0.01
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_outerfalse():
     voxpts = make_test_points(1000, 30)
@@ -184,7 +183,7 @@ def test_Voxel_score_outerfalse():
     assert th.sum(th.abs(sc3 - sc1) > 0.01) < 35
     assert th.sum(th.abs(sc3 - sc1) > 0.001) < 100
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_voxpos():
     voxpts = make_test_points(1000, 30)
@@ -198,13 +197,13 @@ def test_Voxel_score_voxpos():
     assert th.sum(th.abs(sc2 - sc1) > 0.001) < 100
     # assert th.allclose(sc1, sc2, atol=1e-3)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_class():
     xyz = make_test_points(300, 30)
     ipd.voxel.Voxel(xyz, func=ipd.cuda.ClashFunc(3, 4), resl=1)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_clash_perf():
     voxpts = make_test_points(1000, 30)
@@ -213,9 +212,9 @@ def test_Voxel_score_clash_perf():
     frame = h.rand(100_000, cart_sd=20).to(th.float32).to('cuda')
     nsamp = 10
     mintime = 9e9
-    ttot = wu.Timer(verbose=False, start=False)
+    ttot = ipd.dev.Timer(verbose=False, start=False)
     for isamp in range(nsamp + 1):
-        with wu.Timer(verbose=False) as t:
+        with ipd.dev.Timer(verbose=False) as t:
             if isamp: ttot.start()
             vox.score(localxyz, xyzpos=frame, nthread=th.tensor([1, 256, 1]))
             if isamp: ttot.stop()
@@ -223,7 +222,7 @@ def test_Voxel_score_clash_perf():
     print(f'score  clash   min {mintime*1000:7.2f}ms avg {ttot.elapsed()/nsamp*1000:7.2f}ms')
     assert mintime < 0.01
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_contact_perf():
     voxpts = make_test_points(1000, 30)
@@ -232,9 +231,9 @@ def test_Voxel_score_contact_perf():
     frame = h.rand(100_000, cart_sd=20).to(th.float32).to('cuda')
     nsamp = 1
     mintime = 9e9
-    ttot = wu.Timer(verbose=False, start=False)
+    ttot = ipd.dev.Timer(verbose=False, start=False)
     for isamp in range(nsamp + 1):
-        with wu.Timer(verbose=False) as t:
+        with ipd.dev.Timer(verbose=False) as t:
             if isamp: ttot.start()
             vox.score(localxyz, xyzpos=frame, nthread=th.tensor([1, 256, 1]))
             if isamp: ttot.stop()
@@ -243,19 +242,19 @@ def test_Voxel_score_contact_perf():
     assert mintime < 0.01
     # assert 0
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_symcheck_perf():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(30, 30)
     vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ClashFunc(3, 4), resl=1)
     frame = h.rand(100_000, cart_sd=20).to(th.float32).to('cuda')
-    symx = wu.h.rot([0, 0, 1], 120).to(th.float32).to('cuda')
+    symx = ipd.h.rot([0, 0, 1], 120).to(th.float32).to('cuda')
     nsamp = 10
     mintime = 9e9
-    ttot = wu.Timer(verbose=False, start=False)
+    ttot = ipd.dev.Timer(verbose=False, start=False)
     for isamp in range(nsamp + 1):
-        with wu.Timer(verbose=False) as t:
+        with ipd.dev.Timer(verbose=False) as t:
             if isamp: ttot.start()
             vox.score(localxyz, frame, symx=symx, symclashdist=3, nthread=th.tensor([1, 128, 1]))
             if isamp: ttot.stop()
@@ -264,7 +263,7 @@ def test_Voxel_score_symcheck_perf():
     assert mintime < 0.1
 
 # @pytest.mark.flaky(retries=2)
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score():
     nframe, nxyz = 100, 30
@@ -306,14 +305,14 @@ def test_Voxel_score():
             # assert th.sum(~th.isclose(sc, sc2, atol=1e-3)) < 2
             assert th.allclose(sc2, sc, atol=1e-3)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_symcheck():
     nframe, nxyz = 100, 30
     for isamp in range(3):
         th.manual_seed(isamp)
         np.random.seed(isamp)
-        symx = wu.h.rot([0, 0, 1], random.choice([60, 72, 90, 120, 180])).to(th.float32).to('cuda')
+        symx = ipd.h.rot([0, 0, 1], random.choice([60, 72, 90, 120, 180])).to(th.float32).to('cuda')
         # ic(symx)
         symclashdist = float(th.rand(1) * 8)
         voxpts = make_test_points(400, 30)

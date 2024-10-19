@@ -9,7 +9,7 @@ from willutil import h
 
 def symcheck(sym, thing, kind=None, **kw):
     thing, kind, adaptor = get_kind_and_adaptor(sym, thing, kind)
-    kw = wu.Bunch(kw)
+    kw = ipd.Bunch(kw)
     kw.idx = sym.idx
     kw.sym = sym
     kw.thing = thing

@@ -370,7 +370,7 @@ class DynamicParameters(Mapping):
             return "_".join(str(_) for _ in self._step)
 
     def to_bunch(self):
-        return wu.Bunch(self, tag=self.tag)
+        return ipd.Bunch(self, tag=self.tag)
 
     # @property
     # def progress(self):
