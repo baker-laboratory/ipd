@@ -211,8 +211,7 @@ def PollSpec_get_structure_properties(poll):
         except ValueError:
             # print(os.path.join(poll.path, fname))
             traceback.print_exc()
-            if poll.nchain < 4: poll.sym = 'C1'
-            else: poll.sym = 'unknown'
+            poll.sym = 'C1' if poll.nchain < 4 else 'unknown'
         except (AttributeError, pymol.CmdException, gzip.BadGzipPollFile) as e:
             poll._errors += f'POLL error in _validated: {type(e)}\n{e}'
         finally:
