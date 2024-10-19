@@ -20,8 +20,7 @@ class ClientError(Exception):
 
 def tojson(thing):
     if isinstance(thing, list): return f'[{",".join(tojson(_) for _ in thing)}]'
-    if hasattr(thing, 'json'): return thing.json()
-    return str(thing)
+    return thing.json() if hasattr(thing, 'json') else str(thing)
 
 class ModelRef(type):
     def __class_getitem__(cls, T):
