@@ -375,8 +375,7 @@ def add_basic_client_model_methods(clientcls):
 _ModelRefType = Optional[Union[uuid.UUID, str]]
 
 def _label_field(cls):
-    if hasattr(cls, '_label'): return cls._label.default
-    return 'name'
+    return cls._label.default if hasattr(cls, '_label') else 'name'
 
 def process_modelref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
