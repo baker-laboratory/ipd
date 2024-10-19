@@ -6,12 +6,14 @@ build-backend = "hatchling.build"
 name = "ipd"
 version = "0.1"
 dependencies = [
-'hydra-core',
-'hypothesis',
-'icecream',
-'requests',
-'pydantic',
-'numpy',
-'assertpy', 
+    'hydra-core',
+    'hypothesis',
+    'icecream',
+    'requests',
+    'pydantic',
+    'numpy',
+    'assertpy',
+    'eliot',
+    'eliot-tree',
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"

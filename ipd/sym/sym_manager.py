@@ -45,7 +45,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         pass
 
     def post_init(self):
-        if self._post_init_args.idx: self.idx = self._post_init_args.idx
+        if 'idx' in self._post_init_args: self.idx = self._post_init_args.idx
         ipd.hub.sym_manager_created(self)
 
     def add_properties(self):
@@ -248,8 +248,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         unsym = orig[tomove]
         ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
         if len(unsym) and len(origasu) > 2 and not th.allclose(origasu, movedasu, atol=1e-3):
-            rms, _, xfit = wu.h.rmsfit(origasu, movedasu)
-            moved[tomove] = wu.h.xform(xfit, unsym)
+            rms, _, xfit = ipd.h.rmsfit(origasu, movedasu)
+            moved[tomove] = ipd.h.xform(xfit, unsym)
             if rms > 1e-3:
                 ic(orig)
                 ic(moved)
@@ -437,10 +437,10 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self._symmRs = self._symmRs.to(self.device)
 
     def is_on_symaxis(self, xyz):
-        axes = wu.sym.axes(self.symid, all=True)
+        axes = ipd.sym.axes(self.symid, all=True)
         onanyaxis = False
         for axis in itertools.chain(axes.values()):
-            onanyaxis |= th.any(wu.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
+            onanyaxis |= th.any(ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
         if not onanyaxis: return th.tensor([], dtype=int)
         if self.opt.subsymid is None:
             if len(axes) > 1: raise ValueError(f'atom on axes and dont know which subsymid {self.symid}')
@@ -448,7 +448,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             if axes.ndim: axes = axes[None]
         onaxis = th.zeros(len(xyz), dtype=bool)
         for axis in axes:
-            onaxis |= wu.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
+            onaxis |= ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
         return onaxis
 
     def update_px0(self, indep, px0):

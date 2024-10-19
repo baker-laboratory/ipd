@@ -187,17 +187,25 @@ class SymAdaptDataClass(SymAdapt):
             #     print(f'{k:15} {[x.shape for x in v]}')
         return type(self.orig)(**symparts)
 
-# @_sym_adapt.register(SimpleSparseTensor)
-# def _(sparse, sym):
-# return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
-
-def check_isasym(tensor, sym, isasym, idx):
-    if isasym is not None: return isasym
-    if sym.L in tensor.shape: return False
-    if sym.Nasym in tensor.shape: return True
-    assert idx is not None
-
+# ipd libs shouldn't require torch
 with contextlib.suppress(ImportError):
+
+    @dataclasses.dataclass
+    class SimpleSparseTensor:
+        val: th.Tensor
+        idx: th.Tensor
+        isidx: slice
+        kind: kind = None
+
+    # @_sym_adapt.register(SimpleSparseTensor)
+    # def _(sparse, sym):
+    # return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
+
+    def check_isasym(tensor, sym, isasym, idx):
+        if isasym is not None: return isasym
+        if sym.L in tensor.shape: return False
+        if sym.Nasym in tensor.shape: return True
+        assert idx is not None
 
     class SymAdaptNamedDenseTensor(SymAdapt):
         adapts = None

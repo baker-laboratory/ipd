@@ -1,17 +1,16 @@
 import pytest
-
-pytest.importorskip('torch')
-pytest.importorskip('gemmi')
 import math
 from ipd import h
 import numpy as np
 import ipd
-from ipd.voxel.voxel_cuda import _voxel
 import random
 from icecream import ic
 
+pytest.importorskip('torch')
+pytest.importorskip('gemmi')
 pytest.importorskip('ipd.voxel.voxel_cuda')
 th = lazimport('torch')
+from ipd.voxel.voxel_cuda import _voxel
 
 def main():
     Voxel_score_converse()

@@ -231,7 +231,7 @@ def PymolCMDSpec_validate_commands(command):
     command._errors = ''
     global _PML
     _PML += 1
-    pymol.cmd.load(ipd.testpath('pdb/tiny.pdb'), f'TEST_OBJECT{_PML}')
+    pymol.cmd.load(ipd.dev.package_testdata_path('pdb/tiny.pdb'), f'TEST_OBJECT{_PML}')
     PymolCMDSpec_validate_command(command, 'cmdstart')
     PymolCMDSpec_validate_command(command, 'cmdon')
     PymolCMDSpec_validate_command(command, 'cmdoff')

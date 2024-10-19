@@ -14,12 +14,17 @@
         },
         "project_environment": {
             "env": {
-                "PYTHON": "/home/sheffler/sw/MambaForge/envs/ppp/bin/python",
+                "PYTHON": "/home/sheffler/sw/MambaForge/envs/rfdsym312/bin/python",
             },
         },
 
     },
 	"build_systems": [
+        {
+            "name": "pytest",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m pytest  -x 2>&1 | tee ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
         {
             "name": "test ppp plugin",
             "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/pymol/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py 2>&1 | tee ide/sublime_build.log",

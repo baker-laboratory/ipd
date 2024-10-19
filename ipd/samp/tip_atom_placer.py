@@ -5,7 +5,7 @@ th = lazyimport('torch')
 
 import ipd
 import willutil as wu
-from willutil import h
+from ipd import h
 import dataclasses
 from icecream import ic
 

@@ -36,7 +36,7 @@ def asu_to_canon_if_necessary(sym, xyz, Lasu, asu_to_canon=None, disable_all_fit
         dist = th.cdist(xyz[None, :Lasu, 0], oldcom[None, None])[0]
         rg = th.sqrt(th.sum(th.square(dist)) / Lasu)
         rg_ratio = asu_to_canon if isinstance(asu_to_canon, float) else 1.2
-        newcom = rg_ratio * rg * wu.sym.canonical_asu_center(sym.symid, cuda=True)
+        newcom = rg_ratio * rg * ipd.sym.canonical_asu_center(sym.symid, cuda=True)
         # print(newcom-oldcom)
         xyz[:Lasu] += newcom - oldcom
     return xyz
@@ -92,7 +92,7 @@ def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
         # wu.showme(xyz[mask, 1], name='gp0', col=(1, 0, 0), sphere=0.3)
 
         # xyz[mask] = th.einsum('ij,raj->rai', R, xyz[mask]) + T
-        xyz[mask] = wu.h.xform(xform, xyz[mask])
+        xyz[mask] = ipd.h.xform(xform, xyz[mask])
 
         # wu.showme(xyz[~mask, 1], name='prot1', sphere=0.3)
         # wu.showme(xyz[mask, 1], name='gp1', col=(1, 0, 1), sphere=0.3)

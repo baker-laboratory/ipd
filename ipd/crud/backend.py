@@ -128,7 +128,7 @@ class BackendBase:
         thing.ghost = True
         self.session.add(thing)
         self.session.commit()
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
+        # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
 
     def actually_remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
@@ -368,7 +368,7 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
                 anno[kind][attr] = Attrs
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:
                 args = typing.get_args(field.annotation)
-                print(kind, attr, args)
+                # print(kind, attr, args)
                 if args[0] in specnames or args[0] in spec_models.values():
                     assert len(args) < 3
                     if len(args) == 2: refname, link = args

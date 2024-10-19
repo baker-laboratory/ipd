@@ -14,13 +14,13 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
     def init(self, *a, idx=None, **kw):
         '''Create an IpdSymmetryManager'''
         super().init(*a, **kw)
-        self._symmRs = th.tensor(wu.sym.frames(self.symid)[:, :3, :3], dtype=th.float32, device=self.device)
+        self._symmRs = th.tensor(ipd.sym.frames(self.symid)[:, :3, :3], dtype=th.float32, device=self.device)
         self.symmsub = th.arange(min(len(self._symmRs), self.opt.max_nsub))
         if self.symid == 'I' and self.opt.max_nsub == 4:
-            self.asucen = th.as_tensor(wu.sym.canonical_asu_center('icos4')[:3], device=self.device)
+            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center('icos4')[:3], device=self.device)
         else:
-            self.asucen = th.as_tensor(wu.sym.canonical_asu_center(self.symid)[:3], device=self.device)
-        self.asucenvec = wu.h.normalized(self.asucen)
+            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center(self.symid)[:3], device=self.device)
+        self.asucenvec = ipd.h.normalized(self.asucen)
         if 'nsub' in self.opt and self.opt.nsub:
             # assert int(self.metasymm[1][0]) == self.opt.nsub
             if self.opt.has('Lasu'):

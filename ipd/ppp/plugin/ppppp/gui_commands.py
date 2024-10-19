@@ -126,7 +126,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
             result = self.remote.upload(cmdspec)
             assert not result, result
         else:
-            cmd = ipd.ppp.PymolCMD(None, id=len(self.state.cmds) + 1, **cmdspec.dict())
+            cmd = ipd.ppp.PymolCMD(None, id=len(self.state.cmds) + 1, **cmdspec.model_dump())
             setattr(self.state.cmds, cmd.name, cmd)
         self.newcmdwidget.hide()
         self.refresh_command_list()

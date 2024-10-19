@@ -3,7 +3,7 @@ import numpy as np
 import gemmi
 import torch as th
 import ipd
-from willutil import h
+from ipd import h
 from numba import cuda
 from icecream import ic
 

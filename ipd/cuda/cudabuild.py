@@ -1,9 +1,10 @@
+import pytest
+
+th = pytest.importorskip('torch')
+pytest.mark.skipif(not th.cuda.device_count(), 'cuda unavailable')
+
 import os
-from ipd.dev.lazy_import import lazyimport
-
-th = lazyimport('torch')
-
-from ipd import projdir
+import ipd
 
 mode = 'release'
 # mode = 'debug'
@@ -15,7 +16,10 @@ mode = 'release'
 
 os.environ['TORCH_CUDA_ARCH_LIST'] = ''
 
+@ipd.dev.change_exception(OSError=ImportError, RuntimeError=ImportError)
 def build_extension(name, sources, incpath, module=None, verbose=False):
+    import torch as th
+    import torch.utils.cpp_extension
     # os.environ['CC'] = "gcc-9"
     commonflags = ['-DEIGEN_NO_DEBUG'] if mode == 'release' else []
     # ic('start cuda build')
@@ -31,7 +35,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         verbose=verbose,
         extra_cflags=['-O3'] + commonflags,
         extra_cuda_cflags=['-Xnvlink', '-use-host-info'] + commonflags,
-        extra_include_paths=[f'{projdir}/{d}' for d in ['../lib', 'cuda'] + incpath] + I)
+        extra_include_paths=[f'{ipd.projdir}/{d}' for d in ['../lib', 'cuda'] + incpath] + I)
     # ic('done cuda build')
     if module:
         for k, v in extension.__dict__.items():

@@ -109,7 +109,7 @@ class PPPBackend(ipd.crud.backend.BackendBase, models=ipd.ppp.spec_models):
         # print('CREATE empty files', len(files))
         for file in files:
             assert not file.filecontent.strip()
-            self.session.add(DBPollFile(**file.dict()))
+            self.session.add(DBPollFile(**file.model_dump()))
         self.session.commit()
         poll = self.poll(dict(id=files[0].pollid))
 

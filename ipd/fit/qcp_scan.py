@@ -6,7 +6,7 @@ th = lazyimport('torch')
 import numpy as np
 import torch.utils.cpp_extension
 import ipd
-from willutil import h
+from ipd import h
 from icecream import ic
 
 _rms = ipd.dev.LazyModule('ipd.fit.qcp_rms_cuda')

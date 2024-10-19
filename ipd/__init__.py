@@ -25,9 +25,12 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 ic.configureOutput(includeContext=True)
 projdir = os.path.realpath(os.path.dirname(__file__))
 
-def testpath(path):
-    return os.path.join(proj_dir, 'tests', 'data', path)
-
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
+
+def  __getattr__(name):
+    if name == 'symmetrize':
+        return ipd.sym.symmetrize
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+

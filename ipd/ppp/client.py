@@ -79,7 +79,7 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         return self.get(f'/poll{id}/fids')
 
     # def create_poll(self, poll):
-    # self.post('/poll', json=json.loads(poll.json()))
+    # self.post('/poll', json=json.loads(poll.model_dump_json()))
 
     def reviews_for_fname(self, fname):
         fname = fname.replace('/', '__DIRSEP__')

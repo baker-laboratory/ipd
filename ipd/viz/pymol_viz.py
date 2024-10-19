@@ -23,7 +23,7 @@ except ImportError:
 from ipd.viz.pymol_cgo import *
 # from ipd.sym.symfit import RelXformInfo
 import ipd.viz.primitives as prim
-# from ipd.sym.spacegroup_util import tounitcellpts
+# from ipd.sym.xtal.spacegroup_util import tounitcellpts
 
 _showme_state = ipd.Bunch(
     launched=0,

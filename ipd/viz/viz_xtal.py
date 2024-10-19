@@ -1,7 +1,7 @@
 import numpy as np
-from willutil.sym.xtalcls import Xtal, interp_xtal_cell_list
-from willutil.sym.xtalinfo import SymElem
-from willutil.viz.pymol_viz import pymol_load, cgo_cyl, cgo_sphere, cgo_fan, cgo_cube
+from ipd.sym.xtal.xtalcls import Xtal, interp_xtal_cell_list
+from ipd.sym.xtal.xtalinfo import SymElem
+from ipd.viz.pymol_viz import pymol_load, cgo_cyl, cgo_sphere, cgo_fan, cgo_cube
 import willutil as wu
 
 @pymol_load.register(SymElem)
