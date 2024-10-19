@@ -4,8 +4,7 @@ import contextlib
 from ipd.dev.lazy_import import lazyimport
 import numpy as np
 from functools import singledispatch
-from itertools import repeat
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from collections.abc import Sequence, Mapping
 import ipd
 from ipd.sym.sym_kind import SymKind, ShapeKind, ValueKind

@@ -74,7 +74,6 @@ def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
         # ic(gpbb.shape)
         # ic(bb.shape)
         Lasu = len(bb) // sym.nsub
-        import willutil
         # with willutil.Timer():
         idx, rms, xform = ipd.fit.qcp_scan_AB(bb, gpbb, Lasu)
         # ic(idx, rms, R, T)

@@ -10,12 +10,10 @@ def DBPoll_clear(self, backend, ghost=True):
 
 backend_models['poll'].clear = DBPoll_clear
 
-import os
 from typing import Optional
 import ipd
 from ipd import ppp
 from ipd.crud.backend import BackendModelBase, Props, Attrs, props_default, attrs_default
-from typing import Union
 import uuid
 
 backend_models = ipd.crud.backend.make_backend_models(ipd.ppp.spec_models)

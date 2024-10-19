@@ -517,7 +517,6 @@ class _TrueOnIters(DynamicParam):
 class _Spline1D(DynamicParam):
     def __init__(self, manager, design, diffuse, rfold, **kw):
         from scipy.interpolate import CubicSpline
-        from scipy.spatial import QhullError
         super().__init__(manager)
         if 1 != sum([design is not None, diffuse is not None, rfold is not None]):
             raise ValueError('add_spline_1d requires exactly one of design, diffuse, or rfold ')

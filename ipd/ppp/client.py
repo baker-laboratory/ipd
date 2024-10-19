@@ -3,9 +3,7 @@ from subprocess import check_output
 import ipd
 from ipd import ppp
 from ipd.ppp.server.pppapi import PPPBackend
-import uuid
 from pathlib import Path
-from icecream import ic
 
 requests = ipd.lazyimport('requests', pip=True)
 fastapi = ipd.lazyimport('fastapi', pip=True)

@@ -1,5 +1,4 @@
 import ipd
-from ipd.sym import SymmetryManager, set_default_sym_manager
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')

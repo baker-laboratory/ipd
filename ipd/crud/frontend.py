@@ -2,18 +2,15 @@ import contextlib
 from datetime import datetime
 import fastapi
 import functools
-from icecream import ic
 import inspect
 import ipd
-import os
 import pydantic
 import requests
-import rich
 import uuid
 import typing
 import yaml
 import sys
-from typing import Union, Optional, Callable, Annotated, get_type_hints, Type, Any
+from typing import Union, Optional, Annotated
 
 class ClientError(Exception):
     pass
@@ -335,7 +332,7 @@ class ClientBase:
             newthing = self.get(f'/{kind}', id=result)
             newthing = self.__client_models__[kind](self, **newthing)
             return newthing
-        except ValueError as e:
+        except ValueError:
             return result
 
 def add_basic_client_model_methods(clientcls):

@@ -1,4 +1,3 @@
-from ipd import ppp
 import os
 import pymol
 

@@ -1,5 +1,3 @@
-import os
-import yaml
 from ipd.dev.lazy_import import lazyimport
 import ipd
 from collections.abc import Sequence

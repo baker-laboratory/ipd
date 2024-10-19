@@ -5,26 +5,20 @@ pytest.importorskip('sqlmodel')
 pytest.importorskip('fastapi')
 
 import itertools as it
-import sys
 import ipd
 from ipd import ppp
-import tempfile
 from pathlib import Path
 import traceback
 import os
-import json
 import inspect
 import subprocess
 from fastapi.testclient import TestClient
-from sqlmodel import create_engine
-from icecream import ic
 import pydantic
 import pytest
 import rich
 # from rich import print
 
 def set_debug_requests():
-    import requests
     import logging
     import http.client as http_client
 
@@ -63,7 +57,7 @@ def make_tmp_clent_server():
     # assert not os.path.exists(f'{tmpdir}/test.db')
     pppserver, pppbackend, pppclient = ipd.ppp.server.run(
         port=12346,
-        dburl=f'sqlite:////tmp/test.db',
+        dburl='sqlite:////tmp/test.db',
         # dburl='<memory>',
         woerkers=1,
         loglevel='warning')

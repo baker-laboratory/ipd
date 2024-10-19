@@ -2,8 +2,6 @@ import pytest
 
 pytest.importorskip('torch')
 import torch as th
-import rf_diffusion as rfd
-import rf2aa as rf
 import ipd
 import hypothesis
 from hypothesis import strategies as st

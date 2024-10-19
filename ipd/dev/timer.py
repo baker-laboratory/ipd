@@ -7,7 +7,6 @@ import functools
 import inspect
 import sys
 import _testcapi
-import inspect
 
 log = logging.getLogger(__name__)
 

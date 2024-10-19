@@ -1,13 +1,11 @@
-import sys
 import contextlib
-from abc import ABC, abstractmethod, ABCMeta
+from abc import ABC, abstractmethod
 import copy
 import itertools
 from icecream import ic
 import assertpy
 from ipd.dev.lazy_import import lazyimport
 import numpy as np
-from itertools import repeat
 import ipd
 from ipd.sym.sym_adapt import _sym_adapt
 from ipd.sym import ShapeKind, ValueKind
@@ -430,7 +428,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         try:
             self.assert_symmetry_correct(thing, **kw)
             return True
-        except AssertionError as e:
+        except AssertionError:
             return False
 
     def reset(self):

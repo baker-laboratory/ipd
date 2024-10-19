@@ -10,7 +10,6 @@ th = lazyimport('torch')
 import numpy as np
 from functools import partial
 import torch
-import ipd as ipd
 
 def main():
     test_dim_rearrange_basic()

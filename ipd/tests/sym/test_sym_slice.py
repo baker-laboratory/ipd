@@ -1,4 +1,3 @@
-from icecream import ic
 import pytest
 
 pytest.importorskip('torch')
@@ -8,7 +7,6 @@ from ipd.dev.lazy_import import lazyimport
 th = lazyimport('torch')
 
 import hypothesis
-from hypothesis import strategies as st
 from ipd.tests.sym import symslices
 
 @pytest.mark.fast

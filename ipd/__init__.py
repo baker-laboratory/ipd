@@ -2,10 +2,9 @@ import os
 from ipd.dev import lazyimport
 import ipd.observer
 from icecream import ic
-from ipd.dev import Bunch, lazyimport
+from ipd.dev import Bunch
 from ipd import dev, tests
 from ipd.observer import hub, DynamicParameters
-import ipd.observer
 
 dev = lazyimport('ipd.dev')
 crud = lazyimport('ipd.crud')

@@ -7,7 +7,6 @@ from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
-import torch.utils.cpp_extension
 import ipd
 from numba import cuda
 import math

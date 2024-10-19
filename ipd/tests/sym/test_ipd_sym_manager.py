@@ -7,7 +7,6 @@ th = lazyimport('torch')
 
 import ipd
 from icecream import ic
-import ipd as ipd
 from ipd import h
 import hypothesis
 

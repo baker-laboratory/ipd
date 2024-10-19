@@ -2,17 +2,12 @@ import pytest
 
 pytest.importorskip('sqlmodel')
 pytest.importorskip('fastapi')
-import copy
 from fastapi.testclient import TestClient
 import ipd
 import pydantic
 import sqlmodel.pool
-import sqlalchemy
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import registry
 from typing import Optional, Type
-import uuid
-import rich
 import tempfile
 from uuid import uuid4, UUID
 

@@ -4,7 +4,6 @@ pytest.importorskip('torch')
 pytest.importorskip('gemmi')
 import math
 from ipd import h
-from ipd.dev.lazy_import import lazyimport
 import numpy as np
 import ipd
 from ipd.voxel.voxel_cuda import _voxel

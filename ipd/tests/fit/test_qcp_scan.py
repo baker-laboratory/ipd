@@ -7,7 +7,6 @@ th = lazyimport('torch')
 import ipd
 pytest.importorskip('ipd.fit.qcp_rms_cuda')
 from ipd.fit.qcp_rms import _rms
-import ipd as ipd
 from ipd import h
 import numpy as np
 from icecream import ic

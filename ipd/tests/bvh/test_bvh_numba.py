@@ -1,14 +1,11 @@
 import pytest
 
 pytest.importorskip('torch')
-import math
 import os
 
 from numba import cuda
 import torch as th
-from icecream import ic
 import ipd as ipd
-import ipd
 
 def main():
 

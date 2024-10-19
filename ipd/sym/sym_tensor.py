@@ -146,7 +146,6 @@ FullSlicedAll1DBasic([0, 1, 2, 0, 1, 2, 0, 1, 2, 7])
 
 import sys
 import ipd
-import willutil as wu
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
@@ -528,7 +527,7 @@ def makeclass(bases):
     name = ''.join(b.__name__ for b in bases)
     name = name.replace('OneDim', '1D')
     name = name.replace('TwoDim', '2D')
-    if not name in sym_tensor_types:
+    if name not in sym_tensor_types:
         sym_tensor_types[name] = type(name, tuple(bases), dict())
     return sym_tensor_types[name]
 

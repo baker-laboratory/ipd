@@ -1,8 +1,3 @@
-import tempfile
-import os
-import json
-import time
-from pathlib import Path
 from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import *
 import ipd
 

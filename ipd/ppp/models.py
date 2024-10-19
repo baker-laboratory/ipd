@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union, Annotated
+from typing import Union
 import contextlib
 import os
 from subprocess import check_output
