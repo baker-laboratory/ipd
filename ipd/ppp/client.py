@@ -69,13 +69,7 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         if not exists:
             if response := self.post('/create/pollfilecontents', file): return response
         review = review.to_spec()
-        # print(self.user(id=review.userid))
-        # print(self.poll(id=review.pollid))
-        # print(self.pollfile(id=review.pollfileid))
-        # print(self.workflow(id=review.workflowid))
-        # assert 0
-        result = self.upload(review, _dispatch_on_type=False)
-        return result
+        return self.upload(review, _dispatch_on_type=False)
 
     def pollinfo(self, user=None):
         return self.get(f'/pollinfo?user={user}')
