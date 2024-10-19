@@ -95,45 +95,45 @@ def test_hcentered():
     cencoord = hcentered(coords)
     assert cencoord.shape == coords.shape
     assert np.allclose(hcom(cencoord), [0, 0, 0, 1])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.hcom(coords)[..., None, :3])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
 
     coords = hrandpoint((8, 7, 2, 1))[..., :3]
     coords[..., :3] += [30, 20, 10]
     cencoord = hcentered(coords)
     assert cencoord.shape[:-1] == coords.shape[:-1]
     assert np.allclose(hcom(cencoord), [0, 0, 0, 1])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.hcom(coords)[..., None, :3])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
 
     coords = hrandpoint((1, 8, 3, 7))
     coords[..., :3] += 20
     cencoord = hcentered3(coords)
     assert cencoord.shape[:-1] == coords.shape[:-1]
     assert np.allclose(hcom(cencoord)[..., :3], [0, 0, 0])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.hcom(coords)[..., None, :3])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
 
     coords = hrandpoint(7)[..., :3]
     coords[..., :3] += 30
     cencoord = hcentered3(coords)
     assert cencoord.shape == coords.shape
     assert np.allclose(hcom(cencoord)[..., :3], [0, 0, 0])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.hcom(coords)[..., None, :3])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
 
     coords = hrandpoint((8, 7))
     coords[..., :3] += [10, 20, 30]
     cencoord = hcentered(coords, singlecom=True)
     assert cencoord.shape == coords.shape
     assert np.allclose(hcom(cencoord, flat=True), [0, 0, 0, 1])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.hcom(coords, flat=True)[..., None, :3])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords, flat=True)[..., None, :3])
 
 @pytest.mark.fast
 def test_halign():
     for i in range(10):
         a, b = rand_unit(2)
-        x = ipd.halign(a, b)
+        x = ipd.homog.halign(a, b)
         b2 = ipd.homog.hxform(x, a)
         assert np.allclose(b, b2)
-        ang = ipd.hangle(a, b)
-        ang2 = ipd.hangle_of(x)
+        ang = ipd.homog.angle(a, b)
+        ang2 = ipd.homog.angle_of(x)
         # ic(ang, ang2)
         assert np.allclose(ang, ang2)
 
