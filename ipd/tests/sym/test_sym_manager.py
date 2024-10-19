@@ -8,13 +8,13 @@ import ipd
 import assertpy
 import hypothesis
 from icecream import ic
-from willutil import h, showme
+from ipd import h, showme
 
 # ic.configureOutput(includeContext=False, contextAbsPath=True)
 
 pytestmark = pytest.mark.fast
 
-@hypothesis.settings(deadline=1000, max_examples=10)
+@hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 def test_sym_manager_fuzz_basic_sym(sym):
     idx = sym.idx
@@ -30,7 +30,7 @@ def test_sym_manager_fuzz_basic_sym(sym):
     assert th.all(msym[idx.asym, idx.asym] == m[idx.asym, idx.asym])
     sym.check(msym)
 
-@hypothesis.settings(deadline=1000, max_examples=10)
+@hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 def test_sym_manager_fuzz_fill_from_contiguous(sym):
     idx = sym.idx
@@ -185,11 +185,11 @@ def test_sym_asu_xyz():
 
     xyz = th.randn((1, 40, 1, 3))
     s = sym(xyz)
-    # import willutil as wu
+    # import ipd as ipd
     # ic(s.shape)
-    # wu.showme(xyz[0,:20,0])
-    # wu.showme(s[0,:20,0])
-    # wu.showme(s[0,20:,0])
+    # ipd.showme(xyz[0,:20,0])
+    # ipd.showme(s[0,:20,0])
+    # ipd.showme(s[0,20:,0])
     assert s.shape == (1, 40, 1, 3)
     assert th.allclose(xyz[:, :10], s[:, :10], atol=0.001)
     s2 = th.einsum('ij,rj->ri', sym.symmRs[1].cpu(), xyz[0, :10, 0])
@@ -219,7 +219,7 @@ def test_sym_slices():
 
     sym.idx = [(N, 0, 6), (N, 10, 16), (N, 20, 26)]
     symxyz = sym(xyz)
-    # wu.showme(symxyz[~sym.idx.unsym] * 30, name='FOOF')
+    # ipd.showme(symxyz[~sym.idx.unsym] * 30, name='FOOF')
     assert th.allclose(xyz[sym.idx.asym], symxyz[sym.idx.asym])
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz)
 

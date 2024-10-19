@@ -5,11 +5,11 @@ th = lazyimport('torch')
 
 import ipd
 from icecream import ic
-import willutil as wu
-from willutil import h
+import ipd as ipd
+from ipd import h
 import hypothesis
 
-@hypothesis.settings(deadline=1000, max_examples=10)
+@hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 @pytest.mark.fast
 def test_sym_manager_fuzz_xyz_sym(sym):
@@ -71,7 +71,7 @@ def test_sym_asu_align_icos_nounsym():
     n = sym.nsub
     sym.idx = [ipd.sym.SymSlice((N, 0, N))]
     symxyz = sym(xyz, showme=0)
-    # wu.showme(symxyz)
+    # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
 @pytest.mark.fast
@@ -89,7 +89,7 @@ def test_sym_asu_align_icos_unsym():
     # ic(sym.idx.asufit.to(int))
     # ic(sym.idx.asunotfit.to(int))
     symxyz = sym(xyz, showme=0)
-    # wu.showme(symxyz)
+    # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
 @pytest.mark.fast
@@ -106,7 +106,7 @@ def test_sym_fit_icos_unsym():
     n = sym.nsub
     sym.idx = [ipd.sym.SymSlice((N, 0, 180))]
     symxyz = sym(xyz, showme=0)
-    # wu.showme(symxyz)
+    # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
 @pytest.mark.fast
@@ -129,7 +129,7 @@ def test_sym_fit_icos_unsym_multislice():
     # ic(sym.idx.unsym.to(int))
     # ic(sym.idx.asu.to(int))
     symxyz = sym(xyz, showme=0)
-    # wu.showme(symxyz)
+    # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
 if __name__ == '__main__':

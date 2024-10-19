@@ -4,7 +4,7 @@ from ipd.dev.lazy_import import lazyimport
 th = lazyimport('torch')
 
 import torch.utils.cpp_extension
-from ipd import proj_dir
+from ipd import projdir
 
 mode = 'release'
 # mode = 'debug'
@@ -32,7 +32,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         verbose=verbose,
         extra_cflags=['-O3'] + commonflags,
         extra_cuda_cflags=['-Xnvlink', '-use-host-info'] + commonflags,
-        extra_include_paths=[f'{proj_dir}/{d}' for d in ['../lib', 'cuda'] + incpath] + I)
+        extra_include_paths=[f'{projdir}/{d}' for d in ['../lib', 'cuda'] + incpath] + I)
     # ic('done cuda build')
     if module:
         for k, v in extension.__dict__.items():

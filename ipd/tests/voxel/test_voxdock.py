@@ -1,13 +1,10 @@
 import numpy as np
 import pytest
 import ipd
-from ipd.dev.lazy_import import lazyimport
 
-th = lazyimport('torch')
-
-import willutil as wu
-from willutil import h
 from icecream import ic
+
+pytest.importorskip('ipd.voxel.voxel_cuda')
 
 def main():
     test_voxdock_ab()
@@ -29,9 +26,9 @@ def make_test_points(npts, bound, ngen=None):
     return xyz[:npts]
 
 @pytest.mark.fast
-def test_voxdock_ab(timer=wu.Timer()):
+def test_voxdock_ab(timer=ipd.dev.Timer()):
     # th.manual_seed(0)
-    # xform = wu.h.rand(100, cart_sd=20, dtype=th.float32, device='cuda')
+    # xform = ipd.h.rand(100, cart_sd=20, dtype=th.float32, device='cuda')
     # xform = ipd.samp.randxform(100, cart_sd=20, dtype=th.float32, device='cuda')
 
     xyz = make_test_points(100, 20)
@@ -40,21 +37,21 @@ def test_voxdock_ab(timer=wu.Timer()):
     # rb = ipd.voxel.VoxRB(xyz[:128], resl=1, func=ipd.cuda.ContactFunc())
 
     rb = ipd.voxel.VoxRB(xyz,
-                         resl=1,
-                         func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
-                         repulsive_only=repulsive_only)
-    # trans_score = rb.score(rb, th.eye(4), wu.h.trans(x=th.arange(40, 50, 0.1))).min()
+                        resl=1,
+                        func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
+                        repulsive_only=repulsive_only)
+    # trans_score = rb.score(rb, th.eye(4), ipd.h.trans(x=th.arange(40, 50, 0.1))).min()
     # ic(trans_score)
     timer.checkpoint('vox')
-    # wu.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
-    # rb._vizpos = wu.h.trans([45,0,0])
-    # wu.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
+    # ipd.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
+    # rb._vizpos = ipd.h.trans([45,0,0])
+    # ipd.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
     # assert 0
 
     N = 100_000
     Ntop = 1000
-    # xform = wu.h.rand(N, cart_sd=20).to(th.float32).to('cuda')
-    # xform = wu.h.rand(N, cart_sd=20, dtype=th.float32, device='cuda')
+    # xform = ipd.h.rand(N, cart_sd=20).to(th.float32).to('cuda')
+    # xform = ipd.h.rand(N, cart_sd=20, dtype=th.float32, device='cuda')
     xform = ipd.samp.randxform(N, cartsd=20).to(th.float32).to('cuda')
     timer.checkpoint('rand xform')
     # for i in range(100):
@@ -72,7 +69,7 @@ def test_voxdock_ab(timer=wu.Timer()):
         timer.checkpoint('topk')
         xform = th.tile(xform[itop], (N // Ntop, 1, 1))
         timer.checkpoint('xform tile')
-        # delta = wu.h.randsmall(N, cart_sd=10 / (i + 1), rot_sd=0.7 / (i + 0.1), dtype=th.float32, device='cuda')
+        # delta = ipd.h.randsmall(N, cart_sd=10 / (i + 1), rot_sd=0.7 / (i + 0.1), dtype=th.float32, device='cuda')
         delta = ipd.samp.randxform(N, cartmax=maxcart, orimax=maxangle)
         timer.checkpoint('rand xform small')
         xform = th.matmul(xform, delta)
@@ -86,11 +83,11 @@ def test_voxdock_ab(timer=wu.Timer()):
     col = th.zeros(100, 3)
     col[:, 0] = 1
     col[~repulsive_only, 1] = 1
-    wu.showme(rb, col=col, sphere=2, name='ref')
+    ipd.showme(rb, col=col, sphere=2, name='ref')
     col[~repulsive_only, 2] = 1
     for i in sc.topk(31, largest=False).indices:
         rb._vizpos = xform[i]
-        wu.showme(rb, col=col, sphere=2)
+        ipd.showme(rb, col=col, sphere=2)
 
 @pytest.mark.fast
 def test_voxdock_c3():
@@ -98,10 +95,10 @@ def test_voxdock_c3():
     xyz -= xyz.mean(0)
     rg = th.sqrt(th.mean(h.norm(xyz)**2))
     rb = ipd.voxel.VoxRB(xyz, resl=1, func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10))
-    # wu.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
+    # ipd.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
     N = 100_000
     Ntop = 1000
-    xsym = th.tensor(wu.sym.frames('C3'), device='cuda', dtype=th.float32)
+    xsym = th.tensor(ipd.sym.frames('C3'), device='cuda', dtype=th.float32)
     xform = ipd.samp.randxform(N, cartmean=[rg, 0, 0], cartsd=[20, 0, 0]).to(th.float32).to('cuda')
     sc = rb.score(rb, xsym[1] @ xform, xform)
     maxcart, maxangle = 5, 0.6
@@ -116,26 +113,26 @@ def test_voxdock_c3():
     assert sc.min() < -50
     # for i in sc.topk(10, largest=False).indices:
     # rb._vizpos = xsym @ xform[i]
-    # wu.showme(rb, sphere=2)
+    # ipd.showme(rb, sphere=2)
 
 def asuvec_frames_minimal_z(sym):
-    xsym = th.tensor(wu.sym.frames(sym), device='cuda', dtype=th.float32)
-    asuvec = h.normvec(th.tensor(np.array(list(wu.sym.axes(sym).values()))).mean(0),
+    xsym = th.tensor(ipd.sym.frames(sym), device='cuda', dtype=th.float32)
+    asuvec = h.normvec(th.tensor(np.array(list(ipd.sym.axes(sym).values()))).mean(0),
                        device='cuda',
                        dtype=th.float32)
     iasu = th.argmax((xsym @ asuvec)[:, 2])
     asuvec = xsym[iasu] @ asuvec
     # xnbr = [th.eye(4, device='cuda')]
-    # for nf in wu.sym.axes(sym):
-    #     ax = th.as_tensor(wu.sym.axes(sym, nfold=nf, all=True)).cuda()
+    # for nf in ipd.sym.axes(sym):
+    #     ax = th.as_tensor(ipd.sym.axes(sym, nfold=nf, all=True)).cuda()
     #     ax = ax[th.argmax(th.abs(h.dot(asuvec, ax)))]
     #     # print(nf, ax[:3])
     #     xnbr.append(h.rot(ax, th.pi * 2 / nf, device='cuda'))
     # assert 0
     # xsymuniq = list()
     # ncopy = list()
-    # for nf in wu.sym.axes(sym):
-    #     x = h.rot(wu.sym.axes(sym, nfold=nf, all=True), th.pi * 2 / nf)
+    # for nf in ipd.sym.axes(sym):
+    #     x = h.rot(ipd.sym.axes(sym, nfold=nf, all=True), th.pi * 2 / nf)
     #     ic(x.shape)
     #     xsymuniq.append(x)
     #     ncopy.append(th.ones(len(x)) * (2 if nf > 2 else 1))
@@ -153,10 +150,10 @@ def scoreme(rb, xform, xsym, ncopy, maxcart, Ntop):
     cen2 = h.xform(xsym, cen1)
     inbounds = h.norm(cen1 - cen2) < 2 * rad + rb.func.arg[-1] + maxcart
     # if len(xsym) == 23:
-    #     wu.showme(h.xform(xform[0], rb.xyz))
+    #     ipd.showme(h.xform(xform[0], rb.xyz))
     #     for i, x in enumerate(xsym):
     #         if inbounds[i]:
-    #             wu.showme(h.xform(x @ xform[0], rb.xyz))
+    #             ipd.showme(h.xform(x @ xform[0], rb.xyz))
     # ic(inbounds.shape)
     if Ntop: inbounds = inbounds.max(1).values
     return sum(ncopy[i] * rb.score(rb, xsym[i] @ xform, xform) for i in range(len(xsym)) if inbounds[i])
@@ -207,7 +204,7 @@ def voxdock_cage(xyz,
     if timer: timer.checkpoint('voxel')
     # cen = None
     # rb._vizpos = xsym
-    # wu.showme(rb, sphere=2)
+    # ipd.showme(rb, sphere=2)
     # assert 0
     xform = ipd.samp.randxform(N, cartmax=initmaxcart, cen=cen, dtype=th.float32, device='cuda')
     if timer: timer.checkpoint('randxform')
@@ -232,7 +229,7 @@ def voxdock_cage(xyz,
     if showme:
         for i in sc.topk(10, largest=False).indices:
             rb._vizpos = xsym @ xform[i]
-            wu.showme(rb, sphere=2)
+            ipd.showme(rb, sphere=2)
     return xform, sc
 
 if __name__ == '__main__':

@@ -5,9 +5,10 @@ from ipd.dev.lazy_import import lazyimport
 th = lazyimport('torch')
 
 import ipd
+pytest.importorskip('ipd.fit.qcp_rms_cuda')
 from ipd.fit.qcp_rms import _rms
-import willutil as wu
-from willutil import h
+import ipd as ipd
+from ipd import h
 import numpy as np
 from icecream import ic
 
@@ -23,9 +24,9 @@ def main():
     # assert 0
     test_qcp_scan_AB()
     print('test_qcp_scan PASS', flush=True)
-    wu.global_timer.report()
+    ipd.global_timer.report()
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_scan_partition():
     for i in range(100):
@@ -35,7 +36,7 @@ def test_qcp_scan_partition():
         idx, rms = ipd.fit.scan_rms_seqpos(bb, tgt, lbub, chainbreak=2, nthread=1)
         assert idx.sum() == 6
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_bbhetero():
     nscan = 10
@@ -54,7 +55,7 @@ def test_qcp_bbhetero():
     assert th.allclose(rms, rms2, atol=1e-3)
     # assert 0
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def helper_test_qcp_scan_cuda(N, Ncyc, natom, i=0, ntgt=0, bbhetero=False):
     try:
@@ -84,25 +85,25 @@ def helper_test_qcp_scan_cuda(N, Ncyc, natom, i=0, ntgt=0, bbhetero=False):
         print('fail on', N, i, Ncyc, natom, seed)
         raise e
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_scan_cuda():
     for N in range(1, 16):
         helper_test_qcp_scan_cuda(N, 1, 1)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_scan_cuda_ncac():
     for N in range(1, 16):
         helper_test_qcp_scan_cuda(N, 1, 3)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_scan_cuda_cyclic():
     for N in range(1, 16):
         helper_test_qcp_scan_cuda(N, 3, 1)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_scan_cuda_ncac_cyclic():
     for N in range(1, 16):
@@ -117,7 +118,7 @@ def helper_test_qcpscan_perf(nscan, nres, natom, cyclic, nsamp):
     for i, ii in enumerate(idx0):
         bb[ii] = h.xform(xrand, tgt[i])
     if nscan**len(lbub) < 1e8:
-        with wu.Timer(verbose=False) as t:
+        with ipd.dev.Timer(verbose=False) as t:
             for isamp in range(nsamp):
                 idx, rms, xfit = ipd.fit.qcp_scan_ref(bb, tgt, lbub, cyclic)
         assert all(idx == idx0)
@@ -133,7 +134,7 @@ def helper_test_qcpscan_perf(nscan, nres, natom, cyclic, nsamp):
     # lbub = th.tensor([[0, 50], [0, 50], [0, 50], [0, 50]], dtype=th.int32, device='cuda')
     # ic(lbub[:,1], bb.shape)
     for threads in [4]:  #range(1, 20):
-        with wu.Timer(verbose=False) as t:
+        with ipd.dev.Timer(verbose=False) as t:
             for isamp in range(nsamp):
                 idx, rms = ipd.fit.scan_rms_seqpos(bb, tgt, lbub, nthread=threads * 32)
         rate = th.prod(lbub[:, 1] - lbub[:, 0]) / t.elapsed() / 1_000_000 * nsamp
@@ -141,12 +142,12 @@ def helper_test_qcpscan_perf(nscan, nres, natom, cyclic, nsamp):
             f'scan_rms_seqpos cuda {threads*32:3}t {nscan:4}s {nres:2}r {natom:3}a {cyclic:2}c rate {rate:8.3f}M elapsed {t.elapsed()/nsamp:7.3f}'
         )
 
-@wu.timed
+@ipd.timed
 def perf_test_qcpscan_cuda():
     for natom in [1, 3, 10]:
         helper_test_qcpscan_perf(50, 4, natom, 1, 3)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_scan_AB():
     for i in range(3, 7):
@@ -155,7 +156,7 @@ def test_qcp_scan_AB():
         idx, rms, xfit = ipd.fit.qcp_scan_AB(pts1, pts2, 10)
         assert i // 2 <= sum(10 <= idx) <= (i - i // 2)
 
-@wu.timed
+@ipd.timed
 @pytest.mark.fast
 def test_qcp_scan():
     helper_test_qcp_scan(ranges=[[0, 1], [10, 11], [20, 21]])

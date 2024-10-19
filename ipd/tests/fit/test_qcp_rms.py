@@ -7,9 +7,10 @@ from ipd.dev.lazy_import import lazyimport
 th = lazyimport('torch')
 
 import ipd
+pytest.importorskip('ipd.fit.qcp_rms_cuda')
 from ipd.fit.qcp_rms import _rms
-import willutil as wu
-from willutil import h
+import ipd as ipd
+from ipd import h
 import numpy as np
 
 def main():
@@ -76,7 +77,7 @@ def test_rms():
         xfit2 = th.empty([13, 7, 4, 4])
         for i in range(len(pts1)):
             for j in range(len(pts2)):
-                rms2[i, j], _, xfit2[i, j] = wu.h.rmsfit(pts1[i], pts2[j])
+                rms2[i, j], _, xfit2[i, j] = ipd.h.rmsfit(pts1[i], pts2[j])
         assert th.allclose(rms1.cpu(), rms2, atol=1e-3)
         assert th.allclose(xfit1.cpu(), xfit2, atol=3e-2)
 
@@ -84,7 +85,7 @@ def helper_test_qcp_raw_cuda(getfit):
     pts1 = th.randn((7, 10, 3), dtype=th.float32, device='cuda')
     pts2 = th.randn((7, 10, 3), dtype=th.float32, device='cuda')
     # ic(iprod.shape, E0.shape)
-    # with wu.Timer():
+    # with ipd.dev.Timer():
     if True:
         pts1cen, pts2cen = pts1 - pts1.mean(1).unsqueeze(1), pts2 - pts2.mean(1).unsqueeze(1)
         iprod = th.matmul(pts1cen[:, None].transpose(-2, -1), pts2cen[None])
@@ -129,17 +130,17 @@ def test_qcp_vec():
 def test_qcp_align_vec(npts=(1000, 10)):
     pts1 = h.randpoint(npts)[:, :, :3].contiguous().to(th.float64)
     pts2 = h.randpoint(npts[1])[:, :3].contiguous().to(th.float64)
-    # with wu.Timer():
+    # with ipd.dev.Timer():
     rms2, R2, T2 = zip(*[_rms.qcp_rms_align_f8(p1, pts2) for p1 in pts1])
     rms, R, T = np.stack(rms2), np.stack(R2), np.stack(T2)
-    # with wu.Timer():
+    # with ipd.dev.Timer():
     rms2, R2, T2 = _rms.qcp_rms_align_vec_f8(pts1, pts2)
     assert np.allclose(rms, rms2)
     assert np.allclose(R, R2)
     assert np.allclose(T, T2)
     pts1 = pts1.to(th.float32)
     pts2 = pts2.to(th.float32)
-    # with wu.Timer():
+    # with ipd.dev.Timer():
     rms3, R3, T3 = _rms.qcp_rms_align_vec_f4(pts1, pts2)
 
     assert np.allclose(rms, rms3, atol=1e-4)
@@ -156,7 +157,7 @@ def test_qcp_regions_simple_1seg():
     offsets = np.arange(10).reshape(10, 1)
     # offsets = np.tile(offsets, (170_000, 1))
     # ic(offsets.shape)
-    # with wu.Timer():
+    # with ipd.dev.Timer():
     rms = _rms.qcp_rms_regions_f4i4(pts1, pts2, [N], offsets)
     # ic(rms)
     for i in range(10):
@@ -230,7 +231,7 @@ def compute_rms_offsets_brute(pts1, pts2, sizes, offsets, junct=0):
     return rms
 
 def perftest_qcp_regions():
-    t = wu.Timer()
+    t = ipd.dev.Timer()
     ncalc = 0
     for _ in range(30):
         pts1 = h.randpoint(200, dtype=th.float32)[:, :3].contiguous()
@@ -289,7 +290,7 @@ def test_qcp_align(niter=20, npts=50):
         pts1 = h.randpoint(npts, dtype=th.float64)[:, :3].contiguous()
         pts2 = h.randpoint(npts, dtype=th.float64)[:, :3].contiguous()
         assert pts1.dtype == th.float64
-        rms, fit, x = wu.hrmsfit(pts1, pts2)
+        rms, fit, x = ipd.hrmsfit(pts1, pts2)
         rms2, R, T = _rms.qcp_rms_align_f8(pts1, pts2)
         assert np.allclose(rms, rms2)
         assert np.allclose(x[:3, :3], R)
@@ -304,7 +305,7 @@ def test_qcp(niter=100, npts=50):
     for i in range(niter):
         pts1 = h.randpoint(npts, dtype=th.float64)[:, :3].contiguous()
         pts2 = h.randpoint(npts, dtype=th.float64)[:, :3].contiguous()
-        rms, fit, x = wu.hrmsfit(pts1, pts2)
+        rms, fit, x = ipd.hrmsfit(pts1, pts2)
         rms2 = _rms.qcp_rms_f8(pts1, pts2)
         assert np.allclose(rms, rms2)
 

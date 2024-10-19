@@ -1,12 +1,9 @@
 from ipd.dev.lazy_import import lazyimport
-
-th = lazyimport('torch')
-wu = lazyimport('willutil')
-
 from ipd.sym.sym_manager import SymmetryManager, set_default_sym_manager
 import ipd
+th = lazyimport('torch')
 
-class IpdSymmetryManager(SymmetryManager):
+class IpdSymmetryManager(ipd.sym.SymmetryManager):
     """
     Implements default ipd symmetry operations.
 
@@ -14,10 +11,10 @@ class IpdSymmetryManager(SymmetryManager):
     """
     kind = 'ipd'
 
-    def __init__(self, *a, idx=None, **kw):
+    def init(self, *a, idx=None, **kw):
         '''Create an IpdSymmetryManager'''
-        super().__init__(*a, **kw)
-        self._symmRs = th.tensor(wu.sym.frames(self.symid)[:, :3, :3], dtype=th.float32, device=self.device)
+        super().init(*a, **kw)
+        self._symmRs = th.tensor(wu.sym.frames(self.symid)[:,:3,:3], dtype=th.float32, device=self.device)
         self.symmsub = th.arange(min(len(self._symmRs), self.opt.max_nsub))
         if self.symid == 'I' and self.opt.max_nsub == 4:
             self.asucen = th.as_tensor(wu.sym.canonical_asu_center('icos4')[:3], device=self.device)
@@ -35,13 +32,12 @@ class IpdSymmetryManager(SymmetryManager):
         self.opt.nsub = len(self.symmsub)
         self.post_init()
 
-    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, disable_all_fitting=False, **kw):
+    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, disable_all_fitting=False, **_):
         '''Apply symmetry to an object or xyz/pair'''
-        kw = wu.Bunch(kw)
-        kw.disable_all_fitting = disable_all_fitting
-        xyz = ipd.sym.asu_to_best_frame_if_necessary(self, xyz, **kw)
-        xyz = ipd.sym.set_particle_radius_if_necessary(self, xyz, **kw)
-        xyz = ipd.sym.asu_to_canon_if_necessary(self, xyz, **kw)
+        opts.disable_all_fitting = disable_all_fitting
+        xyz = ipd.sym.asu_to_best_frame_if_necessary(self, xyz, **opts)
+        xyz = ipd.sym.set_particle_radius_if_necessary(self, xyz, **opts)
+        xyz = ipd.sym.asu_to_canon_if_necessary(self, xyz, **opts)
 
         assert pair is None
 
@@ -49,4 +45,4 @@ class IpdSymmetryManager(SymmetryManager):
                         xyz[:len(xyz) // self.nsub]).reshape(-1, *xyz.shape[1:])
         return xyz
 
-set_default_sym_manager('ipd')
+ipd.sym.set_default_sym_manager('ipd')

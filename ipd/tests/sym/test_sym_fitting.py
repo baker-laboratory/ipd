@@ -1,6 +1,6 @@
 import pytest
 import ipd
-import willutil as wu
+import ipd as ipd
 from icecream import ic
 from ipd.dev.lazy_import import lazyimport
 
@@ -18,7 +18,7 @@ def main():
 def make_test_points(npts, bound, cen=[0, 0, 0], ngen=None):
     ngen = ngen or npts * 10
     xyz = bound * th.randn((ngen, 3)).to(th.float32)
-    xyz = xyz[th.topk(-wu.h.norm(xyz), npts).indices]
+    xyz = xyz[th.topk(-ipd.h.norm(xyz), npts).indices]
     xyz = xyz[-bound < xyz[:, 0]]
     xyz = xyz[-bound < xyz[:, 1]]
     xyz = xyz[-bound < xyz[:, 2]]
@@ -37,10 +37,10 @@ def helper_test_align_asu(sym, Lasu=13):
                                                Lasu,
                                                asu_to_best_frame=True) for R in sym.symmRs
     ]
-    # wu.showme(xyz.squeeze(1))
-    # wu.showme(xyzs[0][:Lasu].squeeze(1))
+    # ipd.showme(xyz.squeeze(1))
+    # ipd.showme(xyzs[0][:Lasu].squeeze(1))
     for xyz in xyzs[1:]:
-        # wu.showme(xyz[:Lasu,0])
+        # ipd.showme(xyz[:Lasu,0])
         assert th.allclose(xyzs[0][:Lasu], xyz[:Lasu], atol=1e-3)
 
 def test_align_asu_c2():

@@ -156,7 +156,7 @@ def bounding_sphere(xyz):
 #     ]
 #     std2qh = np.polynomial.Polynomial(coeff, domain=[0., 0.4326], window=[-1., 1.], symbol='x')
 #     print(
-#         wu.Bunch(
+#         ipd.Bunch(
 #             n=n,
 #             cartmean=cartmean,
 #             cart_sd=cartsd,

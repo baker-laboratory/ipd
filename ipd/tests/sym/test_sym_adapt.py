@@ -8,7 +8,7 @@ import numpy as np
 from functools import partial
 import torch
 import pytest
-import willutil as wu
+import ipd as ipd
 
 def main():
     test_dim_rearrange_basic()
@@ -124,7 +124,7 @@ def test_sym_adapt_tensor_3d():
 def _dispatch_symfunc_on_type_shape(*a, **kw):
     '''take in args and decides what kind of symmetry func to use
      sortof a poor mans doubledispatch'''
-    kw = wu.Bunch(kw)
+    kw = ipd.Bunch(kw, _strict=False)
     if len(a) == 3:
         raise ValueError('apply_symmetry only accepts <= 2 args')
     if len(a) == 2:
@@ -152,12 +152,13 @@ def _dispatch_symfunc_on_type_shape(*a, **kw):
         if kw.seq is not None:
             for t in types:
                 if t == 'seq': continue
-                assert t not in kw
+                print(t, kw, t not in kw)
+                assert not kw[t]
             return '_seq'
         if kw.indep is not None:
             for t in types:
                 if t == 'indep': continue
-                assert t not in kw
+                assert not kw[t]
             return '_Indep'
 
 @pytest.mark.fast

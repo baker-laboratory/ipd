@@ -1,3 +1,4 @@
+import sys
 import contextlib
 from abc import ABC, abstractmethod, ABCMeta
 import copy
@@ -5,46 +6,15 @@ import itertools
 from icecream import ic
 import assertpy
 from ipd.dev.lazy_import import lazyimport
-
-th = lazyimport('torch')
-wu = lazyimport('willutil')
-
 import numpy as np
 from itertools import repeat
 import ipd
-import ipd
 from ipd.sym.sym_adapt import _sym_adapt
 from ipd.sym import ShapeKind, ValueKind
+th = lazyimport('torch')
 
-_sym_managers = dict()
-_default_sym_manager = 'base'
 
-def set_default_sym_manager(kind):
-    '''Set the default symmetry manager'''
-    global _default_sym_manager
-    _default_sym_manager = kind
-    # ic('set_default_sym_manager', kind, _default_sym_manager)
-
-class MetaSymManager(ABCMeta):
-    '''
-    Metaclass for SymmetryManager, ensures all subclasses are registered here even if in other modules
-    '''
-    def __init__(cls, cls_name, cls_bases, cls_dict):
-        # sourcery skip: instance-method-first-arg-name
-        '''Register the SymmetryManager subclass'''
-        super(MetaSymManager, cls).__init__(cls_name, cls_bases, cls_dict)
-        kind = cls.kind or cls_name
-        if kind in _sym_managers:
-            raise TypeError(f'multiple SymmetryManagers with same kind!'
-                            f'trying to add {kind}:{cls_name} to:\n{_sym_managers}')
-        _sym_managers[kind] = cls
-
-    def __call__(cls, *args, **kwargs):
-        instance = super().__call__(*args, **kwargs)
-        instance.post_init()
-        return instance
-
-class SymmetryManager(ABC, metaclass=MetaSymManager):
+class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     """
     The SymmetryManager class encapsulates symmetry related functionality and parameters.
 
@@ -52,19 +22,33 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     """
     kind = None
 
-    def __init__(self, opt, device=None, **kw):
+    def __init__(self, opt, symid=None, device=None, **kw) -> None:
         '''Create a SymmetryManager'''
         super().__init__()
         self.opt = opt
+        # self.opt.symid =symid or self.opt.symid
         self.device = device or ('cuda' if th.cuda.is_available() else 'cpu')
         self.skip_keys = set()
         self._idx = None
         self._post_init_args = wu.Bunch(kw)
+        self._frames = None
         self.add_properties()
+        self.init(**kw)
+
+    @abstractmethod
+    def init(self, **kw) -> None:
+        pass
+
+    @abstractmethod
+    def apply_symmetry(self, xyz, pair=None, update_symmsub=False, **kw):
+        '''All subclasses must implement this method. Calls will recieve only the part
+        of the structure that needs to be symmetrized, and inputs will always be on the
+        gpu, if cuda is available'''
+        pass
 
     def post_init(self):
         if self._post_init_args.idx: self.idx = self._post_init_args.idx
-        ipd.spy.sym_manager_created(self)
+        ipd.hub.sym_manager_created(self)
 
     def add_properties(self):
         locprops = dict(
@@ -90,13 +74,6 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
                     name = name[1:]
                 setattr(self.__class__, prop, makeprop(location, name))
 
-    @abstractmethod
-    def apply_symmetry(self, xyz, pair=None, update_symmsub=False, **kw):
-        '''All subclasses must implement this method. Calls will recieve only the part
-        of the structure that needs to be symmetrized, and inputs will always be on the
-        gpu, if cuda is available'''
-        pass
-
     def __call__(self, thing=None, pair=None, key=None, isasym=None, **kw):
         '''
         This is the main entry point for applying symmetry to any object.
@@ -115,6 +92,8 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             if pair is not None: return thing, pair
             return thing
 
+        self._verify_index(thing)
+
         thing = self.sym_adapt(thing, isasym=isasym)
         # print(f'sym {type(thing)}', key, flush=True)
         pair = self.sym_adapt(pair, isasym=isasym)
@@ -124,6 +103,8 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             orig = thing.adapted
             newxyz, newpair = self.apply_sym_slices_xyzpair(thing, pair, **kw)
             self.move_unsym_to_match_asu(orig, newxyz)
+            if self.symid.startswith('C') and self.opt.center_cyclic:
+                newxyz[self.idx.kind < 1, :, 2] -= newxyz[self.idx.kind < 1, 1, 2].mean()
             newxyz = thing.reconstruct(newxyz)
             newpair = pair.reconstruct(newpair)
             newxyz[0] = ipd.sym.set_motif_placement_if_necessary(self, newxyz[0], **kw)
@@ -145,22 +126,28 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             result.__HAS_BEEN_SYMMETRIZED = True
         return result
 
+    def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
+        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.Bunch(kw, _strict=False), **kw)
+        if isinstance(xyz, tuple): xyz, pair = xyz
+        if origxyz.ndim == 2: xyz = xyz[:, None, :]
+        if len(xyz) == 1: xyz = xyz[0]
+        return xyz if pair is None else (xyz, pair)
+
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
         kw = wu.Bunch(kw)
         origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
-        xyz, pair = self.apply_symmetry(xyz, pair, opts=kw, **kw)
+        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pari=pair, origxyz=origxyz**kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
-        if origxyz.ndim == 2: xyz = xyz[:, 0, :]
         xyzpair_on_subset = len(xyz) != len(origxyz)
         xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
         pair = self.fill_from_contiguous(pairadaptor, origpair, pair, **kw)
         xyz = self.move_unsym_to_match_asu(origxyz, xyz, move_all_nonprot=False)
         if xyzpair_on_subset:
             xyz = self(xyz, **kw.sub(fit=False, disable_all_fitting=True))
-        ipd.spy.sym_xyzpair(xyz, pair=pair)
+        ipd.hub.sym_xyzpair(xyz, pair=pair)
         return xyz, pair
 
     def apply_sym_slices(self, thing, **kw):
@@ -168,10 +155,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         match thing.kind.valuekind:
             case ValueKind.XYZ:
                 assert thing.kind.shapekind == ShapeKind.ONEDIM
-                if adapted.ndim == 2: contig = contig[:, None, :]
-                contig = self.apply_symmetry(contig, pair=None, opts=wu.Bunch(kw), **kw)
-                if len(contig) == 1: contig = contig[0]
-                if adapted.ndim == 2: contig = contig[:, 0, :]
+                contig = self.apply_symmetry_xyz_maybe_pair(contig, pari=None, origxyz=adapted, **kw)
             case ValueKind.INDEX:
                 contig = self.apply_symmetry_index(adapted.idx, adapted.val, adapted.isidx, **kw)
             case ValueKind.BASIC:
@@ -421,6 +405,14 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             self._idx = ipd.sym.SymIndex(self.nsub, idx)
         self._idx.to(self.device)
 
+    def _verify_index(self, thing):
+        if self.idx:
+            # TODO: verify self.idx compatible with thing
+            pass
+        else:
+            if isinstance(thing, th.Tensor):
+                self.idx = len(thing)
+
     def sym_adapt(self, thing, isasym=None):
         '''Return a SymAdapt object with metadata about the symmetry of the thing'''
         return _sym_adapt(thing, self, isasym)
@@ -503,15 +495,25 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def apply_initial_offset(self, x):
         return x
 
+    @property
+    def frames(self):
+        return self._frames
+
+    @frames.setter
+    def frames(self, frames):
+        assert frames.shape[-2:] == (4, 4) and frames.ndim == 3
+        self._frames = th.as_tensor(frames,device=self.device, dtype=th.float32)
+        self.opt.nsub = len(frames)
+
 class C1SymmetryManager(SymmetryManager):
     """Basically a null symmetry manager, does not modify anything"""
     kind = 'C1'
 
-    def __init__(self, opt=None, symid=None, idx=None, device=None, **kw):
+    def init(self, opt=None, symid=None, idx=None, device=None, **kw):
+        super().init(**kw)
         '''Create a C1SymmetryManager'''
         if symid: assert symid.upper() == 'C1'
         opt = opt or ipd.sym.get_sym_options(symid='C1')
-        super().__init__(opt, device=device)
         self.opt.nsub = 1
         self._symmRs = th.eye(3)[None]
         self.symmsub = th.tensor([0])
@@ -535,27 +537,3 @@ class C1SymmetryManager(SymmetryManager):
     def __bool__(self):
         '''Return False if this is a dummy symmetry manager'''
         return False
-
-def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **kw):
-    '''Create a symmetry manager based on the configuration
-    Args:
-        conf (dict, optional): Hydra conf
-        extra_params (dict, optional): extra parameters
-        kind (str, optional): symmetry manager kind
-    Returns:
-        SymmetryManager: a symmetry manager
-    '''
-    opt = ipd.sym.get_sym_options(conf, extra_params=extra_params)
-    opt._add_params(**kw)
-    opt = ipd.sym.process_symmetry_options(opt)
-    global _default_sym_manager
-    kind = kind or opt.get(kind, None) or _default_sym_manager
-    if opt.symid == 'C1': kind = 'C1'
-    return _sym_managers[kind](opt, device=device)
-
-def check_sym_manager(sym, *a, **kw):
-    '''Check if a symmetry manager is valid, and create one if it is not'''
-    if sym is not None:
-        assert isinstance(sym, SymmetryManager)
-        return sym
-    return create_sym_manager(*a, **kw)

@@ -62,7 +62,7 @@ class SymSlice:
     def set_nsub(self, nsub):
         '''Set the number of subunits in the symmetry'''
         self.Lasu = self.mask.sum() // nsub
-        ic(self.Lasu, self.mask.sum(), nsub)
+        # ic(self.Lasu, self.mask.sum(), nsub)
         # assert self.Lasu
         if self.Lasu == 0: self.asuend, self.symend = 0, 0
         else: self.asuend = int(th.where(th.cumsum(self.mask, 0) == self.Lasu)[0][0]) + 1
@@ -135,6 +135,7 @@ class SymIndex:
         '''
         self.nsub = nsub
         self.orig_input = slices
+        if isinstance(slices, int): slices = [slices]
         self.slices = [SymSlice.make_symslice(s) for s in slices]
         self.slices[0].fit = True  # assume fit should always be checked on the first slice
         for s in self.slices:
@@ -263,13 +264,16 @@ class SymIndex:
     def getsubnum(self, idx):
         return self.subnum[idx]
 
-    def is_sym_subsequence(self, idx):
+    def is_sym_subsequence(self, idx, strict=True):
+        strict = len({int(_) for _ in idx}) == len(idx)
         idx = th.as_tensor(idx).to(self.unsym.device)
         if th.all(self.unsym[idx]): return True
+        # if idx.max() < len(self.idx_asym_to_sym) and th.all(self.asym[self.idx_asym_to_sym[idx]]): return False
         idx = th.as_tensor(idx, dtype=int)
+        # ic(self.asym)
         replicates = th.bincount(idx)
         replicates = replicates[replicates != 0]
-        assert len(replicates.unique()) == 1
+        if strict: assert len(replicates.unique()) == 1
         replicates = int(replicates[0])
         idx = th.as_tensor(idx, dtype=int)
         idx = idx[~self.unsym[idx]]
@@ -280,8 +284,8 @@ class SymIndex:
         # ic(idx, subcount, asucount)
         if len(subcount) != self.nsub: return False
         if len(subcount.unique()) != 1: return False
-        if len(asucount) != len(idx) // replicates // self.nsub: return False
-        if len(asucount.unique()) != 1: return False
+        if strict and len(asucount) != len(idx) // replicates // self.nsub: return False
+        if strict and len(asucount.unique()) != 1: return False
         return True
 
     def is_asym_subsequence(self, idx):

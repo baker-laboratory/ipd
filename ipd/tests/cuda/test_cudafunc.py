@@ -4,6 +4,8 @@ from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
+pytest.importorskip('ipd.voxel.voxel_cuda')
+
 def main():
     test_cudafunc_clash()
     test_cudafunc_contact_10()
