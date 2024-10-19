@@ -1,7 +1,8 @@
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+wu = lazyimport('willutil')
 import ipd
-import willutil as wu
-from willutil import h
 
 def asu_com(sym, xyz, Lasu, **kw):
     '''Calculate the center of mass of the asymmetric unit'''
@@ -73,11 +74,10 @@ def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
         # ic(gpbb.shape)
         # ic(bb.shape)
         Lasu = len(bb) // sym.nsub
-        import willutil
         # with willutil.Timer():
         idx, rms, xform = ipd.fit.qcp_scan_AB(bb, gpbb, Lasu)
         # ic(idx, rms, R, T)
-        # rms2, fit, xform = h.rmsfit(gpbb.reshape(-1, 3), bb[idx].reshape(-1, 3))
+        # rms2, fit, xform = wu.wrmsfit(gpbb.reshape(-1, 3), bb[idx].reshape(-1, 3))
         mask = th.logical_or(sym.idx.kind == 1, sym.idx.kind == 12)
         # import willutil as wu
         # x = bb[idx]
@@ -92,7 +92,7 @@ def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
         # wu.showme(xyz[mask, 1], name='gp0', col=(1, 0, 0), sphere=0.3)
 
         # xyz[mask] = th.einsum('ij,raj->rai', R, xyz[mask]) + T
-        xyz[mask] = h.xform(xform, xyz[mask])
+        xyz[mask] = wu.h.xform(xform, xyz[mask])
 
         # wu.showme(xyz[~mask, 1], name='prot1', sphere=0.3)
         # wu.showme(xyz[mask, 1], name='gp1', col=(1, 0, 1), sphere=0.3)

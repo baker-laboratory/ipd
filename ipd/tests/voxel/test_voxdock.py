@@ -1,12 +1,11 @@
 import numpy as np
 import pytest
 import ipd
-import torch as th
-import ipd as ipd
-from ipd import h
+
 from icecream import ic
 
 pytest.importorskip('ipd.voxel.voxel_cuda')
+th = pytest.importorskip('torch')
 
 def main():
     test_voxdock_ab()
@@ -39,9 +38,9 @@ def test_voxdock_ab(timer=ipd.dev.Timer()):
     # rb = ipd.voxel.VoxRB(xyz[:128], resl=1, func=ipd.cuda.ContactFunc())
 
     rb = ipd.voxel.VoxRB(xyz,
-                        resl=1,
-                        func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
-                        repulsive_only=repulsive_only)
+                         resl=1,
+                         func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
+                         repulsive_only=repulsive_only)
     # trans_score = rb.score(rb, th.eye(4), ipd.h.trans(x=th.arange(40, 50, 0.1))).min()
     # ic(trans_score)
     timer.checkpoint('vox')

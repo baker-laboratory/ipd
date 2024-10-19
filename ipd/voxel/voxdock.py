@@ -1,5 +1,7 @@
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
 
 class VoxRB(ipd.voxel.Voxel):
     '''Represents a rigid body with an associated Voxel score'''
@@ -11,8 +13,6 @@ class VoxRB(ipd.voxel.Voxel):
         if isinstance(other, VoxRB):
             other = other.xyz
         return super().score(other, otherpos, pos, **kw)
-
-
 
 class VoxRBSym:
     '''Represents a symmetric rigid body with an associated Voxel score'''

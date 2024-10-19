@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ipd"
+version = "0.1"
+dependencies = [
+'hydra-core',
+'hypothesis',
+'icecream',
+'requests',
+'pydantic',
+'numpy',
+'assertpy', 
+]
+requires-python = ">=3.8"

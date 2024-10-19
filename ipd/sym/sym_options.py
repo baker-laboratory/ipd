@@ -1,11 +1,9 @@
-import os
-import yaml
-import hydra
-import willutil as wu
-import ipd
+from ipd.dev.lazy_import import lazyimport
 import ipd
 from collections.abc import Sequence
-import omegaconf
+
+hydra = lazyimport('hydra')
+omegaconf = lazyimport('omegaconf')
 
 default_params = dict(
     L=None,

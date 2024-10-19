@@ -2,8 +2,58 @@
 	"folders":
 	[
 		{
-			"path": "/home/sheffler/rfdsym/lib/ipd/lib/ipd",
-            "folder_exclude_patterns": [ "Eigen", ".benchmarks", ".git" ]
+			"path": "../..",
+			"folder_exclude_patterns": [ "Eigen", ".benchmarks", ".git" ]
 		}
-	]
+	],
+    "settings":
+     {
+        "PyYapf":{
+         "yapf_command": "yapf",
+         "on_save": true,
+        },
+        "project_environment": {
+            "env": {
+                "PYTHON": "/home/sheffler/sw/MambaForge/envs/ppp/bin/python",
+            },
+        },
+
+    },
+	"build_systems": [
+        {
+            "name": "test ppp plugin",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/pymol/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py 2>&1 | tee ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "test ppp server",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/ppp/bin/python ipd/tests/ppp/server/test_pppapi.py $file 2>&1 | tee ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "test crud",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON ipd/tests/crud/test_crud.py 2>&1 | tee ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "runtest.py",
+            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ide/runtest.py $file &> ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "test bunch",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/dev/test_bunch.py &> ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "test state",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/dev/test_state.py &> ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "pymol",
+            "shell_cmd": "cd $folder; QT_QPA_PLATFORM=xcb /home/sheffler/sw/MambaForge/envs/basic_pymol/bin/pymol",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+	],
 }

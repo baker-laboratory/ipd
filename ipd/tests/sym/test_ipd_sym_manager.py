@@ -1,8 +1,12 @@
 import pytest
-import torch as th
+
+pytest.importorskip('torch')
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd
 from icecream import ic
-import ipd as ipd
 from ipd import h
 import hypothesis
 

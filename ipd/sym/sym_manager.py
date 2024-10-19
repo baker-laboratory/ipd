@@ -1,19 +1,16 @@
-import sys
 import contextlib
-from abc import ABC, abstractmethod, ABCMeta
+from abc import ABC, abstractmethod
 import copy
 import itertools
 from icecream import ic
 import assertpy
-import torch as th
+from ipd.dev.lazy_import import lazyimport
 import numpy as np
-from itertools import repeat
 import ipd
-import willutil as wu
-from willutil import h
 from ipd.sym.sym_adapt import _sym_adapt
 from ipd.sym import ShapeKind, ValueKind
 
+th = lazyimport('torch')
 
 class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     """
@@ -31,7 +28,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self.device = device or ('cuda' if th.cuda.is_available() else 'cpu')
         self.skip_keys = set()
         self._idx = None
-        self._post_init_args = wu.Bunch(kw)
+        self._post_init_args = ipd.Bunch(kw)
         self._frames = None
         self.add_properties()
         self.init(**kw)
@@ -117,7 +114,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         elif thing.kind.shapekind == ShapeKind.SEQUENCE:
             result = thing.reconstruct([self(x, **kw) for x in thing.adapted])
         elif thing.kind.shapekind == ShapeKind.MAPPING:
-            result = thing.reconstruct(wu.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
+            result = thing.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
         elif thing.kind.shapekind == ShapeKind.SCALAR:
             result = thing.orig
         else:
@@ -135,7 +132,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return xyz if pair is None else (xyz, pair)
 
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
-        kw = wu.Bunch(kw)
+        kw = ipd.Bunch(kw)
         origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
@@ -251,8 +248,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         unsym = orig[tomove]
         ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
         if len(unsym) and len(origasu) > 2 and not th.allclose(origasu, movedasu, atol=1e-3):
-            rms, _, xfit = h.rmsfit(origasu, movedasu)
-            moved[tomove] = h.xform(xfit, unsym)
+            rms, _, xfit = wu.h.rmsfit(origasu, movedasu)
+            moved[tomove] = wu.h.xform(xfit, unsym)
             if rms > 1e-3:
                 ic(orig)
                 ic(moved)
@@ -431,7 +428,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         try:
             self.assert_symmetry_correct(thing, **kw)
             return True
-        except AssertionError as e:
+        except AssertionError:
             return False
 
     def reset(self):
@@ -443,7 +440,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         axes = wu.sym.axes(self.symid, all=True)
         onanyaxis = False
         for axis in itertools.chain(axes.values()):
-            onanyaxis |= th.any(h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
+            onanyaxis |= th.any(wu.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
         if not onanyaxis: return th.tensor([], dtype=int)
         if self.opt.subsymid is None:
             if len(axes) > 1: raise ValueError(f'atom on axes and dont know which subsymid {self.symid}')
@@ -451,7 +448,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             if axes.ndim: axes = axes[None]
         onaxis = th.zeros(len(xyz), dtype=bool)
         for axis in axes:
-            onaxis |= h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
+            onaxis |= wu.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
         return onaxis
 
     def update_px0(self, indep, px0):
@@ -503,7 +500,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     @frames.setter
     def frames(self, frames):
         assert frames.shape[-2:] == (4, 4) and frames.ndim == 3
-        self._frames = th.as_tensor(frames,device=self.device, dtype=th.float32)
+        self._frames = th.as_tensor(frames, device=self.device, dtype=th.float32)
         self.opt.nsub = len(frames)
 
 class C1SymmetryManager(SymmetryManager):

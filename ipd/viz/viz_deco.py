@@ -1,4 +1,4 @@
-import willutil as wu
+import ipd
 import functools
 
 try:
@@ -7,7 +7,7 @@ except ImportError:
     pass
 
 def pymol_frame(_FUNCTION_):
-    from willutil.viz.pymol_viz import _showme_state
+    from ipd.viz.pymol_viz import _showme_state
 
     @functools.wraps(_FUNCTION_)
     def wrapper(
@@ -28,7 +28,7 @@ def pymol_frame(_FUNCTION_):
         name += "_%i" % state["seenit"][name]
 
         bunch = _FUNCTION_(*args, name=name, delprev=delprev, state=state, **kw)
-        bunch = bunch or wu.Bunch(cgo=None)
+        bunch = bunch or ipd.Bunch(cgo=None)
 
         if bunch.cgo:
             if addtocgo is not None:

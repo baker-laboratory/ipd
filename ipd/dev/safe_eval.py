@@ -1,14 +1,16 @@
 import logging
 
 try:
-    from RestrictedPython import compile_restricted
+    from ipd.dev.lazy_import import lazyimport
+    rp = lazyimport('RestrictedPython', pip=True)
 
     def safe_eval(code, **kw):
-        return eval(compile_restricted(code, filename='<inline code>', mode='eval'), **kw)
+        return eval(rp.compile_restricted(code, filename='<inline code>', mode='eval'), **kw)
 
     def safe_exec(code, **kw):
-        return exec(compile_restricted(code, filename='<inline code>', mode='exec'), **kw)
+        return exec(rp.compile_restricted(code, filename='<inline code>', mode='exec'), **kw)
 except ImportError:
-    logging.warning('RestrictedPython not installed, exec and eval will be unsafe. pip install RestrictedPython')
+    logging.warning(
+        'RestrictedPython not installed, exec and eval will be unsafe. pip install RestrictedPython')
     safe_eval = eval
     safe_exec = exec

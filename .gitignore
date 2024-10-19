@@ -162,3 +162,10 @@ cython_debug/
 #.idea/
 
 log
+/*.cif
+/*.pdb
+*.sublime-workspace
+.qtcreator
+\#*
+ppp_server_data
+.qtc_clangd

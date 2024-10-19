@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PPPPPNewWorkflow</class>
+ <widget class="QWidget" name="PPPPPNewWorkflow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>809</width>
+    <height>780</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1,10,0">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <family>Source Code Pro</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Create Workflow</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="name">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="placeholderText">
+          <string>Workflow Name</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QPlainTextEdit" name="desc">
+       <property name="placeholderText">
+        <string>Workflow Description</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
+         <item>
+          <widget class="QPushButton" name="button_newcmd">
+           <property name="text">
+            <string>New Command</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="cmdlist"/>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="findcmd">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;searches command names using fzf fuzzyfinder syntax&lt;br/&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; border-collapse:collapse;&quot; cellspacing=&quot;2&quot; cellpadding=&quot;0&quot; bgcolor=&quot;#343a40&quot;&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;sbtrkt&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;fuzzy-match&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that include &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;sbtrkt&lt;/span&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt; characters in that order&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;'wild&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;exact-match (quoted)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that include &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;wild&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;'wild'&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;exact-boundary-match (quoted both ends)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that include &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;wild&lt;/span&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt; at word boundaries&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;^music&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;prefix-exact-match&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that start with &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;music&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;.mp3$&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;suffix-exact-match&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that end with &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;.mp3&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;!fire&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;inverse-exact-match&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that do not include &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;fire&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;!^music&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;inverse-prefix-exact-match&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that do not start with &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;music&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;!.mp3$&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;inverse-suffix-exact-match&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; padding-left:0; padding-right:0; padding-top:0; padding-bottom:0; border-top:1px; border-right:1px; border-bottom:1px; border-left:1px; border-top-color:#000000; border-right-color:#000000; border-bottom-color:#000000; border-left-color:#000000; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid;&quot;&gt;&lt;p&gt;&lt;span style=&quot; font-family:'roboto','sans-serif'; font-size:16px; color:#000000;&quot;&gt;Items that do not end with &lt;/span&gt;&lt;span style=&quot; font-family:'roboto mono','monospace'; font-size:16px; color:#000000;&quot;&gt;.mp3&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="placeholderText">
+            <string>fuzzy find...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="tesntestnset">
+         <item>
+          <widget class="QPushButton" name="button_newstep">
+           <property name="text">
+            <string>New Workflow Step</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QScrollArea" name="scroll">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollcontent">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>386</width>
+              <height>548</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,1,1">
+       <item>
+        <widget class="QCheckBox" name="checkBox_2">
+         <property name="text">
+          <string>Public</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="text">
+          <string>Allow Flow Matching</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_create">
+         <property name="text">
+          <string>Create Workflow</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_cancel">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

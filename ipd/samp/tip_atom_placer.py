@@ -1,5 +1,8 @@
 import numpy as np
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd
 import willutil as wu
 from willutil import h
@@ -197,10 +200,10 @@ try:
         acol = [atomcol[n[0]] for n in tip.aname]
         for fd, fa in zip(fdon.cpu(), facc.cpu()):
             for rays, rcol, f, ftip in zip([tip.don, tip.acc], [(1, 1, 1), (1, 0, 0)], [fd, fa],
-                                          tip.donacc_frames()):
+                                           tip.donacc_frames()):
                 if len(rays) == 0: continue
                 for ray, ft in zip(rays, ftip):
-                    frame = f@ft
+                    frame = f @ ft
                     for xyz, col in zip(h.xform(frame, tip.xyz), acol):
                         cgo += wu.viz.cgo_sphere(cen=xyz, rad=0.5, col=col)
                     beg = wu.hxform(ft, ray[:, 0])

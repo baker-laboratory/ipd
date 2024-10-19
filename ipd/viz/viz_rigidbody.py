@@ -3,7 +3,6 @@ from willutil.viz.pymol_viz import pymol_load, cgo_sphere
 import willutil as wu
 from willutil.rigid.rigidbody import RigidBody, RigidBodyFollowers
 
-
 @pymol_load.register(RigidBodyFollowers)
 def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, addtocgo=None, **kw):
     wu.showme(bodies.bodies, name=name, topcolors=[(1, 1, 1)], **kw)
@@ -11,7 +10,7 @@ def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, 
 
     import pymol
 
-    kw = wu.Bunch(kw)
+    kw = ipd.Bunch(kw)
     v = pymol.cmd.get_view()
     state["seenit"][name] += 1
     cgo = list()
@@ -26,21 +25,20 @@ def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, 
     else:
         addtocgo.extend(cgo)
 
-
 @pymol_load.register(RigidBody)
 def pymol_viz_RigidBody(
-    body,
-    name="rigidbody",
-    state=None,
-    addtocgo=None,
-    showpairswith=None,
-    showpairsdist=8,
-    showcontactswith=None,
-    vizsphereradius=2,
-    col=(1, 1, 1),
-    **kw,
+        body,
+        name="rigidbody",
+        state=None,
+        addtocgo=None,
+        showpairswith=None,
+        showpairsdist=8,
+        showcontactswith=None,
+        vizsphereradius=2,
+        col=(1, 1, 1),
+        **kw,
 ):
-    kw = wu.Bunch(kw)
+    kw = ipd.Bunch(kw)
     import pymol
 
     v = pymol.cmd.get_view()

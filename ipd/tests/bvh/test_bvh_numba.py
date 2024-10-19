@@ -1,14 +1,13 @@
-import math
+import pytest
+
+pytest.importorskip('torch')
 import os
 
 from numba import cuda
 import torch as th
-from icecream import ic
 import ipd as ipd
-import ipd
 
 def main():
-
 
     # Should also be True
     print(cuda.is_float16_supported())
@@ -27,13 +26,13 @@ def main():
         # x2 = ipd.samp.randxform(N)
         # x1 = ipd.h.rand(N, device='cuda')
         # x2 = ipd.h.rand(N, device='cuda')
-        s += x1[-1,-1,-1] #+ x2[-1,-1,-1]
+        s += x1[-1, -1, -1]  #+ x2[-1,-1,-1]
         t.checkpoint('randxform')
         continue
         x3 = th.matmul(x1, x2)
-        s += x3[-1,-1,-1]
+        s += x3[-1, -1, -1]
         t.checkpoint('matmul')
-    print(min(t.checkpoints['randxform'])*1000)
+    print(min(t.checkpoints['randxform']) * 1000)
 
 # @cuda.jit(device=True)
 # def add3(a,b)
@@ -50,7 +49,6 @@ def main():
 # @cuda.jit(device=True)
 # def norm3(a)
 #     return math.sqrt(a[0]*b[0]+a[1]*b[1]+a[2]*b[2])
-
 
 # @cuda.jit(device=True)
 # def makesph():
@@ -129,7 +127,6 @@ def main():
 #     return smallestSphere;
 #   for i in range(3): sos[numsos,i] = pts[index,i];
 #   return welzl_bounding_sphere_impl(points, index, sos, numsos + 1);
-
 
 # template <class Ary, class Sph, bool range>
 # struct UpdateBounds {

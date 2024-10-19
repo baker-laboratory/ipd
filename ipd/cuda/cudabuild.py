@@ -1,6 +1,8 @@
 import os
-import torch as th
-import torch.utils.cpp_extension
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 from ipd import projdir
 
 mode = 'release'

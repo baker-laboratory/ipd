@@ -1,13 +1,17 @@
-import math
 import pytest
+
+pytest.importorskip('torch')
+pytest.importorskip('gemmi')
+import math
 from ipd import h
-import torch as th
 import numpy as np
 import ipd
-pytest.importorskip('ipd.voxel.voxel_cuda')
 from ipd.voxel.voxel_cuda import _voxel
 import random
 from icecream import ic
+
+pytest.importorskip('ipd.voxel.voxel_cuda')
+th = lazimport('torch')
 
 def main():
     Voxel_score_converse()
@@ -76,7 +80,7 @@ def test_numba_vox_create():
             irad = int(math.ceil(rad[-1] / resl))
             block, thread = (len(xyz), 2 * irad + 1, 2 * irad + 1), (32, 2, 2)
             ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl,
-                                                       grid.cuda())
+                                                        grid.cuda())
 
     # ipd.showme(vox)
     vox.grid = grid

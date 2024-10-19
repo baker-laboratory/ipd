@@ -1,8 +1,10 @@
 import pytest
+
+pytest.importorskip('torch')
 import ipd
-import ipd as ipd
-from icecream import ic
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
 
 pytestmark = pytest.mark.fast
 
@@ -30,8 +32,10 @@ def helper_test_align_asu(sym, Lasu=13):
     xyz = make_test_points(Lasu, 10, cen=[1, 2, 3]).unsqueeze(1)
     xyz = sym(xyz)
     xyzs = [
-        ipd.sym.asu_to_best_frame_if_necessary(sym, th.einsum('ij,raj->rai', R, xyz), Lasu, asu_to_best_frame=True)
-        for R in sym.symmRs
+        ipd.sym.asu_to_best_frame_if_necessary(sym,
+                                               th.einsum('ij,raj->rai', R, xyz),
+                                               Lasu,
+                                               asu_to_best_frame=True) for R in sym.symmRs
     ]
     # ipd.showme(xyz.squeeze(1))
     # ipd.showme(xyzs[0][:Lasu].squeeze(1))
@@ -39,22 +43,27 @@ def helper_test_align_asu(sym, Lasu=13):
         # ipd.showme(xyz[:Lasu,0])
         assert th.allclose(xyzs[0][:Lasu], xyz[:Lasu], atol=1e-3)
 
+@pytest.mark.fast
 def test_align_asu_c2():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'], max_nsub=5)
     helper_test_align_asu(sym)
 
+@pytest.mark.fast
 def test_align_asu_c7():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C7'], max_nsub=5)
     helper_test_align_asu(sym)
 
+@pytest.mark.fast
 def test_align_asu_tet():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=T'], max_nsub=12)
     helper_test_align_asu(sym)
 
+@pytest.mark.fast
 def test_align_asu_oct():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=O'], max_nsub=5)
     helper_test_align_asu(sym)
 
+@pytest.mark.fast
 def test_align_asu_icos():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=I'], max_nsub=5)
     helper_test_align_asu(sym)

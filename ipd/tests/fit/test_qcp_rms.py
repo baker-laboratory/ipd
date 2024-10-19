@@ -2,11 +2,13 @@ import itertools
 from timeit import timeit
 import random
 import pytest
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd
 pytest.importorskip('ipd.fit.qcp_rms_cuda')
 from ipd.fit.qcp_rms import _rms
-import ipd as ipd
 from ipd import h
 import numpy as np
 
@@ -56,7 +58,7 @@ def test_rms_perf():
         pts2 = th.randn((100, 50, 3), dtype=th.float32, device=dev)
         count = 100 if dev == 'cuda' else 1
         ipd.fit.rmsd(pts1, pts2)
-        if dev=='cuda':
+        if dev == 'cuda':
             t = timeit(lambda: ipd.fit.rmsd(pts1, pts2, usenumba=True), number=count)
             print(f'numba noxform {t/count*1000:7.3f}ms')
         t = timeit(lambda: ipd.fit.rmsd(pts1, pts2), number=count)

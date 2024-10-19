@@ -1,9 +1,12 @@
-from icecream import ic
 import pytest
+
+pytest.importorskip('torch')
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import hypothesis
-from hypothesis import strategies as st
 from ipd.tests.sym import symslices
 
 @pytest.mark.fast
@@ -217,6 +220,7 @@ def test_nonprot():
     sym.idx = [33]
     assert th.all(sym.idx.nonprot.cpu() == th.repeat_interleave(th.arange(1), 33))
 
+@pytest.mark.fast
 def test_slice2d():
     sym = ipd.tests.sym.create_test_sym_manager(symid='c3')
     sym.idx = [(12, 0, 6), (12, 6, 12)]

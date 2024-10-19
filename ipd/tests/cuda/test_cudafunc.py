@@ -1,6 +1,8 @@
 import pytest
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
 
 pytest.importorskip('ipd.voxel.voxel_cuda')
 
@@ -33,7 +35,7 @@ def test_cudafunc_clash_on_gpu():
 def test_cudafunc_contact():
     func = ipd.cuda.ContactFunc()
     # for f in th.arange(0,10.01,0.25):
-        # print(f'{f}) == {func.reference_impl(f)}')
+    # print(f'{f}) == {func.reference_impl(f)}')
     assert func.reference_impl(0.0) == 10000.0
     assert func.reference_impl(3.0) == 10000.0
     assert func.reference_impl(3.25) == 7499.75
@@ -73,7 +75,6 @@ def test_cudafunc_contact_on_gpu():
     # ic(dist)
     # ic(tst)
     assert th.allclose(tst.cpu(), ref)
-
 
 if __name__ == '__main__':
     main()

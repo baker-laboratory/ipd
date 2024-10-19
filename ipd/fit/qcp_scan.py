@@ -1,5 +1,8 @@
 import itertools
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import numpy as np
 import torch.utils.cpp_extension
 import ipd

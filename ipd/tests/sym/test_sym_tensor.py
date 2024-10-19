@@ -1,8 +1,12 @@
-import inspect
 import pytest
+
+pytest.importorskip('torch')
 import copy
 from icecream import ic
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd.sym.sym_tensor as st
 import ipd
 
@@ -55,6 +59,7 @@ def test_sym_tensor_sort_typemap_dense_1D():
                 assert th.all(getattr(s, type2l) == new)
                 setattr(s, type2l, orig)
 
+@pytest.mark.fast
 def test_sym_tensor_res_typemap_dense_1D():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
@@ -119,6 +124,7 @@ def test_sym_tensor_sym_typemap_dense_1D():
         with pytest.raises(st.SymTensorError):
             s.sub(sym.nsub + 1)
 
+@pytest.mark.fast
 def test_sym_tensor_2d():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
@@ -203,7 +209,8 @@ def test_sym_tensor():
     print('>>> t.gp')
     print(t.gp)
 
-    t = sym.tensor(['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
+    t = sym.tensor(
+        ['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
     print('>>> t.all.orig')
     print(t.all.orig)
     print('>>> t.res.orig')
@@ -222,7 +229,7 @@ def test_sym_tensor():
     print('>>> t.sliced')
     print(t.sliced)
 
-    sym.idx = [(10,0,9)]
+    sym.idx = [(10, 0, 9)]
     sym.idx.set_kind(th.zeros(10))
     print(sym.idx.all)
     t = sym.tensor(th.zeros(10, dtype=int))

@@ -1,6 +1,9 @@
 import math
 import ipd
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import numpy as np
 from willutil import h
 

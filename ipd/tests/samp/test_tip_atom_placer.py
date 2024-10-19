@@ -1,5 +1,8 @@
 import pytest
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
+
 import ipd
 from ipd import h
 
@@ -14,6 +17,7 @@ def main():
     test_tip_atom_target()
     test_tip_atom_groups()
 
+@pytest.mark.fast
 def test_place_tip_atoms():
     tgt = ipd.samp.TipAtomTarget.from_pdb(ipd.tests.path('pdb/dna_example.pdb'), clashthresh=2.0)
     tips = ipd.samp.get_tip_atom_groups()

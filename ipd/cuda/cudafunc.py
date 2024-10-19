@@ -1,5 +1,7 @@
 import abc
-import torch as th
+from ipd.dev.lazy_import import lazyimport
+
+th = lazyimport('torch')
 
 class CudaFunc(abc.ABC):
     def __init__(self, arg, label):

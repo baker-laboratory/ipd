@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PPPPPNewOption</class>
+ <widget class="QDialog" name="PPPPPNewOption">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>554</width>
+    <height>624</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="title">
+       <property name="font">
+        <font>
+         <family>Source Code Pro Semibold</family>
+         <pointsize>16</pointsize>
+         <italic>true</italic>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Create a new toggle command</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLineEdit" name="name">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>ToggleCommand Name</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="font">
+          <font>
+           <family>Source Code Pro</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Creator:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="user">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="placeholderText">
+          <string>creator</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QPlainTextEdit" name="cmdon">
+       <property name="placeholderText">
+        <string>this runs when clicked, ex: my_command enabled=True</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPlainTextEdit" name="cmdoff">
+       <property name="placeholderText">
+        <string>this runs when clicked, ex: my_command enabled=True</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="font">
+            <font>
+             <family>Source Code Pro</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Requires Ligand:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ligand">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;if blank, no ligand requirement&lt;/p&gt;&lt;p&gt;if any, this command will be valid for any structure with ligand&lt;/p&gt;&lt;p&gt;if specific 3 letter ligand codes in comma separated list, command will be valid&lt;/p&gt;&lt;p&gt;if all of those ligands are present&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="placeholderText">
+            <string>any OR ligcode1, ligcode2, ...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="font">
+            <font>
+             <family>Source Code Pro</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Requires Symmetry:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="sym">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;if blank, no symmetry requirement&lt;/p&gt;&lt;p&gt;if any, this command will be valid for any structure with non C1 symmetry&lt;/p&gt;&lt;p&gt;if specific symmetries in comma separated list, command will be valid if any of those ligands are present&lt;/p&gt;&lt;p&gt;if cyclic: valid for all cyclic symmetries&lt;/p&gt;&lt;p&gt;if dihedral: valid for all dihedral symetries&lt;/p&gt;&lt;p&gt;if layer: valid for all layer symetries&lt;/p&gt;&lt;p&gt;if cage: valid for all cage symmetries&lt;/p&gt;&lt;p&gt;if xtal: valid for all xtal symmetries&lt;/p&gt;&lt;p&gt;if helix: valid for all helical symmetries&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="placeholderText">
+            <string>any OR sym1, sym2</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QPlainTextEdit" name="cmdstart">
+       <property name="plainText">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Optional code to run on startup</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QPlainTextEdit" name="props">
+         <property name="placeholderText">
+          <string>properties: prop1, prop2, ...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="attrs">
+         <property name="placeholderText">
+          <string>attributes: attr1=value1, attr2=value2, ...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QPushButton" name="test_on_file">
+         <property name="text">
+          <string>  Test cmd on this file:  </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="testfile">
+         <property name="placeholderText">
+          <string>test file</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="openfilepicker">
+         <property name="text">
+          <string>Pick File...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QCheckBox" name="onstart">
+         <property name="text">
+          <string>On by default</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="ispublic">
+         <property name="text">
+          <string>Make publicly avaliable</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="ok">
+         <property name="text">
+          <string>OK</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cancel">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
