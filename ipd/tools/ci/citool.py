@@ -111,12 +111,12 @@ class TestsTool(CITool):
         fail = False
         for f in glob.glob('pytest*.log'):
             with open(f) as inp:
-                lines = inp.readlines()
-                for line in lines:
+                for line in inp.readlines():
                     fail |= 'ERROR' in line
                     fail |= 'FAILED' in line
                     fail |= 'FATAL' in line
                     fail |= 'Error while loading ' in line
+                    if fail: print(line)
             if fail:
                 print('PYTEST FAILED:', f)
                 print(str.join('', lines))
