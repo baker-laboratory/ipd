@@ -5,8 +5,8 @@ import ipd
 from ipd import h
 from icecream import ic
 
-pytest.importorskip('ipd.samp.samp_cuda')
 pytest.importorskip('torch')
+pytest.importorskip('ipd.samp.samp_cuda')
 
 def main():
     # fitsd()
