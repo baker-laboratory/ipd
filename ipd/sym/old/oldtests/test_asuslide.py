@@ -91,7 +91,7 @@ def manual_test():
         vizfresh=False,
         centerasu=False,
     )
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     # ipd.contactdis = 10
     # ipd.contactfrac = 0.1
     slid = asuslide(
@@ -321,7 +321,7 @@ def asuslide_case3():
 
 @pytest.mark.fast
 def test_asuslide_helix_case1(showme=False):
-    showmeopts = ipd.Bunch(vizsphereradius=4)
+    showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7084203)
     xyz = ipd.tests.point_cloud(100, std=30, outliers=20)
@@ -329,7 +329,7 @@ def test_asuslide_helix_case1(showme=False):
     h = ipd.sym.helix.Helix(turns=15, phase=0.5, nfold=1)
     spacing = 50
     rad = 70
-    hgeom = ipd.Bunch(radius=rad, spacing=spacing, turns=2)
+    hgeom = ipd.dev.Bunch(radius=rad, spacing=spacing, turns=2)
     cellsize = [hgeom.radius, hgeom.radius, hgeom.spacing]
     rb1 = ipd.sym.helix_slide(h, xyz, cellsize, iters=0, closest=9)
     rb2 = ipd.sym.helix_slide(h, xyz, cellsize, contactfrac=0.1, closest=9)
@@ -349,7 +349,7 @@ def test_asuslide_helix_case1(showme=False):
 
 @pytest.mark.fast
 def test_asuslide_helix_nfold1(showme=False):
-    showmeopts = ipd.Bunch(vizsphereradius=4)
+    showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7)
     xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
@@ -357,7 +357,7 @@ def test_asuslide_helix_nfold1(showme=False):
     h = ipd.sym.helix.Helix(turns=15, phase=0.5, nfold=1)
     spacing = 70
     rad = h.turns * 0.8 * h.nfold * spacing / 2 / np.pi
-    hgeom = ipd.Bunch(radius=rad, spacing=spacing, turns=2)
+    hgeom = ipd.dev.Bunch(radius=rad, spacing=spacing, turns=2)
     cellsize = [hgeom.radius, hgeom.radius, hgeom.spacing]
 
     rb1 = ipd.sym.helix_slide(h, xyz, cellsize, iters=0, closest=9)
@@ -380,7 +380,7 @@ def test_asuslide_helix_nfold1(showme=False):
 
 @pytest.mark.fast
 def test_asuslide_helix_nfold1_2():
-    showmeopts = ipd.Bunch(vizsphereradius=6)
+    showmeopts = ipd.dev.Bunch(vizsphereradius=6)
 
     np.random.seed(7)
     xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
@@ -388,7 +388,7 @@ def test_asuslide_helix_nfold1_2():
     h = ipd.sym.helix.Helix(turns=8, phase=0.5, nfold=1)
     spacing = 70
     rad = h.turns * spacing / 2 / np.pi * 1.3
-    hgeom = ipd.Bunch(radius=rad, spacing=spacing, turns=2)
+    hgeom = ipd.dev.Bunch(radius=rad, spacing=spacing, turns=2)
     cellsize = [hgeom.radius, hgeom.radius, hgeom.spacing]
 
     rb1 = ipd.sym.helix_slide(h, xyz, cellsize, iters=0, closest=20)
@@ -415,7 +415,7 @@ def test_asuslide_helix_nfold1_2():
 
 @pytest.mark.fast
 def test_asuslide_helix_nfold3():
-    showmeopts = ipd.Bunch(vizsphereradius=4)
+    showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7)
     xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
@@ -423,7 +423,7 @@ def test_asuslide_helix_nfold3():
     h = ipd.sym.helix.Helix(turns=6, phase=0.5, nfold=3)
     spacing = 50
     rad = h.turns * spacing / 2 / np.pi
-    hgeom = ipd.Bunch(radius=rad, spacing=spacing, turns=2)
+    hgeom = ipd.dev.Bunch(radius=rad, spacing=spacing, turns=2)
     cellsize = [hgeom.radius, hgeom.radius, hgeom.spacing]
 
     rb1 = ipd.sym.helix_slide(h, xyz, cellsize, iters=0, closest=20)
@@ -439,7 +439,7 @@ def test_asuslide_helix_nfold3():
 
 @pytest.mark.fast
 def test_asuslide_helix_nfold5():
-    showmeopts = ipd.Bunch(vizsphereradius=4)
+    showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7)
     xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
@@ -447,7 +447,7 @@ def test_asuslide_helix_nfold5():
     h = ipd.sym.helix.Helix(turns=4, phase=0.1, nfold=5)
     spacing = 40
     rad = h.turns * h.nfold * spacing / 2 / np.pi
-    hgeom = ipd.Bunch(radius=rad, spacing=spacing, turns=2)
+    hgeom = ipd.dev.Bunch(radius=rad, spacing=spacing, turns=2)
     cellsize = [hgeom.radius, hgeom.radius, hgeom.spacing]
 
     rb = ipd.sym.helix_slide(h, xyz, cellsize, iters=0, closest=0)

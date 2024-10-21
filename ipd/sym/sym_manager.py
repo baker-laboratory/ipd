@@ -28,7 +28,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self.device = device or ('cuda' if th.cuda.is_available() else 'cpu')
         self.skip_keys = set()
         self._idx = None
-        self._post_init_args = ipd.Bunch(kw)
+        self._post_init_args = ipd.dev.Bunch(kw)
         self._frames = None
         self.add_properties()
         self.init(**kw)
@@ -114,7 +114,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         elif thing.kind.shapekind == ShapeKind.SEQUENCE:
             result = thing.reconstruct([self(x, **kw) for x in thing.adapted])
         elif thing.kind.shapekind == ShapeKind.MAPPING:
-            result = thing.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
+            result = thing.reconstruct(
+                ipd.dev.Bunch({
+                    k: self(x, key=k, **kw)
+                    for k, x in thing.adapted.items()
+                }))
         elif thing.kind.shapekind == ShapeKind.SCALAR:
             result = thing.orig
         else:
@@ -125,14 +129,14 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return result
 
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
-        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.Bunch(kw, _strict=False), **kw)
+        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)
         if isinstance(xyz, tuple): xyz, pair = xyz
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         if len(xyz) == 1: xyz = xyz[0]
         return xyz if pair is None else (xyz, pair)
 
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
-        kw = ipd.Bunch(kw)
+        kw = ipd.dev.Bunch(kw)
         origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]

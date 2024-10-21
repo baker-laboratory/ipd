@@ -1,7 +1,7 @@
 import contextlib
 import copy
 import functools
-from ipd import Bunch
+from ipd.dev import Bunch
 from ipd.homog.hgeom import *
 from ipd.sym.symframes import *
 
@@ -263,7 +263,7 @@ def symelem_associations(sym=None, symelems=None):
         for i in range(1, s.nfold):
             nbrs.append(n)
             n += 1
-        assoc.append(ipd.Bunch(nbrs=nbrs, symelem=s))
+        assoc.append(ipd.dev.Bunch(nbrs=nbrs, symelem=s))
     return assoc
 
 def remove_if_same_axis(frames, bbaxes, onesided=True, partial_ok=False):

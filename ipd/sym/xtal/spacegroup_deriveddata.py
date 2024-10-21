@@ -14,7 +14,7 @@ from ipd.sym.xtal.SymElem import ComponentIDError, _make_operator_component_join
 def _get_spacegroup_data():
     sgdata = dict()
     if have_package_data('spacegroup_data'):
-        sgdata = load_package_data('spacegroup_data.pickle')
+        sgdata = load_package_data('spacegroup_data')
 
     sg_frames_dict = sgdata.get('sg_frames_dict', dict())
     sg_cheshire_dict = sgdata.get('sg_cheshire_dict', dict())

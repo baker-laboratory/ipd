@@ -279,8 +279,11 @@ class ClientBase:
         thingtype = thing.__class__.__name__.lower()
         return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
 
+    def preprocess_get(self, kw):
+        return kw
+
     def get(self, url, **kw):
-        ipd.ppp.fix_label_case(kw)
+        kw = self.preprocess_get(kw)
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
         if self.testclient:

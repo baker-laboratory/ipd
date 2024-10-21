@@ -28,7 +28,7 @@ def pymol_frame(_FUNCTION_):
         name += "_%i" % state["seenit"][name]
 
         bunch = _FUNCTION_(*args, name=name, delprev=delprev, state=state, **kw)
-        bunch = bunch or ipd.Bunch(cgo=None)
+        bunch = bunch or ipd.dev.Bunch(cgo=None)
 
         if bunch.cgo:
             if addtocgo is not None:

@@ -73,6 +73,7 @@ def test_helix_scaling():
 
 @pytest.mark.fast
 def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
+    pytest.importorskip('torch')
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0.5)
     hframes = h.frames(xtalrad=80, closest=7, radius=100, spacing=40, coils=2)
     foo = np.array([
@@ -123,6 +124,7 @@ def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
 
 @pytest.mark.fast
 def test_helix_7_1_1_r80_s30_p20_t1_c7():
+    pytest.importorskip('torch')
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0.2)
     hframes = h.frames(closest=9, radius=80, spacing=30, coils=1)
     foo = np.array([

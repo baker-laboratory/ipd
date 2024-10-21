@@ -28,7 +28,7 @@ def place_asu_grid_multiscale(
     **kw,
 ):
     # print('place_asu_grid_multiscale', repr(pos), cellsize, flush=True)
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
 
     assert kw.lbub < 1
     assert kw.lbubcell < 1

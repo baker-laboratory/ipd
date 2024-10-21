@@ -64,7 +64,7 @@ def compute_symfit(
     target_sub_com_testpoint=None,
     **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     sym = sym.lower()
 
     iscyclic = sym.startswith("c")
@@ -284,7 +284,7 @@ def cyclic_sym_err(pair, angle):
     return err
 
 def symops_from_frames(*, sym, frames, **kw):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     assert len(frames) > 1
     assert frames.shape[-2:] == (4, 4)
     pairs = dict()
@@ -754,7 +754,7 @@ def symfit_mc_play(
     headless=False,
     **kw,
 ):
-    kw = ipd.Bunch(kw, _strict=False)
+    kw = ipd.dev.Bunch(kw, _strict=False)
 
     if "timer" not in kw:
         kw.timer = ipd.dev.Timer()
@@ -973,7 +973,7 @@ def symfit_mc_play(
 
     # t.report()
 
-    return ipd.Bunch(nsamp=isamp + 1, besterr=besterr, symerr=symerr, frames=frames, start_err=err0)
+    return ipd.dev.Bunch(nsamp=isamp + 1, besterr=besterr, symerr=symerr, frames=frames, start_err=err0)
 
 def symframes_coherence(frames):
     frames = frames.reshape(-1, 4, 4)
@@ -988,7 +988,7 @@ def wrapper(*args, **kwargs):
     try:
         return symfit_mc_play(*args, **kwargs)
     except:
-        return ipd.Bunch(nsamp=9999, besterr=999, symerr=999)
+        return ipd.dev.Bunch(nsamp=9999, besterr=999, symerr=999)
 
 def symfit_parallel_convergence_trials(**kw):
     # ====== Octahedral convergence ======
@@ -1017,7 +1017,7 @@ def symfit_parallel_convergence_trials(**kw):
     import concurrent.futures as cf
     from collections import defaultdict
 
-    kw = ipd.Bunch()
+    kw = ipd.dev.Bunch()
     ntrials = 32
     kw.goalerr = 0.1
     kw.maxiters = 10_000
@@ -1060,7 +1060,7 @@ def symfit_parallel_mc_scoreterms_trials(**kw):
     termsset = list(str.join("", combo) for combo in termsset)
     # termsset = ['C']
 
-    kw = ipd.Bunch()
+    kw = ipd.dev.Bunch()
     ntrials = 100
     kw.goalerr = 0.1
     kw.maxiters = 2000

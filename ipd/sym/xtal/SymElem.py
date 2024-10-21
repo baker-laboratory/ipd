@@ -92,7 +92,7 @@ class SymElem:
         isunit=None,
         latticetype=None,
     ):
-        self._init_args = ipd.Bunch(vars()).without("self")
+        self._init_args = ipd.dev.Bunch(vars()).without("self")
         self.vizcol = vizcol
         self.scale = scale
 

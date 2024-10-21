@@ -43,25 +43,11 @@ def test_spacegroup_identify_chiral():
     assert len(ipd.sym.xtal.sg_all_chiral) == 65
 
 @pytest.mark.fast
-def test_spacegroup_frames_sanity_check():
-    seenit = []
-    # for sym in ipd.sym.xtal.sg_all_chiral:
-    count = 0
-    for sym in ipd.sym.xtal.sg_all:
-        if not ipd.sym.xtal.sg_is_chiral(sym): continue
-        f = ipd.sym.xtal.sgframes(sym, cells=3, cellgeom="nonsingular")
-        if not ipd.homog.hvalid(f):
-            assert not ipd.sym.xtal.sg_is_chiral(sym)
-        # ic(sym)
-        count += 1
-        # ipd.showme(f @ ipd.homog.htrans([0.01, 0.015, 0.02]), scale=10, name=sym)
-        # assert 0
-        for sym2, f2 in seenit:
-            if f.shape == f2.shape and np.allclose(f, f2):
-                ic("IDENT", sym, sym2)
-        seenit.append((sym, f))
-    ic(count)
-    # assert 0
+@pytest.mark.parametrize('sym', ipd.sym.xtal.sg_all_chiral)
+def test_spacegroup_frames_sanity_check(sym):
+    f = ipd.sym.xtal.sgframes(sym, cells=3, cellgeom="nonsingular")
+    if not ipd.homog.hvalid(f):
+        assert not ipd.sym.xtal.sg_is_chiral(sym)
 
 @pytest.mark.fast
 def test_spacegroup_lattice_transpose_bug():

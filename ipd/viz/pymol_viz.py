@@ -24,7 +24,7 @@ from ipd.viz.pymol_cgo import *
 import ipd.viz.primitives as prim
 # from ipd.sym.xtal.spacegroup_util import tounitcellpts
 
-_showme_state = ipd.Bunch(
+_showme_state = ipd.dev.Bunch(
     launched=0,
     seenit=defaultdict(lambda: -1),
     _nsymops=0,
@@ -188,7 +188,7 @@ def pymol_viz_list(
     topcolors=[],
     **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
 
     if iscgo(toshow):
         pymol.cmd.load_cgo(toshow, name)
@@ -333,7 +333,7 @@ def pymol_visualize_xforms(
         showneg=False,
         **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     if perturb != 0:
         raise NotImplementedError
 
@@ -433,7 +433,7 @@ def pymol_visualize_xforms(
         for ix, xform in enumerate(xforms):
             mycgo += cgo_cyl(center, xform[:, 3], rays, col=col1)
 
-    return ipd.Bunch(cgo=mycgo)
+    return ipd.dev.Bunch(cgo=mycgo)
 
 def show_ndarray_lines(
     toshow,
@@ -602,7 +602,7 @@ def show_ndarray_point_or_vec(
     scale=1,
     **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     with contextlib.suppress(ImportError):
         import torch as th
         if isinstance(toshow, th.Tensor):
@@ -647,7 +647,7 @@ def show_ndarray_point_or_vec(
             else:
                 raise NotImplementedError
 
-    return ipd.Bunch(cgo=cgo, colors=colors)
+    return ipd.dev.Bunch(cgo=cgo, colors=colors)
 
 @pymol_frame
 def show_array_ncacoh(
@@ -667,7 +667,7 @@ def show_array_ncacoh(
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', 'name N+CA+C')
-    return ipd.Bunch(pymol_object=name)
+    return ipd.dev.Bunch(pymol_object=name)
 
 @pymol_frame
 def show_ndarray_n_ca_c(
@@ -688,7 +688,7 @@ def show_ndarray_n_ca_c(
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', f'{name} and name N+CA+C')
-    return ipd.Bunch(pymol_object=name)
+    return ipd.dev.Bunch(pymol_object=name)
 
 def iscgo(maybecgo):
     return isinstance(maybecgo[0], float)

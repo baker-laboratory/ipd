@@ -138,7 +138,7 @@ class WorkflowStepGui:
 class WorkflowCreatorGui(ToggleCommands):
     def __init__(self, parent, state, remote):
         self.sharedstate = state
-        state = ipd.Bunch(_strict=False, cmds={}, active_cmds=set(), showallcmds=True, findcmd='')
+        state = ipd.dev.Bunch(_strict=False, cmds={}, active_cmds=set(), showallcmds=True, findcmd='')
         super().__init__(parent, state, remote)
         self.name = self.__class__.__name__
         uifile = os.path.join(os.path.dirname(__file__), 'gui_workflows.ui')

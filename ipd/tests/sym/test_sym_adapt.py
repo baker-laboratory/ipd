@@ -125,7 +125,7 @@ def test_sym_adapt_tensor_3d():
 def _dispatch_symfunc_on_type_shape(*a, **kw):
     '''take in args and decides what kind of symmetry func to use
      sortof a poor mans doubledispatch'''
-    kw = ipd.Bunch(kw, _strict=False)
+    kw = ipd.dev.Bunch(kw, _strict=False)
     if len(a) == 3:
         raise ValueError('apply_symmetry only accepts <= 2 args')
     if len(a) == 2:

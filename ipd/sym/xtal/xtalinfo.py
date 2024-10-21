@@ -41,60 +41,60 @@ def _populate__xtal_info_dict():
     ##################################################################################
     # yapf: disable
     _xtal_info_dict = {
-      # 'P 4 3 2'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    # C4 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 1 ]) / 2 ),
       #    C4 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 1, 0, 1 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 443'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 443'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C4 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 1 ]) / 2 ),
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 1, 0, 1 ]) / 2 ),
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 43'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 43'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 1, 0, 1 ]) / 2 ),
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 43'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 43'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 1, 0, 1 ]) / 2 ),
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 322'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 322'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 0 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 422'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 422'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 0 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 432'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 432'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 0 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 4322'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 4322'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 0 ]) / 2 ),
       # ]),
-      # 'P 4 3 2 432D2'   : ipd.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
+      # 'P 4 3 2 432D2'   : ipd.dev.Bunch( nsub=24 , spacegroup='P 4 3 2', symelems=[
       #    C4 ( axis= [ 0,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  1,  0 ] , cen= A([ 0, 0, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 0 ]) / 2 ),
       #    C2 ( axis= [ 1,  0,  1 ] , cen= A([ 0, 1, 0 ]) / 2 ),
       # ]),
-      # 'F 4 3 2'   : ipd.Bunch( nsub=96 , spacegroup='F 4 3 2', symelems=[
+      # 'F 4 3 2'   : ipd.dev.Bunch( nsub=96 , spacegroup='F 4 3 2', symelems=[
       #    C4 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 0, 1 ]) / 2 ),
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 2,-1,-1 ]) / 6 ),
       #    # C4 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 1 ]) / 2 ),
       #    # C3 ( axis= [ 1,  1,  1 ] , cen= A([ 4, 1, 1 ]) / 6 ),
       #    # C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 6 ),
       # ]),
-      # 'I 4 3 2 432'   : ipd.Bunch( nsub=48 , spacegroup='I 4 3 2', symelems=[
+      # 'I 4 3 2 432'   : ipd.dev.Bunch( nsub=48 , spacegroup='I 4 3 2', symelems=[
       #    C4 ( axis= [ 0,  0,  1 ] , cen= A([ 0, 0, 0 ]) / 1 ),
       #    C3 ( axis= [ 1,  1, -1 ] , cen= A([ 0, 0, 0 ]) / 1 ),
       #    C2 ( axis= [ 0,  1,  1 ] , cen= A([ 1, 1,-1 ]) / 4 ),
@@ -102,30 +102,30 @@ def _populate__xtal_info_dict():
       #    # C2 ( axis= [ 0,  1,  1 ] , cen= A([ 1, 1, 1 ]) / 2 ),
       # ]),
 
-      # 'P 2 3'    : ipd.Bunch( nsub=12 , spacegroup='P 2 3', symelems=[
+      # 'P 2 3'    : ipd.dev.Bunch( nsub=12 , spacegroup='P 2 3', symelems=[
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 1, 1, 1 ]) / 2, label='C3_111_000' ),
       #    C2 ( axis= [ 0,  0,  1 ] , cen= A([ 1, 1, 0 ]) / 2, label='C2_001_000' ),
       #    # C2 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 1, 0 ]) / 2, label='C2_100_010' ),
       # ]),
-      # 'P 21 3'   : ipd.Bunch( nsub=12 , spacegroup='P 21 3', symelems=[
+      # 'P 21 3'   : ipd.dev.Bunch( nsub=12 , spacegroup='P 21 3', symelems=[
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 2, vizcol=(0.0, 1.0, 1.0), label='A' ),
       #    C3 ( axis= [ 1,  1, -1 ] , cen= A([ 1, 0, 1 ]) / 2, vizcol=(0.3, 1, 0.7), label='B' ),
       # ]),
-      # 'I 21 3'   : ipd.Bunch( nsub=24 , spacegroup='I 21 3', symelems=[
+      # 'I 21 3'   : ipd.dev.Bunch( nsub=24 , spacegroup='I 21 3', symelems=[
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 1 ),
       #    C2 ( axis= [ 0,  0,  1 ] , cen= A([ 2, 1, 0 ]) / 4 ),
       # ]),
-      # 'P 41 3 2'  : ipd.Bunch( nsub=24 , spacegroup='P 41 3 2', symelems=[
+      # 'P 41 3 2'  : ipd.dev.Bunch( nsub=24 , spacegroup='P 41 3 2', symelems=[
       #    C3 ( axis= [ 1,  1,  1 ] , cen= A([ 0, 0, 0 ]) / 1 ),
       #    C2 ( axis= [ 1,  0,  1 ] , cen= A([ 2, 1, 0 ]) / 8 ),
       # ]),
-      # 'I 41 3 2' : ipd.Bunch( nsub=48, spacegroup='I 41 3 2', symelems=[
+      # 'I 41 3 2' : ipd.dev.Bunch( nsub=48, spacegroup='I 41 3 2', symelems=[
       # D3 ( axis= [ 1,  1,  1 ] , axis2= [ 1, -1,  0 ] , cen= A([ 1, 1, 1 ]) / 8, label='D3_111_1m0_111_8' , vizcol=(0, 1, 0)),
       # D2 ( axis= [ 1,  0,  0 ] , axis2= [ 0, -1,  1 ] , cen= A([ 1, 0, 2 ]) / 8, label='D2_100_0m1_102_8' , vizcol=(0, 1, 1)),
       # D3 ( axis= [ 1,  1,  1 ] , axis2= [ 1, -1,  0 ] , cen= A([-1,-1,-1 ]) / 8, label='D3_111_1m0_mmm_8' , vizcol=(1, 0, 0)),
       # D2 ( axis= [ 1,  0,  0 ] , axis2= [ 0, -1,  1 ] , cen= A([-1, 0,-2 ]) / 8, label='D2_100_0m1_m12m_8', vizcol=(1, 1, 0)),
       # ]),
-      # #'I 41 3 2' : ipd.Bunch( nsub=48, spacegroup='I 41 3 2', symelems=[
+      # #'I 41 3 2' : ipd.dev.Bunch( nsub=48, spacegroup='I 41 3 2', symelems=[
       # #   C3 ( axis= [ 1,  1,  1 ] , cen= A([ 1, 1, 1 ]) / 8, label='D3_111_1m0_111_8' , vizcol=(0, 1, 0)),
       # #   C2 ( axis= [ 1, -1,  0 ] , cen= A([ 1, 1, 1 ]) / 8, label='D3_111_1m0_111_8' , vizcol=(0, 1, 0)),
       # #   C2 ( axis= [ 1,  0,  0 ], cen= A([ 1, 0, 2 ]) / 8, label='D2_100_0m1_102_8' , vizcol=(0, 1, 1)),
@@ -135,7 +135,7 @@ def _populate__xtal_info_dict():
       # #   C2 ( axis= [ 1,  0,  0 ] , cen= A([-1, 0,-2 ]) / 8, label='D2_100_0m1_m12m_8', vizcol=(1, 1, 0)),
       # #   C2 ( axis= [ 0, -1,  1 ] , cen= A([-1, 0,-2 ]) / 8, label='D2_100_0m1_m12m_8', vizcol=(1, 1, 0)),
       # #]),
-      'I4132_322' : ipd.Bunch( nsub=48, spacegroup='I 41 3 2', symelems=[
+      'I4132_322' : ipd.dev.Bunch( nsub=48, spacegroup='I 41 3 2', symelems=[
          # C3 ( axis= [ 1,  1,  1 ] , cen= A([ 2, 2, 2 ]) / 8, label='C3_111_1m0_111_8' , vizcol=(1, 0, 0)),
          # C2 ( axis= [ 1,  0,  0 ] , cen= A([ 3, 0, 2 ]) / 8, label='D2_100_0m1_102_8' , vizcol=(0, 1, 0)),
          # C2 ( axis= [ 1, -1,  0 ] , cen= A([-2.7, 0.7,-1 ]) / 8, label='D3_111_1m0_mmm_8' , vizcol=(0, 0, 1)),
@@ -143,24 +143,24 @@ def _populate__xtal_info_dict():
          C2 ( axis= [ 1,  0,  0 ] , cen= A([-1, 0, 2 ]) / 8, label='D2_100_0m1_102_8' , vizcol=(0, 1, 0)),
          C2 ( axis= [ 1,  1,  0 ] , cen= [-0.1625,  0.0875,  0.125 ], label='D3_111_1m0_mmm_8' , vizcol=(0, 0, 1)),
       ]),
-      'L6_32'   : ipd.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
+      'L6_32'   : ipd.dev.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
          C3 ( axis= [ 0,  0,  1 ] , cen= A([ 0, 0, 0 ])/2, vizcol=(0.0, 1.0, 1.0) ),
          C2 ( axis= [ 0,  0,  1 ] , cen= A([ 1, 0, 0 ])/2, vizcol=(0.3, 1, 0.7) ),
       ]),
-      'L6M_322' : ipd.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
+      'L6M_322' : ipd.dev.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
          C3 ( axis= [ 0,  0,  1 ] , cen= A([ 0, 0, 0 ])/2, vizcol=(0.0, 1.0, 1.0) ),
          C2 ( axis= [ 0,  0,  1 ] , cen= A([ 1, 0, 0 ])/2, vizcol=(0.3, 1, 0.7) ),
          C2 ( axis= [ 1,  0,  0 ] , cen= A([ 0, 0, 0 ])/2, vizcol=(0.5, 1, 0.8) ),
       ]),
-      'L4_44'   : ipd.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
+      'L4_44'   : ipd.dev.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
          C4 ( axis= [ 0,  0,  1 ] , cen= A([ 0, 0, 0 ])/2, vizcol=(0.0, 1.0, 1.0) ),
          C4 ( axis= [ 0,  0,  1 ] , cen= A([ 1, 0, 0 ])/2, vizcol=(0.3, 1, 0.7) ),
       ]),
-      'L4_42'   : ipd.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
+      'L4_42'   : ipd.dev.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
          C4 ( axis= [ 0,  0,  1 ] , cen= A([ 0, 0, 0 ])/2, vizcol=(0.0, 1.0, 1.0) ),
          C2 ( axis= [ 0,  0,  1 ] , cen= A([ 1, 0, 0 ])/2, vizcol=(0.3, 1, 0.7) ),
       ]),
-      'L3_33'   : ipd.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
+      'L3_33'   : ipd.dev.Bunch( nsub=None , spacegroup=None, dimension=2, symelems=[
          C3 ( axis= [ 0,  0,  1 ] , cen= A([ 0, 0, 0 ])/2, vizcol=(0.0, 1.0, 1.0) ),
          C3 ( axis= [ 0,  0,  1 ] , cen= A([ 1, 0, 0 ])/2, vizcol=(0.3, 1, 0.7) ),
       ]),
@@ -178,7 +178,7 @@ def _populate__xtal_info_dict():
     )
     for k in sg_frames_dict:
         if k not in sg_symelem_dict: continue
-        _xtal_info_dict[k] = ipd.Bunch(
+        _xtal_info_dict[k] = ipd.dev.Bunch(
             spacegroup=k,
             nsub=len(sg_frames_dict[k]),
             dimension=3,

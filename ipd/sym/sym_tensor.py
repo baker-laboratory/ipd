@@ -197,17 +197,17 @@ def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
 
     cls = cls or sym_tensor_types[f'FullSlicedAll{dim}{val}']
     symten = tensor.as_subclass(cls)
-    attr = ipd.Bunch(sym=sym,
-                    ordering=th.arange(sym.idx.L, dtype=int),
-                    symmask=th.ones(sym.idx.L, dtype=bool),
-                    resmask=th.ones(sym.idx.L, dtype=bool),
-                    origval=origval,
-                    origtype=origtype,
-                    origshape=origshape,
-                    orig=tensor.clone(),
-                    symdims=symdims,
-                    noupdate=False,
-                    symnoupdate=False)
+    attr = ipd.dev.Bunch(sym=sym,
+                         ordering=th.arange(sym.idx.L, dtype=int),
+                         symmask=th.ones(sym.idx.L, dtype=bool),
+                         resmask=th.ones(sym.idx.L, dtype=bool),
+                         origval=origval,
+                         origtype=origtype,
+                         origshape=origshape,
+                         orig=tensor.clone(),
+                         symdims=symdims,
+                         noupdate=False,
+                         symnoupdate=False)
 
     symten = cls(symten, attr)
     symten.attr.observers = set([symten])
@@ -491,7 +491,7 @@ SymTensorError = type('SymTensorError', (Exception, ), {})
 SymTensorTypeError = type('SymTensorTypeError', (SymTensorError, ), {})
 SymTensorIndexError = type('SymTensorIndexError', (SymTensorError, ), {})
 
-sym_tensor_types = ipd.Bunch()
+sym_tensor_types = ipd.dev.Bunch()
 base_types = dict()
 type_maps = dict()
 subbasenames = dict()

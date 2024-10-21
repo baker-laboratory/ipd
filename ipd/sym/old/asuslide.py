@@ -36,7 +36,7 @@ def asuslide(
     timer=None,
     **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
 
     if isinstance(cellsize, (int, float)):
         cellsize = [float(cellsize)] * 3
@@ -56,7 +56,7 @@ def asuslide(
       ipd.showme(slid)
       # slid.dump_pdb(f'/home/sheffler/DEBUG_slid_ipd.pdb')
       """)
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     kw.showme = showme
     if timer is None:
         timer = ipd.dev.Timer()

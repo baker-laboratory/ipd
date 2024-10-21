@@ -84,14 +84,14 @@ def test_state_manager(tmpdir):  # sourcery skip: extract-duplicate-method
         ''')
     at(state.activepoll).is_equal_to('poll1')
 
-    assert isinstance(state.polls, ipd.Bunch)
+    assert isinstance(state.polls, ipd.dev.Bunch)
     assert 'polls' in state._state
     assert 'polls' not in state._conf
     assert state._conf.__dict__['_special']['strict_lookup']
     assert not state._state.__dict__['_special']['strict_lookup']
     assert state._state.polls is state.polls
     assert not state.polls.__dict__['_special']['strict_lookup']
-    assert isinstance(state.polls['foo bar'], ipd.Bunch)
+    assert isinstance(state.polls['foo bar'], ipd.dev.Bunch)
 
 if __name__ == '__main__':
     main()

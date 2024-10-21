@@ -1,10 +1,7 @@
-import builtins
 import os
 from ipd.dev import lazyimport
 import ipd.dev.observer
-from ipd.dev import Bunch
-from ipd import dev, tests
-from ipd.dev.observer import hub, DynamicParameters
+from ipd.dev.observer import hub
 
 ci = lazyimport('ipd.ci')
 crud = lazyimport('ipd.crud')
@@ -18,6 +15,7 @@ qt = lazyimport('ipd.dev.qt')
 samp = lazyimport('ipd.samp')
 sieve = lazyimport('ipd.sieve')
 sym = lazyimport('ipd.sym')
+tests = lazyimport('ipd.tests')
 tools = lazyimport('ipd.tools')
 viz = lazyimport('ipd.viz')
 voxel = lazyimport('ipd.voxel')

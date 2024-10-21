@@ -45,7 +45,7 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     '''
     Reads all options in conf.sym, and anything in extra_params
     '''
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     if conf is None:
         try:
             path = '../../../../rf_diffusion/config/inference/sym.yaml'
@@ -57,7 +57,7 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if isinstance(extra_params, Sequence):
         extra_params = {v.split('=')[0].lstrip('+'): parse(v.split('=')[1]) for v in extra_params}
 
-    opt = opt or ipd.DynamicParameters(
+    opt = opt or ipd.dev.DynamicParameters(
         ndesign=resolve_option('inference.num_designs', kw, conf, 1),
         ndiffuse=resolve_option('diffuser.T', kw, conf, 1),
         nrfold=40,

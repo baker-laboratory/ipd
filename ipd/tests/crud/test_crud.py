@@ -1,7 +1,5 @@
 import pytest
 
-pytest.importorskip('sqlmodel')
-pytest.importorskip('fastapi')
 from fastapi.testclient import TestClient
 import ipd
 import pydantic

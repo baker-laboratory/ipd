@@ -10,7 +10,7 @@ def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, 
 
     import pymol
 
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     v = pymol.cmd.get_view()
     state["seenit"][name] += 1
     cgo = list()
@@ -38,7 +38,7 @@ def pymol_viz_RigidBody(
         col=(1, 1, 1),
         **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     import pymol
 
     v = pymol.cmd.get_view()

@@ -47,7 +47,7 @@ def main():
                 choose_closest_frame=True,
                 showsymdups=True,
                 showsymops=True,
-                showopts=ipd.Bunch(
+                showopts=ipd.dev.Bunch(
                     cyc_ang_match_tol=0.3,
                     axisrad=0.19,
                     helicalrad=None,
@@ -173,7 +173,7 @@ def main():
     # errs = list()
     # for i in range(5):
     #     errs.append(test_symops_cen_imperfect(nsamp=20, manual=True))
-    # err = ipd.Bunch().accumulate(errs)
+    # err = ipd.dev.Bunch().accumulate(errs)
     # err.reduce(max)
     # print(err)
 
@@ -553,7 +553,7 @@ def test_symops_cen_imperfect(nsamp=20, manual=False, **kw):
     # print(a)
     # assert 0
 
-    kw = ipd.Bunch()
+    kw = ipd.dev.Bunch()
     kw.tprelen = 20
     kw.tprerand = 2
     kw.tpostlen = 20
@@ -594,7 +594,7 @@ def test_symops_cen_imperfect(nsamp=20, manual=False, **kw):
         assert np.allclose(radius, symfit.radius, atol=kw.cart_sd_fuzz * 10)
 
     np.sort(all_cen_err)
-    err = ipd.Bunch()
+    err = ipd.dev.Bunch()
     err.mean = np.mean(all_cen_err)
     err.mean1 = np.mean(all_cen_err[1:-1])
     err.mean2 = np.mean(all_cen_err[2:-2])
@@ -610,7 +610,7 @@ def test_symops_cen_imperfect(nsamp=20, manual=False, **kw):
 
 @pytest.mark.fast
 def test_symfit_align_axes():
-    kw = ipd.Bunch()
+    kw = ipd.dev.Bunch()
     # kw.sym = np.random.choice('tet oct icos'.split())
     kw.sym = "tet"
     # kw.nframes = np.random.choice(6) + 6
@@ -677,7 +677,7 @@ def test_disambiguate_axes():
     # assert 0
 
 def _test_symfit_mc():
-    kw = ipd.Bunch()
+    kw = ipd.dev.Bunch()
     kw.tprelen = 10
     kw.tprerand = 0
     kw.tpostlen = 20

@@ -129,7 +129,7 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
     assert domc
 
     if domc:
-        state = ipd.Bunch(
+        state = ipd.dev.Bunch(
             cellsize=cellsize,
             # cartshift=np.array([0., 0, 0, 0]),
             cartshift=cartshift,
@@ -170,7 +170,7 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
         # torch.autograd.set_detect_anomaly(True)
 
         # check
-        v1 = npscorefunc(xtal, scom, ipd.Bunch(cellsize=cellsize, cartshift=cartshift))
+        v1 = npscorefunc(xtal, scom, ipd.dev.Bunch(cellsize=cellsize, cartshift=cartshift))
         v2 = torchscorefunc(xtal, scom, cellsize, cartshift, grad=False)
         assert np.allclose(v1, v2)
 

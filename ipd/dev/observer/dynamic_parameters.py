@@ -368,7 +368,7 @@ class DynamicParameters(Mapping):
             return "_".join(str(_) for _ in self._step)
 
     def to_bunch(self):
-        return ipd.Bunch(self, tag=self.tag)
+        return ipd.dev.Bunch(self, tag=self.tag)
 
     # @property
     # def progress(self):

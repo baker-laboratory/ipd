@@ -114,7 +114,7 @@ def fname_extensions(fname):
         extcomp = f".{c}"
     uncomp = f"{directory}{baseext}"
 
-    return ipd.Bunch(
+    return ipd.dev.Bunch(
         directory=directory,
         base=base,
         ext=ext,
@@ -172,7 +172,7 @@ def load_pickle(fname, add_dotpickle=True, assume_lzma=False, **kw):
             if "__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__" in stuff:
                 _special = stuff["__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__"]
                 del stuff["__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__"]
-                stuff = ipd.Bunch(stuff)
+                stuff = ipd.dev.Bunch(stuff)
                 stuff._special = _special
 
     return stuff
@@ -205,14 +205,14 @@ def save(stuff, fname, **kw):
 
 def save_pickle(stuff, fname, add_dotpickle=True, uselzma=False, **kw):
     opener = open
-    if isinstance(stuff, ipd.Bunch):
+    if isinstance(stuff, ipd.dev.Bunch):
         # pickle as dict to avoid version problems or whatever
         _special = stuff._special
         stuff = dict(stuff)
         stuff["__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__"] = _special
     if fname.endswith(".xz"):
         assert fname.endswith(".pickle.xz")
-        cachefile = os.path.expanduser(os.path.relpath(f"~/.wucache/{fname}"))
+        cachefile = os.path.expanduser(os.path.relpath(f"~/.cache/ipd/{fname}"))
         opener = lzma.open
         if os.path.exists(cachefile):
             os.remove(cachefile)
@@ -232,7 +232,7 @@ def save_pickle(stuff, fname, add_dotpickle=True, uselzma=False, **kw):
 class open_lzma_cached:
     def __init__(self, fname, mode="rb"):
         assert mode == "rb"
-        cachefile = os.path.expanduser(os.path.relpath(f"~/.ipd/filecache/{fname}"))
+        cachefile = os.path.expanduser(os.path.relpath(f"~/.cache/ipd/{fname}"))
         fname = os.path.abspath(fname)
         if not os.path.exists(cachefile):
             os.makedirs(os.path.dirname(cachefile), exist_ok=True)

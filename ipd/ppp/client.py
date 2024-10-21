@@ -14,7 +14,6 @@ _wpcgit = 'git+https://github.com/willsheffler/wills_pymol_crap'
 wills_pymol_crap = ipd.lazyimport('wills_pymol_crap', _wpcgit, pip=True)
 pymol = ipd.lazyimport('pymol', 'pymol-bundle', mamba=True, channels='-c schrodinger')
 print = rich.print
-
 _GLOBAL_CLIENT = None
 
 def get_hack_fixme_global_client():
@@ -30,6 +29,9 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         assert self.get('/')['msg'] == 'Hello World'
         global _GLOBAL_CLIENT
         _GLOBAL_CLIENT = self  #there should be a better way to do this
+
+    def preprocess_get(self, kw):
+        return ipd.ppp.fix_label_case(kw)
 
     def upload_poll(self, poll):
         print('upload_poll')
@@ -80,7 +82,6 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
 
     # def create_poll(self, poll):
     # self.post('/poll', json=json.loads(poll.model_dump_json()))
-
     def reviews_for_fname(self, fname):
         fname = fname.replace('/', '__DIRSEP__')
         rev = self.get(f'/reviews/byfname/{fname}')

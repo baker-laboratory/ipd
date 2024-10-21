@@ -53,7 +53,7 @@ def asufit(
 ):
     ic("asufit", sym)
 
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     asym = ipd.dock.rigid.RigidBody(coords, contact_coords, **kw)
     if frames is None:
         frames = ipd.sym.frames(sym)
