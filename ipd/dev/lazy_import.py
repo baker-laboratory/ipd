@@ -38,17 +38,20 @@ class LazyModule:
         except (ValueError, AssertionError, ModuleNotFoundError):
 
             if self._mamba:
-                mamba = sys.executable.replace('/bin/python', '')
-                *mamba, env = mamba.split('/')
-                # mamba = '/'.join(mamba[:-1])+'/bin/mamba'
-                mamba = 'mamba'
-                cmd = f'{mamba} activate {env} && {mamba} install {self._channels} {self._package}'
-                result = subprocess.check_call(cmd.split(), shell=True)
-                assert 'error' not in result.lower()
+                self._try_mamba_install()
             try:
                 return import_module(self._name)
             except (ValueError, AssertionError, ModuleNotFoundError):
                 return self._pipimport()
+
+    def _try_mamba_install(self):
+        mamba = sys.executable.replace('/bin/python', '')
+        *mamba, env = mamba.split('/')
+        # mamba = '/'.join(mamba[:-1])+'/bin/mamba'
+        mamba = 'mamba'
+        cmd = f'{mamba} activate {env} && {mamba} install {self._channels} {self._package}'
+        result = subprocess.check_call(cmd.split(), shell=True)
+        assert 'error' not in result.lower()
 
     def _pipimport(self):
         global _skip_global_install
@@ -61,7 +64,7 @@ class LazyModule:
                         sys.stderr.write(f'PIPIMPORT {self._package}\n')
                         result = subprocess.check_call(
                             f'{sys.executable} -mpip install {self._package}'.split())
-                    except:
+                    except:  # noqa
                         pass
             try:
                 return import_module(self._name)
@@ -73,7 +76,7 @@ class LazyModule:
                         result = subprocess.check_call(
                             f'{sys.executable} -mpip install --user {self._package}'.split())
                         sys.stderr.write(result)
-                    except:
+                    except:  # noqa
                         pass
                 return import_module(self._name)
 

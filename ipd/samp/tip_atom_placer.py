@@ -4,7 +4,6 @@ from ipd.dev.lazy_import import lazyimport
 th = lazyimport('torch')
 
 import ipd
-import ipd
 from ipd import h
 import dataclasses
 from icecream import ic

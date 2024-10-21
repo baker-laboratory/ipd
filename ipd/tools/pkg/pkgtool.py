@@ -1,7 +1,6 @@
 # import os
 import sys
-from ipd.dev import CliBase, CB, KW
-from pydantic import DirectoryPath
+from ipd.dev import CliBase
 
 def main():
     tool  = PkgTool()

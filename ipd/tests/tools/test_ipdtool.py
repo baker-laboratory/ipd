@@ -1,5 +1,4 @@
 import os
-import tempfile
 import pytest
 from typer.testing import CliRunner
 import ipd
@@ -38,7 +37,7 @@ def test_setup_submodules():
 @pytest.mark.skip
 def test_ipdtool_ci_update():
     if not os.path.isdir(os.path.expanduser('~/bare_repos')): return
-    result = run(f'ci update_repos ~/bare_repos')
+    result = run('ci update_repos ~/bare_repos')
     print(result.stdout)
 
 

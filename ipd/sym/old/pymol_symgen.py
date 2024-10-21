@@ -7,7 +7,7 @@ import functools
 from ipd.sym.pymol_xyzmath import Vec, Mat, Xform, RAD, projperp, SYMTET, SYMOCT, isvec, randnorm, Ux, Uz
 
 try:
-    from ipd.viz.pymol_cgo import cgo_cyl, cgo_sphere, cgo_segment
+    from ipd.viz.pymol_cgo import cgo_cyl, cgo_sphere, cgo_segment  # noqa
     import pymol
     from pymol import cmd
 

@@ -1,5 +1,4 @@
 import ipd
-import functools
 import typer
 from ipd.dev.types import KW
 from typing import Self

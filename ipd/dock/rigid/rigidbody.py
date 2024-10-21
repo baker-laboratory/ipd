@@ -317,7 +317,7 @@ class RigidBody:
     def position(self, newposition):
         if newposition.shape[-2:] != (4, 4):
             raise ValueError("RigidBody position is 4,4 matrix (not point)")
-        if self.parent != None:
+        if self.parent is not None:
             # raise ValueError(f'RigidBody with parent cant have position set')
             self.parent.position = ipd.hinv(self.xfromparent) @ newposition
         self._position = newposition.reshape(4, 4)

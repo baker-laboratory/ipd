@@ -49,7 +49,7 @@ def load_json(f):
     with open(f, "r") as inp:
         return json.load(inp)
 
-def load_json(j, f, indent=True):
+def dump_json(j, f, indent=True):
     with open(f, "w") as out:
         return json.dump(j, out, indent=indent)
 

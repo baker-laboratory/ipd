@@ -168,7 +168,7 @@ def test_axisangcenhel_roundtrip():
 def test_th_axis_angle_cen_hel_vec():
     xforms = ipd.homog.hrand(100)
     xgeom = ipd.homog.axis_angle_cen_hel_of(xforms)
-    for i, (x, a, an, c, h) in enumerate(zip(xforms, *xgeom)):
+    for i, (x, a, an, c, h) in enumerate(zip(xforms, *xgeom)):  # noqa
         a2, an2, c2, h2 = ipd.homog.axis_angle_cen_hel_of(x)
         assert np.allclose(a, a2)
         assert np.allclose(an, an2)
@@ -468,7 +468,7 @@ def test_torch_rmsfit_grad():
             assert rms < 1e-3
 
 @pytest.mark.fast
-def test_th_axis_angle():
+def test_th_axis_angle():  # noqa
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
 
@@ -566,7 +566,7 @@ if __name__ == "__main__":
 
 # @pytest.mark.fast
 # def test_th_intersect_planes():
-
+# noqa
 #    p1 = th.tensor([0., 0, 0, 1], requires_grad=True)
 #    n1 = th.tensor([1., 0, 0, 0], requires_grad=True)
 #    p2 = th.tensor([0., 0, 0, 1], requires_grad=True)

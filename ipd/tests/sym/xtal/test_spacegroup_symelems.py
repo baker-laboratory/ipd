@@ -699,12 +699,6 @@ def test_symelems_I432(debug=False, **kw):
     helper_test_symelem('I432', val, debug, **kw)
 
 @pytest.mark.fast
-def test_symelems_R3(debug=False, **kw):
-    val = dict()
-    helper_test_symelem('R3', val, debug, **kw)
-
-
-@pytest.mark.fast
 def test_symelems_R32(debug=False, **kw):
     val = dict(
        C2=[
@@ -842,11 +836,6 @@ def test_symelems_P23(debug=False, **kw):
        ],
     )
     helper_test_symelem('P23', val, debug, **kw)
-
-@pytest.mark.fast
-def test_symelems_I41(debug=False, **kw):
-    val = dict()
-    helper_test_symelem('I41', val, debug, **kw)
 
 @pytest.mark.fast
 def test_symelems_I213(debug=False, **kw):

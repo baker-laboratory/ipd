@@ -376,7 +376,7 @@ def test_axis_angle_of_rand():
     # ic(np.linalg.norm(ax, axis=-1), 1.0)
     try:
         assert np.allclose(axis, ax)
-    except:
+    except:  # noqa
         ic("ax.shape", ax.shape)
         for u, v, w, x, y in zip(
                 axis.reshape(-1, 4),
@@ -1604,9 +1604,6 @@ def test_hrmsfit(trials=10):
             rms2 = hrms(q, hxform(rand_xform_small(1, 0.01, 0.001), qhat))
             # print(float(rms), float(rms2))
             assert rms2 > rms
-
-        import torch
-
         rms2, qhat2, xpqhat2 = h.rmsfit(torch.tensor(p), torch.tensor(q))
         assert np.allclose(rms, rms2)
         assert np.allclose(qhat, qhat2)

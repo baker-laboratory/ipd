@@ -21,6 +21,11 @@
     },
 	"build_systems": [
         {
+            "name": "ruff",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/rfdsym312/bin/ruff check  2>&1 | tee ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
             "name": "pytest",
             "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m pytest  -x 2>&1 | tee ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",

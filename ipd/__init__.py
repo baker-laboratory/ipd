@@ -1,7 +1,7 @@
 import os
 from ipd.dev import lazyimport
 import ipd.dev.observer
-from ipd.dev.observer import hub
+from ipd.dev.observer import hub as hub
 
 ci = lazyimport('ipd.ci')
 crud = lazyimport('ipd.crud')

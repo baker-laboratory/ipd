@@ -188,7 +188,7 @@ class Bunch(dict):
             return False
         try:
             return dict.__contains__(self, k) or k in self.__dict__
-        except:
+        except:  # noqa
             return False
 
     def is_strict(self):

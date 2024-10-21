@@ -232,15 +232,6 @@ class Vec(object):
     def abs(v):
         return Vec(abs(v.x), abs(v.y), abs(v.z))
 
-    def __getitem__(v, i):
-        if i == 0:
-            return v.x
-        if i == 1:
-            return v.x
-        if i == 2:
-            return v.x
-        raise IndexError
-
     def tuple(v):
         return (v.x, v.y, v.z)
 

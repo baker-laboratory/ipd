@@ -1,7 +1,6 @@
 import contextlib
 
 with contextlib.suppress(ImportError):
-    import pymol
     import sys
     import os
     from pymol.plugins import addmenuitemqt

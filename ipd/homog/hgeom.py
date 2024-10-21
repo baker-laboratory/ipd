@@ -1,7 +1,6 @@
 import copy
 import sys
 import collections
-import ipd
 
 import numpy as np
 
@@ -30,9 +29,9 @@ def to_xyz(x):
     return x
 
 def hvalid(stuff, is_points=None, strict=False, **kw):
-    if stuff.shape[-2:] == (4, 4) and not is_points == True:
+    if stuff.shape[-2:] == (4, 4) and not is_points:
         return hvalid44(stuff, **kw)
-    if stuff.shape[-2:] == (4, 2) and not is_points == True:
+    if stuff.shape[-2:] == (4, 2) and not is_points:
         return is_valid_rays(stuff)
     elif stuff.shape[-1] == 4 and strict:
         return np.allclose(stuff[..., 3], 0) or np.allclose(stuff[..., 3], 1)

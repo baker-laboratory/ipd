@@ -1,7 +1,6 @@
 import random
 import sys
 import ipd
-import ipd
 import tempfile
 try:
     import pymol

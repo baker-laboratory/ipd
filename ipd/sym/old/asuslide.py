@@ -333,7 +333,7 @@ def slide_cellsize(
     nbrs = None
     if scalecoords is not None:
         assembly.scale_com_with_cellsize = scalecoords
-    elif ignoreimmobile and assembly.sym != None:
+    elif ignoreimmobile and assembly.sym is not None:
         nbrs = []
         assoc = ipd.sym.xtal.symelem_associations(assembly.sym)
         # ic(assoc)

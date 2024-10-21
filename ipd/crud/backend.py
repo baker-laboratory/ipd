@@ -175,7 +175,7 @@ class BackendBase:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
         if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)
-        if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)
+        if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)  # noqa
         # print(statement)
         # if statement._get_embedded_bindparams():
         # print({p.key: p.value for p in statement._get_embedded_bindparams()})
@@ -363,10 +363,10 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
                 # print(refkind, link, list[dbclsname[kind]], 'Rel. backpop', attr[:-2])
                 body[refkind][link] = sqlmodel.Relationship(back_populates=attr[:-2])
                 anno[refkind][link] = list[dbclsname[kind]]
-            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == dict:
+            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == dict:  # noqa
                 body[kind][attr] = attrs_default()
                 anno[kind][attr] = Attrs
-            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:
+            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:  # noqa
                 args = typing.get_args(field.annotation)
                 # print(kind, attr, args)
                 if args[0] in specnames or args[0] in spec_models.values():
@@ -424,7 +424,7 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
             ano = trimspec.__annotations__.get(attr, None)
             ano = ano or trimspec.model_fields.get(attr, None)
             ano = getattr(ano, '__origin__', None)
-            if ano == list:
+            if ano == list:  # noqa
                 if attr in trimspec.model_fields: del trimspec.model_fields[attr]
                 if hasattr(trimspec, attr): delattr(trimspec, attr)
                 if attr in trimspec.__annotations__: del trimspec.__annotations__[attr]

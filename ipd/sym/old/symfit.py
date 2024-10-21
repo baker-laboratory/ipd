@@ -987,7 +987,7 @@ def symframes_coherence(frames):
 def wrapper(*args, **kwargs):
     try:
         return symfit_mc_play(*args, **kwargs)
-    except:
+    except:  # noqa
         return ipd.dev.Bunch(nsamp=9999, besterr=999, symerr=999)
 
 def symfit_parallel_convergence_trials(**kw):
