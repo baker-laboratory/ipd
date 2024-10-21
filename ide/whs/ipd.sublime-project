@@ -47,7 +47,7 @@
         },
         {
             "name": "test citool",
-            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd.tools.citool 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd ci tests ruff 2>&1 | tee ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
         {

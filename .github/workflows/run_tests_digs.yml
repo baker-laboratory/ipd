@@ -14,22 +14,20 @@ jobs:
 
     - name: setup
       run: |
-        ~/ci/bin/python -m ipd ci repo update_library
-        ~/ci/bin/python -m ipd ci repo setup_submodules
+        ipd ci repo update_library
+        ipd ci repo setup_submodules
 
     - name: run ruff
       run: |
-        ruff check 2>&1 | tee ruff.log
+        ipd ci tests ruff
 
     - name: run pytest digs
       run: |
-        ~/ci/bin/pytest 2>&1 | tee pytest.log
+        ipd ci tests pytest
 
     - name: check test results
       run: |
-        conda activate ci
-        echo $(which python)
-        ~/ci/bin/python -m ipd.tests.check_test_results
+        ipd ci tests check
 
     # - name: build docs
     #   run: |

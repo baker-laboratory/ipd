@@ -26,6 +26,7 @@ class CliBase:
                 # print('add command', cls, attr)
                 method = getattr(newself, attr)
                 setattr(cls, attr, cls.__app__.command(attr)(method))
+                # setattr(CliBase, attr, getattr(cls, attr))
 
     @classmethod
     def __set_relationships__(cls: CB, **kw: KW) -> None:

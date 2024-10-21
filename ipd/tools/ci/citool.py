@@ -1,4 +1,6 @@
+import sys
 import shutil
+import glob
 import git
 import os
 import ipd
@@ -52,3 +54,37 @@ class RepoTool(CITool):
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.bash(f'cd {path} && git clone --bare {url}')
+
+class TestsTool(CITool):
+    def run(self):
+        TestsTool.ruff()
+        TestsTool.pytest()
+
+    def ruff(self):
+        ipd.dev.bash('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log')
+
+    def pytest(self):
+        ipd.dev.bash(f'{sys.executable} -m pytest 2>&1 | tee pytest_ipd_ci_test_run.log')
+
+    def check(self, path: DirectoryPath = '.'):
+        fail = False
+        for f in glob.glob('pytest*.log'):
+            with open(f) as inp:
+                lines = inp.readlines()
+                fail |= 'failed' in lines[-1]
+                for line in lines:
+                    fail |= 'ERROR' in line
+                    fail |= 'FAILED' in line
+                    fail |= 'FATAL' in line
+                    fail |= 'Error while loading ' in line
+            if fail:
+                print('PYTEST FAILED:', f)
+                print(str.join('', lines))
+        for f in glob.glob('ruff*.log'):
+            with open(f) as inp:
+                lines = inp.readlines()
+                if 'All checks passed!' not in lines[-1]:
+                    print('RUFF FAILED')
+                    print(str.join('', lines))
+                    fail = True
+        assert not fail
