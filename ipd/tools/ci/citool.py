@@ -22,6 +22,18 @@ class CITool(ipd.tools.IPDTool):
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
+    def update_library(self, path: Path = '~/bare_repos'):
+        path = os.path.expanduser(path)
+        assert os.path.isdir(path)
+        for repo, url in self.repos.items():
+            repo_dir = f'{path}/{repo}.git'
+            if os.path.isdir(repo_dir):
+                print(f'Directory {repo_dir} exists. Fetching latest changes...')
+                ipd.dev.bash(f'git --git-dir={repo_dir} fetch')
+            else:
+                print(f'Directory {repo_dir} does not exist. Cloning repository...')
+                ipd.dev.bash(f'cd {path} && git clone --bare {url}')
+
 def get_repo(path):
     repo = git.Repo(path, search_parent_directories=True)
     repodir = repo.git.rev_parse("--show-toplevel")
@@ -43,18 +55,6 @@ class RepoTool(CITool):
         with ipd.dev.cd(path):
             init_submodules(repo, repolib)
 
-    def update_library(self, path: Path = '~/bare_repos'):
-        path = os.path.expanduser(path)
-        assert os.path.isdir(path)
-        for repo, url in self.repos.items():
-            repo_dir = f'{path}/{repo}.git'
-            if os.path.isdir(repo_dir):
-                print(f'Directory {repo_dir} exists. Fetching latest changes...')
-                ipd.dev.bash(f'git --git-dir={repo_dir} fetch')
-            else:
-                print(f'Directory {repo_dir} does not exist. Cloning repository...')
-                ipd.dev.bash(f'cd {path} && git clone --bare {url}')
-
 class TestsTool(CITool):
     def run(self):
         TestsTool.ruff()
@@ -63,14 +63,17 @@ class TestsTool(CITool):
     def ruff(self):
         ipd.dev.bash('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log')
 
-    def pytest(self,
-               slurm: bool = False,
-               gpu: bool = False,
-               exe: Path = sys.executable,
-               threads: int = 1,
-               log: Path = 'pytest_ipd_ci_test_run.log',
-               mark: str = '',
-               parallel: int = 1):
+    def pytest(
+        self,
+        slurm: bool = False,
+        gpu: bool = False,
+        exe: Path = sys.executable,
+        threads: int = 1,
+        log: Path = 'pytest_ipd_ci_test_run.log',
+        mark: str = '',
+        parallel: int = 1,
+        timeout: int = 60,
+    ):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
@@ -86,15 +89,15 @@ class TestsTool(CITool):
             executor = submitit.AutoExecutor(folder='slurm_logs_%j')
             if gpu: executor.update_parameters(slurm_partition='gpu', gres=f'gpu:{gpu}:1')
             if parallel == 1:
-                executor.update_parameters(timeout_min=4, mem='16G', cpus_per_task=1)
+                executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
                 cmd = f'{threads} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}.log'
                 job = executor.submit(ipd.dev.bash, cmd)
                 job.result()
             else:
-                executor.update_parameters(timeout_min=4, mem='32G', cpus_per_task=parallel)
+                executor.update_parameters(timeout_min=timeout, slurm_mem='32G', cpus_per_task=parallel)
                 cmd = f'{threads} PYTHONPATH=. {exe} {mark} -m "not noparallel" {par} 2>&1 | tee {log}.parallel.log'
                 parallel_job = executor.submit(ipd.dev.bash, cmd)
-                executor.update_parameters(timeout_min=4, mem='16G', cpus_per_task=1)
+                executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
                 cmd = f'{threads} PYTHONPATH=. {exe} {mark} -m noparallel 2>&1 | tee {log}.noparallel.log'
                 nonparallel_job = executor.submit(ipd.dev.bash, cmd)
                 parallel_job.result()

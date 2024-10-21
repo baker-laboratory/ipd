@@ -23,7 +23,7 @@ class CliBase:
         cmds = [m for m in cls.__dict__ if callable(getattr(cls, m)) and m[0] != '_']
         for attr in cmds:
             with ipd.dev.cast(cls, self) as newself:
-                print('add command', cls, attr)
+                # print('add command', cls, attr)
                 method = getattr(newself, attr)
                 setattr(cls, attr, cls.__app__.command(attr)(method))
                 # setattr(CliBase, attr, getattr(cls, attr))
