@@ -23,7 +23,7 @@ class CliBase:
         cmds = [m for m in cls.__dict__ if callable(getattr(cls, m)) and m[0] != '_']
         for attr in cmds:
             with ipd.dev.cast(cls, self) as newself:
-                # print('add command', cls, attr)
+                print('add command', cls, attr)
                 method = getattr(newself, attr)
                 setattr(cls, attr, cls.__app__.command(attr)(method))
                 # setattr(CliBase, attr, getattr(cls, attr))
@@ -51,13 +51,12 @@ class CliBase:
             cls.__parent__.__app__.add_typer(cls.__app__, name=cls.__name__.replace('Tool', '').lower())
 
     def __init_subclass__(cls: CB, **kw: KW):
-        # print('init_subclass', cls)
         assert not cls.__module__.startswith('__main__')
         super().__init_subclass__(**kw)
         cls.__set_relationships__(**kw)
 
     def __init__(self, **kw):
-        # print(self.__class__, self.__descendants__)
+        self.__class__.__add_all_cmds__(self, **kw)
         for cls in self.__descendants__:
             cls.__add_all_cmds__(self, **kw)
             cls.__init__(self, **kw)

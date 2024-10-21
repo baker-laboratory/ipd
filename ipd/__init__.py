@@ -38,14 +38,8 @@ def __getattr__(name):
         return ipd.sym.symmetrize
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-from collections import defaultdict
-from pathlib import Path
 from box import Box
-from functools import partial
 import builtins
 
 builtins.ic = ic
-builtins.Path = Path
 builtins.Box = Box
-builtins.partial = partial
-builtins.defaultdict = defaultdict

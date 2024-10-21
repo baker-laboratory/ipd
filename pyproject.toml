@@ -23,6 +23,7 @@ dependencies = [
     'requests',
     'ruff',
     'sqlmodel[standard]',
+    'submitit',
     'typer[all]',]
 
 [project.scripts]
@@ -41,7 +42,7 @@ exclude = [
     "**/__pycache__",
 ]
 defineConstant = { DEBUG = true }
-typeCheckingMode = "off"
+typeCheckingMode = "basic"
 reportMissingImports = true
 reportMissingTypeStubs = false
 pythonPlatform = "Linux"
