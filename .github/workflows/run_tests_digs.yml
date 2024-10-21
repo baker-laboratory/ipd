@@ -15,6 +15,7 @@ jobs:
     - name: setup
       run: |
         source /home/bench/.bashrc
+        alias ipd="/home/bench/.conda/envs/ci/bin/python -m ipd"
         ipd ci repo update_library
         ipd ci repo setup_submodules
 
@@ -24,11 +25,12 @@ jobs:
 
     - name: run pytest digs
       run: |
-        echo $(which python)
+        echo $(which pytest)
         pytest 2>&1 | tee pytest.log
 
     - name: check test results
       run: |
+        echo $(which python)
         python ipd/tests/check_test_results.py
 
     # - name: build docs
