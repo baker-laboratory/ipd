@@ -92,7 +92,7 @@ class TestsTool(CITool):
             if gpu: executor.update_parameters(slurm_partition='gpu', gres=f'gpu:{gpu}:1')
             if parallel == 1:
                 executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
-                cmd = f'{threads} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}.log'
+                cmd = f'{threads} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}'
                 print('SLURM run:', cmd, flush=True)
                 job = executor.submit(ipd.dev.bash, cmd)
                 job.result()
