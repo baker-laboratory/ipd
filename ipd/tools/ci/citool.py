@@ -93,14 +93,17 @@ class TestsTool(CITool):
             if parallel == 1:
                 executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
                 cmd = f'{threads} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}.log'
+                print('SLURM run:', cmd, flush=True)
                 job = executor.submit(ipd.dev.bash, cmd)
                 job.result()
             else:
                 executor.update_parameters(timeout_min=timeout, slurm_mem='32G', cpus_per_task=parallel)
                 cmd = f'{threads} PYTHONPATH=. {exe} {mark} -m "not noparallel" {par} 2>&1 | tee {log}.parallel.log'
+                print('SLURM run:', cmd, flush=True)
                 parallel_job = executor.submit(ipd.dev.bash, cmd)
                 executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
                 cmd = f'{threads} PYTHONPATH=. {exe} {mark} -m noparallel 2>&1 | tee {log}.noparallel.log'
+                print('SLURM run:', cmd, flush=True)
                 nonparallel_job = executor.submit(ipd.dev.bash, cmd)
                 parallel_job.result()
                 nonparallel_job.result()
