@@ -15,7 +15,7 @@ jobs:
     - name: setup
       run: |
         source /home/bench/.bashrc
-        alias ipd="/home/bench/.conda/envs/ci/bin/python -m ipd"
+        conda activate ci
         ipd ci repo update_library
         ipd ci repo setup_submodules
 
