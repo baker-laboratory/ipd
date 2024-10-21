@@ -14,10 +14,8 @@ jobs:
 
     - name: setup
       run: |
-        source /home/bench/.bashrc
-        conda activate ci
-        ipd ci repo update_library
-        ipd ci repo setup_submodules
+        ~/ci/bin/python -m ipd ci repo update_library
+        ~/ci/bin/python -m ipd ci repo setup_submodules
 
     - name: run ruff
       run: |
@@ -25,15 +23,13 @@ jobs:
 
     - name: run pytest digs
       run: |
-        conda activate ci
-        echo $(which pytest)
-        pytest 2>&1 | tee pytest.log
+        ~/ci/bin/pytest 2>&1 | tee pytest.log
 
     - name: check test results
       run: |
         conda activate ci
         echo $(which python)
-        python ipd/tests/check_test_results.py
+        ~/ci/bin/python -m ipd.tests.check_test_results
 
     # - name: build docs
     #   run: |
