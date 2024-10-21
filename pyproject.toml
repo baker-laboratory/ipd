@@ -1,7 +1,6 @@
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
 [project]
 name = "ipd"
 version = "0.1"
@@ -12,8 +11,38 @@ dependencies = [
     'requests',
     'pydantic',
     'numpy',
+    'typer[all]',
+    'gitpython',
+    'python-box',
+    'ruff',
     'assertpy',
+    'opt_einsum',
     'eliot',
     'eliot-tree',
 ]
-requires-python = ">=3.10"
+
+[project.scripts]
+ipd = 'ipd.tools.__main__:main'
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "ipd/tests",
+]
+
+[tool.pyright]
+include = ["rf_diffusion", "lib/rf2aa/rf2aa", "lib/rf2aa/lib/ipd/ipd"]
+exclude = [
+    "**/__pycache__",
+]
+defineConstant = { DEBUG = true }
+typeCheckingMode = "off"
+reportMissingImports = true
+reportMissingTypeStubs = false
+pythonPlatform = "Linux"
+requires-python = ">=3.11"
+pythonVersion = "3.12"
+executionEnvironments = [
+  { root = "/home/sheffler/sw/MambaForge/envs/rfdsym312/bin/python", pythonVersion = "3.12", pythonPlatform = "Linux", extraPaths = [] },
+]

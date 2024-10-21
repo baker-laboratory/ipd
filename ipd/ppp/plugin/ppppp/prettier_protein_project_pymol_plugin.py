@@ -4,18 +4,18 @@ import ipd
 from ipd import ppp
 import os
 import pymol
+import time
 import sys
 import threading
 from rich import print
-from ipd.qt import isfalse_notify
+from ipd.dev.qt import isfalse_notify
 
 it = ipd.lazyimport('itertools', 'more_itertools', pip=True)
 requests = ipd.lazyimport('requests', pip=True)
 # fuzzyfinder = ipd.lazyimport('fuzzyfinder', pip=True)
 yaml = ipd.lazyimport('yaml', 'pyyaml', pip=True)
-wu = ipd.lazyimport('willutil', 'git+https://github.com/willsheffler/willutil.git', pip=True)
 wpc = ipd.lazyimport('wills_pymol_crap', 'git+https://github.com/willsheffler/wills_pymol_crap.git', pip=True)
-wu.h
+ipd.h
 wpc.pymol_util
 
 remote, state, ppppp = None, None, None
@@ -180,7 +180,7 @@ def main():
     print('RUNNING main if for debugging only!')
 
     while True:
-        sleep(0.1)
+        time.sleep(0.1)
 
 if __name__ == '__main__':
     main()

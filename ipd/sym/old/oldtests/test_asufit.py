@@ -32,7 +32,7 @@ def test_canonical_asu_center():
 @pytest.mark.xfail()
 def test_asufit_oct(showme=False):
     sym = "oct"
-    fname = "/home/sheffler/src/willutil/blob4h.pdb"
+    fname = "/home/sheffler/src/ipd/blob4h.pdb"
     pdb = ipd.pdb.readpdb(fname)
     pdb = pdb.subset(atomnames=["CA"], chains=["A"])
     xyz = np.stack([pdb.df["x"], pdb.df["y"], pdb.df["z"]]).T
@@ -117,7 +117,7 @@ def test_asufit_I4132(showme=False):
     xyz[:, 2] += -0.020 * scale
     xyz = xyz[:, :3]
 
-    # fname = '/home/sheffler/src/willutil/blob5h.pdb'
+    # fname = '/home/sheffler/src/ipd/blob5h.pdb'
     # pdb = ipd.pdb.readpdb(fname)
     # # xyz = np.stack([pdb.df['x'], pdb.df['y'], pdb.df['z']]).T
     # xyz, mask = pdb.coords()
@@ -278,7 +278,7 @@ def test_asufit_P213(showme=False):
     # xyz += ipd.homog.hvec(asucen)
     # xyz[:, 2] += 30
 
-    fname = "/home/sheffler/src/willutil/blob5h.pdb"
+    fname = "/home/sheffler/src/ipd/blob5h.pdb"
     pdb = ipd.pdb.readpdb(fname)
     # xyz = np.stack([pdb.df['x'], pdb.df['y'], pdb.df['z']]).T
     xyz, mask = pdb.coords()
@@ -392,7 +392,7 @@ def test_asufit_L6m322(showme=False):
     # xyz += ipd.homog.hvec(xtal.asucen(cellsize=scale))
     # xyz[:, 2] += 20
 
-    fname = "/home/sheffler/src/willutil/blob6h.pdb"
+    fname = "/home/sheffler/src/ipd/blob6h.pdb"
     pdb = ipd.pdb.readpdb(fname)
     # xyz = np.stack([pdb.df['x'], pdb.df['y'], pdb.df['z']]).T
     xyz, mask = pdb.coords()

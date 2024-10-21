@@ -1,6 +1,6 @@
 import numpy as np
-import willutil as wu
-from willutil.homog import *
+import ipd
+from ipd.homog import *
 
 
 def tooclose_clash(bodies, nbrs=None, **kw):
@@ -13,7 +13,7 @@ def tooclose_overlap(bodies, nbrs=None, contactfrac=0.1, printme=False, **kw):
     maxcfrac = max([np.mean(c) for c in cfrac])
     # ic(maxcfrac, contactfrac)
     # if maxcfrac > 0.999:
-    # wu.showme(bodies)
+    # ipd.showme(bodies)
     # assert 0
     # TRUE means sufficient overlap
 
@@ -42,7 +42,7 @@ class RBLatticeOverlapObjective:
         self.rbojective = RBOverlapObjective(*args, **kw)
 
     def __call__(self, state, **kw):
-        assert isinstance(state, wu.Bunch)
+        assert isinstance(state, ipd.dev.Bunch)
         assert isinstance(state.scale, (int, float))
         ic(state.scale)
         self.rbojective.bodies[0].set_scale(state.scale)
@@ -114,7 +114,7 @@ class RBOverlapObjective:
         for ib, b in enumerate(self.bodies):
             for jb, b2 in enumerate(self.bodies):
                 if (ib, jb) in self.scoreframes:
-                    d = wu.hnorm(b.com() - b2.com())
+                    d = ipd.hnorm(b.com() - b2.com())
                     d = max(0, d - asym.rog() * 3)
                     dists.append(d)
                     f1, f2 = b.contact_fraction(b2, contactdist=self.contactdist)
@@ -142,25 +142,25 @@ class RBOverlapObjective:
         # ic([int(_ * 100) for _ in fracs])
         # ic(max(scores), (self.driftpenalty * xdiff)**2)
 
-        # zxang0 = wu.homog.dihedral([0, 0, 1], [0, 0, 0], [1, 0, 0], self.initialcom)
-        # ax1 = wu.sym.axes(self.sym)[2]
-        # ax2 = wu.sym.axes(self.sym)[3]
+        # zxang0 = ipd.homog.dihedral([0, 0, 1], [0, 0, 0], [1, 0, 0], self.initialcom)
+        # ax1 = ipd.sym.axes(self.sym)[2]
+        # ax2 = ipd.sym.axes(self.sym)[3]
         angdiff1 = angdiff2 = angdiffcen = 0
         if self.symaxes is not None:
             ax1, ax2 = self.symaxes
-            nf1rot = wu.homog.dihedral(ax2, [0, 0, 0], ax1, asym.com())
-            nf2rot = wu.homog.dihedral(ax1, [0, 0, 0], ax2, asym.com())
+            nf1rot = ipd.homog.dihedral(ax2, [0, 0, 0], ax1, asym.com())
+            nf2rot = ipd.homog.dihedral(ax1, [0, 0, 0], ax2, asym.com())
             angokrange = np.pi / 16
             # angdiff = max(0, abs(zxang0 - zxang) - angokrange)
             angdiff1 = max(0, abs(nf1rot) - angokrange)
             angdiff2 = max(0, abs(nf2rot) - angokrange)
-            # axsdist1 = wu.hnorm(wu.hprojperp(ax1, asym.com()))
-            # axsdist2 = wu.hnorm(wu.hprojperp(ax2, asym.com()))
+            # axsdist1 = ipd.hnorm(ipd.hprojperp(ax1, asym.com()))
+            # axsdist2 = ipd.hnorm(ipd.hprojperp(ax2, asym.com()))
             # angdiff1 = angdiff1 * axsdist1
             # angdiff2 = angdiff2 * axsdist2
             angdiff1 = 10 * angdiff1**2
             # angdiff2 = 10 * angdiff2**2
-            angdiffcen = wu.hnorm(asym.com()) * wu.hangle(asym.com(), ax1 + ax2)
+            angdiffcen = ipd.hnorm(asym.com()) * ipd.hangle(asym.com(), ax1 + ax2)
 
         # ic(nf1rot, nf2rot)
         # ic(abs(zxang0 - zxang))
@@ -173,7 +173,7 @@ class RBOverlapObjective:
             # ic(scores)
             ic(fracs)
             # ic((self.driftpenalty * xdiff)**2)
-            # ic((self.angpenalty * 10 * angdiff * wu.hnorm(wu.hprojperp([1, 0, 0], asym.com())))**2)
+            # ic((self.angpenalty * 10 * angdiff * ipd.hnorm(ipd.hprojperp([1, 0, 0], asym.com())))**2)
         s = [
             10 * sum(scores),
             (self.spreadpenalty * (max(fracs) - min(fracs))) ** 2,
@@ -181,7 +181,7 @@ class RBOverlapObjective:
             (self.angpenalty * angdiff1) ** 2,
             (self.angpenalty * angdiff2) ** 2,
             # 0.1 * (axsdist1 + axsdist2)
-            (max(0, self.minradius - wu.hnorm(asym.com()))) ** 2,
+            (max(0, self.minradius - ipd.hnorm(asym.com()))) ** 2,
             0.0 * angdiffcen**2,
             self.clashpenalty * clash,
             2 * np.sum(np.array(dists) ** 2),

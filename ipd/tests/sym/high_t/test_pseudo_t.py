@@ -36,22 +36,22 @@ def debug_from_pdb():
     ficos = ipd.sym.frames("I")
     axes = ipd.sym.axes("I")
 
-    # frames = np.load('willutil/data/pseudo_t/T2_4btg.npy')
-    frames = np.load("willutil/data/pseudo_t/T2_3iz3.npy")
-    # frames = np.load('willutil/data/pseudo_t/T2_7cbp_D.npy')  # 222 res
-    # frames = np.load('willutil/data/pseudo_t/T2_7cbp_E.npy')  # 215 res
-    # frames = np.load('willutil/data/pseudo_t/T3_7cbp_K.npy')  # 501 res
-    # frames = np.load('willutil/data/pseudo_t/T3_7cbp_T.npy')  # 75 res
-    # frames = np.load('willutil/data/pseudo_t/T3_2wbh_A129.npy')
-    # frames = np.load('willutil/data/pseudo_t/T3_6rrs_A129.npy')
-    # frames = np.load('willutil/data/pseudo_t/T3_2tbv.npy')
-    # frames = np.load('willutil/data/pseudo_t/T4_1ohf_A510.npy')
-    # frames = np.load('willutil/data/pseudo_t/T4_6rrt_A128.npy')
-    # frames = np.load('willutil/data/pseudo_t/T4_1qgt_A142.npy')
-    # frames = np.load('willutil/data/pseudo_t/T7_6o3h.npy')
-    # frames = np.load('willutil/data/pseudo_t/T7_1ohg_A200.npy')
-    # frames = np.load('willutil/data/pseudo_t/T9_8h89_J155.npy')
-    # frames = np.load('willutil/data/pseudo_t/T13_2btv.npy')
+    # frames = np.load('ipd/data/pseudo_t/T2_4btg.npy')
+    frames = np.load("ipd/data/pseudo_t/T2_3iz3.npy")
+    # frames = np.load('ipd/data/pseudo_t/T2_7cbp_D.npy')  # 222 res
+    # frames = np.load('ipd/data/pseudo_t/T2_7cbp_E.npy')  # 215 res
+    # frames = np.load('ipd/data/pseudo_t/T3_7cbp_K.npy')  # 501 res
+    # frames = np.load('ipd/data/pseudo_t/T3_7cbp_T.npy')  # 75 res
+    # frames = np.load('ipd/data/pseudo_t/T3_2wbh_A129.npy')
+    # frames = np.load('ipd/data/pseudo_t/T3_6rrs_A129.npy')
+    # frames = np.load('ipd/data/pseudo_t/T3_2tbv.npy')
+    # frames = np.load('ipd/data/pseudo_t/T4_1ohf_A510.npy')
+    # frames = np.load('ipd/data/pseudo_t/T4_6rrt_A128.npy')
+    # frames = np.load('ipd/data/pseudo_t/T4_1qgt_A142.npy')
+    # frames = np.load('ipd/data/pseudo_t/T7_6o3h.npy')
+    # frames = np.load('ipd/data/pseudo_t/T7_1ohg_A200.npy')
+    # frames = np.load('ipd/data/pseudo_t/T9_8h89_J155.npy')
+    # frames = np.load('ipd/data/pseudo_t/T13_2btv.npy')
 
     if 0:
         frames[:, :3, 3] -= frames[:, :3, 3].mean(0)

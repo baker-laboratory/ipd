@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import ipd
-from ipd.observer.dynamic_parameters import _NotIn
+from ipd.dev.observer.dynamic_parameters import _NotIn
 
 
 def main():

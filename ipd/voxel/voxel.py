@@ -14,7 +14,7 @@ class Voxel:
             self,
             xyz: th.Tensor,
             resl: float = 1,
-            func: ipd.cuda.CudaFunc = ipd.cuda.ClashFunc(3, 4),
+            func: ipd.dev.cuda.CudaFunc = ipd.dev.cuda.ClashFunc(3, 4),
             repulsive_only: th.Tensor = None,
     ):
         assert th.cuda.is_available()

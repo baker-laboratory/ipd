@@ -4,7 +4,7 @@ import pytest
 import yaml
 import shutil
 from argparse import Namespace
-from ipd.dev.bunch import *
+from ipd.dev.state.bunch import *
 
 def main():
     from tempfile import mkdtemp

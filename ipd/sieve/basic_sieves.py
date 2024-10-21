@@ -1,6 +1,6 @@
 import ipd
 from rf_diffusion.structure import get_bb_pydssp_seq_xyz_isgp_issm, assign_torch
-from willutil import h
+from ipd import h
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')

@@ -124,7 +124,7 @@ def manual_test():
         **kw,
     )
     ipd.showme(slid)
-    # slid.dump_pdb(f'/home/sheffler/DEBUG_slid_willutil.pdb')
+    # slid.dump_pdb(f'/home/sheffler/DEBUG_slid_ipd.pdb')
 
 @pytest.mark.fast
 def test_asuslide_L632_2(showme=False):
@@ -644,7 +644,7 @@ def asuslide_case1():
     sym = "I4132_322"
     xtal = ipd.sym.xtal.Xtal(sym)
     # csize = 20
-    # fname = '/home/sheffler/src/willutil/step2A.pdb'
+    # fname = '/home/sheffler/src/ipd/step2A.pdb'
     fname = "/home/sheffler/project/diffusion/unbounded/step-9Ainput.pdb"
     pdb = ipd.pdb.readpdb(fname)
     chainA = pdb.subset(chain="A")

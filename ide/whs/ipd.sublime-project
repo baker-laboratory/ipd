@@ -41,6 +41,16 @@
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
         {
+            "name": "test citool",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd.tools.citool 2>&1 | tee ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
+            "name": "test pkgtool",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd.tools.pkgtool 2>&1 | tee ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
+        },
+        {
             "name": "runtest.py",
             "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ide/runtest.py $file &> ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",

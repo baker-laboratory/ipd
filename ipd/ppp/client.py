@@ -46,7 +46,7 @@ class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
         fnames = list(filter(filt, fnames))
         assert fnames, f'path must contain structure files: {poll.path}'
         poll = self.upload(poll, _dispatch_on_type=False)
-        if ipd.qt.isfalse_notify(not isinstance(poll, str), poll): return
+        if ipd.dev.qt.isfalse_notify(not isinstance(poll, str), poll): return
         construct = ppp.PollFileSpec.construct if digs else ppp.PollFileSpec
         files = [construct(pollid=poll.id, fname=fn) for fn in fnames]
         if result := self.post('/create/pollfiles', files):

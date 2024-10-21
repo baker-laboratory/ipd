@@ -5,7 +5,7 @@ th = lazyimport('torch')
 
 class VoxRB(ipd.voxel.Voxel):
     '''Represents a rigid body with an associated Voxel score'''
-    def __init__(self, *a, func=ipd.cuda.ContactFunc(), **kw):
+    def __init__(self, *a, func=ipd.dev.cuda.ContactFunc(), **kw):
         super().__init__(*a, func=func, **kw)
         self._vizpos = th.eye(4)
 

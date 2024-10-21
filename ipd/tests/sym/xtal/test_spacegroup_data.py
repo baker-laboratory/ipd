@@ -16,7 +16,7 @@ def _highindex():
 
 
 def parse_sgdat():
-    with open("/home/sheffler/src/willutil/willutil/sym/spacegroups.txt") as inp:
+    with open("/home/sheffler/src/ipd/ipd/sym/spacegroups.txt") as inp:
         s = inp.read()
     # s = re.sub('','',s)
     s = s.replace("\n}\n", "\n   return frames, cc\n")

@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 import ipd as ipd
+from icecream import ic
 
 def main():
     # test_hnormalized()

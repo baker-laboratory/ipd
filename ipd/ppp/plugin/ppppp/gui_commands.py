@@ -1,7 +1,7 @@
 import os
 import pymol
 import ipd
-from ipd.qt import MenuAction, isfalse_notify
+from ipd.dev.qt import MenuAction, isfalse_notify
 
 _startup_cmds_done = set()
 
@@ -37,7 +37,7 @@ class ToggleCommand(ipd.ppp.PymolCMD):
     def __bool__(self):
         return bool(self.widget.checkState())
 
-class ToggleCommands(ipd.qt.ContextMenuMixin):
+class ToggleCommands(ipd.dev.qt.ContextMenuMixin):
     def __init__(self, parent, state, remote):
         self.name = self.__class__.__name__
         self.parent = parent
@@ -61,7 +61,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
 
     def _context_menu_items(self):
         return {
-            'details': MenuAction(func=lambda cmd: ipd.qt.notify(cmd)),
+            'details': MenuAction(func=lambda cmd: ipd.dev.qt.notify(cmd)),
             'refersh': MenuAction(func=self.refresh_command_list, item=False),
             'edit': MenuAction(func=self.edit_command_start, owner=True),
             'clone': MenuAction(func=self.clone_command_start),
@@ -107,7 +107,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
     def update_gui_from_cmd(self, cmd):
         for k in 'name cmdon cmdoff cmdstart sym ligand props attrs'.split():
             val = str(cmd[k]) if cmd[k] else ''
-            ipd.qt.widget_settext(getattr(self.newcmdwidget, k), val)
+            ipd.dev.qt.widget_settext(getattr(self.newcmdwidget, k), val)
         for k in 'ispublic onstart'.split():
             getattr(self.newcmdwidget, k).setCheckState(2 * cmd[k])
 
@@ -115,7 +115,7 @@ class ToggleCommands(ipd.qt.ContextMenuMixin):
         if isfalse_notify(self.newcmdwidget.name.text(), 'Must provide a Name'): return
         if isfalse_notify(self.newcmdwidget.cmdon.toPlainText(), 'Must provide a command'): return
         fields = 'name cmdon cmdoff cmdstart sym ligand props attrs'
-        kw = {k: ipd.qt.widget_gettext(getattr(self.newcmdwidget, k)) for k in fields.split()}
+        kw = {k: ipd.dev.qt.widget_gettext(getattr(self.newcmdwidget, k)) for k in fields.split()}
         kw |= {k: bool(getattr(self.newcmdwidget, k).checkState()) for k in 'ispublic onstart'.split()}
         return ipd.ppp.PymolCMDSpec(**kw)
 

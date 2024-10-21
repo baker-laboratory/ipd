@@ -11,7 +11,6 @@ from icecream import ic
 from functools import singledispatch
 from ipd.viz.viz_deco import pymol_frame
 
-wu = ipd.dev.lazyimport('willutil')
 pymol = ipd.dev.lazyimport('pymol')
 cgo = ipd.dev.lazyimport('pymol.cgo')
 cmd = ipd.dev.lazyimport('pymol.cmd')

@@ -1,5 +1,6 @@
 import pytest
 import ipd
+from icecream import ic
 
 @pytest.mark.fast
 def test_sym_options():

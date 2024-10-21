@@ -37,8 +37,8 @@ def Voxel_score_converse():
     np.random.seed(2)
     xyz1 = make_test_points(100, 30, 200)
     xyz2 = make_test_points(200, 30, 200)
-    vox1 = ipd.voxel.Voxel(xyz1, resl=0.5, func=ipd.cuda.ContactFunc(10))
-    vox2 = ipd.voxel.Voxel(xyz2, resl=0.5, func=ipd.cuda.ContactFunc(10))
+    vox1 = ipd.voxel.Voxel(xyz1, resl=0.5, func=ipd.dev.cuda.ContactFunc(10))
+    vox2 = ipd.voxel.Voxel(xyz2, resl=0.5, func=ipd.dev.cuda.ContactFunc(10))
     x = ipd.samp.randxform(1000, cartmean=[30, 0, 0], cartsd=10)
     sc1 = vox1.score(xyz2, xyzpos=x)
     sc2 = vox2.score(xyz1, voxpos=x)
@@ -51,7 +51,7 @@ def Voxel_score_converse():
 def test_Voxel_score_boundscheck():
     xyz = make_test_points(100, 30, 200)
     # xyz2 = make_test_points(100, 30, 200)
-    vox = ipd.voxel.Voxel(xyz, func=ipd.cuda.ContactFunc())
+    vox = ipd.voxel.Voxel(xyz, func=ipd.dev.cuda.ContactFunc())
     x = ipd.samp.randxform(1000000, cartmean=[30, 0, 0], cartsd=10)
     sc = vox.score(xyz, xyzpos=x)
     sc2 = vox.score(xyz, xyzpos=x, boundscheck=True)
@@ -143,7 +143,7 @@ def test_create_voxel_grid_contact():
     nsamp = 100
     mintime = 9e9
     ttot = ipd.dev.Timer(verbose=False, start=False)
-    func = ipd.cuda.ContactFunc()
+    func = ipd.dev.cuda.ContactFunc()
     for i in range(nsamp + 1):
         with ipd.dev.Timer(verbose=False) as t:
             ttot.start()
@@ -170,7 +170,7 @@ def test_create_voxel_grid_contact():
 def test_Voxel_score_outerfalse():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
-    vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ClashFunc(3, 4))
+    vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ClashFunc(3, 4))
     xyzpos = h.rand(10000, cart_sd=20).to(th.float32).to('cuda')
     voxpos = h.rand(10000, cart_sd=20).to(th.float32).to('cuda')
     pos2 = th.matmul(th.linalg.inv(voxpos), xyzpos).contiguous()
@@ -191,7 +191,7 @@ def test_Voxel_score_outerfalse():
 def test_Voxel_score_voxpos():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
-    vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ClashFunc(3, 4), resl=1)
+    vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ClashFunc(3, 4), resl=1)
     xyzpos = h.rand(10_000, cart_sd=20).to(th.float32).to('cuda')
     sc1 = vox.score(localxyz, xyzpos)
     sc2 = vox.score(localxyz, voxpos=th.linalg.inv(xyzpos).contiguous())
@@ -204,14 +204,14 @@ def test_Voxel_score_voxpos():
 @pytest.mark.fast
 def test_Voxel_class():
     xyz = make_test_points(300, 30)
-    ipd.voxel.Voxel(xyz, func=ipd.cuda.ClashFunc(3, 4), resl=1)
+    ipd.voxel.Voxel(xyz, func=ipd.dev.cuda.ClashFunc(3, 4), resl=1)
 
 @ipd.timed
 @pytest.mark.fast
 def test_Voxel_score_clash_perf():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
-    vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ClashFunc(3, 4), resl=1)
+    vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ClashFunc(3, 4), resl=1)
     frame = h.rand(100_000, cart_sd=20).to(th.float32).to('cuda')
     nsamp = 10
     mintime = 9e9
@@ -230,7 +230,7 @@ def test_Voxel_score_clash_perf():
 def test_Voxel_score_contact_perf():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
-    vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ContactFunc(), resl=1)
+    vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ContactFunc(), resl=1)
     frame = h.rand(100_000, cart_sd=20).to(th.float32).to('cuda')
     nsamp = 1
     mintime = 9e9
@@ -250,7 +250,7 @@ def test_Voxel_score_contact_perf():
 def test_Voxel_score_symcheck_perf():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(30, 30)
-    vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ClashFunc(3, 4), resl=1)
+    vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ClashFunc(3, 4), resl=1)
     frame = h.rand(100_000, cart_sd=20).to(th.float32).to('cuda')
     symx = ipd.h.rot([0, 0, 1], 120).to(th.float32).to('cuda')
     nsamp = 10
@@ -275,8 +275,8 @@ def test_Voxel_score():
         # np.random.seed(isamp)
         voxpts = make_test_points(400, 30)
         localxyz = make_test_points(nxyz, 30)
-        vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ClashFunc(3, 4), resl=1)
-        # vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ContactFunc(10,-1,1,2,3,4), resl=1)
+        vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ClashFunc(3, 4), resl=1)
+        # vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ContactFunc(10,-1,1,2,3,4), resl=1)
         voxpos = h.rand(1, cart_sd=20, dtype=th.float32, device='cuda')[0]
         # voxpos = th.eye(4, device='cuda')
         frame = h.rand(nframe, cart_sd=20, dtype=th.float32, device='cuda')
@@ -320,7 +320,7 @@ def test_Voxel_score_symcheck():
         symclashdist = float(th.rand(1) * 8)
         voxpts = make_test_points(400, 30)
         localxyz = make_test_points(nxyz, 30)
-        vox = ipd.voxel.Voxel(voxpts, func=ipd.cuda.ClashFunc(3, 4), resl=1)
+        vox = ipd.voxel.Voxel(voxpts, func=ipd.dev.cuda.ClashFunc(3, 4), resl=1)
         voxpos = h.rand(1, cart_sd=20).to(th.float32).to('cuda')[0]
         xyzpos = h.rand(nframe, cart_sd=20).to(th.float32).to('cuda')
         sc = vox.score(

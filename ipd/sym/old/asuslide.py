@@ -54,7 +54,7 @@ def asuslide(
       frames={framestr}
       slid = asuslide(sym='{sym}',coords=coords,frames=frames,axes={axes},existing_olig={existing_olig},alongaxis={alongaxis},towardaxis={towardaxis},printme=False,cellsize={repr(cellsize)},isxtal={isxtal},nbrs={repr(nbrs)},doscale={doscale},iters={iters},subiters={subiters},clashiters={clashiters},receniters={receniters},step={step},scalestep={scalestep},closestfirst={closestfirst},centerasu={repr(centerasu)},centerasu_at_start={centerasu_at_start},showme={showme},scaleslides={scaleslides},iterstepscale={iterstepscale},coords_to_asucen={coords_to_asucen},xtalrad={xtalrad},maxstep={kw.maxstep},**kw,)
       ipd.showme(slid)
-      # slid.dump_pdb(f'/home/sheffler/DEBUG_slid_willutil.pdb')
+      # slid.dump_pdb(f'/home/sheffler/DEBUG_slid_ipd.pdb')
       """)
     kw = ipd.Bunch(kw)
     kw.showme = showme

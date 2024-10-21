@@ -2,6 +2,7 @@ from collections import defaultdict
 import numpy as np
 import ipd
 from ipd.sym.symframes import tetrahedral_frames, octahedral_frames
+from icecream import ic
 from ipd.homog.hgeom import (
     halign2,
     halign,
@@ -193,7 +194,7 @@ class SymElem:
                 iframematch = perm[iframematch0]
             except IndexError:
                 # from ipd.viz.pymol_viz import showme
-                # import willutil.viz.viz_xtal
+                # import ipd.viz.viz_xtal
                 # showme(self, scale=10)
                 # showme(frames, scale=10)
                 # assert 0

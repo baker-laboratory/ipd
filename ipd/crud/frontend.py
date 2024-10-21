@@ -179,7 +179,8 @@ def make_client_models(clientcls, trimspecs, remote_props):
             if attr.endswith('id'):
                 optional = field.default is None
                 body['__annotations__'][attr] = Optional[uuid.UUID] if optional else uuid.UUID
-                del trimspec.model_fields[attr]
+                if attr in trimspec.model_fields:
+                    del trimspec.model_fields[attr]
         clcls = type(clsname, (ClientModelBase, trimspec), body, remote_props=props)
         # for k, v in clcls.model_fields.items():
         # print(clsname, k, v.annotation)

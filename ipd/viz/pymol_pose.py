@@ -1,4 +1,4 @@
-import willutil as wu
+import ipd
 from pyrosetta import Pose
 
 
@@ -13,7 +13,7 @@ def pymol_load_pose(pose, name):
     pymol.cmd.load(fname)
 
 
-@wu.viz.pymol_load.register(Pose)
+@ipd.viz.pymol_load.register(Pose)
 def _(toshow, name=None, state=None, **kw):
     name = name or "rif_thing"
     state["seenit"][name] += 1

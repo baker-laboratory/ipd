@@ -1,4 +1,3 @@
-from ipd.dev import LazyModule
 from ipd.sym.sym import *
 from ipd.sym.symframes import *
 from ipd.sym.sym_kind import *
@@ -14,10 +13,12 @@ from ipd.sym.sym_manager import *
 from ipd.sym.ipd_sym_manager import *
 from ipd.sym.guess_symmetry import *
 from ipd.sym.permutations import *
+from ipd.dev import lazyimport
 
-from ipd.sym import xtal, high_t, helix
-
-sym_tensor = LazyModule('ipd.sym.sym_tensor')
+xtal = lazyimport('ipd.sym.xtal')
+high_t = lazyimport('ipd.sym.high_t')
+helix = lazyimport('ipd.sym.helix')
+sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
 def set_symmetry(sym):
     global symmetrize

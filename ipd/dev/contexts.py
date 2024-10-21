@@ -4,6 +4,14 @@ import sys
 import io
 
 @contextmanager
+def cast(cls, self):
+    try:
+        orig, self.__class__ = self.__class__, cls
+        yield self
+    finally:
+        self.__class__ = orig
+
+@contextmanager
 def redirect(stdout=sys.stdout, stderr=sys.stderr):
     _out, _err = sys.stdout, sys.stderr
     try:

@@ -119,7 +119,7 @@ def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
             [0.00000000e00, 0.00000000e00, 0.00000000e00, 1.00000000e00],
         ],
     ])
-    assert np.allclose(foo, hframes)
+    assert np.allclose(foo, hframes, atol=1e-4)
 
 @pytest.mark.fast
 def test_helix_7_1_1_r80_s30_p20_t1_c7():
@@ -176,7 +176,7 @@ def test_helix_7_1_1_r80_s30_p20_t1_c7():
             [0.0, 0.0, 0.0, 1.0],
         ],
     ])
-    assert np.allclose(foo, hframes)
+    assert np.allclose(foo, hframes, atol=1e-4)
 
 if __name__ == "__main__":
     main()

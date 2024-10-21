@@ -137,7 +137,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
-        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pari=pair, origxyz=origxyz**kw)
+        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pari=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
         xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
@@ -258,8 +258,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                 ic(self.idx)
                 import sys
                 sys.exit()
-                # wu.showme(origasu)
-                # wu.showme(moveasu)
+                # ipd.showme(origasu)
+                # ipd.showme(moveasu)
                 assert rms < 1e-3
         return moved
 

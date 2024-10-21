@@ -7,7 +7,7 @@ import random
 import subprocess
 from subprocess import check_output
 import traceback
-from ipd.qt import MenuAction, notify, isfalse_notify
+from ipd.dev.qt import MenuAction, notify, isfalse_notify
 
 class PollInProgress:
     def __init__(self, root, state, remote, poll):
@@ -18,7 +18,7 @@ class PollInProgress:
         self.viewer = None
         self.state.activepoll = poll.name
         Cache = ipd.dev.PrefetchLocalFileCache if self.state.prefetch else ipd.dev.FileCache
-        ipd.qt.isfalse_notify(self.fnames, f'Poll {self.poll.name} {self.poll.path} has no files')
+        ipd.dev.qt.isfalse_notify(self.fnames, f'Poll {self.poll.name} {self.poll.path} has no files')
         self.filecache = Cache(self.fnames, numprefetch=7 if self.state.prefetch else 0)
         self.root.toggles.update_commands_gui()
         self.root.set_pbar(lb=0, val=len(self.state.reviewed), ub=len(self.fnames) - 1)
@@ -114,7 +114,7 @@ class PollInProgress:
         self.root.widget.showlig.setText('')
         self.filecache.cleanup()
 
-class Polls(ipd.qt.ContextMenuMixin):
+class Polls(ipd.dev.qt.ContextMenuMixin):
     def __init__(self, root, state, remote):
         self.root = root
         self.state = state
@@ -150,7 +150,7 @@ class Polls(ipd.qt.ContextMenuMixin):
 
     def _context_menu_items(self):
         return {
-            'details': MenuAction(func=lambda cmd: ipd.qt.notify(cmd)),
+            'details': MenuAction(func=lambda cmd: ipd.dev.qt.notify(cmd)),
             'refersh': MenuAction(func=self.refresh_polls, item=False),
             'edit': MenuAction(func=self.edit_poll_start, owner=True),
             'clone': MenuAction(func=self.clone_poll_start),
@@ -287,7 +287,7 @@ class Polls(ipd.qt.ContextMenuMixin):
         # return
         if isfalse_notify(duration > datetime.timedelta(minutes=1), 'Poll expires too soon'): return
         fields = 'name path sym ligand user workflow cmdstart cmdstop props attrs'
-        kw = {k: ipd.qt.widget_gettext(getattr(self.newpollwidget, k)) for k in fields.split()}
+        kw = {k: ipd.dev.qt.widget_gettext(getattr(self.newpollwidget, k)) for k in fields.split()}
         kw |= {k: bool(getattr(self.newpollwidget, k).checkState()) for k in 'ispublic telemetry'.split()}
         kw['enddate'] = datetime.datetime.now() + duration
         return self.create_poll_spec(**kw)
@@ -295,7 +295,7 @@ class Polls(ipd.qt.ContextMenuMixin):
     def update_gui_from_poll(self, poll):
         for k in 'name path sym ligand user cmdstart cmdstop props attrs nchain'.split():
             val = str(poll[k]) if poll[k] else ''
-            ipd.qt.widget_settext(getattr(self.newpollwidget, k), val)
+            ipd.dev.qt.widget_settext(getattr(self.newpollwidget, k), val)
         for k in 'ispublic telemetry'.split():
             getattr(self.newpollwidget, k).setCheckState(2 * poll[k])
 

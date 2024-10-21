@@ -2,7 +2,6 @@
 import ipd
 
 th = ipd.lazyimport('torch')
-wu = ipd.lazyimport('willutil')
 
 import numpy as np
 import assertpy
@@ -191,7 +190,7 @@ def symcheck_BASIC_SPARSE(idx, thing, **kw):
 def check_sym_asu(sym, xyz, symxyz, perm_ok=False, atol=1e-4):
     masks = sym.idx.sub.to(xyz.device)
     symxyz = symxyz.to(xyz.device)
-    frames = th.as_tensor(wu.sym.frames(sym.symid), dtype=xyz.dtype, device=xyz.device)
+    frames = th.as_tensor(ipd.sym.frames(sym.symid), dtype=xyz.dtype, device=xyz.device)
     s = sym.idx
     if sym.fit or sym.asu_to_best_frame:
         rms, _, _ = ipd.h.rmsfit(xyz[s.asu], symxyz[s.asu])

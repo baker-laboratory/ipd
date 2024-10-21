@@ -37,9 +37,9 @@ class Xtal:
     ):
         ipd.dev.checkpoint(kw, funcbegin=True)
         if "radius" in kw:
-            ipd.WARNME("willutil.Xtal.cellframes: radius not valid arg")
+            ipd.WARNME("ipd.sym.xtal.Xtal.cellframes: radius not valid arg")
         if "maxdist" in kw:
-            ipd.WARNME("willutil.Xtal.cellframes: maxdist not valid arg")
+            ipd.WARNME("ipd.sym.xtal.Xtal.cellframes: maxdist not valid arg")
 
         if self.dimension != 3:
             frames = _scaled_frames(cellsize, self.unitframes)

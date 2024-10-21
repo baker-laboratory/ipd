@@ -1,5 +1,5 @@
 import numpy as np
-import willutil as wu
+import ipd
 
 class RigidBodyFollowers:
     def __init__(self, bodies=None, coords=None, frames=None, sym=None, cellsize=1, **kw):
@@ -7,7 +7,7 @@ class RigidBodyFollowers:
         self.kw = kw
         assert not (frames is None and sym is None)
         if frames is None:
-            frames = wu.sym.frames(sym, cellsize=cellsize, ontop="primary", **kw)
+            frames = ipd.sym.frames(sym, cellsize=cellsize, ontop="primary", **kw)
         if bodies is not None:
             self.asym = bodies[0]
             self.symbodies = bodies[1:]
@@ -15,13 +15,13 @@ class RigidBodyFollowers:
         elif frames is not None:
             if coords is None:
                 raise ValueError("if no bodies specified, coords and frames/sym must be provided")
-            assert wu.hunique(frames)
+            assert ipd.hunique(frames)
             self.asym = RigidBody(coords, **kw)
             self.symbodies = [RigidBody(parent=self.asym, xfromparent=x, **kw) for x in frames[1:]]
             self.bodies = [self.asym] + self.symbodies
-        self._cellsize = wu.to_xyz(cellsize)
+        self._cellsize = ipd.homog.to_xyz(cellsize)
         self.orig_cellsize = self._cellsize.copy()
-        self.is_point_symmetry = np.sum(wu.hnorm(wu.hcart3(self.frames()))) < 0.0001
+        self.is_point_symmetry = np.sum(ipd.hnorm(ipd.hcart3(self.frames()))) < 0.0001
         self.rootbody = self.asym
         if not self.asymexists:
             self.bodies[0] = RigidBody(parent=self.asym, xfromparent=frames[0], **kw)
@@ -34,11 +34,11 @@ class RigidBodyFollowers:
                     ic(i)
                     assert 0
 
-        assert wu.hunique(self.frames())
+        assert ipd.hunique(self.frames())
         # assert 0
 
     def set_asym_coords(self, coords):
-        newbody = wu.RigidBody(coords, **self.kw)
+        newbody = RigidBody(coords, **self.kw)
         self.rootbody = newbody
         if self.asymexists:
             self.bodies[0] = newbody
@@ -99,7 +99,7 @@ class RigidBodyFollowers:
         if safe and self.is_point_symmetry:
             raise ValueError("scale_frames only valid for non-point symmetry")
 
-        scalefactor = wu.to_xyz(scalefactor)
+        scalefactor = ipd.homog.to_xyz(scalefactor)
         if self.sym is not None and self.sym.startswith("H"):
             assert np.allclose(scalefactor[0], scalefactor[1])
 
@@ -109,7 +109,7 @@ class RigidBodyFollowers:
         if scalecoords:
             # ic(self.asym.xfromparent)
             assert np.allclose(self.asym.xfromparent[:3, :3], np.eye(3))
-            self.asym.moveby(wu.htrans((scalefactor - 1) * self.asym.com()[:3]))
+            self.asym.moveby(ipd.htrans((scalefactor - 1) * self.asym.com()[:3]))
 
         return self.cellsize
         # changed = any([b.scale_frame(scalefactor) for b in self.bodies])
@@ -130,7 +130,7 @@ class RigidBodyFollowers:
         nbrs = list()
         for i in range(1, len(self.bodies)):
             to_nbr_axs = wu.axis_of(self.bodies[i].xfromparent)
-            ang = wu.hangline(to_nbr_axs, axis)
+            ang = ipd.hangline(to_nbr_axs, axis)
             # ic(perp, ang, axis, to_nbr_axs)
             if (not perp and ang > 0.001) or (perp and abs(ang - np.pi / 2) < 0.001):
                 nbrs.append(i)
@@ -150,10 +150,10 @@ class RigidBodyFollowers:
         return np.stack([b.xfromparent for b in self.bodies])
 
     def origins(self):
-        return np.stack([wu.hcart3(b.xfromparent) for b in self.bodies])
+        return np.stack([ipd.hcart3(b.xfromparent) for b in self.bodies])
 
     def orientations(self):
-        return np.stack([wu.hori3(b.xfromparent) for b in self.bodies])
+        return np.stack([ipd.hori3(b.xfromparent) for b in self.bodies])
 
     def coms(self):
         return np.stack([b.com() for b in self.bodies])
@@ -198,7 +198,7 @@ class RigidBody:
             self._xfromparent = xfromparent.copy()
         else:
             self._xfromparent = np.eye(4)
-        assert wu.hvalid(self._xfromparent)
+        assert ipd.hvalid(self._xfromparent)
 
         self._position = position
         self._coords = None
@@ -217,15 +217,15 @@ class RigidBody:
             contact_coords = contact_coords.copy()
             if recenter:
                 # oldcom =
-                self.tolocal = wu.htrans(-wu.hcom(coords))
-                self.toglobal = wu.hinv(self.tolocal)
-                coords = wu.hxform(self.tolocal, coords)
-                contact_coords = wu.hxform(self.tolocal, contact_coords)
+                self.tolocal = ipd.htrans(-ipd.hcom(coords))
+                self.toglobal = ipd.hinv(self.tolocal)
+                coords = ipd.hxform(self.tolocal, coords)
+                contact_coords = ipd.hxform(self.tolocal, contact_coords)
                 # position must be set to move coords back to gloabal frame
                 self.position = self.toglobal.copy()
-            self._coords = wu.hpoint(coords)
-            self._contact_coords = wu.hpoint(contact_coords)
-            self._com = wu.hcom(self._coords)
+            self._coords = ipd.hpoint(coords)
+            self._contact_coords = ipd.hpoint(contact_coords)
+            self._com = ipd.hcom(self._coords)
             if usebvh:
                 self.bvh = wu.cpp.bvh.BVH(coords[..., :3])
                 self.contactbvh = wu.cpp.bvh.BVH(contact_coords[..., :3])
@@ -233,14 +233,14 @@ class RigidBody:
             self.bvh = parent.bvh
             self.contactbvh = parent.contactbvh
             self._coords = parent._coords
-            self._com = wu.hcom(self._coords)
+            self._com = ipd.hcom(self._coords)
             parent.children.append(self)
             self.clashdis = parent.clashdis
             self.contactdis = parent.contactdis
             self.usebvh = parent.usebvh
             self._scale = None
         if parent is None:
-            scale = wu.to_xyz(scale)
+            scale = ipd.homog.to_xyz(scale)
             self._scale = scale
 
         self.children = list()
@@ -251,21 +251,21 @@ class RigidBody:
 
     @property
     def xfromparent(self):
-        return wu.hscaled(self.scale, self._xfromparent)
+        return ipd.hscaled(self.scale, self._xfromparent)
 
     def scale_frame(self, scalefactor):
         self.scale *= scalefactor
         # return
         # if self.xfromparent is not None:
-        #    if wu.hnorm(self.xfromparent[:, 3]) > 0.0001:
-        #       self.xfromparent = wu.hscaled(scalefactor, self.xfromparent)
+        #    if ipd.hnorm(self.xfromparent[:, 3]) > 0.0001:
+        #       self.xfromparent = ipd.hscaled(scalefactor, self.xfromparent)
         #       return True
         # return False
 
     @property
     def state(self):
         assert self.parent is None
-        state = wu.Bunch(position=self.position, scale=self.scale)
+        state = ipd.dev.Bunch(position=self.position, scale=self.scale)
         assert isinstance(state.scale, (int, float, np.ndarray))
         return state
 
@@ -278,17 +278,17 @@ class RigidBody:
     def moveby(self, x):
         x = np.asarray(x)
         if x.ndim == 1:
-            x = wu.htrans(x)
-        self.position = wu.hxform(x, self.position)
-        assert wu.hvalid(self.position)
+            x = ipd.htrans(x)
+        self.position = ipd.hxform(x, self.position)
+        assert ipd.hvalid(self.position)
 
     def move_about_com(self, x):
         x = np.asarray(x)
         if x.ndim == 1:
-            x = wu.htrans(x)
+            x = ipd.htrans(x)
         com = self.com()
         self.moveby(-com)
-        self.position = wu.hxform(x, self.position)
+        self.position = ipd.hxform(x, self.position)
         self.moveby(com)
 
     @property
@@ -301,7 +301,7 @@ class RigidBody:
     def scale(self, scale):
         # assert self.parent is None
         if self.parent:
-            self.parent.scale = wu.to_xyz(scale)
+            self.parent.scale = ipd.homog.to_xyz(scale)
         else:
             self._scale = scale
 
@@ -319,7 +319,7 @@ class RigidBody:
             raise ValueError("RigidBody position is 4,4 matrix (not point)")
         if self.parent != None:
             # raise ValueError(f'RigidBody with parent cant have position set')
-            self.parent.position = wu.hinv(self.xfromparent) @ newposition
+            self.parent.position = ipd.hinv(self.xfromparent) @ newposition
         self._position = newposition.reshape(4, 4)
 
     @property
@@ -328,15 +328,15 @@ class RigidBody:
         # self.positions has been set to move local coords into intial global frame
         # tolocal moves position so identity doesn't move global frame coords
         # yeah, confusing... self.position 'moves' opposite of intuition
-        return wu.hxform(self.tolocal, self.position)
+        return ipd.hxform(self.tolocal, self.position)
 
     @property
     def coords(self):
-        return wu.hxform(self.position, self._coords)
+        return ipd.hxform(self.position, self._coords)
 
     @property
     def globalcoords(self):
-        return wu.hxform(self.globalposition, self._coords)
+        return ipd.hxform(self.globalposition, self._coords)
 
     @property
     def allcoords(self):
@@ -354,7 +354,7 @@ class RigidBody:
         self.position = pos
 
     def comdirn(self):
-        return wu.hnormalized(self.com())
+        return ipd.hnormalized(self.com())
 
     def rog(self):
         d = self.coords - self.com()
@@ -370,7 +370,7 @@ class RigidBody:
             assert 0
             # import scipy.spatial
             # d = scipy.spatial.distance_matrix(self.coords, other.coords)
-            d = wu.hnorm(self.coords[None] - other.coords[:, None])
+            d = ipd.hnorm(self.coords[None] - other.coords[:, None])
             count = np.sum(d < contactdist)
         return count
 
@@ -437,7 +437,7 @@ class RigidBody:
         interactions = self.clash_interactions(other, maxdis)
         crd1 = crd1[interactions[:, 0]]
         crd2 = crd2[interactions[:, 1]]
-        return wu.hnorm(crd1 - crd2)
+        return ipd.hnorm(crd1 - crd2)
 
     def interactions(self, other, contactdist=8, buf=None, usebvh=None):
         self.bvhopcount += 1
@@ -449,7 +449,7 @@ class RigidBody:
                                                            other.position, contactdist, buf)
             assert not overflow
         else:
-            d = wu.hnorm(self.contact_coords[None] - other.contact_coords[:, None])
+            d = ipd.hnorm(self.contact_coords[None] - other.contact_coords[:, None])
             pairs = np.stack(np.where(d <= contactdist), axis=1)
         return pairs
 
@@ -463,7 +463,7 @@ class RigidBody:
                                                            contactdist, buf)
             assert not overflow
         else:
-            d = wu.hnorm(self.coords[None] - other.coords[:, None])
+            d = ipd.hnorm(self.coords[None] - other.coords[:, None])
             pairs = np.stack(np.where(d <= contactdist), axis=1)
         return pairs
 

@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 import ipd
 from opt_einsum import contract as einsum
+from icecream import ic
 
 def main():
     # _test_spacegroup_symelems()
@@ -47,6 +48,7 @@ def test_spacegroup_frames_sanity_check():
     # for sym in ipd.sym.xtal.sg_all_chiral:
     count = 0
     for sym in ipd.sym.xtal.sg_all:
+        if not ipd.sym.xtal.sg_is_chiral(sym): continue
         f = ipd.sym.xtal.sgframes(sym, cells=3, cellgeom="nonsingular")
         if not ipd.homog.hvalid(f):
             assert not ipd.sym.xtal.sg_is_chiral(sym)

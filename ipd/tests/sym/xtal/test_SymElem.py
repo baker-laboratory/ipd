@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 import ipd
+from icecream import ic
 from ipd.sym.xtal.SymElem import *
 from ipd.sym.xtal.SymElem import _make_operator_component_joint_ids
 from ipd.sym.xtal.spacegroup_symelems import _compute_symelems, _find_compound_symelems
