@@ -1,15 +1,17 @@
-from datetime import datetime
-from typing import Union
 import contextlib
 import os
-from subprocess import check_output
-import ipd
 import tempfile
+from datetime import datetime
 from pathlib import Path
-import ipd.ppp
+from subprocess import check_output
+from typing import Union
+
 import pydantic
+
+import ipd
+import ipd.ppp
 from ipd.crud import ModelRef, Unique
-from ipd.sym.guess_symmetry import guess_symmetry, guess_sym_from_directory
+from ipd.sym.guess_symmetry import guess_sym_from_directory, guess_symmetry
 
 class _SpecWithUser(ipd.crud.SpecBase):
     userid: ModelRef['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
@@ -266,6 +268,7 @@ def fix_label_case(thing):
         raise TypeError(f' fix_label_case unsupported type{type(thing)}')
     if 'sym' in keys: set('sym', get('sym').upper())
     if 'ligand' in keys: set('ligand', get('ligand').upper())
+    return thing
 
 spec_models = {
     name.replace('Spec', '').lower(): cls
