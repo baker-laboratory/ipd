@@ -73,10 +73,12 @@ class TestsTool(CITool):
         mark: str = '',
         parallel: int = 1,
         timeout: int = 60,
+        verbose: bool = True
     ):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
+        if verbose: exe += ' -v'
         par = '' if parallel == 1 else f'-n {parallel}'
         threads = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         if not slurm:
