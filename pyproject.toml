@@ -19,6 +19,7 @@ dependencies = [
     'pydantic',
     'pytest',
     'pytest-sugar',
+    'pytest-xdist',
     'python-box',
     'requests',
     'ruff',
