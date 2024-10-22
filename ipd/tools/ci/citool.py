@@ -29,10 +29,10 @@ class CITool(ipd.tools.IPDTool):
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
                 print(f'Directory {repo_dir} exists. Fetching latest changes...')
-                ipd.dev.bash(f'git --git-dir={repo_dir} fetch')
+                ipd.dev.run(f'git --git-dir={repo_dir} fetch')
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
-                ipd.dev.bash(f'cd {path} && git clone --bare {url}')
+                ipd.dev.run(f'cd {path} && git clone --bare {url}')
 
 def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
     repolib = os.path.expanduser(repolib)
@@ -57,7 +57,7 @@ class TestsTool(CITool):
         TestsTool.pytest()
 
     def ruff(self):
-        ipd.dev.bash('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log')
+        ipd.dev.run('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log')
 
     def pytest(self,
                slurm: bool = False,
@@ -77,7 +77,7 @@ class TestsTool(CITool):
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         if not slurm:
             cmd = f'{env} PYTHONPATH=. {exe} {mark} {par} 2>&1 | tee {log}.log'
-            ipd.dev.bash(cmd, echo=True)
+            ipd.dev.run(cmd, echo=True)
         else:
             #  srun --cpus-per-task=4 --mem=32G ../ci/run_pytest.sh parallel 2>&1 | tee pytest_parallel.log
             #  srun --cpus-per-task=1 --mem=16G ../ci/run_pytest.sh notparallel 2>&1 | tee pytest_single.log
@@ -88,17 +88,17 @@ class TestsTool(CITool):
                 executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
                 cmd = f'{env} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}.log'
                 print('SLURM run:', cmd, flush=True)
-                job = executor.submit(ipd.dev.bash, cmd)
+                job = executor.submit(ipd.dev.run, cmd)
                 job.result()
             else:
                 executor.update_parameters(timeout_min=timeout, slurm_mem='32G', cpus_per_task=parallel)
                 cmd = f'{env} PYTHONPATH=. {exe} {mark} -m "not noparallel" {par} 2>&1 | tee {log}.parallel.log'
                 print('SLURM run:', cmd, flush=True)
-                parallel_job = executor.submit(ipd.dev.bash, cmd)
+                parallel_job = executor.submit(ipd.dev.run, cmd)
                 executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
                 cmd = f'{env} PYTHONPATH=. {exe} {mark} -m noparallel 2>&1 | tee {log}.noparallel.log'
                 print('SLURM run:', cmd, flush=True)
-                nonparallel_job = executor.submit(ipd.dev.bash, cmd)
+                nonparallel_job = executor.submit(ipd.dev.run, cmd)
                 parallel_job.result()
                 nonparallel_job.result()
 

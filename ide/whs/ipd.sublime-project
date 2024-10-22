@@ -14,7 +14,7 @@
         },
         "project_environment": {
             "env": {
-                "PYTHON": "/home/sheffler/sw/MambaForge/envs/rfdsym312/bin/python",
+                "PYTHON": "/home/sheffler/sw/MambaForge/envs/mlb/bin/python",
             },
         },
 

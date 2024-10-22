@@ -59,7 +59,7 @@ def make_tmp_clent_server():
         port=12346,
         dburl='sqlite:////tmp/test.db',
         # dburl='<memory>',
-        woerkers=1,
+        workers=1,
         loglevel='warning')
     ppptestclient = TestClient(pppbackend.app)
     ppp.server.defaults.ensure_init_db(pppbackend)

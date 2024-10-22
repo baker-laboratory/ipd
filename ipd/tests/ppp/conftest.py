@@ -12,7 +12,7 @@ def ppp_test_stuff():
         server, backend, client = ipd.ppp.server.run(
             port=12346,
             dburl=f'sqlite:////{tmpdir}/test.db',
-            woerkers=1,
+            workers=1,
             loglevel='warning',
         )
         ipd.ppp.server.defaults.ensure_init_db(backend)

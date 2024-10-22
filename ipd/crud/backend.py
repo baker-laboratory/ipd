@@ -58,6 +58,8 @@ def make_backend_model_base(SQL=sqlmodel.SQLModel):
     return BackendModelBase
 
 class BackendBase:
+    mountpoint = 'ipd'
+
     def __init_subclass__(cls, models, SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
         cls.__spec_models__ = models
@@ -104,6 +106,9 @@ class BackendBase:
             result = self.session.exec(statement)
             self.session.commit()
         self.initdb()
+
+    def add_defaults(self):
+        pass
 
     def initdb(self):
         sqlmodel.SQLModel.metadata.create_all(self.engine)
