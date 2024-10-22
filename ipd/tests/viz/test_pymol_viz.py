@@ -2,11 +2,13 @@ import pytest
 
 pytest.importorskip('pymol')
 
+import os
+
 import numpy as np
+
 import ipd
 import ipd.homog as hm
 import ipd.viz
-import os
 
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 

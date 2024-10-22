@@ -1,8 +1,8 @@
 import numpy as np
-from willutil.sym.helix import Helix
-from willutil.viz.pymol_viz import pymol_load
-import willutil as wu
 
+import ipd
+from ipd.sym.helix import Helix
+from ipd.viz.pymol_viz import pymol_load
 
 @pymol_load.register(Helix)
 def pymol_viz_Helix(
@@ -27,16 +27,14 @@ def pymol_viz_Helix(
 
     frames = helix.frames(radius, spacing, coils, **kw)
     s = 1
-    showpts = np.array(
-        [
-            [0.28, 0.13, 0.13],
-            [0.28, 0.13 + 0.06 * s, 0.13],
-            [0.28, 0.13, 0.13 + 0.05 * s],
-        ]
-    )
+    showpts = np.array([
+        [0.28, 0.13, 0.13],
+        [0.28, 0.13 + 0.06 * s, 0.13],
+        [0.28, 0.13, 0.13 + 0.05 * s],
+    ])
     r = [1.0]
     c = [(1, 1, 1)]
-    cgo = wu.viz.cgo_frame_points(frames, scale=1, showpts=(showpts, r, c), **kw)
+    cgo = ipd.viz.cgo_frame_points(frames, scale=1, showpts=(showpts, r, c), **kw)
 
     if splitobjs:
         pymol.cmd.load_cgo(cgo, f"{name}_GENPTS{i}")

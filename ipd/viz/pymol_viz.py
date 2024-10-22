@@ -1,17 +1,18 @@
-import sys
-import os
-import tempfile
-import numpy as np
-import time
-import functools
-import ipd
 import contextlib
+import functools
+import os
+import sys
+import tempfile
+import time
 from collections import defaultdict
-from icecream import ic
 from functools import singledispatch
+
+import numpy as np
+from icecream import ic
+
+import ipd
 from ipd.viz.viz_deco import pymol_frame
 
-wu = ipd.dev.lazyimport('willutil')
 pymol = ipd.dev.lazyimport('pymol')
 cgo = ipd.dev.lazyimport('pymol.cgo')
 cmd = ipd.dev.lazyimport('pymol.cmd')
@@ -20,12 +21,13 @@ try:
     from pymol import cgo, cmd
 except ImportError:
     pass
-from ipd.viz.pymol_cgo import *
 # from ipd.sym.symfit import RelXformInfo
 import ipd.viz.primitives as prim
-# from ipd.sym.spacegroup_util import tounitcellpts
+from ipd.viz.pymol_cgo import *
 
-_showme_state = ipd.Bunch(
+# from ipd.sym.xtal.spacegroup_util import tounitcellpts
+
+_showme_state = ipd.dev.Bunch(
     launched=0,
     seenit=defaultdict(lambda: -1),
     _nsymops=0,
@@ -189,7 +191,7 @@ def pymol_viz_list(
     topcolors=[],
     **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
 
     if iscgo(toshow):
         pymol.cmd.load_cgo(toshow, name)
@@ -334,7 +336,7 @@ def pymol_visualize_xforms(
         showneg=False,
         **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     if perturb != 0:
         raise NotImplementedError
 
@@ -434,7 +436,7 @@ def pymol_visualize_xforms(
         for ix, xform in enumerate(xforms):
             mycgo += cgo_cyl(center, xform[:, 3], rays, col=col1)
 
-    return ipd.Bunch(cgo=mycgo)
+    return ipd.dev.Bunch(cgo=mycgo)
 
 def show_ndarray_lines(
     toshow,
@@ -603,7 +605,7 @@ def show_ndarray_point_or_vec(
     scale=1,
     **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     with contextlib.suppress(ImportError):
         import torch as th
         if isinstance(toshow, th.Tensor):
@@ -648,7 +650,7 @@ def show_ndarray_point_or_vec(
             else:
                 raise NotImplementedError
 
-    return ipd.Bunch(cgo=cgo, colors=colors)
+    return ipd.dev.Bunch(cgo=cgo, colors=colors)
 
 @pymol_frame
 def show_array_ncacoh(
@@ -664,11 +666,11 @@ def show_array_ncacoh(
         toshow = ipd.homog.hpoint(toshow)
     # ic(toshow.shape)
 
-    wu.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
+    ipd.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', 'name N+CA+C')
-    return ipd.Bunch(pymol_object=name)
+    return ipd.dev.Bunch(pymol_object=name)
 
 @pymol_frame
 def show_ndarray_n_ca_c(
@@ -684,12 +686,12 @@ def show_ndarray_n_ca_c(
         toshow = ipd.homog.hpoint(toshow)
     # ic(toshow.shape)
 
-    wu.dumppdb(fname, toshow)
+    ipd.pdb.dumppdb(fname, toshow)
 
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', f'{name} and name N+CA+C')
-    return ipd.Bunch(pymol_object=name)
+    return ipd.dev.Bunch(pymol_object=name)
 
 def iscgo(maybecgo):
     return isinstance(maybecgo[0], float)

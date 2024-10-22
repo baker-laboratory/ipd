@@ -1,4 +1,6 @@
 import pytest
+from icecream import ic
+
 import ipd
 
 @pytest.mark.fast

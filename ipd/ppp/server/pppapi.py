@@ -1,13 +1,11 @@
-import sys
 import os
-import contextlib
-import threading
-import time
-from uuid import UUID
 import socket
+import sys
+import threading
+from uuid import UUID
+
 import ipd
 from ipd import ppp
-import signal
 
 fastapi = ipd.lazyimport('fastapi', 'fastapi[standard]', pip=True)
 pydantic = ipd.lazyimport('pydantic', pip=True)
@@ -109,7 +107,7 @@ class PPPBackend(ipd.crud.backend.BackendBase, models=ipd.ppp.spec_models):
         # print('CREATE empty files', len(files))
         for file in files:
             assert not file.filecontent.strip()
-            self.session.add(DBPollFile(**file.dict()))
+            self.session.add(DBPollFile(**file.model_dump()))
         self.session.commit()
         poll = self.poll(dict(id=files[0].pollid))
 
@@ -148,56 +146,5 @@ def pymol_launch():
     sys.stderr = stderr
     pymol.cmd.set('suspend_updates', 'on')
 
-@profile
-def run(
-    port,
-    dburl=None,
-    datadir='~/.config/ppp/localserver/data',
-    loglevel='warning',
-    local=False,
-    workers=1,
-    background=True,
-    **kw,
-):
-    datadir = os.path.abspath(os.path.expanduser(datadir))
-    dburl = dburl or f'sqlite:///{datadir}/ppp.db'
-    if not dburl.count('://'): dburl = f'sqlite:///{dburl}'
-    os.makedirs(datadir, exist_ok=True)
-    # print(f'creating db engine from url: \'{dburl}\'')
-    engine = sqlmodel.create_engine(dburl)
-    backend = PPPBackend(engine, datadir)
-    backend.app.mount("/ppp", backend.app)
-    # if not local: pymol_launch()
-    config = uvicorn.Config(
-        backend.app,
-        host='127.0.0.1' if local else '0.0.0.0',
-        port=port,
-        log_level=loglevel,
-        reload=False,
-        # reload_dirs=[
-        # os.path.join(ipd.proj_dir, 'ipd/ppp'),
-        # os.path.join(ipd.proj_dir, 'ipd/ppp/server'),
-        # ],
-        loop='uvloop',
-        workers=workers,
-    )
-    if background:
-        server = Server(config=config)
-        server.run_in_thread()
-        with contextlib.suppress(ValueError):
-            signal.signal(signal.SIGINT, server.stop)
-        for _ in range(5000):
-            if server.started: break
-            time.sleep(0.001)
-        else:
-            raise RuntimeError('server failed to start')
-        client = ppp.PPPClient(f'127.0.0.1:{port}')
-        assert ipd.ppp.get_hack_fixme_global_client()
-        ppp.server.defaults.add_defaults(**kw)
-        # print('server', socket.gethostname())
-        return server, backend, client
-    else:
-        server = uvicorn.Server(config)
-        import pdb
-        pdb.set_trace()
-        server.run()
+def run(**kw):
+    return ipd.crud.run[PPPBackend, ipd.ppp.PPPClient](**kw)

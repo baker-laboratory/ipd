@@ -1,11 +1,13 @@
 import math
-import numpy as np
+
 import gemmi
+import numpy as np
 import torch as th
-import ipd
-from willutil import h
-from numba import cuda
 from icecream import ic
+from numba import cuda
+
+import ipd
+from ipd import h
 
 _voxel = ipd.dev.LazyModule('ipd.voxel.voxel_cuda')
 
@@ -14,7 +16,7 @@ class Voxel:
             self,
             xyz: th.Tensor,
             resl: float = 1,
-            func: ipd.cuda.CudaFunc = ipd.cuda.ClashFunc(3, 4),
+            func: ipd.dev.cuda.CudaFunc = ipd.dev.cuda.ClashFunc(3, 4),
             repulsive_only: th.Tensor = None,
     ):
         assert th.cuda.is_available()

@@ -2,9 +2,10 @@ import pytest
 
 pytest.importorskip('torch')
 import numpy as np
+from icecream import ic
+
 import ipd as ipd
 from ipd import h
-from icecream import ic
 from ipd.homog import intersect_planes
 
 # pytest.skip(allow_module_level=True)
@@ -168,7 +169,7 @@ def test_axisangcenhel_roundtrip():
 def test_th_axis_angle_cen_hel_vec():
     xforms = ipd.homog.hrand(100)
     xgeom = ipd.homog.axis_angle_cen_hel_of(xforms)
-    for i, (x, a, an, c, h) in enumerate(zip(xforms, *xgeom)):
+    for i, (x, a, an, c, h) in enumerate(zip(xforms, *xgeom)):  # noqa
         a2, an2, c2, h2 = ipd.homog.axis_angle_cen_hel_of(x)
         assert np.allclose(a, a2)
         assert np.allclose(an, an2)
@@ -255,7 +256,7 @@ def test_th_axis_angle_cen_rand():
     # ic(rot.shape)
     # assert 0
 
-    axis, ang, cen = ipd.haxis_ang_cen_of(rot.detach().numpy())
+    axis, ang, cen = ipd.homog.axis_ang_cen_of(rot.detach().numpy())
     hel = hel0.detach().numpy()
     assert np.allclose(axis0.detach(), axis, rtol=1e-3)
     assert np.allclose(ang0.detach(), ang, rtol=1e-3)
@@ -365,7 +366,7 @@ def test_th_axis_angle_cen_hel():
     h0 = th.tensor(2.443, requires_grad=True)
     x = h.rot(axis0, ang0, cen0, h0)
     axis, ang, cen, hel = h.axis_angle_cen_hel(x)
-    ax2, an2, cen2 = ipd.haxis_ang_cen_of(x.detach().numpy())
+    ax2, an2, cen2 = ipd.homog.axis_ang_cen_of(x.detach().numpy())
     assert np.allclose(ax2, axis.detach())
     assert np.allclose(an2, ang.detach())
     assert th.allclose(h.projperp(axis0, cen - cen0), h.point([0, 0, 0], dtype=th.float64))
@@ -468,7 +469,7 @@ def test_torch_rmsfit_grad():
             assert rms < 1e-3
 
 @pytest.mark.fast
-def test_th_axis_angle():
+def test_th_axis_angle():  # noqa
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
 
@@ -489,7 +490,7 @@ def test_th_axis_angle():
     ax, an, hel = h.axis_angle_hel(x)
     assert np.allclose(an.detach(), ang0.detach())
     assert np.allclose(hel.detach(), 0)
-    ax2, an2, h2 = ipd.haxis_angle_hel_of(x.detach())
+    ax2, an2, h2 = ipd.homog.axis_angle_hel_of(x.detach())
     assert th.allclose(th.linalg.norm(ax, axis=-1), th.ones_like(ax))
     assert np.allclose(ax2, ax.detach())
     assert np.allclose(an2, an.detach())
@@ -508,7 +509,7 @@ def test_th_axis_angle_hel():
     h0 = th.tensor(2.443, requires_grad=True)
     x = h.rot(axis0, ang0, hel=h0)
     ax, an, hel = h.axis_angle_hel(x)
-    ax2, an2, h2 = ipd.haxis_angle_hel_of(x.detach())
+    ax2, an2, h2 = ipd.homog.axis_angle_hel_of(x.detach())
     assert np.allclose(ax2, ax.detach())
     assert np.allclose(an2, an.detach())
     assert np.allclose(h2, hel.detach())
@@ -555,7 +556,7 @@ if __name__ == "__main__":
 #    ic(rot.shape)
 #    assert 0
 
-#    axis, ang, cen = ipd.haxis_ang_cen_of(rot)
+#    axis, ang, cen = ipd.homog.axis_ang_cen_of(rot)
 
 #    assert np.allclose(axis0, axis, rtol=1e-5)
 #    assert np.allclose(ang0, ang, rtol=1e-5)
@@ -566,7 +567,7 @@ if __name__ == "__main__":
 
 # @pytest.mark.fast
 # def test_th_intersect_planes():
-
+# noqa
 #    p1 = th.tensor([0., 0, 0, 1], requires_grad=True)
 #    n1 = th.tensor([1., 0, 0, 0], requires_grad=True)
 #    p2 = th.tensor([0., 0, 0, 1], requires_grad=True)
@@ -653,7 +654,7 @@ if __name__ == "__main__":
 #    h0 = th.tensor(2.443, requires_grad=True)
 #    x =rot(axis0, ang0, cen0, h0)
 #    axis, ang, cen, hel =h.axis_angle_cen_hel(x)
-#    ax2, an2, cen2 = ipd.haxis_ang_cen_of(x.detach().numpy())
+#    ax2, an2, cen2 = ipd.homog.axis_ang_cen_of(x.detach().numpy())
 #    assert np.allclose(ax2, axis.detach())
 #    assert np.allclose(an2, ang.detach())
 

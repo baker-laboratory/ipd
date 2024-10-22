@@ -7,9 +7,11 @@ from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
-import ipd
-from numba import cuda
 import math
+
+from numba import cuda
+
+import ipd
 
 _rms = ipd.dev.LazyModule('ipd.fit.qcp_rms_cuda')
 

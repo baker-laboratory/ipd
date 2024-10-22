@@ -1,5 +1,7 @@
 import math
+
 import numpy as np
+
 import ipd
 
 torch = ipd.lazyimport('torch')
@@ -983,7 +985,7 @@ def update_symm_Rs(xyz, Lasu, symmsub, allsymmRs, symopt):
     xyz = xyz.reshape(B, -1, natoms, 3)  # (B,S,L,3,3) or (B,LASU*S,natoms,3)
 
     # if symopt.fit:
-    # wu.dumppdb(f'{symopt.tag}_fit1.pdb', xyz[:,:,:3,:3].reshape(L//Lasu,Lasu,3,3))
+    # ipd.pdb.dumppdb(f'{symopt.tag}_fit1.pdb', xyz[:,:,:3,:3].reshape(L//Lasu,Lasu,3,3))
 
     return xyz
 

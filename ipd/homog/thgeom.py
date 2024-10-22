@@ -1,6 +1,8 @@
-import ipd
 import sys
+
 import numpy as np
+
+import ipd
 
 th = ipd.lazyimport("torch")
 h = sys.modules[__name__]
@@ -69,7 +71,7 @@ def mean_along(vecs, along=None):
     return normalized(tot)
 
 def com_flat(points, closeto=None, closefrac=0.5):
-    if closeto != None:
+    if closeto is not None:
         dist = norm(points - closeto)
         close = th.argsort(dist)[:closefrac * len(dist)]
         points = points[close]
@@ -93,7 +95,7 @@ def rog(points, aboutaxis=None):
     points = point(points)
     oshape = points.shape
     points = points.reshape(-1, *oshape[-2:])
-    if aboutaxis != None:
+    if aboutaxis is not None:
         aboutaxis = vec(aboutaxis)
         points = projperp(aboutaxis, points)
     rog = rog_flat(points)
@@ -794,9 +796,9 @@ def _thxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", impr
     return result
 
 def valid(stuff, is_points=None, strict=False, **kw):
-    if stuff.shape[-2:] == (4, 4) and not is_points == True:
+    if stuff.shape[-2:] == (4, 4) and not is_points:
         return valid44(stuff, **kw)
-    if stuff.shape[-2:] == (4, 2) and not is_points == True:
+    if stuff.shape[-2:] == (4, 2) and not is_points:
         return is_valid_rays(stuff)
     elif stuff.shape[-1] == 4 and strict:
         return th.allclose(stuff[..., 3], 0) or th.allclose(stuff[..., 3], 1)

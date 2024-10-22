@@ -1,11 +1,13 @@
 import math
+
 import ipd
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
 import numpy as np
-from willutil import h
+
+from ipd import h
 
 _sampling = ipd.dev.LazyModule('ipd.samp.sampling_cuda')
 
@@ -156,7 +158,7 @@ def bounding_sphere(xyz):
 #     ]
 #     std2qh = np.polynomial.Polynomial(coeff, domain=[0., 0.4326], window=[-1., 1.], symbol='x')
 #     print(
-#         ipd.Bunch(
+#         ipd.dev.Bunch(
 #             n=n,
 #             cartmean=cartmean,
 #             cart_sd=cartsd,

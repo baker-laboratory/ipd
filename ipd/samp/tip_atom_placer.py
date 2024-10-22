@@ -1,13 +1,15 @@
 import numpy as np
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
-import ipd
-import willutil as wu
-from willutil import h
 import dataclasses
+
 from icecream import ic
+
+import ipd
+from ipd import h
 
 ic.configureOutput(includeContext=False)
 
@@ -40,7 +42,7 @@ class TipAtom:
 class TipAtomTarget:
     @staticmethod
     def from_pdb(fname, tgtres=None, clashthresh=2):
-        pdb = wu.readpdb(fname)
+        pdb = ipd.pdb.readpdb(fname)
         xyz = th.stack([th.as_tensor(pdb.df.x), th.as_tensor(pdb.df.y), th.as_tensor(pdb.df.z)], dim=1)
         rn = [s.decode() for s in pdb.df.rn]
         an = [s.decode() for s in pdb.df.an]
@@ -54,7 +56,7 @@ class TipAtomTarget:
         self.resn = np.asarray(resn)[idx]
         self.tgtres = th.unique(self.ires) if tgtres is None else tgtres
         self.source = source
-        # self.vox = ipd.voxel.Voxel(self.xyz, resl=0.5, func=ipd.cuda.ClashFunc(2.8, 3.3))
+        # self.vox = ipd.voxel.Voxel(self.xyz, resl=0.5, func=ipd.dev.cuda.ClashFunc(2.8, 3.3))
         self.find_don_acc(clashthresh)
 
     def place_tip_atoms(self, tips, **kw):
@@ -62,7 +64,7 @@ class TipAtomTarget:
         don = self.don.to('cuda')
         acc = self.acc.to('cuda')
         fdon, facc = self.donacc_frames('cuda')
-        # wu.showme(self, name='ref')
+        # ipd.showme(self, name='ref')
         for tip in tips:
             ic(tip.xyz.shape)
             _sampling.tip_atom_placer(vox, don, acc, tip.xyz.to('cuda'), tip.don.to('cuda'),
@@ -71,7 +73,7 @@ class TipAtomTarget:
                 cgo = list()
                 tip_atom_cgo(fd, fa, tip, cgo)
                 pymol.cmd.load_cgo(cgo, tip.resn)
-            # wu.showme(tip)
+            # ipd.showme(tip)
         # assert 0
 
     def find_don_acc(self, clashthresh):
@@ -90,8 +92,8 @@ class TipAtomTarget:
         self.don = self.don[ddon >= clashthresh]
         self.acc = self.acc[dacc >= clashthresh]
 
-        # wu.showme(donpt)
-        # wu.showme(accpt)
+        # ipd.showme(donpt)
+        # ipd.showme(accpt)
         # donclash = self.vox.score_per_atom(donpt)
         # accclash = self.vox.score_per_atom(accpt)
         # ic(donclash, accclash, clashthresh)
@@ -103,7 +105,7 @@ class TipAtomTarget:
 
 def get_tip_atom_groups():
     tip_atom_start = dict(asn=5, gln=6, asp=5, glu=6)
-    rotset = wu.chem.rotamer.get_rotamerset()
+    rotset = ipd.pdb.rotamer.get_rotamerset()
     tips = list()
     # for resn in 'asp glu asn gln'.split():
     for resn in 'asp asn'.split():
@@ -205,22 +207,22 @@ try:
                 for ray, ft in zip(rays, ftip):
                     frame = f @ ft
                     for xyz, col in zip(h.xform(frame, tip.xyz), acol):
-                        cgo += wu.viz.cgo_sphere(cen=xyz, rad=0.5, col=col)
-                    beg = wu.hxform(ft, ray[:, 0])
-                    end = wu.hxform(ft, ray[:, 0] + 2 * ray[:, 1])
-                    beg = wu.hxform(frame, ray[:, 0])
-                    end = wu.hxform(frame, ray[:, 0] + 2 * ray[:, 1])
-                    cgo += wu.viz.cgo_cyl(beg, end, 0.1, col=rcol)
+                        cgo += ipd.viz.cgo_sphere(cen=xyz, rad=0.5, col=col)
+                    beg = ipd.homog.hxform(ft, ray[:, 0])
+                    end = ipd.homog.hxform(ft, ray[:, 0] + 2 * ray[:, 1])
+                    beg = ipd.homog.hxform(frame, ray[:, 0])
+                    end = ipd.homog.hxform(frame, ray[:, 0] + 2 * ray[:, 1])
+                    cgo += ipd.viz.cgo_cyl(beg, end, 0.1, col=rcol)
 
-    @wu.viz.pymol_frame
-    @wu.viz.pymol_load.register(TipAtom)
+    @ipd.viz.pymol_frame
+    @ipd.viz.pymol_load.register(TipAtom)
     def pymol_load_TipAtom(tip, name='TipAtom', **kw):
         cgo = list()
         tip_atom_cgo(th.eye(4), tip, cgo, **kw)
         pymol.cmd.load_cgo(cgo, name)
 
-    @wu.viz.pymol_frame
-    @wu.viz.pymol_load.register(TipAtomTarget)
+    @ipd.viz.pymol_frame
+    @ipd.viz.pymol_load.register(TipAtomTarget)
     def pymol_load_TipAtomTarget(tgt, name='TipAtomTarget', **kw):
         atomcol = dict(C=(0.5, 0.5, 0.5), O=(1, 0, 0), N=(0, 0, 1), H=(1, 1, 1), P=(1, 0.5, 0.5))
         col = [atomcol[n[0]] for n in tgt.aname]
@@ -228,9 +230,9 @@ try:
             pymol.cmd.load(tgt.source, name + '_xyz')
             pymol.cmd.show('lines')
         else:
-            wu.viz.show_ndarray_point_or_vec(tgt.xyz, name=name + '_xyz', sphere=1, col=col, **kw)
+            ipd.viz.show_ndarray_point_or_vec(tgt.xyz, name=name + '_xyz', sphere=1, col=col, **kw)
         cgo = list()
-        arrow = wu.viz.cgo_cyl_arrow
+        arrow = ipd.viz.cgo_cyl_arrow
         for don in tgt.don:
             cgo += arrow(don[:3, 0], don[:3, 0] + 3 * don[:3, 1], 0.1, col=(1, 1, 1), arrowlen=0)
         for acc in tgt.acc:

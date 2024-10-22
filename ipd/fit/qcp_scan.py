@@ -1,13 +1,15 @@
 import itertools
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
 import numpy as np
 import torch.utils.cpp_extension
-import ipd
-from willutil import h
 from icecream import ic
+
+import ipd
+from ipd import h
 
 _rms = ipd.dev.LazyModule('ipd.fit.qcp_rms_cuda')
 

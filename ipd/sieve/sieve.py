@@ -15,11 +15,11 @@ class SieveManager:
 
     def init_sieves(self, conf):
         self.conf = conf
-        self.opt = ipd.DynamicParameters(conf.inference.num_designs, conf.diffuser.T, 40)
-        self.opt.enabled = True # default
+        self.opt = ipd.dev.DynamicParameters(conf.inference.num_designs, conf.diffuser.T, 40)
+        self.opt.enabled = True  # default
         if 'sieve' not in conf: return
         for key in conf['sieve']:
-            if key[0].isupper(): # assume is class nam
+            if key[0].isupper():  # assume is class nam
                 if key not in self._sieve_classes:
                     err = f'unknown sieve type {key}, available are: [{", ".join(self._sieve_classes.keys())}]'
                     raise SieveError(err)
@@ -27,7 +27,7 @@ class SieveManager:
                 # print(f'CREATE SIEVE {cls} {cls.__name__}')
                 instance = cls(manager=self, conf=conf['sieve'][cls.__name__])
                 self.sieves.append(instance)
-            else: # assume is parameter
+            else:  # assume is parameter
                 self.opt.parse_dynamic_param(key, conf['sieve'][key], overwrite=True)
 
     def apply_sieves(self, t, xyz, indep, **kw):
@@ -59,7 +59,7 @@ class Sieve:
     def __init__(self, manager, conf):
         self.manager = manager
         self.conf = conf
-        self.opt = ipd.DynamicParameters(manager.conf.inference.num_designs, manager.conf.diffuser.T, 40)
-        self.opt.enabled = True # default
+        self.opt = ipd.dev.DynamicParameters(manager.conf.inference.num_designs, manager.conf.diffuser.T, 40)
+        self.opt.enabled = True  # default
         for k, v in self.conf.items():
             setattr(self, k, v)

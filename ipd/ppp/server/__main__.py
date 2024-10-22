@@ -1,6 +1,7 @@
+import argparse
 import os
 import time
-import argparse
+
 import ipd
 
 parser = argparse.ArgumentParser(
@@ -15,7 +16,7 @@ parser.add_argument('--loglevel', type=str, default='info')
 parser.add_argument('--stress_test_polls', action='store_true', default=False)
 
 def main():
-    args = ipd.Bunch(parser.parse_args())
+    args = ipd.dev.Bunch(parser.parse_args())
     print(f'STARTING SERVER 127.0.0.1:{args.port} database: {args.dburl} datadir: {args.datadir}')
     ipd.ppp.server.run(**args)
     while True:

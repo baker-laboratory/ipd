@@ -1,5 +1,5 @@
-from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import *
 import ipd
+from ipd.ppp.plugin.ppppp.prettier_protein_project_pymol_plugin import *
 
 at = ipd.lazyimport('assertpy', pip=True).assert_that
 

@@ -1,8 +1,8 @@
-import pytest
 import numpy as np
-import ipd
-from ipd.observer.dynamic_parameters import _NotIn
+import pytest
 
+import ipd
+from ipd.dev.observer.dynamic_parameters import _NotIn
 
 def main():
     test_dynparam_steps()
@@ -15,27 +15,26 @@ def main():
     test_dynparam_askwargs()
     print('test_dynparam PASS')
 
-
 @pytest.mark.fast
 def test_dynparams_constant():
-    dynp = ipd.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40)
+    dynp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40)
     SS = dynp._set_step
     dynp.newparam_constant('foo', 'FOO')
     assert SS(diffuse=0, rfold=39).foo == 'FOO'
     dynp.newparam_constant('fortytwo', 42)
     assert SS(diffuse=0, rfold=39).fortytwo == 42
 
-
 @pytest.mark.fast
 def test_dynparams_spline2D():
-    dynp = ipd.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40)
+    dynp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40)
     SS = dynp._set_step
-    dynp.newparam_spline_2d('twod', diffuse_rfold=[
-        (0.0, 0.0, 0),
-        (0.0, 1.0, 50),
-        (1.0, 0.0, 50),
-        (1.0, 1.0, 100),
-    ])
+    dynp.newparam_spline_2d('twod',
+                            diffuse_rfold=[
+                                (0.0, 0.0, 0),
+                                (0.0, 1.0, 50),
+                                (1.0, 0.0, 50),
+                                (1.0, 1.0, 100),
+                            ])
     assert np.allclose(SS(diffuse=0, rfold=0).twod, 0.0)
     assert np.allclose(SS(diffuse=0, rfold=39).twod, 50.0)
     assert np.allclose(SS(diffuse=49, rfold=0).twod, 50.0)
@@ -54,10 +53,9 @@ def test_dynparams_spline2D():
     with pytest.raises(ValueError):
         dynp.newparam_spline_2d('linear1', diffuse_rfold=[(0, 0, 1), (1, 1, 0), (1, 0, 1)])
 
-
 @pytest.mark.fast
 def test_dynparams_spline1D():
-    dynp = ipd.DynamicParameters(ndesign=9, ndiffuse=9, nrfold=9)
+    dynp = ipd.dev.DynamicParameters(ndesign=9, ndiffuse=9, nrfold=9)
     SS = dynp._set_step
 
     dynp.newparam_spline_1d('linear1', diffuse=[(0, 1), (1, 9)])
@@ -79,10 +77,9 @@ def test_dynparams_spline1D():
     with pytest.raises(ValueError):
         dynp.newparam_spline_1d('test', diffuse=[(-1, 0), (1, 0)])
 
-
 @pytest.mark.fast
 def test_dynparam_bool_in_range():
-    dynp = ipd.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11)
+    dynp = ipd.dev.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11)
     SS = dynp._set_step
 
     #
@@ -116,10 +113,9 @@ def test_dynparam_bool_in_range():
     assert SS(rfold=5).range3 is not True
     assert SS(rfold=6).range3 is not False
 
-
 @pytest.mark.fast
 def test_dynparam_bool_on_steps():
-    dynp = ipd.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11)
+    dynp = ipd.dev.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11)
     SS = dynp._set_step
 
     dynp.newparam_true_on_steps('toi', diffuse=[1, 3])
@@ -192,10 +188,9 @@ def test_dynparam_bool_on_steps():
     assert SS(diffuse=5).float2 is False
     assert SS(diffuse=6).float2 is False
 
-
 @pytest.mark.fast
 def test_dynparam_steps():
-    dynp = ipd.DynamicParameters(ndesign=12, ndiffuse=50, nrfold=40)
+    dynp = ipd.dev.DynamicParameters(ndesign=12, ndiffuse=50, nrfold=40)
     dynp._set_step(design=7)
     assert dynp._step == (7, None, None)
     dynp._set_step(diffuse=13)
@@ -211,12 +206,11 @@ def test_dynparam_steps():
     assert dynp._step == (11, 38, 1)
 
     # with pytest.raises(AssertionError):
-        # dynp._rfold_iter_begin('foobar2')
-
+    # dynp._rfold_iter_begin('foobar2')
 
 @pytest.mark.fast
 def test_dynparam_parse():
-    dp = ipd.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10)
+    dp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10)
     with pytest.raises(SyntaxError):
         dp.parse_dynamic_param('foo', 'rfold:[(2 4)]')
     with pytest.raises(ValueError):
@@ -249,14 +243,12 @@ def test_dynparam_parse():
     assert dp._set_step(rfold=8, diffuse=7).baz is False
     assert dp._set_step(rfold=9, diffuse=7).baz is False
 
-
 @pytest.mark.fast
 def test_dynparam_askwargs():
-
     def foo(a, b, c):
         return int(a) + int(b) + int(c)
 
-    dp = ipd.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10)
+    dp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10)
     dp.newparam_true_on_steps('a', rfold=0, diffuse=0)
     dp.newparam_true_on_steps('b', rfold=0, diffuse=0)
     dp.newparam_true_on_steps('c', rfold=1, diffuse=1)
@@ -266,7 +258,6 @@ def test_dynparam_askwargs():
     assert foo(**dp) == 1
     dp._set_step(diffuse=0, rfold=1)
     assert foo(**dp) == 0
-
 
 if __name__ == '__main__':
     main()

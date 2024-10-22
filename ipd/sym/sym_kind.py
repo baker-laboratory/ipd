@@ -20,4 +20,3 @@ class ValueKind(Enum):
 class SymKind:
     shapekind: ShapeKind
     valuekind: ValueKind
-

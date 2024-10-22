@@ -1,12 +1,10 @@
 import numpy as np
 
-from willutil.homog.util import jit
-
+from ipd.homog.util import jit
 
 def is_valid_quat_rot(quat):
     assert quat.shape[-1] == 4
     return np.isclose(1, np.linalg.norm(quat, axis=-1))
-
 
 def quat_to_upper_half(quat):
     ineg0 = quat[..., 0] < 0
@@ -22,7 +20,6 @@ def quat_to_upper_half(quat):
     quat[ineg] = -quat[ineg]
     return quat
 
-
 @jit
 def kernel_quat_to_upper_half(quat, ret):
     ineg0 = quat[0] < 0
@@ -33,27 +30,24 @@ def kernel_quat_to_upper_half(quat, ret):
     for i in range(4):
         ret[i] = mul * quat[i]
 
-
 @jit
 def numba_quat_to_upper_half(quat):
     ret = np.empty(4, dtype=quat.dtype)
     kernel_quat_to_upper_half(quat, ret)
     return ret
 
-
 def rand_quat(shape=()):
     if isinstance(shape, int):
-        shape = (shape,)
+        shape = (shape, )
     q = np.random.randn(*shape, 4)
     q /= np.linalg.norm(q, axis=-1)[..., np.newaxis]
     return quat_to_upper_half(q)
-
 
 def rot_to_quat(xform):
     x = np.asarray(xform)
     t0, t1, t2 = x[..., 0, 0], x[..., 1, 1], x[..., 2, 2]
     tr = t0 + t1 + t2
-    quat = np.empty(x.shape[:-2] + (4,))
+    quat = np.empty(x.shape[:-2] + (4, ))
 
     case0 = tr > 0
     S0 = np.sqrt(tr[case0] + 1) * 2
@@ -87,9 +81,7 @@ def rot_to_quat(xform):
 
     return quat_to_upper_half(quat)
 
-
 xform_to_quat = rot_to_quat
-
 
 @jit
 def kernel_rot_to_quat(xform, quat):
@@ -121,13 +113,11 @@ def kernel_rot_to_quat(xform, quat):
         quat[3] = 0.25 * S3
     kernel_quat_to_upper_half(quat, quat)
 
-
 @jit
 def numba_rot_to_quat(xform):
     quat = np.empty(4, dtype=xform.dtype)
     kernel_rot_to_quat(xform, quat)
     return quat
-
 
 # update to numba 0.52 broke this
 # gu_rot_to_quat = guvec([
@@ -155,12 +145,10 @@ def quat_to_rot(quat, dtype="f8", shape=(3, 3)):
     rot[..., 2, 2] = 1 - 2 * (qi**2 + qj**2)
     return rot
 
-
 def quat_to_xform(quat, dtype="f8"):
     r = quat_to_rot(quat, dtype, shape=(4, 4))
     r[..., 3, 3] = 1
     return r
-
 
 def quat_multiply(q, r):
     q, r = np.broadcast_arrays(q, r)
@@ -174,7 +162,6 @@ def quat_multiply(q, r):
     t[..., 3] = r0 * q3 - r1 * q2 + r2 * q1 + r3 * q0
     return t
 
-
 # update to numba 0.52 broke this
 # @jit
 # def kernel_quat_multiply(q, r, out):
@@ -187,7 +174,6 @@ def quat_multiply(q, r):
 
 # gu_quat_multiply = guvec([(float64[:], float64[:], float64[:])], '(n),(n)->(n)',
 #                          kernel_quat_multiply)
-
 
 @jit
 def numba_quat_multiply(q, r):

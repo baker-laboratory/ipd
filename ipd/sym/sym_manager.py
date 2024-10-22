@@ -1,14 +1,16 @@
 import contextlib
-from abc import ABC, abstractmethod
 import copy
 import itertools
-from icecream import ic
+from abc import ABC, abstractmethod
+
 import assertpy
-from ipd.dev.lazy_import import lazyimport
 import numpy as np
+from icecream import ic
+
 import ipd
-from ipd.sym.sym_adapt import _sym_adapt
+from ipd.dev.lazy_import import lazyimport
 from ipd.sym import ShapeKind, ValueKind
+from ipd.sym.sym_adapt import _sym_adapt
 
 th = lazyimport('torch')
 
@@ -28,7 +30,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self.device = device or ('cuda' if th.cuda.is_available() else 'cpu')
         self.skip_keys = set()
         self._idx = None
-        self._post_init_args = ipd.Bunch(kw)
+        self._post_init_args = ipd.dev.Bunch(kw)
         self._frames = None
         self.add_properties()
         self.init(**kw)
@@ -45,7 +47,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         pass
 
     def post_init(self):
-        if self._post_init_args.idx: self.idx = self._post_init_args.idx
+        if 'idx' in self._post_init_args: self.idx = self._post_init_args.idx
         ipd.hub.sym_manager_created(self)
 
     def add_properties(self):
@@ -114,7 +116,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         elif thing.kind.shapekind == ShapeKind.SEQUENCE:
             result = thing.reconstruct([self(x, **kw) for x in thing.adapted])
         elif thing.kind.shapekind == ShapeKind.MAPPING:
-            result = thing.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
+            result = thing.reconstruct(
+                ipd.dev.Bunch({
+                    k: self(x, key=k, **kw)
+                    for k, x in thing.adapted.items()
+                }))
         elif thing.kind.shapekind == ShapeKind.SCALAR:
             result = thing.orig
         else:
@@ -125,19 +131,19 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return result
 
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
-        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.Bunch(kw, _strict=False), **kw)
+        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)
         if isinstance(xyz, tuple): xyz, pair = xyz
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         if len(xyz) == 1: xyz = xyz[0]
         return xyz if pair is None else (xyz, pair)
 
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
-        kw = ipd.Bunch(kw)
+        kw = ipd.dev.Bunch(kw)
         origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
-        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pari=pair, origxyz=origxyz**kw)
+        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pari=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
         xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
@@ -248,8 +254,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         unsym = orig[tomove]
         ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
         if len(unsym) and len(origasu) > 2 and not th.allclose(origasu, movedasu, atol=1e-3):
-            rms, _, xfit = wu.h.rmsfit(origasu, movedasu)
-            moved[tomove] = wu.h.xform(xfit, unsym)
+            rms, _, xfit = ipd.h.rmsfit(origasu, movedasu)
+            moved[tomove] = ipd.h.xform(xfit, unsym)
             if rms > 1e-3:
                 ic(orig)
                 ic(moved)
@@ -258,8 +264,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                 ic(self.idx)
                 import sys
                 sys.exit()
-                # wu.showme(origasu)
-                # wu.showme(moveasu)
+                # ipd.showme(origasu)
+                # ipd.showme(moveasu)
                 assert rms < 1e-3
         return moved
 
@@ -437,10 +443,10 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self._symmRs = self._symmRs.to(self.device)
 
     def is_on_symaxis(self, xyz):
-        axes = wu.sym.axes(self.symid, all=True)
+        axes = ipd.sym.axes(self.symid, all=True)
         onanyaxis = False
         for axis in itertools.chain(axes.values()):
-            onanyaxis |= th.any(wu.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
+            onanyaxis |= th.any(ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
         if not onanyaxis: return th.tensor([], dtype=int)
         if self.opt.subsymid is None:
             if len(axes) > 1: raise ValueError(f'atom on axes and dont know which subsymid {self.symid}')
@@ -448,7 +454,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             if axes.ndim: axes = axes[None]
         onaxis = th.zeros(len(xyz), dtype=bool)
         for axis in axes:
-            onaxis |= wu.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
+            onaxis |= ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
         return onaxis
 
     def update_px0(self, indep, px0):

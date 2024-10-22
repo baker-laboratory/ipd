@@ -1,16 +1,20 @@
 import itertools
-from timeit import timeit
 import random
+from timeit import timeit
+
 import pytest
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
 import ipd
+
 pytest.importorskip('ipd.fit.qcp_rms_cuda')
-from ipd.fit.qcp_rms import _rms
-from ipd import h
 import numpy as np
+
+from ipd import h
+from ipd.fit.qcp_rms import _rms
 
 def main():
     test_qcp_kernel_numba()

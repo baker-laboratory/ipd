@@ -2,13 +2,15 @@ import pytest
 
 pytest.importorskip('torch')
 import copy
+
 from icecream import ic
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
-import ipd.sym.sym_tensor as st
 import ipd
+import ipd.sym.sym_tensor as st
 
 ic.configureOutput(includeContext=False, contextAbsPath=True)
 

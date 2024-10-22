@@ -9,10 +9,9 @@ rich = lazyimport('rich', 'Rich', pip=True).now()
 sqlmodel = lazyimport('sqlmodel', pip=True).now()
 wpc = lazyimport('wills_pymol_crap', 'git+https://github.com/willsheffler/wills_pymol_crap.git',
                  pip=True).now()
-wu = lazyimport('willutil', 'git+https://github.com/willsheffler/willutil.git', pip=True).now()
 yaml = lazyimport('yaml', 'pyyaml', pip=True).now()
 
+from ipd.dev import timed as profile  # noqa
 from ipd.ppp.models import *
-from ipd.ppp.server import PPPBackend
 from ipd.ppp.client import *
-from ipd.dev import timed as profile
+from ipd.ppp.server import PPPBackend as PPPBackend

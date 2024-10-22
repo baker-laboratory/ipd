@@ -2,15 +2,15 @@
 import ipd
 
 th = ipd.lazyimport('torch')
-wu = ipd.lazyimport('willutil')
 
-import numpy as np
 import assertpy
-from ipd.sym import SymKind, ShapeKind, ValueKind
+import numpy as np
+
+from ipd.sym import ShapeKind, SymKind, ValueKind
 
 def symcheck(sym, thing, kind=None, **kw):
     thing, kind, adaptor = get_kind_and_adaptor(sym, thing, kind)
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     kw.idx = sym.idx
     kw.sym = sym
     kw.thing = thing
@@ -104,7 +104,7 @@ def symcheck_XYZ_1D(sym, idx, thing, **kw):
         for i in range(idx.nsub):
             # ic(i, thing.shape, sym.symmRs.shape, sym.symid, sym.nsub,idx.nsub)
             tmp1 = thing[s.beg + i * s.Lasu:s.asuend + i * s.Lasu]
-            tmp2 = wu.h.xform(wu.h.homog(sym.symmRs[i]), thing[s.asu])
+            tmp2 = ipd.h.xform(ipd.h.homog(sym.symmRs[i]), thing[s.asu])
             # ic(tmp1.shape,tmp2.shape)
             th.testing.assert_close(tmp1, tmp2.to(tmp1.dtype), atol=1e-3, rtol=1e-5, equal_nan=True)
 
@@ -191,29 +191,29 @@ def symcheck_BASIC_SPARSE(idx, thing, **kw):
 def check_sym_asu(sym, xyz, symxyz, perm_ok=False, atol=1e-4):
     masks = sym.idx.sub.to(xyz.device)
     symxyz = symxyz.to(xyz.device)
-    frames = th.as_tensor(wu.sym.frames(sym.symid), dtype=xyz.dtype, device=xyz.device)
+    frames = th.as_tensor(ipd.sym.frames(sym.symid), dtype=xyz.dtype, device=xyz.device)
     s = sym.idx
     if sym.fit or sym.asu_to_best_frame:
-        rms, _, _ = wu.h.rmsfit(xyz[s.asu], symxyz[s.asu])
+        rms, _, _ = ipd.h.rmsfit(xyz[s.asu], symxyz[s.asu])
         if rms > 1e-3:
             print(f'ASU mismatck {rms}')
             return False
         if s.Nunsym >= 3:
-            rms, _, _ = wu.h.rmsfit(xyz[s.unsym], symxyz[s.unsym])
+            rms, _, _ = ipd.h.rmsfit(xyz[s.unsym], symxyz[s.unsym])
             if rms > 1e-3:
                 print(f'UNSYM mismatck {rms}')
                 return False
-        rms, _, _ = wu.h.rmsfit(xyz[s.asym], symxyz[s.asym])
+        rms, _, _ = ipd.h.rmsfit(xyz[s.asym], symxyz[s.asym])
         if rms > 1e-3:
             print(f'ASYM mismatch {rms}')
             return False
     else:
         th.testing.assert_close(xyz[sym.idx.asym], symxyz[sym.idx.asym], atol=1e-3, rtol=1e-5)
-    wusym = wu.h.xform(frames, symxyz[masks[0]])
+    wusym = ipd.h.xform(frames, symxyz[masks[0]])
     for i in range(sym.nsub):
         a = symxyz[masks[i]]
         b = wusym[i]
-        if perm_ok: b = wusym[th.argmin(wu.h.norm((wusym - a).reshape(len(wusym), -1)))]
+        if perm_ok: b = wusym[th.argmin(ipd.h.norm((wusym - a).reshape(len(wusym), -1)))]
         if not th.allclose(a, b, atol=1e-3, rtol=1e-5):
             print(masks[i].to(int))
             print(i, 'a', a)

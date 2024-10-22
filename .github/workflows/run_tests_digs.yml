@@ -12,17 +12,22 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
 
+    - name: setup
+      run: |
+        ipd ci update_library
+        ipd ci repo setup_submodules
+
     - name: run ruff
       run: |
-        /home/bench/.local/bin/ruff check 2>&1 | tee ruff.log
+        ipd ci tests ruff
 
     - name: run pytest digs
       run: |
-        srun -p gpu --gres=gpu:a4000:1 --cpus-per-task=4 --mem=32G apptainer exec /home/sheffler/project/apptainer/TEST pytest 2>&1 | tee pytest.log
+        ipd ci tests pytest
 
     - name: check test results
       run: |
-        python ipd/tests/check_test_results.py
+        ipd ci tests check
 
     # - name: build docs
     #   run: |

@@ -1,23 +1,27 @@
 import contextlib
-from datetime import datetime
-import fastapi
 import functools
 import inspect
-import ipd
+import sys
+import typing
+import uuid
+from datetime import datetime
+from typing import Annotated, Optional, Union
+
+import fastapi
 import pydantic
 import requests
-import uuid
-import typing
 import yaml
-import sys
-from typing import Union, Optional, Annotated
+
+import ipd
 
 class ClientError(Exception):
     pass
 
 def tojson(thing):
     if isinstance(thing, list): return f'[{",".join(tojson(_) for _ in thing)}]'
-    return thing.json() if hasattr(thing, 'json') else str(thing)
+    if hasattr(thing, 'model_dump_json'): return thing.model_dump_json()
+    if hasattr(thing, 'json'): return thing.json()
+    return str(thing)
 
 class ModelRef(type):
     def __class_getitem__(cls, T):
@@ -177,7 +181,8 @@ def make_client_models(clientcls, trimspecs, remote_props):
             if attr.endswith('id'):
                 optional = field.default is None
                 body['__annotations__'][attr] = Optional[uuid.UUID] if optional else uuid.UUID
-                del trimspec.model_fields[attr]
+                if attr in trimspec.model_fields:
+                    del trimspec.model_fields[attr]
         clcls = type(clsname, (ClientModelBase, trimspec), body, remote_props=props)
         # for k, v in clcls.model_fields.items():
         # print(clsname, k, v.annotation)
@@ -276,8 +281,11 @@ class ClientBase:
         thingtype = thing.__class__.__name__.lower()
         return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
 
+    def preprocess_get(self, kw):
+        return kw
+
     def get(self, url, **kw):
-        ipd.ppp.fix_label_case(kw)
+        kw = self.preprocess_get(kw)
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
         if self.testclient:

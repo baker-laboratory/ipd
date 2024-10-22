@@ -5,10 +5,11 @@ from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
-import ipd
-from icecream import ic
-from ipd import h
 import hypothesis
+from icecream import ic
+
+import ipd
+from ipd import h
 
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))

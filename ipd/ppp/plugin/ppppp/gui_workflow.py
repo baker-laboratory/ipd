@@ -1,9 +1,11 @@
 import os
-import pymol
-import ipd
-from ipd.ppp.plugin.ppppp.gui_commands import ToggleCommands
 from typing import Any
-from ipd.qt import MenuAction, isfalse_notify
+
+import pymol
+
+import ipd
+from ipd.dev.qt import MenuAction, isfalse_notify
+from ipd.ppp.plugin.ppppp.gui_commands import ToggleCommands
 
 class FlowStepGui(ipd.ppp.FlowStepSpec):
     widget: Any
@@ -11,7 +13,7 @@ class FlowStepGui(ipd.ppp.FlowStepSpec):
 class WorkflowGui(ipd.ppp.WorkflowSpec):
     guisteps: list[FlowStepGui]
 
-class WorkflowStepCmdList(ipd.qt.ContextMenuMixin):
+class WorkflowStepCmdList(ipd.dev.qt.ContextMenuMixin):
     def __init__(self, creator, step):
         class WFCmdList(pymol.Qt.QtWidgets.QListWidget):
             def __init__(self, cmdlist, creator, step):
@@ -50,7 +52,7 @@ class WorkflowStepCmdList(ipd.qt.ContextMenuMixin):
 
     def _context_menu_items(self):
         return {
-            'details': MenuAction(func=lambda cmd: ipd.qt.notify(cmd)),
+            'details': MenuAction(func=lambda cmd: ipd.dev.qt.notify(cmd)),
             'remove cmd': MenuAction(func=lambda item: self.creator.remove_cmd(self.step, item)),
             'remove step': MenuAction(func=lambda: self.creator.remove_step(self.step), item=False),
         }
@@ -138,7 +140,7 @@ class WorkflowStepGui:
 class WorkflowCreatorGui(ToggleCommands):
     def __init__(self, parent, state, remote):
         self.sharedstate = state
-        state = ipd.Bunch(_strict=False, cmds={}, active_cmds=set(), showallcmds=True, findcmd='')
+        state = ipd.dev.Bunch(_strict=False, cmds={}, active_cmds=set(), showallcmds=True, findcmd='')
         super().__init__(parent, state, remote)
         self.name = self.__class__.__name__
         uifile = os.path.join(os.path.dirname(__file__), 'gui_workflows.ui')

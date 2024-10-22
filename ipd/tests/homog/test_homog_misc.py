@@ -1,5 +1,7 @@
-import pytest
 import numpy as np
+import pytest
+from icecream import ic
+
 import ipd as ipd
 
 def main():

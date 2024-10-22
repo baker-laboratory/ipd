@@ -6,12 +6,77 @@ build-backend = "hatchling.build"
 name = "ipd"
 version = "0.1"
 dependencies = [
-'hydra-core',
-'hypothesis',
-'icecream',
-'requests',
-'pydantic',
-'numpy',
-'assertpy', 
+    'assertpy',
+    'eliot',
+    'eliot-tree',
+    'fastapi[standard]',
+    'gitpython',
+    'hydra-core',
+    'hypothesis',
+    'icecream',
+    'numpy',
+    'opt_einsum',
+    'pre-commit',
+    'pydantic',
+    'pytest',
+    'pytest-sugar',
+    'pytest-xdist',
+    'python-box',
+    'requests',
+    'ruff',
+    'sqlmodel[standard]',
+    'submitit',
+    'tqdm',
+    'typer[all]',]
+
+[project.scripts]
+ipd = 'ipd.__main__:main'
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "ipd/tests",
 ]
-requires-python = ">=3.8"
+
+[tool.pyright]
+include = ["rf_diffusion", "lib/rf2aa/rf2aa", "lib/rf2aa/lib/ipd/ipd"]
+exclude = [
+    "**/__pycache__",
+]
+defineConstant = { DEBUG = true }
+typeCheckingMode = "basic"
+reportMissingImports = true
+reportMissingTypeStubs = false
+pythonPlatform = "Linux"
+requires-python = ">=3.11"
+pythonVersion = "3.12"
+executionEnvironments = [
+  { root = "/home/sheffler/sw/MambaForge/envs/rfdsym312/bin/python", pythonVersion = "3.12", pythonPlatform = "Linux", extraPaths = [] },
+]
+
+[tool.ruff]
+lint.ignore = [
+   'E731', #  [ ] Do not assign a `lambda` expression, use a `def`
+   'E402', #  [ ] Module level import not at top of file
+   'E741', #  [ ] Ambiguous variable name: `I`
+   'E701', #  [ ] Multiple statements on one line (colon)
+   'F403', #  [ ] `from Attention_module import *` used; unable to detect undefined names
+   'F405',
+   'F821',
+   'F841',
+
+]
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?)|ic)$"
+line-length = 111
+target-version = "py39"
+format.quote-style = "single"
+format.indent-style = "space"
+format.docstring-code-format = true
+
+[tool.yapf]
+based_on_style = "pep8"
+indent_width = 4
+column_limit = 111
+blank_line_before_nested_class_or_def = false
+blank_lines_around_top_level_definition = 1

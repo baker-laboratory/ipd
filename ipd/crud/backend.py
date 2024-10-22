@@ -1,18 +1,20 @@
-from collections import defaultdict
 import contextlib
-from datetime import datetime
-import fastapi
-import ipd
-from ipd.crud.frontend import SpecBase
 import operator
+import sys
+import traceback
+import typing
+from collections import defaultdict
+from datetime import datetime
+from uuid import UUID, uuid4
+
+import fastapi
 import pydantic
 import sqlalchemy
 import sqlmodel.pool
 from sqlmodel.main import RelationshipInfo
-import sys
-import traceback
-import typing
-from uuid import UUID, uuid4
+
+import ipd
+from ipd.crud.frontend import SpecBase
 
 # python_type_to_sqlalchemy_type = {
 #     str: sqlalchemy.String,
@@ -58,6 +60,8 @@ def make_backend_model_base(SQL=sqlmodel.SQLModel):
     return BackendModelBase
 
 class BackendBase:
+    mountpoint = 'ipd'
+
     def __init_subclass__(cls, models, SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
         cls.__spec_models__ = models
@@ -105,6 +109,9 @@ class BackendBase:
             self.session.commit()
         self.initdb()
 
+    def add_defaults(self):
+        pass
+
     def initdb(self):
         sqlmodel.SQLModel.metadata.create_all(self.engine)
 
@@ -128,7 +135,7 @@ class BackendBase:
         thing.ghost = True
         self.session.add(thing)
         self.session.commit()
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
+        # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
 
     def actually_remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
@@ -175,7 +182,7 @@ class BackendBase:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
         if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)
-        if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)
+        if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)  # noqa
         # print(statement)
         # if statement._get_embedded_bindparams():
         # print({p.key: p.value for p in statement._get_embedded_bindparams()})
@@ -363,12 +370,12 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
                 # print(refkind, link, list[dbclsname[kind]], 'Rel. backpop', attr[:-2])
                 body[refkind][link] = sqlmodel.Relationship(back_populates=attr[:-2])
                 anno[refkind][link] = list[dbclsname[kind]]
-            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == dict:
+            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == dict:  # noqa
                 body[kind][attr] = attrs_default()
                 anno[kind][attr] = Attrs
-            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:
+            elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:  # noqa
                 args = typing.get_args(field.annotation)
-                print(kind, attr, args)
+                # print(kind, attr, args)
                 if args[0] in specnames or args[0] in spec_models.values():
                     assert len(args) < 3
                     if len(args) == 2: refname, link = args
@@ -424,7 +431,7 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
             ano = trimspec.__annotations__.get(attr, None)
             ano = ano or trimspec.model_fields.get(attr, None)
             ano = getattr(ano, '__origin__', None)
-            if ano == list:
+            if ano == list:  # noqa
                 if attr in trimspec.model_fields: del trimspec.model_fields[attr]
                 if hasattr(trimspec, attr): delattr(trimspec, attr)
                 if attr in trimspec.__annotations__: del trimspec.__annotations__[attr]

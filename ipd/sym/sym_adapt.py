@@ -1,13 +1,15 @@
+import contextlib
 import copy
 import dataclasses
-import contextlib
-from ipd.dev.lazy_import import lazyimport
-import numpy as np
-from functools import singledispatch
 from abc import ABC, abstractmethod
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
+from functools import singledispatch
+
+import numpy as np
+
 import ipd
-from ipd.sym.sym_kind import SymKind, ShapeKind, ValueKind
+from ipd.dev.lazy_import import lazyimport
+from ipd.sym.sym_kind import ShapeKind, SymKind, ValueKind
 
 th = lazyimport('torch')
 
@@ -187,17 +189,25 @@ class SymAdaptDataClass(SymAdapt):
             #     print(f'{k:15} {[x.shape for x in v]}')
         return type(self.orig)(**symparts)
 
-# @_sym_adapt.register(SimpleSparseTensor)
-# def _(sparse, sym):
-# return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
-
-def check_isasym(tensor, sym, isasym, idx):
-    if isasym is not None: return isasym
-    if sym.L in tensor.shape: return False
-    if sym.Nasym in tensor.shape: return True
-    assert idx is not None
-
+# ipd libs shouldn't require torch
 with contextlib.suppress(ImportError):
+
+    @dataclasses.dataclass
+    class SimpleSparseTensor:
+        val: th.Tensor
+        idx: th.Tensor
+        isidx: slice
+        kind: kind = None
+
+    # @_sym_adapt.register(SimpleSparseTensor)
+    # def _(sparse, sym):
+    # return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
+
+    def check_isasym(tensor, sym, isasym, idx):
+        if isasym is not None: return isasym
+        if sym.L in tensor.shape: return False
+        if sym.Nasym in tensor.shape: return True
+        assert idx is not None
 
     class SymAdaptNamedDenseTensor(SymAdapt):
         adapts = None

@@ -1,4 +1,5 @@
 import pytest
+
 import ipd
 from ipd.dev.lazy_import import lazyimport
 
@@ -16,7 +17,7 @@ def main():
 
 @pytest.mark.fast
 def test_cudafunc_clash():
-    func = ipd.cuda.ClashFunc(3, 4)
+    func = ipd.dev.cuda.ClashFunc(3, 4)
     assert func.reference_impl(0) == 1
     assert func.reference_impl(3) == 1
     assert func.reference_impl(3.5) == 0.5
@@ -25,7 +26,7 @@ def test_cudafunc_clash():
 
 @pytest.mark.fast
 def test_cudafunc_clash_on_gpu():
-    func = ipd.cuda.ClashFunc(3, 4)
+    func = ipd.dev.cuda.ClashFunc(3, 4)
     dist = th.arange(0, 10.001, 0.5).to('cuda').to(th.float32)
     ref = th.tensor([func.reference_impl(x) for x in dist])
     tst = func(dist)
@@ -33,7 +34,7 @@ def test_cudafunc_clash_on_gpu():
 
 @pytest.mark.fast
 def test_cudafunc_contact():
-    func = ipd.cuda.ContactFunc()
+    func = ipd.dev.cuda.ContactFunc()
     # for f in th.arange(0,10.01,0.25):
     # print(f'{f}) == {func.reference_impl(f)}')
     assert func.reference_impl(0.0) == 10000.0
@@ -51,7 +52,12 @@ def test_cudafunc_contact():
 
 @pytest.mark.fast
 def test_cudafunc_contact_10():
-    func = ipd.cuda.ContactFunc(clashscore=10, contactscore=-1, clashend=3, contactbeg=4, contactend=8, end=9)
+    func = ipd.dev.cuda.ContactFunc(clashscore=10,
+                                    contactscore=-1,
+                                    clashend=3,
+                                    contactbeg=4,
+                                    contactend=8,
+                                    end=9)
     assert func.reference_impl(0.00) == 10.00
     assert func.reference_impl(3.00) == 10.00
     assert func.reference_impl(3.25) == 7.25
@@ -68,7 +74,7 @@ def test_cudafunc_contact_10():
 
 @pytest.mark.fast
 def test_cudafunc_contact_on_gpu():
-    func = ipd.cuda.ContactFunc()
+    func = ipd.dev.cuda.ContactFunc()
     dist = th.arange(0, 10.001, 0.5).to('cuda').to(th.float32)
     ref = th.tensor([func.reference_impl(x) for x in dist])
     tst = func(dist)

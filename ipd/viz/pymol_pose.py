@@ -1,10 +1,9 @@
-import willutil as wu
 from pyrosetta import Pose
 
+import ipd
 
 def is_rosetta_pose(toshow):
     return isinstance(toshow, Pose)
-
 
 def pymol_load_pose(pose, name):
     tmpdir = tempfile.mkdtemp()
@@ -12,8 +11,7 @@ def pymol_load_pose(pose, name):
     pose.dump_pdb(fname)
     pymol.cmd.load(fname)
 
-
-@wu.viz.pymol_load.register(Pose)
+@ipd.viz.pymol_load.register(Pose)
 def _(toshow, name=None, state=None, **kw):
     name = name or "rif_thing"
     state["seenit"][name] += 1

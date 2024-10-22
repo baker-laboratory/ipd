@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-import ipd
-
 from icecream import ic
+
+import ipd
 
 pytest.importorskip('ipd.voxel.voxel_cuda')
 th = pytest.importorskip('torch')
@@ -35,11 +35,11 @@ def test_voxdock_ab(timer=ipd.dev.Timer()):
     xyz = make_test_points(100, 20)
     repulsive_only = th.ones(100, dtype=bool, device='cuda')
     repulsive_only[3:97] = False
-    # rb = ipd.voxel.VoxRB(xyz[:128], resl=1, func=ipd.cuda.ContactFunc())
+    # rb = ipd.voxel.VoxRB(xyz[:128], resl=1, func=ipd.dev.cuda.ContactFunc())
 
     rb = ipd.voxel.VoxRB(xyz,
                          resl=1,
-                         func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
+                         func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
                          repulsive_only=repulsive_only)
     # trans_score = rb.score(rb, th.eye(4), ipd.h.trans(x=th.arange(40, 50, 0.1))).min()
     # ic(trans_score)
@@ -95,7 +95,7 @@ def test_voxdock_c3():
     xyz = make_test_points(100, 20)
     xyz -= xyz.mean(0)
     rg = th.sqrt(th.mean(h.norm(xyz)**2))
-    rb = ipd.voxel.VoxRB(xyz, resl=1, func=ipd.cuda.ContactFunc(1000, -1, 4, 5, 9, 10))
+    rb = ipd.voxel.VoxRB(xyz, resl=1, func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10))
     # ipd.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
     N = 100_000
     Ntop = 1000
@@ -201,7 +201,7 @@ def voxdock_cage(xyz,
     cen = asuvec[:3] * rg * {60: 5, 24: 3, 12: 2}[len(xsym)]
     xyz = xyz + cen
     if timer: timer.checkpoint('startup')
-    rb = ipd.voxel.VoxRB(xyz, resl=resl, func=ipd.cuda.ContactFunc(1000, -1, 5, 6, 9, 10))
+    rb = ipd.voxel.VoxRB(xyz, resl=resl, func=ipd.dev.cuda.ContactFunc(1000, -1, 5, 6, 9, 10))
     if timer: timer.checkpoint('voxel')
     # cen = None
     # rb._vizpos = xsym

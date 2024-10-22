@@ -1,12 +1,13 @@
+from timeit import timeit
+
 import numpy as np
 import pytest
-from timeit import timeit
-import ipd
-from ipd.dev.lazy_import import lazyimport
-from ipd import h
 from icecream import ic
 
-th = lazyimport('torch')
+import ipd
+from ipd import h
+
+pytest.importorskip('torch')
 pytest.importorskip('ipd.samp.samp_cuda')
 
 def main():

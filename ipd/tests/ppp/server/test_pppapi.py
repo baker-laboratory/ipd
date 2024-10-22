@@ -4,23 +4,26 @@ pytest.importorskip('pymol')
 pytest.importorskip('sqlmodel')
 pytest.importorskip('fastapi')
 
-import itertools as it
-import ipd
-from ipd import ppp
-from pathlib import Path
-import traceback
-import os
 import inspect
+import itertools as it
+import os
 import subprocess
-from fastapi.testclient import TestClient
+import traceback
+from pathlib import Path
+
 import pydantic
 import pytest
 import rich
+from fastapi.testclient import TestClient
+
+import ipd
+from ipd import ppp
+
 # from rich import print
 
 def set_debug_requests():
-    import logging
     import http.client as http_client
+    import logging
 
     http_client.HTTPConnection.debuglevel = 1
     # You must initialize logging, otherwise you'll not see debug output.
@@ -59,7 +62,7 @@ def make_tmp_clent_server():
         port=12346,
         dburl='sqlite:////tmp/test.db',
         # dburl='<memory>',
-        woerkers=1,
+        workers=1,
         loglevel='warning')
     ppptestclient = TestClient(pppbackend.app)
     ppp.server.defaults.ensure_init_db(pppbackend)
@@ -78,16 +81,16 @@ def _test_post_hang():
 
 @pytest.mark.fast
 def test_pollfiles(pppclient):
-    poll = pppclient.newpoll(name='polio', path=ipd.testpath('ppppdbdir'))
+    poll = pppclient.newpoll(name='polio', path=ipd.dev.package_testdata_path('ppppdbdir'))
     for f in poll.pollfiles:
         assert f == pppclient.pollfile(pollid=poll.id, fname=f.fname)
 
 @pytest.mark.fast
 def test_review(pppclient):
-    poll = pppclient.newpoll(name='polio', path=ipd.testpath('ppppdbdir'))
+    poll = pppclient.newpoll(name='polio', path=ipd.dev.package_testdata_path('ppppdbdir'))
     assert poll.pollfiles
-    poll2 = pppclient.newpoll(name='polio2', path=ipd.testpath('ppppdbdir'))
-    poll3 = pppclient.newpoll(name='polio3', path=ipd.testpath('ppppdbdir'))
+    poll2 = pppclient.newpoll(name='polio2', path=ipd.dev.package_testdata_path('ppppdbdir'))
+    poll3 = pppclient.newpoll(name='polio3', path=ipd.dev.package_testdata_path('ppppdbdir'))
     file = next(iter(poll.pollfiles))
     pppclient.newuser(name='reviewer')
     print([p.name for p in pppclient.users()])
@@ -142,7 +145,7 @@ def test_review(pppclient):
 
 @pytest.mark.fast
 def test_poll_attr(pppclient):
-    poll = pppclient.upload_poll(ppp.PollSpec(name='foo', path=ipd.testpath('ppppdbdir')))
+    poll = pppclient.upload_poll(ppp.PollSpec(name='foo', path=ipd.dev.package_testdata_path('ppppdbdir')))
     # poll.print_full()
     # print(type(poll.id), type(poll.pollfiles[0].pollid))
     # print(poll.id == poll.pollfiles[0].pollid)
@@ -246,7 +249,7 @@ def test_read_root(pppclient):
 
 def _test_file_upload(pppclient, pppbackend):
     # pppclient = ppp.PPPClient(ppptestclient)
-    path = ipd.testpath('ppppdbdir')
+    path = ipd.dev.package_testdata_path('ppppdbdir')
     spec = ppp.PollSpec(name='usertest1pub', path=path, userid='test', ispublic=True)
     if response := pppclient.upload_poll(spec): print(response)
     localfname = os.path.join(path, '1pgx.cif')
@@ -284,7 +287,7 @@ def _test_file_upload(pppclient, pppbackend):
 
 @pytest.mark.fast
 def test_poll(pppclient, pppbackend):
-    path = ipd.testpath('ppppdbdir')
+    path = ipd.dev.package_testdata_path('ppppdbdir')
     pppclient.upload(ppp.UserSpec(name='test1'))
 
     assert pppclient.user(name='test1').fullname == ''

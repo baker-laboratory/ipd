@@ -1,7 +1,6 @@
+import collections
 import copy
 import sys
-import collections
-import willutil as wu
 
 import numpy as np
 
@@ -30,9 +29,9 @@ def to_xyz(x):
     return x
 
 def hvalid(stuff, is_points=None, strict=False, **kw):
-    if stuff.shape[-2:] == (4, 4) and not is_points == True:
+    if stuff.shape[-2:] == (4, 4) and not is_points:
         return hvalid44(stuff, **kw)
-    if stuff.shape[-2:] == (4, 2) and not is_points == True:
+    if stuff.shape[-2:] == (4, 2) and not is_points:
         return is_valid_rays(stuff)
     elif stuff.shape[-1] == 4 and strict:
         return np.allclose(stuff[..., 3], 0) or np.allclose(stuff[..., 3], 1)
@@ -520,7 +519,7 @@ def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), 
 
 def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
     """angle will override nfold"""
-    # if isinstance(axis, ipd.Bunch):
+    # if isinstance(axis, ipd.dev.Bunch):
     #   bunch = axis
     #   axis = bunch.axis
     #   if angle is None: angle = bunch.angle
@@ -1467,7 +1466,7 @@ def hexpand(
 ):
     generators = np.asarray(generators).astype(np.float64)
     cen = np.asarray(cen).astype(np.float64)
-    x, _ = wu.cpp.geom.expand_xforms_rand(
+    x, _ = ipd.cpp.geom.expand_xforms_rand(
         generators,
         depth=depth,
         trials=ntrials,

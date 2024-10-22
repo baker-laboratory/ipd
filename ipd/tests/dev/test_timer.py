@@ -1,6 +1,8 @@
-import time
-import pytest
 import statistics
+import time
+
+import pytest
+
 import ipd
 from ipd.dev import Timer
 
@@ -52,7 +54,7 @@ def test_auto():
     areport = t.report(printme=False, scale=0)
 
     t = Timer()
-    kw = ipd.Bunch(timer=t)
+    kw = ipd.dev.Bunch(timer=t)
     ipd.dev.checkpoint(t)
     bbbb(**kw)
     breport = t.report(printme=False, scale=0)

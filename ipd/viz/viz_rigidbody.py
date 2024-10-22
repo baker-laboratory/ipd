@@ -1,16 +1,17 @@
 import numpy as np
-from willutil.viz.pymol_viz import pymol_load, cgo_sphere
-import willutil as wu
-from willutil.rigid.rigidbody import RigidBody, RigidBodyFollowers
+
+import ipd
+from ipd.dock.rigid.rigidbody import RigidBody, RigidBodyFollowers
+from ipd.viz.pymol_viz import cgo_sphere, pymol_load
 
 @pymol_load.register(RigidBodyFollowers)
 def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, addtocgo=None, **kw):
-    wu.showme(bodies.bodies, name=name, topcolors=[(1, 1, 1)], **kw)
+    ipd.showme(bodies.bodies, name=name, topcolors=[(1, 1, 1)], **kw)
     return
 
     import pymol
 
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     v = pymol.cmd.get_view()
     state["seenit"][name] += 1
     cgo = list()
@@ -38,7 +39,7 @@ def pymol_viz_RigidBody(
         col=(1, 1, 1),
         **kw,
 ):
-    kw = ipd.Bunch(kw)
+    kw = ipd.dev.Bunch(kw)
     import pymol
 
     v = pymol.cmd.get_view()
@@ -47,7 +48,7 @@ def pymol_viz_RigidBody(
     assert 0 == np.sum(np.isnan(body.coords))
 
     cgo = list()
-    wu.showme(body.coords, addtocgo=cgo, sphere=vizsphereradius, col=col, **kw)
+    ipd.showme(body.coords, addtocgo=cgo, sphere=vizsphereradius, col=col, **kw)
 
     if showcontactswith is not None:
         # ic(body.point_contact_count(showcontactswith, contactdist=showpairsdist))
@@ -65,7 +66,7 @@ def pymol_viz_RigidBody(
         crds2 = showpairswith.coords
         pairs = body.interactions(showpairswith, contactdist=showpairsdist)
         for i, j in pairs:
-            cgo += wu.viz.cgo_lineabs(crds1[i], crds2[j])
+            cgo += ipd.viz.cgo_lineabs(crds1[i], crds2[j])
 
     if addtocgo is None:
         pymol.cmd.load_cgo(cgo, f'{name}_{state["seenit"][name]}')

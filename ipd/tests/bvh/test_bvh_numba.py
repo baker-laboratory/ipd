@@ -3,8 +3,9 @@ import pytest
 pytest.importorskip('torch')
 import os
 
-from numba import cuda
 import torch as th
+from numba import cuda
+
 import ipd as ipd
 
 def main():

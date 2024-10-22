@@ -1,6 +1,8 @@
 import itertools
+
 import numpy as np
-import willutil as wu
+
+import ipd
 
 try:
     import pymol
@@ -33,7 +35,7 @@ def showcom(sel="all"):
     _numcom += 1
 
 def cgo_sphere(cen, rad=1, col=(1, 1, 1)):
-    cen = wu.homog.hpoint(cen).reshape(-1, 4)
+    cen = ipd.homog.hpoint(cen).reshape(-1, 4)
     # white sphere with 3A radius
     # ic(col)
     mycgo = [cgo.COLOR, col[0], col[1], col[2]]
@@ -228,11 +230,11 @@ def cgo_fan(
     if arc > 10:
         arc = np.radians(arc)
     col2 = col2 or col
-    rot = wu.homog.hrot(axis, arc / (ntri + 0), cen)
+    rot = ipd.homog.hrot(axis, arc / (ntri + 0), cen)
 
     # ic(startpoint - cen)
-    dirn = wu.homog.hprojperp(axis, startpoint - cen)
-    dirn = wu.homog.hnormalized(dirn)
+    dirn = ipd.homog.hprojperp(axis, startpoint - cen)
+    dirn = ipd.homog.hnormalized(dirn)
     cen = cen + fanshift * axis
     pt1 = cen + dirn * rad  # - thickness * axis * 0.5
 
@@ -292,15 +294,15 @@ def showaxes():
     pymol.cmd.load_cgo(obj, "axes")
 
 def cgo_cyl_arrow(c1, c2, r, col=(1, 1, 1), col2=None, arrowlen=4.0):
-    c1, c2 = wu.hpoint(c1), wu.hpoint(c2)
+    c1, c2 = ipd.hpoint(c1), ipd.hpoint(c2)
     if not col2:
         col2 = col
     CGO = []
     # c1.round0()
     # c2.round0()
     CGO.extend(cgo_cyl(c1, c2, rad=r, col=col, col2=col2))
-    dirn = wu.hnormalized(c2 - c1)
-    perp = wu.hnormalized(wu.hprojperp(dirn, [0.2340790923, 0.96794275, 0.52037438472304783]))
+    dirn = ipd.homog.hnormalized(c2 - c1)
+    perp = ipd.homog.hnormalized(ipd.hprojperp(dirn, [0.2340790923, 0.96794275, 0.52037438472304783]))
     if arrowlen > 0:
         arrow1 = c2 - dirn * arrowlen + perp * 2.0
         arrow2 = c2 - dirn * arrowlen - perp * 2.0
@@ -368,32 +370,32 @@ def cgo_cube(lb=[-10, -10, -10], ub=[10, 10, 10], r=0.03, xform=np.eye(4)):
     if isinstance(ub, (float, int)):
         ub = [ub] * 3
     a = [
-        wu.homog.hxform(xform, [ub[0], ub[1], ub[2]]),
-        wu.homog.hxform(xform, [ub[0], ub[1], lb[2]]),
-        wu.homog.hxform(xform, [ub[0], lb[1], lb[2]]),
-        wu.homog.hxform(xform, [ub[0], lb[1], ub[2]]),
-        wu.homog.hxform(xform, [lb[0], ub[1], ub[2]]),
-        wu.homog.hxform(xform, [lb[0], ub[1], lb[2]]),
-        wu.homog.hxform(xform, [lb[0], lb[1], lb[2]]),
-        wu.homog.hxform(xform, [lb[0], lb[1], ub[2]]),
-        wu.homog.hxform(xform, [lb[0], ub[1], ub[2]]),
-        wu.homog.hxform(xform, [lb[0], ub[1], lb[2]]),
-        wu.homog.hxform(xform, [lb[0], lb[1], ub[2]]),
-        wu.homog.hxform(xform, [lb[0], lb[1], lb[2]]),
+        ipd.homog.hxform(xform, [ub[0], ub[1], ub[2]]),
+        ipd.homog.hxform(xform, [ub[0], ub[1], lb[2]]),
+        ipd.homog.hxform(xform, [ub[0], lb[1], lb[2]]),
+        ipd.homog.hxform(xform, [ub[0], lb[1], ub[2]]),
+        ipd.homog.hxform(xform, [lb[0], ub[1], ub[2]]),
+        ipd.homog.hxform(xform, [lb[0], ub[1], lb[2]]),
+        ipd.homog.hxform(xform, [lb[0], lb[1], lb[2]]),
+        ipd.homog.hxform(xform, [lb[0], lb[1], ub[2]]),
+        ipd.homog.hxform(xform, [lb[0], ub[1], ub[2]]),
+        ipd.homog.hxform(xform, [lb[0], ub[1], lb[2]]),
+        ipd.homog.hxform(xform, [lb[0], lb[1], ub[2]]),
+        ipd.homog.hxform(xform, [lb[0], lb[1], lb[2]]),
     ]
     b = [
-        wu.homog.hxform(xform, [ub[0], ub[1], lb[2]]),
-        wu.homog.hxform(xform, [ub[0], lb[1], lb[2]]),
-        wu.homog.hxform(xform, [ub[0], lb[1], ub[2]]),
-        wu.homog.hxform(xform, [ub[0], ub[1], ub[2]]),
-        wu.homog.hxform(xform, [lb[0], ub[1], lb[2]]),
-        wu.homog.hxform(xform, [lb[0], lb[1], lb[2]]),
-        wu.homog.hxform(xform, [lb[0], lb[1], ub[2]]),
-        wu.homog.hxform(xform, [lb[0], ub[1], ub[2]]),
-        wu.homog.hxform(xform, [ub[0], ub[1], ub[2]]),
-        wu.homog.hxform(xform, [ub[0], ub[1], lb[2]]),
-        wu.homog.hxform(xform, [ub[0], lb[1], ub[2]]),
-        wu.homog.hxform(xform, [ub[0], lb[1], lb[2]]),
+        ipd.homog.hxform(xform, [ub[0], ub[1], lb[2]]),
+        ipd.homog.hxform(xform, [ub[0], lb[1], lb[2]]),
+        ipd.homog.hxform(xform, [ub[0], lb[1], ub[2]]),
+        ipd.homog.hxform(xform, [ub[0], ub[1], ub[2]]),
+        ipd.homog.hxform(xform, [lb[0], ub[1], lb[2]]),
+        ipd.homog.hxform(xform, [lb[0], lb[1], lb[2]]),
+        ipd.homog.hxform(xform, [lb[0], lb[1], ub[2]]),
+        ipd.homog.hxform(xform, [lb[0], ub[1], ub[2]]),
+        ipd.homog.hxform(xform, [ub[0], ub[1], ub[2]]),
+        ipd.homog.hxform(xform, [ub[0], ub[1], lb[2]]),
+        ipd.homog.hxform(xform, [ub[0], lb[1], ub[2]]),
+        ipd.homog.hxform(xform, [ub[0], lb[1], lb[2]]),
     ]
     mycgo = [[cgo.CYLINDER, a[i][0], a[i][1], a[i][2], b[i][0], b[i][1], b[i][2], r, 1, 1, 1, 1, 1, 1]
              for i in range(len(a))]
