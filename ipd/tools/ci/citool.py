@@ -1,4 +1,3 @@
-import pathlib
 import sys
 import shutil
 import glob
@@ -107,13 +106,12 @@ class TestsTool(CITool):
         fail = False
         for f in glob.glob('pytest*.log'):
             with open(f) as inp:
-                lines = inp.readlines()
-                fail |= 'failed' in lines[-1]
-                for line in lines:
+                for line in inp.readlines():
                     fail |= 'ERROR' in line
                     fail |= 'FAILED' in line
                     fail |= 'FATAL' in line
                     fail |= 'Error while loading ' in line
+                    if fail: print(line)
             if fail:
                 print('PYTEST FAILED, see log:', f)
         for f in glob.glob('ruff*.log'):
