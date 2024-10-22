@@ -115,8 +115,7 @@ class TestsTool(CITool):
                     fail |= 'FATAL' in line
                     fail |= 'Error while loading ' in line
             if fail:
-                print('PYTEST FAILED:', f)
-                print(str.join('', lines))
+                print('PYTEST FAILED, see log:', f)
         for f in glob.glob('ruff*.log'):
             with open(f) as inp:
                 lines = inp.readlines()
