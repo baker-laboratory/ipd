@@ -16,6 +16,7 @@ dependencies = [
     'icecream',
     'numpy',
     'opt_einsum',
+    'pre-commit',
     'pydantic',
     'pytest',
     'pytest-sugar',
