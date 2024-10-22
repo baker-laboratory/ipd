@@ -92,8 +92,8 @@ def test_spacegroup_frames_P3():
         [6.12323400e-17, 1.06057524e-16, 1.00000000e00],
     ])
     ic(latticevec)
-    fname = ipd.tests.test_data_path("pdb/i213fittest.pdb")
-    coords = ipd.readpdb(fname).subset(chain="A").ca()
+    fname = ipd.dev.package_testdata_path("pdb/i213fittest.pdb")
+    coords = ipd.pdb.readpdb(fname).subset(chain="A").ca()
     ipd.showme(coords)
     assert 0
 

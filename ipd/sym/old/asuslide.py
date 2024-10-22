@@ -114,7 +114,7 @@ def asuslide(
                                                  **kw)
     if showme:
         ipd.showme(assembly, name="START", **kw)
-    # assembly.dump_pdb(f'/home/sheffler/DEBUG_asuslide_start_{ipd.misc.datetimetag()}.pdb')
+    # assembly.dump_pdb(f'/home/sheffler/DEBUG_asuslide_start_{ipd.dev.datetimetag()}.pdb')
 
     cellsize0 = cellsize
     if centerasu_at_start:

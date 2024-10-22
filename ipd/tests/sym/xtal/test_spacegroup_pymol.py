@@ -58,7 +58,7 @@ def helper_test_spacegroup_frames_pymol(spacegroup, cellgeom, ncells, dump_pdbs=
     with tempfile.TemporaryDirectory() as tmpdir:
         pymol.cmd.delete("all")
         fname = f"{tmpdir}/test.pdb"
-        ipd.dumppdb(fname, asymcrd, spacegroup=spacegroup, cellgeom=cellgeom)
+        ipd.pdb.dumppdb(fname, asymcrd, spacegroup=spacegroup, cellgeom=cellgeom)
         pymol.cmd.load(fname)
         pymol.cmd.symexp("pref", "test", "all", 9e9)
         crdref = pymol.cmd.get_coords()
@@ -74,8 +74,8 @@ def helper_test_spacegroup_frames_pymol(spacegroup, cellgeom, ncells, dump_pdbs=
         # assert len(crdtst) == 125 * len(asymcrd) * ipd.sym.copies_per_cell(spacegroup)
 
         if dump_pdbs:
-            ipd.dumppdb("crdtst.pdb", 10 * crdtst[:, :3])
-            ipd.dumppdb("crdref.pdb", 10 * crdref)
+            ipd.pdb.dumppdb("crdtst.pdb", 10 * crdtst[:, :3])
+            ipd.pdb.dumppdb("crdref.pdb", 10 * crdref)
         # assert 0
 
         delta = np.sum((crdtst[None, :, :3] - crdref[:, None])**2, axis=-1)

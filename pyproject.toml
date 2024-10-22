@@ -26,6 +26,7 @@ dependencies = [
     'ruff',
     'sqlmodel[standard]',
     'submitit',
+    'tqdm',
     'typer[all]',]
 
 [project.scripts]

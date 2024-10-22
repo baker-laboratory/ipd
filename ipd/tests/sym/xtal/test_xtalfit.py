@@ -11,8 +11,8 @@ def test_xtalfit_I213():
     pytest.importorskip("willutil_cpp")
     sym = "I213_32"
     xtal = ipd.sym.xtal.xtal(sym)
-    fname = ipd.tests.test_data_path("pdb/i213fittest.pdb")
-    pdb = ipd.readpdb(fname)
+    fname = ipd.dev.package_testdata_path("pdb/i213fittest.pdb")
+    pdb = ipd.pdb.readpdb(fname)
     cell0 = float(pdb.cryst1[25:33])
 
     coords0 = ipd.homog.hpoint(pdb.ncac(splitchains=True))
@@ -37,11 +37,11 @@ def test_xtalfit_I213():
     assert np.min(vals) > -0.2
 
 def DISABLED_test_xtalfit_I213_bk():
-    fname = ipd.tests.test_data_path("pdb/i213fittest.pdb")
-    pdb = ipd.readpdb(fname)
+    fname = ipd.dev.package_testdata_path("pdb/i213fittest.pdb")
+    pdb = ipd.pdb.readpdb(fname)
     coords = ipd.homog.hpoint(pdb.ncac(splitchains=True))
     coords0 = coords.copy()
-    ipd.dumppdb("start.pdb", coords)
+    ipd.pdb.dumppdb("start.pdb", coords)
     # ipd.showme(coords[0])
     # ipd.showme(coords[1])
     # ipd.showme(coords[2])
@@ -63,7 +63,7 @@ def DISABLED_test_xtalfit_I213_bk():
     cen2 = ipd.homog.hxform(xalign, cen2)
     cen3 = ipd.homog.hxform(xalign, cen3)
     coords = ipd.homog.hxform(xalign, coords)
-    # ipd.dumppdb('xalign.pdb', coords)
+    # ipd.pdb.dumppdb('xalign.pdb', coords)
     # ic(guessaxis(coords, 3))
 
     # ic(ax3, ax2)
@@ -92,7 +92,7 @@ def DISABLED_test_xtalfit_I213_bk():
     cen2 = ipd.homog.hxform(xdelta, cen2)
     cen3 = ipd.homog.hxform(xdelta, cen3)
     coords = ipd.homog.hxform(xdelta, coords)
-    # ipd.dumppdb('xdelta.pdb', coords)
+    # ipd.pdb.dumppdb('xdelta.pdb', coords)
 
     ic(cen2, cen3)
 

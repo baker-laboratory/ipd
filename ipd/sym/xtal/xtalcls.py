@@ -264,7 +264,7 @@ class Xtal:
             natom = 1 if asymcoords.ndim == 2 else asymcoords.shape[1]
             if nchain > 1:
                 asymcoords = asymcoords.reshape(nchain, -1, natom, 4)
-            ipd.dumppdb(fname, asymcoords, header=cryst1, nchain=nchain)
+            ipd.pdb.dumppdb(fname, asymcoords, header=cryst1, nchain=nchain)
         else:
             if asymcoords.ndim == 2:
                 asymcoords = asymcoords.reshape(-1, 1, asymcoords.shape[-1])

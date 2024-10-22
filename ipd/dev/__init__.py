@@ -7,6 +7,7 @@ from ipd.dev.lazy_import import *
 from ipd.dev.observer import *
 from ipd.dev.storage import *
 from ipd.dev.instrumentation import *
+from ipd.dev.misc import *
 from ipd.dev.instrumentation import timed as profile  # noqa
 from ipd.dev.state import *
 from ipd.dev.subprocess import *

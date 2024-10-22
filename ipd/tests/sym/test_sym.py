@@ -34,11 +34,11 @@ def _test_symmetrize_frames():
     crd = np.stack([[0, 0, 0, 1], [2, 0, 0, 1], [0, 2, 0, 1]])
     crd = ipd.homog.hxform(RT, crd)
     ic(crd.shape)
-    ipd.dumppdb("test.pdb", crd)
+    ipd.pdb.dumppdb("test.pdb", crd)
 
     ic(R.shape, x.shape)
-    ipd.dumppdb("xyzorig.pdb", x + T[:, :, None, :])
-    ipd.dumppdb("RT_x.pdb", einsum("srij,sraj->srai", R, x) + T[:, :, None, :])
+    ipd.pdb.dumppdb("xyzorig.pdb", x + T[:, :, None, :])
+    ipd.pdb.dumppdb("RT_x.pdb", einsum("srij,sraj->srai", R, x) + T[:, :, None, :])
 
     assert 0
 

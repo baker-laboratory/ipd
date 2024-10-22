@@ -1466,7 +1466,7 @@ def hexpand(
 ):
     generators = np.asarray(generators).astype(np.float64)
     cen = np.asarray(cen).astype(np.float64)
-    x, _ = wu.cpp.geom.expand_xforms_rand(
+    x, _ = ipd.cpp.geom.expand_xforms_rand(
         generators,
         depth=depth,
         trials=ntrials,

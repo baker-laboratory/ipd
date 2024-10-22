@@ -299,8 +299,8 @@ def cgo_cyl_arrow(c1, c2, r, col=(1, 1, 1), col2=None, arrowlen=4.0):
     # c1.round0()
     # c2.round0()
     CGO.extend(cgo_cyl(c1, c2, rad=r, col=col, col2=col2))
-    dirn = ipd.hnormalized(c2 - c1)
-    perp = ipd.hnormalized(ipd.hprojperp(dirn, [0.2340790923, 0.96794275, 0.52037438472304783]))
+    dirn = ipd.homog.hnormalized(c2 - c1)
+    perp = ipd.homog.hnormalized(ipd.hprojperp(dirn, [0.2340790923, 0.96794275, 0.52037438472304783]))
     if arrowlen > 0:
         arrow1 = c2 - dirn * arrowlen + perp * 2.0
         arrow2 = c2 - dirn * arrowlen - perp * 2.0

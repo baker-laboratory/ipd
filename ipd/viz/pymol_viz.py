@@ -663,7 +663,7 @@ def show_array_ncacoh(
         toshow = ipd.homog.hpoint(toshow)
     # ic(toshow.shape)
 
-    wu.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
+    ipd.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', 'name N+CA+C')
@@ -683,7 +683,7 @@ def show_ndarray_n_ca_c(
         toshow = ipd.homog.hpoint(toshow)
     # ic(toshow.shape)
 
-    wu.dumppdb(fname, toshow)
+    ipd.pdb.dumppdb(fname, toshow)
 
     pymol.cmd.load(fname, name)
     pymol.cmd.hide('car')

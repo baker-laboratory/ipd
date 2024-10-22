@@ -90,10 +90,10 @@ def place_asu_grid(
         print("   # yapf: disable")
         print("   kw =", repr(kw))
         print(f"""   newpos, newcell = ipd.sym.place_asu_grid(
-      pos={ipd.misc.arraystr(pos)},
+      pos={ipd.dev.arraystr(pos)},
       cellsize={repr(cellsize)},
-      frames={ipd.misc.arraystr(frames)},
-      framesavoid={ipd.misc.arraystr(framesavoid)},
+      frames={ipd.dev.arraystr(frames)},
+      framesavoid={ipd.dev.arraystr(framesavoid)},
       lbub={repr(lbub)},
       lbubcell={repr(lbubcell)},
       nsamp={repr(nsamp)},

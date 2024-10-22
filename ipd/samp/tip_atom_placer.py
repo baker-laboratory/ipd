@@ -39,7 +39,7 @@ class TipAtom:
 class TipAtomTarget:
     @staticmethod
     def from_pdb(fname, tgtres=None, clashthresh=2):
-        pdb = wu.readpdb(fname)
+        pdb = ipd.pdb.readpdb(fname)
         xyz = th.stack([th.as_tensor(pdb.df.x), th.as_tensor(pdb.df.y), th.as_tensor(pdb.df.z)], dim=1)
         rn = [s.decode() for s in pdb.df.rn]
         an = [s.decode() for s in pdb.df.an]
@@ -102,7 +102,7 @@ class TipAtomTarget:
 
 def get_tip_atom_groups():
     tip_atom_start = dict(asn=5, gln=6, asp=5, glu=6)
-    rotset = wu.chem.rotamer.get_rotamerset()
+    rotset = ipd.pdb.rotamer.get_rotamerset()
     tips = list()
     # for resn in 'asp glu asn gln'.split():
     for resn in 'asp asn'.split():
@@ -205,10 +205,10 @@ try:
                     frame = f @ ft
                     for xyz, col in zip(h.xform(frame, tip.xyz), acol):
                         cgo += ipd.viz.cgo_sphere(cen=xyz, rad=0.5, col=col)
-                    beg = ipd.hxform(ft, ray[:, 0])
-                    end = ipd.hxform(ft, ray[:, 0] + 2 * ray[:, 1])
-                    beg = ipd.hxform(frame, ray[:, 0])
-                    end = ipd.hxform(frame, ray[:, 0] + 2 * ray[:, 1])
+                    beg = ipd.homog.hxform(ft, ray[:, 0])
+                    end = ipd.homog.hxform(ft, ray[:, 0] + 2 * ray[:, 1])
+                    beg = ipd.homog.hxform(frame, ray[:, 0])
+                    end = ipd.homog.hxform(frame, ray[:, 0] + 2 * ray[:, 1])
                     cgo += ipd.viz.cgo_cyl(beg, end, 0.1, col=rcol)
 
     @ipd.viz.pymol_frame

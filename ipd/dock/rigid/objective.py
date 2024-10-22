@@ -109,7 +109,7 @@ class RBOverlapObjective:
         for ib, b in enumerate(self.bodies):
             for jb, b2 in enumerate(self.bodies):
                 if (ib, jb) in self.scoreframes:
-                    d = ipd.hnorm(b.com() - b2.com())
+                    d = ipd.homog.hnorm(b.com() - b2.com())
                     d = max(0, d - asym.rog() * 3)
                     dists.append(d)
                     f1, f2 = b.contact_fraction(b2, contactdist=self.contactdist)
@@ -149,13 +149,13 @@ class RBOverlapObjective:
             # angdiff = max(0, abs(zxang0 - zxang) - angokrange)
             angdiff1 = max(0, abs(nf1rot) - angokrange)
             angdiff2 = max(0, abs(nf2rot) - angokrange)
-            # axsdist1 = ipd.hnorm(ipd.hprojperp(ax1, asym.com()))
-            # axsdist2 = ipd.hnorm(ipd.hprojperp(ax2, asym.com()))
+            # axsdist1 = ipd.homog.hnorm(ipd.hprojperp(ax1, asym.com()))
+            # axsdist2 = ipd.homog.hnorm(ipd.hprojperp(ax2, asym.com()))
             # angdiff1 = angdiff1 * axsdist1
             # angdiff2 = angdiff2 * axsdist2
             angdiff1 = 10 * angdiff1**2
             # angdiff2 = 10 * angdiff2**2
-            angdiffcen = ipd.hnorm(asym.com()) * ipd.hangle(asym.com(), ax1 + ax2)
+            angdiffcen = ipd.homog.hnorm(asym.com()) * ipd.hangle(asym.com(), ax1 + ax2)
 
         # ic(nf1rot, nf2rot)
         # ic(abs(zxang0 - zxang))
@@ -168,7 +168,7 @@ class RBOverlapObjective:
             # ic(scores)
             ic(fracs)
             # ic((self.driftpenalty * xdiff)**2)
-            # ic((self.angpenalty * 10 * angdiff * ipd.hnorm(ipd.hprojperp([1, 0, 0], asym.com())))**2)
+            # ic((self.angpenalty * 10 * angdiff * ipd.homog.hnorm(ipd.hprojperp([1, 0, 0], asym.com())))**2)
         s = [
             10 * sum(scores),
             (self.spreadpenalty * (max(fracs) - min(fracs)))**2,
@@ -176,7 +176,7 @@ class RBOverlapObjective:
             (self.angpenalty * angdiff1)**2,
             (self.angpenalty * angdiff2)**2,
             # 0.1 * (axsdist1 + axsdist2)
-            (max(0, self.minradius - ipd.hnorm(asym.com())))**2,
+            (max(0, self.minradius - ipd.homog.hnorm(asym.com())))**2,
             0.0 * angdiffcen**2,
             self.clashpenalty * clash,
             2 * np.sum(np.array(dists)**2),

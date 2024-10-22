@@ -75,7 +75,7 @@ def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
         Lasu = len(bb) // sym.nsub
         idx, rms, xform = ipd.fit.qcp_scan_AB(bb, gpbb, Lasu)
         # ic(idx, rms, R, T)
-        # rms2, fit, xform = wu.wrmsfit(gpbb.reshape(-1, 3), bb[idx].reshape(-1, 3))
+        # rms2, fit, xform = ipd.wrmsfit(gpbb.reshape(-1, 3), bb[idx].reshape(-1, 3))
         mask = th.logical_or(sym.idx.kind == 1, sym.idx.kind == 12)
         # import ipd
         # x = bb[idx]

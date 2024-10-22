@@ -1,7 +1,7 @@
 import os
 import random
-import ipd as ipd
 import numpy as np
+import ipd as ipd
 from ipd.tests import sym
 
 th = ipd.lazyimport('torch')

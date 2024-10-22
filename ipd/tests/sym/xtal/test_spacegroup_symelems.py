@@ -559,8 +559,8 @@ def helper_test_symelem(sym, eref=None, debug=False, compound=False, **kw):
             ok = False
             print(sym, 'EXTRA', k)
         for k in key:
-            tval = ipd.misc.UnhashableSet(etst[k])
-            vval = ipd.misc.UnhashableSet(eref[k])
+            tval = ipd.dev.UnhashableSet(etst[k])
+            vval = ipd.dev.UnhashableSet(eref[k])
             x = vval.difference(tval)
             if x:
                 ok = False

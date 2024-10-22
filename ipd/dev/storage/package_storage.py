@@ -182,7 +182,7 @@ def save(stuff, fname, **kw):
     if finfo.directory:
         os.makedirs(finfo.directory, exist_ok=True)
     if finfo.ext in (".pdb", ".cif"):
-        wu.pdb.dumpstruct(fname, stuff, **kw)
+        ipd.pdb.dumpstruct(fname, stuff, **kw)
     elif finfo.ext == ".nc":
         import xarray
 

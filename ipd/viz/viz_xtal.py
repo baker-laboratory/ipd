@@ -166,7 +166,7 @@ def pymol_viz_Xtal(
     allcgo = list() if addtocgo is None else addtocgo
     # for x in toshow.unitframes:
     # for s in toshow.symelems:
-    # pymol_viz_SymElem(ipd.hxform(x, s), scale=scale, **kw)
+    # pymol_viz_SymElem(ipd.homog.hxform(x, s), scale=scale, **kw)
     if showsymelems:
         cgo = list()
         for cellshift in interp_xtal_cell_list(cells):
@@ -180,7 +180,7 @@ def pymol_viz_Xtal(
                 shift = fanshift[i] if isinstance(fanshift, (list, tuple, np.ndarray)) else fanshift
                 for elem in elems:
                     fanrefpoint = get_fanrefpoint(toshow)
-                    fanrefpoint = ipd.hxform(elem.origin, fanrefpoint)
+                    fanrefpoint = ipd.homog.hxform(elem.origin, fanrefpoint)
                     fanrefpoint = xcellshift @ fanrefpoint
                     fanrefpoint = ipd.hscaled(scale, fanrefpoint)
                     pymol_viz_SymElem(
@@ -202,7 +202,9 @@ def pymol_viz_Xtal(
         xshift2[:3, 3] *= scale
         showcube = toshow.dimension == 3 if showcube is None else showcube
         if showcube:
-            cgo = cgo_cube(ipd.hxform(xshift2, [0, 0, 0]), ipd.hxform(xshift2, [scale, scale, scale]), r=0.03)
+            cgo = cgo_cube(ipd.homog.hxform(xshift2, [0, 0, 0]),
+                           ipd.homog.hxform(xshift2, [scale, scale, scale]),
+                           r=0.03)
             if splitobjs:
                 pymol.cmd.load_cgo(cgo, f"{name}_cube")
         allcgo += cgo
@@ -211,7 +213,7 @@ def pymol_viz_Xtal(
 
     if isinstance(showpoints, np.ndarray):
         frames = toshow.cellframes(cellsize=scale, cells=cells)
-        px = ipd.hxform(frames, showpoints, flat=True)
+        px = ipd.homog.hxform(frames, showpoints, flat=True)
         cgo = list()
         for p in px:
             cgo += cgo_sphere(p, rad=pointradius, col=pointcol)
@@ -225,7 +227,7 @@ def pymol_viz_Xtal(
         # cgo = list()
         # for i, frame in enumerate(frames):
         # for p, r, c in zip(*showpts):
-        # cgo += cgo_sphere(scale * ipd.hxform(frame, p), rad=scale * r, col=c)
+        # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, p), rad=scale * r, col=c)
         if splitobjs:
             pymol.cmd.load_cgo(cgo, f"{name}_pts{i}")
         allcgo += cgo
@@ -235,9 +237,9 @@ def pymol_viz_Xtal(
         cgo = ipd.viz.cgo_frame_points(toshow.genframes, scale, showpts, **kw)
         # cgo = list()
         # for i, frame in enumerate(toshow.genframes):
-        # cgo += cgo_sphere(scale * ipd.hxform(frame, showpts[0]), rad=scale * 0.05, col=col)
-        # cgo += cgo_sphere(scale * ipd.hxform(frame, showpts[1]), rad=scale * 0.03, col=col)
-        # cgo += cgo_sphere(scale * ipd.hxform(frame, showpts[2]), rad=scale * 0.02, col=col)
+        # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, showpts[0]), rad=scale * 0.05, col=col)
+        # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, showpts[1]), rad=scale * 0.03, col=col)
+        # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, showpts[2]), rad=scale * 0.02, col=col)
         if splitobjs:
             pymol.cmd.load_cgo(cgo, f"{name}_GENPTS{i}")
         allcgo += cgo
@@ -290,9 +292,9 @@ def xtal_show_points(which, pointscale=1, pointshift=(0, 0, 0), scaleptrad=1, **
         ]),
         # yapf: enable
     ]
-    # ic(ipd.hxform(ipd.hrot([1, -1, 0], 90, np.array([-2.7, 0.7, -1]) / 8), [0, 0, 0.2]))
+    # ic(ipd.homog.hxform(ipd.hrot([1, -1, 0], 90, np.array([-2.7, 0.7, -1]) / 8), [0, 0, 0.2]))
     # assert 0
-    # showpts[3] = ipd.hxform(ipd.htrans([0.2, 0.1, 0.1]), showpts[3])
+    # showpts[3] = ipd.homog.hxform(ipd.htrans([0.2, 0.1, 0.1]), showpts[3])
     for p in showpts:
         p += pointshift
 
@@ -307,7 +309,7 @@ def get_fanrefpoint(xtal):
     pt = [0, 1, 0, 1]
     # yapf: disable
     if xtal.name == 'P 2 3' : pt= [0, 1, 0, 1]
-    if xtal.name == 'I 21 3': pt= ipd.hxform(ipd.hrot([0, 0, 1], -30), [0, 1, 0,1])
+    if xtal.name == 'I 21 3': pt= ipd.homog.hxform(ipd.hrot([0, 0, 1], -30), [0, 1, 0,1])
     # yapf: enable
     # ic(pt)
     return pt

@@ -179,8 +179,8 @@ def asufit(
         frames = ipd.hscaled(mc.beststate.scale, frames)
         xyz = ipd.homog.hxform(frames, xyz).reshape(len(frames), -1, 4, 4)
         if dumppdb:
-            ipd.dumppdb(dumppdb, xyz, cellsize=cellsize, **kw)
-    # ipd.dumppdb(f'debugpdbs/asufit_999999.pdb', xyz, cellsize=cellsize, **kw)
+            ipd.pdb.dumppdb(dumppdb, xyz, cellsize=cellsize, **kw)
+    # ipd.pdb.dumppdb(f'debugpdbs/asufit_999999.pdb', xyz, cellsize=cellsize, **kw)
     # ipd.showme(bodies[0], name='pairs01', showcontactswith=bodies[1], showpairsdist=16, col=(1, 1, 1))
     # ipd.showme(bodies[0], name='pairs02', showcontactswith=bodies[2], showpairsdist=16, col=(1, 1, 1))
     # ipd.showme(bodies[1], name='pairs10', showcontactswith=bodies[0], showpairsdist=16, col=(1, 0, 0))

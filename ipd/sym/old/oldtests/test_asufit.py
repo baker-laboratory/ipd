@@ -1,5 +1,6 @@
-import pytest
 import numpy as np
+import pytest
+
 import ipd
 
 # ic.configureOutput(includeContext=True)
@@ -401,7 +402,7 @@ def test_asufit_L6m322(showme=False):
     xyz[:, 0] += scale * 0.3
     xyz[:, 1] += scale * 0.1
     xyz[:, 2] += 18
-    ss = np.array(list(ipd.chem.dssp(xyz.reshape(-1, 4, 3))))
+    ss = np.array(list(ipd.pdb.dssp(xyz.reshape(-1, 4, 3))))
     xyz_contact = xyz.reshape(-1, 4, 3)[ss == "H"].reshape(-1, 3)
     ic(xyz_contact.shape)
 
