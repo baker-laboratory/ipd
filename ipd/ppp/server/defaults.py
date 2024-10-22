@@ -1,8 +1,10 @@
-import ipd.dev
-from ipd import ppp
 import os
+
 import yaml
 from rich import print
+
+import ipd.dev
+from ipd import ppp
 
 @ipd.dev.profile
 def ensure_init_db(backend):
@@ -86,8 +88,9 @@ def make_stress_test(presentpolls, client):
         with open('/tmp/add_stresstest_polls.list', 'w') as out:
             out.write(os.linesep.join(result))
     print('add_stresstest_polls', len(result), len(presentpolls))
-    from random_word import RandomWords
     import random
+
+    from random_word import RandomWords
     r = RandomWords()
     syms = ['C1'] * 20 + 'c2 c3 c4 c5 c6 c7 c8 c9 d2 d3 d4 d5 d6 tet oct icos'.upper().split()
     [''] * 48 + syms

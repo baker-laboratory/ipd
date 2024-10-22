@@ -1,6 +1,7 @@
 import contextlib
 import copy
 import functools
+
 from ipd.dev import Bunch
 from ipd.homog.hgeom import *
 from ipd.sym.symframes import *
@@ -8,7 +9,7 @@ from ipd.sym.symframes import *
 # from ipd.sym.asufit import *
 from ipd.sym.xtal.xtalcls import *
 from ipd.sym.xtal.xtalinfo import *
-from ipd.sym.xtal.xtalinfo import *
+
 # from ipd.viz import showme
 
 def frames(

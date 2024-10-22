@@ -1,12 +1,11 @@
-import pytest
 import numpy as np
+import pytest
+from icecream import ic
 
 import ipd
-from ipd.homog import *
 import ipd.homog as hm
 from ipd import h
-
-from icecream import ic
+from ipd.homog import *
 
 ic.configureOutput(includeContext=True, contextAbsPath=True)
 

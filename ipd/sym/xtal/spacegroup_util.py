@@ -1,8 +1,10 @@
 import itertools
+
 import numpy as np
+from opt_einsum import contract as einsum
+
 import ipd
 from ipd.sym.xtal.spacegroup_data import *
-from opt_einsum import contract as einsum
 
 def spacegroup_canonical_name(spacegroup):
     spacegroup = spacegroup.replace("p", "P").replace("i", "I").replace("f", "F")

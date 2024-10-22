@@ -1,5 +1,6 @@
-import pytest
 import numpy as np
+import pytest
+
 import ipd
 from ipd.dev.observer.dynamic_parameters import _NotIn
 

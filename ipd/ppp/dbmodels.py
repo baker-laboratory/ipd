@@ -10,11 +10,12 @@ def DBPoll_clear(self, backend, ghost=True):
 
 backend_models['poll'].clear = DBPoll_clear
 
+import uuid
 from typing import Optional
+
 import ipd
 from ipd import ppp
-from ipd.crud.backend import BackendModelBase, Props, Attrs, props_default, attrs_default
-import uuid
+from ipd.crud.backend import Attrs, BackendModelBase, Props, attrs_default, props_default
 
 backend_models = ipd.crud.backend.make_backend_models(ipd.ppp.spec_models)
 for cls in backend_models.values():
@@ -23,7 +24,7 @@ for cls in backend_models.values():
 pydantic = ipd.lazyimport('pydantic', pip=True)
 sqlmodel = ipd.lazyimport('sqlmodel', pip=True)._import_module()
 sqlalchemy = ipd.lazyimport('sqlalchemy', pip=True)._import_module()
-from sqlmodel import Relationship, SQLModel, Field
+from sqlmodel import Field, Relationship, SQLModel
 
 class _DBWithUser(BackendModelBase):
     userid: uuid.UUID = Field(foreign_key='dbuser.id')

@@ -1,7 +1,9 @@
 import random
 import sys
-import ipd
 import tempfile
+
+import ipd
+
 try:
     import pymol
 except ImportError:

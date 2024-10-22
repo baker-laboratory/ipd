@@ -1,7 +1,8 @@
-import pydantic
 import abc
 from inspect import signature
-from typing import Callable, Any
+from typing import Any, Callable
+
+import pydantic
 
 class MenuAction(pydantic.BaseModel):
     func: Callable[Any, None]

@@ -1,5 +1,7 @@
 import itertools
+
 import numpy as np
+
 import ipd
 from ipd.sym.xtal.xtalinfo import _xtal_asucens
 

@@ -1,10 +1,11 @@
 import functools
 import glob
 import re
-import ipd
-import numpy as np
 
+import numpy as np
 from deferred_import import deferred_import
+
+import ipd
 
 pyrosetta = deferred_import("pyrosetta")
 

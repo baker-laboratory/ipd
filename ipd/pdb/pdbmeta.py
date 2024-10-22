@@ -1,10 +1,10 @@
-import sys
-import os
-import urllib.request
-import logging
-import gzip
-import lzma
 import collections
+import gzip
+import logging
+import lzma
+import os
+import sys
+import urllib.request
 
 import ipd
 

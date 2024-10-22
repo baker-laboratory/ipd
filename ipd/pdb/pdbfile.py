@@ -1,7 +1,9 @@
-from difflib import SequenceMatcher
 import collections
 import os
+from difflib import SequenceMatcher
+
 import numpy as np
+
 import ipd
 
 _default_tol = ipd.dev.Bunch(rms=2.0, translation=1.0, angle=np.radians(5.0), seqmatch=0.8)

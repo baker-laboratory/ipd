@@ -1,7 +1,9 @@
-import numpy as np
 import functools as ft
+
+import numpy as np
 import pytest
 from numpy import array
+
 import ipd
 from ipd.sym.asuslide import asuslide
 

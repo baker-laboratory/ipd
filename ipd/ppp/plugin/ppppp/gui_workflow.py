@@ -1,9 +1,11 @@
 import os
-import pymol
-import ipd
-from ipd.ppp.plugin.ppppp.gui_commands import ToggleCommands
 from typing import Any
+
+import pymol
+
+import ipd
 from ipd.dev.qt import MenuAction, isfalse_notify
+from ipd.ppp.plugin.ppppp.gui_commands import ToggleCommands
 
 class FlowStepGui(ipd.ppp.FlowStepSpec):
     widget: Any

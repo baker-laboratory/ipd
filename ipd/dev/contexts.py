@@ -1,7 +1,7 @@
-from contextlib import contextmanager
+import io
 import os
 import sys
-import io
+from contextlib import contextmanager
 
 @contextmanager
 def cast(cls, self):

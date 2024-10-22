@@ -4,23 +4,26 @@ pytest.importorskip('pymol')
 pytest.importorskip('sqlmodel')
 pytest.importorskip('fastapi')
 
-import itertools as it
-import ipd
-from ipd import ppp
-from pathlib import Path
-import traceback
-import os
 import inspect
+import itertools as it
+import os
 import subprocess
-from fastapi.testclient import TestClient
+import traceback
+from pathlib import Path
+
 import pydantic
 import pytest
 import rich
+from fastapi.testclient import TestClient
+
+import ipd
+from ipd import ppp
+
 # from rich import print
 
 def set_debug_requests():
-    import logging
     import http.client as http_client
+    import logging
 
     http_client.HTTPConnection.debuglevel = 1
     # You must initialize logging, otherwise you'll not see debug output.

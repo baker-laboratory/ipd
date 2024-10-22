@@ -1,14 +1,16 @@
 import contextlib
-from abc import ABC, abstractmethod
 import copy
 import itertools
-from icecream import ic
+from abc import ABC, abstractmethod
+
 import assertpy
-from ipd.dev.lazy_import import lazyimport
 import numpy as np
+from icecream import ic
+
 import ipd
-from ipd.sym.sym_adapt import _sym_adapt
+from ipd.dev.lazy_import import lazyimport
 from ipd.sym import ShapeKind, ValueKind
+from ipd.sym.sym_adapt import _sym_adapt
 
 th = lazyimport('torch')
 

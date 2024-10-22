@@ -1,6 +1,7 @@
 import os
-from ipd.dev import lazyimport
+
 import ipd.dev.observer
+from ipd.dev import lazyimport
 from ipd.dev.observer import hub as hub
 
 ci = lazyimport('ipd.ci')
@@ -39,8 +40,9 @@ def __getattr__(name):
         return ipd.sym.symmetrize
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-from box import Box
 import builtins
+
+from box import Box
 
 builtins.ic = ic
 builtins.Box = Box

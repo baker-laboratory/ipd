@@ -1,8 +1,9 @@
-import sys
 import os
+import socket
+import sys
 import threading
 from uuid import UUID
-import socket
+
 import ipd
 from ipd import ppp
 

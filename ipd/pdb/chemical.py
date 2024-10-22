@@ -1,4 +1,3 @@
-
 aa1 = "ACDEFGHIKLMNPQRSTVWY"
 
 aa3 = [

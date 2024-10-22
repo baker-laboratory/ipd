@@ -5,10 +5,11 @@ from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
-import ipd
 import assertpy
 import hypothesis
 from icecream import ic
+
+import ipd
 
 # ic.configureOutput(includeContext=False, contextAbsPath=True)
 

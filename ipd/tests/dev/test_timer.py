@@ -1,6 +1,8 @@
-import time
-import pytest
 import statistics
+import time
+
+import pytest
+
 import ipd
 from ipd.dev import Timer
 

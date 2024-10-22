@@ -1,4 +1,5 @@
 import numpy as np
+
 import ipd
 from ipd.homog import *
 from ipd.sym.xtal.SymElem import SymElem
@@ -169,12 +170,12 @@ def _populate__xtal_info_dict():
     }
     # yapf: enable
     from ipd.sym.xtal.spacegroup_deriveddata import (
-        sg_frames_dict,
         sg_cheshire_dict,
+        sg_frames_dict,
         sg_symelem_dict,
-        sg_symelem_frame444_opids_dict,
         sg_symelem_frame444_compids_dict,
         sg_symelem_frame444_opcompids_dict,
+        sg_symelem_frame444_opids_dict,
     )
     for k in sg_frames_dict:
         if k not in sg_symelem_dict: continue

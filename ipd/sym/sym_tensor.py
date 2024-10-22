@@ -145,14 +145,16 @@ FullSlicedAll1DBasic([0, 1, 2, 0, 1, 2, 0, 1, 2, 7])
 '''
 
 import sys
+
 import ipd
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
-from torch import Tensor as T
 import functools
+
 import numpy as np
+from torch import Tensor as T
 
 def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
     '''Create a SymTensor object from a tensor

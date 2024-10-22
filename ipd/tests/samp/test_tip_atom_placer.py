@@ -1,4 +1,5 @@
 import pytest
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')

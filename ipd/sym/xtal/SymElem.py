@@ -1,23 +1,25 @@
 from collections import defaultdict
+
 import numpy as np
-import ipd
-from ipd.sym.symframes import tetrahedral_frames, octahedral_frames
 from icecream import ic
+from opt_einsum import contract as einsum
+
+import ipd
 from ipd.homog.hgeom import (
-    halign2,
+    angle,
     halign,
-    htrans,
+    halign2,
+    hdot,
     hinv,
     hnorm,
-    hxform,
     hnormalized,
     hpoint,
+    htrans,
     hvec,
-    angle,
-    hdot,
+    hxform,
 )
+from ipd.sym.symframes import octahedral_frames, tetrahedral_frames
 from ipd.sym.xtal.spacegroup_util import applylatticepts, lattice_vectors
-from opt_einsum import contract as einsum
 
 class ScrewError(Exception):
     pass

@@ -1,8 +1,9 @@
-from collections import defaultdict
 import os
-import ipd
+from collections import defaultdict
 
 import numpy as np
+
+import ipd
 
 all_pymol_chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz" * 100
 

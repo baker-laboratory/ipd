@@ -1,8 +1,10 @@
-import functools
 import concurrent.futures as cf
+import functools
+
 import numpy as np
-import ipd
 from opt_einsum import contract as einsum
+
+import ipd
 
 def symframe_permutations(frames, **kw):
     func = functools.partial(_symperm1, frames=frames)

@@ -1,12 +1,12 @@
-import time
-import os
+import _testcapi
 import collections
-import statistics
-import logging
 import functools
 import inspect
+import logging
+import os
+import statistics
 import sys
-import _testcapi
+import time
 
 log = logging.getLogger(__name__)
 

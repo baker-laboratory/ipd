@@ -1,7 +1,9 @@
-import pytest
-import numpy as np
-import ipd
 import itertools
+
+import numpy as np
+import pytest
+
+import ipd
 from ipd.sym.xtal.spacegroup_symelems import _compute_symelems
 
 def main():

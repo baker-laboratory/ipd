@@ -1,11 +1,12 @@
-import pytest
 import numpy as np
-import ipd
+import pytest
 from icecream import ic
+
+import ipd
+from ipd.sym.permutations import symframe_permutations_torch
+from ipd.sym.xtal.spacegroup_symelems import _compute_symelems, _find_compound_symelems
 from ipd.sym.xtal.SymElem import *
 from ipd.sym.xtal.SymElem import _make_operator_component_joint_ids
-from ipd.sym.xtal.spacegroup_symelems import _compute_symelems, _find_compound_symelems
-from ipd.sym.permutations import symframe_permutations_torch
 
 def main():
     test_screw_elem()

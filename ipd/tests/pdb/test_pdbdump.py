@@ -1,6 +1,8 @@
-import tempfile
 import glob
+import tempfile
+
 import numpy as np
+
 import ipd
 
 def main():

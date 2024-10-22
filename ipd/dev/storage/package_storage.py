@@ -1,10 +1,12 @@
-import ipd
-import json
 import gzip
+import json
 import lzma
-import pickle
 import os
+import pickle
+
 import numpy as np
+
+import ipd
 
 data_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../data"))
 _compression_extensions = ("gz", "tgz", "xz", "txz")

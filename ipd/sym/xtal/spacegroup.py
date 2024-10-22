@@ -1,8 +1,7 @@
 import ipd
-
 from ipd.sym.xtal.spacegroup_data import *
-from ipd.sym.xtal.spacegroup_util import *
 from ipd.sym.xtal.spacegroup_deriveddata import *
+from ipd.sym.xtal.spacegroup_util import *
 
 _memoized_frames = {}
 

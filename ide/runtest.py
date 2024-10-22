@@ -12,11 +12,12 @@ _overrides can be set to manually specipy a command for a file
 _file_mappings can be set to mannually map a file to another file
 """
 
-import sys
-import os
 import argparse
-from time import perf_counter
+import os
+import sys
 from collections import defaultdict
+from time import perf_counter
+
 from icecream import ic
 
 # set to manually specipy a command for a file

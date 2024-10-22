@@ -1,8 +1,8 @@
+import subprocess
 import sys
 from importlib import import_module
 from types import ModuleType
 from typing import List
-import subprocess
 
 _skip_global_install = False
 

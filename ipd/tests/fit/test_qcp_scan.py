@@ -1,5 +1,7 @@
 import random
+
 import pytest
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
@@ -7,10 +9,11 @@ th = lazyimport('torch')
 import ipd
 
 pytest.importorskip('ipd.fit.qcp_rms_cuda')
-from ipd.fit.qcp_rms import _rms
-from ipd import h
 import numpy as np
 from icecream import ic
+
+from ipd import h
+from ipd.fit.qcp_rms import _rms
 
 def main():
     test_qcp_scan()

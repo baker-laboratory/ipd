@@ -3,6 +3,7 @@ try:
 except ImportError:
     pass
 import numpy as np
+
 import ipd
 from ipd.homog import *
 

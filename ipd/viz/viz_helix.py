@@ -1,7 +1,8 @@
 import numpy as np
+
+import ipd
 from ipd.sym.helix import Helix
 from ipd.viz.pymol_viz import pymol_load
-import ipd
 
 @pymol_load.register(Helix)
 def pymol_viz_Helix(

@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 
 from ipd.dev.lazy_import import lazyimport
 

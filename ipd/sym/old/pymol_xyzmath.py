@@ -2,12 +2,12 @@
 OOOOOOOLLLLDD Easy 3D Linear Algebra, like xyz\* in rosetta
 """
 
-from random import gauss, uniform
-from math import pi, sqrt, sin, cos, acos, asin, atan2, degrees, radians
-from itertools import chain, product
 import math
 import operator as op
 from functools import reduce
+from itertools import chain, product
+from math import acos, asin, atan2, cos, degrees, pi, radians, sin, sqrt
+from random import gauss, uniform
 
 EPS = 0.00001
 SQRTEPS = sqrt(EPS)

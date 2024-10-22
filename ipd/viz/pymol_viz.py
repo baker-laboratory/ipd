@@ -1,14 +1,16 @@
-import sys
-import os
-import tempfile
-import numpy as np
-import time
-import functools
-import ipd
 import contextlib
+import functools
+import os
+import sys
+import tempfile
+import time
 from collections import defaultdict
-from icecream import ic
 from functools import singledispatch
+
+import numpy as np
+from icecream import ic
+
+import ipd
 from ipd.viz.viz_deco import pymol_frame
 
 pymol = ipd.dev.lazyimport('pymol')
@@ -19,9 +21,10 @@ try:
     from pymol import cgo, cmd
 except ImportError:
     pass
-from ipd.viz.pymol_cgo import *
 # from ipd.sym.symfit import RelXformInfo
 import ipd.viz.primitives as prim
+from ipd.viz.pymol_cgo import *
+
 # from ipd.sym.xtal.spacegroup_util import tounitcellpts
 
 _showme_state = ipd.dev.Bunch(

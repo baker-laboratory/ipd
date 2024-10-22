@@ -1,14 +1,16 @@
 REBUILD_SPACEGROUP_DATA = False
 # REBUILD_SPACEGROUP_DATA = True
 
-import numpy as np
 import itertools
+
+import numpy as np
 from icecream import ic
-from ipd.sym.xtal.spacegroup_data import *
-from ipd.sym.xtal.spacegroup_util import *
-from ipd.sym.xtal.spacegroup_symelems import _compute_symelems, _find_compound_symelems
+
+from ipd.dev import have_package_data, load_package_data, save_package_data
 from ipd.sym.permutations import symframe_permutations_torch
-from ipd.dev import load_package_data, save_package_data, have_package_data
+from ipd.sym.xtal.spacegroup_data import *
+from ipd.sym.xtal.spacegroup_symelems import _compute_symelems, _find_compound_symelems
+from ipd.sym.xtal.spacegroup_util import *
 from ipd.sym.xtal.SymElem import ComponentIDError, _make_operator_component_joint_ids
 
 def _get_spacegroup_data():

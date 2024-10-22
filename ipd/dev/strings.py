@@ -1,6 +1,7 @@
 import io
-from ipd.dev.safe_eval import safe_eval
+
 from ipd.dev.contexts import redirect
+from ipd.dev.safe_eval import safe_eval
 
 def get_all_annotations(cls):
     annotations = {}

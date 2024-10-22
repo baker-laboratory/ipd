@@ -1,7 +1,8 @@
 import sys
-import git
-import ipd
 
+import git
+
+import ipd
 from ipd.dev.cli.clibase import CliBase
 
 class IPDTool(CliBase):

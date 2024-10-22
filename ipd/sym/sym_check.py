@@ -3,9 +3,10 @@ import ipd
 
 th = ipd.lazyimport('torch')
 
-import numpy as np
 import assertpy
-from ipd.sym import SymKind, ShapeKind, ValueKind
+import numpy as np
+
+from ipd.sym import ShapeKind, SymKind, ValueKind
 
 def symcheck(sym, thing, kind=None, **kw):
     thing, kind, adaptor = get_kind_and_adaptor(sym, thing, kind)

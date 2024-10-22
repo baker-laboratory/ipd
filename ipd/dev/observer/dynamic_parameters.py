@@ -108,14 +108,15 @@ for the four corners exactly
 """
 
 import sys
-from collections.abc import Mapping
-from collections import namedtuple
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
+from collections import namedtuple
+from collections.abc import Iterable, Mapping
+
 import numpy as np
+import pytest
+
 import ipd
 from ipd.dev.observer.observer import Observer
-import pytest
 
 Step = namedtuple('Step', 'design diffuse rfold')
 

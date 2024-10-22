@@ -1,11 +1,13 @@
-import os
+import glob
 import gzip
 import io
-import glob
 import logging
-import tqdm
+import os
 import time
+
 import numpy as np
+import tqdm
+
 import ipd
 from ipd.pdb.pdbfile import PDBFile
 

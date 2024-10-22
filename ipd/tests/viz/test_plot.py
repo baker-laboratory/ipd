@@ -1,5 +1,6 @@
-import ipd
 import numpy as np
+
+import ipd
 
 def main():
     x = np.random.normal(size=10)

@@ -1,5 +1,7 @@
 import os
+
 import pymol
+
 import ipd
 from ipd.dev.qt import MenuAction, isfalse_notify
 
@@ -158,7 +160,7 @@ class ToggleCommands(ipd.dev.qt.ContextMenuMixin):
     def filtered_cmd_list(self):
         hits = set(self.cmds.keys())
         if query := self.state.findcmd:
-            from subprocess import Popen, PIPE
+            from subprocess import PIPE, Popen
             p = Popen(['fzf', '-i', '--filter', f'{query}'], stdout=PIPE, stdin=PIPE, stderr=PIPE, text=True)
             hits = p.communicate(input=self.cmdsearchtext)[0]
             hits = [m[:m.find('||||')] for m in hits.split('\n') if m]

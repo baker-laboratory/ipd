@@ -1,5 +1,5 @@
-from ipd.pdb import readpdb
 from ipd.dev import load_package_data, package_testdata_path
+from ipd.pdb import readpdb
 
 def pdbcontents():
     return load_package_data("tests/pdb/1pgx.pdb1.gz")

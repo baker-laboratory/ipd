@@ -1,7 +1,8 @@
 import pytest
+from icecream import ic
+
 import ipd
 from ipd import *
-from icecream import ic
 
 th = pytest.importorskip('torch')
 

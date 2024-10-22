@@ -1,5 +1,6 @@
-import ipd
 import functools
+
+import ipd
 
 try:
     import pymol

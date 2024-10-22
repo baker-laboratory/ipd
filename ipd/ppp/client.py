@@ -1,9 +1,10 @@
 import os
+from pathlib import Path
 from subprocess import check_output
+
 import ipd
 from ipd import ppp
 from ipd.ppp.server.pppapi import PPPBackend
-from pathlib import Path
 
 requests = ipd.lazyimport('requests', pip=True)
 fastapi = ipd.lazyimport('fastapi', pip=True)

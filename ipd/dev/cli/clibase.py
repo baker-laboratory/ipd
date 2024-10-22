@@ -1,7 +1,10 @@
-import ipd
-import typer
-from ipd.dev.types import KW
 from typing import Self
+
+import typer
+
+import ipd
+from ipd.dev.types import KW
+
 # from ipd.dev.tools.pkginfo import cwd_package, PkgInfo
 
 CB = type['CliBase']

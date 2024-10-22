@@ -1,6 +1,7 @@
+import argparse
 import os
 import time
-import argparse
+
 import ipd
 
 parser = argparse.ArgumentParser(

@@ -1,10 +1,11 @@
-import sys
-import itertools
-import re
-import os
-import inspect
 import functools
-from ipd.sym.pymol_xyzmath import Vec, Mat, Xform, RAD, projperp, SYMTET, SYMOCT, isvec, randnorm, Ux, Uz
+import inspect
+import itertools
+import os
+import re
+import sys
+
+from ipd.sym.pymol_xyzmath import RAD, SYMOCT, SYMTET, Mat, Ux, Uz, Vec, Xform, isvec, projperp, randnorm
 
 try:
     from ipd.viz.pymol_cgo import cgo_cyl, cgo_sphere, cgo_segment  # noqa

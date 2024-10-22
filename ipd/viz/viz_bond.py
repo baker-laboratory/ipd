@@ -4,6 +4,7 @@ except ImportError:
     pass
 
 import numpy as np
+
 import ipd
 
 @ipd.viz.pymol_frame

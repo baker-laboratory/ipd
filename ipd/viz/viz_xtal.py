@@ -1,8 +1,9 @@
 import numpy as np
+
+import ipd
 from ipd.sym.xtal.xtalcls import Xtal, interp_xtal_cell_list
 from ipd.sym.xtal.xtalinfo import SymElem
-from ipd.viz.pymol_viz import pymol_load, cgo_cyl, cgo_sphere, cgo_fan, cgo_cube
-import ipd
+from ipd.viz.pymol_viz import cgo_cube, cgo_cyl, cgo_fan, cgo_sphere, pymol_load
 
 @pymol_load.register(SymElem)
 def pymol_viz_SymElem(

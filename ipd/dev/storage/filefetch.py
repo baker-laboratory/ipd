@@ -1,9 +1,10 @@
-import threading
-import subprocess
-from subprocess import check_output
-import time
-import shutil
 import os
+import shutil
+import subprocess
+import threading
+import time
+from subprocess import check_output
+
 from ipd.dev.qt import isfalse_notify
 
 class FileFetcher(threading.Thread):

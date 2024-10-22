@@ -1,9 +1,11 @@
+from timeit import timeit
+
 import numpy as np
 import pytest
-from timeit import timeit
+from icecream import ic
+
 import ipd
 from ipd import h
-from icecream import ic
 
 pytest.importorskip('torch')
 pytest.importorskip('ipd.samp.samp_cuda')

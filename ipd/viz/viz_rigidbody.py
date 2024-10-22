@@ -1,7 +1,8 @@
 import numpy as np
-from ipd.viz.pymol_viz import pymol_load, cgo_sphere
+
 import ipd
 from ipd.dock.rigid.rigidbody import RigidBody, RigidBodyFollowers
+from ipd.viz.pymol_viz import cgo_sphere, pymol_load
 
 @pymol_load.register(RigidBodyFollowers)
 def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, addtocgo=None, **kw):

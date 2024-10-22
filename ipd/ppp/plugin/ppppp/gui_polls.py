@@ -1,13 +1,15 @@
 import datetime
-import ipd
-from ipd import ppp
 import os
-import pymol
 import random
 import subprocess
-from subprocess import check_output
 import traceback
-from ipd.dev.qt import MenuAction, notify, isfalse_notify
+from subprocess import check_output
+
+import pymol
+
+import ipd
+from ipd import ppp
+from ipd.dev.qt import MenuAction, isfalse_notify, notify
 
 class PollInProgress:
     def __init__(self, root, state, remote, poll):
@@ -220,7 +222,7 @@ class Polls(ipd.dev.qt.ContextMenuMixin):
     def filtered_poll_list(self):
         polls = set(self.allpolls)
         if query := self.state.findpoll:
-            from subprocess import Popen, PIPE
+            from subprocess import PIPE, Popen
             p = Popen(['fzf', '-i', '--filter', f'{query}'], stdout=PIPE, stdin=PIPE, stderr=PIPE, text=True)
             hits = p.communicate(input=self.pollsearchtext)[0]
             hits = [m[:m.find('||||')] for m in hits.split('\n') if m]

@@ -1,13 +1,15 @@
-from functools import partial
 import collections
-import ipd
-from ipd import ppp
 import os
-import pymol
-import time
 import sys
 import threading
+import time
+from functools import partial
+
+import pymol
 from rich import print
+
+import ipd
+from ipd import ppp
 from ipd.dev.qt import isfalse_notify
 
 it = ipd.lazyimport('itertools', 'more_itertools', pip=True)

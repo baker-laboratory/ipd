@@ -1,5 +1,6 @@
-import ipd
 from pyrosetta import Pose
+
+import ipd
 
 def is_rosetta_pose(toshow):
     return isinstance(toshow, Pose)

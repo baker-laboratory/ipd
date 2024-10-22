@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-import ipd
-
 from icecream import ic
+
+import ipd
 
 pytest.importorskip('ipd.voxel.voxel_cuda')
 th = pytest.importorskip('torch')

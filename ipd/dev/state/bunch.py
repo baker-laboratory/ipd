@@ -1,7 +1,8 @@
-import os
-from pathlib import Path
-import shutil
 import hashlib
+import os
+import shutil
+from pathlib import Path
+
 from icecream import ic
 
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')

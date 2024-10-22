@@ -1,10 +1,11 @@
 import pytest
 
 pytest.importorskip('torch')
-import torch as th
-import ipd
 import hypothesis
+import torch as th
 from hypothesis import strategies as st
+
+import ipd
 
 def symslices_from_colors_should_fail(nsub, colors, Lasu, isasu):
     if len(colors) == 0:

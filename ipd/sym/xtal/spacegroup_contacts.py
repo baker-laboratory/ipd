@@ -1,5 +1,7 @@
 import itertools
+
 import numpy as np
+
 import ipd
 
 def check_if_symelems_complete(spacegroup, symelems, depth=60, radius=5, trials=100000, fudgefactor=0.9):

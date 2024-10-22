@@ -1,8 +1,10 @@
-import pytest
 import tempfile
+
 import numpy as np
-import ipd
+import pytest
 from opt_einsum import contract as einsum
+
+import ipd
 
 pytest.skip(allow_module_level=True)
 

@@ -1,6 +1,8 @@
 import numpy as np
+
 import ipd
-from ipd import homog as hm, Bunch
+from ipd import Bunch
+from ipd import homog as hm
 
 def align(coords, symelem, **kw):
     """assumes shape (nchain, nres, natom, 3|4)"""
@@ -1053,8 +1055,8 @@ def symfit_parallel_convergence_trials(**kw):
 
 def symfit_parallel_mc_scoreterms_trials(**kw):
     import concurrent.futures as cf
-    from itertools import chain, combinations
     from collections import defaultdict
+    from itertools import chain, combinations
 
     termsset = list(chain(*(combinations("CHNA", i + 1) for i in range(4))))
     termsset = list(str.join("", combo) for combo in termsset)

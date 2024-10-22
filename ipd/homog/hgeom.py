@@ -1,6 +1,6 @@
+import collections
 import copy
 import sys
-import collections
 
 import numpy as np
 

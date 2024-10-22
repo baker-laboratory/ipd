@@ -1,5 +1,7 @@
 import functools
+
 import numpy as np
+
 import ipd
 from ipd.dock.rigid.objective import tooclose_overlap
 

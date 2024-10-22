@@ -1,13 +1,15 @@
 import itertools
+
 import pytest
+
 import ipd
-from ipd.sym.xtal.SymElem import SymElem, showsymelems
 from ipd.sym.xtal.spacegroup_symelems import (
     _compute_symelems,
     _find_compound_symelems,
-    _remove_redundant_screws,
     _printelems,
+    _remove_redundant_screws,
 )
+from ipd.sym.xtal.SymElem import SymElem, showsymelems
 
 pytest.skip(allow_module_level=True)
 

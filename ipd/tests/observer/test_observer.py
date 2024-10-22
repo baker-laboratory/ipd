@@ -1,4 +1,5 @@
 import pytest
+
 import ipd
 
 class ObserverTest(ipd.dev.observer.Observer):

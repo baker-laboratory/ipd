@@ -1,5 +1,6 @@
-import tempfile
 import random
+import tempfile
+
 from ipd.pdb.pdbfile import PDBFile
 from ipd.viz.pymol_viz import pymol_load
 

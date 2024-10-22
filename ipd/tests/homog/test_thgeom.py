@@ -2,9 +2,10 @@ import pytest
 
 pytest.importorskip('torch')
 import numpy as np
+from icecream import ic
+
 import ipd as ipd
 from ipd import h
-from icecream import ic
 from ipd.homog import intersect_planes
 
 # pytest.skip(allow_module_level=True)

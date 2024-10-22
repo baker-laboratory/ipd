@@ -2,13 +2,14 @@ import pytest
 
 pytest.importorskip('torch')
 import ipd
-from ipd.sym.sym_adapt import _sym_adapt
 from ipd.dev.lazy_import import lazyimport
+from ipd.sym.sym_adapt import _sym_adapt
 
 th = lazyimport('torch')
 
-import numpy as np
 from functools import partial
+
+import numpy as np
 import torch
 
 def main():

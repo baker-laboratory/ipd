@@ -11,7 +11,7 @@ wpc = lazyimport('wills_pymol_crap', 'git+https://github.com/willsheffler/wills_
                  pip=True).now()
 yaml = lazyimport('yaml', 'pyyaml', pip=True).now()
 
-from ipd.ppp.models import *
-from ipd.ppp.server import PPPBackend as PPPBackend
-from ipd.ppp.client import *
 from ipd.dev import timed as profile  # noqa
+from ipd.ppp.models import *
+from ipd.ppp.client import *
+from ipd.ppp.server import PPPBackend as PPPBackend

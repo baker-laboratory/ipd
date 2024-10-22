@@ -1,11 +1,13 @@
 import math
-import numpy as np
+
 import gemmi
+import numpy as np
 import torch as th
+from icecream import ic
+from numba import cuda
+
 import ipd
 from ipd import h
-from numba import cuda
-from icecream import ic
 
 _voxel = ipd.dev.LazyModule('ipd.voxel.voxel_cuda')
 

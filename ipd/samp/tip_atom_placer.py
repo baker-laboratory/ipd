@@ -1,12 +1,15 @@
 import numpy as np
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
+import dataclasses
+
+from icecream import ic
+
 import ipd
 from ipd import h
-import dataclasses
-from icecream import ic
 
 ic.configureOutput(includeContext=False)
 

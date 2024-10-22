@@ -1,11 +1,13 @@
-import sys
-import shutil
 import glob
-import git
 import os
-import ipd
-from box import Box
+import shutil
+import sys
 from pathlib import Path
+
+import git
+from box import Box
+
+import ipd
 
 class CITool(ipd.tools.IPDTool):
     def __init__(self: 'CITool', secretfile: str = '~/.secrets'):

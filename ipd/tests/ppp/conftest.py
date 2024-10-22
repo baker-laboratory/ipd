@@ -1,10 +1,12 @@
 import pytest
 
 pytest.importorskip('pymol')
-import ipd.ppp
-import tempfile
-from fastapi.testclient import TestClient
 import contextlib
+import tempfile
+
+from fastapi.testclient import TestClient
+
+import ipd.ppp
 
 @contextlib.contextmanager
 def ppp_test_stuff():

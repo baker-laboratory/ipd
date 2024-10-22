@@ -1,10 +1,12 @@
-import pytest
 import math
-from ipd import h
-import numpy as np
-import ipd
 import random
+
+import numpy as np
+import pytest
 from icecream import ic
+
+import ipd
+from ipd import h
 
 pytest.importorskip('torch')
 pytest.importorskip('gemmi')

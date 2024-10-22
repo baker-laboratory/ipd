@@ -1,7 +1,8 @@
 import numpy as np
+
 import ipd
 import ipd.homog as hm
-from ipd.sym import symfit_mc_play, setup_test_frames
+from ipd.sym import setup_test_frames, symfit_mc_play
 
 def main():
     t = ipd.dev.Timer()

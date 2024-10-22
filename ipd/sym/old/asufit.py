@@ -2,8 +2,9 @@ import ipd
 from ipd.homog import *
 
 def compute_canonical_asucen(sym, neighbors=None):
-    from ipd import h
     import torch as th
+
+    from ipd import h
     sym = ipd.sym.map_sym_abbreviation(sym).lower()
     frames = h.tocuda(ipd.sym.frames(sym))
     x = h.randunit(int(5e5), device='cuda')

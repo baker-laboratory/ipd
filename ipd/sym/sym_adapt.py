@@ -1,13 +1,15 @@
+import contextlib
 import copy
 import dataclasses
-import contextlib
-from ipd.dev.lazy_import import lazyimport
-import numpy as np
-from functools import singledispatch
 from abc import ABC, abstractmethod
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
+from functools import singledispatch
+
+import numpy as np
+
 import ipd
-from ipd.sym.sym_kind import SymKind, ShapeKind, ValueKind
+from ipd.dev.lazy_import import lazyimport
+from ipd.sym.sym_kind import ShapeKind, SymKind, ValueKind
 
 th = lazyimport('torch')
 

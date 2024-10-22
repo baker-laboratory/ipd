@@ -1,5 +1,5 @@
-from ipd.dev.qt.context_menu import *
 from ipd.dev import lazyimport, printed_string
+from ipd.dev.qt.context_menu import *
 
 Qt = lazyimport('pymol.Qt')
 

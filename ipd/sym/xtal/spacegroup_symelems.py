@@ -1,22 +1,24 @@
 import itertools as it
-from opt_einsum import contract as einsum
 from collections import defaultdict
+
 import numpy as np
+from opt_einsum import contract as einsum
+
 import ipd
+from ipd.homog.hgeom import (
+    angle,
+    h_point_line_dist,
+    hdot,
+    hnorm,
+    hpoint,
+    hvec,
+    line_angle,
+    line_line_closest_points_pa,
+    line_line_distance_pa,
+)
 from ipd.sym.xtal.spacegroup_data import *
 from ipd.sym.xtal.spacegroup_util import *
 from ipd.sym.xtal.SymElem import *
-from ipd.homog.hgeom import (
-    h_point_line_dist,
-    hvec,
-    hpoint,
-    line_line_closest_points_pa,
-    hnorm,
-    angle,
-    line_angle,
-    hdot,
-    line_line_distance_pa,
-)
 
 def _inunit(p):
     x, y, z, w = p.T

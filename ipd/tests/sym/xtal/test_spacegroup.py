@@ -1,8 +1,9 @@
-import pytest
 import numpy as np
-import ipd
-from opt_einsum import contract as einsum
+import pytest
 from icecream import ic
+from opt_einsum import contract as einsum
+
+import ipd
 
 def main():
     # _test_spacegroup_symelems()

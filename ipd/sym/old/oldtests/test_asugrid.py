@@ -1,7 +1,8 @@
 import numpy as np
+import pytest
+
 import ipd
 from ipd.sym.asugrid import vispoints
-import pytest
 
 pytest.skip(allow_module_level=True)
 

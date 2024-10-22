@@ -1,6 +1,7 @@
-from ipd.dev.lazy_import import lazyimport
-import ipd
 from collections.abc import Sequence
+
+import ipd
+from ipd.dev.lazy_import import lazyimport
 
 hydra = lazyimport('hydra')
 omegaconf = lazyimport('omegaconf')

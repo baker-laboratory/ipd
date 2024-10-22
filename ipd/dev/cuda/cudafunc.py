@@ -3,6 +3,7 @@ import pytest
 th = pytest.importorskip('torch')
 pytest.mark.skipif(not th.cuda.device_count(), 'cuda unavailable')
 import abc
+
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')

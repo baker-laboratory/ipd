@@ -1,13 +1,14 @@
 # try:
 from ipd.viz.primitives import *
-from ipd.viz.viz_helix import *
-from ipd.viz.viz_xtal import *
-from ipd.viz.viz_rigidbody import *
-from ipd.viz.pymol_viz import *
 from ipd.viz.pymol_cgo import *
-from ipd.viz.viz_deco import *
-from ipd.viz.viz_bond import *
+from ipd.viz.pymol_viz import *
 from ipd.viz.pymol_viz import pymol_load as pymol_load
+from ipd.viz.viz_bond import *
+from ipd.viz.viz_deco import *
+from ipd.viz.viz_helix import *
+from ipd.viz.viz_rigidbody import *
+from ipd.viz.viz_xtal import *
+
 try:
     pass
 except ImportError:
