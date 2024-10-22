@@ -5,11 +5,12 @@ import glob
 import git
 import os
 import ipd
+from box import Box
 from pathlib import Path
 
 class CITool(ipd.tools.IPDTool):
-    def __init__(self: 'CITool', secrets: str = '~/.secrets'):
-        secrets = Path(secrets).expanduser().read_text().splitlines()
+    def __init__(self: 'CITool', secretfile: str = '~/.secrets'):
+        secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
         self.secrets = Box({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
         self.repos: dict[str, str] = {
             'cifutils': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/cifutils.git',
@@ -22,8 +23,8 @@ class CITool(ipd.tools.IPDTool):
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
-    def update_library(self, path: Path = '~/bare_repos'):
-        path = os.path.expanduser(path)
+    def update_library(self, path: Path = Path('~/bare_repos')):
+        path = path.expanduser()
         assert os.path.isdir(path)
         for repo, url in self.repos.items():
             repo_dir = f'{path}/{repo}.git'
@@ -33,11 +34,6 @@ class CITool(ipd.tools.IPDTool):
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.bash(f'cd {path} && git clone --bare {url}')
-
-def get_repo(path):
-    repo = git.Repo(path, search_parent_directories=True)
-    repodir = repo.git.rev_parse("--show-toplevel")
-    return repo, repodir
 
 def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
     repolib = os.path.expanduser(repolib)
@@ -51,7 +47,8 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
 
 class RepoTool(CITool):
     def setup_submodules(self, path: Path = '.', repolib: str = '~/bare_repos'):
-        repo, path = get_repo(path)
+        repo = git.Repo(path, search_parent_directories=True)
+        repodir = repo.git.rev_parse("--show-toplevel")
         with ipd.dev.cd(path):
             init_submodules(repo, repolib)
 
@@ -63,26 +60,24 @@ class TestsTool(CITool):
     def ruff(self):
         ipd.dev.bash('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log')
 
-    def pytest(
-        self,
-        slurm: bool = False,
-        gpu: bool = False,
-        exe: Path = sys.executable,
-        threads: int = 1,
-        log: Path = 'pytest_ipd_ci_test_run.log',
-        mark: str = '',
-        parallel: int = 1,
-        timeout: int = 60,
-        verbose: bool = True
-    ):
+    def pytest(self,
+               slurm: bool = False,
+               gpu: bool = False,
+               exe: str = sys.executable,
+               threads: int = 1,
+               log: Path = Path('pytest_ipd_ci_test_run.log'),
+               mark: str = '',
+               parallel: int = 1,
+               timeout: int = 60,
+               verbose: bool = True):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
         par = '' if parallel == 1 else f'-n {parallel}'
-        threads = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
+        env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         if not slurm:
-            cmd = f'{threads} PYTHONPATH=. {exe} {mark} {par} 2>&1 | tee {log}.log'
+            cmd = f'{env} PYTHONPATH=. {exe} {mark} {par} 2>&1 | tee {log}.log'
             ipd.dev.bash(cmd, echo=True)
         else:
             #  srun --cpus-per-task=4 --mem=32G ../ci/run_pytest.sh parallel 2>&1 | tee pytest_parallel.log
@@ -92,17 +87,17 @@ class TestsTool(CITool):
             if gpu: executor.update_parameters(slurm_partition='gpu', gres=f'gpu:{gpu}:1')
             if parallel == 1:
                 executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
-                cmd = f'{threads} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}.log'
+                cmd = f'{env} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}.log'
                 print('SLURM run:', cmd, flush=True)
                 job = executor.submit(ipd.dev.bash, cmd)
                 job.result()
             else:
                 executor.update_parameters(timeout_min=timeout, slurm_mem='32G', cpus_per_task=parallel)
-                cmd = f'{threads} PYTHONPATH=. {exe} {mark} -m "not noparallel" {par} 2>&1 | tee {log}.parallel.log'
+                cmd = f'{env} PYTHONPATH=. {exe} {mark} -m "not noparallel" {par} 2>&1 | tee {log}.parallel.log'
                 print('SLURM run:', cmd, flush=True)
                 parallel_job = executor.submit(ipd.dev.bash, cmd)
                 executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
-                cmd = f'{threads} PYTHONPATH=. {exe} {mark} -m noparallel 2>&1 | tee {log}.noparallel.log'
+                cmd = f'{env} PYTHONPATH=. {exe} {mark} -m noparallel 2>&1 | tee {log}.noparallel.log'
                 print('SLURM run:', cmd, flush=True)
                 nonparallel_job = executor.submit(ipd.dev.bash, cmd)
                 parallel_job.result()
