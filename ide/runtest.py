@@ -42,14 +42,12 @@ _file_mappings = {
 # postprocess command
 _post = defaultdict(lambda: "")
 
-
 def get_args(sysargv):
     parser = argparse.ArgumentParser()
     # parser.add_argument("--projname", default='', help='name of project')
     parser.add_argument("testfile", type=str, default='')
     args = parser.parse_args(sysargv[1:])
     return args.__dict__
-
 
 def file_has_main(fname):
     "check if file has a main block"
@@ -58,7 +56,6 @@ def file_has_main(fname):
             if line.startswith("if __name__ == "):
                 return True
     return False
-
 
 def testfile_of(path, bname, **kw):
     "find testfile for a given file"
@@ -74,7 +71,6 @@ def testfile_of(path, bname, **kw):
     ic(t)
     if os.path.exists(t):
         return t
-
 
 def dispatch(
         fname,
@@ -116,7 +112,6 @@ def dispatch(
         cmd = "PYTHONPATH=.. CUDA_VISIBLE_DEVICES='' pytest {pytest_args}".format(**vars())
     return cmd, _post[bname]
 
-
 def main(**kw):
     t = perf_counter()
 
@@ -148,7 +143,6 @@ def main(**kw):
     os.system(post)
     t = perf_counter() - t
     print(f"{f' runtests.py done, time {t:7.3f} ':=^80}")
-
 
 if __name__ == '__main__':
     args = get_args(sys.argv)

@@ -223,7 +223,7 @@ def timed_func(func, *, clsname=None, label=None):
 
     @functools.wraps(func)
     def wrapper(*a, **kw):
-        kwarg =  dict(label=label, filename=filen, clsname=clsname, funcname=funcn)
+        kwarg = dict(label=label, filename=filen, clsname=clsname, funcname=funcn)
         checkpoint(kw, funcbegin=True, **kwarg)
         # print(func, inspect.ismethod(func), a)
         # if inspect.ismethod(func): a = a[1:]
@@ -244,7 +244,7 @@ def timed_class(cls, *, label=None):
     # label = label or rs
     for k in cls.__dict__:
         v = getattr(cls, k)
-        if callable(v) and not inspect.isclass(v): # skip inner classes
+        if callable(v) and not inspect.isclass(v):  # skip inner classes
             setattr(cls, k, timed_func(v, clsname=cls.__name__))
 
     return cls

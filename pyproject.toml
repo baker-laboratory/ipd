@@ -73,3 +73,9 @@ format.quote-style = "single"
 format.indent-style = "space"
 format.docstring-code-format = true
 
+[tool.yapf]
+based_on_style = "pep8"
+indent_width = 4
+column_limit = 111
+blank_line_before_nested_class_or_def = false
+blank_lines_around_top_level_definition = 1

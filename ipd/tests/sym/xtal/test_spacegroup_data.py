@@ -8,12 +8,10 @@ def main():
     pass
     assert 0
 
-
 def _highindex():
     m = set(re.findall(r"\[\d+\]", s))
     m = [int(x[1:-1]) for x in m]
     print(max(m))
-
 
 def parse_sgdat():
     with open("/home/sheffler/src/ipd/ipd/sym/spacegroups.txt") as inp:
@@ -43,7 +41,6 @@ def parse_sgdat():
     print(s)
     with open("spacegroup_frames.py", "w") as out:
         out.write(s)
-
 
 if __name__ == "__main__":
     main()

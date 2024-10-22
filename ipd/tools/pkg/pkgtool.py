@@ -3,7 +3,7 @@ import sys
 from ipd.dev import CliBase
 
 def main():
-    tool  = PkgTool()
+    tool = PkgTool()
     sys.argv += 'imports check'.split()
     tool.run()
     print('check_package_structure.py DONE')
@@ -19,6 +19,7 @@ class Config(PkgTool):
 class Tests(PkgTool):
     def cmd_check(self):
         print('check_import')
+
     def cmd_run(self):
         print('run_tests')
 

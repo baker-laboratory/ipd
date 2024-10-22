@@ -1,12 +1,10 @@
 import numpy as np
 
-
 def symframes_P1():
     frames = np.ones((1, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
     cc = (0, 0, 0)
     return frames, cc
-
 
 def symframes_Pminus1():
     frames = np.ones((2, 12)) * 12345
@@ -15,7 +13,6 @@ def symframes_Pminus1():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P121():
     frames = np.ones((2, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -23,14 +20,12 @@ def symframes_P121():
     cc = (0.5, 0, 0.5)
     return frames, cc
 
-
 def symframes_P1211():
     frames = np.ones((2, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
     frames[1] = (-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.5, 0)
     cc = (0.5, 0, 0.5)
     return frames, cc
-
 
 def symframes_C121():
     frames = np.ones((4, 12)) * 12345
@@ -42,7 +37,6 @@ def symframes_C121():
     cc = (0.5, 0, 0.5)
     return frames, cc
 
-
 def symframes_P1m1():
     frames = np.ones((2, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -50,14 +44,12 @@ def symframes_P1m1():
     cc = (0, 0.5, 0)
     return frames, cc
 
-
 def symframes_P1c1():
     frames = np.ones((2, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
     frames[1] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (0, 0.5, 0)
     return frames, cc
-
 
 def symframes_C1m1():
     frames = np.ones((4, 12)) * 12345
@@ -69,7 +61,6 @@ def symframes_C1m1():
     cc = (0, 0.5, 0)
     return frames, cc
 
-
 def symframes_C1c1():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -80,7 +71,6 @@ def symframes_C1c1():
     cc = (0, 0.5, 0)
     return frames, cc
 
-
 def symframes_P12slashm1():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -90,7 +80,6 @@ def symframes_P12slashm1():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P121slashm1():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -99,7 +88,6 @@ def symframes_P121slashm1():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0.5, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_C12slashm1():
     frames = np.ones((8, 12)) * 12345
@@ -113,7 +101,6 @@ def symframes_C12slashm1():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P12slashc1():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -122,7 +109,6 @@ def symframes_P12slashc1():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P121slashc1():
     frames = np.ones((4, 12)) * 12345
@@ -133,7 +119,6 @@ def symframes_P121slashc1():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P121slashn1():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -142,7 +127,6 @@ def symframes_P121slashn1():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_C12slashc1():
     frames = np.ones((8, 12)) * 12345
@@ -156,7 +140,6 @@ def symframes_C12slashc1():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P222():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -165,7 +148,6 @@ def symframes_P222():
     frames[3] = (-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P2221():
     frames = np.ones((4, 12)) * 12345
@@ -176,7 +158,6 @@ def symframes_P2221():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P21212():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -186,7 +167,6 @@ def symframes_P21212():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P212121():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -195,7 +175,6 @@ def symframes_P212121():
     frames[3] = (-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_C2221():
     frames = np.ones((8, 12)) * 12345
@@ -209,7 +188,6 @@ def symframes_C2221():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_C222():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -221,7 +199,6 @@ def symframes_C222():
         frames[4 + i, 9:12] += (0.5, 0.5, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_F222():
     frames = np.ones((16, 12)) * 12345
@@ -239,7 +216,6 @@ def symframes_F222():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_I222():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -251,7 +227,6 @@ def symframes_I222():
         frames[4 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_I212121():
     frames = np.ones((8, 12)) * 12345
@@ -265,7 +240,6 @@ def symframes_I212121():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pmm2():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -274,7 +248,6 @@ def symframes_Pmm2():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Pmc21():
     frames = np.ones((4, 12)) * 12345
@@ -285,7 +258,6 @@ def symframes_Pmc21():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Pcc2():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -294,7 +266,6 @@ def symframes_Pcc2():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Pma2():
     frames = np.ones((4, 12)) * 12345
@@ -305,7 +276,6 @@ def symframes_Pma2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Pca21():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -314,7 +284,6 @@ def symframes_Pca21():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0, 0)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Pnc2():
     frames = np.ones((4, 12)) * 12345
@@ -325,7 +294,6 @@ def symframes_Pnc2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Pmn21():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -334,7 +302,6 @@ def symframes_Pmn21():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0, 0.5)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Pba2():
     frames = np.ones((4, 12)) * 12345
@@ -345,7 +312,6 @@ def symframes_Pba2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Pna21():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -355,7 +321,6 @@ def symframes_Pna21():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Pnn2():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -364,7 +329,6 @@ def symframes_Pnn2():
     frames[3] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Cmm2():
     frames = np.ones((8, 12)) * 12345
@@ -378,7 +342,6 @@ def symframes_Cmm2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Cmc21():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -390,7 +353,6 @@ def symframes_Cmc21():
         frames[4 + i, 9:12] += (0.5, 0.5, 0)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Ccc2():
     frames = np.ones((8, 12)) * 12345
@@ -404,7 +366,6 @@ def symframes_Ccc2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Amm2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -416,7 +377,6 @@ def symframes_Amm2():
         frames[4 + i, 9:12] += (0, 0.5, 0.5)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Abm2():
     frames = np.ones((8, 12)) * 12345
@@ -430,7 +390,6 @@ def symframes_Abm2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Ama2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -443,7 +402,6 @@ def symframes_Ama2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Aba2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -455,7 +413,6 @@ def symframes_Aba2():
         frames[4 + i, 9:12] += (0, 0.5, 0.5)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Fmm2():
     frames = np.ones((16, 12)) * 12345
@@ -473,7 +430,6 @@ def symframes_Fmm2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Fdd2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -490,7 +446,6 @@ def symframes_Fdd2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Imm2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -502,7 +457,6 @@ def symframes_Imm2():
         frames[4 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Iba2():
     frames = np.ones((8, 12)) * 12345
@@ -516,7 +470,6 @@ def symframes_Iba2():
     cc = (0.5, 0.5, 0)
     return frames, cc
 
-
 def symframes_Ima2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -528,7 +481,6 @@ def symframes_Ima2():
         frames[4 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0)
     return frames, cc
-
 
 def symframes_Pmmm():
     frames = np.ones((8, 12)) * 12345
@@ -543,7 +495,6 @@ def symframes_Pmmm():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pnnn__2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -556,7 +507,6 @@ def symframes_Pnnn__2():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pccm():
     frames = np.ones((8, 12)) * 12345
@@ -571,7 +521,6 @@ def symframes_Pccm():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pban__2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -584,7 +533,6 @@ def symframes_Pban__2():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pmma():
     frames = np.ones((8, 12)) * 12345
@@ -599,7 +547,6 @@ def symframes_Pmma():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pnna():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -612,7 +559,6 @@ def symframes_Pnna():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pmna():
     frames = np.ones((8, 12)) * 12345
@@ -627,7 +573,6 @@ def symframes_Pmna():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pcca():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -640,7 +585,6 @@ def symframes_Pcca():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pbam():
     frames = np.ones((8, 12)) * 12345
@@ -655,7 +599,6 @@ def symframes_Pbam():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pccn():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -668,7 +611,6 @@ def symframes_Pccn():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pbcm():
     frames = np.ones((8, 12)) * 12345
@@ -683,7 +625,6 @@ def symframes_Pbcm():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pnnm():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -696,7 +637,6 @@ def symframes_Pnnm():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pmmn__2():
     frames = np.ones((8, 12)) * 12345
@@ -711,7 +651,6 @@ def symframes_Pmmn__2():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pbcn():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -724,7 +663,6 @@ def symframes_Pbcn():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pbca():
     frames = np.ones((8, 12)) * 12345
@@ -739,7 +677,6 @@ def symframes_Pbca():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pnma():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -752,7 +689,6 @@ def symframes_Pnma():
     frames[7] = (1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0.5, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Cmcm():
     frames = np.ones((16, 12)) * 12345
@@ -770,7 +706,6 @@ def symframes_Cmcm():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Cmca():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -786,7 +721,6 @@ def symframes_Cmca():
         frames[8 + i, 9:12] += (0.5, 0.5, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Cmmm():
     frames = np.ones((16, 12)) * 12345
@@ -804,7 +738,6 @@ def symframes_Cmmm():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Cccm():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -820,7 +753,6 @@ def symframes_Cccm():
         frames[8 + i, 9:12] += (0.5, 0.5, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Cmma():
     frames = np.ones((16, 12)) * 12345
@@ -838,7 +770,6 @@ def symframes_Cmma():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Ccca__2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -854,7 +785,6 @@ def symframes_Ccca__2():
         frames[8 + i, 9:12] += (0.5, 0.5, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Fmmm():
     frames = np.ones((32, 12)) * 12345
@@ -876,7 +806,6 @@ def symframes_Fmmm():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Fddd__2():
     frames = np.ones((32, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -897,7 +826,6 @@ def symframes_Fddd__2():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Immm():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -913,7 +841,6 @@ def symframes_Immm():
         frames[8 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Ibam():
     frames = np.ones((16, 12)) * 12345
@@ -931,7 +858,6 @@ def symframes_Ibam():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Ibca():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -947,7 +873,6 @@ def symframes_Ibca():
         frames[8 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Imma():
     frames = np.ones((16, 12)) * 12345
@@ -965,7 +890,6 @@ def symframes_Imma():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -974,7 +898,6 @@ def symframes_P4():
     frames[3] = (0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 0.5, 0)
     return frames, cc
-
 
 def symframes_P41():
     frames = np.ones((4, 12)) * 12345
@@ -985,7 +908,6 @@ def symframes_P41():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_P42():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -995,7 +917,6 @@ def symframes_P42():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_P43():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1004,7 +925,6 @@ def symframes_P43():
     frames[3] = (0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0.25)
     cc = (1, 0.5, 0)
     return frames, cc
-
 
 def symframes_I4():
     frames = np.ones((8, 12)) * 12345
@@ -1018,7 +938,6 @@ def symframes_I4():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_I41():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1031,7 +950,6 @@ def symframes_I41():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_Pminus4():
     frames = np.ones((4, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1040,7 +958,6 @@ def symframes_Pminus4():
     frames[3] = (0, -1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Iminus4():
     frames = np.ones((8, 12)) * 12345
@@ -1053,7 +970,6 @@ def symframes_Iminus4():
         frames[4 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P4slashm():
     frames = np.ones((8, 12)) * 12345
@@ -1068,7 +984,6 @@ def symframes_P4slashm():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P42slashm():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1081,7 +996,6 @@ def symframes_P42slashm():
     frames[7] = (0, -1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P4slashn__2():
     frames = np.ones((8, 12)) * 12345
@@ -1096,7 +1010,6 @@ def symframes_P4slashn__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P42slashn__2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1109,7 +1022,6 @@ def symframes_P42slashn__2():
     frames[7] = (0, -1, 0, 1, 0, 0, 0, 0, -1, 0.5, 0, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_I4slashm():
     frames = np.ones((16, 12)) * 12345
@@ -1127,7 +1039,6 @@ def symframes_I4slashm():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_I41slasha__2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1144,7 +1055,6 @@ def symframes_I41slasha__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P422():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1157,7 +1067,6 @@ def symframes_P422():
     frames[7] = (0, -1, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P4212():
     frames = np.ones((8, 12)) * 12345
@@ -1172,7 +1081,6 @@ def symframes_P4212():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4122():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1185,7 +1093,6 @@ def symframes_P4122():
     frames[7] = (0, -1, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0.25)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P41212():
     frames = np.ones((8, 12)) * 12345
@@ -1200,7 +1107,6 @@ def symframes_P41212():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4222():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1213,7 +1119,6 @@ def symframes_P4222():
     frames[7] = (0, -1, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P42212():
     frames = np.ones((8, 12)) * 12345
@@ -1228,7 +1133,6 @@ def symframes_P42212():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4322():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1242,7 +1146,6 @@ def symframes_P4322():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P43212():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1255,7 +1158,6 @@ def symframes_P43212():
     frames[7] = (0, -1, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_I422():
     frames = np.ones((16, 12)) * 12345
@@ -1273,7 +1175,6 @@ def symframes_I422():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_I4122():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1290,7 +1191,6 @@ def symframes_I4122():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4mm():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1303,7 +1203,6 @@ def symframes_P4mm():
     frames[7] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 0.5, 0)
     return frames, cc
-
 
 def symframes_P4bm():
     frames = np.ones((8, 12)) * 12345
@@ -1318,7 +1217,6 @@ def symframes_P4bm():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_P42cm():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1331,7 +1229,6 @@ def symframes_P42cm():
     frames[7] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 0.5, 0)
     return frames, cc
-
 
 def symframes_P42nm():
     frames = np.ones((8, 12)) * 12345
@@ -1346,7 +1243,6 @@ def symframes_P42nm():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_P4cc():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1359,7 +1255,6 @@ def symframes_P4cc():
     frames[7] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (1, 0.5, 0)
     return frames, cc
-
 
 def symframes_P4nc():
     frames = np.ones((8, 12)) * 12345
@@ -1374,7 +1269,6 @@ def symframes_P4nc():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_P42mc():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1388,7 +1282,6 @@ def symframes_P42mc():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_P42bc():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1401,7 +1294,6 @@ def symframes_P42bc():
     frames[7] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0.5, 0.5, 0.5)
     cc = (1, 0.5, 0)
     return frames, cc
-
 
 def symframes_I4mm():
     frames = np.ones((16, 12)) * 12345
@@ -1419,7 +1311,6 @@ def symframes_I4mm():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_I4cm():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1435,7 +1326,6 @@ def symframes_I4cm():
         frames[8 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 0.5, 0)
     return frames, cc
-
 
 def symframes_I41md():
     frames = np.ones((16, 12)) * 12345
@@ -1453,7 +1343,6 @@ def symframes_I41md():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_I41cd():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1470,7 +1359,6 @@ def symframes_I41cd():
     cc = (1, 0.5, 0)
     return frames, cc
 
-
 def symframes_Pminus42m():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1483,7 +1371,6 @@ def symframes_Pminus42m():
     frames[7] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pminus42c():
     frames = np.ones((8, 12)) * 12345
@@ -1498,7 +1385,6 @@ def symframes_Pminus42c():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pminus421m():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1511,7 +1397,6 @@ def symframes_Pminus421m():
     frames[7] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0.5, 0.5, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pminus421c():
     frames = np.ones((8, 12)) * 12345
@@ -1526,7 +1411,6 @@ def symframes_Pminus421c():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pminus4m2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1539,7 +1423,6 @@ def symframes_Pminus4m2():
     frames[7] = (0, -1, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Pminus4c2():
     frames = np.ones((8, 12)) * 12345
@@ -1554,7 +1437,6 @@ def symframes_Pminus4c2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pminus4b2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1568,7 +1450,6 @@ def symframes_Pminus4b2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Pminus4n2():
     frames = np.ones((8, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1581,7 +1462,6 @@ def symframes_Pminus4n2():
     frames[7] = (0, -1, 0, -1, 0, 0, 0, 0, -1, 0.5, 0.5, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Iminus4m2():
     frames = np.ones((16, 12)) * 12345
@@ -1599,7 +1479,6 @@ def symframes_Iminus4m2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Iminus4c2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1615,7 +1494,6 @@ def symframes_Iminus4c2():
         frames[8 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Iminus42m():
     frames = np.ones((16, 12)) * 12345
@@ -1633,7 +1511,6 @@ def symframes_Iminus42m():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Iminus42d():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1649,7 +1526,6 @@ def symframes_Iminus42d():
         frames[8 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P4slashmmm():
     frames = np.ones((16, 12)) * 12345
@@ -1672,7 +1548,6 @@ def symframes_P4slashmmm():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4slashmcc():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1693,7 +1568,6 @@ def symframes_P4slashmcc():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P4slashnbm__2():
     frames = np.ones((16, 12)) * 12345
@@ -1716,7 +1590,6 @@ def symframes_P4slashnbm__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4slashnnc__2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1737,7 +1610,6 @@ def symframes_P4slashnnc__2():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0.5, 0.5, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P4slashmbm():
     frames = np.ones((16, 12)) * 12345
@@ -1760,7 +1632,6 @@ def symframes_P4slashmbm():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4slashmnc():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1781,7 +1652,6 @@ def symframes_P4slashmnc():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0.5, 0.5, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P4slashnmm__2():
     frames = np.ones((16, 12)) * 12345
@@ -1804,7 +1674,6 @@ def symframes_P4slashnmm__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P4slashncc__2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1825,7 +1694,6 @@ def symframes_P4slashncc__2():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P42slashmmc():
     frames = np.ones((16, 12)) * 12345
@@ -1848,7 +1716,6 @@ def symframes_P42slashmmc():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P42slashmcm():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1869,7 +1736,6 @@ def symframes_P42slashmcm():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P42slashnbc__2():
     frames = np.ones((16, 12)) * 12345
@@ -1892,7 +1758,6 @@ def symframes_P42slashnbc__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P42slashnnm__2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1913,7 +1778,6 @@ def symframes_P42slashnnm__2():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0.5, 0.5, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P42slashmbc():
     frames = np.ones((16, 12)) * 12345
@@ -1936,7 +1800,6 @@ def symframes_P42slashmbc():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P42slashmnm():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -1957,7 +1820,6 @@ def symframes_P42slashmnm():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_P42slashnmc__2():
     frames = np.ones((16, 12)) * 12345
@@ -1980,7 +1842,6 @@ def symframes_P42slashnmc__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P42slashncm__2():
     frames = np.ones((16, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2001,7 +1862,6 @@ def symframes_P42slashncm__2():
     frames[15] = (0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_I4slashmmm():
     frames = np.ones((32, 12)) * 12345
@@ -2027,7 +1887,6 @@ def symframes_I4slashmmm():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_I4slashmcm():
     frames = np.ones((32, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2051,7 +1910,6 @@ def symframes_I4slashmcm():
         frames[16 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_I41slashamd__2():
     frames = np.ones((32, 12)) * 12345
@@ -2077,7 +1935,6 @@ def symframes_I41slashamd__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_I41slashacd__2():
     frames = np.ones((32, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2102,7 +1959,6 @@ def symframes_I41slashacd__2():
     cc = (1, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_P3():
     frames = np.ones((3, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2110,7 +1966,6 @@ def symframes_P3():
     frames[2] = (-1, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
-
 
 def symframes_P31():
     frames = np.ones((3, 12)) * 12345
@@ -2120,7 +1975,6 @@ def symframes_P31():
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
 
-
 def symframes_P32():
     frames = np.ones((3, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2128,7 +1982,6 @@ def symframes_P32():
     frames[2] = (-1, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0.333333333333333)
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
-
 
 def symframes_R3():
     frames = np.ones((9, 12)) * 12345
@@ -2143,7 +1996,6 @@ def symframes_R3():
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
 
-
 def symframes_Pminus3():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2154,7 +2006,6 @@ def symframes_Pminus3():
     frames[5] = (1, -1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_Rminus3__H():
     frames = np.ones((18, 12)) * 12345
@@ -2172,7 +2023,6 @@ def symframes_Rminus3__H():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P312():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2183,7 +2033,6 @@ def symframes_P312():
     frames[5] = (-1, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
-
 
 def symframes_P321():
     frames = np.ones((6, 12)) * 12345
@@ -2196,7 +2045,6 @@ def symframes_P321():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P3112():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2207,7 +2055,6 @@ def symframes_P3112():
     frames[5] = (-1, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0.333333333333333)
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
-
 
 def symframes_P3121():
     frames = np.ones((6, 12)) * 12345
@@ -2220,7 +2067,6 @@ def symframes_P3121():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P3212():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2232,7 +2078,6 @@ def symframes_P3212():
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
 
-
 def symframes_P3221():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2243,7 +2088,6 @@ def symframes_P3221():
     frames[5] = (1, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0.333333333333333)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_R32():
     frames = np.ones((18, 12)) * 12345
@@ -2261,7 +2105,6 @@ def symframes_R32():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P3m1():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2272,7 +2115,6 @@ def symframes_P3m1():
     frames[5] = (-1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
-
 
 def symframes_P31m():
     frames = np.ones((6, 12)) * 12345
@@ -2285,7 +2127,6 @@ def symframes_P31m():
     cc = (1, 1, 0)
     return frames, cc
 
-
 def symframes_P3c1():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2297,7 +2138,6 @@ def symframes_P3c1():
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
 
-
 def symframes_P31c():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2308,7 +2148,6 @@ def symframes_P31c():
     frames[5] = (1, -1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (1, 1, 0)
     return frames, cc
-
 
 def symframes_R3m__H():
     frames = np.ones((18, 12)) * 12345
@@ -2326,7 +2165,6 @@ def symframes_R3m__H():
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
 
-
 def symframes_R3c__H():
     frames = np.ones((18, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2342,7 +2180,6 @@ def symframes_R3c__H():
         frames[12 + i, 9:12] += (0.333333333333333, 0.666666666666667, 0.666666666666667)
     cc = (0.666666666666667, 0.666666666666667, 0)
     return frames, cc
-
 
 def symframes_Pminus31m():
     frames = np.ones((12, 12)) * 12345
@@ -2361,7 +2198,6 @@ def symframes_Pminus31m():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_Pminus31c():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2378,7 +2214,6 @@ def symframes_Pminus31c():
     frames[11] = (1, -1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_Pminus3m1():
     frames = np.ones((12, 12)) * 12345
@@ -2397,7 +2232,6 @@ def symframes_Pminus3m1():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_Pminus3c1():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2414,7 +2248,6 @@ def symframes_Pminus3c1():
     frames[11] = (-1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_Rminus3m__H():
     frames = np.ones((36, 12)) * 12345
@@ -2438,7 +2271,6 @@ def symframes_Rminus3m__H():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_Rminus3c__H():
     frames = np.ones((36, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2461,7 +2293,6 @@ def symframes_Rminus3c__H():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P6():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2472,7 +2303,6 @@ def symframes_P6():
     frames[5] = (0, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 1, 0)
     return frames, cc
-
 
 def symframes_P61():
     frames = np.ones((6, 12)) * 12345
@@ -2485,7 +2315,6 @@ def symframes_P61():
     cc = (1, 1, 0)
     return frames, cc
 
-
 def symframes_P65():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2496,7 +2325,6 @@ def symframes_P65():
     frames[5] = (0, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, 0.166666666666667)
     cc = (1, 1, 0)
     return frames, cc
-
 
 def symframes_P62():
     frames = np.ones((6, 12)) * 12345
@@ -2509,7 +2337,6 @@ def symframes_P62():
     cc = (1, 1, 0)
     return frames, cc
 
-
 def symframes_P64():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2520,7 +2347,6 @@ def symframes_P64():
     frames[5] = (0, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, 0.333333333333333)
     cc = (1, 1, 0)
     return frames, cc
-
 
 def symframes_P63():
     frames = np.ones((6, 12)) * 12345
@@ -2533,7 +2359,6 @@ def symframes_P63():
     cc = (1, 1, 0)
     return frames, cc
 
-
 def symframes_Pminus6():
     frames = np.ones((6, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2544,7 +2369,6 @@ def symframes_Pminus6():
     frames[5] = (0, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 0)
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
-
 
 def symframes_P6slashm():
     frames = np.ones((12, 12)) * 12345
@@ -2563,7 +2387,6 @@ def symframes_P6slashm():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P63slashm():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2580,7 +2403,6 @@ def symframes_P63slashm():
     frames[11] = (0, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 0.5)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_P622():
     frames = np.ones((12, 12)) * 12345
@@ -2599,7 +2421,6 @@ def symframes_P622():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P6122():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2616,7 +2437,6 @@ def symframes_P6122():
     frames[11] = (-1, 0, 0, -1, 1, 0, 0, 0, -1, 0, 0, 0.666666666666667)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_P6522():
     frames = np.ones((12, 12)) * 12345
@@ -2635,7 +2455,6 @@ def symframes_P6522():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P6222():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2652,7 +2471,6 @@ def symframes_P6222():
     frames[11] = (-1, 0, 0, -1, 1, 0, 0, 0, -1, 0, 0, 0.333333333333333)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_P6422():
     frames = np.ones((12, 12)) * 12345
@@ -2671,7 +2489,6 @@ def symframes_P6422():
     cc = (1, 1, 0.5)
     return frames, cc
 
-
 def symframes_P6322():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2688,7 +2505,6 @@ def symframes_P6322():
     frames[11] = (-1, 0, 0, -1, 1, 0, 0, 0, -1, 0, 0, 0)
     cc = (1, 1, 0.5)
     return frames, cc
-
 
 def symframes_P6mm():
     frames = np.ones((12, 12)) * 12345
@@ -2707,7 +2523,6 @@ def symframes_P6mm():
     cc = (1, 1, 0)
     return frames, cc
 
-
 def symframes_P6cc():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2724,7 +2539,6 @@ def symframes_P6cc():
     frames[11] = (1, 0, 0, 1, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (1, 1, 0)
     return frames, cc
-
 
 def symframes_P63cm():
     frames = np.ones((12, 12)) * 12345
@@ -2743,7 +2557,6 @@ def symframes_P63cm():
     cc = (1, 1, 0)
     return frames, cc
 
-
 def symframes_P63mc():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2760,7 +2573,6 @@ def symframes_P63mc():
     frames[11] = (1, 0, 0, 1, -1, 0, 0, 0, 1, 0, 0, 0)
     cc = (1, 1, 0)
     return frames, cc
-
 
 def symframes_Pminus6m2():
     frames = np.ones((12, 12)) * 12345
@@ -2779,7 +2591,6 @@ def symframes_Pminus6m2():
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
 
-
 def symframes_Pminus6c2():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2796,7 +2607,6 @@ def symframes_Pminus6c2():
     frames[11] = (1, 0, 0, 1, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
-
 
 def symframes_Pminus62m():
     frames = np.ones((12, 12)) * 12345
@@ -2815,7 +2625,6 @@ def symframes_Pminus62m():
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
 
-
 def symframes_Pminus62c():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2832,7 +2641,6 @@ def symframes_Pminus62c():
     frames[11] = (-1, 0, 0, -1, 1, 0, 0, 0, -1, 0, 0, 0)
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
-
 
 def symframes_P6slashmmm():
     frames = np.ones((24, 12)) * 12345
@@ -2863,7 +2671,6 @@ def symframes_P6slashmmm():
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
 
-
 def symframes_P6slashmcc():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2892,7 +2699,6 @@ def symframes_P6slashmcc():
     frames[23] = (1, 0, 0, 1, -1, 0, 0, 0, 1, 0, 0, 0.5)
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
-
 
 def symframes_P63slashmcm():
     frames = np.ones((24, 12)) * 12345
@@ -2923,7 +2729,6 @@ def symframes_P63slashmcm():
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
 
-
 def symframes_P63slashmmc():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2953,7 +2758,6 @@ def symframes_P63slashmmc():
     cc = (0.666666666666667, 0.666666666666667, 0.5)
     return frames, cc
 
-
 def symframes_P23():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -2970,7 +2774,6 @@ def symframes_P23():
     frames[11] = (0, -1, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_F23():
     frames = np.ones((48, 12)) * 12345
@@ -2996,7 +2799,6 @@ def symframes_F23():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_I23():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3017,7 +2819,6 @@ def symframes_I23():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_P213():
     frames = np.ones((12, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3034,7 +2835,6 @@ def symframes_P213():
     frames[11] = (0, -1, 0, 0, 0, -1, 1, 0, 0, 0.5, 0, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_I213():
     frames = np.ones((24, 12)) * 12345
@@ -3055,7 +2855,6 @@ def symframes_I213():
         frames[12 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Pmminus3():
     frames = np.ones((24, 12)) * 12345
@@ -3086,7 +2885,6 @@ def symframes_Pmminus3():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_Pnminus3__2():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3115,7 +2913,6 @@ def symframes_Pnminus3__2():
     frames[23] = (0, 1, 0, 0, 0, 1, -1, 0, 0, 0.5, 0.5, 0)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Fmminus3():
     frames = np.ones((96, 12)) * 12345
@@ -3153,7 +2950,6 @@ def symframes_Fmminus3():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Fdminus3__2():
     frames = np.ones((96, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3190,7 +2986,6 @@ def symframes_Fdminus3__2():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Imminus3():
     frames = np.ones((48, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3223,7 +3018,6 @@ def symframes_Imminus3():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_Paminus3():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3252,7 +3046,6 @@ def symframes_Paminus3():
     frames[23] = (0, 1, 0, 0, 0, 1, -1, 0, 0, 0.5, 0, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Iaminus3():
     frames = np.ones((48, 12)) * 12345
@@ -3286,7 +3079,6 @@ def symframes_Iaminus3():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_P432():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3316,7 +3108,6 @@ def symframes_P432():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_P4232():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3345,7 +3136,6 @@ def symframes_P4232():
     frames[23] = (0, 0, -1, 0, 1, 0, 1, 0, 0, 0.5, 0.5, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_F432():
     frames = np.ones((96, 12)) * 12345
@@ -3383,7 +3173,6 @@ def symframes_F432():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_F4132():
     frames = np.ones((96, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3420,7 +3209,6 @@ def symframes_F4132():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_I432():
     frames = np.ones((48, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3453,7 +3241,6 @@ def symframes_I432():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_P4332():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3483,7 +3270,6 @@ def symframes_P4332():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_P4132():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3512,7 +3298,6 @@ def symframes_P4132():
     frames[23] = (0, 0, -1, 0, 1, 0, 1, 0, 0, 0.25, 0.75, 0.25)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_I4132():
     frames = np.ones((48, 12)) * 12345
@@ -3546,7 +3331,6 @@ def symframes_I4132():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_Pminus43m():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3575,7 +3359,6 @@ def symframes_Pminus43m():
     frames[23] = (0, 0, 1, 0, -1, 0, -1, 0, 0, 0, 0, 0)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Fminus43m():
     frames = np.ones((96, 12)) * 12345
@@ -3613,7 +3396,6 @@ def symframes_Fminus43m():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Iminus43m():
     frames = np.ones((48, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3646,7 +3428,6 @@ def symframes_Iminus43m():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_Pminus43n():
     frames = np.ones((24, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3675,7 +3456,6 @@ def symframes_Pminus43n():
     frames[23] = (0, 0, 1, 0, -1, 0, -1, 0, 0, 0.5, 0.5, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Fminus43c():
     frames = np.ones((96, 12)) * 12345
@@ -3713,7 +3493,6 @@ def symframes_Fminus43c():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Iminus43d():
     frames = np.ones((48, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3745,7 +3524,6 @@ def symframes_Iminus43d():
         frames[24 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Pmminus3m():
     frames = np.ones((48, 12)) * 12345
@@ -3800,7 +3578,6 @@ def symframes_Pmminus3m():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_Pnminus3n__2():
     frames = np.ones((48, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3853,7 +3630,6 @@ def symframes_Pnminus3n__2():
     frames[47] = (0, 0, 1, 0, -1, 0, -1, 0, 0, 0.5, 0, 0)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Pmminus3n():
     frames = np.ones((48, 12)) * 12345
@@ -3908,7 +3684,6 @@ def symframes_Pmminus3n():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_Pnminus3m__2():
     frames = np.ones((48, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -3961,7 +3736,6 @@ def symframes_Pnminus3m__2():
     frames[47] = (0, 0, 1, 0, -1, 0, -1, 0, 0, 0, 0.5, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_Fmminus3m():
     frames = np.ones((192, 12)) * 12345
@@ -4023,7 +3797,6 @@ def symframes_Fmminus3m():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Fmminus3c():
     frames = np.ones((192, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -4083,7 +3856,6 @@ def symframes_Fmminus3c():
         frames[144 + i, 9:12] += (0.5, 0.5, 0)
     cc = (0.5, 0.5, 0.5)
     return frames, cc
-
 
 def symframes_Fdminus3m__2():
     frames = np.ones((192, 12)) * 12345
@@ -4145,7 +3917,6 @@ def symframes_Fdminus3m__2():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Fdminus3c__2():
     frames = np.ones((192, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -4206,7 +3977,6 @@ def symframes_Fdminus3c__2():
     cc = (0.5, 0.5, 0.5)
     return frames, cc
 
-
 def symframes_Imminus3m():
     frames = np.ones((96, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -4263,7 +4033,6 @@ def symframes_Imminus3m():
     cc = (1, 1, 1)
     return frames, cc
 
-
 def symframes_Iaminus3d():
     frames = np.ones((96, 12)) * 12345
     frames[0] = (1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -4319,7 +4088,6 @@ def symframes_Iaminus3d():
         frames[48 + i, 9:12] += (0.5, 0.5, 0.5)
     cc = (1, 1, 1)
     return frames, cc
-
 
 def symframes_B11m():
     frames = np.ones((4, 12)) * 12345

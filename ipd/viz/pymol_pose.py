@@ -1,17 +1,14 @@
 import ipd
 from pyrosetta import Pose
 
-
 def is_rosetta_pose(toshow):
     return isinstance(toshow, Pose)
-
 
 def pymol_load_pose(pose, name):
     tmpdir = tempfile.mkdtemp()
     fname = tmpdir + "/" + name + ".pdb"
     pose.dump_pdb(fname)
     pymol.cmd.load(fname)
-
 
 @ipd.viz.pymol_load.register(Pose)
 def _(toshow, name=None, state=None, **kw):

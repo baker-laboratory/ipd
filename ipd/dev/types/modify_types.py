@@ -1,8 +1,9 @@
-
 def list_classes(data):
     seenit = set()
+
     def visitor(x):
         seenit.add(x.__class__)
+
     visit(data, visitor)
     return seenit
 
@@ -10,6 +11,7 @@ def change_class(data, clsmap) -> None:
     def visitor(x):
         if x.__class__ in clsmap:
             x.__class__ = clsmap[x.__class__]
+
     visit(data, visitor)
 
 def visit(data, func) -> None:

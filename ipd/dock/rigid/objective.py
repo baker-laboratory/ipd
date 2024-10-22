@@ -2,10 +2,8 @@ import numpy as np
 import ipd
 from ipd.homog import *
 
-
 def tooclose_clash(bodies, nbrs=None, **kw):
     return bodies.clashes(nbrs)
-
 
 def tooclose_overlap(bodies, nbrs=None, contactfrac=0.1, printme=False, **kw):
     cfrac = bodies.contact_fraction(nbrs)
@@ -19,7 +17,6 @@ def tooclose_overlap(bodies, nbrs=None, contactfrac=0.1, printme=False, **kw):
 
     return max(False, maxcfrac - contactfrac)
     # return maxcfrac > contactfrac
-
 
 def tooclose_primary_overlap(bodies, nbrs=None, contactfrac=0.1, nprimary=None, printme=False, **kw):
     # assert 0
@@ -36,7 +33,6 @@ def tooclose_primary_overlap(bodies, nbrs=None, contactfrac=0.1, nprimary=None, 
     return max(False, maxcfrac - contactfrac)
     # return maxcfrac > contactfrac
 
-
 class RBLatticeOverlapObjective:
     def __init__(self, *args, **kw):
         self.rbojective = RBOverlapObjective(*args, **kw)
@@ -47,7 +43,6 @@ class RBLatticeOverlapObjective:
         ic(state.scale)
         self.rbojective.bodies[0].set_scale(state.scale)
         return self.rbojective(state.position, **kw)
-
 
 class RBOverlapObjective:
     def __init__(
@@ -127,14 +122,14 @@ class RBOverlapObjective:
 
                     # ic(f1, diff11, diff12, f2, diff21, diff22)
 
-                    scores.append((max(diff11, diff12) ** 2))
-                    scores.append((max(diff21, diff22) ** 2))
+                    scores.append((max(diff11, diff12)**2))
+                    scores.append((max(diff21, diff22)**2))
                 elif (ib, jb) in self.clashframes:
                     dists = b.clash_distances(b2, self.clashdist)
                     # if len(dists):
                     # ic(dists)
                     # assert 0
-                    clash += np.sum((self.clashdist - dists) ** 2)
+                    clash += np.sum((self.clashdist - dists)**2)
                     # clash += (self.clashpenalty / 10 * (b.clashes(b2, self.clashdist) / len(b)))**2
 
         # ic(dists)
@@ -176,15 +171,15 @@ class RBOverlapObjective:
             # ic((self.angpenalty * 10 * angdiff * ipd.hnorm(ipd.hprojperp([1, 0, 0], asym.com())))**2)
         s = [
             10 * sum(scores),
-            (self.spreadpenalty * (max(fracs) - min(fracs))) ** 2,
-            (self.driftpenalty * xdiff) ** 2,
-            (self.angpenalty * angdiff1) ** 2,
-            (self.angpenalty * angdiff2) ** 2,
+            (self.spreadpenalty * (max(fracs) - min(fracs)))**2,
+            (self.driftpenalty * xdiff)**2,
+            (self.angpenalty * angdiff1)**2,
+            (self.angpenalty * angdiff2)**2,
             # 0.1 * (axsdist1 + axsdist2)
-            (max(0, self.minradius - ipd.hnorm(asym.com()))) ** 2,
+            (max(0, self.minradius - ipd.hnorm(asym.com())))**2,
             0.0 * angdiffcen**2,
             self.clashpenalty * clash,
-            2 * np.sum(np.array(dists) ** 2),
+            2 * np.sum(np.array(dists)**2),
         ]
         # ic(s)
         return np.sum(s)

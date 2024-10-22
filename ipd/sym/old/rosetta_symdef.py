@@ -8,7 +8,6 @@ from deferred_import import deferred_import
 
 pyrosetta = deferred_import("pyrosetta")
 
-
 def get_rosetta_symfile_path(name):
     name = name.upper().replace("M_", "m_")
     if name.endswith(".sym"):
@@ -20,14 +19,12 @@ def get_rosetta_symfile_path(name):
     assert len(g) == 1
     return g[0]
 
-
 @functools.lru_cache()
 def get_rosetta_symfile_contents(name):
     path = get_rosetta_symfile_path(name)
     print(f"reading symdef {path}")
     with ipd.open_package_data(path) as inp:
         return inp.read()
-
 
 @functools.lru_cache()
 def get_rosetta_symdata(name):
@@ -37,7 +34,6 @@ def get_rosetta_symdata(name):
     d = pyrosetta.rosetta.core.conformation.symmetry.SymmData()
     d.read_symmetry_data_from_stream(ss)
     return d
-
 
 def get_rosetta_symdata_modified(name, string_substitutions=None, scale_positions=None):
     rosetta_symfilestr = get_rosetta_symfile_contents(name)

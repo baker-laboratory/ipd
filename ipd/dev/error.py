@@ -2,7 +2,7 @@ import builtins
 import functools
 from ipd.dev.types.type_aliases import KW
 
-def change_exception(**kw:KW):
+def change_exception(**kw: KW):
     excmap = {getattr(builtins, k): v for k, v in kw.items()}
 
     def deco(func):

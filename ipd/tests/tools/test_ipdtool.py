@@ -5,15 +5,15 @@ import ipd
 
 runner = CliRunner()
 ipdtool = ipd.tools.IPDTool()
+
 def run(cmd):
     print('run:', cmd)
-    if isinstance(cmd,str): cmd = cmd.split()
+    if isinstance(cmd, str): cmd = cmd.split()
     result = runner.invoke(ipdtool.__app__, cmd)
     if result.exit_code:
         print(result.stdout)
     assert not result.exit_code
     return result
-
 
 def main():
     test_ipdtool_basic()
@@ -39,7 +39,6 @@ def test_ipdtool_ci_update():
     if not os.path.isdir(os.path.expanduser('~/bare_repos')): return
     result = run('ci update_repos ~/bare_repos')
     print(result.stdout)
-
 
 if __name__ == '__main__':
     main()

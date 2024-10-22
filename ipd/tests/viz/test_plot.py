@@ -1,7 +1,6 @@
 import ipd
 import numpy as np
 
-
 def main():
     x = np.random.normal(size=10)
     y = np.random.normal(size=10)
@@ -15,7 +14,6 @@ def main():
     ipd.viz.scatter(x + 1, y, show=False)
     ipd.viz.hist(x)
     ipd.viz.show()
-
 
 if __name__ == "__main__":
     main()

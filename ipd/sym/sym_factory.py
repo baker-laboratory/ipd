@@ -18,6 +18,7 @@ class MetaSymManager(abc.ABCMeta):
             raise TypeError(f'multiple SymmetryManagers with same kind!'
                             f'trying to add {kind}:{cls_name} to:\n{_sym_managers}')
         _sym_managers[kind] = cls
+
     def __call__(cls, *args, **kwargs):
         instance = super().__call__(*args, **kwargs)
         instance.post_init()
@@ -28,7 +29,6 @@ def set_default_sym_manager(kind):
     global _default_sym_manager
     _default_sym_manager = kind
     # ic('set_default_sym_manager', kind, _default_sym_manager)
-
 
 def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **kw):
     '''Create a symmetry manager based on the configuration

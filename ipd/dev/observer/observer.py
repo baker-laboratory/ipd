@@ -56,7 +56,7 @@ class Subject:
     def _shutdown(self):
         pass
         # for e in self._warnings:
-            # print(e)
+        # print(e)
 
     def __getattr__(self, k: str):
         if k == '_observers':
