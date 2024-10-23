@@ -72,10 +72,12 @@ def run_pytest(env,
                timeout=60,
                executor=None,
                dryrun=False,
-               tee=False):
+               tee=False,
+               benchmarks=False):
     dry = '--collect-only' if dryrun else ''
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
+    if not benchmarks: sel = f'{sel} --benchmarks-disable'
     par = '' if parallel == 1 else f'-n {parallel}'
     cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
     while '  ' in cmd:
