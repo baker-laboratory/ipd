@@ -1,12 +1,14 @@
 import glob
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
 
 import git
+from rich import print
+import submitit
 from box import Box
-
 import ipd
 
 class CITool(ipd.tools.IPDTool):
@@ -53,6 +55,69 @@ class RepoTool(CITool):
         with ipd.dev.cd(path):
             init_submodules(repo, repolib)
 
+class Future:
+    def __init__(self, result):
+        self._result = result
+
+    def result(self):
+        return self._result
+
+def run_pytest(env,
+               exe,
+               log,
+               mark='',
+               sel='',
+               parallel=1,
+               mem='16G',
+               timeout=60,
+               executor=None,
+               dryrun=False,
+               tee=False):
+    dry = '--collect-only' if dryrun else ''
+    tee = '2>&1 | tee' if tee else '>'
+    sel = f'-k "{sel}"' if sel else ''
+    par = '' if parallel == 1 else f'-n {parallel}'
+    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
+    while '  ' in cmd:
+        cmd = cmd.replace('  ', ' ')
+    msg = f'{"SLURM" if executor else "LOCAL"} run: {cmd}'
+    print(msg, flush=True)
+    if executor:
+        executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
+        return cmd, executor.submit(ipd.dev.run, cmd, echo=False), log
+    else:
+        return cmd, Future(ipd.dev.run(cmd, echo=False)), log
+
+def get_re(pattern, text):
+    result = re.findall(pattern, text)
+    assert len(result) < 2
+    if not result: return 0
+    return int(result[0])
+
+def parse_pytest(fname):
+    if not os.path.exists(fname):
+        print(f'missing {fname} in {os.getcwd()}')
+        return None
+    result = Box()
+    result.fname = fname
+    content = Path(fname).read_text()
+    # collecting ... collected 230 items / 2 deselected / 22 skipped / 228 selected
+    # =============== 228/230 tests collected (2 deselected) in 0.81s ================
+    os.system(f'grep "collecting ..." {fname}')
+    os.system(f'grep "==========" {fname} | grep -v FAILURES')
+    os.system(f'grep "FAILED" {fname}')
+    # print(content)
+    result.ncollect = get_re(r'collecting ... collected (\d+) ', content)
+    result.deselected = get_re(r'collecting ... collected .* / (\d+) deselected', content)
+    result.skipped = get_re(r'collecting ... collected .* / (\d+) skipped', content)
+    result.selected = get_re(r'collecting ... collected .* / (\d+) selected', content)
+    result.collected = get_re(r'===== .*?(\d+) tests collected .* =====', content)
+    result.passed = get_re(r'=====.*? (\d+) passed.* =====', content)
+    result.failed = get_re(r'=====.*? (\d+) failed.* =====', content)
+    result.xfailed = get_re(r'=====.*? (\d+) xfailed.* =====', content)
+    result.xpassed = get_re(r'=====.*? (\d+) xpassed.* =====', content)
+    return result
+
 class TestsTool(CITool):
     def run(self):
         TestsTool.ruff()
@@ -61,66 +126,59 @@ class TestsTool(CITool):
     def ruff(self):
         ipd.dev.run('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log')
 
-    def pytest(self,
-               slurm: bool = False,
-               gpu: bool = False,
-               exe: str = sys.executable,
-               threads: int = 1,
-               log: Path = Path('pytest_ipd_ci_test_run.log'),
-               mark: str = '',
-               parallel: int = 1,
-               timeout: int = 60,
-               verbose: bool = True):
+    def pytest(
+        self,
+        slurm: bool = False,
+        gpu: bool = False,
+        exe: str = sys.executable,
+        threads: int = 1,
+        log: Path = Path('pytest_ipd_ci_test_run.log'),
+        mark: str = '',
+        parallel: int = 1,
+        timeout: int = 60,
+        verbose: bool = True,
+        which: str = '',
+        dryrun: bool = False,
+        tee: bool = False,
+    ):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
         par = '' if parallel == 1 else f'-n {parallel}'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
+        executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
+        sel = ' or '.join(which.split()) if which else ''
+        nosel = ' and '.join([f'not {t}' for t in which.split()])
+        jobs = []
+        kw = dict(env=env, exe=exe, mark=mark, dryrun=dryrun, executor=executor, tee=tee)
         if not slurm:
-            cmd = f'{env} PYTHONPATH=. {exe} {mark} {par} 2>&1 | tee {log}.log'
-            ipd.dev.run(cmd, echo=True)
+            jobs.append(run_pytest(sel=sel, parallel=parallel, log=log, **kw))
         else:
-            #  srun --cpus-per-task=4 --mem=32G ../ci/run_pytest.sh parallel 2>&1 | tee pytest_parallel.log
-            #  srun --cpus-per-task=1 --mem=16G ../ci/run_pytest.sh notparallel 2>&1 | tee pytest_single.log
-            import submitit
-            executor = submitit.AutoExecutor(folder='slurm_logs_%j')
             if gpu: executor.update_parameters(slurm_partition='gpu', gres=f'gpu:{gpu}:1')
             if parallel == 1:
-                executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
-                cmd = f'{env} PYTHONPATH=. {exe} {mark} 2>&1 | tee {log}.log'
-                print('SLURM run:', cmd, flush=True)
-                job = executor.submit(ipd.dev.run, cmd)
-                job.result()
+                jobs.append(run_pytest(sel=sel, parallel=1, log=log, **kw))
             else:
-                executor.update_parameters(timeout_min=timeout, slurm_mem='32G', cpus_per_task=parallel)
-                cmd = f'{env} PYTHONPATH=. {exe} {mark} -m "not noparallel" {par} 2>&1 | tee {log}.parallel.log'
-                print('SLURM run:', cmd, flush=True)
-                parallel_job = executor.submit(ipd.dev.run, cmd)
-                executor.update_parameters(timeout_min=timeout, slurm_mem='16G', cpus_per_task=1)
-                cmd = f'{env} PYTHONPATH=. {exe} {mark} -m noparallel 2>&1 | tee {log}.noparallel.log'
-                print('SLURM run:', cmd, flush=True)
-                nonparallel_job = executor.submit(ipd.dev.run, cmd)
-                parallel_job.result()
-                nonparallel_job.result()
+                jobs.append(run_pytest(sel=sel, parallel=1, log=f'{log}.noparallel.log', **kw))
+                jobs.append(
+                    run_pytest(sel=nosel, parallel=parallel, log=f'{log}.parallel.log', mem='32G', **kw))
+        return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
 
     def check(self, path: Path = '.'):
         fail = False
-        for f in glob.glob('pytest*.log'):
-            with open(f) as inp:
-                for line in inp.readlines():
-                    fail |= 'ERROR' in line
-                    fail |= 'FAILED' in line
-                    fail |= 'FATAL' in line
-                    fail |= 'Error while loading ' in line
-                    if fail: print(line)
-            if fail:
-                print('PYTEST FAILED, see log:', f)
-        for f in glob.glob('ruff*.log'):
-            with open(f) as inp:
+        for log in glob.glob('ruff*.log'):
+            with open(log) as inp:
                 lines = inp.readlines()
                 if 'All checks passed!' not in lines[-1]:
                     print('RUFF FAILED')
                     print(str.join('', lines))
                     fail = True
+        pytestlogs = glob.glob('pytest*.log')
+        for log in pytestlogs:
+            print()
+            print(f'pytest log: {log}')
+            result = parse_pytest(log)
+            print(dict(result))
+            print()
+            fail |= result.failed
         assert not fail

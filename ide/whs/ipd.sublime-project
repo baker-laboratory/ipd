@@ -57,7 +57,7 @@
         },
         {
             "name": "runtest.py",
-            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ide/runtest.py $file &> ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ipd/tools/run_tests_on_file.py ipd $file &> ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)",
         },
         {

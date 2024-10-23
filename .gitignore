@@ -14,7 +14,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -169,3 +168,5 @@ log
 \#*
 ppp_server_data
 .qtc_clangd
+slurm_logs_*
+

@@ -17,6 +17,7 @@ dependencies = [
     'numpy',
     'opt_einsum',
     'pre-commit',
+    'pandas',
     'pydantic',
     'pytest',
     'pytest-sugar',

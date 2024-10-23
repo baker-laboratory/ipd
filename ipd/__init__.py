@@ -42,7 +42,4 @@ def __getattr__(name):
 
 import builtins
 
-from box import Box
-
 builtins.ic = ic
-builtins.Box = Box

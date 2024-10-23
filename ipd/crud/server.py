@@ -73,8 +73,6 @@ class CrudRun:
             return server, backend, client
         else:
             server = uvicorn.Server(config)
-            import pdb
-            pdb.set_trace()
             server.run()
 
 run = CrudRun()

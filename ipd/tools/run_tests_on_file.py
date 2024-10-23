@@ -1,5 +1,5 @@
 """
-usage: python runtests.py [file.py]
+usage: python run_tests_on_file.py [project name(s)] [file.py]
 
 This script exists for easy editor integration with python test files. Dispatch:
 
@@ -17,6 +17,7 @@ import os
 import sys
 from collections import defaultdict
 from time import perf_counter
+from assertpy import assert_that
 
 from icecream import ic
 
@@ -45,7 +46,7 @@ _post = defaultdict(lambda: "")
 
 def get_args(sysargv):
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--projname", default='', help='name of project')
+    parser.add_argument("projects", type=str, nargs='+', default='')
     parser.add_argument("testfile", type=str, default='')
     args = parser.parse_args(sysargv[1:])
     return args.__dict__
@@ -58,22 +59,43 @@ def file_has_main(fname):
                 return True
     return False
 
-def testfile_of(path, bname, **kw):
+def test():
+    tfile = testfile_of(['foo'], '/a/b/c/d/foo/e/f/g', 'h.py', debug=True)
+    assert_that(tfile).is_equal_to('/a/b/c/d/foo/tests/e/f/g/test_h.py')
+
+    tfile = testfile_of(['foo'], 'a/b/c/d/foo/e/f/g', 'h.py', debug=True)
+    assert_that(tfile).is_equal_to('a/b/c/d/foo/tests/e/f/g/test_h.py')
+
+    tfile = testfile_of(['foo', 'bar', 'baz'], '/a/foo/b/bar/c/baz/d', 'file.py', debug=True)
+    assert_that(tfile).is_equal_to('/a/foo/b/bar/c/baz/tests/d/test_file.py')
+
+    tfile = testfile_of(['foo', 'bar', 'baz'], 'a/foo/b/bar/c', 'file.py', debug=True)
+    assert_that(tfile).is_equal_to('a/foo/b/bar/tests/c/test_file.py')
+
+    tfile = testfile_of(['foo', 'bar', 'baz'], 'a/foo/b', 'file.py', debug=True)
+    assert_that(tfile).is_equal_to('a/foo/tests/b/test_file.py')
+
+    print(__file__, 'tests pass')
+
+def rindex(lst, val):
+    try:
+        return len(lst) - lst[-1::-1].index(val) - 1
+    except ValueError:
+        return -1
+
+def testfile_of(projects, path, bname, debug=True, **kw) -> str:
     "find testfile for a given file"
-    ic(path, bname)
-    if path.startswith('../rf2aa/'):
-        t = f'../rf2aa/tests/{path[9:]}/test_{bname}'
-    elif path.startswith('../lib/rf2aa/'):
-        t = f'../lib/rf2aa/rf2aa/tests/{path[19:]}/test_{bname}'
-    elif path.startswith('../../rf/rfsym/rf2aa/'):
-        t = f'../rf2aa/tests/{path[21:]}/test_{bname}'
-    else:
-        t = f'tests/{path}/test_{bname}'
-    ic(t)
-    if os.path.exists(t):
-        return t
+    root = '/' if path[0] == '/' else ''
+    spath = path.split('/')
+    i = max(rindex(spath, proj) for proj in projects)
+    proj = spath[i]
+    assert i, f'no {proj} dir in {path}'
+    pre, post = os.path.join(*spath[:i + 1]), os.path.join(*spath[i + 1:])
+    t = f'{root}{pre}/tests/{post}/test_{bname}'
+    if debug or os.path.exists(t): return t
 
 def dispatch(
+        projects,
         fname,
         pytest_args='--disable-warnings -m "not nondeterministic"',
         file_mappings=dict(),
@@ -100,46 +122,32 @@ def dispatch(
         path, bname = os.path.split(bname)
 
     if not file_has_main(fname) and not bname.startswith("test_"):
-        testfile = testfile_of(path, bname, **kw)
+        testfile = testfile_of(projects, path, bname, **kw)
         if testfile:
             fname = testfile
             path, bname = os.path.split(fname)
 
+    if bname == os.path.basename(__file__):
+        test()
+        sys.exit()
     if not file_has_main(fname) and bname.startswith("test_"):
-        cmd = "PYTHONPATH=.. CUDA_VISIBLE_DEVICES='' pytest {pytest_args} {fname}".format(**vars())
+        cmd = f"{sys.executable} -mpytest {pytest_args} {fname}"
     elif fname.endswith(".py") and bname != 'conftest.py':
-        cmd = f"PYTHONPATH=.. {sys.executable} " + fname
+        cmd = f"PYTHONPATH=. {sys.executable} " + fname
     else:
-        cmd = "PYTHONPATH=.. CUDA_VISIBLE_DEVICES='' pytest {pytest_args}".format(**vars())
+        cmd = f"{sys.executable} -mpytest {pytest_args}"
     return cmd, _post[bname]
 
-def main(**kw):
+def main(projects, **kw):
     t = perf_counter()
-
-    post = ""
-    if not kw['testfile']:
-        cmd = "pytest"
-    else:
-        if kw['testfile'].endswith(__file__):
-            cmd = ""
-        else:
-            cmd, post = dispatch(
-                kw['testfile'],
-                **kw,
-            )
-
-    # print("call:", sys.argv)
+    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest',
+                                                                                 '')
+    print("call:", sys.argv)
     print("cwd:", os.getcwd())
     print("cmd:", cmd)
     print(f"{' ide/runtests.py running cmd in cwd ':=^80}")
     sys.stdout.flush()
-    # if 1cmd.startswith('pytest '):
-    os.putenv("NUMBA_OPT", "1")
-    # os.putenv('NUMBA_DISABLE_JIT', '1')
-
-    # print(cmd)
     os.system(cmd)
-
     print(f"{' main command done ':=^80}")
     os.system(post)
     t = perf_counter() - t
