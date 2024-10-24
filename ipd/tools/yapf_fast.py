@@ -1,6 +1,5 @@
 import os
 import pathlib
-from re import sub
 import subprocess
 
 def main():
