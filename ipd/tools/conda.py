@@ -39,7 +39,7 @@ class MambaTool(ipd.tools.IPDTool):
             for p in packages:
                 os.system(f'mamba install {yes} {channels} "{self._fill_secrets(p)}"')
             for p in pippackages:
-                os.system(f'pip install "{self._fill_secrets(p)}"')
+                print(f'pip install "{self._fill_secrets(p)}"')
         else:
             packages = self._fill_secrets(' '.join(f'"{dep}"' for dep in packages))
             pippackages = self._fill_secrets(' '.join(f'"{dep}"' for dep in pippackages))
