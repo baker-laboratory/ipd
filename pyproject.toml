@@ -14,6 +14,7 @@ dependencies = [
     'hydra-core',
     'hypothesis',
     'icecream',
+    'more_itertools',
     'numpy',
     'opt_einsum',
     'pre-commit',
@@ -53,7 +54,7 @@ pythonPlatform = "Linux"
 requires-python = ">=3.11"
 pythonVersion = "3.12"
 executionEnvironments = [
-  { root = "/home/sheffler/sw/MambaForge/envs/rfdsym312/bin/python", pythonVersion = "3.12", pythonPlatform = "Linux", extraPaths = [] },
+  { root = "/home/sheffler/sw/MambaForge/envs/pyright/bin/python", pythonVersion = "3.12", pythonPlatform = "Linux", extraPaths = [] },
 ]
 
 [tool.ruff]

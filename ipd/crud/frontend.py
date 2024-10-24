@@ -14,6 +14,8 @@ import yaml
 
 import ipd
 
+T = typing.TypeVar('T')
+
 class ClientError(Exception):
     pass
 
@@ -42,8 +44,6 @@ class SpecBase(pydantic.BaseModel):
     id: uuid.UUID = pydantic.Field(default_factory=uuid.uuid4)
     ghost: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    props: Union[list[str], str] = []
-    attrs: Union[dict[str, Union[str, int, float]], str] = {}
     _errors: str = ''
 
     def __init_subclass__(cls, **kw):
@@ -63,51 +63,27 @@ class SpecBase(pydantic.BaseModel):
     def __heash__(self):
         return self.id
 
-    def to_spec(self):
+    def to_spec(self) -> 'SpecBase':
         return self.__spec__(**self.model_dump())
 
     @classmethod
-    def from_spec(cls, spec):
+    def from_spec(cls: T, spec) -> T:
         return cls(**spec.model_dump())
 
     @classmethod
-    def kind(cls):
+    def modelkind(cls) -> str:
         if cls.__name__.endswith('Spec'): return cls.__name__.replace('Spec', '').lower()
         if cls.__name__.startswith('DB'): return cls.__name__.replace('DB', '').lower()
         return cls.__name__.lower()
 
     @classmethod
-    def layer(cls):
+    def modellayer(cls) -> str:
         return layerof(cls)
 
-    @pydantic.field_validator('props')
-    def valprops(cls, props):
-        if isinstance(props, (set, list)): return props
-        try:
-            props = ipd.dev.safe_eval(props)
-        except (NameError, SyntaxError):
-            if isinstance(props, str):
-                if not props.strip(): return []
-                props = [p.strip() for p in props.strip().split(',')]
-
-    @pydantic.field_validator('attrs')
-    def valattrs(cls, attrs):
-        if isinstance(attrs, dict): return attrs
-        try:
-            attrs = ipd.dev.safe_eval(attrs)
-        except (NameError, SyntaxError):
-            if isinstance(attrs, str):
-                if not attrs.strip(): return {}
-                attrs = {
-                    x.split('=').split(':')[0].strip(): x.split('=').split(':')[1].strip()
-                    for x in attrs.strip().split(',')
-                }
-        return attrs
-
-    def _copy_with_newid(self):
+    def _copy_with_newid(self) -> typing.Self:
         return self.__class__(**{**self.model_dump(), 'id': uuid.uuid4()})
 
-    def errors(self):
+    def errors(self) -> list[str]:
         return self._errors
 
     def __getitem__(self, k):
@@ -116,7 +92,7 @@ class SpecBase(pydantic.BaseModel):
     def __setitem__(self, k, v):
         return setattr(self, k, v)
 
-    def print_full(self, seenit=None, depth=0):
+    def print_full(self, seenit=None, depth=0) -> None:
         seenit = seenit or set()
         if self.id in seenit: return
         seenit.add(self.id)
@@ -203,17 +179,17 @@ class ClientModelBase(pydantic.BaseModel):
         super().__init_subclass__(**kw)
         if not remote_props: return
         cls.__remote_props__ = remote_props
-        cls.__sibling_models__[cls.kind()] = cls
+        cls.__sibling_models__[cls.modelkind()] = cls
         for attr, kind in cls.__remote_props__.items():
 
             def make_client_remote_model_property_closure(_cls=cls, _attr=attr, _kind=kind):
                 # print('client prop', cls.__name__, attr, kind)
 
                 def getter(self):
-                    val = self._client.getattr(_cls.kind(), self.id, _attr)
+                    val = self._client.getattr(_cls.modelkind(), self.id, _attr)
                     if val is None:
                         return val
-                        # raise AttributeError(f'kind {_cls.kind()} id {self.id} attr {_attr} is None')
+                        # raise AttributeError(f'kind {_cls.modelkind()} id {self.id} attr {_attr} is None')
                     elif _kind in self.__sibling_models__:
                         attrcls = self.__sibling_models__[_kind]
                     else:
@@ -327,8 +303,8 @@ class ClientBase:
         return self.get(f'/remove/{thingname}/{thing.id}')
 
     def upload(self, thing, _dispatch_on_type=True, **kw):
-        if _dispatch_on_type and hasattr(self, f'upload_{thing.kind()}'):
-            return getattr(self, f'upload_{thing.kind()}')(thing, **kw)
+        if _dispatch_on_type and hasattr(self, f'upload_{thing.modelkind()}'):
+            return getattr(self, f'upload_{thing.modelkind()}')(thing, **kw)
         thing = thing.to_spec()
         # print('upload', type(thing), kw)
         if thing._errors:
@@ -411,7 +387,7 @@ def model_method(func, layer):
     @functools.wraps(func)
     def wrapper(self, *a, **kw):
         err = f'{inspect.signature(func)} only valid in {layer} model, not {self.__class__.__name__}'
-        assert self.layer() == layer, err
+        assert self.modellayer() == layer, err
         func(self, *a, **kw)
 
     wrapper.__layer__ = layer

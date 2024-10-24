@@ -1,5 +1,6 @@
 import contextlib
 import operator
+import inspect
 import sys
 import traceback
 import typing
@@ -12,26 +13,55 @@ import pydantic
 import sqlalchemy
 import sqlmodel.pool
 from sqlmodel.main import RelationshipInfo
+from rich import print
 
 import ipd
 from ipd.crud.frontend import SpecBase
 
-# python_type_to_sqlalchemy_type = {
-#     str: sqlalchemy.String,
-#     int: sqlalchemy.Integer,
-#     float: sqlalchemy.Float,
-#     bool: sqlalchemy.Boolean,
-#     # datetime.date: sqlalchemy.Date,
-#     datetime: sqlalchemy.DateTime,
-#     # datetime.time: sqlalchemy.Time,
-#     dict: sqlalchemy.JSON,
-#     list: sqlalchemy.ARRAY,
-#     # decimal.Decimal: sqlalchemy.Numeric
-# }
+backend_type_map = {
+    pydantic.AnyUrl: str,
+    pydantic.FilePath: str,
+    pydantic.NewPath: str,
+    pydantic.DirectoryPath: str,
+}
 
+Props = list[str]
+Attrs = dict[str, typing.Union[str, int, float]]
+props_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
+attrs_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
+sqlmodel_field_map = {Props: props_default, Attrs: attrs_default}
 pydantic_field_args = ('default default_factory alias alias_priority validation_alias serialization_alias '
                        'title field_title_generator description examples exclude discriminator deprecated '
                        'json_schema_extra frozen validate_default repr init init_var kw_only').split()
+
+def to_sqlalchemy_types(thing):
+    # if isinstance(thing, pydantic.fields.FieldInfo):
+    #     print('anno', thing.annotation)
+    #     if thing.annotation in sqlmodel_field_map:
+    #         return sqlmodel_field_map[thing.thing]
+    if isinstance(thing, list): return [to_sqlalchemy_types(x) for x in thing]
+    if isinstance(thing, dict): return {n: to_sqlalchemy_types(x) for n, x in thing.items()}
+    if thing in backend_type_map: return backend_type_map[thing]
+    return thing
+
+def allfields(model):
+    fields = {}
+    for base in reversed(model.__mro__):
+        if hasattr(base, 'model_fields'):
+            fields |= base.model_fields
+    return fields
+
+def copy_model_cls(cls, clsname) -> typing.Type[pydantic.BaseModel]:
+    fields, funcs = {}, {}
+    for name, f in cls.model_fields.items():
+        if f.annotation in sqlmodel_field_map:
+            fields[name] = (f.annotation, sqlmodel_field_map[f.annotation]())
+        else:
+            newfield = pydantic.Field(**{k: getattr(f, k) for k in pydantic_field_args})
+            fields[name] = (to_sqlalchemy_types(f.annotation), newfield)
+    newcls = pydantic.create_model(clsname, __validators__=funcs, __base__=cls.__bases__, **fields)
+    # newcls.__annotations__ = cls.__annotations__
+    return newcls
 
 class BackendError(Exception):
     pass
@@ -62,8 +92,10 @@ def make_backend_model_base(SQL=sqlmodel.SQLModel):
 class BackendBase:
     mountpoint = 'ipd'
 
-    def __init_subclass__(cls, models, SQL=sqlmodel.SQLModel, **kw):
+    def __init_subclass__(cls, models: dict[str, SpecBase], SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
+        if isinstance(models, list):
+            models = {m.modelkind(): m for m in models}
         cls.__spec_models__ = models
         backend_info = ipd.crud.backend.make_backend_models(cls, SQL)
         cls.__backend_models__, cls.__remoteprops__, cls.__trimspecs__ = backend_info
@@ -291,26 +323,6 @@ def add_basic_backend_model_methods(backendcls):
         if not hasattr(backendcls, f'create_{_name}'):
             setattr(backendcls, f'create_{_name}', create)
 
-Props = list[str]
-Attrs = dict[str, typing.Union[str, int, float]]
-props_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
-attrs_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
-
-def allfields(model):
-    fields = {}
-    for base in reversed(model.__mro__):
-        if hasattr(base, 'model_fields'):
-            fields |= base.model_fields
-    return fields
-
-def copy_model_cls(cls, clsname) -> typing.Type[pydantic.BaseModel]:
-    fields, funcs = {}, {}
-    for name, f in cls.model_fields.items():
-        fields[name] = (f.annotation, pydantic.Field(**{k: getattr(f, k) for k in pydantic_field_args}))
-    newcls = pydantic.create_model(clsname, __validators__=funcs, __base__=cls.__bases__, **fields)
-    # newcls.__annotations__ = cls.__annotations__
-    return newcls
-
 def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
     spec_models = backendcls.__spec_models__
     # print('make_backend_models')
@@ -320,17 +332,19 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
     remove_fields = {kind: [] for kind in spec_models}
     links, linktables = defaultdict(list), {}
     annospec = {kind: ipd.dev.get_all_annotations(spec) for kind, spec in spec_models.items()}
-    specnames = [cls.__name__ for cls in spec_models.values()]
+    specbyclsname = {cls.__name__: cls for cls in spec_models.values()}
     dbclsname = {kind: 'DB' + cls.__name__.replace('Spec', '') for kind, cls in spec_models.items()}
     dbclsname |= {cls.__name__: 'DB' + cls.__name__.replace('Spec', '') for cls in spec_models.values()}
     specns = {cls.__name__: cls for cls in spec_models.values()}
     for kind, spec in spec_models.items():
         assert kind == spec.__name__[:-4].lower()
         # print('make_backend_models', kind, spec.__name__)
-        body[kind]['props'] = props_default()
-        body[kind]['attrs'] = attrs_default()
-        anno[kind]['props'] = Props
-        anno[kind]['attrs'] = Attrs
+        if hasattr(spec, 'props'):
+            body[kind]['props'] = props_default()
+            anno[kind]['props'] = Props
+        if hasattr(spec, 'attrs'):
+            body[kind]['attrs'] = attrs_default()
+            anno[kind]['attrs'] = Attrs
         for attr, field in spec.model_fields.items():
             # if attr == 'name':
             # print(kind, attr, field.annotation, field.metadata)
@@ -339,9 +353,11 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
                 anno[kind][attr] = field.annotation
             elif len(field.metadata) == 2 and isinstance(field.metadata[0], pydantic.BeforeValidator):
                 # ModelRefs id
-                assert attr.endswith('id')
+                # assert attr.endswith('id'), f'{spec.__name__} single ModelRef attr "{attr}" doesnt end wtih id'
+                if not attr.endswith('id'): attr = f'{attr}id'
                 refname, link = field.metadata[1], f'{kind}s'
                 if isinstance(refname, tuple): refname, link = refname
+                if not isinstance(refname, str): refname = refname.__name__
                 refname = dbclsname[refname]
                 optional = field.default is None
                 kw = {}
@@ -376,7 +392,7 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:  # noqa
                 args = typing.get_args(field.annotation)
                 # print(kind, attr, args)
-                if args[0] in specnames or args[0] in spec_models.values():
+                if args[0] in specbyclsname or args[0] in spec_models.values():
                     assert len(args) < 3
                     if len(args) == 2: refname, link = args
                     elif isinstance(args[0], str): refname, link = args[0], 'DEFAULT'
@@ -387,7 +403,12 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
 
     # create many to many relations
     for (pair, link), ends in links.items():
-        assert len(ends) == 2, f'links of order > 2 not supported, {pair}, {link}'
+        if len(ends) == 1:
+            kind, attr, refname = ends[0]
+            refcls = specbyclsname[refname]
+            assert not hasattr(refcls, f'{kind}s')
+            ends.append((refcls.modelkind(), f'{kind}s', spec_models[kind].__name__))
+        assert len(ends) == 2, f'links of order != 2 not supported, {pair}/{link}, {ends}'
         linkname = f'{str.join("",pair).replace("Spec", "")}{link.title()}Link'
         (kind1, attr1, refname1), (kind2, attr2, refname2) = ends
         # print(pair, link, ends)
@@ -436,7 +457,10 @@ def make_backend_models(backendcls, SQL=sqlmodel.SQLModel):
                 if hasattr(trimspec, attr): delattr(trimspec, attr)
                 if attr in trimspec.__annotations__: del trimspec.__annotations__[attr]
 
-        body[kind]['__annotations__'] = anno[kind]
+        body[kind]['__annotations__'] = to_sqlalchemy_types(anno[kind])
+        # print(dbclsname[kind], body[kind]['__annotations__'], flush=True)
+        # for k, v in trimspec.model_fields.items():
+        # if not k in body[kind]: print(f'    {k}: {str(v)[:51]}...')
         dbcls = type(dbclsname[kind], (BackendModelBase, trimspec), body[kind], table=True)
         dbcls.__spec__ = spec
         spec.__backend_model__ = dbcls
