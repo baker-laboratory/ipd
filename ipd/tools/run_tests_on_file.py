@@ -19,7 +19,6 @@ from collections import defaultdict
 from time import perf_counter
 from assertpy import assert_that
 
-
 # set to manually specipy a command for a file
 _overrides = {
     # "foo.py": "PYTHONPATH=.. python foo/bar.py -baz"

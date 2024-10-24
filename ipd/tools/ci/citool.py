@@ -8,7 +8,6 @@ from pathlib import Path
 import git
 from rich import print
 import submitit
-from box import Box
 import ipd
 
 class CITool(ipd.tools.IPDTool):
@@ -96,7 +95,7 @@ def parse_pytest(fname):
     if not os.path.exists(fname):
         print(f'missing {fname} in {os.getcwd()}')
         return None
-    result = Box()
+    result = ipd.Bunch()
     result.fname = fname
     content = Path(fname).read_text()
     # collecting ... collected 230 items / 2 deselected / 22 skipped / 228 selected
