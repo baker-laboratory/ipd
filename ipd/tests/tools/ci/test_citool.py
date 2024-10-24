@@ -1,8 +1,6 @@
 import os
 import pytest
-import ipd
 from rich import print
-from assertpy import assert_that
 
 def main():
     # test_clitool_pytest()

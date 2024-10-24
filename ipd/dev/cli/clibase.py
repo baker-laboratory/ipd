@@ -12,6 +12,8 @@ CB = type['CliBase']
 typer_args = dict(no_args_is_help=True, pretty_exceptions_enable=False)
 
 class CliBase:
+    __init_called__ = set()
+
     @classmethod
     def mrca(_, classes: set[CB], cls: CB | None = None) -> CB | None:
         classes = set(classes)
@@ -59,8 +61,12 @@ class CliBase:
         cls.__set_relationships__(**kw)
 
     def __init__(self, **kw):
+        # print('init', self.__class__)
         self.__class__.__add_all_cmds__(self, **kw)
         for cls in self.__descendants__:
+            if cls in self.__init_called__: continue
+            self.__init_called__.add(cls)
+            # print('init', cls)
             cls.__add_all_cmds__(self, **kw)
             cls.__init__(self, **kw)
 

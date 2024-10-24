@@ -3,6 +3,7 @@ import os
 import ipd.dev.observer
 from ipd.dev import lazyimport
 from ipd.dev.observer import hub as hub
+from ipd.dev.state.bunch import Bunch as Bunch
 
 ci = lazyimport('ipd.ci')
 crud = lazyimport('ipd.crud')

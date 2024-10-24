@@ -28,7 +28,9 @@ dependencies = [
     'sqlmodel[standard]',
     'submitit',
     'tqdm',
-    'typer[all]',]
+    'typer[all]',
+    'yapf',
+]
 
 [project.scripts]
 ipd = 'ipd.__main__:main'
@@ -53,7 +55,7 @@ pythonPlatform = "Linux"
 requires-python = ">=3.11"
 pythonVersion = "3.12"
 executionEnvironments = [
-  { root = "/home/sheffler/sw/MambaForge/envs/rfdsym312/bin/python", pythonVersion = "3.12", pythonPlatform = "Linux", extraPaths = [] },
+  { root = "/home/sheffler/sw/MambaForge/envs/pyright/bin/python", pythonVersion = "3.12", pythonPlatform = "Linux", extraPaths = [] },
 ]
 
 [tool.ruff]
