@@ -14,7 +14,12 @@ def isinstalled(installed, pkg):
     return pkg in installed
 
 class MambaTool(ipd.tools.IPDTool):
-    def install_yaml(self, envfile, secrets: str = '', yes: bool = False, overwrite: bool = False):
+    def install_yaml(self,
+                     envfile,
+                     secrets: str = '',
+                     yes: bool = False,
+                     overwrite: bool = False,
+                     sequential: bool = False):
         self._add_secrets(secrets)
         with open(envfile) as inp:
             env = yaml.load(inp, yaml.CLoader)
@@ -29,14 +34,20 @@ class MambaTool(ipd.tools.IPDTool):
             installed = {x.split()[0] for x in installed if x.strip()}
             packages = [x for x in packages if not isinstalled(installed, x)]
             pippackages = [x for x in pippackages if not isinstalled(installed, x)]
-        packages = self._fill_secrets(' '.join(f'"{dep}"' for dep in packages))
-        pippackages = self._fill_secrets(' '.join(f'"{dep}"' for dep in pippackages))
         yes = '-y' if yes else ''
-        if packages:
-            mambacmd = f'mamba install {yes} {channels} {packages}'
-            print(mambacmd)
-            # os.system(mambacmd)
-        if pippackages:
-            pipcmd = f'pip install {pippackages}'
-            print(pipcmd)
-            # os.system(pipcmd)
+        if sequential:
+            for p in packages:
+                os.system(f'mamba install {yes} {channels} "{self._fill_secrets(p)}"')
+            for p in pippackages:
+                os.system(f'pip install "{self._fill_secrets(p)}"')
+        else:
+            packages = self._fill_secrets(' '.join(f'"{dep}"' for dep in packages))
+            pippackages = self._fill_secrets(' '.join(f'"{dep}"' for dep in pippackages))
+            if packages:
+                mambacmd = f'mamba install {yes} {channels} {packages}'
+                print(mambacmd)
+                os.system(mambacmd)
+            if pippackages:
+                pipcmd = f'pip install {pippackages}'
+                print(pipcmd)
+                os.system(pipcmd)
