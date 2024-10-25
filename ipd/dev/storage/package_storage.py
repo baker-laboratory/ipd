@@ -3,9 +3,6 @@ import json
 import lzma
 import os
 import pickle
-
-import numpy as np
-
 import ipd
 
 data_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../data"))
@@ -131,6 +128,7 @@ def is_pickle_fname(fname):
     return os.path.basename(fname).count(".pickle") > 0
 
 def load(fname, **kw):
+    import numpy as np
     if fname.count(".") == 0 or is_pickle_fname(fname):
         return load_pickle(fname, **kw)
     elif fname.endswith(".nc"):
@@ -192,6 +190,7 @@ def save(stuff, fname, **kw):
             raise ValueError("can only save xarray.Dataset as .nc file")
         stuff.to_netcdf(fname)
     elif finfo.ext == ".npy":
+        import numpy as np
         np.save(fname, stuff)
     elif fname.count(".") == 0 or is_pickle_fname(fname):
         save_pickle(stuff, fname, **kw)

@@ -5,10 +5,8 @@ import typer
 import ipd
 from ipd.dev.types import KW
 
-# from ipd.dev.tools.pkginfo import cwd_package, PkgInfo
-
+DEBUG = False
 CB = type['CliBase']
-
 typer_args = dict(no_args_is_help=True, pretty_exceptions_enable=False)
 
 class CliBase:
@@ -54,15 +52,21 @@ class CliBase:
             cls.__parent__.__app__.add_typer(cls.__app__, name=cls.__name__.replace('Tool', '').lower())
 
     def __init_subclass__(cls: CB, **kw: KW):
+        if DEBUG: print('__init_subclass__', cls)
         assert not cls.__module__.startswith('__main__')
         super().__init_subclass__(**kw)
         cls.__set_relationships__(**kw)
 
     def __init__(self, **kw):
+        if DEBUG: print('__init__', self)
+        if not hasattr(self, '__init_called__'): self.__init_called__ = set()
+        if self.__class__ in self.__init_called__: return
         self.__class__.__add_all_cmds__(self, **kw)
-        for cls in self.__descendants__:
+        self.__init_called__.add(self.__class__)
+        for cls in self.__descendants__ - self.__init_called__:
             cls.__add_all_cmds__(self, **kw)
             cls.__init__(self, **kw)
+            self.__init_called__.add(cls)
 
     def run(self):
         self.__root__.__app__()

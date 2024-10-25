@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Optional, Union
 
+from rich import print
 import fastapi
 import pydantic
 import requests
@@ -114,12 +115,12 @@ class SpecBase(pydantic.BaseModel):
                 # if p.id not in seenit: p.print_full(seenit, depth)
 
 class UploadOnMutateList(ipd.dev.Instrumented, list):
-    def __init__(self, thing, attr, val):
+    def __init__(self, thing, attr, val, attrkind=''):
         super().__init__(val)
-        self.thing, self.attr = thing, attr
+        self.thing, self.attr, self.attrkind = thing, attr, attrkind
 
     def __on_change__(self, thing):
-        self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self])
+        self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self], self.attrkind)
 
 def make_client_models(clientcls, trimspecs, remote_props):
     spec_models = clientcls.__spec_models__
@@ -151,6 +152,7 @@ def make_client_models(clientcls, trimspecs, remote_props):
             props[propname] = propkind.replace('DB', '').lower()
         for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'client':
+                assert callable(member)
                 body[name] = member
                 delattr(spec, name)
         for attr, field in spec.model_fields.copy().items():
@@ -196,7 +198,7 @@ class ClientModelBase(pydantic.BaseModel):
                         raise ValueError(f'unknown type {_kind}')
                     if isinstance(val, list):
                         val = (attrcls(self._client, **kw) for kw in val)
-                        return UploadOnMutateList(self, _attr, val)
+                        return UploadOnMutateList(self, _attr, val, attrkind=_kind)
                     return attrcls(self._client, **val)
 
                 return getter
@@ -223,6 +225,9 @@ class ClientModelBase(pydantic.BaseModel):
             assert not result, result
         super().__setattr__(name, val)
 
+    def __eq__(self, other):
+        return self.id == other.id
+
 def client_obj_representer(dumper, obj):
     data = obj.dict()
     data['class'] = obj.__class__.__name__
@@ -237,11 +242,11 @@ yaml.add_representer(ClientModelBase, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
 class ClientBase:
-    def __init_subclass__(cls, backend, **kw):
+    def __init_subclass__(cls, Backend, **kw):
         super().__init_subclass__(**kw)
-        cls.__backend_models__ = backend.__backend_models__
+        cls.__backend_models__ = Backend.__backend_models__
         cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in cls.__backend_models__.items()}
-        cls.__client_models__ = make_client_models(cls, backend.__trimspecs__, backend.__remoteprops__)
+        cls.__client_models__ = make_client_models(cls, Backend.__trimspecs__, Backend.__remoteprops__)
         add_basic_client_model_methods(cls)
 
     def __init__(self, server_addr_or_testclient):
@@ -253,9 +258,12 @@ class ClientBase:
     def getattr(self, thing, id, attr):
         return self.get(f'/getattr/{thing}/{id}/{attr}')
 
-    def setattr(self, thing, attr, val):
+    def setattr(self, thing, attr, val, attrkind=''):
         thingtype = thing.__class__.__name__.lower()
-        return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
+        if attrkind:
+            return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}/{attrkind}', val)
+        else:
+            return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
 
     def preprocess_get(self, kw):
         return kw
@@ -334,12 +342,13 @@ def add_basic_client_model_methods(clientcls):
             def count(self, **kw) -> int:
                 return self.get(f'/n{name}s', **kw)
 
-            def multi(self, **kw) -> list[cls]:
-                return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
-
             def single(self, **kw) -> Union[cls, None]:
                 result = self.get(f'/{name}', **kw)
                 return cls(self, **result) if result else None
+
+            def multi(self, _names=None, **kw) -> list[cls]:
+                if _names: return [cls(self, **self.get(f'/{name}', name=n)) for n in _names]
+                return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
 
             return single, multi, count, new
 

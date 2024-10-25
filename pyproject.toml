@@ -12,13 +12,14 @@ dependencies = [
     'fastapi[standard]',
     'gitpython',
     'hydra-core',
-    'hypothesis',
+    'hypothesis[all]',
     'icecream',
     'more_itertools',
     'numpy',
     'opt_einsum',
     'pre-commit',
     'pandas',
+    'psychopg2',
     'pydantic',
     'pytest',
     'pytest-sugar',
@@ -29,7 +30,9 @@ dependencies = [
     'sqlmodel[standard]',
     'submitit',
     'tqdm',
-    'typer[all]',]
+    'typer[all]',
+    'uvicorn[standard]',
+]
 
 [project.scripts]
 ipd = 'ipd.__main__:main'

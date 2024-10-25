@@ -1,5 +1,6 @@
+import asyncio
 import tempfile
-from typing import Optional, Type
+from typing import Optional
 from uuid import UUID, uuid4
 
 import pydantic
@@ -17,18 +18,8 @@ def main():
             v(td)
     print('test_crud PASS')
 
-def create_new_sqlmodel_base() -> Type[sqlmodel.SQLModel]:
-    # mapper_registry = sqlalchemy.orm.registry()
-    # Base = mapper_registry.generate_base()
-    # Base.registry._class_registry.clear()
-
-    # __abstract__ = True  # This marks it as an abstract class, so it won't create its own table
-    # metadata = Base.metadata
-    # _sa_registry = copy.deepcopy(sqlmodel.SQLModel._sa_registry)
-    NewBase = type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
-    # NewBase._sa_registry._class_registry.clear()
-
-    return NewBase
+def create_new_sqlmodel_base() -> type[sqlmodel.SQLModel]:
+    return type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
 
 @pytest.mark.fast
 def test_user_group(tmpdir):
@@ -60,13 +51,13 @@ def test_user_group(tmpdir):
 
     models = dict(pollz=PollZSpec, userz=UserZSpec, groupz=GroupZSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models)
-    MyClient = type('MyClient', (ipd.crud.ClientBase, ), {}, backend=MyBackend)
+    MyClient = type('MyClient', (ipd.crud.ClientBase, ), {}, Backend=MyBackend)
 
     backend = MyBackend(f'sqlite:///{tmpdir}/test.db')
     print('backend.newuserz', backend.newuserz(name='foo'))
     print('backend.newuserz', backend.newuserz(name='bar'))
     print('backend.newuserz', backend.newuserz(name='baz'))
-    assert 3 == len(backend.userzs())
+    assert 3 == len(asyncio.run(backend.userzs()))
     testclient = TestClient(backend.app)
     assert testclient.get('/api/userzs').status_code == 200
     client = MyClient(testclient)

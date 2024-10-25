@@ -112,7 +112,6 @@ from abc import ABC, abstractmethod
 from collections import namedtuple
 from collections.abc import Iterable, Mapping
 
-import numpy as np
 import pytest
 
 import ipd
@@ -519,6 +518,7 @@ class _TrueOnIters(DynamicParam):
 class _Spline1D(DynamicParam):
     def __init__(self, manager, design, diffuse, rfold, **kw):
         pytest.importorskip('scipy')
+        import numpy as np
         from scipy.interpolate import CubicSpline
         super().__init__(manager)
         if 1 != sum([design is not None, diffuse is not None, rfold is not None]):
@@ -542,6 +542,7 @@ class _Spline1D(DynamicParam):
 class _Spline2D(DynamicParam):
     def __init__(self, manager, diffuse_rfold, **kw):
         pytest.importorskip('scipy')
+        import numpy as np
         from scipy.interpolate import CloughTocher2DInterpolator
         from scipy.spatial import QhullError
         super().__init__(manager)
