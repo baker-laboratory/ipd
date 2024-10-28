@@ -76,10 +76,8 @@ def run_pytest(env,
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
-    while '  ' in cmd:
-        cmd = cmd.replace('  ', ' ')
-    msg = f'{"SLURM" if executor else "LOCAL"} run: {cmd}'
-    print(msg, flush=True)
+    # while '  ' in cmd:
+    #     cmd = cmd.replace('  ', ' ')
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
         slurm = f'srun --cpus-per-task {parallel} --mem {mem} --time {timeout}'
