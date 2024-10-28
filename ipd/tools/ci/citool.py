@@ -82,8 +82,8 @@ def run_pytest(env,
     print(msg, flush=True)
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
-        exe = f'{exe} --cpus-per-task {parallel} --mem {mem} --time {timeout}'
-        cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
+        slurm = f'srun --cpus-per-task {parallel} --mem {mem} --time {timeout}'
+        cmd = f'{slurm} {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
         # return cmd, executor.submit(ipd.dev.run, cmd, echo=True), log
         return cmd, Future(ipd.dev.run(cmd, echo=True)), log
     else:
@@ -158,7 +158,6 @@ class TestsTool(CITool):
         if not slurm:
             jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
         else:
-            exe = f'srun --cpus-per-task {parallel'
             if gpu:
                 executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
                 exe = f'{exe} -p gpu --gres=gpu:{gpu}:1'
