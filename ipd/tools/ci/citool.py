@@ -76,16 +76,18 @@ def run_pytest(env,
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
-    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
     while '  ' in cmd:
         cmd = cmd.replace('  ', ' ')
     msg = f'{"SLURM" if executor else "LOCAL"} run: {cmd}'
     print(msg, flush=True)
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
-        return cmd, executor.submit(ipd.dev.run, cmd, echo=False), log
+        exe = f'{exe} --cpus-per-task {parallel} --mem {mem} --time {timeout}'
+        cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
+        return cmd, executor.submit(ipd.dev.run, cmd, echo=True), log
     else:
-        return cmd, Future(ipd.dev.run(cmd, echo=False)), log
+        cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
+        return cmd, Future(ipd.dev.run(cmd, echo=True)), log
 
 def get_re(pattern, text):
     result = re.findall(pattern, text)
@@ -139,6 +141,7 @@ class TestsTool(CITool):
         which: str = '',
         dryrun: bool = False,
         tee: bool = False,
+        mem: list[str] = ['16G']
     ):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
@@ -146,21 +149,24 @@ class TestsTool(CITool):
         if verbose: exe += ' -v'
         par = '' if parallel == 1 else f'-n {parallel}'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
-        executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
         sel = ' or '.join(which.split()) if which else ''
         nosel = ' and '.join([f'not {t}' for t in which.split()])
         jobs = []
-        kw = dict(env=env, exe=exe, mark=mark, dryrun=dryrun, executor=executor, tee=tee)
+        executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
+        kw = dict(env=env, mark=mark, dryrun=dryrun, executor=executor, tee=tee)
         if not slurm:
-            jobs.append(run_pytest(sel=sel, parallel=parallel, log=log, **kw))
+            jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
         else:
-            if gpu: executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
+            exe = f'srun --cpus-per-task {parallel'
+            if gpu:
+                executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
+                exe = f'{exe} -p gpu --gres=gpu:{gpu}:1'
             if parallel == 1:
-                jobs.append(run_pytest(sel=sel, parallel=1, log=log, **kw))
+                jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, log=log, mem=mem[0], **kw))
             else:
-                jobs.append(run_pytest(sel=sel, parallel=1, log=f'{log}.noparallel.log', **kw))
+                jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
                 jobs.append(
-                    run_pytest(sel=nosel, parallel=parallel, log=f'{log}.parallel.log', mem='32G', **kw))
+                    run_pytest(exe=exe, sel=nosel, parallel=parallel, mem=mem[1%len(mem)], log=f'{log}.parallel.log', **kw))
         return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
 
     def check(self, path: Path = '.'):
