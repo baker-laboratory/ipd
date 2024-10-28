@@ -38,7 +38,7 @@ class CITool(ipd.tools.IPDTool):
 
 def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
     repolib = os.path.expanduser(repolib)
-    with ipd.dev.cd(repo.git.rev_parse('--show-toplevel'))
+    with ipd.dev.cd(repo.git.rev_parse('--show-toplevel')):
         for sub in repo.submodules:
             if os.path.exists(sub.path): shutil.rmtree(sub.path)
             subrepo = f'{repolib}/{os.path.basename(sub.url)}'
