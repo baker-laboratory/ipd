@@ -23,4 +23,9 @@ def path(fname):
 def load(fname):
     return ipd.load(path(fname))
 
+def force_pytest_skip(reason):
+    import _pytest
+
+    raise _pytest.outcomes.Skipped(reason)
+
 __all__ = ['sym', 'make_deterministic', 'path', 'load']

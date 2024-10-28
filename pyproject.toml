@@ -20,6 +20,7 @@ dependencies = [
     'ipykernel',
     'ipywidgets',
     'ipdb',
+    'numba',
     'numpy',
     'opt_einsum',
     'pre-commit',
