@@ -71,8 +71,9 @@ def run_pytest(env,
                timeout=60,
                executor=None,
                dryrun=False,
-               tee=False
-               gpu=''):
+               tee=False,
+               gpu='',
+            ):
     dry = '--collect-only' if dryrun else ''
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
