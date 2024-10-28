@@ -31,7 +31,7 @@ class CITool(ipd.tools.IPDTool):
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
                 print(f'Directory {repo_dir} exists. Fetching latest changes...')
-                ipd.dev.run(f'git --git-dir={repo_dir} fetch')
+                ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*"')
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.run(f'cd {path} && git clone --bare {url}')
