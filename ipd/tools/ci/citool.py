@@ -154,7 +154,7 @@ class TestsTool(CITool):
         if not slurm:
             jobs.append(run_pytest(sel=sel, parallel=parallel, log=log, **kw))
         else:
-            if gpu: executor.update_parameters(slurm_partition='gpu', gres=f'gpu:{gpu}:1')
+            if gpu: executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
             if parallel == 1:
                 jobs.append(run_pytest(sel=sel, parallel=1, log=log, **kw))
             else:
