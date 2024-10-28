@@ -83,8 +83,8 @@ def run_pytest(env,
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
         if gpu: parallel = 3
-        slurm = f'srun -p gpu --gres=gpu:{gpu}:1 --cpus-per-task {parallel} --mem {mem} --time {timeout}'
-        cmd = f'{slurm} {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
+        slurm = f'srun -p gpu --gres=gpu:{gpu}:1 --cpus-per-task {parallel} --mem {mem} --time {timeout} --export=ALL'
+        cmd = f'{env} PYTHONPATH=. {slurm} {exe} {mark} {sel} {dry} {par} {tee} {log}'
         # return cmd, executor.submit(ipd.dev.run, cmd, echo=True), log
         return cmd, Future(ipd.dev.run(cmd, echo=True)), log
     else:
