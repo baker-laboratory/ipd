@@ -71,7 +71,8 @@ def run_pytest(env,
                timeout=60,
                executor=None,
                dryrun=False,
-               tee=False):
+               tee=False
+               gpu=''):
     dry = '--collect-only' if dryrun else ''
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
@@ -80,7 +81,8 @@ def run_pytest(env,
     #     cmd = cmd.replace('  ', ' ')
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
-        slurm = f'srun --cpus-per-task {parallel} --mem {mem} --time {timeout}'
+        if gpu: parallel = 3
+        slurm = f'srun -p gpu --gres=gpu:{gpu}:1 --cpus-per-task {parallel} --mem {mem} --time {timeout}'
         cmd = f'{slurm} {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
         # return cmd, executor.submit(ipd.dev.run, cmd, echo=True), log
         return cmd, Future(ipd.dev.run(cmd, echo=True)), log
@@ -152,13 +154,12 @@ class TestsTool(CITool):
         nosel = ' and '.join([f'not {t}' for t in which.split()])
         jobs = []
         executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
-        kw = dict(env=env, mark=mark, dryrun=dryrun, executor=executor, tee=tee)
+        kw = dict(env=env, mark=mark, dryrun=dryrun, executor=executor, tee=tee, gpu=gpu)
         if not slurm:
             jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
         else:
             if gpu:
                 executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
-                exe = f'{exe} -p gpu --gres=gpu:{gpu}:1'
             if parallel == 1:
                 jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, log=log, mem=mem[0], **kw))
             else:
