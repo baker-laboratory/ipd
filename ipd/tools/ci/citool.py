@@ -84,7 +84,8 @@ def run_pytest(env,
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
         exe = f'{exe} --cpus-per-task {parallel} --mem {mem} --time {timeout}'
         cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
-        return cmd, executor.submit(ipd.dev.run, cmd, echo=True), log
+        # return cmd, executor.submit(ipd.dev.run, cmd, echo=True), log
+        return cmd, Future(ipd.dev.run(cmd, echo=True)), log
     else:
         cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
         return cmd, Future(ipd.dev.run(cmd, echo=True)), log
