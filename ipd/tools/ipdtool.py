@@ -16,7 +16,7 @@ class IPDTool(CliBase):
         super().__init__()
 
     def _add_secrets(self, secretfile=''):
-        if not os.path.exists(secretfile): return
+        if not os.path.exists(os.path.expanduser(secretfile)): return
         secrets: list[str] = Path(os.path.expanduser(secretfile)).read_text().splitlines()
         self.secrets |= ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
 

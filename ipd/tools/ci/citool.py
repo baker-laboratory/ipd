@@ -12,6 +12,7 @@ import ipd
 
 class CITool(ipd.tools.IPDTool):
     def __init__(self: 'CITool', secretfile: str = '~/.secrets'):
+        if os.path.exists(secretfile): self._add_secrets(secretfile)
         self.repos: dict[str, str] = {
             'cifutils': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/cifutils.git',
             'datahub': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/datahub.git',
@@ -22,7 +23,6 @@ class CITool(ipd.tools.IPDTool):
             f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
-        if os.path.exists(secretfile): self._add_secrets(secretfile)
 
     def update_library(self, path: Path = Path('~/bare_repos')):
         path = path.expanduser()
