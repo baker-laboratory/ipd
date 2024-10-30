@@ -16,6 +16,7 @@ dependencies = [
     'icecream',
     'more_itertools',
     'networkx[default]',
+    'numba',
     'numpy',
     'opt_einsum',
     'pre-commit',

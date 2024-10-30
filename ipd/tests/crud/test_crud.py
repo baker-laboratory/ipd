@@ -26,7 +26,6 @@ def create_new_sqlmodel_base() -> type[sqlmodel.SQLModel]:
 @pytest.mark.fast
 @pytest.mark.xfail
 def test_duplicate_one_to_many(tmpdir):
-    return
     LocalSQLModel = create_new_sqlmodel_base()
     sarel = sqlalchemy.orm.relationship
 
