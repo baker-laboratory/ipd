@@ -215,12 +215,12 @@ class BackendBase:
             setattr(thing, attr, body)
         else:
             if attr in thing.model_fields:
-                print(thing.model_fields[attr].annotation)
                 oktypes = (int, float, str, UUID, list[int], list[float], list[str], list[UUID])
                 assert thing.model_fields[attr].annotation in oktypes
             setattr(thing, attr, body)
         self.session.add(thing)
         self.session.commit()
+        # ic(thing, attr, body, getattr(thing, attr))
 
     async def select(self, cls, _count: bool = False, _single=False, user=None, _ghost=False, **kw):
         # print('select', cls, kw)
@@ -265,6 +265,7 @@ class BackendBase:
             return self.handle_error(e)
 
     async def fields_name_to_id(self, dbcls: pydantic.BaseModel, modeldict: dict):
+        if not isinstance(modeldict, dict): return modeldict
         for k, v in modeldict.copy().items():
             if not isinstance(v, str): continue
             if k == 'name' or k.endswith('id'): continue
@@ -280,6 +281,7 @@ class BackendBase:
         return modeldict
 
 def fields_uuidstr_to_id(vals):
+    if not isinstance(vals, dict): return vals
     for k, v in vals.copy().items():
         if not k.endswith('id') and (uid := ipd.dev.touuid(v)):
             del vals[k]

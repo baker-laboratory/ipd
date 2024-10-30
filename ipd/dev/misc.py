@@ -1,11 +1,15 @@
+import sys
 import contextlib
 import datetime
-from optparse import Values
-import sys
 import uuid
+from optparse import Values
+
 import ipd
 
 _WARNINGS_ISSUED = set()
+
+def classname_or_str(T):
+    return T if isinstance(T, str) else T.__name__
 
 def ishex(val):
     with contextlib.suppress(ValueError):

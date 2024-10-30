@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Optional, Union
 
+import attr
 import fastapi
 import pydantic
 import requests
@@ -19,19 +20,32 @@ T = typing.TypeVar('T')
 class ClientError(Exception):
     pass
 
+def _label_field(cls):
+    return cls._label.default if hasattr(cls, '_label') else 'name'
+
+_CLIENT = None
+
+def set_client(client: 'ClientBase'):
+    global _CLIENT
+    _CLIENT = client
+
 def tojson(thing):
     if isinstance(thing, list): return f'[{",".join(tojson(_) for _ in thing)}]'
     if hasattr(thing, 'model_dump_json'): return thing.model_dump_json()
     if hasattr(thing, 'json'): return thing.json()
     return str(thing)
 
+_ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
+
 class ModelRef(type):
     def __class_getitem__(cls, T):
         outerns = inspect.currentframe().f_back.f_globals
         validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: process_modelref(x, y, outerns))
+        if isinstance(T, tuple): T = tuple([ipd.dev.classname_or_str(T[0]), *T[1:]])
+        else: T = ipd.dev.classname_or_str(T)
         return Annotated[Annotated[_ModelRefType, validator], T]
 
-def process_modelref(val: typing.Union[uuid.UUID, str], valinfo, spec_namespace):
+def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
     if hasattr(val, 'id'): return val.id
     with contextlib.suppress(TypeError, ValueError, AttributeError):
@@ -46,10 +60,10 @@ def process_modelref(val: typing.Union[uuid.UUID, str], valinfo, spec_namespace)
     if isinstance(refcls, str):
         if not refcls.endswith('Spec'): refcls += 'Spec'
         refcls = spec_namespace[refcls]
-    if isinstance(val, str):
+    if isinstance(val, str) and _CLIENT:
         # print(val, valinfo)
         refclsname = refcls.__name__.replace('Spec', '').lower()
-        if not (ref := getattr(_client, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
+        if not (ref := getattr(_CLIENT, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
             raise ValueError(f'unknown {refcls.__name__[:-4]} named "{val}"')
         val = ref.id
     # print(cls, refcls, val)
@@ -268,6 +282,8 @@ class ClientModelBase(pydantic.BaseModel):
                     val = [v.id for v in val]
             result = self._client.setattr(self, name, val, attrkind)
             assert not result, result
+            if name not in self.__remote_props__:
+                super().__setattr__(name, val)
         else:
             super().__setattr__(name, val)
 
@@ -416,17 +432,6 @@ def add_basic_client_model_methods(clientcls):
         setattr(clientcls, f'{_name}s', multi)
         setattr(clientcls, f'n{_name}s', count)
         setattr(clientcls, f'new{_name}', new)
-
-_ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
-
-def _label_field(cls):
-    return cls._label.default if hasattr(cls, '_label') else 'name'
-
-_client = None
-
-def set_client(client: ClientBase):
-    global _client
-    _client = client
 
 def model_method(func, layer):
     @functools.wraps(func)
