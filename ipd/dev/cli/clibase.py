@@ -10,6 +10,8 @@ CB = type['CliBase']
 typer_args = dict(no_args_is_help=True, pretty_exceptions_enable=False)
 
 class CliBase:
+    __init_called__ = set()
+
     @classmethod
     def mrca(_, classes: set[CB], cls: CB | None = None) -> CB | None:
         classes = set(classes)

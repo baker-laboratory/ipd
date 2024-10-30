@@ -36,6 +36,7 @@ dependencies = [
     'tqdm',
     'typer',
     'uvicorn[standard]',
+    'yapf',
 ]
 
 [project.scripts]
