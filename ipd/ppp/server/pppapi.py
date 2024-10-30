@@ -1,7 +1,6 @@
 import os
 import socket
 import sys
-import threading
 from uuid import UUID
 
 import ipd

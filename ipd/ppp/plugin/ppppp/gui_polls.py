@@ -1,4 +1,4 @@
-import pendulum, duration as timedelta
+import duration as timedelta
 import os
 import random
 import subprocess

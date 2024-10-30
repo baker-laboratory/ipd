@@ -7,7 +7,6 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Optional, Union
 
-import pytest
 import fastapi
 import pydantic
 import requests

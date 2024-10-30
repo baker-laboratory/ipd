@@ -14,3 +14,4 @@ from ipd.dev.observer import *
 
 cli = lazyimport('ipd.dev.cli')
 cuda = lazyimport('ipd.dev.cuda')
+testing = lazyimport('ipd.dev.testing')

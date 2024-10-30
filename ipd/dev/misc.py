@@ -2,7 +2,6 @@ import sys
 import contextlib
 import datetime
 import uuid
-from optparse import Values
 
 import ipd
 

@@ -13,7 +13,7 @@ import ipd
 class CITool(ipd.tools.IPDTool):
     def __init__(self, secretfile: str = '~/.secrets'):
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
-        self.secrets = Box({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
+        self.secrets = ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
         self.repos: dict[str, str] = {
             'cifutils': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/cifutils.git',
             'datahub': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/datahub.git',
