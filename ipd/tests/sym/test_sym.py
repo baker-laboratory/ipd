@@ -72,7 +72,6 @@ def test_frames_asym_of():
     f = ipd.sym.frames("tet", asym_of="c2")
     assert len(f) == 6
 
-@pytest.mark.fast
 def test_frames_asym_remove_sameaxis():
     syms = "tet oct icos".split()
     csyms = "c2 c3 c4 c5".split()

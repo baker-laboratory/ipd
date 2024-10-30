@@ -13,7 +13,7 @@ def main():
 
 runner = CliRunner()
 
-@pytest.mark.fast
+@pytest.mark.slow
 def test_citool_update_library():
     tool = ipd.tools.IPDTool()
     result = runner.invoke(tool.__app__, 'ci update_library')
