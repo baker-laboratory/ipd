@@ -7,7 +7,6 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Optional, Union
 
-from rich import print
 import fastapi
 import pydantic
 import requests
@@ -31,6 +30,30 @@ class ModelRef(type):
         outerns = inspect.currentframe().f_back.f_globals
         validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: process_modelref(x, y, outerns))
         return Annotated[Annotated[_ModelRefType, validator], T]
+
+def process_modelref(val: typing.Union[uuid.UUID, str], valinfo, spec_namespace):
+    assert not isinstance(val, int), 'int id is wrong, use uuid now'
+    if hasattr(val, 'id'): return val.id
+    with contextlib.suppress(TypeError, ValueError, AttributeError):
+        return uuid.UUID(val)
+    specname = valinfo.config['title']
+    if not specname.endswith('Spec'): specname += 'Spec'
+    cls = spec_namespace[specname]
+    field = cls.model_fields[valinfo.field_name]
+    typehint = field.annotation
+    assert typehint == _ModelRefType, 'typehint == _ModelRefType'
+    refcls = field.metadata[1]
+    if isinstance(refcls, str):
+        if not refcls.endswith('Spec'): refcls += 'Spec'
+        refcls = spec_namespace[refcls]
+    if isinstance(val, str):
+        # print(val, valinfo)
+        refclsname = refcls.__name__.replace('Spec', '').lower()
+        if not (ref := getattr(_client, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
+            raise ValueError(f'unknown {refcls.__name__[:-4]} named "{val}"')
+        val = ref.id
+    # print(cls, refcls, val)
+    return val
 
 class Unique(type):
     def __class_getitem__(cls, T):
@@ -61,15 +84,33 @@ class SpecBase(pydantic.BaseModel):
                 else:
                     cls.__spec__.__frontend__ = cls
 
+    @pydantic.model_validator(mode='before')
+    def validate_base(cls, vals):
+        # if isinstance(vals, uuid.UUID): vals = dict(id=vals)
+        # if issubclass(cls, SpecBase) and isinstance(vals, pydantic.BaseModel):
+        # vals = vals.to_spec()
+        assert isinstance(vals, dict)
+        if 'name' in vals: assert ipd.dev.toname(vals['name']), f'name is bad identifier {vals["name"]}'
+        return vals
+
     def __heash__(self):
         return self.id
 
     def to_spec(self) -> 'SpecBase':
-        return self.__spec__(**self.model_dump())
+        if isinstance(self, SpecBase): return self
+        dump = self.model_dump()
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        for k, v in dump.copy().items():
+            if k != 'id' and k.endswith('id'):
+                del dump[k]
+                dump[k[:-2]] = v
+        return self.__spec__(**dump)
 
     @classmethod
     def from_spec(cls: T, spec) -> T:
-        return cls(**spec.model_dump())
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        dump = spec.model_dump()
+        return cls(**dump)
 
     @classmethod
     def modelkind(cls) -> str:
@@ -221,9 +262,14 @@ class ClientModelBase(pydantic.BaseModel):
     def __setattr__(self, name, val):
         assert name != 'id', 'cant set id via client'
         if self._client and name[0] != '_':
-            result = self._client.setattr(self, name, val)
+            attrkind = self.__remote_props__[name] if name in self.__remote_props__ else ''
+            if attrkind:
+                with contextlib.suppress(AssertionError):
+                    val = [v.id for v in val]
+            result = self._client.setattr(self, name, val, attrkind)
             assert not result, result
-        super().__setattr__(name, val)
+        else:
+            super().__setattr__(name, val)
 
     def __eq__(self, other):
         return self.id == other.id
@@ -254,6 +300,7 @@ class ClientBase:
             self.testclient, self.server_addr = None, server_addr_or_testclient
         elif isinstance(server_addr_or_testclient, fastapi.testclient.TestClient):
             self.testclient, self.server_addr = server_addr_or_testclient, None
+        set_client(self)
 
     def getattr(self, thing, id, attr):
         return self.get(f'/getattr/{thing}/{id}/{attr}')
@@ -310,22 +357,29 @@ class ClientBase:
         thingname = thing.__class__.__name__.replace('Spec', '').lower()
         return self.get(f'/remove/{thingname}/{thing.id}')
 
-    def upload(self, thing, _dispatch_on_type=True, **kw):
-        if _dispatch_on_type and hasattr(self, f'upload_{thing.modelkind()}'):
-            return getattr(self, f'upload_{thing.modelkind()}')(thing, **kw)
-        thing = thing.to_spec()
-        # print('upload', type(thing), kw)
-        if thing._errors:
-            return thing._errors
-        kind = type(thing).__name__.replace('Spec', '').lower()
-        # ic(kind)
-        result = self.post(f'/create/{kind}', thing, **kw)
+    def upload(self, thing, _dispatch_on_type=True, modelkind=None, **kw):
+        modelkind = modelkind or thing.modelkind()
+        if _dispatch_on_type and hasattr(self, f'upload_{modelkind}'):
+            return getattr(self, f'upload_{modelkind}')(thing, **kw)
+        # thing = thing.to_spec()
+        # if thing._errors: return thing._errors
+        result = self.post(f'/create/{modelkind}', thing, **kw)
         try:
-            newthing = self.get(f'/{kind}', id=result)
-            newthing = self.__client_models__[kind](self, **newthing)
+            newthing = self.get(f'/{modelkind}', id=result)
+            newthing = self.__client_models__[modelkind](self, **newthing)
             return newthing
         except ValueError:
             return result
+
+    def make_spec(self, cls, **kw):
+        if 'exe' in cls.__spec__.model_fields:
+            ic(cls, kw)
+            ic(cls.__spec__.model_fields)
+            # for k, v in kw.copy().items():
+            # if isinstance(v, pydantic.BaseModel) and hasattr(v, 'id'):
+            # kw[f'{k}id'] = v.id
+            # kw[k] = v.id
+        return cls.__spec__(**kw)
 
 def add_basic_client_model_methods(clientcls):
     '''
@@ -337,7 +391,8 @@ def add_basic_client_model_methods(clientcls):
 
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):
             def new(self, **kw) -> str:
-                return self.upload(cls.__spec__(**kw))
+                # return self.upload(kw, modelkind=cls.modelkind())
+                return self.upload(self.make_spec(cls, **kw))
 
             def count(self, **kw) -> int:
                 return self.get(f'/n{name}s', **kw)
@@ -362,35 +417,16 @@ def add_basic_client_model_methods(clientcls):
         setattr(clientcls, f'n{_name}s', count)
         setattr(clientcls, f'new{_name}', new)
 
-_ModelRefType = Optional[Union[uuid.UUID, str]]
+_ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
 
 def _label_field(cls):
     return cls._label.default if hasattr(cls, '_label') else 'name'
 
-def process_modelref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
-    assert not isinstance(val, int), 'int id is wrong, use uuid now'
-    if hasattr(val, 'id'): return val.id
-    with contextlib.suppress(TypeError, ValueError, AttributeError):
-        return uuid.UUID(val)
-    specname = valinfo.config['title']
-    if not specname.endswith('Spec'): specname += 'Spec'
-    cls = spec_namespace[specname]
-    field = cls.model_fields[valinfo.field_name]
-    typehint = field.annotation
-    assert typehint == _ModelRefType
-    refcls = field.metadata[1]
-    if isinstance(refcls, str):
-        if not refcls.endswith('Spec'): refcls += 'Spec'
-        refcls = spec_namespace[refcls]
-    if isinstance(val, str):
-        client = ipd.ppp.get_hack_fixme_global_client()
-        assert client, 'client unavailable'
-        refclsname = refcls.__name__.replace('Spec', '').lower()
-        if not (ref := getattr(client, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
-            raise ValueError(f'unknown {refcls.__name__[:-4]} named "{val}"')
-        val = ref.id
-    # print(cls, refcls, val)
-    return val
+_client = None
+
+def set_client(client: ClientBase):
+    global _client
+    _client = client
 
 def model_method(func, layer):
     @functools.wraps(func)

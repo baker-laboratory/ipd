@@ -1,7 +1,25 @@
+import contextlib
 import datetime
+from optparse import Values
 import sys
+import uuid
+import ipd
 
 _WARNINGS_ISSUED = set()
+
+def ishex(val):
+    with contextlib.suppress(ValueError):
+        int(val, 16)
+        return True
+    return False
+
+def keyexists(thing, key):
+    if not isinstance(key, str): return [keyexists(thing, s) for s in key]
+    return key in thing and thing[key]
+
+def attrexists(thing, key):
+    if not isinstance(key, str): return [attrexists(thing, s) for s in key]
+    return hasattr(thing, key) and getattr(thing, key)
 
 def arraystr(array):
     return "np." + repr(array.round(10)).replace("\n", "").replace(" ", "").replace(".,", ",")
@@ -96,14 +114,30 @@ def tostr(s):
         return s.decode()
     return s
 
-def datetimetag(sep="_"):
-    now = datetime.datetime.now()
-    if sep == "label":
-        return now.strftime("y%Ym%md%dh%Hm%Ms%S")
-    return now.strftime(f"%Y{sep}%m{sep}%d{sep}%H{sep}%M{sep}%S")
+def todatetime(val):
+    if isinstance(val, datetime.datetime): return val
+    try:
+        return datetime.datetime.strptime(val, ipd.DATETIME_FORMAT)
+    except (ValueError, ):
+        return None
+
+def touuid(val):
+    if isinstance(val, uuid.UUID): return val
+    try:
+        return uuid.UUID(val)
+    except (TypeError, ValueError, AttributeError):
+        return None
+
+def toname(val):
+    if isinstance(val, str) and val.isidentifier(): return val
+    return None
+
+def datetimetag():
+    now = datetime.now()
+    return now.strftime(ipd.DATETIME_FORMAT)
 
 def datetag(sep="_"):
-    now = datetime.datetime.now()
+    now = datetime.now()
     if sep == "label":
         return now.strftime("y%Ym%md%d")
     return now.strftime(f"%Y{sep}%m{sep}%d")
@@ -127,7 +161,7 @@ def datetime_from_tag(tag):
     assert 0 < vals[3] <= 60  # hour
     assert 0 < vals[4] <= 60  # minute
     assert 0 < vals[5] <= 60  # second
-    return datetime.datetime(*vals)
+    return datetime(*vals)
 
 def generic_equals(this, that, checktypes=False, debug=False):
     import numpy as np

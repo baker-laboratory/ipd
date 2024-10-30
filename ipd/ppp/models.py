@@ -1,7 +1,6 @@
 import contextlib
 import os
 import tempfile
-from datetime import datetime
 from pathlib import Path
 from subprocess import check_output
 from typing import Union

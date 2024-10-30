@@ -1,4 +1,4 @@
-import datetime
+import pendulum, duration as timedelta
 import os
 import random
 import subprocess
@@ -281,17 +281,17 @@ class Polls(ipd.dev.qt.ContextMenuMixin):
         # print('create_poll_spec_from_gui')
         # sourcery skip: dict-assign-update-to-union
         duration = ipd.dev.safe_eval('dict(' + ','.join(self.newpollwidget.duration.text().split()) + ')')
-        duration = datetime.timedelta(**duration)
-        duration = duration or datetime.timedelta(weeks=99999)
+        duration = timedelta(**duration)
+        duration = duration or timedelta(weeks=99999)
         # if isfalse_notify(self.newpollwidget.name.text(), 'Must provide a Name'): return
         # if isfalse_notify(os.path.exists(os.path.expanduser(self.newpollwidget.path.text())),
         # 'path must exist'):
         # return
-        if isfalse_notify(duration > datetime.timedelta(minutes=1), 'Poll expires too soon'): return
+        if isfalse_notify(duration > timedelta(minutes=1), 'Poll expires too soon'): return
         fields = 'name path sym ligand user workflow cmdstart cmdstop props attrs'
         kw = {k: ipd.dev.qt.widget_gettext(getattr(self.newpollwidget, k)) for k in fields.split()}
         kw |= {k: bool(getattr(self.newpollwidget, k).checkState()) for k in 'ispublic telemetry'.split()}
-        kw['enddate'] = datetime.datetime.now() + duration
+        kw['enddate'] = datetime.now() + duration
         return self.create_poll_spec(**kw)
 
     def update_gui_from_poll(self, poll):

@@ -20,7 +20,7 @@ class CliBase:
             return cls
 
     @classmethod
-    def __add_all_cmds__(cls: CB, self: Self, **kw: KW) -> None:
+    def __add_all_cmds__(cls, self: 'CliBase', **kw: KW) -> None:
         cmds = [m for m in cls.__dict__ if callable(getattr(cls, m)) and m[0] != '_']
         for attr in cmds:
             with ipd.dev.cast(cls, self) as newself:
@@ -30,7 +30,7 @@ class CliBase:
                 # setattr(CliBase, attr, getattr(cls, attr))
 
     @classmethod
-    def __set_relationships__(cls: CB, **kw: KW) -> None:
+    def __set_relationships__(cls, **kw: KW) -> None:
         parent: list[CB] = [b for b in cls.__bases__ if hasattr(b, '__app__')]
         assert len(parent) < 2
         cls.__app__: typer.Typer = typer.Typer(**typer_args)
@@ -51,7 +51,7 @@ class CliBase:
                 ancestor.__descendants__.add(cls)
             cls.__parent__.__app__.add_typer(cls.__app__, name=cls.__name__.replace('Tool', '').lower())
 
-    def __init_subclass__(cls: CB, **kw: KW):
+    def __init_subclass__(cls, **kw: KW):
         if DEBUG: print('__init_subclass__', cls)
         assert not cls.__module__.startswith('__main__')
         super().__init_subclass__(**kw)

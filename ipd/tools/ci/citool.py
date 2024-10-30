@@ -12,7 +12,7 @@ from box import Box
 import ipd
 
 class CITool(ipd.tools.IPDTool):
-    def __init__(self: 'CITool', secretfile: str = '~/.secrets'):
+    def __init__(self, secretfile: str = '~/.secrets'):
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
         self.secrets = Box({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
         self.repos: dict[str, str] = {

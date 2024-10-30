@@ -13,6 +13,7 @@ import fastapi
 import pydantic
 import sqlalchemy
 import sqlmodel.pool
+from annotated_types import IsInfinite
 from rich import print
 from sqlalchemy.orm import registry
 from sqlmodel.main import RelationshipInfo
@@ -93,14 +94,23 @@ def make_backend_model_base(SQL):
 
     return BackendModelBase
 
+def process_specs(specs):
+    for kind, spec in specs.items():
+        for k, v in spec.model_fields.items():
+            if k != 'exe': continue
+            # print(k, v.annotation, v.metadata, v)
+            # print(dir(v))
+    # assert 0
+    return specs
+
 class BackendBase:
     mountpoint = 'ipd'
 
     def __init_subclass__(cls, models: dict[str, SpecBase], SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
-        if isinstance(models, list):
-            models = {m.modelkind(): m for m in models}
-        cls.__spec_models__ = models
+        cls._BackendModelBase = make_backend_model_base(SQL)
+        if isinstance(models, list): models = {m.modelkind(): m for m in models}
+        cls.__spec_models__ = process_specs(models)
         backend_info = ipd.crud.backend.make_backend_models(cls, SQL)
         cls.__backend_models__, cls.__remoteprops__, cls.__trimspecs__ = backend_info
         cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in cls.__backend_models__.items()}
@@ -199,12 +209,15 @@ class BackendBase:
         with contextlib.suppress((AttributeError, ValueError)):
             body = UUID(body)
         if attrkind:
-            body = [UUID(id) for id in body[1:-1].split(',')]
+            body = [] if body == '[]' else body[1:-1].split(',')
+            body = [UUID(id) for id in body]
             body = [await coro for coro in list(map(getattr(self, f'i{attrkind}'), body))]
             setattr(thing, attr, body)
         else:
             if attr in thing.model_fields:
-                assert thing.model_fields[attr].annotation in (int, float, str, UUID)
+                print(thing.model_fields[attr].annotation)
+                oktypes = (int, float, str, UUID, list[int], list[float], list[str], list[UUID])
+                assert thing.model_fields[attr].annotation in oktypes
             setattr(thing, attr, body)
         self.session.add(thing)
         self.session.commit()
@@ -251,6 +264,28 @@ class BackendBase:
             self.session.rollback()
             return self.handle_error(e)
 
+    async def fields_name_to_id(self, dbcls: pydantic.BaseModel, modeldict: dict):
+        for k, v in modeldict.copy().items():
+            if not isinstance(v, str): continue
+            if k == 'name' or k.endswith('id'): continue
+            if k in dbcls.model_fields: continue
+            # if ipd.dev.touuid(v): continue
+            # if ipd.dev.todatetime(v): continue
+            anno = typing.get_args(dbcls.__annotations__[k])[0].__forward_arg__
+            kind = anno[2:].lower()
+            thing = await getattr(self, kind)(dict(name=v))
+            modeldict[f'{k}id'] = thing.id
+            del modeldict[k]
+            # ic(k, v, thing.id)
+        return modeldict
+
+def fields_uuidstr_to_id(vals):
+    for k, v in vals.copy().items():
+        if not k.endswith('id') and (uid := ipd.dev.touuid(v)):
+            del vals[k]
+            vals[f'{k}id'] = uid
+    return vals
+
 def add_basic_backend_model_methods(backendcls):
     '''
     Autogen getter methods. Yes, this is better than lots of boilerplate functions that must be kept
@@ -264,6 +299,8 @@ def add_basic_backend_model_methods(backendcls):
             async def create(self, model: dict) -> typing.Union[str, int]:
                 # model = dbcls.parse_obj(model)
                 assert isinstance(self, BackendBase)
+                model = fields_uuidstr_to_id(model)
+                model = await self.fields_name_to_id(dbcls, model)
                 if isinstance(model, dict): model = dbcls(**model)
                 return await self.validate_and_add_to_db(model)
 
@@ -370,8 +407,8 @@ def newSQL() -> type[sqlmodel.SQLModel]:
 def make_backend_models(backendcls, SQL=None, debug=False):
     SQL = SQL or newSQL()
     models = backendcls.__spec_models__
+    # ic(models['method'].model_fields)
     # print('make_backend_models')
-    BackendModelBase = make_backend_model_base(SQL)
     body = {kind: {} for kind in models}
     anno = {kind: {} for kind in models}
     rmfields = {kind: [] for kind in models}
@@ -381,7 +418,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
     dbclsname = {kind: 'DB' + cls.__name__.replace('Spec', '') for kind, cls in models.items()}
     dbclsname |= {cls.__name__: 'DB' + cls.__name__.replace('Spec', '') for cls in models.values()}
     specns = {cls.__name__: cls for cls in models.values()}
-    renamed_attrs: dict[str, str] = {}
+    renamed_attrs = {kind: {} for kind in models}
     for kind, spec in models.items():
         assert kind == spec.__name__[:-4].lower()
         # print('make_backend_models', kind, spec.__name__)
@@ -392,8 +429,9 @@ def make_backend_models(backendcls, SQL=None, debug=False):
             body[kind]['attrs'] = attrs_default()
             anno[kind]['attrs'] = Attrs
         for attr, field in spec.model_fields.items():
-            # if attr == 'name':
-            # print(kind, attr, field.annotation, field.metadata)
+            if attr == 'name':
+                body[kind][attr] = sqlmodel.Field(index=True)
+                anno[kind][attr] = str
             if field.metadata == ['UNIQUE']:
                 body[kind][attr] = sqlmodel.Field(sa_column_kwargs={'unique': True})
                 anno[kind][attr] = field.annotation
@@ -408,18 +446,22 @@ def make_backend_models(backendcls, SQL=None, debug=False):
                     anno[kind][attr] = field.metadata[1][0]
                     continue
                 if not attr.endswith('id'):
-                    renamed_attrs[attr] = f'{attr}id'
-                    assert not hasattr(spec, renamed_attrs[attr])
-                    attr = renamed_attrs[attr]
-                refname, link = field.metadata[1], f'{kind}s'
-                if isinstance(refname, tuple): refname, link = refname
+                    renamed_attrs[kind][attr] = f'{attr}id'
+                    assert not hasattr(spec, renamed_attrs[kind][attr])
+                    attr = renamed_attrs[kind][attr]
+                refname, refattr, tagged = field.metadata[1], f'{kind}s', False
+                if isinstance(refname, tuple):
+                    # refname, refattr, tagged = refname[0], f'{refattr}{refname[1]}', True
+                    refname, refattr, tagged = refname[0], f'{refname[1]}', True
                 if not isinstance(refname, str): refname = refname.__name__
                 refname = dbclsname[refname]
                 optional = field.default is None
                 kw = {}
                 if dbclsname[kind] == refname:
-                    kw = {'sa_relationship_kwargs': dict(cascade="all", remote_side=f'{dbclsname[kind]}.id')}
-                reffield = sqlmodel.Relationship(back_populates=f'{link}', **kw)
+                    kw = {'sa_relationship_kwargs': dict(remote_side=f'{dbclsname[kind]}.id')}
+                elif tagged:
+                    kw = {'sa_relationship_kwargs': dict()}
+                reffield = sqlmodel.Relationship(back_populates=f'{refattr}', **kw)
                 idfield = sqlmodel.Field(foreign_key=f'{refname.lower()}.id')
                 if optional:
                     idfield = sqlmodel.Field(foreign_key=f'{refname.lower()}.id', nullable=True, default=None)
@@ -427,21 +469,28 @@ def make_backend_models(backendcls, SQL=None, debug=False):
                 anno[kind][attr] = Optional[UUID] if optional else UUID
                 body[kind][attr[:-2]] = reffield
                 anno[kind][attr[:-2]] = Optional[refname] if optional else refname
+
+                # print(attr)
+                # spec.__annotations__[attr] = UUID
+                # spec.__annotations__[attr[-2:]] = Optional[refname]
+                # spec.model_fields[attr] = pydantic.Field(annotation=UUID)
+                # spec.model_fields[attr[-2:]] = pydantic.Field(annotation=Optional[refname], default=None)
+
                 # if attr == 'pollid':
                 # print(kind, attr, anno[kind][attr], 'foreign_key', refname.lower() + '.id')
-                # print(kind, attr[:-2], anno[kind][attr[:-2]], 'Rel. backpop', link)
+                # print(kind, attr[:-2], anno[kind][attr[:-2]], 'Rel. backpop', refattr)
                 refkind = refname.replace('DB', '').lower()
                 refspec = models[refkind]
-                if link in refspec.model_fields:
-                    # print('    link', refkind, link, dbclsname[kind])
-                    refmeta = refspec.model_fields[link].metadata
+                if refattr in refspec.model_fields:
+                    # print('    refattr', refkind, refattr, dbclsname[kind])
+                    refmeta = refspec.model_fields[refattr].metadata
                     if len(refmeta) != 2 or refmeta[1] != spec.__name__:
-                        err = f'{kind}.{attr} linked {refkind}.{link} must be list["{refspec.__name__}"]'
+                        err = f'{kind}.{attr} linked {refkind}.{refattr} must be list["{refspec.__name__}"]'
                         raise TypeError(err)
 
-                # print(refkind, link, list[dbclsname[kind]], 'Rel. backpop', attr[:-2])
-                body[refkind][link] = sqlmodel.Relationship(back_populates=attr[:-2])
-                anno[refkind][link] = list[dbclsname[kind]]
+                # print(refkind, refattr, list[dbclsname[kind]], 'Rel. backpop', attr[:-2])
+                body[refkind][refattr] = sqlmodel.Relationship(back_populates=attr[:-2])
+                anno[refkind][refattr] = list[dbclsname[kind]]
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == dict:  # noqa
                 body[kind][attr] = attrs_default()
                 anno[kind][attr] = Attrs
@@ -496,7 +545,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
             if hasattr(member, '__layer__') and member.__layer__ == 'backend':
                 body[kind][name] = member.__wrapped__
                 delattr(spec, name)
-        trimspec = copy_model_cls(spec, f'{spec.__name__}Trim', renamed_attrs=renamed_attrs)
+        trimspec = copy_model_cls(spec, f'{spec.__name__}Trim', renamed_attrs=renamed_attrs[kind])
         attrs = set(models[kind].model_fields) - set(body[kind])
         attrs = attrs - {'ispublic', 'ghost', 'datecreated', 'telemetry', 'id', '__annotations__'}
         for attr in rmfields[kind] + list(body[kind]):
@@ -509,7 +558,6 @@ def make_backend_models(backendcls, SQL=None, debug=False):
                 if attr in trimspec.model_fields: del trimspec.model_fields[attr]
                 if hasattr(trimspec, attr): delattr(trimspec, attr)
                 if attr in trimspec.__annotations__: del trimspec.__annotations__[attr]
-
         body[kind]['__annotations__'] = to_sqlalchemy_types(anno[kind])
         if debug:
             print(dbclsname[kind])
@@ -518,7 +566,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
                 print('      ' if k in body[kind] else '    * ', end='')
                 print(f'{k}: {str(v)[:51]}...', flush=True)
             # print('   ', [k for k in trimspec.__dict__.keys() if not k[0] == '_'], flush=True)
-        dbcls = type(dbclsname[kind], (BackendModelBase, trimspec), body[kind], table=True)
+        dbcls = type(dbclsname[kind], (backendcls._BackendModelBase, trimspec), body[kind], table=True)
         dbcls.__spec__ = spec
         spec.__backend_model__ = dbcls
         dbcls.__sibling_models__ = backend_models

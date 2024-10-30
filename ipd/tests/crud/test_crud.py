@@ -5,9 +5,11 @@ from uuid import UUID, uuid4
 
 import pydantic
 import pytest
+import sqlalchemy
 import sqlmodel.pool
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import registry
+from sqlmodel import Field, Relationship
 
 import ipd
 
@@ -20,6 +22,50 @@ def main():
 
 def create_new_sqlmodel_base() -> type[sqlmodel.SQLModel]:
     return type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
+
+@pytest.mark.fast
+@pytest.mark.xfail
+def test_duplicate_one_to_many(tmpdir):
+    LocalSQLModel = create_new_sqlmodel_base()
+    sarel = sqlalchemy.orm.relationship
+
+    class DBUserD(LocalSQLModel, table=True):
+        id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
+        group1id: UUID = Field(default=None, foreign_key='dbgroupd.id')
+        group2id: UUID = Field(default=None, foreign_key='dbgroupd.id')
+        group1: 'DBGroupD' = Relationship(back_populates='users1')
+        group2: 'DBGroupD' = Relationship(back_populates='users2')
+        # group1: 'DBGroupD' = Relationship(
+        # sa_relationship=sarel(back_populates='users1', foreign_keys='dbuserd.(group1id'))
+
+    class DBGroupD(LocalSQLModel, table=True):
+        id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
+        users1: list[DBUserD] = sqlmodel.Relationship(
+            sa_relationship=sarel(back_populates='group1'))  #, foreign_keys='dbuserd_group1id'))
+        users2: list[DBUserD] = sqlmodel.Relationship(back_populates='group2')
+
+    session = helper_create_db(tmpdir, LocalSQLModel)
+    DBG1 = DBGroupD()
+    DBG2 = DBGroupD()
+    session.add(DBG1)
+    session.add(DBG2)
+    session.commit()
+    DBU1 = DBUserD(group1=DBG1)  #, group2=DBG2)
+    session.add(DBU1)
+
+    # class GroupDSpec(ipd.crud.SpecBase):
+    #     id: UUID = pydantic.Field(default_factory=uuid4)
+
+    # class UserDSpec(ipd.crud.SpecBase):
+    #     id: UUID = pydantic.Field(default_factory=uuid4)
+    #     group1: ipd.crud.ModelRef[GroupDSpec]
+    #     # group2: ipd.crud.ModelRef[GroupDSpec, '2']
+
+    # models = dict(userd=UserDSpec, groupd=GroupDSpec)
+    # MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
+    # b = MyBackend(f'sqlite:///{tmpdir}/test.db')
+    # f, g = b.newgroupd(), b.newgroupd()
+    # b.newuserd(group1=f, group2=g)
 
 @pytest.mark.fast
 def test_user_group(tmpdir):
