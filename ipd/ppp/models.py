@@ -1,7 +1,6 @@
 import contextlib
 import os
 import tempfile
-from datetime import datetime
 from pathlib import Path
 from subprocess import check_output
 from typing import Union
@@ -13,12 +12,40 @@ import ipd.ppp
 from ipd.crud import ModelRef, Unique
 from ipd.sym.guess_symmetry import guess_sym_from_directory, guess_symmetry
 
-class _SpecWithUser(ipd.crud.SpecBase):
+class SpecWithProps(ipd.crud.SpecBase):
+    props: Union[list[str], str] = []
+    attrs: Union[dict[str, Union[str, int, float]], str] = {}
+
+    @pydantic.field_validator('props')
+    def valprops(cls, props):
+        if isinstance(props, (set, list)): return props
+        try:
+            props = ipd.dev.safe_eval(props)
+        except (NameError, SyntaxError):
+            if isinstance(props, str):
+                if not props.strip(): return []
+                props = [p.strip() for p in props.strip().split(',')]
+
+    @pydantic.field_validator('attrs')
+    def valattrs(cls, attrs):
+        if isinstance(attrs, dict): return attrs
+        try:
+            attrs = ipd.dev.safe_eval(attrs)
+        except (NameError, SyntaxError):
+            if isinstance(attrs, str):
+                if not attrs.strip(): return {}
+                attrs = {
+                    x.split('=').split(':')[0].strip(): x.split('=').split(':')[1].strip()
+                    for x in attrs.strip().split(',')
+                }
+        return attrs
+
+class SpecWithUser(ipd.crud.SpecBase):
     userid: ModelRef['UserSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
     ispublic: bool = True
     telemetry: bool = False
 
-class PollSpec(_SpecWithUser):
+class PollSpec(SpecWithUser, SpecWithProps):
     name: Unique[str]
     desc: str = ''
     path: str
@@ -94,7 +121,7 @@ class PollFileSpec(ipd.crud.SpecBase):
         assert os.path.exists(fname)  # or check_output(['rsync', f'digs:{fname}'])
         return fname
 
-class ReviewSpec(_SpecWithUser):
+class ReviewSpec(SpecWithUser):
     pollid: ModelRef['PollSpec']
     grade: str
     comment: str = ''
@@ -133,7 +160,7 @@ class PymolCMDSpecError(Exception):
         super().__init__(message + os.linesep + log)
         self.log = log
 
-class PymolCMDSpec(_SpecWithUser):
+class PymolCMDSpec(SpecWithUser):
     name: Unique[str]
     desc: str = ''
     cmdon: str
@@ -152,7 +179,7 @@ class PymolCMDSpec(_SpecWithUser):
         if self.cmdcheck: PymolCMDSpec_validate_commands(self)
         return self
 
-class WorkflowSpec(_SpecWithUser):
+class WorkflowSpec(SpecWithUser):
     name: Unique[str]
     desc: str
     ordering: str = 'Manual'
@@ -177,7 +204,7 @@ class UserSpec(ipd.crud.SpecBase):
     following: list['UserSpec'] = []
     groups: list['GroupSpec'] = []
 
-class GroupSpec(_SpecWithUser):
+class GroupSpec(SpecWithUser):
     name: Unique[str]
     users: list['UserSpec'] = []
     userid: ModelRef['UserSpec', 'ownedgroups'] = pydantic.Field(default='anonymous_coward',

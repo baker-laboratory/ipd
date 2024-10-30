@@ -1,14 +1,11 @@
-from typing import Self
 
 import typer
 
 import ipd
 from ipd.dev.types import KW
 
-# from ipd.dev.tools.pkginfo import cwd_package, PkgInfo
-
+DEBUG = False
 CB = type['CliBase']
-
 typer_args = dict(no_args_is_help=True, pretty_exceptions_enable=False)
 
 class CliBase:
@@ -24,7 +21,7 @@ class CliBase:
             return cls
 
     @classmethod
-    def __add_all_cmds__(cls: CB, self: Self, **kw: KW) -> None:
+    def __add_all_cmds__(cls, self: 'CliBase', **kw: KW) -> None:
         cmds = [m for m in cls.__dict__ if callable(getattr(cls, m)) and m[0] != '_']
         for attr in cmds:
             with ipd.dev.cast(cls, self) as newself:
@@ -34,7 +31,7 @@ class CliBase:
                 # setattr(CliBase, attr, getattr(cls, attr))
 
     @classmethod
-    def __set_relationships__(cls: CB, **kw: KW) -> None:
+    def __set_relationships__(cls, **kw: KW) -> None:
         parent: list[CB] = [b for b in cls.__bases__ if hasattr(b, '__app__')]
         assert len(parent) < 2
         cls.__app__: typer.Typer = typer.Typer(**typer_args)
@@ -55,20 +52,22 @@ class CliBase:
                 ancestor.__descendants__.add(cls)
             cls.__parent__.__app__.add_typer(cls.__app__, name=cls.__name__.replace('Tool', '').lower())
 
-    def __init_subclass__(cls: CB, **kw: KW):
+    def __init_subclass__(cls, **kw: KW):
+        if DEBUG: print('__init_subclass__', cls)
         assert not cls.__module__.startswith('__main__')
         super().__init_subclass__(**kw)
         cls.__set_relationships__(**kw)
 
     def __init__(self, **kw):
-        # print('init', self.__class__)
+        if DEBUG: print('__init__', self)
+        if not hasattr(self, '__init_called__'): self.__init_called__ = set()
+        if self.__class__ in self.__init_called__: return
         self.__class__.__add_all_cmds__(self, **kw)
-        for cls in self.__descendants__:
-            if cls in self.__init_called__: continue
-            self.__init_called__.add(cls)
-            # print('init', cls)
+        self.__init_called__.add(self.__class__)
+        for cls in self.__descendants__ - self.__init_called__:
             cls.__add_all_cmds__(self, **kw)
             cls.__init__(self, **kw)
+            self.__init_called__.add(cls)
 
     def run(self):
         self.__root__.__app__()

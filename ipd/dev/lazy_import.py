@@ -51,7 +51,7 @@ class LazyModule:
         mamba = 'mamba'
         cmd = f'{mamba} activate {env} && {mamba} install {self._channels} {self._package}'
         result = subprocess.check_call(cmd.split(), shell=True)
-        assert 'error' not in result.lower()
+        assert not isinstance(result, int) and 'error' not in result.lower()
 
     def _pipimport(self):
         global _skip_global_install

@@ -1,3 +1,5 @@
+assert 0
+
 from ipd.ppp.models import *
 
 def DBPoll_clear(self, backend, ghost=True):

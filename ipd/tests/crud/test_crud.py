@@ -1,12 +1,15 @@
+import asyncio
 import tempfile
-from typing import Optional, Type
+from typing import Optional
 from uuid import UUID, uuid4
 
 import pydantic
 import pytest
+import sqlalchemy
 import sqlmodel.pool
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import registry
+from sqlmodel import Field, Relationship
 
 import ipd
 
@@ -17,18 +20,52 @@ def main():
             v(td)
     print('test_crud PASS')
 
-def create_new_sqlmodel_base() -> Type[sqlmodel.SQLModel]:
-    # mapper_registry = sqlalchemy.orm.registry()
-    # Base = mapper_registry.generate_base()
-    # Base.registry._class_registry.clear()
+def create_new_sqlmodel_base() -> type[sqlmodel.SQLModel]:
+    return type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
 
-    # __abstract__ = True  # This marks it as an abstract class, so it won't create its own table
-    # metadata = Base.metadata
-    # _sa_registry = copy.deepcopy(sqlmodel.SQLModel._sa_registry)
-    NewBase = type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
-    # NewBase._sa_registry._class_registry.clear()
+@pytest.mark.fast
+@pytest.mark.xfail
+def test_duplicate_one_to_many(tmpdir):
+    LocalSQLModel = create_new_sqlmodel_base()
+    sarel = sqlalchemy.orm.relationship
 
-    return NewBase
+    class DBUserD(LocalSQLModel, table=True):
+        id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
+        group1id: UUID = Field(default=None, foreign_key='dbgroupd.id')
+        group2id: UUID = Field(default=None, foreign_key='dbgroupd.id')
+        group1: 'DBGroupD' = Relationship(back_populates='users1')
+        group2: 'DBGroupD' = Relationship(back_populates='users2')
+        # group1: 'DBGroupD' = Relationship(
+        # sa_relationship=sarel(back_populates='users1', foreign_keys='dbuserd.(group1id'))
+
+    class DBGroupD(LocalSQLModel, table=True):
+        id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
+        users1: list[DBUserD] = sqlmodel.Relationship(
+            sa_relationship=sarel(back_populates='group1'))  #, foreign_keys='dbuserd_group1id'))
+        users2: list[DBUserD] = sqlmodel.Relationship(back_populates='group2')
+
+    session = helper_create_db(tmpdir, LocalSQLModel)
+    DBG1 = DBGroupD()
+    DBG2 = DBGroupD()
+    session.add(DBG1)
+    session.add(DBG2)
+    session.commit()
+    DBU1 = DBUserD(group1=DBG1)  #, group2=DBG2)
+    session.add(DBU1)
+
+    # class GroupDSpec(ipd.crud.SpecBase):
+    #     id: UUID = pydantic.Field(default_factory=uuid4)
+
+    # class UserDSpec(ipd.crud.SpecBase):
+    #     id: UUID = pydantic.Field(default_factory=uuid4)
+    #     group1: ipd.crud.ModelRef[GroupDSpec]
+    #     # group2: ipd.crud.ModelRef[GroupDSpec, '2']
+
+    # models = dict(userd=UserDSpec, groupd=GroupDSpec)
+    # MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
+    # b = MyBackend(f'sqlite:///{tmpdir}/test.db')
+    # f, g = b.newgroupd(), b.newgroupd()
+    # b.newuserd(group1=f, group2=g)
 
 @pytest.mark.fast
 def test_user_group(tmpdir):
@@ -60,13 +97,13 @@ def test_user_group(tmpdir):
 
     models = dict(pollz=PollZSpec, userz=UserZSpec, groupz=GroupZSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models)
-    MyClient = type('MyClient', (ipd.crud.ClientBase, ), {}, backend=MyBackend)
+    MyClient = type('MyClient', (ipd.crud.ClientBase, ), {}, Backend=MyBackend)
 
     backend = MyBackend(f'sqlite:///{tmpdir}/test.db')
     print('backend.newuserz', backend.newuserz(name='foo'))
     print('backend.newuserz', backend.newuserz(name='bar'))
     print('backend.newuserz', backend.newuserz(name='baz'))
-    assert 3 == len(backend.userzs())
+    assert 3 == len(asyncio.run(backend.userzs()))
     testclient = TestClient(backend.app)
     assert testclient.get('/api/userzs').status_code == 200
     client = MyClient(testclient)
@@ -76,6 +113,7 @@ def test_user_group(tmpdir):
     assert a.name == 'foo'
     assert b.fullname == ''
     b.fullname = 'foo bar baz'
+    print('fullname', b.fullname, type(b.fullname))
     assert b.fullname == 'foo bar baz'
     c.number = 7
     assert c.number == 7

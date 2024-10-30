@@ -1,13 +1,24 @@
 import os
+
 import pytest
 from rich import print
+from typer.testing import CliRunner
+
+import ipd
 
 def main():
     # test_clitool_pytest()
-    test_clitool_pytest_slurm_parallel()
+    # test_clitool_pytest_slurm_parallel()
     print('test clitool PASS')
 
-os.chdir(f'{os.path.dirname(__file__)}/../../../..')
+runner = CliRunner()
+
+@pytest.mark.fast
+def test_citool_update_library():
+    tool = ipd.tools.IPDTool()
+    result = runner.invoke(tool.__app__, 'ci update_library')
+    print(result.stdout)
+    assert result.exit_code == 0
 
 @pytest.mark.xfail
 def test_that_fails():
@@ -18,6 +29,8 @@ def test_foo():
 
 def test_bar():
     pass
+
+os.chdir(f'{os.path.dirname(__file__)}/../../../..')
 
 # @pytest.mark.recursive
 # def test_clitool_pytest():
