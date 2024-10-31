@@ -1,4 +1,3 @@
-import asyncio
 import tempfile
 from typing import Optional
 from uuid import UUID, uuid4
@@ -103,7 +102,7 @@ def test_user_group(tmpdir):
     print('backend.newuserz', backend.newuserz(name='foo'))
     print('backend.newuserz', backend.newuserz(name='bar'))
     print('backend.newuserz', backend.newuserz(name='baz'))
-    assert 3 == len(asyncio.run(backend.userzs()))
+    assert 3 == len(backend.userzs())
     testclient = TestClient(backend.app)
     assert testclient.get('/api/userzs').status_code == 200
     client = MyClient(testclient)

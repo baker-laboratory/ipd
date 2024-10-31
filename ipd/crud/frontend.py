@@ -1,20 +1,25 @@
 import contextlib
 import functools
 import inspect
+import os
 import sys
 import typing
 import uuid
 from datetime import datetime
+from pathlib import Path
 from typing import Annotated, Optional, Union
 
 import compact_json
 import fastapi
 import httpx
 import pydantic
-import rich
 import yaml
 
 import ipd
+from ipd.dev import tojson, str_to_json
+
+tojson = ipd.dev.timed(tojson)
+str_to_json = ipd.dev.timed(str_to_json)
 
 T = typing.TypeVar('T')
 
@@ -40,6 +45,7 @@ class ModelRef(type):
         else: T = ipd.dev.classname_or_str(T)
         return Annotated[Annotated[_ModelRefType, validator], T]
 
+@ipd.dev.timed
 def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
     if hasattr(val, 'id'): return val.id
@@ -143,48 +149,96 @@ class SpecBase(pydantic.BaseModel):
     def __setitem__(self, k, v):
         return setattr(self, k, v)
 
-    def info(self, recurse=3, showfields='name', recursefields='*', seenit=None) -> dict:
+    @ipd.dev.timed
+    def info(
+        self,
+        recurse=1,
+        showfields='*',
+        recursefields='*',
+        hidefields='datecreated ghost gpus protocols path version kind required guaranteed results',
+        seenit=None,
+        parent=None,
+        shorten=3,
+    ) -> dict:
         if recurse < 0: return {}
-        showall = showfields == '*'
-        recurseall = recursefields == '*'
-        if isinstance(showfields, str): showfields = set(showfields.split())
+        showall = '*' in showfields
+        recurseall = '*' in recursefields
         if isinstance(recursefields, str): recursefields = set(recursefields.split())
+        if isinstance(hidefields, str): hidefields = set(hidefields.split())
         seenit = seenit or set()
-        if self.id in seenit: return {}
-        seenit.add(self.id)
-        recurse -= 1
-        kw = dict(recurse=recurse, showfields=showfields, recursefields=recursefields, seenit=seenit)
+        # if self.id in seenit: return {}
         fields = set(self.model_fields)
         if hasattr(self, '__remote_props__'): fields |= set(self.__remote_props__)
         sfields = fields if showall else fields.intersection(showfields)
         rfields = fields if recurseall else fields.intersection(recursefields)
-        d = {}
-        for attr in sorted(sfields | rfields):
+        # print('INFO', self.__class__.__name__, recurseall, showall, len(fields), len(sfields), len(rfields))
+        kw = dict(recurse=recurse - 1,
+                  showfields=showfields,
+                  recursefields=recursefields,
+                  hidefields=hidefields,
+                  seenit=seenit | {self.id},
+                  parent=self.modelkind(),
+                  shorten=shorten)
+        d = dict(name=self.name) if hasattr(self, 'name') else {}
+        for attr in sorted(sfields - {'name', 'user'} - hidefields):
+            if attr.endswith('id'): continue
+            if parent and parent in attr: continue
+            d[attr] = getattr(self, attr)
+        for attr in sorted(rfields - {'name', 'user'} - hidefields):
+            if attr.endswith('id'): continue
+            if parent and parent in attr: continue
             prop = getattr(self, attr)
-            if isinstance(prop, (tuple, list)):
+            if attr in rfields and hasattr(prop, 'info'):
+                d[attr] = prop.info(**kw)
+                # print(attr, d[attr])
+            elif isinstance(prop, (tuple, list)):
                 if len(prop) and hasattr(prop[0], 'info'): d[attr] = [p.info(**kw) for p in prop]
                 else: d[attr] = prop
-            elif attr in rfields and hasattr(prop, 'info'):
-                d[attr] = prop.info(**kw)
-            elif attr in sfields:
-                d[attr] = prop
-        for k, v in d.copy().items():
-            if len(v) == 0: del d[k]
-            elif len(v) == 1 and isinstance(v, list): d[k] = next(iter(v))
-            elif len(v) == 1 and isinstance(v, dict): d[k] = next(iter(v.values()))
+        for i in range(shorten):
+            for k, v in d.copy().items():
+                if isinstance(v, Path): print(k, v)
+                if not v: del d[k]
+                elif isinstance(v, Path): d[k] = str(v)
+                elif not hasattr(v, '__len__'): continue
+                elif len(v) == 0: del d[k]
+                elif len(v) == 1 and isinstance(v, list): d[k] = next(iter(v))
+                elif len(v) == 1 and isinstance(v, dict): d[k] = next(iter(v.values()))
+                elif isinstance(v, list):
+                    for j, u in enumerate(v):
+                        if len(u) == 0: del v[j]
+                        elif isinstance(u, Path): v[j] = str(u)
+                        elif len(u) == 1 and isinstance(u, list): v[j] = next(iter(u))
+                        elif len(u) == 1 and isinstance(u, dict): v[j] = next(iter(u.values()))
+
         # d = {self.__class__.__name__: d}
 
         return d
 
-    def print(self, **kw):
+    @ipd.dev.timed
+    def str_compact(self, linelen=120, strip_labels='invars outvars name'.split(), **kw):
         formatter = compact_json.Formatter()
         formatter.indent_spaces = 2
         formatter.max_inline_complexity = 10
-        formatter.max_inline_length = 200
-        json = self.info(**kw)
-        text = formatter.serialize(json).replace('"', '')
-        print(f'{self.__class__.__name__} {text}')
+        formatter.max_inline_length = linelen
+        val = self.info(**kw)
+        # rich.print(val)
+        text = formatter.serialize(val).replace('"', '')
+        for label in strip_labels:
+            text = text.replace(f'{label}: ', '')
+        text = f'{self.__class__.__name__}{text}'
+        compact = ['']
+        for i in range(6, 1, -1):
+            text = text.replace(' ' * i, ' ')
+        for line in text.split(os.linesep):
+            if len(compact[-1]) + len(line) < linelen: compact[-1] += line.lstrip()
+            else: compact.append('    ' + line)
+        compact = os.linesep.join(compact)
+        return compact
 
+    def print_compact(self, **kw):
+        print(self.str_compact(**kw), flush=True)
+
+@ipd.dev.timed
 class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __init__(self, thing, attr, val, attrkind=''):
         super().__init__(val)
@@ -193,6 +247,7 @@ class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __on_change__(self, thing):
         self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self], self.attrkind)
 
+@ipd.dev.timed
 def make_client_models(clientcls, trimspecs, remote_props):
     spec_models = clientcls.__spec_models__
     backend_models = clientcls.__backend_models__
@@ -248,6 +303,7 @@ class ClientModelBase(pydantic.BaseModel):
     _client: 'ClientBase' = None
     __sibling_models__: dict[str, 'ClientModelBase'] = {}
 
+    @ipd.dev.timed
     def __init_subclass__(cls, remote_props=(), siblings=(), **kw):
         super().__init_subclass__(**kw)
         if not remote_props: return
@@ -289,6 +345,7 @@ class ClientModelBase(pydantic.BaseModel):
         'noop, as validation should have happened at Spec stage'
         return self
 
+    @ipd.dev.timed
     def __setattr__(self, name, val):
         assert name != 'id', 'cant set id via client'
         if self._client and name[0] != '_':
@@ -319,6 +376,7 @@ def client_obj_constructor(loader, node):
 yaml.add_representer(ClientModelBase, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
+@ipd.dev.timed
 class ClientBase:
     def __init_subclass__(cls, Backend, **kw):
         super().__init_subclass__(**kw)
@@ -452,21 +510,18 @@ def add_basic_client_model_methods(clientcls):
                     return thing
                 return new(self, **kw)
 
-            return single, singleornone, multi, count, new, getornew
+            return {
+                _name: single,
+                f'{_name}ornone': singleornone,
+                f'{_name}s': multi,
+                f'n{_name}s': count,
+                f'new{_name}': new,
+                f'getornew{_name}': getornew
+            }
 
-        single, singleornone, multi, count, new, getornew = make_basic_client_model_methods_closure()
-        single.__qualname__ = f'{clientcls.__name__}.{_name}'
-        singleornone.__qualname__ = f'{clientcls.__name__}.{_name}ornone'
-        multi.__qualname__ = f'{clientcls.__name__}.{_name}s'
-        count.__qualname__ = f'{clientcls.__name__}.n{_name}s'
-        new.__qualname__ = f'{clientcls.__name__}.new{_name}'
-        getornew.__qualname__ = f'{clientcls.__name__}.getornew{_name}'
-        setattr(clientcls, _name, single)
-        setattr(clientcls, f'{_name}ornone', singleornone)
-        setattr(clientcls, f'{_name}s', multi)
-        setattr(clientcls, f'n{_name}s', count)
-        setattr(clientcls, f'new{_name}', new)
-        setattr(clientcls, f'getornew{_name}', getornew)
+        for attr, fn in make_basic_client_model_methods_closure().items():
+            fn.__qualname__ = f'{clientcls.__name__}.{attr}'
+            setattr(clientcls, attr, ipd.dev.timed(fn))
 
 def model_method(func, layer):
     @functools.wraps(func)
