@@ -128,7 +128,7 @@ class TestsTool(CITool):
     def pytest(
         self,
         slurm: bool = False,
-        gpu: bool = False,
+        gpu: str = '',
         exe: str = sys.executable,
         threads: int = 1,
         log: Path = Path('pytest_ipd_ci_test_run.log'),

@@ -7,9 +7,11 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Optional, Union
 
+import compact_json
 import fastapi
+import httpx
 import pydantic
-import requests
+import rich
 import yaml
 
 import ipd
@@ -27,12 +29,6 @@ _CLIENT = None
 def set_client(client: 'ClientBase'):
     global _CLIENT
     _CLIENT = client
-
-def tojson(thing):
-    if isinstance(thing, list): return f'[{",".join(tojson(_) for _ in thing)}]'
-    if hasattr(thing, 'model_dump_json'): return thing.model_dump_json()
-    if hasattr(thing, 'json'): return thing.json()
-    return str(thing)
 
 _ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
 
@@ -112,18 +108,18 @@ class SpecBase(pydantic.BaseModel):
     def to_spec(self) -> 'SpecBase':
         if isinstance(self, SpecBase): return self
         dump = self.model_dump()
-        raise NotImplementedError('need to implement id mapping and field stripping')
         for k, v in dump.copy().items():
             if k != 'id' and k.endswith('id'):
                 del dump[k]
                 dump[k[:-2]] = v
-        return self.__spec__(**dump)
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        # return self.__spec__(**dump)
 
     @classmethod
     def from_spec(cls: T, spec) -> T:
-        raise NotImplementedError('need to implement id mapping and field stripping')
         dump = spec.model_dump()
-        return cls(**dump)
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        # return cls(**dump)
 
     @classmethod
     def modelkind(cls) -> str:
@@ -138,7 +134,7 @@ class SpecBase(pydantic.BaseModel):
     def _copy_with_newid(self) -> typing.Self:
         return self.__class__(**{**self.model_dump(), 'id': uuid.uuid4()})
 
-    def errors(self) -> list[str]:
+    def errors(self) -> str:
         return self._errors
 
     def __getitem__(self, k):
@@ -147,26 +143,47 @@ class SpecBase(pydantic.BaseModel):
     def __setitem__(self, k, v):
         return setattr(self, k, v)
 
-    def print_full(self, seenit=None, depth=0) -> None:
+    def info(self, recurse=3, showfields='name', recursefields='*', seenit=None) -> dict:
+        if recurse < 0: return {}
+        showall = showfields == '*'
+        recurseall = recursefields == '*'
+        if isinstance(showfields, str): showfields = set(showfields.split())
+        if isinstance(recursefields, str): recursefields = set(recursefields.split())
         seenit = seenit or set()
-        if self.id in seenit: return
+        if self.id in seenit: return {}
         seenit.add(self.id)
-        fields = list(self.model_fields)
-        depth += 1
-        if hasattr(self, '__remote_props__'): fields += self.__remote_props__
-        print(self.__class__.__name__)
-        for field in sorted(fields):
-            prop = getattr(self, field)
-            if not prop: continue
-            print(' ' * depth * 4, field, '=', end=' ')
+        recurse -= 1
+        kw = dict(recurse=recurse, showfields=showfields, recursefields=recursefields, seenit=seenit)
+        fields = set(self.model_fields)
+        if hasattr(self, '__remote_props__'): fields |= set(self.__remote_props__)
+        sfields = fields if showall else fields.intersection(showfields)
+        rfields = fields if recurseall else fields.intersection(recursefields)
+        d = {}
+        for attr in sorted(sfields | rfields):
+            prop = getattr(self, attr)
             if isinstance(prop, (tuple, list)):
-                print('multiple:')
-            elif hasattr(prop, 'print_full'):
-                prop.print_full(seenit, depth)
-            else:
-                print(prop)
-                # for p in prop:
-                # if p.id not in seenit: p.print_full(seenit, depth)
+                if len(prop) and hasattr(prop[0], 'info'): d[attr] = [p.info(**kw) for p in prop]
+                else: d[attr] = prop
+            elif attr in rfields and hasattr(prop, 'info'):
+                d[attr] = prop.info(**kw)
+            elif attr in sfields:
+                d[attr] = prop
+        for k, v in d.copy().items():
+            if len(v) == 0: del d[k]
+            elif len(v) == 1 and isinstance(v, list): d[k] = next(iter(v))
+            elif len(v) == 1 and isinstance(v, dict): d[k] = next(iter(v.values()))
+        # d = {self.__class__.__name__: d}
+
+        return d
+
+    def print(self, **kw):
+        formatter = compact_json.Formatter()
+        formatter.indent_spaces = 2
+        formatter.max_inline_complexity = 10
+        formatter.max_inline_length = 200
+        json = self.info(**kw)
+        text = formatter.serialize(json).replace('"', '')
+        print(f'{self.__class__.__name__} {text}')
 
 class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __init__(self, thing, attr, val, attrkind=''):
@@ -185,13 +202,13 @@ def make_client_models(clientcls, trimspecs, remote_props):
         clsdb = backend_models[kind]
         clsname = spec.__name__[:-4]
         body, props = {'__annotations__': {}}, {}
-        for propname in remote_props[kind]:
-            if propname in clsdb.model_fields:
-                proptype = clsdb.model_fields[propname].annotation
-                print(spec, propname)
+        for attr in remote_props[kind]:
+            if attr in clsdb.model_fields:
+                proptype = clsdb.model_fields[attr].annotation
+                print(spec, attr, proptype)
                 assert 0
-            elif propname in clsdb.__annotations__:
-                proptype = typing.get_args(clsdb.__annotations__[propname])[0]
+            elif attr in clsdb.__annotations__:
+                proptype = typing.get_args(clsdb.__annotations__[attr])[0]
             else:
                 continue
             if hasattr(proptype, '__origin__'):
@@ -203,7 +220,7 @@ def make_client_models(clientcls, trimspecs, remote_props):
             if hasattr(propkind, '__forward_arg__'):
                 propkind = propkind.__forward_arg__
             if not isinstance(propkind, str): propkind = propkind.__name__
-            props[propname] = propkind.replace('DB', '').lower()
+            props[attr] = propkind.replace('DB', '').lower()
         for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'client':
                 assert callable(member)
@@ -318,7 +335,9 @@ class ClientBase:
         set_client(self)
 
     def getattr(self, thing, id, attr):
-        return self.get(f'/getattr/{thing}/{id}/{attr}')
+        result = self.get(f'/getattr/{thing}/{id}/{attr}')
+        # ic(self, thing, attr, result)
+        return result
 
     def setattr(self, thing, attr, val, attrkind=''):
         thingtype = thing.__class__.__name__.lower()
@@ -338,23 +357,23 @@ class ClientBase:
             response = self.testclient.get(f'/api{url}')
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = requests.get(url)
+            response = httpx.get(url)
         if response.status_code != 200:
             reason = response.reason if hasattr(response, 'reason') else '???'
             raise ClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
                               f'REASON:   {reason}\n    CONTENT:  {response.content.decode()}')
-        return response.json()
+        return ipd.dev.str_to_json(response.content.decode())
 
     def post(self, url, thing, **kw):
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
-        body = tojson(thing)
+        body = ipd.dev.tojson(thing)
         if self.testclient:
             url = f'/api{url}'
             response = self.testclient.post(url, content=body)
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = requests.post(url, body)
+            response = httpx.post(url, data=body)
         # ic(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
@@ -362,7 +381,7 @@ class ClientBase:
             raise ClientError(f'POST failed "{url}"\n    BODY:     {body}\n    '
                               f'RESPONSE: {response}\n    REASON:   {reason}\n    '
                               f'CONTENT:  {response.content.decode()}')
-        response = response.json()
+        response = ipd.dev.str_to_json(response.content.decode())
         with contextlib.suppress((TypeError, ValueError)):
             return uuid.UUID(response)
         return response
@@ -387,13 +406,13 @@ class ClientBase:
             return result
 
     def make_spec(self, cls, **kw):
-        if 'exe' in cls.__spec__.model_fields:
-            ic(cls, kw)
-            ic(cls.__spec__.model_fields)
-            # for k, v in kw.copy().items():
-            # if isinstance(v, pydantic.BaseModel) and hasattr(v, 'id'):
-            # kw[f'{k}id'] = v.id
-            # kw[k] = v.id
+        # if 'exe' in cls.__spec__.model_fields:
+        # ic(cls, kw)
+        # ic(cls.__spec__.model_fields)
+        # for k, v in kw.copy().items():
+        # if isinstance(v, pydantic.BaseModel) and hasattr(v, 'id'):
+        # kw[f'{k}id'] = v.id
+        # kw[k] = v.id
         return cls.__spec__(**kw)
 
 def add_basic_client_model_methods(clientcls):
@@ -405,32 +424,49 @@ def add_basic_client_model_methods(clientcls):
     for _name, _cls in clientcls.__client_models__.items():
 
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):
-            def new(self, **kw) -> str:
+            def new(self, **kw) -> cls:
                 # return self.upload(kw, modelkind=cls.modelkind())
                 return self.upload(self.make_spec(cls, **kw))
 
             def count(self, **kw) -> int:
                 return self.get(f'/n{name}s', **kw)
 
-            def single(self, **kw) -> Union[cls, None]:
+            def single(self, **kw) -> cls:
                 result = self.get(f'/{name}', **kw)
                 return cls(self, **result) if result else None
+
+            def singleornone(self, **kw) -> Union[cls, None]:
+                result = self.get(f'/{name}s', **kw)
+                if not result: return None
+                if len(result) > 1: raise ClientError(f'singleornone {len(results)}>1 rslts {name} {cls} {kw}')
+                return cls(self, **result[0]) if result else None
 
             def multi(self, _names=None, **kw) -> list[cls]:
                 if _names: return [cls(self, **self.get(f'/{name}', name=n)) for n in _names]
                 return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
 
-            return single, multi, count, new
+            def getornew(self, **kw) -> cls:
+                if thing := singleornone(self, **kw):
+                    for k, v in kw.items():
+                        assert thing[k] == v
+                    return thing
+                return new(self, **kw)
 
-        single, multi, count, new = make_basic_client_model_methods_closure()
+            return single, singleornone, multi, count, new, getornew
+
+        single, singleornone, multi, count, new, getornew = make_basic_client_model_methods_closure()
         single.__qualname__ = f'{clientcls.__name__}.{_name}'
+        singleornone.__qualname__ = f'{clientcls.__name__}.{_name}ornone'
         multi.__qualname__ = f'{clientcls.__name__}.{_name}s'
         count.__qualname__ = f'{clientcls.__name__}.n{_name}s'
         new.__qualname__ = f'{clientcls.__name__}.new{_name}'
+        getornew.__qualname__ = f'{clientcls.__name__}.getornew{_name}'
         setattr(clientcls, _name, single)
+        setattr(clientcls, f'{_name}ornone', singleornone)
         setattr(clientcls, f'{_name}s', multi)
         setattr(clientcls, f'n{_name}s', count)
         setattr(clientcls, f'new{_name}', new)
+        setattr(clientcls, f'getornew{_name}', getornew)
 
 def model_method(func, layer):
     @functools.wraps(func)

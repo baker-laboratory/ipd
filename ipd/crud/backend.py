@@ -1,18 +1,18 @@
 import asyncio
 import contextlib
-import sys
 import operator
+import sys
 import traceback
 import typing
-from typing import Optional
 from collections import defaultdict
 from datetime import datetime
+from typing import Optional
 from uuid import UUID, uuid4
+
 import fastapi
 import pydantic
-import sqlalchemy
 import sqlmodel.pool
-from rich import print
+import sqlalchemy
 from sqlalchemy.orm import registry
 from sqlmodel.main import RelationshipInfo
 
@@ -28,9 +28,9 @@ backend_type_map = {
 
 Props = list[str]
 Attrs = dict[str, typing.Union[str, int, float]]
-props_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
-attrs_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
-sqlmodel_field_map = {Props: props_default, Attrs: attrs_default}
+list_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
+dict_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
+sqlmodel_field_map = {Props: list_default, Attrs: dict_default}
 pydantic_field_args = ('default default_factory alias alias_priority validation_alias serialization_alias '
                        'title field_title_generator description examples exclude discriminator deprecated '
                        'json_schema_extra frozen validate_default repr init init_var kw_only').split()
@@ -106,6 +106,7 @@ class BackendBase:
 
     def __init_subclass__(cls, models: dict[str, SpecBase], SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
+        cls.__sqlmodel__ = SQL
         cls._BackendModelBase = make_backend_model_base(SQL)
         if isinstance(models, list): models = {m.modelkind(): m for m in models}
         cls.__spec_models__ = process_specs(models)
@@ -158,7 +159,7 @@ class BackendBase:
         pass
 
     def initdb(self):
-        sqlmodel.SQLModel.metadata.create_all(self.engine)
+        self.__sqlmodel__.metadata.create_all(self.engine)
 
     def init_routes(self):
         pass
@@ -196,7 +197,12 @@ class BackendBase:
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
         thingattr = getattr(thing, attr)
-        # if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
+        if hasattr(thingattr, 'modelkind'):
+            table = self.__sqlmodel__.metadata.tables[f'db{thingattr.modelkind()}']
+            for k, v in thingattr.model_fields.items():
+                satype = table.columns[k].type.__class__.__name__
+                if satype == 'JSON' and isinstance(thingattr[k], str):
+                    thingattr[k] = ipd.dev.str_to_json(thingattr[k])
         return thingattr
 
     async def setattr(self, request: fastapi.Request, kind: str, id: UUID, attr: str, attrkind: str = ''):
@@ -378,7 +384,7 @@ def add_basic_backend_model_methods(backendcls):
         if not hasattr(backendcls, f'create_{_name}'):
             setattr(backendcls, f'create_{_name}', create)
 
-def process_list_type(kind, spec, attr, annotation, links, specbyname, models, rmfields):
+def check_list_T(kind, spec, attr, annotation, links, specbyname, models, rmfields):
     if isinstance(annotation, tuple):
         args = annotation
     else:
@@ -393,6 +399,8 @@ def process_list_type(kind, spec, attr, annotation, links, specbyname, models, r
         if not isinstance(refname, str): refname = refname.__name__
         links[tuple(sorted([spec.__name__, refname])), link].append((kind, attr, refname))
         rmfields[kind].append(attr)
+        return True
+    return False
 
 def field_is_ref(field):
     return (len(field.metadata) == 2 and isinstance(field.metadata[0], pydantic.BeforeValidator))
@@ -412,6 +420,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
     body = {kind: {} for kind in models}
     anno = {kind: {} for kind in models}
     rmfields = {kind: [] for kind in models}
+    keepattrs = {kind: set() for kind in models}
     links, linktables = defaultdict(list), {}
     annospec = {kind: ipd.dev.get_all_annotations(spec) for kind, spec in models.items()}
     specbyname = {cls.__name__: cls for cls in models.values()}
@@ -422,26 +431,26 @@ def make_backend_models(backendcls, SQL=None, debug=False):
     for kind, spec in models.items():
         assert kind == spec.__name__[:-4].lower()
         # print('make_backend_models', kind, spec.__name__)
-        if hasattr(spec, 'props'):
-            body[kind]['props'] = props_default()
-            anno[kind]['props'] = Props
-        if hasattr(spec, 'attrs'):
-            body[kind]['attrs'] = attrs_default()
-            anno[kind]['attrs'] = Attrs
         for attr, field in spec.model_fields.items():
             if attr == 'name':
-                body[kind][attr] = sqlmodel.Field(index=True)
+                body[kind][attr] = sqlmodel.Field(index=True, sa_column_kwargs={'unique': True})
                 anno[kind][attr] = str
-            if field.metadata == ['UNIQUE']:
-                body[kind][attr] = sqlmodel.Field(sa_column_kwargs={'unique': True})
+            elif hasattr(spec, 'props'):
+                body[kind]['props'] = list_default()
+                anno[kind]['props'] = Props
+            elif hasattr(spec, 'attrs'):
+                body[kind]['attrs'] = dict_default()
+                anno[kind]['attrs'] = Attrs
                 anno[kind][attr] = field.annotation
+            elif field.metadata == ['UNIQUE']:
+                body[kind][attr] = sqlmodel.Field(sa_column_kwargs={'unique': True})
             elif field_is_ref(field):
                 # ModelRefs id
                 # assert attr.endswith('id'), f'{spec.__name__} single ModelRef attr "{attr}" doesnt end wtih id'
                 if field_is_ref_to_list(field):
                     meta = typing.get_args(field.metadata[1][0])[0], field.metadata[1][1]
                     # print('Ref list', kind, attr, meta)
-                    process_list_type(kind, spec, attr, meta, links, specbyname, models, rmfields)
+                    check_list_T(kind, spec, attr, meta, links, specbyname, models, rmfields)
                     body[kind][attr] = None
                     anno[kind][attr] = field.metadata[1][0]
                     continue
@@ -492,10 +501,13 @@ def make_backend_models(backendcls, SQL=None, debug=False):
                 body[refkind][refattr] = sqlmodel.Relationship(back_populates=attr[:-2])
                 anno[refkind][refattr] = list[dbclsname[kind]]
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == dict:  # noqa
-                body[kind][attr] = attrs_default()
-                anno[kind][attr] = Attrs
+                body[kind][attr] = dict_default()
+                anno[kind][attr] = field.annotation
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:  # noqa
-                process_list_type(kind, spec, attr, field.annotation, links, specbyname, models, rmfields)
+                if not check_list_T(kind, spec, attr, field.annotation, links, specbyname, models, rmfields):
+                    keepattrs[kind].add(attr)
+                    body[kind][attr] = list_default()
+                    anno[kind][attr] = field.annotation
 
     # create many to many relations
     for (pair, link), ends in links.items():
@@ -539,7 +551,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
             # print(f'{kind} {attr} : {anno[kind][attr]} = Relationship({kw})')
 
     # build the models
-    backend_models, remote_props, trimspecs = {}, {}, {}
+    backend_models, trimspecs, remote_props = {}, {}, {}
     for kind, spec in models.items():
         for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'backend':
@@ -549,6 +561,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
         attrs = set(models[kind].model_fields) - set(body[kind])
         attrs = attrs - {'ispublic', 'ghost', 'datecreated', 'telemetry', 'id', '__annotations__'}
         for attr in rmfields[kind] + list(body[kind]):
+            if attr in keepattrs[kind]: continue
             # if attr[0] == '_': continue
             # print(kind, 'remove', attr)
             ano = trimspec.__annotations__.get(attr, None)
