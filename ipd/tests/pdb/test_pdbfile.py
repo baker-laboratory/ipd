@@ -5,7 +5,7 @@ import numpy as np
 import ipd
 
 def main():
-    from willutil.tests import fixtures as f
+    from ipd.tests import fixtures as f
 
     _test_cb_fillin()
     test_pdbfile_coords(f.pdb1pgx())

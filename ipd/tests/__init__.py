@@ -2,10 +2,10 @@ import os
 import random
 import numpy as np
 import ipd as ipd
-# from ipd.tests import sym
 from ipd.tests.maintest import *
 
 th = ipd.lazyimport('torch')
+sym = ipd.lazyimport('ipd.tests.sym')
 
 def make_deterministic(seed=0):
     random.seed(seed)

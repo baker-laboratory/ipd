@@ -46,6 +46,10 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         gpu, if cuda is available'''
         pass
 
+    def setup_for_symmetry(self, thing):
+        '''Default implementation no-op'''
+        return thing
+
     def post_init(self):
         if 'idx' in self._post_init_args: self.idx = self._post_init_args.idx
         ipd.hub.sym_manager_created(self)
