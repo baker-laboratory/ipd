@@ -100,6 +100,11 @@ def process_symmetry_options(opt, **kw):
         if opt.n_repeats:
             opt.L = opt.n_repeats * opt.repeat_length
 
+    if opt.has('input_pdb'):
+        opt.T_xforms = ipd.sym.generate_ASU_xforms(opt.input_pdb)
+        opt.Tn = len(opt.T_xforms)
+        log.info(f'HIGH T - processed T{opt.Tn} symmetry')
+
     return opt
 
 def resolve_option(name, kw, conf, default, strict=False):
