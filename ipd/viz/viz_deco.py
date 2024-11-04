@@ -16,7 +16,7 @@ def pymol_frame(_FUNCTION_):
         name=_FUNCTION_.__name__,
         addtocgo=None,
         suspend_updates=True,
-        delprev=False,
+        delprev=True,
         state=_showme_state,
         **kw,
     ):
@@ -29,9 +29,9 @@ def pymol_frame(_FUNCTION_):
         name += "_%i" % state["seenit"][name]
 
         bunch = _FUNCTION_(*args, name=name, delprev=delprev, state=state, **kw)
-        bunch = bunch or ipd.dev.Bunch(cgo=None)
+        bunch = bunch or ipd.dev.Bunch(cgo=None, _strict=False)
 
-        if bunch.cgo:
+        if bunch.get('cgo'):
             if addtocgo is not None:
                 addtocgo.extend(bunch.cgo)
             else:

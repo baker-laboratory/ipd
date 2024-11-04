@@ -1,6 +1,6 @@
 import pytest
 
-pytest.importorskip('torch')
+th = pytest.importorskip('torch')
 import numpy as np
 from icecream import ic
 
@@ -11,6 +11,7 @@ from ipd.homog import intersect_planes
 # pytest.skip(allow_module_level=True)
 
 def main():
+    test_thxform_invalid44_bug()
     test_rand_dtype_device()
     test_randsmall_dtype_device()
     test_th_axis_angle_cen_hel_vec()
@@ -266,7 +267,7 @@ def test_th_axis_angle_cen_rand():
     assert np.allclose(cenhel, cenhat, atol=1e-3)
 
     # ic(rot.shape)
-    axis2, ang2, cen2, hel2 = h.axis_angle_cen_hel(rot)
+    axis2, ang2, cen2, hel2 = h.axis_angle_cen_hel(rot, flipaxis=False)
     assert np.allclose(axis2.detach(), axis)
     assert np.allclose(ang2.detach(), ang)
     assert np.allclose(cen2.detach(), cen)
@@ -531,6 +532,37 @@ def test_th_misc():
     assert np.allclose(p[:, 3], 1)
 
 #################################################
+
+@pytest.mark.fast
+def test_thxform_invalid44_bug():
+    a_to_others = th.tensor([
+        [
+            [1.0000, 0.0000, 0.0000, 0.0000],
+            [0.0000, 1.0000, 0.0000, 0.0000],
+            [0.0000, 0.0000, 1.0000, 0.0000],
+            [0.0000, 0.0000, 0.0000, 1.0000],
+        ],
+        [
+            [0.2406, -0.2430, 0.9397, -6.2558],
+            [0.9178, -0.2582, -0.3017, -15.2322],
+            [0.3159, 0.9350, 0.1609, 13.8953],
+            [0.0000, 0.0000, 0.0000, 1.0000],
+        ],
+        [
+            [0.3498, 0.8144, 0.4629, -6.0973],
+            [-0.2221, -0.4080, 0.8856, -13.5191],
+            [0.9101, -0.4126, 0.0382, 13.4486],
+            [0.0000, 0.0000, 0.0000, 1.0000],
+        ],
+    ],
+                            dtype=th.float64)
+    stub = th.tensor([[-0.5669, 0.4278, -0.7040, 84.6459], [0.7742, 0.5688, -0.2777, 8.8629],
+                      [-0.2817, 0.7024, 0.6536, 87.7865], [0.0000, 0.0000, 0.0000, 1.0000]],
+                     dtype=th.float64)
+    assert h.valid44(a_to_others, debug=True)
+    assert not h.valid(stub, debug=True)
+    assert not h.valid(h.xform(a_to_others, stub))
+    assert not th.allclose(a_to_others @ stub, h.xform(a_to_others, stub))
 
 if __name__ == "__main__":
     main()

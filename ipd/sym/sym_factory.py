@@ -32,7 +32,9 @@ def set_default_sym_manager(kind):
     # ic('set_default_sym_manager', kind, _default_sym_manager)
 
 def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **kw):
-    '''Create a symmetry manager based on the configuration
+    '''
+    Create a symmetry manager based on the configuration
+    
     Args:
         conf (dict, optional): Hydra conf
         extra_params (dict, optional): extra parameters
@@ -48,13 +50,7 @@ def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **k
     if kind == 'input_defined': opt.symid = 'input_defined'
     elif opt.symid == 'C1': kind = 'C1'
     sym = _sym_managers[kind](opt, device=device)
-    ipd.sym.set_symmetry(sym)
-    assert ipd.sym.symmetrize is sym
+    ipd.sym.set_global_symmetry(sym)
+    assert ipd.symmetrize is sym
     return sym
 
-def check_sym_manager(sym, *a, **kw):
-    '''Check if a symmetry manager is valid, and create one if it is not'''
-    if sym is not None:
-        assert isinstance(sym, SymmetryManager)
-        return sym
-    return create_sym_manager(*a, **kw)

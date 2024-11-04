@@ -38,7 +38,7 @@ def showme(*a, **kw):
 
 def __getattr__(name):
     if name == 'symmetrize':
-        return ipd.sym.symmetrize
+        return sym.get_global_symmetry()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 import builtins

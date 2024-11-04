@@ -35,8 +35,8 @@ class SieveManager:
         if not self.opt.enabled: return
         cache = {}
         progress = 1.0 - t / self.conf.diffuser.T
-        xyz = ipd.sym.symmetrize.asym(xyz)
-        indep = ipd.sym.symmetrize.asym(indep)
+        xyz = ipd.symmetrize.asym(xyz)
+        indep = ipd.symmetrize.asym(indep)
         # print("APPLY SIEVES")
         for sieve in self.sieves:
             if not sieve(progress=progress, indep=indep, xyz=xyz, cache=cache, **kw):

@@ -856,6 +856,23 @@ def symm_subunit_matrix(symmid, symopt=None):
         offset = torch.tensor([1.0, 0.0, 0.0])
         offset = est_radius * offset / torch.linalg.norm(offset)
         metasymm = ([torch.arange(60)], [min(len(Rs), symopt.max_nsub if symopt else 6)])
+    elif symmid.startswith('I'):
+        ax2, ax3, ax5 = ipd.sym.axes('I', closest_to=[1, 2, 21]).values()
+        pi = torch.pi
+        Rs = [torch.eye(3)]
+        if '2' in symmid:
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax2, pi)))
+        if '3' in symmid:
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, 2 / 3 * pi)))
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, -2 / 3 * pi)))
+        if '5' in symmid:
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, 2 / 5 * pi)))
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, -2 / 5 * pi)))
+        Rs = torch.stack(Rs)
+        nsub = len(Rs)
+        symmatrix = (torch.arange(nsub)[:, None] - torch.arange(nsub)[None, :]) % nsub
+        metasymm = ([torch.arange(nsub)], [min(nsub, symopt.max_nsub if symopt else min(3, nsub))])
+        offset = None
     else:
         print("Unknown symmetry", symmid)
         assert False

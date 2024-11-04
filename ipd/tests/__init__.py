@@ -17,7 +17,7 @@ def make_deterministic(seed=0):
         th.backends.cudnn.benchmark = False
 
 def path(fname):
-    return os.path.realpath(f'{ipd.projdir}/tests/data/{fname}')
+    return os.path.realpath(f'{ipd.projdir}/data/tests/{fname}')
 
 def load(fname):
     return ipd.load(path(fname))
