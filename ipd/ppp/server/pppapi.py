@@ -1,7 +1,6 @@
 import os
 import socket
 import sys
-import threading
 from uuid import UUID
 
 import ipd
@@ -126,17 +125,6 @@ class PPPBackend(ipd.crud.backend.BackendBase, models=ipd.ppp.spec_models):
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 for cls in PPPBackend.__backend_models__.values():
     globals()[cls.__name__] = cls
-
-class Server(uvicorn.Server):
-    def run_in_thread(self):
-        self.thread = threading.Thread(target=self.run)
-        self.thread.start()
-
-    def stop(self, *_):
-        # print('shutting down server')
-        self.should_exit = True
-        self.thread.join()
-        # sys.exit()
 
 def pymol_launch():
     stdout = sys.stdout

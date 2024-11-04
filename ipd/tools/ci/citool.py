@@ -11,8 +11,14 @@ import submitit
 import ipd
 
 class CITool(ipd.tools.IPDTool):
+<<<<<<< HEAD
     def __init__(self: 'CITool', secretfile: str = '~/.secrets'):
         if os.path.exists(secretfile): self._add_secrets(secretfile)
+=======
+    def __init__(self, secretfile: str = '~/.secrets'):
+        secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
+        self.secrets = ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
+>>>>>>> origin/main
         self.repos: dict[str, str] = {
             'cifutils': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/cifutils.git',
             'datahub': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/datahub.git',
@@ -31,10 +37,14 @@ class CITool(ipd.tools.IPDTool):
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
                 print(f'Directory {repo_dir} exists. Fetching latest changes...')
+<<<<<<< HEAD
                 ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f')
+=======
+                ipd.dev.run(f'git --git-dir={repo_dir} fetch', echo=True)
+>>>>>>> origin/main
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
-                ipd.dev.run(f'cd {path} && git clone --bare {url}')
+                ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)
 
 def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
     repolib = os.path.expanduser(repolib)
@@ -82,14 +92,9 @@ def run_pytest(env,
     #     cmd = cmd.replace('  ', ' ')
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
-        if gpu: parallel = 3
-        slurm = f'srun -p gpu --gres=gpu:{gpu}:1 --cpus-per-task {parallel} --mem {mem} --time {timeout} --export=ALL'
-        cmd = f'{env} PYTHONPATH=. {slurm} {exe} {mark} {sel} {dry} {par} {tee} {log}'
-        # return cmd, executor.submit(ipd.dev.run, cmd, echo=True), log
-        return cmd, Future(ipd.dev.run(cmd, echo=True)), log
+        return cmd, executor.submit(ipd.dev.run, cmd), log
     else:
-        cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
-        return cmd, Future(ipd.dev.run(cmd, echo=True)), log
+        return cmd, Future(ipd.dev.run(cmd)), log
 
 def get_re(pattern, text):
     result = re.findall(pattern, text)
@@ -127,7 +132,7 @@ class TestsTool(CITool):
         TestsTool.pytest()
 
     def ruff(self):
-        ipd.dev.run('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log')
+        ipd.dev.run('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
 
     def pytest(
         self,

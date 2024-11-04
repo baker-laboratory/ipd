@@ -24,7 +24,7 @@ REMOTE_MODE = not os.path.exists('/net/scratch/sheffler')
 # profile = ipd.dev.timed
 profile = lambda f: f
 
-class PPPClient(ipd.crud.ClientBase, backend=PPPBackend):
+class PPPClient(ipd.crud.ClientBase, Backend=PPPBackend):
     def __init__(self, server_addr_or_testclient):
         super().__init__(server_addr_or_testclient)
         assert self.get('/')['msg'] == 'Hello World'

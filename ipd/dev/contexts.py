@@ -1,6 +1,7 @@
 import io
 import os
 import sys
+import traceback
 from contextlib import contextmanager
 
 @contextmanager
@@ -33,3 +34,20 @@ def cd(path):
         yield None
     finally:
         os.chdir(oldpath)
+
+class TracePrints(object):
+    def __init__(self):
+        self.stdout = sys.stdout
+
+    def write(self, s):
+        self.stdout.write("Writing %r\n" % s)
+        traceback.print_stack(file=self.stdout)
+
+    def flush(self):
+        self.stdout.flush()
+
+@contextmanager
+def trace_prints():
+    tp = TracePrints()
+    with redirect(stdout=tp):
+        yield tp

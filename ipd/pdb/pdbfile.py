@@ -107,7 +107,8 @@ class PDBFile:
         if isinstance(ia, str):
             ia = ia.encode()
         if isinstance(ia, bytes):
-            return float(r.x[r.an == ia]), float(r.y[r.an == ia]), float(r.z[r.an == ia])
+            return float(r.x[r.an == ia].iloc[0]), float(r.y[r.an == ia].iloc[0]), float(
+                r.z[r.an == ia].iloc[0])
         raise ValueError(ia)
 
     def renumber_from_0(self, unique_chains=True):

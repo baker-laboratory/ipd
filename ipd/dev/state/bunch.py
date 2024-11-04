@@ -422,8 +422,6 @@ def make_autosave_hierarchy(x, _parent=None, seenit=None, _strict=True, _autosav
         x = BunchChildSet(val, _parent=_parent)
     elif isinstance(x, (tuple, )):
         x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)
-    # elif not isinstance(x, (type(None), str, int, float, datetime.datetime, datetime.timedelta)):
-    # raise ValueError(f'cant convert to BunchChild type {type(x)}')
     seenit.add(id(x))
     return x
 

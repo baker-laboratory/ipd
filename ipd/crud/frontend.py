@@ -14,8 +14,19 @@ import yaml
 
 import ipd
 
+T = typing.TypeVar('T')
+
 class ClientError(Exception):
     pass
+
+def _label_field(cls):
+    return cls._label.default if hasattr(cls, '_label') else 'name'
+
+_CLIENT = None
+
+def set_client(client: 'ClientBase'):
+    global _CLIENT
+    _CLIENT = client
 
 def tojson(thing):
     if isinstance(thing, list): return f'[{",".join(tojson(_) for _ in thing)}]'
@@ -23,11 +34,39 @@ def tojson(thing):
     if hasattr(thing, 'json'): return thing.json()
     return str(thing)
 
+_ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
+
 class ModelRef(type):
     def __class_getitem__(cls, T):
         outerns = inspect.currentframe().f_back.f_globals
         validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: process_modelref(x, y, outerns))
+        if isinstance(T, tuple): T = tuple([ipd.dev.classname_or_str(T[0]), *T[1:]])
+        else: T = ipd.dev.classname_or_str(T)
         return Annotated[Annotated[_ModelRefType, validator], T]
+
+def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
+    assert not isinstance(val, int), 'int id is wrong, use uuid now'
+    if hasattr(val, 'id'): return val.id
+    with contextlib.suppress(TypeError, ValueError, AttributeError):
+        return uuid.UUID(val)
+    specname = valinfo.config['title']
+    if not specname.endswith('Spec'): specname += 'Spec'
+    cls = spec_namespace[specname]
+    field = cls.model_fields[valinfo.field_name]
+    typehint = field.annotation
+    assert typehint == _ModelRefType, 'typehint == _ModelRefType'
+    refcls = field.metadata[1]
+    if isinstance(refcls, str):
+        if not refcls.endswith('Spec'): refcls += 'Spec'
+        refcls = spec_namespace[refcls]
+    if isinstance(val, str) and _CLIENT:
+        # print(val, valinfo)
+        refclsname = refcls.__name__.replace('Spec', '').lower()
+        if not (ref := getattr(_CLIENT, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
+            raise ValueError(f'unknown {refcls.__name__[:-4]} named "{val}"')
+        val = ref.id
+    # print(cls, refcls, val)
+    return val
 
 class Unique(type):
     def __class_getitem__(cls, T):
@@ -42,8 +81,6 @@ class SpecBase(pydantic.BaseModel):
     id: uuid.UUID = pydantic.Field(default_factory=uuid.uuid4)
     ghost: bool = False
     datecreated: datetime = pydantic.Field(default_factory=datetime.now)
-    props: Union[list[str], str] = []
-    attrs: Union[dict[str, Union[str, int, float]], str] = {}
     _errors: str = ''
 
     def __init_subclass__(cls, **kw):
@@ -60,54 +97,48 @@ class SpecBase(pydantic.BaseModel):
                 else:
                     cls.__spec__.__frontend__ = cls
 
+    @pydantic.model_validator(mode='before')
+    def validate_base(cls, vals):
+        # if isinstance(vals, uuid.UUID): vals = dict(id=vals)
+        # if issubclass(cls, SpecBase) and isinstance(vals, pydantic.BaseModel):
+        # vals = vals.to_spec()
+        assert isinstance(vals, dict)
+        if 'name' in vals: assert ipd.dev.toname(vals['name']), f'name is bad identifier {vals["name"]}'
+        return vals
+
     def __heash__(self):
         return self.id
 
-    def to_spec(self):
-        return self.__spec__(**self.model_dump())
+    def to_spec(self) -> 'SpecBase':
+        if isinstance(self, SpecBase): return self
+        dump = self.model_dump()
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        for k, v in dump.copy().items():
+            if k != 'id' and k.endswith('id'):
+                del dump[k]
+                dump[k[:-2]] = v
+        return self.__spec__(**dump)
 
     @classmethod
-    def from_spec(cls, spec):
-        return cls(**spec.model_dump())
+    def from_spec(cls: T, spec) -> T:
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        dump = spec.model_dump()
+        return cls(**dump)
 
     @classmethod
-    def kind(cls):
+    def modelkind(cls) -> str:
         if cls.__name__.endswith('Spec'): return cls.__name__.replace('Spec', '').lower()
         if cls.__name__.startswith('DB'): return cls.__name__.replace('DB', '').lower()
         return cls.__name__.lower()
 
     @classmethod
-    def layer(cls):
+    def modellayer(cls) -> str:
         return layerof(cls)
 
-    @pydantic.field_validator('props')
-    def valprops(cls, props):
-        if isinstance(props, (set, list)): return props
-        try:
-            props = ipd.dev.safe_eval(props)
-        except (NameError, SyntaxError):
-            if isinstance(props, str):
-                if not props.strip(): return []
-                props = [p.strip() for p in props.strip().split(',')]
-
-    @pydantic.field_validator('attrs')
-    def valattrs(cls, attrs):
-        if isinstance(attrs, dict): return attrs
-        try:
-            attrs = ipd.dev.safe_eval(attrs)
-        except (NameError, SyntaxError):
-            if isinstance(attrs, str):
-                if not attrs.strip(): return {}
-                attrs = {
-                    x.split('=').split(':')[0].strip(): x.split('=').split(':')[1].strip()
-                    for x in attrs.strip().split(',')
-                }
-        return attrs
-
-    def _copy_with_newid(self):
+    def _copy_with_newid(self) -> typing.Self:
         return self.__class__(**{**self.model_dump(), 'id': uuid.uuid4()})
 
-    def errors(self):
+    def errors(self) -> list[str]:
         return self._errors
 
     def __getitem__(self, k):
@@ -116,7 +147,7 @@ class SpecBase(pydantic.BaseModel):
     def __setitem__(self, k, v):
         return setattr(self, k, v)
 
-    def print_full(self, seenit=None, depth=0):
+    def print_full(self, seenit=None, depth=0) -> None:
         seenit = seenit or set()
         if self.id in seenit: return
         seenit.add(self.id)
@@ -138,12 +169,12 @@ class SpecBase(pydantic.BaseModel):
                 # if p.id not in seenit: p.print_full(seenit, depth)
 
 class UploadOnMutateList(ipd.dev.Instrumented, list):
-    def __init__(self, thing, attr, val):
+    def __init__(self, thing, attr, val, attrkind=''):
         super().__init__(val)
-        self.thing, self.attr = thing, attr
+        self.thing, self.attr, self.attrkind = thing, attr, attrkind
 
     def __on_change__(self, thing):
-        self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self])
+        self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self], self.attrkind)
 
 def make_client_models(clientcls, trimspecs, remote_props):
     spec_models = clientcls.__spec_models__
@@ -175,6 +206,7 @@ def make_client_models(clientcls, trimspecs, remote_props):
             props[propname] = propkind.replace('DB', '').lower()
         for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'client':
+                assert callable(member)
                 body[name] = member
                 delattr(spec, name)
         for attr, field in spec.model_fields.copy().items():
@@ -203,24 +235,24 @@ class ClientModelBase(pydantic.BaseModel):
         super().__init_subclass__(**kw)
         if not remote_props: return
         cls.__remote_props__ = remote_props
-        cls.__sibling_models__[cls.kind()] = cls
+        cls.__sibling_models__[cls.modelkind()] = cls
         for attr, kind in cls.__remote_props__.items():
 
             def make_client_remote_model_property_closure(_cls=cls, _attr=attr, _kind=kind):
                 # print('client prop', cls.__name__, attr, kind)
 
                 def getter(self):
-                    val = self._client.getattr(_cls.kind(), self.id, _attr)
+                    val = self._client.getattr(_cls.modelkind(), self.id, _attr)
                     if val is None:
                         return val
-                        # raise AttributeError(f'kind {_cls.kind()} id {self.id} attr {_attr} is None')
+                        # raise AttributeError(f'kind {_cls.modelkind()} id {self.id} attr {_attr} is None')
                     elif _kind in self.__sibling_models__:
                         attrcls = self.__sibling_models__[_kind]
                     else:
                         raise ValueError(f'unknown type {_kind}')
                     if isinstance(val, list):
                         val = (attrcls(self._client, **kw) for kw in val)
-                        return UploadOnMutateList(self, _attr, val)
+                        return UploadOnMutateList(self, _attr, val, attrkind=_kind)
                     return attrcls(self._client, **val)
 
                 return getter
@@ -243,9 +275,19 @@ class ClientModelBase(pydantic.BaseModel):
     def __setattr__(self, name, val):
         assert name != 'id', 'cant set id via client'
         if self._client and name[0] != '_':
-            result = self._client.setattr(self, name, val)
+            attrkind = self.__remote_props__[name] if name in self.__remote_props__ else ''
+            if attrkind:
+                with contextlib.suppress(AssertionError):
+                    val = [v.id for v in val]
+            result = self._client.setattr(self, name, val, attrkind)
             assert not result, result
-        super().__setattr__(name, val)
+            if name not in self.__remote_props__:
+                super().__setattr__(name, val)
+        else:
+            super().__setattr__(name, val)
+
+    def __eq__(self, other):
+        return self.id == other.id
 
 def client_obj_representer(dumper, obj):
     data = obj.dict()
@@ -261,11 +303,11 @@ yaml.add_representer(ClientModelBase, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
 class ClientBase:
-    def __init_subclass__(cls, backend, **kw):
+    def __init_subclass__(cls, Backend, **kw):
         super().__init_subclass__(**kw)
-        cls.__backend_models__ = backend.__backend_models__
+        cls.__backend_models__ = Backend.__backend_models__
         cls.__spec_models__ = {name: mdl.__spec__ for name, mdl in cls.__backend_models__.items()}
-        cls.__client_models__ = make_client_models(cls, backend.__trimspecs__, backend.__remoteprops__)
+        cls.__client_models__ = make_client_models(cls, Backend.__trimspecs__, Backend.__remoteprops__)
         add_basic_client_model_methods(cls)
 
     def __init__(self, server_addr_or_testclient):
@@ -273,13 +315,17 @@ class ClientBase:
             self.testclient, self.server_addr = None, server_addr_or_testclient
         elif isinstance(server_addr_or_testclient, fastapi.testclient.TestClient):
             self.testclient, self.server_addr = server_addr_or_testclient, None
+        set_client(self)
 
     def getattr(self, thing, id, attr):
         return self.get(f'/getattr/{thing}/{id}/{attr}')
 
-    def setattr(self, thing, attr, val):
+    def setattr(self, thing, attr, val, attrkind=''):
         thingtype = thing.__class__.__name__.lower()
-        return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
+        if attrkind:
+            return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}/{attrkind}', val)
+        else:
+            return self.post(f'/setattr/{thingtype}/{thing.id}/{attr}', val)
 
     def preprocess_get(self, kw):
         return kw
@@ -326,22 +372,29 @@ class ClientBase:
         thingname = thing.__class__.__name__.replace('Spec', '').lower()
         return self.get(f'/remove/{thingname}/{thing.id}')
 
-    def upload(self, thing, _dispatch_on_type=True, **kw):
-        if _dispatch_on_type and hasattr(self, f'upload_{thing.kind()}'):
-            return getattr(self, f'upload_{thing.kind()}')(thing, **kw)
-        thing = thing.to_spec()
-        # print('upload', type(thing), kw)
-        if thing._errors:
-            return thing._errors
-        kind = type(thing).__name__.replace('Spec', '').lower()
-        # ic(kind)
-        result = self.post(f'/create/{kind}', thing, **kw)
+    def upload(self, thing, _dispatch_on_type=True, modelkind=None, **kw):
+        modelkind = modelkind or thing.modelkind()
+        if _dispatch_on_type and hasattr(self, f'upload_{modelkind}'):
+            return getattr(self, f'upload_{modelkind}')(thing, **kw)
+        # thing = thing.to_spec()
+        # if thing._errors: return thing._errors
+        result = self.post(f'/create/{modelkind}', thing, **kw)
         try:
-            newthing = self.get(f'/{kind}', id=result)
-            newthing = self.__client_models__[kind](self, **newthing)
+            newthing = self.get(f'/{modelkind}', id=result)
+            newthing = self.__client_models__[modelkind](self, **newthing)
             return newthing
         except ValueError:
             return result
+
+    def make_spec(self, cls, **kw):
+        if 'exe' in cls.__spec__.model_fields:
+            ic(cls, kw)
+            ic(cls.__spec__.model_fields)
+            # for k, v in kw.copy().items():
+            # if isinstance(v, pydantic.BaseModel) and hasattr(v, 'id'):
+            # kw[f'{k}id'] = v.id
+            # kw[k] = v.id
+        return cls.__spec__(**kw)
 
 def add_basic_client_model_methods(clientcls):
     '''
@@ -353,17 +406,19 @@ def add_basic_client_model_methods(clientcls):
 
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):
             def new(self, **kw) -> str:
-                return self.upload(cls.__spec__(**kw))
+                # return self.upload(kw, modelkind=cls.modelkind())
+                return self.upload(self.make_spec(cls, **kw))
 
             def count(self, **kw) -> int:
                 return self.get(f'/n{name}s', **kw)
 
-            def multi(self, **kw) -> list[cls]:
-                return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
-
             def single(self, **kw) -> Union[cls, None]:
                 result = self.get(f'/{name}', **kw)
                 return cls(self, **result) if result else None
+
+            def multi(self, _names=None, **kw) -> list[cls]:
+                if _names: return [cls(self, **self.get(f'/{name}', name=n)) for n in _names]
+                return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
 
             return single, multi, count, new
 
@@ -377,41 +432,11 @@ def add_basic_client_model_methods(clientcls):
         setattr(clientcls, f'n{_name}s', count)
         setattr(clientcls, f'new{_name}', new)
 
-_ModelRefType = Optional[Union[uuid.UUID, str]]
-
-def _label_field(cls):
-    return cls._label.default if hasattr(cls, '_label') else 'name'
-
-def process_modelref(val: Union[uuid.UUID, str], valinfo, spec_namespace):
-    assert not isinstance(val, int), 'int id is wrong, use uuid now'
-    if hasattr(val, 'id'): return val.id
-    with contextlib.suppress(TypeError, ValueError, AttributeError):
-        return uuid.UUID(val)
-    specname = valinfo.config['title']
-    if not specname.endswith('Spec'): specname += 'Spec'
-    cls = spec_namespace[specname]
-    field = cls.model_fields[valinfo.field_name]
-    typehint = field.annotation
-    assert typehint == _ModelRefType
-    refcls = field.metadata[1]
-    if isinstance(refcls, str):
-        if not refcls.endswith('Spec'): refcls += 'Spec'
-        refcls = spec_namespace[refcls]
-    if isinstance(val, str):
-        client = ipd.ppp.get_hack_fixme_global_client()
-        assert client, 'client unavailable'
-        refclsname = refcls.__name__.replace('Spec', '').lower()
-        if not (ref := getattr(client, refclsname)(**{_label_field(refcls): val}, _ghost=True)):
-            raise ValueError(f'unknown {refcls.__name__[:-4]} named "{val}"')
-        val = ref.id
-    # print(cls, refcls, val)
-    return val
-
 def model_method(func, layer):
     @functools.wraps(func)
     def wrapper(self, *a, **kw):
         err = f'{inspect.signature(func)} only valid in {layer} model, not {self.__class__.__name__}'
-        assert self.layer() == layer, err
+        assert self.modellayer() == layer, err
         func(self, *a, **kw)
 
     wrapper.__layer__ = layer

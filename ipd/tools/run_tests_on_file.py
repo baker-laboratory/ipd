@@ -73,6 +73,15 @@ def test():
     tfile = testfile_of(['foo', 'bar', 'baz'], 'a/foo/b', 'file.py', debug=True)
     assert_that(tfile).is_equal_to('a/foo/tests/b/test_file.py')
 
+    tfile = testfile_of(['foo', 'bar', 'baz'], 'foo/foo', 'file.py', debug=True)
+    assert_that(tfile).is_equal_to('foo/foo/tests/test_file.py')
+
+    tfile = testfile_of(['foo', 'bar', 'baz'], 'a/b/c', 'file.py', debug=True)
+    assert_that(tfile).is_equal_to('tests/a/b/c/test_file.py')
+
+    tfile = testfile_of(['foo', 'bar', 'baz'], '', 'file.py', debug=True)
+    assert_that(tfile).is_equal_to('tests//test_file.py')
+
     print(__file__, 'tests pass')
 
 def rindex(lst, val):
@@ -81,15 +90,22 @@ def rindex(lst, val):
     except ValueError:
         return -1
 
-def testfile_of(projects, path, bname, debug=True, **kw) -> str:
+def testfile_of(projects, path, bname, debug=False, **kw) -> str:
     "find testfile for a given file"
-    root = '/' if path[0] == '/' else ''
+    root = '/' if path and path[0] == '/' else ''
     spath = path.split('/')
     i = max(rindex(spath, proj) for proj in projects)
-    proj = spath[i]
-    assert i, f'no {proj} dir in {path}'
-    pre, post = os.path.join(*spath[:i + 1]), os.path.join(*spath[i + 1:])
-    t = f'{root}{pre}/tests/{post}/test_{bname}'
+    # assert i >= 0, f'no {" or ".join(projects)} dir in {path}'
+    if i < 0:
+        pre, post = '', f'{path}/'
+    else:
+        proj = spath[i]
+        # print(spath[:i + 1], spath[i + 1:])
+        pre, post = spath[:i + 1], spath[i + 1:]
+        pre = f'{os.path.join(*pre)}/' if pre else ''
+        post = f'{os.path.join(*post)}/' if post else ''
+    # print(pre, post)
+    t = f'{root}{pre}tests/{post}test_{bname}'
     if debug or os.path.exists(t): return t
 
 def dispatch(
