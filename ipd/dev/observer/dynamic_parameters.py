@@ -11,10 +11,10 @@ Examples
 A central DynamicParameter manager class creates and contains all parameters and is
 created for a run with 10 designs, 50 diffusion steps, and 40 total rfold steps like so
 
-    >>> params = DynamicParam   eters(ndesign=10, ndiffuse=50, nrfold=40)
+    >>> params = DynamicParameters(ndesign=10, ndiffuse=50, nrfold=40)
 
-New parameters are created wtih factory member functions of DynamicParameter
-with a specified name and will depend on any combination of thes current design,
+New parameters are created with factory member functions of DynamicParameter
+with a specified name and will depend on any combination of the current design,
 diffusion, and/or rfold step. For example:
 
     >>> params.newparam_false_on_steps(name='done_on_first_3_steps', diffuse=[0, 1, 2])
