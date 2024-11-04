@@ -11,14 +11,9 @@ import submitit
 import ipd
 
 class CITool(ipd.tools.IPDTool):
-<<<<<<< HEAD
-    def __init__(self: 'CITool', secretfile: str = '~/.secrets'):
-        if os.path.exists(secretfile): self._add_secrets(secretfile)
-=======
     def __init__(self, secretfile: str = '~/.secrets'):
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
         self.secrets = ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
->>>>>>> origin/main
         self.repos: dict[str, str] = {
             'cifutils': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/cifutils.git',
             'datahub': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/datahub.git',
@@ -37,11 +32,7 @@ class CITool(ipd.tools.IPDTool):
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
                 print(f'Directory {repo_dir} exists. Fetching latest changes...')
-<<<<<<< HEAD
                 ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f')
-=======
-                ipd.dev.run(f'git --git-dir={repo_dir} fetch', echo=True)
->>>>>>> origin/main
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)

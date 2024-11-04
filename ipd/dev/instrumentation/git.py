@@ -3,7 +3,6 @@ import subprocess
 import ipd
 
 def git_status(header=None, footer=None, printit=False):
-    # srcdir = '/projects/services/ppp/lib/ipd'
     srcdir = ipd.proj_dir
     with ipd.dev.cd(srcdir):
         s = ''

@@ -30,7 +30,7 @@ class CrudRun:
         self,
         port,
         dburl=None,
-        datadir='~/.config/ppp/localserver/data',
+        datadir='./datadir',
         loglevel='warning',
         local=False,
         workers=1,

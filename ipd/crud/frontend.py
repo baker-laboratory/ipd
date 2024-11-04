@@ -368,7 +368,7 @@ class ClientBase:
         return response
 
     def remove(self, thing):
-        assert isinstance(thing, ipd.ppp.SpecBase), f'cant remove type {thing.__class__.__name__}'
+        assert isinstance(thing, SpecBase), f'cant remove type {thing.__class__.__name__}'
         thingname = thing.__class__.__name__.replace('Spec', '').lower()
         return self.get(f'/remove/{thingname}/{thing.id}')
 
