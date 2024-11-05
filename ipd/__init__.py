@@ -28,8 +28,13 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 projdir = os.path.realpath(os.path.dirname(__file__))
 
 from icecream import ic
+from collections import defaultdict, namedtuple
+import builtins
 
 ic.configureOutput(includeContext=True)
+builtins.ic = ic
+builtins.defaultdict = defaultdict
+builtins.namedtuple = namedtuple
 
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
@@ -39,7 +44,3 @@ def __getattr__(name):
     if name == 'symmetrize':
         return sym.get_global_symmetry()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
-
-import builtins
-
-builtins.ic = ic

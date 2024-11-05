@@ -1,18 +1,26 @@
 import contextlib
 import functools
 import inspect
+import os
 import sys
 import typing
 import uuid
 from datetime import datetime
+from pathlib import Path
 from typing import Annotated, Optional, Union
 
+import compact_json
 import fastapi
+import httpx
+import mlb
 import pydantic
-import requests
 import yaml
 
 import ipd
+from ipd.dev import str_to_json, tojson
+
+tojson = mlb.profiler(tojson)
+str_to_json = mlb.profiler(str_to_json)
 
 T = typing.TypeVar('T')
 
@@ -28,12 +36,6 @@ def set_client(client: 'ClientBase'):
     global _CLIENT
     _CLIENT = client
 
-def tojson(thing):
-    if isinstance(thing, list): return f'[{",".join(tojson(_) for _ in thing)}]'
-    if hasattr(thing, 'model_dump_json'): return thing.model_dump_json()
-    if hasattr(thing, 'json'): return thing.json()
-    return str(thing)
-
 _ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
 
 class ModelRef(type):
@@ -44,6 +46,7 @@ class ModelRef(type):
         else: T = ipd.dev.classname_or_str(T)
         return Annotated[Annotated[_ModelRefType, validator], T]
 
+@mlb.profiler
 def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
     if hasattr(val, 'id'): return val.id
@@ -112,18 +115,18 @@ class SpecBase(pydantic.BaseModel):
     def to_spec(self) -> 'SpecBase':
         if isinstance(self, SpecBase): return self
         dump = self.model_dump()
-        raise NotImplementedError('need to implement id mapping and field stripping')
         for k, v in dump.copy().items():
             if k != 'id' and k.endswith('id'):
                 del dump[k]
                 dump[k[:-2]] = v
-        return self.__spec__(**dump)
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        # return self.__spec__(**dump)
 
     @classmethod
     def from_spec(cls: T, spec) -> T:
-        raise NotImplementedError('need to implement id mapping and field stripping')
         dump = spec.model_dump()
-        return cls(**dump)
+        raise NotImplementedError('need to implement id mapping and field stripping')
+        # return cls(**dump)
 
     @classmethod
     def modelkind(cls) -> str:
@@ -138,7 +141,7 @@ class SpecBase(pydantic.BaseModel):
     def _copy_with_newid(self) -> typing.Self:
         return self.__class__(**{**self.model_dump(), 'id': uuid.uuid4()})
 
-    def errors(self) -> list[str]:
+    def errors(self) -> str:
         return self._errors
 
     def __getitem__(self, k):
@@ -147,27 +150,96 @@ class SpecBase(pydantic.BaseModel):
     def __setitem__(self, k, v):
         return setattr(self, k, v)
 
-    def print_full(self, seenit=None, depth=0) -> None:
+    @mlb.profiler
+    def info(
+        self,
+        recurse=1,
+        showfields='*',
+        recursefields='*',
+        hidefields='datecreated ghost gpus protocols path version kind required guaranteed results',
+        seenit=None,
+        parent=None,
+        shorten=3,
+    ) -> dict:
+        if recurse < 0: return {}
+        showall = '*' in showfields
+        recurseall = '*' in recursefields
+        if isinstance(recursefields, str): recursefields = set(recursefields.split())
+        if isinstance(hidefields, str): hidefields = set(hidefields.split())
         seenit = seenit or set()
-        if self.id in seenit: return
-        seenit.add(self.id)
-        fields = list(self.model_fields)
-        depth += 1
-        if hasattr(self, '__remote_props__'): fields += self.__remote_props__
-        print(self.__class__.__name__)
-        for field in sorted(fields):
-            prop = getattr(self, field)
-            if not prop: continue
-            print(' ' * depth * 4, field, '=', end=' ')
-            if isinstance(prop, (tuple, list)):
-                print('multiple:')
-            elif hasattr(prop, 'print_full'):
-                prop.print_full(seenit, depth)
-            else:
-                print(prop)
-                # for p in prop:
-                # if p.id not in seenit: p.print_full(seenit, depth)
+        # if self.id in seenit: return {}
+        fields = set(self.model_fields)
+        if hasattr(self, '__remote_props__'): fields |= set(self.__remote_props__)
+        sfields = fields if showall else fields.intersection(showfields)
+        rfields = fields if recurseall else fields.intersection(recursefields)
+        # print('INFO', self.__class__.__name__, recurseall, showall, len(fields), len(sfields), len(rfields))
+        kw = dict(recurse=recurse - 1,
+                  showfields=showfields,
+                  recursefields=recursefields,
+                  hidefields=hidefields,
+                  seenit=seenit | {self.id},
+                  parent=self.modelkind(),
+                  shorten=shorten)
+        d = dict(name=self.name) if hasattr(self, 'name') else {}
+        for attr in sorted(sfields - {'name', 'user'} - hidefields):
+            if attr.endswith('id'): continue
+            if parent and parent in attr: continue
+            d[attr] = getattr(self, attr)
+        for attr in sorted(rfields - {'name', 'user'} - hidefields):
+            if attr.endswith('id'): continue
+            if parent and parent in attr: continue
+            prop = getattr(self, attr)
+            if attr in rfields and hasattr(prop, 'info'):
+                d[attr] = prop.info(**kw)
+                # print(attr, d[attr])
+            elif isinstance(prop, (tuple, list)):
+                if len(prop) and hasattr(prop[0], 'info'): d[attr] = [p.info(**kw) for p in prop]
+                else: d[attr] = prop
+        for i in range(shorten):
+            for k, v in d.copy().items():
+                if isinstance(v, Path): print(k, v)
+                if not v: del d[k]
+                elif isinstance(v, Path): d[k] = str(v)
+                elif not hasattr(v, '__len__'): continue
+                elif len(v) == 0: del d[k]
+                elif len(v) == 1 and isinstance(v, list): d[k] = next(iter(v))
+                elif len(v) == 1 and isinstance(v, dict): d[k] = next(iter(v.values()))
+                elif isinstance(v, list):
+                    for j, u in enumerate(v):
+                        if len(u) == 0: del v[j]
+                        elif isinstance(u, Path): v[j] = str(u)
+                        elif len(u) == 1 and isinstance(u, list): v[j] = next(iter(u))
+                        elif len(u) == 1 and isinstance(u, dict): v[j] = next(iter(u.values()))
 
+        # d = {self.__class__.__name__: d}
+
+        return d
+
+    @mlb.profiler
+    def str_compact(self, linelen=120, strip_labels='invars outvars name'.split(), **kw):
+        formatter = compact_json.Formatter()
+        formatter.indent_spaces = 2
+        formatter.max_inline_complexity = 10
+        formatter.max_inline_length = linelen
+        val = self.info(**kw)
+        # rich.print(val)
+        text = formatter.serialize(val).replace('"', '')
+        for label in strip_labels:
+            text = text.replace(f'{label}: ', '')
+        text = f'{self.__class__.__name__}{text}'
+        compact = ['']
+        for i in range(6, 1, -1):
+            text = text.replace(' ' * i, ' ')
+        for line in text.split(os.linesep):
+            if len(compact[-1]) + len(line) < linelen: compact[-1] += line.lstrip()
+            else: compact.append('    ' + line)
+        compact = os.linesep.join(compact)
+        return compact
+
+    def print_compact(self, **kw):
+        print(self.str_compact(**kw), flush=True)
+
+@mlb.profiler
 class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __init__(self, thing, attr, val, attrkind=''):
         super().__init__(val)
@@ -176,6 +248,7 @@ class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __on_change__(self, thing):
         self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self], self.attrkind)
 
+@mlb.profiler
 def make_client_models(clientcls, trimspecs, remote_props):
     spec_models = clientcls.__spec_models__
     backend_models = clientcls.__backend_models__
@@ -185,13 +258,13 @@ def make_client_models(clientcls, trimspecs, remote_props):
         clsdb = backend_models[kind]
         clsname = spec.__name__[:-4]
         body, props = {'__annotations__': {}}, {}
-        for propname in remote_props[kind]:
-            if propname in clsdb.model_fields:
-                proptype = clsdb.model_fields[propname].annotation
-                print(spec, propname)
+        for attr in remote_props[kind]:
+            if attr in clsdb.model_fields:
+                proptype = clsdb.model_fields[attr].annotation
+                print(spec, attr, proptype)
                 assert 0
-            elif propname in clsdb.__annotations__:
-                proptype = typing.get_args(clsdb.__annotations__[propname])[0]
+            elif attr in clsdb.__annotations__:
+                proptype = typing.get_args(clsdb.__annotations__[attr])[0]
             else:
                 continue
             if hasattr(proptype, '__origin__'):
@@ -203,7 +276,7 @@ def make_client_models(clientcls, trimspecs, remote_props):
             if hasattr(propkind, '__forward_arg__'):
                 propkind = propkind.__forward_arg__
             if not isinstance(propkind, str): propkind = propkind.__name__
-            props[propname] = propkind.replace('DB', '').lower()
+            props[attr] = propkind.replace('DB', '').lower()
         for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'client':
                 assert callable(member)
@@ -231,6 +304,7 @@ class ClientModelBase(pydantic.BaseModel):
     _client: 'ClientBase' = None
     __sibling_models__: dict[str, 'ClientModelBase'] = {}
 
+    @mlb.profiler
     def __init_subclass__(cls, remote_props=(), siblings=(), **kw):
         super().__init_subclass__(**kw)
         if not remote_props: return
@@ -272,6 +346,7 @@ class ClientModelBase(pydantic.BaseModel):
         'noop, as validation should have happened at Spec stage'
         return self
 
+    @mlb.profiler
     def __setattr__(self, name, val):
         assert name != 'id', 'cant set id via client'
         if self._client and name[0] != '_':
@@ -302,6 +377,7 @@ def client_obj_constructor(loader, node):
 yaml.add_representer(ClientModelBase, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
+@mlb.profiler
 class ClientBase:
     def __init_subclass__(cls, Backend, **kw):
         super().__init_subclass__(**kw)
@@ -318,7 +394,9 @@ class ClientBase:
         set_client(self)
 
     def getattr(self, thing, id, attr):
-        return self.get(f'/getattr/{thing}/{id}/{attr}')
+        result = self.get(f'/getattr/{thing}/{id}/{attr}')
+        # ic(self, thing, attr, result)
+        return result
 
     def setattr(self, thing, attr, val, attrkind=''):
         thingtype = thing.__class__.__name__.lower()
@@ -338,23 +416,23 @@ class ClientBase:
             response = self.testclient.get(f'/api{url}')
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = requests.get(url)
+            response = httpx.get(url)
         if response.status_code != 200:
             reason = response.reason if hasattr(response, 'reason') else '???'
             raise ClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
                               f'REASON:   {reason}\n    CONTENT:  {response.content.decode()}')
-        return response.json()
+        return ipd.dev.str_to_json(response.content.decode())
 
     def post(self, url, thing, **kw):
         query = '&'.join([f'{k}={v}' for k, v in kw.items()])
         url = f'{url}?{query}' if query else url
-        body = tojson(thing)
+        body = ipd.dev.tojson(thing)
         if self.testclient:
             url = f'/api{url}'
             response = self.testclient.post(url, content=body)
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = requests.post(url, body)
+            response = httpx.post(url, data=body)
         # ic(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
@@ -362,7 +440,7 @@ class ClientBase:
             raise ClientError(f'POST failed "{url}"\n    BODY:     {body}\n    '
                               f'RESPONSE: {response}\n    REASON:   {reason}\n    '
                               f'CONTENT:  {response.content.decode()}')
-        response = response.json()
+        response = ipd.dev.str_to_json(response.content.decode())
         with contextlib.suppress((TypeError, ValueError)):
             return uuid.UUID(response)
         return response
@@ -374,6 +452,8 @@ class ClientBase:
 
     def upload(self, thing, _dispatch_on_type=True, modelkind=None, **kw):
         modelkind = modelkind or thing.modelkind()
+        if not isinstance(thing, SpecBase):
+            thing, remote, extra = self.make_spec(modelkind, **thing)
         if _dispatch_on_type and hasattr(self, f'upload_{modelkind}'):
             return getattr(self, f'upload_{modelkind}')(thing, **kw)
         # thing = thing.to_spec()
@@ -382,19 +462,34 @@ class ClientBase:
         try:
             newthing = self.get(f'/{modelkind}', id=result)
             newthing = self.__client_models__[modelkind](self, **newthing)
+            for r in remote:
+                setattr(newthing, r, thing[r])
             return newthing
         except ValueError:
             return result
 
-    def make_spec(self, cls, **kw):
-        if 'exe' in cls.__spec__.model_fields:
-            ic(cls, kw)
-            ic(cls.__spec__.model_fields)
-            # for k, v in kw.copy().items():
-            # if isinstance(v, pydantic.BaseModel) and hasattr(v, 'id'):
-            # kw[f'{k}id'] = v.id
-            # kw[k] = v.id
-        return cls.__spec__(**kw)
+    def getorupload_by_name(self, thing, modelkind=None, **kw):
+        modelkind = modelkind or thing.modelkind()
+        if 'name' in thing:
+            # ic(thing)
+            if existing := getattr(self, f'{modelkind}s')(name=thing['name']):
+                # ic(len(existing))
+                assert len(existing) == 1
+                return existing[0]
+        return self.upload(thing, modelkind=modelkind, **kw)
+
+    def make_spec(self, modelkind, **kw):
+        cls = self.__spec_models__[modelkind]
+        remoteprops = set(self.__client_models__[modelkind].__remote_props__)
+        remote = {k: kw[k] for k in set(kw) & set(remoteprops)}
+        args = {k: kw[k] for k in (set(kw) & set(cls.model_fields)) - remoteprops}
+        extra = {k: kw[k] for k in set(kw) - set(args) - remoteprops}
+        for k, v in remote.copy().items():
+            if isinstance(v, ClientModelBase):
+                args[k] = v.id
+                del remote[k]
+        # ic(cls, args, remote, extra)
+        return cls.__spec__(**args), remote, extra
 
 def add_basic_client_model_methods(clientcls):
     '''
@@ -405,32 +500,46 @@ def add_basic_client_model_methods(clientcls):
     for _name, _cls in clientcls.__client_models__.items():
 
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):
-            def new(self, **kw) -> str:
+            def new(self, **kw) -> cls:
                 # return self.upload(kw, modelkind=cls.modelkind())
-                return self.upload(self.make_spec(cls, **kw))
+                return self.upload(kw, modelkind=cls.modelkind())
 
             def count(self, **kw) -> int:
                 return self.get(f'/n{name}s', **kw)
 
-            def single(self, **kw) -> Union[cls, None]:
+            def single(self, **kw) -> cls:
                 result = self.get(f'/{name}', **kw)
                 return cls(self, **result) if result else None
+
+            def singleornone(self, **kw) -> Union[cls, None]:
+                result = self.get(f'/{name}s', **kw)
+                if not result: return None
+                if len(result) > 1: raise ClientError(f'singleornone {len(results)}>1 rslts {name} {cls} {kw}')
+                return cls(self, **result[0]) if result else None
 
             def multi(self, _names=None, **kw) -> list[cls]:
                 if _names: return [cls(self, **self.get(f'/{name}', name=n)) for n in _names]
                 return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
 
-            return single, multi, count, new
+            def getornew(self, **kw) -> cls:
+                if thing := singleornone(self, **kw):
+                    for k, v in kw.items():
+                        assert thing[k] == v
+                    return thing
+                return new(self, **kw)
 
-        single, multi, count, new = make_basic_client_model_methods_closure()
-        single.__qualname__ = f'{clientcls.__name__}.{_name}'
-        multi.__qualname__ = f'{clientcls.__name__}.{_name}s'
-        count.__qualname__ = f'{clientcls.__name__}.n{_name}s'
-        new.__qualname__ = f'{clientcls.__name__}.new{_name}'
-        setattr(clientcls, _name, single)
-        setattr(clientcls, f'{_name}s', multi)
-        setattr(clientcls, f'n{_name}s', count)
-        setattr(clientcls, f'new{_name}', new)
+            return {
+                _name: single,
+                f'{_name}ornone': singleornone,
+                f'{_name}s': multi,
+                f'n{_name}s': count,
+                f'new{_name}': new,
+                f'getornew{_name}': getornew
+            }
+
+        for attr, fn in make_basic_client_model_methods_closure().items():
+            fn.__qualname__ = f'{clientcls.__name__}.{attr}'
+            setattr(clientcls, attr, mlb.profiler(fn))
 
 def model_method(func, layer):
     @functools.wraps(func)

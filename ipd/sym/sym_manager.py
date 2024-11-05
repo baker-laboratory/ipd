@@ -124,7 +124,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         elif thing.kind.shapekind == ShapeKind.SCALAR:
             result = thing.orig
         else:
-            result = thing.reconstruct(self.apply_sym_slices(thing, **kw))
+            if th.is_tensor(thing.orig) and not thing.orig.shape[-1]: result = thing.orig
+            else: result = thing.reconstruct(self.apply_sym_slices(thing, **kw))
 
         with contextlib.suppress(AttributeError):
             result.__HAS_BEEN_SYMMETRIZED = True

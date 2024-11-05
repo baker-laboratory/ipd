@@ -8,6 +8,7 @@ from ipd.dev.safe_eval import *
 from ipd.dev.shell import *
 from ipd.dev.types import *
 from ipd.dev.lazy_import import *
+from ipd.dev.serialization import *
 from ipd.dev.state import *
 from ipd.dev.storage import *
 from ipd.dev.observer import *

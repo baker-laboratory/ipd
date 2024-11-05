@@ -9,7 +9,6 @@ dependencies = [
     'assertpy',
     'colorlog',
     'debugpy',
-    # 'eliot',
     # 'eliot-tree',
     'gitpython',
     'hydra-core',
@@ -45,12 +44,11 @@ dependencies = [
     'yapf',
 ]
 [project.optional-dependencies]
-ppp = [
+crud = [
     'fastapi[standard]',
     'psycopg2',
     'sqlmodel',
     'uvicorn[standard]',
-
 ]
 
 [project.scripts]

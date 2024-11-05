@@ -9,7 +9,7 @@ import pydantic_core
 from hypothesis import strategies as st
 
 class PydanticStrats:
-    def __init__(self, overrides=None, type_mapping=None):
+    def __init__(self, overrides=None, type_mapping=None, exclude_attrs=None):
         self.overrides = overrides or {}
         # self.urls_strat = st.text().filter(str.isidentifier).map(lambda s: f'https://example.com/{s}.git').map(
         # pydantic.AnyUrl)
@@ -32,6 +32,7 @@ class PydanticStrats:
             # pydantic_core._pydantic_core.Url: urls_strat,
             # Path: st.text().map(Path),
         }
+        self.exclude_attrs = exclude_attrs or set()
         self.type_mapping.update(type_mapping or {})
 
     def __call__(self, Model: Type[pydantic.BaseModel]) -> st.SearchStrategy[dict[str, Any]]:
@@ -55,6 +56,7 @@ class PydanticStrats:
         if Ts == [uuid.UUID, str]: return uuid.UUID
 
     def get_strategy(self, Model, attr, T):
+        if attr in self.exclude_attrs: return None
         if None is not (strat := self.overrides.get(f'*.{attr}')): return strat
         if None is not (strat := self.overrides.get(f'{Model.__name__}.{attr}')): return strat
         orig, args = getattr(T, '__origin__', None), get_args(T)
