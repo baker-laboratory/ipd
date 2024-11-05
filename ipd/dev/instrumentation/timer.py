@@ -1,11 +1,9 @@
-import _testcapi
 import collections
 import functools
 import inspect
 import logging
 import os
 import statistics
-import sys
 import time
 
 log = logging.getLogger(__name__)
@@ -214,29 +212,31 @@ def checkpoint(kw,
         fulllabel += f":{label}"
     t.checkpoint(fulllabel, autolabel=label is None)
 
-def timed_func(func, *, clsname=None, label=None):
+def timed_func(func, *, label=None):
     if '__file__' in func.__globals__:
         filen = os.path.basename(func.__globals__["__file__"])
     else:
         filen = '???'
-    funcn = func.__name__
+    funcn = func.__qualname__
 
-    @functools.wraps(func)
-    def wrapper(*a, **kw):
-        kwarg = dict(label=label, filename=filen, clsname=clsname, funcname=funcn)
-        checkpoint(kw, funcbegin=True, **kwarg)
-        # print(func, inspect.ismethod(func), a)
-        # if inspect.ismethod(func): a = a[1:]
-        # try/except removes this decorator from stack traces
-        try:
+    if inspect.iscoroutinefunction(func):
+
+        @functools.wraps(func)
+        async def wrapper(*a, **kw):
+            kwarg = dict(label=label, filename=filen, funcname=funcn)
+            checkpoint(kw, funcbegin=True, **kwarg)
+            val = await func(*a, **kw)
+            checkpoint(kw, **kwarg)
+            return val
+    else:
+
+        @functools.wraps(func)
+        def wrapper(*a, **kw):
+            kwarg = dict(label=label, filename=filen, funcname=funcn)
+            checkpoint(kw, funcbegin=True, **kwarg)
             val = func(*a, **kw)
-        except:
-            tp, exc, tb = sys.exc_info()
-            _testcapi.set_exc_info(tp, exc, tb.tb_next)
-            del tp, exc, tb
-            raise
-        checkpoint(kw, **kwarg)
-        return val
+            checkpoint(kw, **kwarg)
+            return val
 
     return wrapper
 
@@ -245,7 +245,7 @@ def timed_class(cls, *, label=None):
     for k in cls.__dict__:
         v = getattr(cls, k)
         if callable(v) and not inspect.isclass(v):  # skip inner classes
-            setattr(cls, k, timed_func(v, clsname=cls.__name__))
+            setattr(cls, k, timed_func(v))
 
     return cls
 

@@ -1,18 +1,18 @@
 import asyncio
 import contextlib
-import sys
 import operator
+import sys
 import traceback
 import typing
-from typing import Optional
 from collections import defaultdict
 from datetime import datetime
+from typing import Optional
 from uuid import UUID, uuid4
+
 import fastapi
 import pydantic
-import sqlalchemy
 import sqlmodel.pool
-from rich import print
+import sqlalchemy
 from sqlalchemy.orm import registry
 from sqlmodel.main import RelationshipInfo
 
@@ -28,9 +28,9 @@ backend_type_map = {
 
 Props = list[str]
 Attrs = dict[str, typing.Union[str, int, float]]
-props_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
-attrs_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
-sqlmodel_field_map = {Props: props_default, Attrs: attrs_default}
+list_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=list)
+dict_default = lambda: sqlmodel.Field(sa_column=sqlalchemy.Column(sqlalchemy.JSON), default_factory=dict)
+sqlmodel_field_map = {Props: list_default, Attrs: dict_default}
 pydantic_field_args = ('default default_factory alias alias_priority validation_alias serialization_alias '
                        'title field_title_generator description examples exclude discriminator deprecated '
                        'json_schema_extra frozen validate_default repr init init_var kw_only').split()
@@ -52,6 +52,7 @@ def allfields(model):
             fields |= base.model_fields
     return fields
 
+@ipd.dev.timed
 def copy_model_cls(cls, clsname, renamed_attrs) -> type[pydantic.BaseModel]:
     fields, funcs = {}, {}
     assert all(not hasattr(cls, newattr) for newattr in renamed_attrs.values())
@@ -69,6 +70,7 @@ def copy_model_cls(cls, clsname, renamed_attrs) -> type[pydantic.BaseModel]:
 class BackendError(Exception):
     pass
 
+@ipd.dev.timed
 def make_backend_model_base(SQL):
     class BackendModelBase(SQL, SpecBase):
         id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
@@ -101,11 +103,13 @@ def process_specs(specs):
     # assert 0
     return specs
 
+@ipd.dev.timed
 class BackendBase:
     mountpoint = 'ipd'
 
     def __init_subclass__(cls, models: dict[str, SpecBase], SQL=sqlmodel.SQLModel, **kw):
         super().__init_subclass__(**kw)
+        cls.__sqlmodel__ = SQL
         cls._BackendModelBase = make_backend_model_base(SQL)
         if isinstance(models, list): models = {m.modelkind(): m for m in models}
         cls.__spec_models__ = process_specs(models)
@@ -158,7 +162,7 @@ class BackendBase:
         pass
 
     def initdb(self):
-        sqlmodel.SQLModel.metadata.create_all(self.engine)
+        self.__sqlmodel__.metadata.create_all(self.engine)
 
     def init_routes(self):
         pass
@@ -178,38 +182,44 @@ class BackendBase:
         return fastapi.responses.JSONResponse(content=exc_str,
                                               status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-    async def remove(self, kind, id):
+    def remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
         thing.ghost = True
         self.session.add(thing)
         self.session.commit()
         # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
 
-    async def actually_remove(self, kind, id):
+    def actually_remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
         thing.clear(self)
         self.session.delete(thing)
         self.session.commit()
 
-    async def getattr(self, kind: str, id: UUID, attr: str):
+    def getattr(self, kind: str, id: UUID, attr: str):
         cls = self.__backend_models__[kind]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
         thingattr = getattr(thing, attr)
-        # if thingattr is None: raise AttributeError(f'db {cls} attr {attr} is None in instance {repr(thing)}')
+        if hasattr(thingattr, 'modelkind'):
+            table = self.__sqlmodel__.metadata.tables[f'db{thingattr.modelkind()}']
+            for k, v in thingattr.model_fields.items():
+                satype = table.columns[k].type.__class__.__name__
+                if satype == 'JSON' and isinstance(thingattr[k], str):
+                    thingattr[k] = ipd.dev.str_to_json(thingattr[k])
         return thingattr
 
-    async def setattr(self, request: fastapi.Request, kind: str, id: UUID, attr: str, attrkind: str = ''):
+    def setattr(self, request: fastapi.Request, kind: str, id: UUID, attr: str, attrkind: str = ''):
         cls = self.__backend_models__[kind]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')
-        body = (await request.body()).decode()
+        body = asyncio.run(request.body()).decode()
+        # body = asyncio.run(request.body()).decode()
         with contextlib.suppress((AttributeError, ValueError)):
             body = UUID(body)
         if attrkind:
             body = [] if body == '[]' else body[1:-1].split(',')
             body = [UUID(id) for id in body]
-            body = [await coro for coro in list(map(getattr(self, f'i{attrkind}'), body))]
+            body = [coro for coro in list(map(getattr(self, f'i{attrkind}'), body))]
             setattr(thing, attr, body)
         else:
             if attr in thing.model_fields:
@@ -220,7 +230,7 @@ class BackendBase:
         self.session.commit()
         # ic(thing, attr, body, getattr(thing, attr))
 
-    async def select(self, cls, _count: bool = False, _single=False, user=None, _ghost=False, **kw):
+    def select(self, cls, _count: bool = False, _single=False, user=None, _ghost=False, **kw):
         # print('select', cls, kw)
         if isinstance(cls, str): cls = self.__backend_models__[cls]
         selection = sqlalchemy.func.count(cls.id) if _count else cls
@@ -251,7 +261,7 @@ class BackendBase:
         if hasattr(x, 'enddate') and isinstance(x.enddate, str):
             x.enddate = datetime.strptime(x.enddate, ipd.DATETIME_FORMAT)
 
-    async def validate_and_add_to_db(self, thing) -> Optional[str]:
+    def validate_and_add_to_db(self, thing) -> Optional[str]:
         self.fix_date(thing)
         thing = thing.validated_with_backend(self)
         self.session.add(thing)
@@ -262,7 +272,7 @@ class BackendBase:
             self.session.rollback()
             return self.handle_error(e)
 
-    async def fields_name_to_id(self, dbcls: pydantic.BaseModel, modeldict: dict):
+    def fields_name_to_id(self, dbcls: pydantic.BaseModel, modeldict: dict):
         if not isinstance(modeldict, dict): return modeldict
         for k, v in modeldict.copy().items():
             if not isinstance(v, str): continue
@@ -272,7 +282,7 @@ class BackendBase:
             # if ipd.dev.todatetime(v): continue
             anno = typing.get_args(dbcls.__annotations__[k])[0].__forward_arg__
             kind = anno[2:].lower()
-            thing = await getattr(self, kind)(dict(name=v))
+            thing = getattr(self, kind)(dict(name=v))
             modeldict[f'{k}id'] = thing.id
             del modeldict[k]
             # ic(k, v, thing.id)
@@ -296,13 +306,13 @@ def add_basic_backend_model_methods(backendcls):
     for _name, _dbcls in backendcls.__backend_models__.items():
 
         def make_basic_backend_model_methods_closure(name=_name, dbcls=_dbcls):
-            async def create(self, model: dict) -> typing.Union[str, int]:
+            def create(self, model: dict) -> typing.Union[str, int]:
                 # model = dbcls.parse_obj(model)
                 assert isinstance(self, BackendBase)
                 model = fields_uuidstr_to_id(model)
-                model = await self.fields_name_to_id(dbcls, model)
+                model = self.fields_name_to_id(dbcls, model)
                 if isinstance(model, dict): model = dbcls(**model)
-                return await self.validate_and_add_to_db(model)
+                return self.validate_and_add_to_db(model)
 
             def new(self, **kw) -> typing.Union[str, int]:
                 assert isinstance(self, BackendBase)
@@ -311,74 +321,91 @@ def add_basic_backend_model_methods(backendcls):
                         kw[f'{k}id'] = v.id
                         del kw[k]
                 model = dbcls(**kw)
-                newid = asyncio.run(getattr(self, f'create_{name}')(model))
+                newid = (getattr(self, f'create_{name}')(model))
                 if self.iserror(newid): return newid
-                return asyncio.run(getattr(self, f'i{name}')(newid, _ghost=True))
+                return (getattr(self, f'i{name}')(newid, _ghost=True))
 
-            async def count(self, kw=None, request: fastapi.Request = None, response_model=int):
+            def count(self, kw=None, request: fastapi.Request = None, response_model=int):
                 # print('route', name, dbcls, kw, request, flush=True)
                 assert isinstance(self, BackendBase)
-                if request: return await self.select(dbcls, _count=True, **request.query_params)
-                elif kw: return await self.select(dbcls, _count=True, **kw)
-                else: return await self.select(dbcls, _count=True)
+                if request: return self.select(dbcls, _count=True, **request.query_params)
+                elif kw: return self.select(dbcls, _count=True, **kw)
+                else: return self.select(dbcls, _count=True)
 
-            async def single(self, kw=None, request: fastapi.Request = None, response_model=Optional[dbcls]):
+            def single(self, kw=None, request: fastapi.Request = None, response_model=Optional[dbcls]):
                 # print('route', name, dbcls, kw, request, flush=True)
                 assert isinstance(self, BackendBase)
-                if request: return await self.select(dbcls, _single=True, **request.query_params)
-                elif kw: return await self.select(dbcls, _single=True, **kw)
-                else: return await self.select(dbcls, _single=True)
+                if request: return self.select(dbcls, _single=True, **request.query_params)
+                elif kw: return self.select(dbcls, _single=True, **kw)
+                else: return self.select(dbcls, _single=True)
 
-            async def multi(self, kw=None, request: fastapi.Request = None, response_model=list[dbcls]):
+            def multi(self, kw=None, request: fastapi.Request = None, response_model=list[dbcls]):
                 # print('route', name, dbcls, kw, request, flush=True)
+                # ipd.dev.global_timer.checkpoint('multi')
                 assert isinstance(self, BackendBase)
-                if request: return await self.select(dbcls, **request.query_params)
-                elif isinstance(kw, list): return [await single(self, dict(name=n)) for n in kw]
-                elif kw: return await self.select(dbcls, **kw)
-                else: return await self.select(dbcls)
+                if request: return self.select(dbcls, **request.query_params)
+                elif isinstance(kw, list): return [single(self, dict(name=n)) for n in kw]
+                elif kw: return self.select(dbcls, **kw)
+                else: return self.select(dbcls)
 
-            async def bcount(self, count=count, **kw) -> int:
+            def bcount(self, count=count, **kw) -> int:
                 assert isinstance(self, BackendBase)
-                return await count(self, kw)
+                return count(self, kw)
 
-            async def bmulti(self, multi=multi, **kw) -> list[dbcls]:
+            def bmulti(self, multi=multi, **kw) -> list[dbcls]:
                 assert isinstance(self, BackendBase)
-                return await multi(self, kw)
+                return multi(self, kw)
 
-            async def bsingle(self, single=single, **kw) -> Optional[dbcls]:
+            def bsingle(self, single=single, **kw) -> Optional[dbcls]:
                 assert isinstance(self, BackendBase)
-                return await single(self, kw)
+                return single(self, kw)
 
-            async def singleid(self, id: str, **kw) -> typing.Union[dbcls, None]:
+            def singleid(self, id: str, **kw) -> typing.Union[dbcls, None]:
                 assert isinstance(self, BackendBase)
                 assert id
-                return await self.select(dbcls, id=id, _single=True, **kw)
+                return self.select(dbcls, id=id, _single=True, **kw)
 
-            return multi, single, singleid, count, create, new, bcount, bmulti, bsingle
+            return create, {
+                f'i{_name}': singleid,
+                _name: single,
+                f'{_name}s': multi,
+                f'n{_name}s': count,
+                f'b{_name}': bsingle,
+                f'b{_name}s': bmulti,
+                f'bn{_name}s': bcount,
+                f'new{_name}': new,
+            }
+            # return multi, single, singleid, count, create, new, bcount, bmulti, bsingle
 
-        funcs = make_basic_backend_model_methods_closure()
-        multi, single, singleid, count, create, new, bcount, bmulti, bsingle = funcs
-        singleid.__qualname__ = f'{backendcls.__name__}.i{_name}'
-        single.__qualname__ = f'{backendcls.__name__}.{_name}'
-        multi.__qualname__ = f'{backendcls.__name__}.{_name}s'
-        count.__qualname__ = f'{backendcls.__name__}.n{_name}s'
-        bsingle.__qualname__ = f'{backendcls.__name__}.b{_name}'
-        bmulti.__qualname__ = f'{backendcls.__name__}.b{_name}s'
-        bcount.__qualname__ = f'{backendcls.__name__}.bn{_name}s'
-        new.__qualname__ = f'{backendcls.__name__}.new{_name}'
+        create, funcs = make_basic_backend_model_methods_closure()
+        for attr, fn in funcs.items():
+            fn.__qualname__ = f'{backendcls.__name__}.{attr}'
+            # setattr(backendcls, attr, fn)
+            setattr(backendcls, attr, ipd.dev.timed(fn))
+
+        # funcs = make_basic_backend_model_methods_closure()
+        # multi, single, singleid, count, create, new, bcount, bmulti, bsingle = funcs
+        # singleid.__qualname__ = f'{backendcls.__name__}.i{_name}'
+        # single.__qualname__ = f'{backendcls.__name__}.{_name}'
+        # multi.__qualname__ = f'{backendcls.__name__}.{_name}s'
+        # count.__qualname__ = f'{backendcls.__name__}.n{_name}s'
+        # bsingle.__qualname__ = f'{backendcls.__name__}.b{_name}'
+        # bmulti.__qualname__ = f'{backendcls.__name__}.b{_name}s'
+        # bcount.__qualname__ = f'{backendcls.__name__}.bn{_name}s'
+        # new.__qualname__ = f'{backendcls.__name__}.new{_name}'
         create.__qualname__ = f'{backendcls.__name__}.create_{_name}'
-        setattr(backendcls, f'i{_name}', singleid)
-        setattr(backendcls, _name, single)
-        setattr(backendcls, f'{_name}s', multi)
-        setattr(backendcls, f'n{_name}s', count)
-        setattr(backendcls, f'b{_name}', bsingle)
-        setattr(backendcls, f'b{_name}s', bmulti)
-        setattr(backendcls, f'bn{_name}s', bcount)
-        setattr(backendcls, f'new{_name}', new)
+        # setattr(backendcls, f'i{_name}', singleid)
+        # setattr(backendcls, _name, single)
+        # setattr(backendcls, f'{_name}s', multi)
+        # setattr(backendcls, f'n{_name}s', count)
+        # setattr(backendcls, f'b{_name}', bsingle)
+        # setattr(backendcls, f'b{_name}s', bmulti)
+        # setattr(backendcls, f'bn{_name}s', bcount)
+        # setattr(backendcls, f'new{_name}', new)
         if not hasattr(backendcls, f'create_{_name}'):
             setattr(backendcls, f'create_{_name}', create)
 
-def process_list_type(kind, spec, attr, annotation, links, specbyname, models, rmfields):
+def check_list_T(kind, spec, attr, annotation, links, specbyname, models, rmfields):
     if isinstance(annotation, tuple):
         args = annotation
     else:
@@ -393,6 +420,8 @@ def process_list_type(kind, spec, attr, annotation, links, specbyname, models, r
         if not isinstance(refname, str): refname = refname.__name__
         links[tuple(sorted([spec.__name__, refname])), link].append((kind, attr, refname))
         rmfields[kind].append(attr)
+        return True
+    return False
 
 def field_is_ref(field):
     return (len(field.metadata) == 2 and isinstance(field.metadata[0], pydantic.BeforeValidator))
@@ -412,6 +441,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
     body = {kind: {} for kind in models}
     anno = {kind: {} for kind in models}
     rmfields = {kind: [] for kind in models}
+    keepattrs = {kind: set() for kind in models}
     links, linktables = defaultdict(list), {}
     annospec = {kind: ipd.dev.get_all_annotations(spec) for kind, spec in models.items()}
     specbyname = {cls.__name__: cls for cls in models.values()}
@@ -422,26 +452,26 @@ def make_backend_models(backendcls, SQL=None, debug=False):
     for kind, spec in models.items():
         assert kind == spec.__name__[:-4].lower()
         # print('make_backend_models', kind, spec.__name__)
-        if hasattr(spec, 'props'):
-            body[kind]['props'] = props_default()
-            anno[kind]['props'] = Props
-        if hasattr(spec, 'attrs'):
-            body[kind]['attrs'] = attrs_default()
-            anno[kind]['attrs'] = Attrs
         for attr, field in spec.model_fields.items():
             if attr == 'name':
-                body[kind][attr] = sqlmodel.Field(index=True)
+                body[kind][attr] = sqlmodel.Field(index=True, sa_column_kwargs={'unique': True})
                 anno[kind][attr] = str
-            if field.metadata == ['UNIQUE']:
-                body[kind][attr] = sqlmodel.Field(sa_column_kwargs={'unique': True})
+            elif hasattr(spec, 'props'):
+                body[kind]['props'] = list_default()
+                anno[kind]['props'] = Props
+            elif hasattr(spec, 'attrs'):
+                body[kind]['attrs'] = dict_default()
+                anno[kind]['attrs'] = Attrs
                 anno[kind][attr] = field.annotation
+            elif field.metadata == ['UNIQUE']:
+                body[kind][attr] = sqlmodel.Field(sa_column_kwargs={'unique': True})
             elif field_is_ref(field):
                 # ModelRefs id
                 # assert attr.endswith('id'), f'{spec.__name__} single ModelRef attr "{attr}" doesnt end wtih id'
                 if field_is_ref_to_list(field):
                     meta = typing.get_args(field.metadata[1][0])[0], field.metadata[1][1]
                     # print('Ref list', kind, attr, meta)
-                    process_list_type(kind, spec, attr, meta, links, specbyname, models, rmfields)
+                    check_list_T(kind, spec, attr, meta, links, specbyname, models, rmfields)
                     body[kind][attr] = None
                     anno[kind][attr] = field.metadata[1][0]
                     continue
@@ -492,10 +522,13 @@ def make_backend_models(backendcls, SQL=None, debug=False):
                 body[refkind][refattr] = sqlmodel.Relationship(back_populates=attr[:-2])
                 anno[refkind][refattr] = list[dbclsname[kind]]
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == dict:  # noqa
-                body[kind][attr] = attrs_default()
-                anno[kind][attr] = Attrs
+                body[kind][attr] = dict_default()
+                anno[kind][attr] = field.annotation
             elif hasattr(field.annotation, '__origin__') and field.annotation.__origin__ == list:  # noqa
-                process_list_type(kind, spec, attr, field.annotation, links, specbyname, models, rmfields)
+                if not check_list_T(kind, spec, attr, field.annotation, links, specbyname, models, rmfields):
+                    keepattrs[kind].add(attr)
+                    body[kind][attr] = list_default()
+                    anno[kind][attr] = field.annotation
 
     # create many to many relations
     for (pair, link), ends in links.items():
@@ -539,7 +572,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
             # print(f'{kind} {attr} : {anno[kind][attr]} = Relationship({kw})')
 
     # build the models
-    backend_models, remote_props, trimspecs = {}, {}, {}
+    backend_models, trimspecs, remote_props = {}, {}, {}
     for kind, spec in models.items():
         for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'backend':
@@ -549,6 +582,7 @@ def make_backend_models(backendcls, SQL=None, debug=False):
         attrs = set(models[kind].model_fields) - set(body[kind])
         attrs = attrs - {'ispublic', 'ghost', 'datecreated', 'telemetry', 'id', '__annotations__'}
         for attr in rmfields[kind] + list(body[kind]):
+            if attr in keepattrs[kind]: continue
             # if attr[0] == '_': continue
             # print(kind, 'remove', attr)
             ano = trimspec.__annotations__.get(attr, None)
