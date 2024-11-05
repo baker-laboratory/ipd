@@ -42,5 +42,7 @@ def __getattr__(name):
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 import builtins
+from collections import namedtuple
 
 builtins.ic = ic
+builtins.namedtuple = namedtuple

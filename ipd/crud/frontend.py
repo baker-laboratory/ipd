@@ -12,14 +12,15 @@ from typing import Annotated, Optional, Union
 import compact_json
 import fastapi
 import httpx
+import mlb
 import pydantic
 import yaml
 
 import ipd
-from ipd.dev import tojson, str_to_json
+from ipd.dev import str_to_json, tojson
 
-tojson = ipd.dev.timed(tojson)
-str_to_json = ipd.dev.timed(str_to_json)
+tojson = mlb.profiler(tojson)
+str_to_json = mlb.profiler(str_to_json)
 
 T = typing.TypeVar('T')
 
@@ -45,7 +46,7 @@ class ModelRef(type):
         else: T = ipd.dev.classname_or_str(T)
         return Annotated[Annotated[_ModelRefType, validator], T]
 
-@ipd.dev.timed
+@mlb.profiler
 def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
     if hasattr(val, 'id'): return val.id
@@ -149,7 +150,7 @@ class SpecBase(pydantic.BaseModel):
     def __setitem__(self, k, v):
         return setattr(self, k, v)
 
-    @ipd.dev.timed
+    @mlb.profiler
     def info(
         self,
         recurse=1,
@@ -214,7 +215,7 @@ class SpecBase(pydantic.BaseModel):
 
         return d
 
-    @ipd.dev.timed
+    @mlb.profiler
     def str_compact(self, linelen=120, strip_labels='invars outvars name'.split(), **kw):
         formatter = compact_json.Formatter()
         formatter.indent_spaces = 2
@@ -238,7 +239,7 @@ class SpecBase(pydantic.BaseModel):
     def print_compact(self, **kw):
         print(self.str_compact(**kw), flush=True)
 
-@ipd.dev.timed
+@mlb.profiler
 class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __init__(self, thing, attr, val, attrkind=''):
         super().__init__(val)
@@ -247,7 +248,7 @@ class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __on_change__(self, thing):
         self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self], self.attrkind)
 
-@ipd.dev.timed
+@mlb.profiler
 def make_client_models(clientcls, trimspecs, remote_props):
     spec_models = clientcls.__spec_models__
     backend_models = clientcls.__backend_models__
@@ -303,7 +304,7 @@ class ClientModelBase(pydantic.BaseModel):
     _client: 'ClientBase' = None
     __sibling_models__: dict[str, 'ClientModelBase'] = {}
 
-    @ipd.dev.timed
+    @mlb.profiler
     def __init_subclass__(cls, remote_props=(), siblings=(), **kw):
         super().__init_subclass__(**kw)
         if not remote_props: return
@@ -345,7 +346,7 @@ class ClientModelBase(pydantic.BaseModel):
         'noop, as validation should have happened at Spec stage'
         return self
 
-    @ipd.dev.timed
+    @mlb.profiler
     def __setattr__(self, name, val):
         assert name != 'id', 'cant set id via client'
         if self._client and name[0] != '_':
@@ -376,7 +377,7 @@ def client_obj_constructor(loader, node):
 yaml.add_representer(ClientModelBase, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
-@ipd.dev.timed
+@mlb.profiler
 class ClientBase:
     def __init_subclass__(cls, Backend, **kw):
         super().__init_subclass__(**kw)
@@ -451,6 +452,8 @@ class ClientBase:
 
     def upload(self, thing, _dispatch_on_type=True, modelkind=None, **kw):
         modelkind = modelkind or thing.modelkind()
+        if not isinstance(thing, SpecBase):
+            thing, remote, extra = self.make_spec(modelkind, **thing)
         if _dispatch_on_type and hasattr(self, f'upload_{modelkind}'):
             return getattr(self, f'upload_{modelkind}')(thing, **kw)
         # thing = thing.to_spec()
@@ -459,19 +462,34 @@ class ClientBase:
         try:
             newthing = self.get(f'/{modelkind}', id=result)
             newthing = self.__client_models__[modelkind](self, **newthing)
+            for r in remote:
+                setattr(newthing, r, thing[r])
             return newthing
         except ValueError:
             return result
 
-    def make_spec(self, cls, **kw):
-        # if 'exe' in cls.__spec__.model_fields:
-        # ic(cls, kw)
-        # ic(cls.__spec__.model_fields)
-        # for k, v in kw.copy().items():
-        # if isinstance(v, pydantic.BaseModel) and hasattr(v, 'id'):
-        # kw[f'{k}id'] = v.id
-        # kw[k] = v.id
-        return cls.__spec__(**kw)
+    def getorupload_by_name(self, thing, modelkind=None, **kw):
+        modelkind = modelkind or thing.modelkind()
+        if 'name' in thing:
+            # ic(thing)
+            if existing := getattr(self, f'{modelkind}s')(name=thing['name']):
+                # ic(len(existing))
+                assert len(existing) == 1
+                return existing[0]
+        return self.upload(thing, modelkind=modelkind, **kw)
+
+    def make_spec(self, modelkind, **kw):
+        cls = self.__spec_models__[modelkind]
+        remoteprops = set(self.__client_models__[modelkind].__remote_props__)
+        remote = {k: kw[k] for k in set(kw) & set(remoteprops)}
+        args = {k: kw[k] for k in (set(kw) & set(cls.model_fields)) - remoteprops}
+        extra = {k: kw[k] for k in set(kw) - set(args) - remoteprops}
+        for k, v in remote.copy().items():
+            if isinstance(v, ClientModelBase):
+                args[k] = v.id
+                del remote[k]
+        # ic(cls, args, remote, extra)
+        return cls.__spec__(**args), remote, extra
 
 def add_basic_client_model_methods(clientcls):
     '''
@@ -484,7 +502,7 @@ def add_basic_client_model_methods(clientcls):
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):
             def new(self, **kw) -> cls:
                 # return self.upload(kw, modelkind=cls.modelkind())
-                return self.upload(self.make_spec(cls, **kw))
+                return self.upload(kw, modelkind=cls.modelkind())
 
             def count(self, **kw) -> int:
                 return self.get(f'/n{name}s', **kw)
@@ -521,7 +539,7 @@ def add_basic_client_model_methods(clientcls):
 
         for attr, fn in make_basic_client_model_methods_closure().items():
             fn.__qualname__ = f'{clientcls.__name__}.{attr}'
-            setattr(clientcls, attr, ipd.dev.timed(fn))
+            setattr(clientcls, attr, mlb.profiler(fn))
 
 def model_method(func, layer):
     @functools.wraps(func)
