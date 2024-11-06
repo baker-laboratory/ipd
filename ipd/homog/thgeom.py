@@ -1,5 +1,4 @@
 import sys
-from token import ISNONTERMINAL
 
 import numpy as np
 

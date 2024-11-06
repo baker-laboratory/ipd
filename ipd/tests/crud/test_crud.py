@@ -3,7 +3,6 @@ import pytest
 pytest.importorskip('fastapi')
 pytest.importorskip('sqlmodel')
 
-import asyncio
 import tempfile
 from typing import Optional
 from uuid import UUID, uuid4
