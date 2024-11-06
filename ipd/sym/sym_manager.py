@@ -123,9 +123,10 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             result = thing.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
         elif thing.kind.shapekind == ShapeKind.SCALAR:
             result = thing.orig
+        elif th.is_tensor(thing.orig) and thing.orig.shape[-1] == 0:
+            result = thing.orig
         else:
-            if th.is_tensor(thing.orig) and not thing.orig.shape[-1]: result = thing.orig
-            else: result = thing.reconstruct(self.apply_sym_slices(thing, **kw))
+            result = thing.reconstruct(self.apply_sym_slices(thing, **kw))
 
         with contextlib.suppress(AttributeError):
             result.__HAS_BEEN_SYMMETRIZED = True

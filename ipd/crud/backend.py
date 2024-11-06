@@ -18,7 +18,9 @@ from sqlmodel.main import RelationshipInfo
 
 import ipd
 from ipd.crud.frontend import SpecBase
-import mlb
+
+# profiler= ipd.dev.timed
+profiler= lambda f: f
 
 backend_type_map = {
     pydantic.AnyUrl: str,
@@ -53,7 +55,7 @@ def allfields(model):
             fields |= base.model_fields
     return fields
 
-@mlb.profiler
+@profiler
 def copy_model_cls(cls, clsname, renamed_attrs) -> type[pydantic.BaseModel]:
     fields, funcs = {}, {}
     assert all(not hasattr(cls, newattr) for newattr in renamed_attrs.values())
@@ -71,7 +73,7 @@ def copy_model_cls(cls, clsname, renamed_attrs) -> type[pydantic.BaseModel]:
 class BackendError(Exception):
     pass
 
-@mlb.profiler
+@profiler
 def make_backend_model_base(SQL):
     class BackendModelBase(SQL, SpecBase):
         id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
@@ -104,7 +106,7 @@ def process_specs(specs):
     # assert 0
     return specs
 
-@mlb.profiler
+@profiler
 class BackendBase:
     mountpoint = 'ipd'
 
@@ -382,7 +384,7 @@ def add_basic_backend_model_methods(backendcls):
         for attr, fn in funcs.items():
             fn.__qualname__ = f'{backendcls.__name__}.{attr}'
             # setattr(backendcls, attr, fn)
-            setattr(backendcls, attr, mlb.profiler(fn))
+            setattr(backendcls, attr, profiler(fn))
 
         # funcs = make_basic_backend_model_methods_closure()
         # multi, single, singleid, count, create, new, bcount, bmulti, bsingle = funcs

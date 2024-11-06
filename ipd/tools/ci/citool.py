@@ -32,7 +32,8 @@ class CITool(ipd.tools.IPDTool):
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
                 print(f'Directory {repo_dir} exists. Fetching latest changes...')
-                ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f')
+                # ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
+                ipd.dev.run(f'git --git-dir={repo_dir} fetch --all -f', echo=True)
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)
@@ -112,6 +113,7 @@ def parse_pytest(fname):
     result.selected = get_re(r'collecting ... collected .* / (\d+) selected', content)
     result.collected = get_re(r'===== .*?(\d+) tests collected .* =====', content)
     result.passed = get_re(r'=====.*? (\d+) passed.* =====', content)
+    result.errors = get_re(r'=====.*? (\d+) errors.* =====', content)
     result.failed = get_re(r'=====.*? (\d+) failed.* =====', content)
     result.xfailed = get_re(r'=====.*? (\d+) xfailed.* =====', content)
     result.xpassed = get_re(r'=====.*? (\d+) xpassed.* =====', content)
@@ -181,5 +183,6 @@ class TestsTool(CITool):
             result = parse_pytest(log)
             print(dict(result))
             print()
+            fail |= result.errors
             fail |= result.failed
         assert not fail

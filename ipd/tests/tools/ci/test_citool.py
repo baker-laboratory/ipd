@@ -7,6 +7,7 @@ from typer.testing import CliRunner
 import ipd
 
 def main():
+    test_citool_update_library()
     # test_clitool_pytest()
     # test_clitool_pytest_slurm_parallel()
     print('test clitool PASS')
