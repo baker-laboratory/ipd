@@ -80,8 +80,9 @@ def run_pytest(env,
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
-    # while '  ' in cmd:
-    #     cmd = cmd.replace('  ', ' ')
+    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
+    while '  ' in cmd:
+        cmd = cmd.replace('  ', ' ')
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
         return cmd, executor.submit(ipd.dev.run, cmd), log
