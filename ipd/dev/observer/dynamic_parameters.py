@@ -174,14 +174,14 @@ class StepObserver(Observer):
 
 class DynamicParameters(Mapping):
     '''A central class that manages all dynamic parameters for a run'''
-    def __init__(self, ndesign=None, ndiffuse=None, nrfold=40):
+    def __init__(self, ndesign=None, ndiffuse=None, nrfold=40, _testing=False):
         self._step = Step(None, None, None)
         self._nstep = Step(ndesign, ndiffuse, nrfold)
         self._rfold_tags = set()
         self._params = dict()
         self._strict = not (ndesign is None or ndiffuse is None or nrfold is None)
         self._parsed_params = dict()
-        StepObserver()._add_observer(self)
+        if not _testing: StepObserver()._add_observer(self)
         self._sanity_check()
 
     ################## factory funcs for the various dynparam types #####################
