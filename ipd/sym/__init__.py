@@ -26,6 +26,4 @@ def set_global_symmetry(sym):
     _global_symmetry = sym
 
 def get_global_symmetry():
-    if _global_symmetry is None:
-        raise ValueError("Global symmetry not set")
     return _global_symmetry

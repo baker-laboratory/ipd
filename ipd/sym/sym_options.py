@@ -30,6 +30,7 @@ default_params = dict(
     recenter_xt_chains_on_px0=None,
     rfsym_enabled=None,
     subsymid=None,
+    start_radius=0,
     sym_enabled=True,
     symid='C1',
     symmetrize_repeats=None,

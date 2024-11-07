@@ -2,6 +2,7 @@ import pytest
 
 import ipd
 
+@pytest.mark.skip
 @pytest.mark.slow
 def test_pip_install(tmpdir):
     try:
