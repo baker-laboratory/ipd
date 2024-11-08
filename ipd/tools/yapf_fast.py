@@ -1,23 +1,30 @@
+import argparse
 import os
 import pathlib
 import subprocess
 
 def main():
-    cmd = 'find . -name *.py -exec md5sum {} ;'
-    files = subprocess.check_output(cmd.split()).decode().split(os.linesep)
-    files = {f for f in files if f}
+    parser = argparse.ArgumentParser()
+    parser.add_argument("codedir", type=str, default='.')
+    parser.add_argument("--dry-run", action='store_true', default=False)
+    args = parser.parse_args()
+
+    cmd = f'find {args.codedir} -name *.py -exec md5sum {{}} ;'
+    files = set(subprocess.check_output(cmd.split()).decode().strip().split(os.linesep))
     exclude = set()
     if os.path.exists('.yapf_exclude'):
-        exclude = pathlib.Path('.yapf_exclude').read_text().split()
-        exclude = {f for f in exclude if f}
+        exclude = set(pathlib.Path('.yapf_exclude').read_text().strip().split())
     prev = set()
     if os.path.exists('.yapf_hash'):
-        prev = pathlib.Path('.yapf_hash').read_text().split(os.linesep)
-        prev = {f for f in prev if f}
+        prev = set(pathlib.Path('.yapf_hash').read_text().strip().split(os.linesep))
     diff = {x.split()[1] for x in (files - prev)} - exclude
+    yapfcmd = f'yapf -ip {" ".join(diff)}'
     if diff:
-        os.system(f'yapf -ip {" ".join(diff)}')
-        os.system('find . -name \\*.py -exec md5sum {} \\; > .yapf_hash')
+        print(yapfcmd)
+        if not args.dry_run:
+            os.system(yapfcmd)
+            os.system(f'find {args.codedir} -name \\*.py -exec md5sum {{}} \\; > .yapf_hash')
+            exit(-1)
 
 if __name__ == '__main__':
     main()

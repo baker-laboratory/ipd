@@ -19,7 +19,7 @@ jobs:
 
     - name: run ruff
       run: |
-        ipd ci tests ruff
+        ipd ci tests ruff ipd
 
     - name: run pytest digs
       run: |

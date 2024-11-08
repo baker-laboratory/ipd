@@ -21,6 +21,7 @@ helix = lazyimport('ipd.sym.helix')
 sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
 _global_symmetry = None
+
 def set_global_symmetry(sym):
     global _global_symmetry
     _global_symmetry = sym

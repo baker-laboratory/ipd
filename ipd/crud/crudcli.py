@@ -1,4 +1,3 @@
-
 class CrudCli:
     def __init_subclass__(cls, Client, **kw):
         super().__init_subclass__(**kw)

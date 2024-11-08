@@ -73,7 +73,7 @@ def test_helix_scaling():
     assert not np.allclose(rb.orientations(), origori)
 
 @pytest.mark.fast
-@pytest.mark.skipif(np.__version__[0]=='2', reason='ipd.sym.Helix breaks on numpy 2')
+@pytest.mark.skipif(np.__version__[0] == '2', reason='ipd.sym.Helix breaks on numpy 2')
 def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
     pytest.importorskip('torch')
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0.5)
@@ -125,7 +125,7 @@ def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
     assert np.allclose(foo, hframes, atol=1e-4)
 
 @pytest.mark.fast
-@pytest.mark.skipif(np.__version__[0]=='2', reason='ipd.sym.Helix breaks on numpy 2')
+@pytest.mark.skipif(np.__version__[0] == '2', reason='ipd.sym.Helix breaks on numpy 2')
 def test_helix_7_1_1_r80_s30_p20_t1_c7():
     pytest.importorskip('torch')
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0.2)

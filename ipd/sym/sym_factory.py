@@ -53,4 +53,3 @@ def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **k
     ipd.sym.set_global_symmetry(sym)
     assert ipd.symmetrize is sym
     return sym
-

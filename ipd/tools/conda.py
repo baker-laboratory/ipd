@@ -6,7 +6,7 @@ import ipd
 
 def isinstalled(installed, pkg):
     pkg = pkg.strip('"')
-    if 'git+hppt' in pkg:
+    if 'git+http' in pkg:
         pkg = pkg[:pkg.rfind('.git')]
         pkg = os.path.basename(pkg)
     else:

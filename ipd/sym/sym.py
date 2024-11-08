@@ -2,7 +2,6 @@ import contextlib
 import copy
 import functools
 
-
 from ipd.dev import Bunch
 from ipd.homog.hgeom import *
 from ipd.sym.symframes import *

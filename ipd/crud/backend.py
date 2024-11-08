@@ -20,7 +20,7 @@ import ipd
 from ipd.crud.frontend import SpecBase
 
 # profiler= ipd.dev.timed
-profiler= lambda f: f
+profiler = lambda f: f
 
 backend_type_map = {
     pydantic.AnyUrl: str,

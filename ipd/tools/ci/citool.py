@@ -63,19 +63,20 @@ class Future:
     def result(self):
         return self._result
 
-def run_pytest(env,
-               exe,
-               log,
-               mark='',
-               sel='',
-               parallel=1,
-               mem='16G',
-               timeout=60,
-               executor=None,
-               dryrun=False,
-               tee=False,
-               gpu='',
-            ):
+def run_pytest(
+    env,
+    exe,
+    log,
+    mark='',
+    sel='',
+    parallel=1,
+    mem='16G',
+    timeout=60,
+    executor=None,
+    dryrun=False,
+    tee=False,
+    gpu='',
+):
     dry = '--collect-only' if dryrun else ''
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
@@ -125,25 +126,23 @@ class TestsTool(CITool):
         TestsTool.ruff()
         TestsTool.pytest()
 
-    def ruff(self):
-        ipd.dev.run('ruff check 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
+    def ruff(self, project):
+        ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
 
-    def pytest(
-        self,
-        slurm: bool = False,
-        gpu: str = '',
-        exe: str = sys.executable,
-        threads: int = 1,
-        log: Path = Path('pytest_ipd_ci_test_run.log'),
-        mark: str = '',
-        parallel: int = 1,
-        timeout: int = 60,
-        verbose: bool = True,
-        which: str = '',
-        dryrun: bool = False,
-        tee: bool = False,
-        mem: list[str] = ['16G']
-    ):
+    def pytest(self,
+               slurm: bool = False,
+               gpu: str = '',
+               exe: str = sys.executable,
+               threads: int = 1,
+               log: Path = Path('pytest_ipd_ci_test_run.log'),
+               mark: str = '',
+               parallel: int = 1,
+               timeout: int = 60,
+               verbose: bool = True,
+               which: str = '',
+               dryrun: bool = False,
+               tee: bool = False,
+               mem: list[str] = ['16G']):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
@@ -163,9 +162,15 @@ class TestsTool(CITool):
             if parallel == 1:
                 jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, log=log, mem=mem[0], **kw))
             else:
-                jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
                 jobs.append(
-                    run_pytest(exe=exe, sel=nosel, parallel=parallel, mem=mem[1%len(mem)], log=f'{log}.parallel.log', **kw))
+                    run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
+                jobs.append(
+                    run_pytest(exe=exe,
+                               sel=nosel,
+                               parallel=parallel,
+                               mem=mem[1 % len(mem)],
+                               log=f'{log}.parallel.log',
+                               **kw))
         return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
 
     def check(self, path: Path = '.'):

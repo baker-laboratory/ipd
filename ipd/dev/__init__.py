@@ -12,6 +12,7 @@ from ipd.dev.serialization import *
 from ipd.dev.state import *
 from ipd.dev.storage import *
 from ipd.dev.observer import *
+from ipd.dev.git import *
 
 cli = lazyimport('ipd.dev.cli')
 cuda = lazyimport('ipd.dev.cuda')

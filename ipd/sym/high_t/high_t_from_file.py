@@ -1,5 +1,6 @@
 import ipd
 from ipd import h
+
 th = ipd.lazyimport('torch')
 
 def get_quasi_sym_ops(stubs):
@@ -31,4 +32,3 @@ def get_high_t_frames_from_file(fname):
     # ipd.showme(h.xform(ipd.sym.frames('I'), stubs), weight=10)
     # ipd.showme(h.xform(frames, stubs[0]))
     # ipd.showme(h.xform(frames, ca[0]).reshape(-1,3))
-

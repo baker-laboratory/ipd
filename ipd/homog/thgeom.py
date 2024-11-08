@@ -120,8 +120,8 @@ def choose_axis_flip(axis, angle):
         axis = th.where(flipaxis, -axis, axis)
         return axis, angle
     else:
-        oshape=axis.shape
-        axis = axis.reshape(-1,4)
+        oshape = axis.shape
+        axis = axis.reshape(-1, 4)
         angle = angle.reshape(-1)
         flipaxis = np.dot(axis, [1, 2, 11, 0]) < 0
         axis[flipaxis] = -axis[flipaxis]
