@@ -2,6 +2,7 @@ import contextlib
 import copy
 import functools
 
+
 from ipd.dev import Bunch
 from ipd.homog.hgeom import *
 from ipd.sym.symframes import *
@@ -23,6 +24,7 @@ def frames(
     com=None,
     ontop=None,
     sgonly=False,
+    torch=False,
     **kw,
 ):
     """generate symmetrical coordinate frames
@@ -123,6 +125,10 @@ def frames(
             f = put_frames_on_top(f, ontop)
         ipd.dev.checkpoint("frames sortframes")
 
+    if torch:
+        import torch as th
+        return th.as_tensor(f, dtype=th.float64)
+
     ipd.dev.checkpoint(kw)
     return f.round(10)
 
@@ -217,14 +223,10 @@ def min_symaxis_angle(sym):
                 # print(i, j, line_angle_degrees(iax, jax))
     return minaxsang
 
-def axes(sym, nfold=None, all=False, cellsize=1, **kw):
+def axes(sym, nfold=None, all=False, cellsize=1, closest_to=None, **kw):
     sym = sym.lower()
-    if sym == "t":
-        sym = "tet"
-    if sym == "o":
-        sym = "oct"
-    if sym == "i":
-        sym = "icos"
+    sym_name_map = dict(t='tet', o='oct', i='icos', i32='icos', i53='icos', i52='icos', i532='icos')
+    sym = sym_name_map.get(sym, sym)
     try:
         if ipd.sym.is_known_xtal(sym):
             x = xtal(sym)
@@ -240,15 +242,20 @@ def axes(sym, nfold=None, all=False, cellsize=1, **kw):
                 if sym[-1].isdigit() and nfold is None:
                     nfold = int(sym[-1])
                     sym = sym[:-1]
-            if nfold is None:
-                return symaxes[sym].copy()
-            elif isinstance(nfold, str):
-                assert nfold.lower().startswith("c")
-                nfold = int(nfold[1:])
             if all:
-                return symaxes_all[sym][nfold].copy()
+                axes = symaxes_all[sym].copy()
+            elif closest_to is not None:
+                axes = symaxes_all[sym].copy()
+                for k, v in axes.items():
+                    axes[k] = v[np.argmax(np.abs(np.dot(v, ipd.homog.hvec(closest_to))))]
             else:
-                return symaxes[sym][nfold].copy()
+                axes = symaxes[sym].copy()
+            if nfold:
+                if isinstance(nfold, str):
+                    assert nfold.lower().startswith("c")
+                    nfold = int(nfold[1:])
+                axes = axes[nfold]
+            return axes
 
     except (KeyError, ValueError) as e:
         raise ValueError(f"unknown symmetry {sym}")
@@ -740,8 +747,20 @@ _canon_asucen = dict(
     tet=np.array([9.47438171e-05, 1.00242090e+00, 1.61772847e+00]),
     oct=np.array([0.67599002, 1.2421906, 2.28592391]),
     icos=np.array([1.13567793, 1.28546351, 3.95738551]),
+    i2=np.array([0, 0, 1]),
+    i3=np.array([0, 0.35, 0.93]),
+    i5=np.array([0.52, 0, 0.85]),
+    i32=np.array([0, 1, 5.85725386]),
+    # i32=np.array([1.13567793, 1.28546351, 3.95738551]),
+    i52=np.array([1.13567793, 1.28546351, 3.95738551]),
+    i53=np.array([1.13567793, 1.28546351, 3.95738551]),
+    i532=np.array([1.13567793, 1.28546351, 3.95738551]),
     icos4=np.array([0, 1, 5.85725386]),
 )
+_canon_asucen = {k: ipd.homog.hnormalized(_canon_asucen[k]) for k in _canon_asucen}
+_canon_asucen['i2'] = _canon_asucen['i2'] * 0.8 + _canon_asucen['i532'] * 0.2
+_canon_asucen['i3'] = _canon_asucen['i3'] * 0.8 + _canon_asucen['i532'] * 0.2
+_canon_asucen['i5'] = _canon_asucen['i5'] * 0.8 + _canon_asucen['i532'] * 0.2
 
 def canonical_asu_center(sym, cuda=False):
     sym = ipd.sym.map_sym_abbreviation(sym).lower()

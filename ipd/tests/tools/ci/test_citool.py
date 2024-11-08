@@ -7,13 +7,14 @@ from typer.testing import CliRunner
 import ipd
 
 def main():
+    test_citool_update_library()
     # test_clitool_pytest()
     # test_clitool_pytest_slurm_parallel()
     print('test clitool PASS')
 
 runner = CliRunner()
 
-@pytest.mark.slow
+@pytest.mark.ci
 def test_citool_update_library():
     tool = ipd.tools.IPDTool()
     result = runner.invoke(tool.__app__, 'ci update_library')

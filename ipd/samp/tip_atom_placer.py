@@ -214,14 +214,14 @@ try:
                     end = ipd.homog.hxform(frame, ray[:, 0] + 2 * ray[:, 1])
                     cgo += ipd.viz.cgo_cyl(beg, end, 0.1, col=rcol)
 
-    @ipd.viz.pymol_frame
+    @ipd.viz.pymol_scene
     @ipd.viz.pymol_load.register(TipAtom)
     def pymol_load_TipAtom(tip, name='TipAtom', **kw):
         cgo = list()
         tip_atom_cgo(th.eye(4), tip, cgo, **kw)
         pymol.cmd.load_cgo(cgo, name)
 
-    @ipd.viz.pymol_frame
+    @ipd.viz.pymol_scene
     @ipd.viz.pymol_load.register(TipAtomTarget)
     def pymol_load_TipAtomTarget(tgt, name='TipAtomTarget', **kw):
         atomcol = dict(C=(0.5, 0.5, 0.5), O=(1, 0, 0), N=(0, 0, 1), H=(1, 1, 1), P=(1, 0.5, 0.5))

@@ -35,6 +35,7 @@ def helper_test_align_asu(sym, Lasu=13):
         ipd.sym.asu_to_best_frame_if_necessary(sym,
                                                th.einsum('ij,raj->rai', R, xyz),
                                                Lasu,
+                                               asu_to_best_frame_min_dist_to_origin=0,
                                                asu_to_best_frame=True) for R in sym.symmRs
     ]
     # ipd.showme(xyz.squeeze(1))

@@ -7,7 +7,7 @@ import numpy as np
 
 import ipd
 
-@ipd.viz.pymol_frame
+@ipd.viz.pymol_scene
 def show_bonds(xyz, bonds, colors=None, **kw):
     cgo = list()
     if not colors: colors = [(0.3, 0.3, 0.3)] * len(xyz)

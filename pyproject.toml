@@ -7,37 +7,48 @@ name = "ipd"
 version = "0.1"
 dependencies = [
     'assertpy',
-    'compact-json',
-    # 'eliot',
+    'colorlog',
+    'debugpy',
     # 'eliot-tree',
-    'fastapi[standard]',
     'gitpython',
     'hydra-core',
     'hypothesis[numpy]',
     'icecream',
+    'ipython',
+    'ipykernel',
+    'ipywidgets',
+    'ipdb',
     'more_itertools',
-    'networkx',
     'numba',
     'numpy',
     'opt_einsum',
     # 'pre-commit',
     'pandas',
+    'plotly',
     'pendulum',
-    # 'psycopg2',
     'pydantic',
     'pdot',
     'pytest',
     'pytest-sugar',
     'pytest-xdist',
-    # 'python-box',
+    'pytest-cov',
+    'pytest-benchmark',
+    'pytest-dotenv',
+    'python-box',
     'requests',
     'ruff',
-    'sqlmodel',
+    'seaborn',
     'submitit',
     'tqdm',
     'typer',
-    'uvicorn[standard]',
     'yapf',
+]
+[project.optional-dependencies]
+crud = [
+    'fastapi[standard]',
+    'psycopg2',
+    'sqlmodel',
+    'uvicorn[standard]',
 ]
 
 [project.scripts]
@@ -45,9 +56,13 @@ ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q"
+addopts = "-m 'not ci'"
 testpaths = [
     "ipd/tests",
+]
+markers = [
+    "slow: marks tests as slow to run",
+    "fast: tests that run in a second or two",
 ]
 
 [tool.pyright]

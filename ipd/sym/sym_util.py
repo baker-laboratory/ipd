@@ -8,6 +8,47 @@ torch = ipd.lazyimport('torch')
 
 SYMA = 1.0
 
+def get_coords_stack(pdblines):
+    '''
+    Getting the Ca coords of input "high-T" pdb. Grabs coords of ASU.
+    Returns stack of coords [N,L,3], N being n chains
+    '''
+    atom_dtype = np.dtype( [
+    ("chnid", np.unicode_, 1),
+    ("resid", np.int32),
+    ("X", np.float64, 3),
+    ] )
+    chains = []
+    allatoms = []
+    for line in pdblines:
+        if line[:4] == 'ATOM' or line[:6] == "HETATM":
+            if line[12:16] == " CA ":
+                split_line = (line[21], line[22:26],
+                    (line[30:38], line[38:46], line[46:54]))
+                allatoms.append(split_line)
+                if line[21] not in chains: chains.append(line[21])
+    allatoms = np.array(allatoms, dtype=atom_dtype)
+    L_chain_main = len(allatoms[allatoms['chnid'] == chains[0]])
+    xyz_stack = []
+    for c in chains:
+        assert len(allatoms[allatoms['chnid'] == c]) == L_chain_main, 'PDB file does not contain symmetric units!'
+        xyz_stack.append(allatoms[allatoms['chnid'] == c]['X'])
+    # center the complex
+    COM = np.mean(xyz_stack, axis=(0,1))
+    return torch.tensor(xyz_stack - COM)
+
+def generate_ASU_xforms(pdb):
+    '''
+    Takes in [N,L,3] Ca xyz stack to map transforms of ASU, should return homogenous transforms for each subunit in the ASU
+    We use this to generate the ASU in the first place
+    '''
+    xyz_stack = get_coords_stack(open(pdb))
+    xforms = []
+    for n in range(xyz_stack.shape[0]):
+        _, _, X = ipd.h.rmsfit(xyz_stack[n],xyz_stack[0]) # rms, fitxyz, X
+        xforms.append(X)
+    return xforms
+
 def normQ(Q):
     """normalize a quaternions
     """
@@ -856,6 +897,23 @@ def symm_subunit_matrix(symmid, symopt=None):
         offset = torch.tensor([1.0, 0.0, 0.0])
         offset = est_radius * offset / torch.linalg.norm(offset)
         metasymm = ([torch.arange(60)], [min(len(Rs), symopt.max_nsub if symopt else 6)])
+    elif symmid.startswith('I'):
+        ax2, ax3, ax5 = ipd.sym.axes('I', closest_to=[1, 2, 21]).values()
+        pi = torch.pi
+        Rs = [torch.eye(3)]
+        if '2' in symmid:
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax2, pi)))
+        if '3' in symmid:
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, 2 / 3 * pi)))
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, -2 / 3 * pi)))
+        if '5' in symmid:
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, 2 / 5 * pi)))
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, -2 / 5 * pi)))
+        Rs = torch.stack(Rs)
+        nsub = len(Rs)
+        symmatrix = (torch.arange(nsub)[:, None] - torch.arange(nsub)[None, :]) % nsub
+        metasymm = ([torch.arange(nsub)], [min(nsub, symopt.max_nsub if symopt else min(3, nsub))])
+        offset = None
     else:
         print("Unknown symmetry", symmid)
         assert False

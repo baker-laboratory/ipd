@@ -1,14 +1,10 @@
-try:
-    import torch
-except ImportError:
-    pass
 import numpy as np
 
 import ipd
 from ipd.homog import *
-
-# from ipd.homog.thgeom import *
 from ipd.homog import thgeom as h
+
+th = ipd.lazyimport('torch')
 
 def extract_t_asu(frames, t, sym="I"):
     cen = hpoint(np.stack(list(ipd.sym.axes("I").values())).mean(0))
@@ -66,87 +62,87 @@ def to_canonical_frame(asym, frames):
     asym = hxform(frames[closest], asym)
     # point z outward
     asym[:, :3, :3] = hori(halign(asym[:, :, 2], asym[:, :3, 3], doto=asym))
-    return torch.as_tensor(asym)
+    return th.as_tensor(asym)
 
 def min_dist_loss(asym0, frames0, lbfgs, indep, **kw):
     lbfgs.zero_grad()
-    asym = torch.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0)
-    sym = torch.einsum("sij,aj->sai", frames0, asym)
-    d = torch.norm(asym[None, None] - sym[:, :, None], dim=-1)
-    d = torch.where(d < 0.001, 9e9, d)
-    loss = -torch.min(d)
+    asym = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0)
+    sym = th.einsum("sij,aj->sai", frames0, asym)
+    d = th.norm(asym[None, None] - sym[:, :, None], dim=-1)
+    d = th.where(d < 0.001, 9e9, d)
+    loss = -th.min(d)
     loss.backward()
     return loss
 
 def min_pseudo_t_dist2(asym, sym="I"):
     t = len(asym)
     frames = ipd.sym.frames(sym)
-    frames0 = torch.tensor(frames[:, :3, :3]).cuda().to(torch.float32)
-    asym0 = torch.tensor(asym[:, :3, 3]).cuda().to(torch.float32)
-    indep = [torch.zeros((t, 3)).cuda().requires_grad_(True)]
+    frames0 = th.tensor(frames[:, :3, :3]).cuda().to(th.float32)
+    asym0 = th.tensor(asym[:, :3, 3]).cuda().to(th.float32)
+    indep = [th.zeros((t, 3)).cuda().requires_grad_(True)]
     loss = h.torch_min(min_dist_loss, **vars())
-    asym[:, :3, 3] = torch.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0).cpu().detach()
+    asym[:, :3, 3] = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0).cpu().detach()
     asym = to_canonical_frame(asym, frames)
     return loss, asym.numpy()
 
 def min_sym_environment_loss(asym0, frames0, lbfgs, indep, **kw):
     lbfgs.zero_grad()
-    asym = torch.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0)
-    sym = torch.einsum("sij,aj->sai", frames0, asym)
-    d = torch.norm(asym[None, None] - sym[:, :, None], dim=-1)
-    d = torch.where(d < 0.001, 9e9, d)
-    loss = -torch.min(d)
+    asym = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0)
+    sym = th.einsum("sij,aj->sai", frames0, asym)
+    d = th.norm(asym[None, None] - sym[:, :, None], dim=-1)
+    d = th.where(d < 0.001, 9e9, d)
+    loss = -th.min(d)
     loss.backward()
     return loss
 
 def min_pseudo_t_symerror(asym, sym="I"):
     t = len(asym)
     frames = ipd.sym.frames(sym)
-    frames0 = torch.tensor(frames[:, :3, :3]).cuda().to(torch.float32)
-    asym0 = torch.tensor(asym[:, :3, 3]).cuda().to(torch.float32)
-    indep = [torch.zeros((t, 3)).cuda().requires_grad_(True)]
+    frames0 = th.tensor(frames[:, :3, :3]).cuda().to(th.float32)
+    asym0 = th.tensor(asym[:, :3, 3]).cuda().to(th.float32)
+    indep = [th.zeros((t, 3)).cuda().requires_grad_(True)]
     loss = h.torch_min(min_sym_environment_loss, **vars())
-    asym[:, :3, 3] = torch.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0).cpu().detach()
+    asym[:, :3, 3] = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0).cpu().detach()
     asym = to_canonical_frame(asym, frames)
     return loss, asym.numpy()
 
 def min_pseudo_t_dist(asym, sym="I"):
     t = len(asym)
     frames = ipd.sym.frames(sym)
-    frames0 = torch.tensor(frames[:, :3, :3]).cuda().to(torch.float32)
-    asym0 = torch.tensor(asym[:, :3, 3]).cuda().to(torch.float32)
-    cen = h.point(np.stack(list(ipd.sym.axes("I").values())).mean(0))[:3].cuda().to(torch.float32)
-    cen = cen * torch.norm(asym0[0])
+    frames0 = th.tensor(frames[:, :3, :3]).cuda().to(th.float32)
+    asym0 = th.tensor(asym[:, :3, 3]).cuda().to(th.float32)
+    cen = h.point(np.stack(list(ipd.sym.axes("I").values())).mean(0))[:3].cuda().to(th.float32)
+    cen = cen * th.norm(asym0[0])
 
     def score():
         lbfgs.zero_grad()
-        asym = torch.einsum("aij,aj->ai", h.Q2R(Q), asym0)
-        sym = torch.einsum("sij,aj->sai", frames0, asym)
-        d = torch.norm(asym[None, None] - sym[:, :, None], dim=-1)
-        d = torch.where(d < 0.001, 9e9, d)
+        asym = th.einsum("aij,aj->ai", h.Q2R(Q), asym0)
+        sym = th.einsum("sij,aj->sai", frames0, asym)
+        d = th.norm(asym[None, None] - sym[:, :, None], dim=-1)
+        d = th.where(d < 0.001, 9e9, d)
         # loss = -d.min()  # + dcen / 4
-        # d = torch.topk(-d, 5, dim=0).values
+        # d = th.topk(-d, 5, dim=0).values
         loss = 0
         # for i in range(len(asym)):
         # for j in range(i, len(asym)):
-        # denv = torch.norm(d[:, i, :] - d[:, j, :])
+        # denv = th.norm(d[:, i, :] - d[:, j, :])
         # loss += denv
-        loss -= torch.min(d)
+        loss -= th.min(d)
         loss.backward()
         return loss
 
-    Q = torch.zeros((t, 3)).cuda().requires_grad_(True)
-    lbfgs = torch.optim.LBFGS([Q], history_size=10, max_iter=4, line_search_fn="strong_wolfe")
+    Q = th.zeros((t, 3)).cuda().requires_grad_(True)
+    lbfgs = th.optim.LBFGS([Q], history_size=10, max_iter=4, line_search_fn="strong_wolfe")
 
     for iter in range(4):
         loss = lbfgs.step(score)
 
-    asym[:, :3, 3] = torch.einsum("aij,aj->ai", h.Q2R(Q), asym0).cpu().detach()
+    asym[:, :3, 3] = th.einsum("aij,aj->ai", h.Q2R(Q), asym0).cpu().detach()
     asym = to_canonical_frame(asym, frames)
     return loss, asym
 
 def create_pseudo_t(t, sym="I"):
-    frames = torch.tensor(ipd.sym.frames(sym))
+    frames = th.tensor(ipd.sym.frames(sym))
     losses, asyms = list(), list()
     for i in range(100):
         asym = make_asym(t, 8 * np.sqrt(t), frames)
@@ -154,9 +150,9 @@ def create_pseudo_t(t, sym="I"):
         loss, asym2 = min_pseudo_t_dist(asym, sym="I")
         losses.append(loss)
         asyms.append(asym)
-    losses = torch.tensor(losses)
+    losses = th.tensor(losses)
     ic(losses, min(losses))
-    asym = asyms[torch.argmin(losses)]
+    asym = asyms[th.argmin(losses)]
     sym2 = h.xform(frames, asym2).reshape(-1, 4, 4)
     # ipd.showme(sym2, weight=2, colorset=range(t))
     # ipd.showme(asym2, weight=4, colorset=range(t))

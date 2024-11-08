@@ -112,7 +112,23 @@ def projperp(u, v):
     v = point(v)
     return v - proj(u, v)
 
-def axis_angle_cen(xforms, ident_match_tol=1e-8):
+def choose_axis_flip(axis, angle):
+    if th.is_tensor(axis):
+        flipaxis = th.matmul(axis, th.tensor([1, 2, 11, 0], dtype=axis.dtype)) < 0
+        angle = th.where(flipaxis, -angle, angle)
+        flipaxis = flipaxis.tile(4).reshape(4, *flipaxis.shape).swapdims(0, -1)
+        axis = th.where(flipaxis, -axis, axis)
+        return axis, angle
+    else:
+        oshape=axis.shape
+        axis = axis.reshape(-1,4)
+        angle = angle.reshape(-1)
+        flipaxis = np.dot(axis, [1, 2, 11, 0]) < 0
+        axis[flipaxis] = -axis[flipaxis]
+        angle[flipaxis] = -angle[flipaxis]
+        return axis.reshape(oshape), angle.reshape(oshape[:-1])
+
+def axis_angle_cen(xforms, ident_match_tol=1e-8, flipaxis=True):
     # ic(xforms.dtype)
     origshape = xforms.shape[:-2]
     xforms = xforms.reshape(-1, 4, 4)
@@ -123,9 +139,9 @@ def axis_angle_cen(xforms, ident_match_tol=1e-8):
         angle.shape,
     ).reshape(*angle.shape, 4)
 
-    assert th.all(not_ident)
-    xforms1 = xforms[not_ident]
-    axis1 = axis[not_ident]
+    # assert th.all(not_ident)
+    # xforms1 = xforms[not_ident]
+    # axis1 = axis[not_ident]
     #  sketchy magic points...
     p1, p2 = axis_ang_cen_magic_points_torch()
     p1 = p1.to(xforms.dtype)
@@ -144,6 +160,8 @@ def axis_angle_cen(xforms, ident_match_tol=1e-8):
         cen = cen1
     else:
         cen = th.where(not_ident, cen1, cen)
+    if flipaxis:
+        axis, angle = choose_axis_flip(axis, angle)
 
     axis = axis.reshape(*origshape, 4)
     angle = angle.reshape(origshape)
@@ -201,7 +219,7 @@ def randvec(shape=(), dtype=None, device=None):
     kw = get_dtype_dev(shape, dtype, device)
     if isinstance(shape, int):
         shape = (shape, )
-    v = vec(np.random.randn(*(shape + (3, ))), **kw)
+    v = vec(th.randn(*(shape + (3, ))), **kw)
     if isinstance(shape, int):
         shape = (shape, )
     return v
@@ -340,8 +358,8 @@ def rot3(axis, angle, shape=(3, 3), squeeze=True, dtype=None, device=None):
 
     if axis.ndim == 1:
         axis = axis[None]
-    if angle.ndim == 0:
-        angle = angle[None]
+    if isinstance(angle, (int, float)) or angle.ndim == 0:
+        angle = th.as_tensor([angle])
     # if angle.ndim == 0
     if axis.shape and angle.shape and not is_broadcastable(axis.shape[:-1], angle.shape):
         raise ValueError(f"axis/angle not compatible: {axis.shape} {angle.shape}")
@@ -510,8 +528,8 @@ def axis_angle_hel(xforms):
     hel = dot(axis, xforms[..., :, 3])
     return axis, angle, hel
 
-def axis_angle_cen_hel(xforms):
-    axis, angle, cen = axis_angle_cen(xforms)
+def axis_angle_cen_hel(xforms, **kw):
+    axis, angle, cen = axis_angle_cen(xforms, **kw)
     hel = dot(axis, xforms[..., :, 3])
     return axis, angle, cen, hel
 
@@ -688,7 +706,7 @@ def cross(u, v):
 def frame(u, v, w, cen=None, primary='x', **kw):
     dd = get_dtype_dev([u, v, w, cen], **kw)
     assert u.shape == v.shape == w.shape
-    if not cen: cen = u
+    if cen is None: cen = u
     assert cen.shape == u.shape
     u, v, w, cen = vec(u, **dd), vec(v, **dd), vec(w, **dd), point(cen, **dd)
     stubs = th.empty(u.shape[:-1] + (4, 4), **dd)
@@ -697,9 +715,10 @@ def frame(u, v, w, cen=None, primary='x', **kw):
     elif primary == 'y': order = [2, 0, 2]
     else: order = [0, 2, 1]
     stubs[..., :, order[0]] = normalized(u - v)
-    stubs[..., :, order[2]] = normalized(cross(stubs[..., :, order[0]], w - v))
-    stubs[..., :, order[1]] = cross(stubs[..., :, order[2]], stubs[..., :, order[0]])
+    stubs[..., :, order[1]] = normalized(cross(stubs[..., :, order[0]], w - v))
+    stubs[..., :, order[2]] = cross(stubs[..., :, order[1]], stubs[..., :, order[0]])
     stubs[..., :, 3] = cen[..., :]
+    assert valid44(stubs)
     return stubs
 
 def Qs2Rs(Qs, shape=(3, 3)):
@@ -736,7 +755,6 @@ def _thxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", impr
         if is_points:
             if stuff.shape[-1] != 4 and stuff.shape[-2:] == (4, 1):
                 raise ValueError(f"hxform cant understand shape {stuff.shape}")
-
     if not is_points:
         if outerprod == "auto":
             outerprod = x.shape[:-2] != stuff.shape[:-2]
@@ -813,18 +831,28 @@ def valid_norm(x):
     normok &= th.allclose(1, th.linalg.norm(x[..., :3, :3], axis=-2))
     return th.all(normok)
 
-def valid44(x, improper_ok=False, **kw):
+def valid44(x, improper_ok=False, debug=False, **kw):
     if x.shape[-2:] != (4, 4):
         return False
     det = th.linalg.det(x[..., :3, :3])
     if improper_ok:
         det = th.abs(det)
-    detok = th.allclose(det, th.tensor(1.0))
 
-    return all([th.allclose(x[..., 3, 3], th.tensor(1.0)), th.allclose(x[..., 3, :3], th.tensor(0.0)), detok])
+    detok = th.allclose(det, th.tensor(1.0, dtype=x.dtype), atol=1e-4)
+    is_one_33 = th.allclose(x[..., 3, 3], th.tensor(1.0, dtype=x.dtype))
+    is_zero_3_012 = th.allclose(x[..., 3, :3], th.tensor(0.0, dtype=x.dtype))
+    ok = is_zero_3_012 and is_one_33 and detok
+    if debug and not ok: ic(improper_ok, det, detok, is_one_33, is_zero_3_012)
+    return ok
 
 def inv(x):
     return th.linalg.inv(x)
 
 def tocuda(x):
     return th.as_tensor(x, device='cuda')
+
+def remove_diagonal_elements(a):
+    assert a.shape[0] == a.shape[1]
+    n = len(a)
+    elemsize = th.prod(th.tensor(a.shape[2:]))
+    return a.flatten()[elemsize:].view(n - 1, n + 1, -1)[:, :-1].reshape(n, n - 1, *a.shape[2:])

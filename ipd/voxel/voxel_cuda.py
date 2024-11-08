@@ -1,10 +1,4 @@
-import pytest
-
-th = pytest.importorskip('torch')
-pytest.mark.skipif(not th.cuda.device_count(), 'cuda unavailable')
-
 import os
-
 import ipd
 
 try:

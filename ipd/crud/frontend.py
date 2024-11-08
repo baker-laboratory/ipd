@@ -12,15 +12,16 @@ from typing import Annotated, Optional, Union
 import compact_json
 import fastapi
 import httpx
-import mlb
 import pydantic
 import yaml
 
 import ipd
 from ipd.dev import str_to_json, tojson
 
-tojson = mlb.profiler(tojson)
-str_to_json = mlb.profiler(str_to_json)
+# profiler = ipd.dev.timed
+profiler = lambda f: f
+tojson = profiler(tojson)
+str_to_json = profiler(str_to_json)
 
 T = typing.TypeVar('T')
 
@@ -46,7 +47,7 @@ class ModelRef(type):
         else: T = ipd.dev.classname_or_str(T)
         return Annotated[Annotated[_ModelRefType, validator], T]
 
-@mlb.profiler
+@profiler
 def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
     if hasattr(val, 'id'): return val.id
@@ -150,7 +151,7 @@ class SpecBase(pydantic.BaseModel):
     def __setitem__(self, k, v):
         return setattr(self, k, v)
 
-    @mlb.profiler
+    @profiler
     def info(
         self,
         recurse=1,
@@ -215,7 +216,7 @@ class SpecBase(pydantic.BaseModel):
 
         return d
 
-    @mlb.profiler
+    @profiler
     def str_compact(self, linelen=120, strip_labels='invars outvars name'.split(), **kw):
         formatter = compact_json.Formatter()
         formatter.indent_spaces = 2
@@ -239,7 +240,7 @@ class SpecBase(pydantic.BaseModel):
     def print_compact(self, **kw):
         print(self.str_compact(**kw), flush=True)
 
-@mlb.profiler
+@profiler
 class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __init__(self, thing, attr, val, attrkind=''):
         super().__init__(val)
@@ -248,7 +249,7 @@ class UploadOnMutateList(ipd.dev.Instrumented, list):
     def __on_change__(self, thing):
         self.thing._client.setattr(self.thing, self.attr, [str(x.id) for x in self], self.attrkind)
 
-@mlb.profiler
+@profiler
 def make_client_models(clientcls, trimspecs, remote_props):
     spec_models = clientcls.__spec_models__
     backend_models = clientcls.__backend_models__
@@ -304,7 +305,7 @@ class ClientModelBase(pydantic.BaseModel):
     _client: 'ClientBase' = None
     __sibling_models__: dict[str, 'ClientModelBase'] = {}
 
-    @mlb.profiler
+    @profiler
     def __init_subclass__(cls, remote_props=(), siblings=(), **kw):
         super().__init_subclass__(**kw)
         if not remote_props: return
@@ -346,7 +347,7 @@ class ClientModelBase(pydantic.BaseModel):
         'noop, as validation should have happened at Spec stage'
         return self
 
-    @mlb.profiler
+    @profiler
     def __setattr__(self, name, val):
         assert name != 'id', 'cant set id via client'
         if self._client and name[0] != '_':
@@ -377,7 +378,7 @@ def client_obj_constructor(loader, node):
 yaml.add_representer(ClientModelBase, client_obj_representer)
 yaml.add_constructor('!Pydantic', client_obj_constructor)
 
-@mlb.profiler
+@profiler
 class ClientBase:
     def __init_subclass__(cls, Backend, **kw):
         super().__init_subclass__(**kw)
@@ -446,12 +447,13 @@ class ClientBase:
         return response
 
     def remove(self, thing):
-        assert isinstance(thing, ipd.ppp.SpecBase), f'cant remove type {thing.__class__.__name__}'
+        assert isinstance(thing, SpecBase), f'cant remove type {thing.__class__.__name__}'
         thingname = thing.__class__.__name__.replace('Spec', '').lower()
         return self.get(f'/remove/{thingname}/{thing.id}')
 
     def upload(self, thing, _dispatch_on_type=True, modelkind=None, **kw):
         modelkind = modelkind or thing.modelkind()
+        remote = []
         if not isinstance(thing, SpecBase):
             thing, remote, extra = self.make_spec(modelkind, **thing)
         if _dispatch_on_type and hasattr(self, f'upload_{modelkind}'):
@@ -539,7 +541,7 @@ def add_basic_client_model_methods(clientcls):
 
         for attr, fn in make_basic_client_model_methods_closure().items():
             fn.__qualname__ = f'{clientcls.__name__}.{attr}'
-            setattr(clientcls, attr, mlb.profiler(fn))
+            setattr(clientcls, attr, profiler(fn))
 
 def model_method(func, layer):
     @functools.wraps(func)

@@ -183,6 +183,7 @@ class SymIndex:
         for i in range(self.nsub):
             self.idx_sym_to_sub[i, self.sub[i]] = th.arange(self.Nasu)
             self.idx_asu_to_sub[i, self.asu] = th.where(self.sub[i])[0]
+        self.subunit_masks = [m != -1 for m in self.idx_sym_to_sub]
         self.subnum = th.max(self.sub.to(int) * th.arange(nsub)[:, None], 0).values
         self.subnum[self.unsym] = -1
         self.idx_sub_to_asu = -th.ones(self.L, dtype=int)

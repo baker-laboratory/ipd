@@ -5,19 +5,19 @@ import ipd
 from ipd.dev.observer.dynamic_parameters import _NotIn
 
 def main():
-    test_dynparam_steps()
-    test_dynparam_bool_on_steps()
-    test_dynparam_bool_in_range()
-    test_dynparams_spline1D()
-    test_dynparams_spline2D()
     test_dynparams_constant()
+    test_dynparams_spline2D()
+    test_dynparams_spline1D()
+    test_dynparam_bool_in_range()
+    test_dynparam_bool_on_steps()
+    test_dynparam_steps()
     test_dynparam_parse()
     test_dynparam_askwargs()
     print('test_dynparam PASS')
 
 @pytest.mark.fast
 def test_dynparams_constant():
-    dynp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40)
+    dynp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40, _testing=True)
     SS = dynp._set_step
     dynp.newparam_constant('foo', 'FOO')
     assert SS(diffuse=0, rfold=39).foo == 'FOO'
@@ -26,7 +26,7 @@ def test_dynparams_constant():
 
 @pytest.mark.fast
 def test_dynparams_spline2D():
-    dynp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40)
+    dynp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40, _testing=True)
     SS = dynp._set_step
     dynp.newparam_spline_2d('twod',
                             diffuse_rfold=[
@@ -55,7 +55,7 @@ def test_dynparams_spline2D():
 
 @pytest.mark.fast
 def test_dynparams_spline1D():
-    dynp = ipd.dev.DynamicParameters(ndesign=9, ndiffuse=9, nrfold=9)
+    dynp = ipd.dev.DynamicParameters(ndesign=9, ndiffuse=9, nrfold=9, _testing=True)
     SS = dynp._set_step
 
     dynp.newparam_spline_1d('linear1', diffuse=[(0, 1), (1, 9)])
@@ -79,7 +79,7 @@ def test_dynparams_spline1D():
 
 @pytest.mark.fast
 def test_dynparam_bool_in_range():
-    dynp = ipd.dev.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11)
+    dynp = ipd.dev.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11, _testing=True)
     SS = dynp._set_step
 
     #
@@ -115,7 +115,7 @@ def test_dynparam_bool_in_range():
 
 @pytest.mark.fast
 def test_dynparam_bool_on_steps():
-    dynp = ipd.dev.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11)
+    dynp = ipd.dev.DynamicParameters(ndesign=5, ndiffuse=7, nrfold=11, _testing=True)
     SS = dynp._set_step
 
     dynp.newparam_true_on_steps('toi', diffuse=[1, 3])
@@ -190,7 +190,7 @@ def test_dynparam_bool_on_steps():
 
 @pytest.mark.fast
 def test_dynparam_steps():
-    dynp = ipd.dev.DynamicParameters(ndesign=12, ndiffuse=50, nrfold=40)
+    dynp = ipd.dev.DynamicParameters(ndesign=12, ndiffuse=50, nrfold=40, _testing=True)
     dynp._set_step(design=7)
     assert dynp._step == (7, None, None)
     dynp._set_step(diffuse=13)
@@ -210,7 +210,7 @@ def test_dynparam_steps():
 
 @pytest.mark.fast
 def test_dynparam_parse():
-    dp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10)
+    dp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10, _testing=True)
     with pytest.raises(SyntaxError):
         dp.parse_dynamic_param('foo', 'rfold:[(2 4)]')
     with pytest.raises(ValueError):
@@ -248,7 +248,7 @@ def test_dynparam_askwargs():
     def foo(a, b, c):
         return int(a) + int(b) + int(c)
 
-    dp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10)
+    dp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=10, nrfold=10, _testing=True)
     dp.newparam_true_on_steps('a', rfold=0, diffuse=0)
     dp.newparam_true_on_steps('b', rfold=0, diffuse=0)
     dp.newparam_true_on_steps('c', rfold=1, diffuse=1)

@@ -11,7 +11,7 @@ import numpy as np
 from icecream import ic
 
 import ipd
-from ipd.viz.viz_deco import pymol_frame
+from ipd.viz.viz_deco import pymol_scene
 
 pymol = ipd.dev.lazyimport('pymol')
 cgo = ipd.dev.lazyimport('pymol.cgo')
@@ -313,7 +313,7 @@ def get_different_colors(ncol, niter=1000, colorseed=1):
     # return name + '_%i' % _showme_state['seenit']
     # return name
 
-@pymol_frame
+@pymol_scene
 def pymol_visualize_xforms(
         xforms,
         name="xforms",
@@ -595,7 +595,7 @@ def generate_rainbow_gradient(n_values=100):
 
 # RAINBOW = generate_rainbow_gradient(100)
 
-@pymol_frame
+@pymol_scene
 def show_ndarray_point_or_vec(
     toshow,
     col=None,
@@ -652,7 +652,7 @@ def show_ndarray_point_or_vec(
 
     return ipd.dev.Bunch(cgo=cgo, colors=colors)
 
-@pymol_frame
+@pymol_scene
 def show_array_ncacoh(
     toshow,
     name=None,
@@ -672,7 +672,7 @@ def show_array_ncacoh(
     pymol.cmd.show('sti', 'name N+CA+C')
     return ipd.dev.Bunch(pymol_object=name)
 
-@pymol_frame
+@pymol_scene
 def show_ndarray_n_ca_c(
     toshow,
     name=None,
@@ -789,11 +789,8 @@ def showme(*args, name=None, how="pymol", **kw):
             else: names.append(i)
     elif isinstance(name, str): names = [name]
     else: names = name
-
-    if "pymol" not in sys.modules:
-        how = "pdb"
+    if "pymol" not in sys.modules: how = "pdb"
     if how == "pymol":
-
         for arg, name in zip(args, names):
             result = showme_pymol(arg, name=name, **kw)
     else:

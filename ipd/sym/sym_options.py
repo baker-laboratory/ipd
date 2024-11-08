@@ -13,10 +13,12 @@ default_params = dict(
     center_cyclic=False,
     copy_main_block_template=None,
     contig_is_symmetric=False,
+    contig_relabel_chains=False,
     fit=None,
     fittscale=1.0,
     fitwclash=4.0,
     guideposts_are_symmetric=False,
+    high_t_number=1,
     ligand_is_symmetric=None,
     max_nsub=99,
     motif_copy_position_from_px0=False,
@@ -24,8 +26,11 @@ default_params = dict(
     move_unsym_with_asu=True,
     nsub=None,
     pseudo_cycle=None,
+    recenter_for_diffusion=None,
+    recenter_xt_chains_on_px0=None,
     rfsym_enabled=None,
     subsymid=None,
+    start_radius=0,
     sym_enabled=True,
     symid='C1',
     symmetrize_repeats=None,
@@ -81,9 +86,9 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if 'nsub' not in opt or not opt.nsub:
         if opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])
         if opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])
-        if opt.symid == 'T': opt.nusb = 12
-        if opt.symid == 'O': opt.nusb = 24
-        if opt.symid == 'I': opt.nusb = 60
+        if opt.symid == 'T': opt.nsub = 12
+        if opt.symid == 'O': opt.nsub = 24
+        if opt.symid == 'I': opt.nsub = 60
     return opt
 
 def process_symmetry_options(opt, **kw):
@@ -99,6 +104,11 @@ def process_symmetry_options(opt, **kw):
         opt.Lasu = opt.repeat_length
         if opt.n_repeats:
             opt.L = opt.n_repeats * opt.repeat_length
+
+    if opt.has('sym_input_pdb'):
+        opt.T_xforms = ipd.sym.generate_ASU_xforms(opt.sym_input_pdb)
+        opt.high_t_number = len(opt.T_xforms)
+        log.info(f'HIGH T - processed T{opt.high_t_number} symmetry')
 
     return opt
 

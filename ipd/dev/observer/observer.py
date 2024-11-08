@@ -68,14 +68,7 @@ class Subject:
 
 hub = Subject()
 
-class ObserverMeta(abc.ABCMeta):
-    '''This metaclass registers all subclasses of Observer with the hub Subject'''
-    def __init__(cls, name, bases, dct):
-        super().__init__(name, bases, dct)
-        if cls.__name__ != 'Observer':
-            hub._register_instance(cls())
-
-class Observer(abc.ABC, metaclass=ObserverMeta):
+class Observer(abc.ABC):
     '''
     Base class for all Observers, must define set_config and use it to configure themselves
 
@@ -93,11 +86,14 @@ class Observer(abc.ABC, metaclass=ObserverMeta):
     '''
     _instances = dict()
 
+    def __init_subclass__(cls, **kw):
+        super().__init__(cls, **kw)
+        hub._register_instance(cls())
+
     def __new__(cls, *args, **kw):
         if cls not in cls._instances:
             cls._instances[cls] = super().__new__(cls, *args, **kw)
         return cls._instances[cls]
 
-    @abc.abstractmethod
     def set_config(self, conf, **kw):
         pass

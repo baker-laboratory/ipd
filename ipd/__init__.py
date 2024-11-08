@@ -13,7 +13,6 @@ fit = lazyimport('ipd.fit')
 h = lazyimport('ipd.homog.thgeom')
 homog = lazyimport('ipd.homog')
 pdb = lazyimport('ipd.pdb')
-ppp = lazyimport('ipd.ppp')
 qt = lazyimport('ipd.dev.qt')
 samp = lazyimport('ipd.samp')
 sieve = lazyimport('ipd.sieve')
@@ -29,8 +28,13 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 projdir = os.path.realpath(os.path.dirname(__file__))
 
 from icecream import ic
+from collections import defaultdict, namedtuple
+import builtins
 
 ic.configureOutput(includeContext=True)
+builtins.ic = ic
+builtins.defaultdict = defaultdict
+builtins.namedtuple = namedtuple
 
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
@@ -38,11 +42,5 @@ def showme(*a, **kw):
 
 def __getattr__(name):
     if name == 'symmetrize':
-        return ipd.sym.symmetrize
+        return sym.get_global_symmetry()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
-
-import builtins
-from collections import namedtuple
-
-builtins.ic = ic
-builtins.namedtuple = namedtuple

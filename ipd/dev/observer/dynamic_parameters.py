@@ -11,10 +11,10 @@ Examples
 A central DynamicParameter manager class creates and contains all parameters and is
 created for a run with 10 designs, 50 diffusion steps, and 40 total rfold steps like so
 
-    >>> params = DynamicParam   eters(ndesign=10, ndiffuse=50, nrfold=40)
+    >>> params = DynamicParameters(ndesign=10, ndiffuse=50, nrfold=40)
 
-New parameters are created wtih factory member functions of DynamicParameter
-with a specified name and will depend on any combination of thes current design,
+New parameters are created with factory member functions of DynamicParameter
+with a specified name and will depend on any combination of the current design,
 diffusion, and/or rfold step. For example:
 
     >>> params.newparam_false_on_steps(name='done_on_first_3_steps', diffuse=[0, 1, 2])
@@ -174,14 +174,14 @@ class StepObserver(Observer):
 
 class DynamicParameters(Mapping):
     '''A central class that manages all dynamic parameters for a run'''
-    def __init__(self, ndesign=None, ndiffuse=None, nrfold=40):
+    def __init__(self, ndesign=None, ndiffuse=None, nrfold=40, _testing=False):
         self._step = Step(None, None, None)
         self._nstep = Step(ndesign, ndiffuse, nrfold)
         self._rfold_tags = set()
         self._params = dict()
         self._strict = not (ndesign is None or ndiffuse is None or nrfold is None)
         self._parsed_params = dict()
-        StepObserver()._add_observer(self)
+        if not _testing: StepObserver()._add_observer(self)
         self._sanity_check()
 
     ################## factory funcs for the various dynparam types #####################
@@ -510,9 +510,10 @@ class _TrueOnIters(DynamicParam):
 
     def __str__(self):
         s = super().__str__()
-        if self.design_steps: s += f' design:  {str(self.design_steps)}'
-        if self.diffuse_steps: s += f' diffuse: {str(self.diffuse_steps)}'
-        if self.rfold_steps: s += f' rfold:   {str(self.rfold_steps)}'
+        extra = '' if self.levels == [True, False] else f' levels = {self.levels}'
+        if self.design_steps: s += f' design:  {str(self.design_steps)}{extra}'
+        if self.diffuse_steps: s += f' diffuse: {str(self.diffuse_steps)}{extra}'
+        if self.rfold_steps: s += f' rfold:   {str(self.rfold_steps)}{extra}'
         return s
 
 class _Spline1D(DynamicParam):

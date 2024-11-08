@@ -2,7 +2,7 @@ import pytest
 
 import ipd
 
-@pytest.mark.slow
+@pytest.mark.ci
 def test_pip_install(tmpdir):
     try:
         result = ipd.dev.run(f'python -mvenv {tmpdir} && time {tmpdir}/bin/pip install {ipd.projdir}/..')

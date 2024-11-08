@@ -46,6 +46,10 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         gpu, if cuda is available'''
         pass
 
+    def setup_for_symmetry(self, thing):
+        '''Default implementation no-op'''
+        return thing
+
     def post_init(self):
         if 'idx' in self._post_init_args: self.idx = self._post_init_args.idx
         ipd.hub.sym_manager_created(self)
@@ -110,24 +114,19 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             newxyz[0] = ipd.sym.set_motif_placement_if_necessary(self, newxyz[0], **kw)
             # self.assert_symmetry_correct(newxyz, **kw)
             # self.assert_symmetry_correct(newpair, **kw)
-            newxyz.__HAS_BEEN_SYMMETRIZED = True
-            newpair.__HAS_BEEN_SYMMETRIZED = True
+            self.mark_symmetrical(newxyz, newpair)
             return newxyz, newpair
         elif thing.kind.shapekind == ShapeKind.SEQUENCE:
             result = thing.reconstruct([self(x, **kw) for x in thing.adapted])
         elif thing.kind.shapekind == ShapeKind.MAPPING:
-            result = thing.reconstruct(
-                ipd.dev.Bunch({
-                    k: self(x, key=k, **kw)
-                    for k, x in thing.adapted.items()
-                }))
+            result = thing.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in thing.adapted.items()}))
         elif thing.kind.shapekind == ShapeKind.SCALAR:
+            result = thing.orig
+        elif th.is_tensor(thing.orig) and thing.orig.shape[-1] == 0:
             result = thing.orig
         else:
             result = thing.reconstruct(self.apply_sym_slices(thing, **kw))
-
-        with contextlib.suppress(AttributeError):
-            result.__HAS_BEEN_SYMMETRIZED = True
+        self.mark_symmetrical(result)
         return result
 
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
@@ -143,7 +142,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
-        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pari=pair, origxyz=origxyz, **kw)
+        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
         xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
@@ -172,7 +171,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         if len(contig) == 1: contig = contig[0]
         result = self.fill_from_contiguous(thing, adapted, contig, **kw)
         if thing.kind.valuekind == ValueKind.XYZ:
-            s = self.idx
             result = self.move_unsym_to_match_asu(adapted, result)
         return result
 
@@ -196,8 +194,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             if self.opt.sympair_method == 'max':
                 grouped[group] = th.maximum(grouped[group], pair[i:i + N, j:j + N])
             elif self.opt.sympair_method == 'mean':
-                ic(grouped[group].shape)
-                ic(pair[i:i + N, j:j + N].shape)
+                # ic(grouped[group].shape)
+                # ic(pair[i:i + N, j:j + N].shape)
                 grouped[group] += pair[i:i + N, j:j + N] / Nmembers
             else:
                 raise NotImplementedError(f'unknown sympair_method {self.opt.sympair_method}')
@@ -252,7 +250,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         origasu = orig[self.masu, 0]
         movedasu = moved[self.masu, 0]
         unsym = orig[tomove]
-        ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
+        # ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
         if len(unsym) and len(origasu) > 2 and not th.allclose(origasu, movedasu, atol=1e-3):
             rms, _, xfit = ipd.h.rmsfit(origasu, movedasu)
             moved[tomove] = ipd.h.xform(xfit, unsym)
@@ -361,6 +359,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     def tensor(self, *a, **kw):
         return ipd.sym.sym_tensor.symtensor(self, *a, **kw)
 
+    def mark_symmetrical(self, *args):
+        for a in args:
+            with contextlib.suppress(AttributeError):
+                a.__HAS_BEEN_SYMMETRIZED = True
+
     def is_symmetrical(self, obj):
         if hasattr(obj, '__HAS_BEEN_SYMMETRIZED'): return True
         if self.idx is None: return False
@@ -386,7 +389,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return n / N, 1 / N
 
     @property
-    def idx(self):
+    def idx(self) -> ipd.sym.SymIndex:
         '''Return the idx of the symmetry managerm or a simple slice if None'''
         if not self._idx:
             try:
@@ -417,7 +420,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             if isinstance(thing, th.Tensor):
                 self.idx = len(thing)
 
-    def sym_adapt(self, thing, isasym=None):
+    def sym_adapt(self, thing, isasym=None) -> ipd.sym.SymAdapt:
         '''Return a SymAdapt object with metadata about the symmetry of the thing'''
         return _sym_adapt(thing, self, isasym)
 
@@ -443,6 +446,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self._symmRs = self._symmRs.to(self.device)
 
     def is_on_symaxis(self, xyz):
+        if len(xyz) == 0: return None
         axes = ipd.sym.axes(self.symid, all=True)
         onanyaxis = False
         for axis in itertools.chain(axes.values()):
@@ -496,8 +500,14 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         '''Return all symmetry matrices'''
         return self._symmRs
 
+    @property
+    def full_symmetry(self):
+        if hasattr(self, '_full_symmetry'):
+            return self._full_symmetry
+        return self.allsymmRs
+
     def apply_initial_offset(self, x):
-        return x
+        return x + self.asucenvec.to(x.device).to(x.dtype) * self.opt.start_radius
 
     @property
     def frames(self):
@@ -508,6 +518,14 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         assert frames.shape[-2:] == (4, 4) and frames.ndim == 3
         self._frames = th.as_tensor(frames, device=self.device, dtype=th.float32)
         self.opt.nsub = len(frames)
+
+    def recenter_by_chain(self, xyz, target):
+        xyz = xyz.clone()
+        for m in self.idx.subunit_masks:
+            tgtcom = target[m, 1].mean(0)
+            xyzcom = xyz[m, 1].mean(0)
+            xyz[m] += tgtcom - xyzcom
+        return xyz
 
 class C1SymmetryManager(SymmetryManager):
     """Basically a null symmetry manager, does not modify anything"""

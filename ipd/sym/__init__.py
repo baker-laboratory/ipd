@@ -20,6 +20,10 @@ high_t = lazyimport('ipd.sym.high_t')
 helix = lazyimport('ipd.sym.helix')
 sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
-def set_symmetry(sym):
-    global symmetrize
-    symmetrize = sym
+_global_symmetry = None
+def set_global_symmetry(sym):
+    global _global_symmetry
+    _global_symmetry = sym
+
+def get_global_symmetry():
+    return _global_symmetry
