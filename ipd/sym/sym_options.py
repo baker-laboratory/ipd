@@ -86,9 +86,9 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if 'nsub' not in opt or not opt.nsub:
         if opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])
         if opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])
-        if opt.symid == 'T': opt.nusb = 12
-        if opt.symid == 'O': opt.nusb = 24
-        if opt.symid == 'I': opt.nusb = 60
+        if opt.symid == 'T': opt.nsub = 12
+        if opt.symid == 'O': opt.nsub = 24
+        if opt.symid == 'I': opt.nsub = 60
     return opt
 
 def process_symmetry_options(opt, **kw):
