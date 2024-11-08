@@ -1,6 +1,6 @@
 import ipd
 from ipd import h
-import torch as th
+th = ipd.lazyimport('torch')
 
 def get_quasi_sym_ops(stubs):
     stubgrid = stubs[None] @ h.inv(stubs[:, None])

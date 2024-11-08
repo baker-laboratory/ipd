@@ -1,3 +1,6 @@
+import pytest
+
+th = pytest.importorskip('torch')
 import ipd
 
 def main():
