@@ -106,6 +106,10 @@ fb2705150373e4fff22fc343ed58ffa8  ipd/sym/old/oldtests/oldtest_diffusion_sym.py
 1f984155bd9dcfecb7b85391b0d81e2f  ipd/sym/sym_adapt.py
 a30f293d09fb0609ca9875785053fa07  ipd/sym/test_sym_color.py
 0e1e887b35d8a097ec27fbda129a9c1a  ipd/sym/sym_tensor.py
+a994a4f7b5fd5066c60aec0a3ce377a7  ipd/motif/motif_options.py
+edf8004f9c47dc097fe7a6dbbe89cda0  ipd/motif/motif_factory.py
+c270fa00927c8dc17ccfbf7474d31ae8  ipd/motif/__init__.py
+36cc5f57d087edf7b92f3e1dc3e3e00b  ipd/motif/motif_manager.py
 3e5c31016d5cee70a9ef83a1f8839621  ipd/samp/sampling.py
 de99df83b1ef2b60517c6ad15c149e1b  ipd/samp/tip_atom_placer.py
 8d38584cc5353047cf5390644b73b6f3  ipd/samp/sampling_cuda.py
@@ -136,7 +140,7 @@ ef5152eb27badcc5e655161593e31de4  ipd/pdb/pdbread.py
 94672a44ac83200dd39ec38b9c3654bf  ipd/pdb/chemical.py
 c4ead89c7d0d9f9796e114655f865ef0  ipd/pdb/pdbdump.py
 07d9dccce92f9ee50f6352d832fb98f6  ipd/__main__.py
-50571813f0248eb4ed6e0bad4dcd136e  ipd/__init__.py
+7d6a5ca2ae5137f226cce1d8f68cfa15  ipd/__init__.py
 deab956f94db7fb477fa20732aff0330  ipd/homog/quat.py
 e87dbbb9aae42b790e1ccce4ecccd9e5  ipd/homog/hgeom.py
 06ed2f5c106f4ef1c3a0883f68e7ad0e  ipd/homog/thgeom.py
@@ -187,6 +191,7 @@ a20b401f6685011342e4feb73bc88d26  ipd/tests/sym/test_sym_fitting.py
 60ccb53233905854eb91a4e3e5b55a07  ipd/tests/maintest.py
 0a1c6631b8b7ecbe50946f23462631fe  ipd/tests/conftest.py
 a22d06112595d5f7f5c3c3b8c6483923  ipd/tests/test_pip_install.py
+2d6670052c550dd1792e5d775d078505  ipd/tests/motif/test_motif_manager.py
 fe7911a80fc6d2223f96f50f6fd0fbf3  ipd/tests/samp/test_tip_atom_placer.py
 92b105e4d5a3c7b38a1587772f808ed5  ipd/tests/samp/test_sampling.py
 75b391f9cb5d21cd52c606397427c175  ipd/tests/tools/test_ipdtool.py

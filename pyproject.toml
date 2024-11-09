@@ -63,6 +63,7 @@ testpaths = [
 markers = [
     "slow: marks tests as slow to run",
     "fast: tests that run in a second or two",
+    "ci: tests that should only run in ci",
 ]
 
 [tool.pyright]

@@ -12,6 +12,7 @@ cuda = lazyimport('ipd.dev.cuda')
 fit = lazyimport('ipd.fit')
 h = lazyimport('ipd.homog.thgeom')
 homog = lazyimport('ipd.homog')
+motif = lazyimport('ipd.motif')
 pdb = lazyimport('ipd.pdb')
 qt = lazyimport('ipd.dev.qt')
 samp = lazyimport('ipd.samp')
@@ -43,6 +44,8 @@ def showme(*a, **kw):
 def __getattr__(name):
     if name == 'symmetrize':
         return sym.get_global_symmetry()
+    if name == 'motif_applier':
+        return motif.get_global_motif_manager()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 dev.install_pre_commit_hook(projdir, '..')
