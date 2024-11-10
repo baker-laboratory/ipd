@@ -19,6 +19,3 @@ def install_ipd_pre_commit_hook(projdir, path=None):
     assert os.path.exists(frm)
     print(f'symlinking {frm} {to}')
     os.symlink(frm, to)
-
-if __name__ == '__main__':
-    install_ipd_pre_commit_hook(sys.argv[1])

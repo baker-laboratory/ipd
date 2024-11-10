@@ -53,7 +53,7 @@ def file_has_main(fname):
     "check if file has a main block"
     with open(fname) as inp:
         for line in inp:
-            if line.startswith("if __name__ == "):
+            if line.startswith("if __name__ == ") and not line.strip().endswith('{# notmain #}'):
                 return True
     return False
 
@@ -106,7 +106,7 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
         post = f'{os.path.join(*post)}/' if post else ''
     # print(pre, post)
     t = f'{root}{pre}tests/{post}test_{bname}'
-    if debug or os.path.exists(t): return t
+    return t
 
 def dispatch(
         projects,
@@ -138,8 +138,13 @@ def dispatch(
     if not file_has_main(fname) and not bname.startswith("test_"):
         testfile = testfile_of(projects, path, bname, **kw)
         if testfile:
+            if not os.path.exists(testfile):
+                print('autogen test file', testfile)
+                os.system(f'{sys.executable} -mipd code make_testfile {fname} {testfile}')
+                os.system(f'subl {testfile}')
             fname = testfile
             path, bname = os.path.split(fname)
+
 
     if bname == os.path.basename(__file__):
         test()

@@ -5,10 +5,14 @@ try:
     rp = lazyimport('RestrictedPython', pip=True)
 
     def safe_eval(code, **kw):
-        return eval(rp.compile_restricted(code, filename='<inline code>', mode='eval'), **kw)
+        bytecode = rp.compile_restricted(code, filename='<inline code>', mode='eval')
+        return eval(bytecode, **kw)
 
     def safe_exec(code, **kw):
-        return exec(rp.compile_restricted(code, filename='<inline code>', mode='exec'), **kw)
+        print(code)
+        bytecode = rp.compile_restricted(code, filename='<inline code>', mode='exec')
+        return exec(bytecode, **kw)
+
 except ImportError:
     logging.warning(
         'RestrictedPython not installed, exec and eval will be unsafe. pip install RestrictedPython')
