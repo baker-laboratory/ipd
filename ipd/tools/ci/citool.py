@@ -122,9 +122,10 @@ def parse_pytest(fname):
     return result
 
 class TestsTool(CITool):
-    def run(self):
-        TestsTool.ruff()
+    def run(self, project):
+        TestsTool.ruff(project)
         TestsTool.pytest()
+        TestsTool.check()
 
     def ruff(self, project):
         ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
@@ -167,10 +168,12 @@ class TestsTool(CITool):
                 jobs.append(
                     run_pytest(exe=exe,
                                sel=nosel,
-                               parallel=parallel,
+                               parallel=par,
                                mem=mem[1 % len(mem)],
                                log=f'{log}.parallel.log',
                                **kw))
+        for cmd, job, log in jobs:
+            os.system(f'cat {log}')
         return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
 
     def check(self, path: Path = '.'):
