@@ -176,9 +176,10 @@ class TestsTool(CITool):
                                mem=mem[1 % len(mem)],
                                log=f'{log}.parallel.log',
                                **kw))
+        result = [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
         for cmd, job, log in jobs:
-            os.system(f'cat {log}')
-        return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
+            os.system'cat {log}')
+        return result
 
     def check(self, path: Path = '.'):
         fail = False
