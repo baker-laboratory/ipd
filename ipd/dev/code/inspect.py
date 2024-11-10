@@ -23,8 +23,8 @@ def caller_info(excludefiles=None) -> CallerInfo:
     if excludefiles:
         while frame.f_code.co_filename in excludefiles:
             frame = frame_parent(frame)
-    module = inspect.getmodule(frame)
-    if module is None: raise ValueError('module is None')
     lines, no = inspect.getsourcelines(frame)
-    code = lines[frame.f_lineno - no - 1].strip()
+    module = inspect.getmodule(frame)
+    code = 'unknown source code'
+    if module is not None: code = lines[frame.f_lineno - no - 1].strip()
     return CallerInfo(frame.f_code.co_filename, frame.f_lineno, code)
