@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from os.path import join, isdir, abspath
+from os.path import join, isdir, abspath, exists
 import sys
 import ipd
 
@@ -13,8 +13,9 @@ def install_ipd_pre_commit_hook(projdir, path=None):
         gitdir = Path(join(projdir, '.git')).read_text()
         assert gitdir.startswith('gitdir: ')
         hookdir = abspath(join(projdir, gitdir[7:].strip(), 'hooks'))
-    frm, to = f'{ipd.projdir}/../git_pre_commit.sh', f'{hookdir}/pre-commit'
-    if os.path.exists(to): return
+    frm, to = abspath(f'{ipd.projdir}/../git_pre_commit.sh'), f'{hookdir}/pre-commit'
+    if exists(to): return
+    assert os.path.exists(frm)
     print(f'symlinking {frm} {to}')
     os.symlink(frm, to)
 
