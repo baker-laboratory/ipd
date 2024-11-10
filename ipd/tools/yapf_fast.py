@@ -18,7 +18,8 @@ def main():
     if os.path.exists('.yapf_hash'):
         prev = set(pathlib.Path('.yapf_hash').read_text().strip().split(os.linesep))
     diff = {x.split()[1] for x in (files - prev)} - exclude
-    yapfcmd = f'yapf -ip {" ".join(diff)}'
+    ppath = f'{os.path.dirname(__file__)}/../../lib'
+    yapfcmd = f'PYTHONPATH={ppath} python -m yapf -ip {" ".join(diff)}'
     if diff:
         print(yapfcmd)
         if not args.dry_run:
