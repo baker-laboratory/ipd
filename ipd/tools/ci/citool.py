@@ -106,7 +106,7 @@ def parse_pytest(fname):
     # collecting ... collected 230 items / 2 deselected / 22 skipped / 228 selected
     # =============== 228/230 tests collected (2 deselected) in 0.81s ================
     os.system(f'grep "collecting ..." {fname}')
-    os.system(f'grep "==========" {fname} | grep -v FAILURES')
+    os.system(f'grep "===" {fname} | grep -v FAILURES')
     os.system(f'grep "FAILED" {fname}')
     # print(content)
     result.ncollect = get_re(r'collecting ... collected (\d+) ', content)
@@ -114,11 +114,11 @@ def parse_pytest(fname):
     result.skipped = get_re(r'collecting ... collected .* / (\d+) skipped', content)
     result.selected = get_re(r'collecting ... collected .* / (\d+) selected', content)
     result.collected = get_re(r'===== .*?(\d+) tests collected .* =====', content)
-    result.passed = get_re(r'=====.*? (\d+) passed.* =====', content)
-    result.errors = get_re(r'=====.*? (\d+) errors.* =====', content)
-    result.failed = get_re(r'=====.*? (\d+) failed.* =====', content)
-    result.xfailed = get_re(r'=====.*? (\d+) xfailed.* =====', content)
-    result.xpassed = get_re(r'=====.*? (\d+) xpassed.* =====', content)
+    result.passed = get_re(r'=.*? (\d+) passed.* =', content)
+    result.errors = get_re(r'=.*? (\d+) errors.* =', content)
+    result.failed = get_re(r'=.*? (\d+) failed.* =', content)
+    result.xfailed = get_re(r'=.*? (\d+) xfailed.* =', content)
+    result.xpassed = get_re(r'=.*? (\d+) xpassed.* =', content)
     return result
 
 class TestsTool(CITool):
