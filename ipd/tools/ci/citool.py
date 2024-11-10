@@ -78,12 +78,13 @@ def run_pytest(
     dryrun=False,
     tee=False,
     gpu='',
+    flags='',
 ):
     dry = '--collect-only' if dryrun else ''
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
-    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
+    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log} --benchmark-disable'
     while '  ' in cmd:
         cmd = cmd.replace('  ', ' ')
     if executor:
@@ -145,7 +146,8 @@ class TestsTool(CITool):
                which: str = '',
                dryrun: bool = False,
                tee: bool = False,
-               mem: list[str] = ['16G']):
+               mem: list[str] = ['16G'],
+               flags: str = ''):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
@@ -156,7 +158,7 @@ class TestsTool(CITool):
         nosel = ' and '.join([f'not {t}' for t in which.split()])
         jobs = []
         executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
-        kw = dict(env=env, mark=mark, dryrun=dryrun, executor=executor, tee=tee, gpu=gpu)
+        kw = dict(env=env, mark=mark, dryrun=dryrun, executor=executor, tee=tee, gpu=gpu, flags=flags)
         if not slurm:
             jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
         else:

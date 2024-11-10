@@ -1,4 +1,3 @@
-import collections
 from pathlib import Path
 import os
 import inspect

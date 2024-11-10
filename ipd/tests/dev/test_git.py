@@ -1,6 +1,5 @@
 import os
 import tempfile
-import pytest
 import ipd
 
 def main():

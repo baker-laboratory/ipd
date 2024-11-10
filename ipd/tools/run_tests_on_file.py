@@ -145,7 +145,6 @@ def dispatch(
             fname = testfile
             path, bname = os.path.split(fname)
 
-
     if bname == os.path.basename(__file__):
         test()
         sys.exit()

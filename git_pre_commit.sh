@@ -2,6 +2,7 @@
 
 gitroot=$(git rev-parse --show-toplevel)
 echo git root dir found: $gitroot
+
 if [ $(basename $gitroot) == 'ipd' ]; then
     ipd="$gitroot"
     src=ipd
@@ -20,10 +21,12 @@ else
     echo ruff failed; exit 1;
 fi
 
-cmd=PYTHONPATH=$ipd/lib python $ipd/ipd/tools/yapf_fast.py $src
-retcode=$($cmd)
+cmd="PYTHONPATH=$ipd/lib python $ipd/ipd/tools/yapf_fast.py $src"
+PYTHONPATH=$ipd/lib python $ipd/ipd/tools/yapf_fast.py $src
+retcode=$?
+echo $retcode $cmd
 
-if $retcode; then
+if [ $retcode == 0 ]; then
     echo files all formatted
 else
     echo some files changed, retry commit
