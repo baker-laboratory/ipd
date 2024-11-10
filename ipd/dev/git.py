@@ -21,4 +21,4 @@ def install_ipd_pre_commit_hook(projdir, path=None):
     os.symlink(frm, to)
 
 if __name__ == '__main__':
-    install_pre_commit_hook(sys.argv[1])
+    install_ipd_pre_commit_hook(sys.argv[1])
