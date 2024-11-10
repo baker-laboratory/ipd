@@ -178,7 +178,7 @@ class TestsTool(CITool):
                                **kw))
         result = [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
         for cmd, job, log in jobs:
-            os.system'cat {log}')
+            os.system(f'cat {log}')
         return result
 
     def check(self, path: Path = '.'):
