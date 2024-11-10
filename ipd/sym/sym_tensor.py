@@ -145,14 +145,11 @@ FullSlicedAll1DBasic([0, 1, 2, 0, 1, 2, 0, 1, 2, 7])
 '''
 
 import sys
-
-import ipd
-from ipd.dev.lazy_import import lazyimport
-
-th = lazyimport('torch')
-
 import functools
 
+import ipd
+
+import torch as th
 import numpy as np
 from torch import Tensor as T
 

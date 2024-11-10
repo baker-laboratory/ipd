@@ -1,5 +1,3 @@
-from rf_diffusion.structure import assign_torch, get_bb_pydssp_seq_xyz_isgp_issm
-
 import ipd
 from ipd import h
 from ipd.dev.lazy_import import lazyimport
@@ -26,6 +24,8 @@ def relax_thresh_min(progress, thresh):
     return mod * thresh
 
 class SS(ipd.sieve.Sieve):
+    from rf_diffusion.structure import assign_torch, get_bb_pydssp_seq_xyz_isgp_issm
+
     def __call__(self, progress, indep, xyz, cache, **kw):
         if 'ss' not in cache:
             xyz = generate_O(xyz)

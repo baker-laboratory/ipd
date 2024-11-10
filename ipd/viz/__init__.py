@@ -1,4 +1,3 @@
-# try:
 from ipd.viz.primitives import *
 from ipd.viz.pymol_cgo import *
 from ipd.viz.pymol_viz import *

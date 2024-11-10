@@ -1,11 +1,8 @@
-import os
 import shutil
 import subprocess
 import threading
 import time
 from subprocess import check_output
-
-from ipd.dev.qt import isfalse_notify
 
 class FileFetcher(threading.Thread):
     def __init__(self, fname, cache):
@@ -77,6 +74,7 @@ class PrefetchLocalFileCache(FileCache):
             if self.fnames[index] in self.available:
                 return localfname
             time.sleep(0.1)
+        from ipd.dev.qt import isfalse_notify
         isfalse_notify(os.path.exists(localfname))
 
     def cleanup(self):

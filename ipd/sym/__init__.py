@@ -22,9 +22,9 @@ sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
 _global_symmetry = None
 
-def set_global_symmetry(sym):
+def set_global_symmetry(sym: SymmetryManager):
     global _global_symmetry
     _global_symmetry = sym
 
-def get_global_symmetry():
+def get_global_symmetry() -> SymmetryManager:
     return _global_symmetry

@@ -72,7 +72,7 @@ exclude = [
     "**/__pycache__",
 ]
 defineConstant = { DEBUG = true }
-typeCheckingMode = "basic"
+typeCheckingMode = "standard"
 reportMissingImports = true
 reportMissingTypeStubs = false
 pythonPlatform = "Linux"
