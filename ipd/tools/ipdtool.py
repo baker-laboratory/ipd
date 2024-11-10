@@ -37,8 +37,8 @@ class IPDTool(CliBase):
 
     def clone(self,
               url: str,
-              branch: Annotated[str, typer.Argument('main')],
-              path: Annotated[str | None, typer.Argument(None)],
+              branch: Annotated[str, typer.Argument()] = 'main',
+              path: Annotated[str | None, typer.Argument()] = None,
               secrets: str = '',
               norecurse: bool = False):
         path = path or branch
