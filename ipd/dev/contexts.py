@@ -8,6 +8,7 @@ from contextlib import contextmanager
 def onexit(func):
     def wrapper(*args, **kw):
         return func(*args, **kw)
+
     atexit.register(wrapper)
     return wrapper
 

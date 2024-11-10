@@ -32,14 +32,14 @@ class LazyModule:
         try:
             return self._mambathenpipimport()
         # except ImportError as e:
-            # msg = f'lazy import of module {self._name} failed, continuing without {self._name} support'
-            # if msg not in _warned:
-                # print(msg)
-                # _warned.add(msg)
-            # for p in sys.path:
-            # print(p)
-            # raise ImportError(f'Failed to import module: {self._name}') from e
-            # raise e from e
+        # msg = f'lazy import of module {self._name} failed, continuing without {self._name} support'
+        # if msg not in _warned:
+        # print(msg)
+        # _warned.add(msg)
+        # for p in sys.path:
+        # print(p)
+        # raise ImportError(f'Failed to import module: {self._name}') from e
+        # raise e from e
         except Exception as e:
             callinfo = f'{self._callerinfo.filename}:{self._callerinfo.lineno}\n    {self._callerinfo.code}'
             print(f'LazyModule: Failed to import module: {self._name}\nFile: {callinfo}', flush=True)
@@ -143,7 +143,6 @@ _DEBUG_ALLOW_LAZY_IMPORT = [
     'sqlmodel',
     'fastapi',
     'torch',
-
     'ipd.sym.high_t',
     'omegaconf',
     'ipd.dev.cli',

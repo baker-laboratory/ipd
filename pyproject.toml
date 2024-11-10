@@ -36,6 +36,7 @@ dependencies = [
     'pytest-dotenv',
     'python-box',
     'requests',
+    'RestrectedPython',
     'ruff',
     'seaborn',
     'submitit',
