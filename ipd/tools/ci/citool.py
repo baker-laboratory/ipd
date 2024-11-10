@@ -84,7 +84,7 @@ def run_pytest(
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
-    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log} --benchmark-disable'
+    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} --benchmark-disable {tee} {log}'
     while '  ' in cmd:
         cmd = cmd.replace('  ', ' ')
     if executor:
