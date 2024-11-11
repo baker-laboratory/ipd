@@ -2,6 +2,7 @@ import subprocess
 import sys
 from importlib import import_module
 from types import ModuleType
+import typing
 from ipd.dev.code.inspect import caller_info
 from ipd.dev.contexts import onexit
 
@@ -14,7 +15,7 @@ class LazyModule:
     '''
     __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels', '_callerinfo')
 
-    def __init__(self, name: str, package: str = None, pip=False, mamba=False, channels=''):
+    def __init__(self, name: str, package: str = '', pip=False, mamba=False, channels=''):
         self._name = name
         self._package = package or name.split('.', maxsplit=1)[0]
         self._pip = pip
@@ -109,7 +110,9 @@ class LazyModule:
             n=self._name,
         )
 
-def lazyimport(*a, **kw):
+def lazyimport(*a, **kw) -> ModuleType:
+    if typing.TYPE_CHECKING:
+        return import_module(a[0])
     return LazyModule(*a, **kw)
 
 _all_skipped_lazy_imports = set()

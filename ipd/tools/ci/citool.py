@@ -118,7 +118,7 @@ def parse_pytest(fname):
     result.selected = get_re(r'collecting ... collected .* / (\d+) selected', content)
     result.collected = get_re(r'===== .*?(\d+) tests collected .* =====', content)
     result.passed = get_re(r'=.*? (\d+) passed.* =', content)
-    result.errors = get_re(r'=.*? (\d+) errors.* =', content)
+    result.errors = get_re(r'=.*? (\d+) error.* =', content)
     result.failed = get_re(r'=.*? (\d+) failed.* =', content)
     result.xfailed = get_re(r'=.*? (\d+) xfailed.* =', content)
     result.xpassed = get_re(r'=.*? (\d+) xpassed.* =', content)

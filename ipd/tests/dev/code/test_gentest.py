@@ -11,11 +11,12 @@ def test_make_testfile(tmpdir):
     sourcefile = os.path.join(tmpdir, 'sourcefile.py')
     testfile = os.path.join(tmpdir, 'testfile.py')
     pathlib.Path(sourcefile).write_text(CODE)
-    ipd.tools.CodeTool().make_testfile(sourcefile, testfile)
+    os.system(f'cp {ipd.projdir}/../pyproject.toml {tmpdir}')
+    ipd.dev.code.make_testfile(sourcefile, testfile)
     code = pathlib.Path(testfile).read_text()
-    # print(code)
     if code != EXPECTED:
         pathlib.Path(f'{tmpdir}/expected.py').write_text(EXPECTED)
+        print(code)
         os.system(f'diff {tmpdir}/expected.py {tmpdir}/testfile.py')
     assert code == EXPECTED
 

@@ -51,6 +51,7 @@ def get_args(sysargv):
 
 def file_has_main(fname):
     "check if file has a main block"
+    if not os.path.exists(fname): return False
     with open(fname) as inp:
         for line in inp:
             if line.startswith("if __name__ == ") and not line.strip().endswith('{# notmain #}'):
