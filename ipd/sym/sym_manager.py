@@ -7,9 +7,10 @@ from abc import ABC, abstractmethod
 import assertpy
 import numpy as np
 from icecream import ic
-import torch as th
 
 import ipd
+
+th = ipd.dev.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
 from ipd.sym.sym_adapt import _sym_adapt
 
@@ -67,7 +68,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         pass
 
     @abstractmethod
-    def apply_symmetry(self, xyz: th.Tensor, pair=None, update_symmsub=False, **kw) -> th.Tensor:
+    def apply_symmetry(self, xyz: 'th.Tensor', pair=None, update_symmsub=False, **kw) -> 'th.Tensor':
         """All subclasses must implement this method.
 
         Calls will recieve only the part of the structure that needs to
@@ -204,7 +205,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             result = self.move_unsym_to_match_asu(adapted, result)
         return result
 
-    def apply_symmetry_pair(self, pair: th.Tensor, **kw) -> th.Tensor:
+    def apply_symmetry_pair(self, pair: 'th.Tensor', **kw) -> 'th.Tensor':
         if not self.opt.symmetrize_repeats and not self.opt.sympair_enabled:
             return pair
         if kw['sympair_protein_only']:
@@ -256,7 +257,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         assert th.allclose(newidx, idx)
         return new
 
-    def apply_symmetry_scalar(self, shapekind: ShapeKind, contig: th.Tensor, **kw) -> th.Tensor:
+    def apply_symmetry_scalar(self, shapekind: ShapeKind, contig: 'th.Tensor', **kw) -> 'th.Tensor':
         N = len(contig) // self.nsub
         match shapekind:
             case ShapeKind.ONEDIM:
@@ -297,7 +298,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                 assert rms < 1e-3
         return moved
 
-    def to_contiguous(self, thing, matchpair=False, sympair_protein_only=None, **kw) -> tuple[th.Tensor, th.Tensor, int]:
+    def to_contiguous(self,
+                      thing,
+                      matchpair=False,
+                      sympair_protein_only=None,
+                      **kw) -> tuple['th.Tensor', 'th.Tensor', int]:
         if isinstance(thing, tuple):
             return tuple(self.make_contiguous(t) for t in thing)
         adapted = thing.adapted
@@ -322,7 +327,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             case _:
                 raise ValueError(f'SymManager.to_contiguous: unknown thing {type(thing)}')
 
-    def fill_from_contiguous(self, thing, orig, contig, matchpair=False, sympair_protein_only=None, **kw) -> th.Tensor:
+    def fill_from_contiguous(self, thing, orig, contig, matchpair=False, sympair_protein_only=None, **kw) -> 'th.Tensor':
         ctg = self.idx.contiguous
         if isinstance(orig, np.ndarray): ctg = ctg.cpu().numpy()
         new = copy.deepcopy(orig)
@@ -344,7 +349,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                     new[idx[:, 0], idx[:, 1]] = contig.reshape(-1, *contig.shape[2:])
         return new
 
-    def extract(self, thing: T, mask: th.Tensor, key=None, skip_keys=None, **kw) -> T:
+    def extract(self, thing: T, mask: 'th.Tensor', key=None, skip_keys=None, **kw) -> T:
         """Extract the asu from an object.
 
         This should basically be the inverse of __call__. residues not
@@ -378,7 +383,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     def asu(self, thing: T, **kw) -> T:
         return self.extract(thing, self.masu, asu=True, **kw)
 
-    def symdims(self, tensor: th.Tensor, idx=None) -> th.Tensor:
+    def symdims(self, tensor: 'th.Tensor', idx=None) -> 'th.Tensor':
         """Try to guess which dimensions are symmetrical, could be 1 or 2."""
         if idx is None:
             symdims = th.where(th.tensor(tensor.shape) == self.idx.L)[0]
