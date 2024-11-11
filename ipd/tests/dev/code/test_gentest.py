@@ -16,9 +16,11 @@ def test_make_testfile(tmpdir):
     code = pathlib.Path(testfile).read_text()
     if code != EXPECTED:
         pathlib.Path(f'{tmpdir}/expected.py').write_text(EXPECTED)
-        print(code)
-        os.system(f'diff {tmpdir}/expected.py {tmpdir}/testfile.py')
-    assert code == EXPECTED
+        diff = ipd.dev.run(f'diff -B {tmpdir}/expected.py {tmpdir}/testfile.py')
+        if diff:
+            print(code)
+            print(diff)
+    assert code == EXPECTED or not diff
 
 CODE = '''
 from pathlib import Path
