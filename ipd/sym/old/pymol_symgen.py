@@ -76,7 +76,7 @@ def hacky_xtal_maker(
     cmd.set_view(v)
 
 class PymolSymElem(object):
-    """docstring for PymolSymElem"""
+    """Docstring for PymolSymElem."""
     def __init__(
             self,
             kind,
@@ -546,7 +546,7 @@ class PymolSymElem(object):
         return self.kind + " " + str(self.axis)
 
 class SymElemPosition(object):
-    """docstring for SymElemPosition"""
+    """Docstring for SymElemPosition."""
     def __init__(self, symelem, xform):
         super(SymElemPosition, self).__init__()
         self.symelem = symelem
@@ -556,7 +556,7 @@ class SymElemPosition(object):
         return self.symelem == other.symelem and self.xform == other.xform
 
 class SymElemGroupManager(object):
-    """docstring for SymElemGroupManager"""
+    """Docstring for SymElemGroupManager."""
     def __init__(self):
         super(SymElemGroupManager, self).__init__()
         self.node2elems = dict()
@@ -578,7 +578,7 @@ class SymElemGroupManager(object):
         self.node2elem[node].append(xelem)
 
 class SymTrieNode(object):
-    """docstring for SymTrieNode"""
+    """Docstring for SymTrieNode."""
     def __init__(self, generators, ielem, iframe, depth, position):
         super(SymTrieNode, self).__init__()
         self.generators = generators
@@ -615,7 +615,7 @@ class SymTrieNode(object):
         )
 
 class SymTrieSanityCheckVisitor(object):
-    """docstring for SymTrieSanityCheckVisitor"""
+    """Docstring for SymTrieSanityCheckVisitor."""
     def __init__(self):
         super(SymTrieSanityCheckVisitor, self).__init__()
         self.seenit = list()  # [ Xform() ]
@@ -891,7 +891,7 @@ def show_node(node, **kwargs):
         node.show(xform=kwargs["xform"])
 
 class CountFrames(object):
-    """docstring for CountFrames"""
+    """Docstring for CountFrames."""
     def __init__(self):
         super(CountFrames, self).__init__()
         self.count = 0
@@ -917,7 +917,7 @@ def cgo_cyl_arrow(c1, c2, rad, col=(1, 1, 1), col2=None, arrowlen=4.0):
     return CGO
 
 class BuildCGO(object):
-    """docstring for BuildCGO"""
+    """Docstring for BuildCGO."""
     def __init__(
         self,
         nodes,
@@ -1045,7 +1045,7 @@ class BuildCGO(object):
 # TODO move to xyzMath
 
 class VecDict(object):
-    """docstring for VecDict"""
+    """Docstring for VecDict."""
     def __init__(self):
         super(VecDict, self).__init__()
         self.keys_ = list()
@@ -1074,7 +1074,7 @@ class VecDict(object):
             self.values_.append(val)
 
 class ComponentCenterVisitor(object):
-    """docstring for ComponentCenterVisitor"""
+    """Docstring for ComponentCenterVisitor."""
     def __init__(self, symelems, extranodes=[], label="NODES", colors=list(), showlinks=1, **kwargs):
         super(ComponentCenterVisitor, self).__init__()
         # if len(symelems) > 2:
@@ -1496,7 +1496,7 @@ class ComponentCenterVisitor(object):
         return s
 
 class RosettaSymDef(object):
-    """docstring for RosettaSymDef"""
+    """Docstring for RosettaSymDef."""
     def __init__(self, virtuals=None, edges=None):
         super(RosettaSymDef, self).__init__()
         if not virtuals:

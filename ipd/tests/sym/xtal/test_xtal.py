@@ -132,9 +132,8 @@ def main():
             showcube=False,
         )
         assert 0
-        """
-run /home/sheffler/pymol3/misc/G222.py; gyroid(10,r=11,cen=Vec(5,5,5)); set light, [ -0.3, -0.30, 0.8 ]
-   """
+        """Run /home/sheffler/pymol3/misc/G222.py;
+        gyroid(10,r=11,cen=Vec(5,5,5)); set light, [ -0.3, -0.30, 0.8 ]"""
         assert 0, "aoisrtnoiarnsiot"
 
     noshow = True

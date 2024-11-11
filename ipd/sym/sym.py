@@ -26,11 +26,10 @@ def frames(
     torch=False,
     **kw,
 ):
-    """generate symmetrical coordinate frames
-    axis aligns Cx or bbaxis or axis0 to this
-    bbsym removes redundant building block frames, e.g. TET with c3 bbs has 4 frames
-    asym_of removes redundant frames wrt a point group, e.g. turn TET into C3 and get asym unit of that C3
-    """
+    """Generate symmetrical coordinate frames axis aligns Cx or bbaxis or axis0
+    to this bbsym removes redundant building block frames, e.g. TET with c3 bbs
+    has 4 frames asym_of removes redundant frames wrt a point group, e.g. turn
+    TET into C3 and get asym unit of that C3."""
     ipd.dev.checkpoint(kw, funcbegin=True)
 
     if sym is None or (not isinstance(sym, int) and sym.upper() == "C1"):

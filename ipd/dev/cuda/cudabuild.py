@@ -20,8 +20,7 @@ os.environ['TORCH_CUDA_ARCH_LIST'] = ''
 
 @change_exception(OSError=ImportError, RuntimeError=ImportError)
 def build_extension(name, sources, incpath, module=None, verbose=False):
-    '''
-    Build a torch extension module from sources.
+    """Build a torch extension module from sources.
 
     Args:
         name (str): Name of the extension module.
@@ -31,7 +30,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         verbose (bool, optional): Print verbose output.
     Returns:
         Extension module.
-    '''
+    """
     import torch as th
     import torch.utils.cpp_extension
     # os.environ['CC'] = "gcc-9"

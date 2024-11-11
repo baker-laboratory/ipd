@@ -1,6 +1,4 @@
-"""
-OOOOOOOLLLLDD Easy 3D Linear Algebra, like xyz\* in rosetta
-"""
+"""OOOOOOOLLLLDD Easy 3D Linear Algebra, like xyz\* in rosetta."""
 
 import math
 import operator as op
@@ -43,7 +41,7 @@ def isxform(x):
     return hasattr(x, "__Xform__")
 
 class Vec(object):
-    """a Vector like xyzVector<Real> in rosetta
+    """A Vector like xyzVector<Real> in rosetta.
 
     >>> v = Vec(1,2,3)
     >>> print v, 10*v
@@ -303,7 +301,7 @@ def rmsd(l, m):
     return sqrt(rmsd)
 
 class Mat(object):
-    """docstring for Mat
+    """Docstring for Mat.
 
     >>> m = Mat(2,0,0,0,1,0,0,0,1)
     >>> print m
@@ -683,7 +681,7 @@ def rotation_matrix(axis, angle):
     return R
 
 def rotation_matrix_degrees(axis, angle):
-    """get a rotation matrix
+    """Get a rotation matrix.
 
     >>> rx180 = rotation_matrix_degrees(Vec(1,0,0),180.0)
     >>> rx90  = rotation_matrix_degrees(Vec(1,0,0),90.0)
@@ -738,7 +736,7 @@ def randrot(n=None):
     return (rotation_matrix_degrees(randnorm(), uniform(0, 1) * 360) for i in range(n))
 
 class Xform(object):
-    """Coordinate frame like rosetta Xform, behaves also as a rosetta Stub
+    """Coordinate frame like rosetta Xform, behaves also as a rosetta Stub.
 
     >>> x = Xform(R=Imat,t=Uz)
     >>> print x
@@ -1504,8 +1502,7 @@ def find_identities(G, n=6, c=Vec(1, 3, 10)):
             yield x
 
 def get_cell_bounds_orthogonal_only(G, n=6, c=Vec(1, 3, 10)):
-    """
-    very slow... need to speed up
+    """Very slow... need to speed up.
 
     >>> G = get_test_generators1()                  #doctest: +SKIP
     >>> get_cell_bounds_orthogonal_only(G[:2],12)   #doctest: +SKIP
@@ -2366,13 +2363,11 @@ def cyclic_axis(coords):
     return axis, cen, diserr, angerr
 
 def symmetrize_xform(anchor, x, nf=None):  # ,debug=False):
-    """
-    # >>> x = rotation_around_degrees(Uz,180,V0)
-    # >>> assert symmetrize_xform(Ux,x,2) == x
-    #>>> x = rotation_around_degrees(Vec(0,0,1),121,Vec(1,1,1))
-    #>>> x,c = symmetrize_xform(Ux,x,3); print x.pretty(); print c
-    # >>> print x.pretty()
-    """
+    """# >>> x = rotation_around_degrees(Uz,180,V0) # >>> assert
+    symmetrize_xform(Ux,x,2) == x #>>> x =
+    rotation_around_degrees(Vec(0,0,1),121,Vec(1,1,1)) #>>> x,c =
+    symmetrize_xform(Ux,x,3); print x.pretty(); print c # >>> print
+    x.pretty()"""
     if not nf:
         axs, ang = x.rotation_axis()
         nf = int(round(2 * pi / ang))

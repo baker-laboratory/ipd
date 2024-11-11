@@ -1,8 +1,8 @@
-'''
-This module provides a PyTorch interface to the QCP RMSD algorithm.
+"""This module provides a PyTorch interface to the QCP RMSD algorithm.
 
-The CUDA implementation is very fast, can compute > 100 million RMSDs per second on a single GPU.
-'''
+The CUDA implementation is very fast, can compute > 100 million RMSDs
+per second on a single GPU.
+"""
 from ipd.dev.lazy_import import lazyimport
 
 th = lazyimport('torch')
@@ -13,14 +13,15 @@ from numba import cuda
 
 import ipd
 
-_rms = ipd.dev.LazyModule('ipd.fit.qcp_rms_cuda')
+_rms = ipd.dev.lazyimport('ipd.fit.qcp_rms_cuda')
 
 def rmsd(xyz1, xyz2, getfit=False, nthread=128, usenumba=False):
-    '''
-    compute RMSD of xyz1 to xyz2. Can  be AxNx3, BxNx3
+    """Compute RMSD of xyz1 to xyz2.
+
+    Can  be AxNx3, BxNx3
     Args:
         getfit: if True, return xforms
-    '''
+    """
     if xyz1.shape[-1] not in (3, 4) or xyz1.ndim not in (2, 3):
         raise ValueError(f"Unsupported shape: {xyz1.shape}")
     if xyz2.shape[-1] not in (3, 4) or xyz2.ndim not in (2, 3):

@@ -494,11 +494,13 @@ class ClientBase:
         return cls.__spec__(**args), remote, extra
 
 def add_basic_client_model_methods(clientcls):
-    '''
-      Generic interface for accessing models from the server. Any name or name suffixed with 's'
-      that is in frontend_model, above, will get /name from the server and turn the result(s) into
-      the appropriate client model type, list of such types for plural, or None.
-      '''
+    """Generic interface for accessing models from the server.
+
+    Any name or name suffixed with 's' that is in frontend_model, above,
+    will get /name from the server and turn the result(s) into the
+    appropriate client model type, list of such types for plural, or
+    None.
+    """
     for _name, _cls in clientcls.__client_models__.items():
 
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):

@@ -33,9 +33,10 @@ class FileCache:
         pass
 
 class PrefetchLocalFileCache(FileCache):
-    '''
-    Copies files to a CONF temp directory. Will downloads files ahead of requested index in background.
-    '''
+    """Copies files to a CONF temp directory.
+
+    Will downloads files ahead of requested index in background.
+    """
     def __init__(self, fnames, numprefetch=7, path='/tmp/ppp/filecache'):
         self.path = path
         self.fetchers = {}

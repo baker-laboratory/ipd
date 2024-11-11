@@ -7,10 +7,11 @@ th = lazyimport('torch')
 
 @dataclass
 class SymSlice:
-    '''A contiguous slice of an array to symmetrize'''
+    """A contiguous slice of an array to symmetrize."""
     @classmethod
     def make_symslice(cls, slice):
-        '''construct a SymSlice from length, range, bools, or another SymSlice'''
+        """Construct a SymSlice from length, range, bools, or another
+        SymSlice."""
         if isinstance(slice, (int, list, tuple)):
             return SymSlice(slice)
         elif isinstance(slice, SymSlice):
@@ -57,7 +58,7 @@ class SymSlice:
                 self.__dict__[k] = v.to(device)
 
     def set_nsub(self, nsub):
-        '''Set the number of subunits in the symmetry'''
+        """Set the number of subunits in the symmetry."""
         self.Lasu = self.mask.sum() // nsub
         # ic(self.Lasu, self.mask.sum(), nsub)
         # assert self.Lasu
@@ -72,11 +73,11 @@ class SymSlice:
             self.sym[i, range(self.beg + i * self.Lasu, self.beg + (i + 1) * self.Lasu)] = True
 
     def set_asu(self, toasu):
-        '''Set the asymmetric unit'''
+        """Set the asymmetric unit."""
         self.toasu = self.asu[toasu]
 
     def sanity_check(self, nsub):
-        '''Check that the slice is sane'''
+        """Check that the slice is sane."""
         # assert self.Lasu
         N = th.sum(self.mask)
         # assert N
@@ -98,8 +99,7 @@ class SymSlice:
 
 @dataclass
 class SymIndex:
-    '''
-    A collection of slices to symmetrize
+    """A collection of slices to symmetrize.
 
     Attributes:
             * slices: a list of slices
@@ -122,8 +122,7 @@ class SymIndex:
             * idx_sub_to_asu     = map sym numbering to asu numbering, including all subs
             * contiguous         = map to contiguous subunits
             * subnum             = subunit number of idx in sym numbering
-
-    '''
+    """
     def __init__(self, nsub: int, slices):
         '''
         Args:
@@ -299,7 +298,8 @@ class SymIndex:
             return False
 
     def to_contiguous(self, idx):
-        '''Convert a subsequence index to a contiguous-subunit subsequence index'''
+        """Convert a subsequence index to a contiguous-subunit subsequence
+        index."""
         return th.arange(len(idx))
 
         # assert th.all(0 <= idx)
@@ -334,14 +334,13 @@ class SymIndex:
         return new
 
     def slice2d(self, t, idx, val=None, dim=[0, 1]):
-        '''
-        utility for 2d masking, takes care of reshaping nonsense
+        """Utility for 2d masking, takes care of reshaping nonsense.
 
         Args:
             t (torch.Tensor): the tensor to slice
             idx (torch.Tensor): the indices to slice, can be bool or indices
             val (torch.Tensor): the values to set (optional)
-        '''
+        """
         assert dim == [0, 1]
         idx = getattr(self, idx) if isinstance(idx, str) else idx
         if idx.dtype is th.bool:

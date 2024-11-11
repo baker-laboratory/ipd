@@ -48,9 +48,7 @@ def parse(s):
     return s
 
 def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
-    '''
-    Reads all options in conf.sym, and anything in extra_params
-    '''
+    """Reads all options in conf.sym, and anything in extra_params."""
     kw = ipd.dev.Bunch(kw)
     if conf is None:
         try:
@@ -92,7 +90,7 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     return opt
 
 def process_symmetry_options(opt, **kw):
-    '''Does some basic logic on opt'''
+    """Does some basic logic on opt."""
     if opt.has('symid'):
         opt.symid = opt.symid.upper()
 
@@ -113,7 +111,7 @@ def process_symmetry_options(opt, **kw):
     return opt
 
 def resolve_option(name, kw, conf, default, strict=False):
-    '''take from kwargs first, then conf, then use default'''
+    """Take from kwargs first, then conf, then use default."""
     *path, name = name.split('.')
     if name in kw:
         return kw[name]

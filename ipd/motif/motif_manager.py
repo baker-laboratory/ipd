@@ -4,7 +4,7 @@ import ipd
 from ipd.motif.motif_factory import MetaMotifManager, set_default_motif_manager
 
 class MotifManager(ABC, metaclass=MetaMotifManager):
-    """All motif logic should go through a MotifManager"""
+    """All motif logic should go through a MotifManager."""
     kind = None
 
     def __init__(self, opts=None, device='cpu'):
@@ -35,7 +35,7 @@ class MotifManager(ABC, metaclass=MetaMotifManager):
         return result
 
 class NullMotifManager(MotifManager):
-    """No-op motif manager"""
+    """No-op motif manager."""
     kind = 'nomotif'
 
     def __call__(self, xyz, **kw):

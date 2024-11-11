@@ -10,9 +10,11 @@ _skip_global_install = False
 _warned = set()
 
 class LazyModule:
-    '''
-    Lazy import of a module. If the module is not found it will try to install it using mamba or pip.
-    '''
+    """Lazy import of a module.
+
+    If the module is not found it will try to install it using mamba or
+    pip.
+    """
     __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels', '_callerinfo')
 
     def __init__(self, name: str, package: str = '', pip=False, mamba=False, channels=''):
@@ -27,9 +29,7 @@ class LazyModule:
         #     _all_skipped_lazy_imports.add(name)
 
     def now(self) -> ModuleType:
-        '''
-        Import the module now.
-        '''
+        """Import the module now."""
         try:
             return self._mambathenpipimport()
         # except ImportError as e:

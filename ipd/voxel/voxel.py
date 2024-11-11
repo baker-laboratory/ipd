@@ -9,7 +9,7 @@ from numba import cuda
 import ipd
 from ipd import h
 
-_voxel = ipd.dev.LazyModule('ipd.voxel.voxel_cuda')
+_voxel = ipd.dev.lazyimport('ipd.voxel.voxel_cuda')
 
 class Voxel:
     def __init__(

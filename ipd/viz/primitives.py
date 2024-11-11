@@ -1,5 +1,5 @@
 class Cylinder(object):
-    """cylinder shape for pymol"""
+    """Cylinder shape for pymol."""
     def __init__(self, start, end, radius=1, color=[1, 1, 1], radius2=None):
         super(Cylinder, self).__init__()
         self.start = start

@@ -16,15 +16,41 @@ from ipd.sym.sym_adapt import _sym_adapt
 T = typing.TypeVar('T')
 
 class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
-    """
-    The SymmetryManager class encapsulates symmetry related functionality and parameters.
+    """The SymmetryManager class encapsulates symmetry related functionality
+    and parameters.
 
-    It is extensible, allowing for new parameters and functionality to be added outside of the rf codebase. For example, for unbounded symmetries, translations and slide operations can be added without need to change the existing core symmetry code in ipd. With a SymmetryManager holding all relevant parameters, function signatures and other code can be cleaned up, removing up to seven parameters from many functions, and future additional parameters can be added without changing function signatures. Some places in the code now require that a SymmetryManager is present in self.sym, so a sym=None argument has been added to some classes __init__ functions. If no symmetry is specified, a no-op C1SymmetryManager is created via sym = create_sym_manager(). To create a symmetry manager based on config / command line, sym = create_sym_manager(conf) can be called. Symmetry is applied to various subjects via the __call__ operator: xyz = sym(xyz), seq = sym(seq), etc. Any SymmetryManager can also symmetrize arbitrary arrays like seq and the diffusion Indep object. Subclasses of SymmetryManager need only call super().__init__(*a,**kw) and implement the apply_symmetry method. apply_symmetry will be passed the correct slice containing only the coordinates that need to be symmetrized, already converted to the correct shape/dtype/device, along with all relevant parameters in kwargs. The kwargs will already be update based on the rfold and/or diffusion timestep as appropriate. Currently, kwargs provides the following and will also include any additions to sym.yaml. Most of these are also available via self.<whatever>, but extracting them from kwargs by adding a function argument is slightly more correct and more convenient.
+    It is extensible, allowing for new parameters and functionality to
+    be added outside of the rf codebase. For example, for unbounded
+    symmetries, translations and slide operations can be added without
+    need to change the existing core symmetry code in ipd. With a
+    SymmetryManager holding all relevant parameters, function signatures
+    and other code can be cleaned up, removing up to seven parameters
+    from many functions, and future additional parameters can be added
+    without changing function signatures. Some places in the code now
+    require that a SymmetryManager is present in self.sym, so a sym=None
+    argument has been added to some classes __init__ functions. If no
+    symmetry is specified, a no-op C1SymmetryManager is created via sym
+    = create_sym_manager(). To create a symmetry manager based on config
+    / command line, sym = create_sym_manager(conf) can be called.
+    Symmetry is applied to various subjects via the __call__ operator:
+    xyz = sym(xyz), seq = sym(seq), etc. Any SymmetryManager can also
+    symmetrize arbitrary arrays like seq and the diffusion Indep object.
+    Subclasses of SymmetryManager need only call
+    super().__init__(*a,**kw) and implement the apply_symmetry method.
+    apply_symmetry will be passed the correct slice containing only the
+    coordinates that need to be symmetrized, already converted to the
+    correct shape/dtype/device, along with all relevant parameters in
+    kwargs. The kwargs will already be update based on the rfold and/or
+    diffusion timestep as appropriate. Currently, kwargs provides the
+    following and will also include any additions to sym.yaml. Most of
+    these are also available via self.<whatever>, but extracting them
+    from kwargs by adding a function argument is slightly more correct
+    and more convenient.
     """
     kind = None
 
     def __init__(self, opt, symid=None, device=None, **kw) -> None:
-        '''Create a SymmetryManager'''
+        """Create a SymmetryManager."""
         super().__init__()
         self.opt = opt
         # self.opt.symid =symid or self.opt.symid
@@ -42,13 +68,16 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
 
     @abstractmethod
     def apply_symmetry(self, xyz: th.Tensor, pair=None, update_symmsub=False, **kw) -> th.Tensor:
-        '''All subclasses must implement this method. Calls will recieve only the part
-        of the structure that needs to be symmetrized, and inputs will always be on the
-        gpu, if cuda is available'''
+        """All subclasses must implement this method.
+
+        Calls will recieve only the part of the structure that needs to
+        be symmetrized, and inputs will always be on the gpu, if cuda is
+        available
+        """
         pass
 
     def setup_for_symmetry(self, thing: T) -> T:
-        '''Default implementation no-op'''
+        """Default implementation no-op."""
         return thing
 
     def post_init(self) -> None:
@@ -79,17 +108,18 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                 setattr(self.__class__, prop, makeprop(location, name))
 
     def __call__(self, thing: T = None, pair=None, key=None, isasym=None, **kw) -> T:
-        '''
-        This is the main entry point for applying symmetry to any object.
+        """This is the main entry point for applying symmetry to any object.
 
-        The object can be a sequence, coordinates, or a pair of coordinates. The object will be
-        passed to the appropriate method based on its type and shape. The method will be
-        called with the object and all relevant symmetry parameters. The method should
-        return the object with symmetry applied. If the object is a pair xyz,pair,
-        the method should return a tuple of xyz,pair. If the object is a 'sequence', the
-        method should return the sequence with the asu copies to the symmetric subs. 'sequence'
-        can be anything with shape that starts with L
-        '''
+        The object can be a sequence, coordinates, or a pair of
+        coordinates. The object will be passed to the appropriate method
+        based on its type and shape. The method will be called with the
+        object and all relevant symmetry parameters. The method should
+        return the object with symmetry applied. If the object is a pair
+        xyz,pair, the method should return a tuple of xyz,pair. If the
+        object is a 'sequence', the method should return the sequence
+        with the asu copies to the symmetric subs. 'sequence' can be
+        anything with shape that starts with L
+        """
 
         kw = self.opt.to_bunch().sub(kw)
         if any([not self, key in self.skip_keys, thing is None]):
@@ -315,8 +345,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return new
 
     def extract(self, thing: T, mask: th.Tensor, key=None, skip_keys=None, **kw) -> T:
-        '''Extract the asu from an object. This should basically be the inverse
-        of __call__. residues not involved with symmetry are included'''
+        """Extract the asu from an object.
+
+        This should basically be the inverse of __call__. residues not
+        involved with symmetry are included
+        """
         if skip_keys is None: skip_keys = []
         if key in skip_keys: return thing
         if thing is None: return None
@@ -346,7 +379,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return self.extract(thing, self.masu, asu=True, **kw)
 
     def symdims(self, tensor: th.Tensor, idx=None) -> th.Tensor:
-        '''try to guess which dimensions are symmetrical, could be 1 or 2'''
+        """Try to guess which dimensions are symmetrical, could be 1 or 2."""
         if idx is None:
             symdims = th.where(th.tensor(tensor.shape) == self.idx.L)[0]
             dasym = th.where(th.tensor(tensor.shape) == self.idx.Nasym)[0]
@@ -392,7 +425,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
 
     @property
     def idx(self) -> ipd.sym.SymIndex:
-        '''Return the idx of the symmetry managerm or a simple slice if None'''
+        """Return the idx of the symmetry managerm or a simple slice if
+        None."""
         if not self._idx:
             try:
                 # ic(self.opt.L,self.opt.Lasu,self.opt.nsub)
@@ -407,7 +441,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
 
     @idx.setter
     def idx(self, idx):
-        '''Set the idx of the symmetry manager'''
+        """Set the idx of the symmetry manager."""
         if isinstance(idx, ipd.sym.SymIndex):
             self._idx = idx
         elif self.nsub:
@@ -423,12 +457,13 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                 self.idx = len(thing)
 
     def sym_adapt(self, thing, isasym=None) -> ipd.sym.SymAdapt:
-        '''Return a SymAdapt object with metadata about the symmetry of the thing'''
+        """Return a SymAdapt object with metadata about the symmetry of the
+        thing."""
         return _sym_adapt(thing, self, isasym)
 
     @property
     def is_dummy_sym(self):
-        '''Return True if this is a dummy symmetry manager'''
+        """Return True if this is a dummy symmetry manager."""
         return False
 
     def assert_symmetry_correct(self, thing, **kw):
@@ -467,11 +502,14 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         pass
 
     def __repr__(self):
-        '''Return a string representation of the SymmetryManager'''
+        """Return a string representation of the SymmetryManager."""
         return f'ipd.sym.{self.__class__.__name__}(symid="{self.opt.symid}", idx={self.idx})'
 
     def __bool__(self):
-        '''Return True if symmetry is currently enabled. can be dynamic thru a run'''
+        """Return True if symmetry is currently enabled.
+
+        can be dynamic thru a run
+        """
         return not any([
             self.is_dummy_sym,
             not self.opt.sym_enabled,
@@ -480,7 +518,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         ])
 
     def __deepcopy__(self, memo):
-        '''Deepcopy the SymmetryManager'''
+        """Deepcopy the SymmetryManager."""
         cls = self.__class__
         result = cls.__new__(cls)
         memo[id(self)] = result
@@ -489,17 +527,17 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return result
 
     def __contains__(self, k):
-        '''Allow checking if a key is in the SymmetryManager'''
+        """Allow checking if a key is in the SymmetryManager."""
         return k in self.__dict__ or k in self.opt
 
     @property
     def symmRs(self):
-        '''Return the symmetry matrices of the current symmsub'''
+        """Return the symmetry matrices of the current symmsub."""
         return self._symmRs[self.symmsub]
 
     @property
     def allsymmRs(self):
-        '''Return all symmetry matrices'''
+        """Return all symmetry matrices."""
         return self._symmRs
 
     @property
@@ -530,12 +568,12 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return xyz
 
 class C1SymmetryManager(SymmetryManager):
-    """Basically a null symmetry manager, does not modify anything"""
+    """Basically a null symmetry manager, does not modify anything."""
     kind = 'C1'
 
     def init(self, opt=None, symid=None, idx=None, device=None, **kw):
         super().init(**kw)
-        '''Create a C1SymmetryManager'''
+        """Create a C1SymmetryManager."""
         if symid: assert symid.upper() == 'C1'
         opt = opt or ipd.sym.get_sym_options(symid='C1')
         self.opt.nsub = 1
@@ -546,7 +584,7 @@ class C1SymmetryManager(SymmetryManager):
         if idx: self.idx = idx
 
     def apply_symmetry(self, xyz, pair=None, **kw):
-        '''no-op'''
+        """no-op."""
         if xyz is None:
             return pair
         if pair is None:
@@ -555,9 +593,9 @@ class C1SymmetryManager(SymmetryManager):
 
     @property
     def is_dummy_sym(self):
-        '''Return True if this is a dummy symmetry manager'''
+        """Return True if this is a dummy symmetry manager."""
         return True
 
     def __bool__(self):
-        '''Return False if this is a dummy symmetry manager'''
+        """Return False if this is a dummy symmetry manager."""
         return False

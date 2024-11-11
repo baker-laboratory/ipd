@@ -18,9 +18,7 @@ def parse(s):
     return s
 
 def get_motif_options(conf=None, opt=None, extra_params=None, **kw):
-    '''
-    Reads all options in conf.motif, and anything in extra_params
-    '''
+    """Reads all options in conf.motif, and anything in extra_params."""
     kw = ipd.dev.Bunch(kw)
     with contextlib.suppress(FileNotFoundError):
         path = '../../../../rf_diffusion/config/inference/motif.yaml'
@@ -53,6 +51,6 @@ def get_motif_options(conf=None, opt=None, extra_params=None, **kw):
     return opt
 
 def process_motif_options(opt, **kw):
-    '''Does some basic logic on opt'''
+    """Does some basic logic on opt."""
     ...
     return opt

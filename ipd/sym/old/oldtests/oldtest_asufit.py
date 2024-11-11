@@ -55,9 +55,7 @@ def test_asufit_oct(showme=False):
     primary_frames = [np.eye(4), ipd.homog.hrot(ax2, 180), ipd.homog.hrot(ax3, 120)]  # , ipd.homog.hrot(ax3, 240)]
     frames = ipd.sym.frames(sym, ontop=primary_frames)
     lever = ipd.hrog(xyz) * 1.5
-    """
-
-   """
+    """"""
     with ipd.dev.Timer():
         ic("symfit")
         # np.random.seed(7)
@@ -331,9 +329,7 @@ def test_asufit_P213(showme=False):
 
     frames = ipd.hscaled(1 / scale, frames)
     lever = ipd.hrog(xyz) * 1.5
-    """
-
-   """
+    """"""
     with ipd.dev.Timer():
         ic("symfit")
         # np.random.seed(7)
@@ -413,9 +409,7 @@ def test_asufit_L6m322(showme=False):
     ])
     frames = ipd.sym.frames(sym, ontop=primary_frames)
     lever = ipd.hrog(xyz) * 1.5
-    """
-
-   """
+    """"""
     for i in range(1):
         with ipd.dev.Timer():
             ic("symfit")

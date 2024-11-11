@@ -5,7 +5,7 @@ from ipd import Bunch
 from ipd import homog as hm
 
 def align(coords, symelem, **kw):
-    """assumes shape (nchain, nres, natom, 3|4)"""
+    """Assumes shape (nchain, nres, natom, 3|4)"""
     assert len(coords) > 1
     if symelem.iscyclic:
         return aligncx(coords, symelem, **kw)
@@ -16,7 +16,7 @@ def align(coords, symelem, **kw):
         raise NotImplementedError("hook up compute_symfit")
 
 def aligncx(coords, symelem, rmsthresh=1, axistol=0.02, angtol=0.05, centol=1.0, **kw):
-    """leaves center at 0 regardless of symelem"""
+    """Leaves center at 0 regardless of symelem."""
     assert len(coords) == symelem.nfold
 
     coords = coords.reshape(symelem.nfold, -1, *coords.shape[-2:])

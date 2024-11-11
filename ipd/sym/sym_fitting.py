@@ -4,12 +4,12 @@ th = lazyimport('torch')
 import ipd
 
 def asu_com(sym, xyz, Lasu, **kw):
-    '''Calculate the center of mass of the asymmetric unit'''
+    """Calculate the center of mass of the asymmetric unit."""
     com = xyz[:Lasu].mean(dim=(0, 1))
     return com
 
 def sym_com(sym, xyz, Lasu, **kw):
-    '''Calculate the center of mass of the symmetric unit'''
+    """Calculate the center of mass of the symmetric unit."""
     com = asu_com(sym, xyz, Lasu, **kw)
     # ic(xyz.shape)
     # ic(com.shape)
@@ -22,7 +22,7 @@ def asu_to_best_frame_if_necessary(sym,
                                    disable_all_fitting=None,
                                    asu_to_best_frame_min_dist_to_origin=7,
                                    **kw):
-    '''Align the asu if necessary'''
+    """Align the asu if necessary."""
     if asu_to_best_frame and not disable_all_fitting:
         if th.any(th.isnan(xyz)): return xyz
         Natom = min(3, xyz.shape[1])
@@ -40,7 +40,7 @@ def asu_to_best_frame_if_necessary(sym,
     return xyz
 
 def asu_to_canon_if_necessary(sym, xyz, Lasu, asu_to_canon=None, disable_all_fitting=None, **kw):
-    '''Align the asu if necessary'''
+    """Align the asu if necessary."""
     if asu_to_canon and not disable_all_fitting:
         if th.any(th.isnan(xyz)): return xyz
         xyz = asu_to_best_frame_if_necessary(sym, xyz, Lasu, True)
@@ -54,7 +54,7 @@ def asu_to_canon_if_necessary(sym, xyz, Lasu, asu_to_canon=None, disable_all_fit
     return xyz
 
 def set_particle_radius_if_necessary(sym, xyz, Lasu, force_radius=None, disable_all_fitting=None, **kw):
-    '''Set the particle radius if necessary'''
+    """Set the particle radius if necessary."""
     if force_radius and not disable_all_fitting:
         if th.any(th.isnan(xyz)): return xyz
         # ic('set_particle_radius_if_necessary')
@@ -71,7 +71,7 @@ def set_particle_radius_if_necessary(sym, xyz, Lasu, force_radius=None, disable_
     return xyz
 
 def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
-    '''Set the particle radius if necessary'''
+    """Set the particle radius if necessary."""
     if disable_all_fitting:
         return xyz
     if sym.opt.motif_position == "AB" and sym.opt.motif_fit:

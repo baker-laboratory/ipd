@@ -9,7 +9,7 @@ import numpy as np
 
 from ipd import h
 
-_sampling = ipd.dev.LazyModule('ipd.samp.sampling_cuda')
+_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
 
 def sort_inplace_topk(data, k):
     data = data.to('cuda')
@@ -90,10 +90,8 @@ def randxform(
     return x.to(device)
 
 def quat_torus_xform(resl, maxtip=th.pi / 6, ringang=2 * th.pi, bcc=True, device='cuda'):
-    '''
-    samples orientations in a hypercone -- tilts plus rotation around cone axis
-    recommend maxtip a multiple of resl
-    '''
+    """Samples orientations in a hypercone -- tilts plus rotation around cone
+    axis recommend maxtip a multiple of resl."""
     n1 = int(math.ceil(ringang / resl))
     n2 = int(math.ceil(maxtip / resl))
     n3 = n2 * 2 + 1

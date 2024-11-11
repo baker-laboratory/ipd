@@ -484,7 +484,7 @@ def angle_of_degrees(xforms, debug=False):
     return np.degrees(angl)
 
 def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
-    """angle will override nfold"""
+    """Angle will override nfold."""
     if angle is None:
         angle = 2 * np.pi / nfold
     angle = np.array(angle, dtype=dtype)
@@ -518,7 +518,7 @@ def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), 
     return rot3
 
 def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
-    """angle will override nfold"""
+    """Angle will override nfold."""
     # if isinstance(axis, ipd.dev.Bunch):
     #   bunch = axis
     #   axis = bunch.axis
@@ -877,7 +877,7 @@ def unhomog(stuff):
 Result_hrmsfit = collections.namedtuple("Result_hrmsfit", "rms fitcoords xfit")
 
 def hrmsfit(mobile, target):
-    """use kabsch method to get rmsd fit"""
+    """Use kabsch method to get rmsd fit."""
     mobile = hpoint(mobile)
     target = hpoint(target)
     assert mobile.shape == target.shape
@@ -973,13 +973,11 @@ def intersect_planes(plane1, plane2):
                1 = disjoint (no intersection)
                2 = the two planes coincide
     """
-    """intersect two planes
-   :param plane1: first plane represented by ray
-   :type plane2: np.array shape=(..., 4, 2) 
-   :param plane1: second planes represented by rays
-   :type plane2: np.array shape=(..., 4, 2) 
-   :return: line: np.array shape=(...,4,2), status: int (0 = intersection returned, 1 = no intersection, 2 = the two planes coincide)
-   """
+    """Intersect two planes :param plane1: first plane represented by ray :type
+    plane2: np.array shape=(..., 4, 2) :param plane1: second planes represented
+    by rays :type plane2: np.array shape=(..., 4, 2) :return: line: np.array
+    shape=(...,4,2), status: int (0 = intersection returned, 1 = no
+    intersection, 2 = the two planes coincide)"""
     if not is_valid_rays(plane1):
         raise ValueError("invalid plane1")
     if not is_valid_rays(plane2):
@@ -1035,7 +1033,7 @@ def axis_ang_cen_of_eig(xforms, debug=False):
     return axis, angle, cen
 
 def axis_ang_cen_of_planes(xforms, debug=False, ident_match_tol=1e-8):
-    """if angle is 0, will return axis along translation"""
+    """If angle is 0, will return axis along translation."""
     origshape = xforms.shape[:-2]
     xforms = xforms.reshape(-1, 4, 4)
 
@@ -1291,7 +1289,7 @@ def xform_around_dof_for_vector_target_angle(fix, mov, dof, target_angle):
             return []
 
 def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True):
-    """zomg, point/axis reversed for second half of args..."""
+    """Zomg, point/axis reversed for second half of args..."""
     ## make sure to align with smaller axis choice
     assert np.allclose(np.linalg.norm(tp1[..., :3]), 0.0)
     if angle(ax1, ax2) > np.pi / 2:

@@ -446,7 +446,7 @@ def recenter_asu_frames(
     resetonfail=True,
     **kw,
 ):
-    """symelemsibs is ???"""
+    """Symelemsibs is ???"""
 
     assert 0
 

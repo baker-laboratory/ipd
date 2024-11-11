@@ -3,7 +3,7 @@ import numpy as np
 import ipd
 
 class Helix:
-    """helical symmetry"""
+    """Helical symmetry."""
     def __init__(self, turns, phase, nfold=1, turnsB=1):
         self.nfold = nfold
         self.turns = turns
@@ -20,9 +20,12 @@ class Helix:
         ipd.pdb.dump_pdb_from_points(fname, symcoords)
 
     def frames(self, radius, spacing, coils=1, xtalrad=9e9, start=None, closest=0, closest_upper_only=False, **kw):
-        """phase is a little artifical here, as really it just changes self.turns
-        "central" frame will be ontop. if closest is given, frames will be sorted on dist to cen
-        otherwise central frame will be first, then others in order from bottom to top
+        """Phase is a little artifical here, as really it just changes
+        self.turns "central" frame will be ontop.
+
+        if closest is given, frames will be sorted on dist to cen
+        otherwise central frame will be first, then others in order from
+        bottom to top
         """
         assert xtalrad is not None
         axis = np.array([0, 0, 1, 0])

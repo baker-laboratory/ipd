@@ -214,7 +214,7 @@ class Xtal:
         return _scaled_frames(cellsize, cen)
 
     def compute_frames(self, **kw):
-        '''this should be depricated, only needed for 2d stuff currently'''
+        """This should be depricated, only needed for 2d stuff currently."""
         if self.dimension == 3:
             self.unitframes = self.info.frames
             self.genframes = self.cellframes(cells=3, ontop=None)

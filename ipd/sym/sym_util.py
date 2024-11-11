@@ -9,10 +9,11 @@ torch = ipd.lazyimport('torch')
 SYMA = 1.0
 
 def get_coords_stack(pdblines):
-    '''
-    Getting the Ca coords of input "high-T" pdb. Grabs coords of ASU.
-    Returns stack of coords [N,L,3], N being n chains
-    '''
+    """Getting the Ca coords of input "high-T" pdb.
+
+    Grabs coords of ASU. Returns stack of coords [N,L,3], N being n
+    chains
+    """
     atom_dtype = np.dtype([
         ("chnid", np.unicode_, 1),
         ("resid", np.int32),
@@ -37,10 +38,9 @@ def get_coords_stack(pdblines):
     return torch.tensor(xyz_stack - COM)
 
 def generate_ASU_xforms(pdb):
-    '''
-    Takes in [N,L,3] Ca xyz stack to map transforms of ASU, should return homogenous transforms for each subunit in the ASU
-    We use this to generate the ASU in the first place
-    '''
+    """Takes in [N,L,3] Ca xyz stack to map transforms of ASU, should return
+    homogenous transforms for each subunit in the ASU We use this to generate
+    the ASU in the first place."""
     xyz_stack = get_coords_stack(open(pdb))
     xforms = []
     for n in range(xyz_stack.shape[0]):
@@ -49,8 +49,7 @@ def generate_ASU_xforms(pdb):
     return xforms
 
 def normQ(Q):
-    """normalize a quaternions
-    """
+    """Normalize a quaternions."""
     return Q / torch.linalg.norm(Q, keepdim=True, dim=-1)
 
 def Rs2Qs(Rs):
@@ -906,8 +905,7 @@ def symm_subunit_matrix(symmid, symopt=None):
     return symmatrix, Rs, metasymm, offset
 
 def find_symmsub_pair(Ltot, Lasu, k, pseudo_cycle=False):
-    """
-    Creates a symmsub matrix
+    """Creates a symmsub matrix.
 
     Parameters:
         Ltot (int, required): Total length of all residues

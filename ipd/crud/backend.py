@@ -299,12 +299,14 @@ def fields_uuidstr_to_id(vals):
     return vals
 
 def add_basic_backend_model_methods(backendcls):
-    '''
-    Autogen getter methods. Yes, this is better than lots of boilerplate functions that must be kept
-    in sync. Any name or name suffixed with 's'
-    that is in clientmodels, above, will get /name from the server and turn the result(s) into
-    the appropriate client model type, list of such types for plural, or None.
-    '''
+    """Autogen getter methods.
+
+    Yes, this is better than lots of boilerplate functions that must be
+    kept in sync. Any name or name suffixed with 's' that is in
+    clientmodels, above, will get /name from the server and turn the
+    result(s) into the appropriate client model type, list of such types
+    for plural, or None.
+    """
     for _name, _dbcls in backendcls.__backend_models__.items():
 
         def make_basic_backend_model_methods_closure(name=_name, dbcls=_dbcls):
