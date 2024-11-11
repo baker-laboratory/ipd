@@ -1,8 +1,10 @@
 import os
-
 import pytest
-from typer.testing import CliRunner
 
+typer = pytest.importorskip('typer')
+pytest.mark.skipif(int(typer.__version__[1]) < 12, reason='ipd.sym.Helix breaks on numpy 2')
+
+from typer.testing import CliRunner
 import ipd
 
 runner = CliRunner()
