@@ -20,8 +20,7 @@ class CITool(ipd.tools.IPDTool):
             'frame-flow': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/frame-flow.git',
             'fused_mpnn': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/fused_mpnn.git',
             'RF2-allatom': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/jue/RF2-allatom.git',
-            'rf_diffusion':
-            f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
+            'rf_diffusion': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
@@ -167,15 +166,9 @@ class TestsTool(CITool):
             if parallel == 1:
                 jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, log=log, mem=mem[0], **kw))
             else:
+                jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
                 jobs.append(
-                    run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
-                jobs.append(
-                    run_pytest(exe=exe,
-                               sel=nosel,
-                               parallel=par,
-                               mem=mem[1 % len(mem)],
-                               log=f'{log}.parallel.log',
-                               **kw))
+                    run_pytest(exe=exe, sel=nosel, parallel=par, mem=mem[1 % len(mem)], log=f'{log}.parallel.log', **kw))
         result = [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
         for cmd, job, log in jobs:
             os.system(f'cat {log}')

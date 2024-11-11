@@ -19,11 +19,7 @@ def main():
 @pytest.mark.fast
 def test_screw_elem_frames():
     f31a = ipd.homog.hrot([0, 0, 1], 120) @ ipd.homog.htrans([0, 0, 1 / 3])
-    assert ipd.sym.xtal.symelem_of(f31a) == SymElem(3,
-                                                    axis=[0, 0, 1],
-                                                    cen=[0.0, 0.0, 0.0],
-                                                    hel=1 / 3,
-                                                    label="C31")
+    assert ipd.sym.xtal.symelem_of(f31a) == SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=1 / 3, label="C31")
 
     f31b = ipd.homog.hrot([0, 0, -1], 240) @ ipd.homog.htrans([0, 0, 1 / 3])
     assert np.allclose(f31a, f31b)
@@ -32,17 +28,9 @@ def test_screw_elem_frames():
     f31b = ipd.homog.hrot([0, 0, -1], 240) @ ipd.homog.htrans([0, 0, 1 / 3])
 
     f32a = ipd.homog.hrot([0, 0, 1], 120) @ ipd.homog.htrans([0, 0, 2 / 3])
-    assert ipd.sym.xtal.symelem_of(f32a) == SymElem(3,
-                                                    axis=[0, 0, 1],
-                                                    cen=[0.0, 0.0, 0.0],
-                                                    hel=2 / 3,
-                                                    label="C32")
+    assert ipd.sym.xtal.symelem_of(f32a) == SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=2 / 3, label="C32")
     f32b = ipd.homog.hrot([0, 0, 1], 240) @ ipd.homog.htrans([0, 0, 1 / 3])
-    assert ipd.sym.xtal.symelem_of(f32b) == SymElem(3,
-                                                    axis=[0, 0, 1],
-                                                    cen=[0.0, 0.0, 0.0],
-                                                    hel=2 / 3,
-                                                    label="C32")
+    assert ipd.sym.xtal.symelem_of(f32b) == SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=2 / 3, label="C32")
 
 @pytest.mark.fast
 def test_screw_elem():
@@ -176,12 +164,7 @@ def check_frame_opids():
                 continue
 
             opids = elem.frame_operator_ids(frames, sanitycheck=True)
-            opcompids = _make_operator_component_joint_ids(elem,
-                                                           elem,
-                                                           frames,
-                                                           opids,
-                                                           compids,
-                                                           sanitycheck=True)
+            opcompids = _make_operator_component_joint_ids(elem, elem, frames, opids, compids, sanitycheck=True)
 
             print("SUCCESS", flush=True)
             break

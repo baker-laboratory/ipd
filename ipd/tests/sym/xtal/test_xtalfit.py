@@ -30,8 +30,7 @@ def test_xtalfit_I213():
 
     vals = list()
     for i in range(10):
-        fitsym = xtal.symcoords(asym + ipd.homog.hrandvec(), cells=0,
-                                cellsize=cell + np.random.normal()).reshape(-1, 4)
+        fitsym = xtal.symcoords(asym + ipd.homog.hrandvec(), cells=0, cellsize=cell + np.random.normal()).reshape(-1, 4)
         vals.append(ipd.homog.hrmsfit(ref, fitsym)[0] - rfit)
     vals = np.array(vals)
     ic(np.min(vals), np.mean(vals))

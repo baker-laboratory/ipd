@@ -76,8 +76,7 @@ class LazyModule:
                 if not _skip_global_install:
                     try:
                         sys.stderr.write(f'PIPIMPORT {self._package}\n')
-                        result = subprocess.check_call(
-                            f'{sys.executable} -mpip install {self._package}'.split())
+                        result = subprocess.check_call(f'{sys.executable} -mpip install {self._package}'.split())
                     except:  # noqa
                         pass
             try:
@@ -87,8 +86,7 @@ class LazyModule:
                     _skip_global_install = True
                     sys.stderr.write(f'PIPIMPORT --user {self._package}\n')
                     try:
-                        result = subprocess.check_call(
-                            f'{sys.executable} -mpip install --user {self._package}'.split())
+                        result = subprocess.check_call(f'{sys.executable} -mpip install --user {self._package}'.split())
                         sys.stderr.write(result)
                     except:  # noqa
                         pass

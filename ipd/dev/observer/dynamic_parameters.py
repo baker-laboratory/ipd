@@ -556,8 +556,7 @@ class _Spline2D(DynamicParam):
         if not np.all(np.logical_and(-0.001 <= y, y <= 1.001)):
             raise ValueError(f'interpolation points {y} must be 0 <= y <= 1')
         self.interp = CloughTocher2DInterpolator(xy, z)
-        xx, yy = np.meshgrid(np.linspace(0, 1, manager._nstep.diffuse),
-                             np.linspace(0, 1, manager._nstep.rfold))
+        xx, yy = np.meshgrid(np.linspace(0, 1, manager._nstep.diffuse), np.linspace(0, 1, manager._nstep.rfold))
         try:
             self.interpvals = self.interp(xx, yy).astype(np.float32).T
             assert not np.any(np.isnan(self.interpvals))

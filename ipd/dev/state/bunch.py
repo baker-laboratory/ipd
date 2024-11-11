@@ -34,8 +34,7 @@ class Bunch(dict):
         self.__dict__["_special"]["autoreload"] = _autoreload
         if _autoreload:
             Path(_autoreload).touch()
-            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload,
-                                                                           'rb').read()).hexdigest()
+            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload, 'rb').read()).hexdigest()
         self.__dict__["_special"]["parent"] = _parent
         for k in self:
             if hasattr(super(), k):
@@ -405,12 +404,7 @@ def make_autosave_hierarchy(x, _parent=None, seenit=None, _strict=True, _autosav
     kw = dict(seenit=seenit, _parent=_parent, _default=_default, _strict=_strict)
     assert _parent is None or isinstance(_parent[0], Bunch)
     if isinstance(x, dict):
-        x = Bunch(**x,
-                  _parent=_parent,
-                  _autosave=_autosave,
-                  _autoreload=_autosave,
-                  _default=_default,
-                  _strict=_strict)
+        x = Bunch(**x, _parent=_parent, _autosave=_autosave, _autoreload=_autosave, _default=_default, _strict=_strict)
         for k, v in x.items():
             kw['_parent'] = (x, k)
             x[k] = make_autosave_hierarchy(v, **kw)

@@ -325,8 +325,7 @@ icosahedral_axes = {
 }
 
 tetrahedral_axes_all = {
-    2:
-    hnormalized([
+    2: hnormalized([
         [1, 0, 0],
         [0, 1, 0],
         [0, 0, 1],
@@ -334,8 +333,7 @@ tetrahedral_axes_all = {
         # [0, _, 0],
         # [0, 0, _],
     ]),
-    3:
-    hnormalized([
+    3: hnormalized([
         [1, 1, 1],
         [1, _, _],
         [_, _, 1],
@@ -345,8 +343,7 @@ tetrahedral_axes_all = {
         # [1, 1, _],
         # [1, _, 1],
     ]),
-    "3b":
-    hnormalized([
+    "3b": hnormalized([
         [_, 1, 1],
         [1, _, 1],
         [1, 1, _],

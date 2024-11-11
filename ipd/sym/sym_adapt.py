@@ -35,8 +35,8 @@ with contextlib.suppress(ImportError):
 
 @_sym_adapt.register(np.ndarray)
 def _(ary, sym, isasym):
-    if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32,
-                     np.int16, np.int8, np.uint8, bool):
+    if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16,
+                     np.int8, np.uint8, bool):
         return SymAdaptTensor(ary, sym, isasym, tlib='numpy')
     else:
         return SymAdaptNDArray(ary, sym, isasym)
@@ -241,8 +241,7 @@ with contextlib.suppress(ImportError):
                     newshape = (sym.idx.L**2, *self.perm.shape[2:])
                     self.adapted = th.zeros(newshape, dtype=tensor.dtype, device=tensor.device)
                     m = (sym.idx.asym[None] * sym.idx.asym[:, None]).view(-1)
-                    self.adapted[m] = self.perm.rename(None).view(sym.idx.Nasym * sym.idx.Nasym,
-                                                                  *self.perm.shape[2:])
+                    self.adapted[m] = self.perm.rename(None).view(sym.idx.Nasym * sym.idx.Nasym, *self.perm.shape[2:])
                     self.adapted = self.adapted.view(sym.idx.L, sym.idx.L, *self.perm.shape[2:])
                 else:
                     newshape = (sym.idx.L, *self.perm.shape[1:])
@@ -328,8 +327,7 @@ with contextlib.suppress(ImportError):
                     new[self.sym.idx.asym.cpu()] = self.orig
                 case _:
                     raise ValueError(
-                        f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}'
-                    )
+                        f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
             return new
 
         def reconstruct(self, ary):
@@ -534,9 +532,7 @@ with contextlib.suppress(ImportError):
                 if self.isasym is not None: assert self.isasym
                 symidx = self.sym.idx.symidx(self.idx)
                 self.asym = True
-                self.orig = th.zeros((len(symidx), *self.orig.shape[1:]),
-                                     dtype=self.orig.dtype,
-                                     device=self.sym.device)
+                self.orig = th.zeros((len(symidx), *self.orig.shape[1:]), dtype=self.orig.dtype, device=self.sym.device)
                 self.orig[:len(tensor)] = tensor
                 self.newidx = symidx
                 self.new = SimpleSparseTensor(idx=self.newidx, val=self.orig, isidx=self.isidx)

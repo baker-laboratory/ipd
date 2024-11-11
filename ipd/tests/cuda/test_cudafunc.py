@@ -51,12 +51,7 @@ def test_cudafunc_contact():
 
 @pytest.mark.fast
 def test_cudafunc_contact_10():
-    func = ipd.dev.cuda.ContactFunc(clashscore=10,
-                                    contactscore=-1,
-                                    clashend=3,
-                                    contactbeg=4,
-                                    contactend=8,
-                                    end=9)
+    func = ipd.dev.cuda.ContactFunc(clashscore=10, contactscore=-1, clashend=3, contactbeg=4, contactend=8, end=9)
     assert func.reference_impl(0.00) == 10.00
     assert func.reference_impl(3.00) == 10.00
     assert func.reference_impl(3.25) == 7.25

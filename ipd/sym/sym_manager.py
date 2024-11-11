@@ -58,13 +58,12 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     def add_properties(self):
         locprops = dict(
             opt=[
-                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame',
-                'symmetrize_repeats', 'sym_enabled', 'rfsym_enabled', 'sympair_enabled',
-                'copy_main_block_template', 'ligand_is_symmetric'
+                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats',
+                'sym_enabled', 'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template', 'ligand_is_symmetric'
             ],
             idx=[
-                'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym',
-                'Nsym', 'Nunsym'
+                'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym', 'Nsym',
+                'Nunsym'
             ],
         )
         for location, props in locprops.items():
@@ -268,11 +267,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                 assert rms < 1e-3
         return moved
 
-    def to_contiguous(self,
-                      thing,
-                      matchpair=False,
-                      sympair_protein_only=None,
-                      **kw) -> tuple[th.Tensor, th.Tensor, int]:
+    def to_contiguous(self, thing, matchpair=False, sympair_protein_only=None, **kw) -> tuple[th.Tensor, th.Tensor, int]:
         if isinstance(thing, tuple):
             return tuple(self.make_contiguous(t) for t in thing)
         adapted = thing.adapted
@@ -297,13 +292,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             case _:
                 raise ValueError(f'SymManager.to_contiguous: unknown thing {type(thing)}')
 
-    def fill_from_contiguous(self,
-                             thing,
-                             orig,
-                             contig,
-                             matchpair=False,
-                             sympair_protein_only=None,
-                             **kw) -> th.Tensor:
+    def fill_from_contiguous(self, thing, orig, contig, matchpair=False, sympair_protein_only=None, **kw) -> th.Tensor:
         ctg = self.idx.contiguous
         if isinstance(orig, np.ndarray): ctg = ctg.cpu().numpy()
         new = copy.deepcopy(orig)

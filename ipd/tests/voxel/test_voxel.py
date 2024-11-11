@@ -80,8 +80,7 @@ def test_numba_vox_create():
             grid = th.zeros(tuple(th.ceil((ub - lb) / resl).to(int)), dtype=th.float16, device='cuda')
             irad = int(math.ceil(rad[-1] / resl))
             block, thread = (len(xyz), 2 * irad + 1, 2 * irad + 1), (32, 2, 2)
-            ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl,
-                                                        grid.cuda())
+            ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl, grid.cuda())
 
     # ipd.showme(vox)
     vox.grid = grid

@@ -68,6 +68,13 @@ markers = [
     'ci: tests that should only run in ci',
 ]
 
+[tool.yapf]
+based_on_style = 'pep8'
+indent_width = 4
+column_limit = 123
+blank_line_before_nested_class_or_def = false
+blank_lines_around_top_level_definition = 1
+
 [tool.pyright]
 include = ['rf_diffusion', 'lib/rf2aa/rf2aa', 'lib/rf2aa/lib/ipd/ipd']
 exclude = [
@@ -99,15 +106,8 @@ lint.ignore = [
 
 ]
 lint.dummy-variable-rgx = '^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?)|ic)$'
-line-length = 111
+line-length = 123
 target-version = 'py39'
 format.quote-style = 'single'
 format.indent-style = 'space'
 format.docstring-code-format = true
-
-[tool.yapf]
-based_on_style = 'pep8'
-indent_width = 4
-column_limit = 111
-blank_line_before_nested_class_or_def = false
-blank_lines_around_top_level_definition = 1

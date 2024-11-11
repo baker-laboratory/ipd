@@ -52,8 +52,7 @@ def test_asufit_oct(showme=False):
     # xyz = point_cloud(100, std=10, outliers=0)
     # xyz[:, :3] += 60 * (ipd.sym.axes(sym)[2] + ipd.sym.axes(sym)[3])[:3]
     # ipd.showme(xyz)
-    primary_frames = [np.eye(4), ipd.homog.hrot(ax2, 180),
-                      ipd.homog.hrot(ax3, 120)]  # , ipd.homog.hrot(ax3, 240)]
+    primary_frames = [np.eye(4), ipd.homog.hrot(ax2, 180), ipd.homog.hrot(ax3, 120)]  # , ipd.homog.hrot(ax3, 240)]
     frames = ipd.sym.frames(sym, ontop=primary_frames)
     lever = ipd.hrog(xyz) * 1.5
     """
@@ -532,8 +531,7 @@ def test_asufit_icos(showme=False):
     xyz[:, :3] += 140 * ipd.homog.hnormalized(ipd.sym.axes(sym)[2] * 4 + ipd.sym.axes(sym)[3])[:3]
     ax2 = ipd.sym.axes("icos")[2]
     ax3 = ipd.sym.axes("icos")[3]
-    primary_frames = [np.eye(4), ipd.homog.hrot(ax2, 180),
-                      ipd.homog.hrot(ax3, 120)]  # , ipd.homog.hrot(ax3, 240)]
+    primary_frames = [np.eye(4), ipd.homog.hrot(ax2, 180), ipd.homog.hrot(ax3, 120)]  # , ipd.homog.hrot(ax3, 240)]
     frames = ipd.sym.frames(sym, ontop=primary_frames)
 
     lever = ipd.hrog(xyz) * 1.5

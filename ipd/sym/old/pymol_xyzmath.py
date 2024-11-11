@@ -539,11 +539,9 @@ class Mat(object):
                 and m.rowy().isnormal() and m.rowz().isnormal())
 
     def __eq__(self, other):
-        return (abs(self.xx - other.xx) < EPS and abs(self.xy - other.xy) < EPS
-                and abs(self.xz - other.xz) < EPS and abs(self.yx - other.yx) < EPS
-                and abs(self.yy - other.yy) < EPS and abs(self.yz - other.yz) < EPS
-                and abs(self.zx - other.zx) < EPS and abs(self.zy - other.zy) < EPS
-                and abs(self.zz - other.zz) < EPS)
+        return (abs(self.xx - other.xx) < EPS and abs(self.xy - other.xy) < EPS and abs(self.xz - other.xz) < EPS
+                and abs(self.yx - other.yx) < EPS and abs(self.yy - other.yy) < EPS and abs(self.yz - other.yz) < EPS
+                and abs(self.zx - other.zx) < EPS and abs(self.zy - other.zy) < EPS and abs(self.zz - other.zz) < EPS)
 
     def __neq__(self, odher):
         return not self == other

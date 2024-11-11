@@ -508,8 +508,7 @@ def make_sub_bases():
             base_types[name] = type(name, (Base, ), {})
 
             def make_prop(name):
-                return property(lambda self: type_maps[self.__class__][base_types[name]]
-                                (self, self.attr.copy()))
+                return property(lambda self: type_maps[self.__class__][base_types[name]](self, self.attr.copy()))
 
             setattr(Base, name.lower(), make_prop(name))
 

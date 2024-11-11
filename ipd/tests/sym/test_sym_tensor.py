@@ -174,8 +174,7 @@ def test_sym_tensor():
     return
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
-    sym.idx.set_kind(
-        ['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
+    sym.idx.set_kind(['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
     t = sym.tensor(th.tensor([11, 12, 13, 0, 1, 21, 22, 23, 2, 3]))
     # by SymSub
     print('>>> t.full')
@@ -211,8 +210,7 @@ def test_sym_tensor():
     print('>>> t.gp')
     print(t.gp)
 
-    t = sym.tensor(
-        ['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
+    t = sym.tensor(['RES', 'RES', 'RES', 'RESGP', 'LIG', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMIZED', 'ATOMGP'])
     print('>>> t.all.orig')
     print(t.all.orig)
     print('>>> t.res.orig')

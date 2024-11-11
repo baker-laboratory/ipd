@@ -22,8 +22,7 @@ def guess_sym_from_fnames(fnames):
 
 def guess_sym_from_directory(path, suffix=('.pdb', '.pdb.gz', '.cif', '.bcif')):
     assert os.path.isdir(path)
-    if fnames := filter(lambda f: f.endswith(suffix) and f[0] != '_',
-                        [os.path.join(path, f) for f in os.listdir(path)]):
+    if fnames := filter(lambda f: f.endswith(suffix) and f[0] != '_', [os.path.join(path, f) for f in os.listdir(path)]):
         return guess_sym_from_fnames(list(fnames))
     else:
         return None

@@ -197,8 +197,7 @@ sg_niface_dict = {
 }
 
 sg_triclinic = "P1 P-1".split()
-sg_monoclinic = (
-    "P121 P1211 C121 P1m1 P1c1 C1m1 C1c1 P12/m1 P121/m1 C12/m1 P12/c1 P121/c1 P121/n1 231 C12/c1".split())
+sg_monoclinic = ("P121 P1211 C121 P1m1 P1c1 C1m1 C1c1 P12/m1 P121/m1 C12/m1 P12/c1 P121/c1 P121/n1 231 C12/c1".split())
 sg_orthorhombic = "P222 P2221 P212S12 P21212 P212121 C2221 C222 F222 I222 I212121 Pmm2 Pmc21 Pcc2 Pma2 Pca21 Pnc2 Pmn21 Pba2 Pna21 Pnn2 Cmm2 Cmc21 Ccc2 Amm2 Abm2 Ama2 Aba2 Fmm2 Fdd2 Imm2 Iba2 Ima2 Pmmm Pnnn:2 Pccm Pban:2 Pmma Pnna Pmna Pcca Pbam Pccn Pbcm Pnnm Pmmn:2 Pbcn Pbca Pnma Cmcm Cmca Cmmm Cccm Cmma Ccca:2 Fmmm Fddd:2 Immm Ibam Ibca Imma".split(
 )
 sg_tetragonal = "P4 P41 P42 P43 I4 I41 P-4 I-4 P4/m P42/m P4/n:2 P42/n:2 I4/m I41/a:2 P422 P4212 P4122 P41212 P4222 P42212 P4322 P43212 I422 I4122 P4mm P4bm P42cm P42nm P4cc P4nc P42mc P42bc I4mm I4cm I41md I41cd P-42m P-42c P-421m P-421c P-4m2 P-4c2 P-4b2 P-4n2 I-4m2 I-4c2 I-42m I-42d P4/mmm P4/mcc P4/nbm:2 P4/nnc:2 P4/mbm P4/mnc P4/nmm:2 P4/ncc:2 P42/mmc P42/mcm P42/nbc:2 P42/nnm:2 P42/mbc P42/mnm P42/nmc:2 P42/ncm:2 I4/mmm I4/mcm I41/amd:2 I41/acd:2".split(

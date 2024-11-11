@@ -118,8 +118,7 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
     Sxx2Syy2Szz2Syz2Szy2 = Syy2 + Szz2 - Sxx2 + Syz2 + Szy2
 
     C2 = -2.0 * (Sxx2 + Syy2 + Szz2 + Sxy2 + Syx2 + Sxz2 + Szx2 + Syz2 + Szy2)
-    C1 = 8.0 * (Sxx * Syz * Szy + Syy * Szx * Sxz + Szz * Sxy * Syx - Sxx * Syy * Szz - Syz * Szx * Sxy -
-                Szy * Syx * Sxz)
+    C1 = 8.0 * (Sxx * Syz * Szy + Syy * Szx * Sxz + Szz * Sxy * Syx - Sxx * Syy * Szz - Syz * Szx * Sxy - Szy * Syx * Sxz)
 
     SxzpSzx = Sxz + Szx
     SyzpSzy = Syz + Szy
@@ -136,13 +135,10 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
 
     C0 = (Sxy2Sxz2Syx2Szx2 * Sxy2Sxz2Syx2Szx2 + (Sxx2Syy2Szz2Syz2Szy2 + SyzSzymSyySzz2) *
           (Sxx2Syy2Szz2Syz2Szy2 - SyzSzymSyySzz2) + (-(SxzpSzx) * (SyzmSzy) + (SxymSyx) * (SxxmSyy - Szz)) *
-          (-(SxzmSzx) * (SyzpSzy) + (SxymSyx) *
-           (SxxmSyy + Szz)) + (-(SxzpSzx) * (SyzpSzy) - (SxypSyx) *
-                               (SxxpSyy - Szz)) * (-(SxzmSzx) * (SyzmSzy) - (SxypSyx) * (SxxpSyy + Szz)) +
-          (+(SxypSyx) * (SyzpSzy) + (SxzpSzx) * (SxxmSyy + Szz)) * (-(SxymSyx) * (SyzmSzy) + (SxzpSzx) *
-                                                                    (SxxpSyy + Szz)) +
-          (+(SxypSyx) * (SyzmSzy) + (SxzmSzx) * (SxxmSyy - Szz)) * (-(SxymSyx) * (SyzpSzy) + (SxzmSzx) *
-                                                                    (SxxpSyy - Szz)))
+          (-(SxzmSzx) * (SyzpSzy) + (SxymSyx) * (SxxmSyy + Szz)) + (-(SxzpSzx) * (SyzpSzy) - (SxypSyx) * (SxxpSyy - Szz)) *
+          (-(SxzmSzx) * (SyzmSzy) - (SxypSyx) * (SxxpSyy + Szz)) + (+(SxypSyx) * (SyzpSzy) + (SxzpSzx) * (SxxmSyy + Szz)) *
+          (-(SxymSyx) * (SyzmSzy) + (SxzpSzx) * (SxxpSyy + Szz)) + (+(SxypSyx) * (SyzmSzy) + (SxzmSzx) * (SxxmSyy - Szz)) *
+          (-(SxymSyx) * (SyzpSzy) + (SxzmSzx) * (SxxpSyy - Szz)))
     # print(C0, C1, C2, E0)
     # Newton-Raphson
     mxEigenV = E0

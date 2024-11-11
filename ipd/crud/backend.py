@@ -182,8 +182,7 @@ class BackendBase:
         print(exc_str)
         print('!' * 80)
         result = f'{"!"*80}\n{exc_str}\nSTACK:\n{traceback.format_exc()}\n{"!"*80}'
-        return fastapi.responses.JSONResponse(content=exc_str,
-                                              status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return fastapi.responses.JSONResponse(content=exc_str, status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     def remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
@@ -430,8 +429,8 @@ def field_is_ref(field):
     return (len(field.metadata) == 2 and isinstance(field.metadata[0], pydantic.BeforeValidator))
 
 def field_is_ref_to_list(field):
-    return (isinstance(field.metadata[1], tuple) and len(field.metadata[1]) == 2
-            and isinstance(field.metadata[1][1], str) and len(typing.get_args(field.metadata[1][0])))
+    return (isinstance(field.metadata[1], tuple) and len(field.metadata[1]) == 2 and isinstance(field.metadata[1][1], str)
+            and len(typing.get_args(field.metadata[1][0])))
 
 def newSQL() -> type[sqlmodel.SQLModel]:
     return type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())

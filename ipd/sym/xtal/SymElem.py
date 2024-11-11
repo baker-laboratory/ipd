@@ -432,11 +432,9 @@ class SymElem:
 
         if adjust_cyclic_center and (axis2 is None) and np.isclose(hel, 0):  # cyclic
             assert 0, "this needs an audit"
-            dist = ipd.homog.line_line_distance_pa(self.cen, self.axis, _cube_edge_cen * self.scale,
-                                                   _cube_edge_axis)
+            dist = ipd.homog.line_line_distance_pa(self.cen, self.axis, _cube_edge_cen * self.scale, _cube_edge_axis)
             w = np.argmin(dist)
-            newcen, _ = ipd.homog.line_line_closest_points_pa(self.cen, self.axis,
-                                                              _cube_edge_cen[w] * self.scale,
+            newcen, _ = ipd.homog.line_line_closest_points_pa(self.cen, self.axis, _cube_edge_cen[w] * self.scale,
                                                               _cube_edge_axis[w])
             if not np.any(np.isnan(newcen)):
                 self.cen = newcen
@@ -675,8 +673,7 @@ def showsymelems(
             elif s.label == "D4":
                 configs = [
                     ((s.axis2, [1, 0, 0]), (s.axis, [0, 1, 0]), [0.7, 0, 0]),
-                    ((ipd.homog.hrot(s.axis, 45, s.cen) @ s.axis2, [1, 0, 0]), (s.axis, [0, 1,
-                                                                                         0]), [0.7, 0, 0]),
+                    ((ipd.homog.hrot(s.axis, 45, s.cen) @ s.axis2, [1, 0, 0]), (s.axis, [0, 1, 0]), [0.7, 0, 0]),
                     ((s.axis, [0, 0, 1]), (s.axis2, [1, 0, 0]), [0.0, 0, 0.9]),
                 ]
             elif s.label == "C11":

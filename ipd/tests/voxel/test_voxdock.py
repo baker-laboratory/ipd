@@ -37,10 +37,7 @@ def test_voxdock_ab(timer=ipd.dev.Timer()):
     repulsive_only[3:97] = False
     # rb = ipd.voxel.VoxRB(xyz[:128], resl=1, func=ipd.dev.cuda.ContactFunc())
 
-    rb = ipd.voxel.VoxRB(xyz,
-                         resl=1,
-                         func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
-                         repulsive_only=repulsive_only)
+    rb = ipd.voxel.VoxRB(xyz, resl=1, func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10), repulsive_only=repulsive_only)
     # trans_score = rb.score(rb, th.eye(4), ipd.h.trans(x=th.arange(40, 50, 0.1))).min()
     # ic(trans_score)
     timer.checkpoint('vox')
@@ -118,9 +115,7 @@ def test_voxdock_c3():
 
 def asuvec_frames_minimal_z(sym):
     xsym = th.tensor(ipd.sym.frames(sym), device='cuda', dtype=th.float32)
-    asuvec = h.normvec(th.tensor(np.array(list(ipd.sym.axes(sym).values()))).mean(0),
-                       device='cuda',
-                       dtype=th.float32)
+    asuvec = h.normvec(th.tensor(np.array(list(ipd.sym.axes(sym).values()))).mean(0), device='cuda', dtype=th.float32)
     iasu = th.argmax((xsym @ asuvec)[:, 2])
     asuvec = xsym[iasu] @ asuvec
     # xnbr = [th.eye(4, device='cuda')]

@@ -28,13 +28,12 @@ def test_dynparams_constant():
 def test_dynparams_spline2D():
     dynp = ipd.dev.DynamicParameters(ndesign=1, ndiffuse=50, nrfold=40, _testing=True)
     SS = dynp._set_step
-    dynp.newparam_spline_2d('twod',
-                            diffuse_rfold=[
-                                (0.0, 0.0, 0),
-                                (0.0, 1.0, 50),
-                                (1.0, 0.0, 50),
-                                (1.0, 1.0, 100),
-                            ])
+    dynp.newparam_spline_2d('twod', diffuse_rfold=[
+        (0.0, 0.0, 0),
+        (0.0, 1.0, 50),
+        (1.0, 0.0, 50),
+        (1.0, 1.0, 100),
+    ])
     assert np.allclose(SS(diffuse=0, rfold=0).twod, 0.0)
     assert np.allclose(SS(diffuse=0, rfold=39).twod, 50.0)
     assert np.allclose(SS(diffuse=49, rfold=0).twod, 50.0)

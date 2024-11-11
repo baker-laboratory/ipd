@@ -159,8 +159,7 @@ def dispatch(
 
 def main(projects, **kw):
     t = perf_counter()
-    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest',
-                                                                                 '')
+    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest', '')
     print("call:", sys.argv)
     print("cwd:", os.getcwd())
     print("cmd:", cmd)

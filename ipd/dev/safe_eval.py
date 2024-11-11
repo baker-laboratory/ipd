@@ -14,7 +14,6 @@ try:
         return exec(bytecode, **kw)
 
 except ImportError:
-    logging.warning(
-        'RestrictedPython not installed, exec and eval will be unsafe. pip install RestrictedPython')
+    logging.warning('RestrictedPython not installed, exec and eval will be unsafe. pip install RestrictedPython')
     safe_eval = eval
     safe_exec = exec

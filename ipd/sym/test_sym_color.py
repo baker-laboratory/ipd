@@ -24,8 +24,7 @@ def symslices_from_colors_should_fail(nsub, colors, Lasu, isasu):
 @hypothesis.settings(deadline=1000, max_examples=10)
 @hypothesis.given(
     nsub=st.integers(1, 2),
-    colors=st.lists(st.integers(0, 5), min_size=30,
-                    max_size=40).filter(lambda x: len(set(x)) == 6).map(sorted),
+    colors=st.lists(st.integers(0, 5), min_size=30, max_size=40).filter(lambda x: len(set(x)) == 6).map(sorted),
     isasu=st.booleans(),
     unsymfrac=st.lists(st.one_of(st.none(), st.floats(0, 0.9)), min_size=3, max_size=3),
 )
