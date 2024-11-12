@@ -79,7 +79,14 @@ blank_lines_around_top_level_definition = 1
 include = ['rf_diffusion', 'lib/rf2aa/rf2aa', 'lib/rf2aa/lib/ipd/ipd']
 exclude = [
     '**/*.log',
-    '/home/sheffler/rfdsym/ide/sublime_build.log',
+    'ipd/viz/*',
+    'ipd/homog/*',
+    'ipd/tests/*',
+    'ipd/voxel/*',
+    'ipd/samp/*',
+    'ipd/fit/*',
+    '*_viz.py',
+    'sym/xtal/*',
     '**/__pycache__',
 ]
 defineConstant = { DEBUG = true }

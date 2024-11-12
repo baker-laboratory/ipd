@@ -50,7 +50,8 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
             init_submodules(subrepo, repolib)
 
 class RepoTool(CITool):
-    def setup_submodules(self, path: Path = '.', repolib: str = '~/bare_repos'):
+    def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos'):
+        """Setup submodules in a git repository from a bare repo library."""
         repo = git.Repo(path, search_parent_directories=True)
         repodir = repo.git.rev_parse('--show-toplevel')
         with ipd.dev.cd(path):
@@ -64,30 +65,30 @@ class Future:
         return self._result
 
 def run_pytest(
-    env,
-    exe,
-    log,
-    mark='',
-    sel='',
-    parallel=1,
-    mem='16G',
-    timeout=60,
+    env: str,
+    exe: str,
+    log: str,
+    mark: str = '',
+    sel: str = '',
+    parallel: int = 1,
+    mem: str = '16G',
+    timeout: int = 60,
     executor=None,
-    dryrun=False,
-    tee=False,
-    gpu='',
-    flags='',
-    testdir='.',
-    cmdonly=False,
+    dryrun: bool = False,
+    tee: bool = False,
+    gpu: str = '',
+    flags: str = '',
+    testdir: str = '.',
+    cmdonly: bool = False,
 ):
     dry = '--collect-only' if dryrun else ''
-    tee = '2>&1 | tee' if tee else '>'
+    stee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
     if cmdonly:
-        cmd = f'cd TESTDIR && {env} PYTHONPATH=. EXE {mark} {sel} {dry} {par} --benchmark-disable {tee} {log}'
+        cmd = f'cd TESTDIR && {env} PYTHONPATH=. EXE {mark} {sel} {dry} {par} --benchmark-disable {stee} {log}'
         return ipd.dev.strip_duplicate_spaces(cmd)
-    cmd = f'cd {testdir} && {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} --benchmark-disable {tee} {log}'
+    cmd = f'cd {testdir} && {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} --benchmark-disable {stee} {log}'
     cmd = ipd.dev.strip_duplicate_spaces(cmd)
     print(f'running: {cmd}')
     if os.path.exists(log): os.remove(log)
@@ -97,17 +98,17 @@ def run_pytest(
     else:
         return cmd, Future(ipd.dev.run(cmd)), log
 
-def get_re(pattern, text):
+def get_re(pattern, text) -> int:
     result = re.findall(pattern, text)
     assert len(result) < 2
     if not result: return 0
     return int(result[0])
 
-def parse_pytest(fname):
+def parse_pytest(fname) -> ipd.Bunch[int]:
+    result = ipd.Bunch()
     if not os.path.exists(fname):
         print(f'missing {fname} in {os.getcwd()}')
-        return None
-    result = ipd.Bunch()
+        return result
     result.fname = fname
     content = Path(fname).read_text()
     # collecting ... collected 230 items / 2 deselected / 22 skipped / 228 selected
@@ -129,11 +130,6 @@ def parse_pytest(fname):
     return result
 
 class TestsTool(CITool):
-    def run(self, project):
-        TestsTool.ruff(project)
-        TestsTool.pytest()
-        TestsTool.check()
-
     def ruff(self, project):
         ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
 
@@ -143,7 +139,7 @@ class TestsTool(CITool):
         gpu: str = '',
         exe: str = sys.executable,
         threads: int = 1,
-        log: Path = Path('pytest_ipd_ci_test_run.log'),
+        log: str = 'pytest_ipd_ci_test_run.log',
         mark: str = '',
         parallel: int = 1,
         timeout: int = 60,
@@ -156,6 +152,28 @@ class TestsTool(CITool):
         testdir: str = '.',
         cmdonly: bool = False,
     ):
+        """Run pytest with the given parameters.
+
+        Args:
+            slurm: bool: whether to run on slurm
+            gpu: str: gpu to use
+            exe: str: python executable
+            threads: int: number of threads
+            log: Path: log file
+            mark: str: pytest marks
+            parallel: int: number of parallel jobs
+            timeout: int: slurm timeout in minutes
+            verbose: bool: verbose output
+            which: str: which tests to run (-k)
+            dryrun: bool: dryrun (--collect-only)
+            tee: bool: tee outputn to stdout and log file
+            mem: list[str]: slurm memory requirements
+            flags: str: extra flags to pytest
+            testdir: str: test directory
+            cmdonly: bool: print command only
+        Returns:
+            list of tuples (cmd, job, log)
+        """
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
@@ -178,7 +196,8 @@ class TestsTool(CITool):
             jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
         else:
             if gpu:
-                executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
+                if executor is not None:
+                    executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
             if parallel == 1:
                 jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, log=log, mem=mem[0], **kw))
             else:
@@ -200,7 +219,7 @@ class TestsTool(CITool):
                 os.system(f'cat {log}')
             return result
 
-    def check(self, path: Path = '.'):
+    def check(self, path: str = '.'):
         fail = False
         for log in glob.glob('ruff*.log'):
             with open(log) as inp:

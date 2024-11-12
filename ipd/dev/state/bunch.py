@@ -2,12 +2,14 @@ import hashlib
 import os
 import shutil
 from pathlib import Path
-
+from typing import Generic, TypeVar
 from icecream import ic
 
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
-class Bunch(dict):
+T = TypeVar('T')
+
+class Bunch(dict, Generic[T]):
     def __init__(
         self,
         __arg_or_ns=None,
@@ -194,7 +196,7 @@ class Bunch(dict):
     def is_strict(self):
         return self.__dict__['_special']["strict_lookup"]
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> T:
         return self.__getattr__(key)
 
     # try:
@@ -202,7 +204,7 @@ class Bunch(dict):
     # except KeyError:
     # return self.__dict__['_special']('default')()
 
-    def __getattr__(self, k):
+    def __getattr__(self, k: str) -> T:
         self._autoreload_check()
         if k == "_special":
             raise ValueError("_special is a reseved name for Bunch")
@@ -224,13 +226,13 @@ class Bunch(dict):
                     return self[k]
                 return self[k]
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k: str, v: T):
         # if k == 'polls':
         # print('set polls trace:')
         # traceback.print_stack()
         super().__setitem__(k, v)
 
-    def __setattr__(self, k, v):
+    def __setattr__(self, k: str, v: T):
         assert k != 'polls'
         if hasattr(super(), k):
             raise ValueError(f"{k} is a reseved name for Bunch")
@@ -261,7 +263,7 @@ class Bunch(dict):
             object.__delattr__(self, k)
             self._notify_changed(k)
 
-    # def __setitem__(self, k, v):
+    # def __setitem__(self, k:str, v):
     # super().__setitem__(k, v)
     # self._notify_changed(k, v)
 
@@ -273,7 +275,7 @@ class Bunch(dict):
         self._autoreload_check()
         return Bunch.from_dict(super().copy())
 
-    def set_if_missing(self, k, v):
+    def set_if_missing(self, k: str, v):
         self._autoreload_check()
         if k not in self:
             self[k] = v
