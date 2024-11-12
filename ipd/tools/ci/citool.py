@@ -96,7 +96,7 @@ def run_pytest(
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
         return cmd, executor.submit(ipd.dev.run, cmd), log
     else:
-        return cmd, Future(ipd.dev.run(cmd)), log
+        return cmd, Future(ipd.dev.run(cmd, errok=True)), log
 
 def get_re(pattern, text) -> int:
     result = re.findall(pattern, text)
