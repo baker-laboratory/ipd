@@ -20,6 +20,8 @@ def test_qualname_of_file():
         ('/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/foo.py', 'foo'),
         ('/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/foo/bar/baz.py', 'ipd.foo.bar.baz'),
     ]:
+        if expected.startswith('rf2aa') and 'rf2aa' not in __file__: continue
+        if expected.startswith('rf_diffusion') and 'rf_diffusion' not in __file__: continue
         at(ipd.dev.qualname_of_file(fname)).is_equal_to(expected)
 
 def test_make_testfile(tmpdir):
