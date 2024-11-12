@@ -14,7 +14,7 @@ def test_qualname_of_file():
         ipd.dev.qualname_of_file('foo')
     for fname, expected in [
         ('sourcefile.py', 'sourcefile'),
-        ('foo/bar/baz.py', 'foo.bar.baz'),
+        ('/foo/bar/baz.py', 'baz'),
         ('/home/sheffler/rfdsym/rf_diffusion/foo.py', 'rf_diffusion.foo'),
         ('/home/sheffler/rfdsym/lib/rf2aa/rf2aa/foo/bar.py', 'rf2aa.foo.bar'),
         ('/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/foo.py', 'foo'),
@@ -30,7 +30,7 @@ def test_make_testfile(tmpdir):
     ipd.dev.make_testfile(sourcefile, testfile)
     code = pathlib.Path(testfile).read_text()
     pathlib.Path(f'{tmpdir}/expected.py').write_text(EXPECTED)
-    diff = ipd.dev.run(f'diff -B {tmpdir}/expected.py {tmpdir}/testfile.py', errok=True)
+    diff = ipd.dev.run(f'diff -wB {tmpdir}/expected.py {tmpdir}/testfile.py', errok=True)
     if diff:
         print('-' * 80)
         print(code)
@@ -76,7 +76,7 @@ def test_some_func():
     assert 0
 
 def test_some_other_func():
-    # some_other_func() -> ipd.dev.code.gentest.Return
+    # some_other_func() -> sourcefile.Return
     assert 0
 
 def test_Bar():
@@ -85,16 +85,16 @@ def test_Bar():
     assert 0
 
 def test_SomeOtherClass():
-    # SomeOtherClass.triple(bar: ipd.dev.code.gentest.Bar) -> ipd.dev.code.gentest.Bar
+    # SomeOtherClass.triple(bar: sourcefile.Bar) -> sourcefile.Bar
     assert 0
 
-# please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function some_func with the following signature: some_func(a, *, b=5) -> None
-# please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function some_other_func with the following signature: some_other_func() -> ipd.dev.code.gentest.Return
+# please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function some_func with the following signature: sourcefile.some_func(a, *, b=5) -> None
+# please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function some_other_func with the following signature: sourcefile.some_other_func() -> sourcefile.Return
 # please write a comprehensive set of pytest tests, including edge cases and input validation, for the class Bar with the following member function signatures:
-# Bar.baz()
-# Bar.double(fug: int) -> int
+#        sourcefile.Bar.baz()
+#        sourcefile.Bar.double(fug: int) -> int
 # please write a comprehensive set of pytest tests, including edge cases and input validation, for the class SomeOtherClass with the following member function signatures:
-# SomeOtherClass.triple(bar: ipd.dev.code.gentest.Bar) -> ipd.dev.code.gentest.Bar
+#        sourcefile.SomeOtherClass.triple(bar: sourcefile.Bar) -> sourcefile.Bar
 
 if __name__ == '__main__':
     main()

@@ -5,13 +5,16 @@ import re
 
 import jinja2
 
-def gitpath(path: str) -> str:
-    module = ''
-    while path and path != '/':
-        path, m = os.path.split(path)
-        module = f'{m}.{module}' if module else m
-        if os.path.exists(os.path.join(path, '.git')):
-            return module
+import ipd
+
+def gitpath(path: str, cwd='.') -> str:
+    with ipd.dev.cd(cwd):
+        module = ''
+        while path and path != '/':
+            path, m = os.path.split(path)
+            module = f'{m}.{module}' if module else m
+            if os.path.exists(os.path.join(path, '.git')):
+                return module
     return ''
 
 def qualname_of_file(sourcefile):
@@ -19,7 +22,7 @@ def qualname_of_file(sourcefile):
         raise ValueError(f'qualname_of_file: {sourcefile} must end with .py:')
     sourcefile = sourcefile[:-3]
     if qual := gitpath(sourcefile): return qual
-    return sourcefile.replace('/', '.')
+    return os.path.basename(sourcefile)
 
 def make_testfile(sourcefile, testifle):
     assert not os.path.exists(testifle)
@@ -41,10 +44,18 @@ def make_testfile(sourcefile, testifle):
         }
         for n, c in classes.items()
     }
+    for n, (f, s) in funcs.items():
+        f.__qualname__ = f'{qualname}.{n}'
+    for c in classes:
+        for n, (f, s) in methods[c].items():
+            f.__qualname__ = f'{qualname}.{f.__qualname__}'
+    for n, c in classes.items():
+        c.__qualname__ = f'{qualname}.{n}'
     environment = jinja2.Environment(trim_blocks=True)
     template = environment.from_string(testfile_template)
     testcode = template.render(funcs=funcs, classes=classes, methods=methods)
-    # testcode = testcode.replace('ipd.dev.code.gentest.', '')
+    testcode = testcode.replace('ipd.dev.code.gentest', qualname)
+    testcode = testcode.replace(f'.{qualname}', '')
     Path(testifle).write_text(testcode)
     os.system(f'yapf -i {testifle}')
 
@@ -58,14 +69,14 @@ def main():
 
 {% for name, (func, sig) in funcs.items() %}
 def test_{{name}}():
-    # {{func.__qualname__}}{{ sig }}
+    # {{func.__name__}}{{ sig }}
     assert 0
 
 {% endfor %}
 {% for clsname, cls in classes.items() %}
 def test_{{clsname}}():
 {% for name, (func, sig) in methods[clsname].items() %}
-    # {{func.__qualname__}}{{ sig }}
+    # {{clsname+'.'+func.__name__}}{{ sig }}
 {% endfor %}
     assert 0
 
@@ -76,7 +87,7 @@ def test_{{clsname}}():
 {% for clsname, cls in classes.items() %}
 # please write a comprehensive set of pytest tests, including edge cases and input validation, for the class {{clsname}} with the following member function signatures:
 {% for name, (func, sig) in methods[clsname].items() %}
-    # {{func.__qualname__}}{{ sig }}
+#        {{func.__qualname__}}{{ sig }}
 {% endfor %}
 {% endfor %}
 
