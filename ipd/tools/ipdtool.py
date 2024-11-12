@@ -29,7 +29,9 @@ class IPDTool(CliBase):
 
     def update(self):
         repo = git.Repo(f'{ipd.projdir}/..')
-        assert not repo.is_dirty()
+        if repo.is_dirty():
+            print('ipd repo dirty, not updating...')
+            return
         old = repo.head.commit
         repo.remotes.origin.pull()
         if repo.head.commit != old:

@@ -237,4 +237,4 @@ class TestsTool(CITool):
             print()
             fail |= result.errors
             fail |= result.failed
-        assert not fail
+        sys.exit(fail)
