@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 
 import git
-from rich import print
 import submitit
 import ipd
 
@@ -78,14 +77,20 @@ def run_pytest(
     tee=False,
     gpu='',
     flags='',
+    testdir='.',
+    cmdonly=False,
 ):
     dry = '--collect-only' if dryrun else ''
     tee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
-    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} --benchmark-disable {tee} {log}'
-    while '  ' in cmd:
-        cmd = cmd.replace('  ', ' ')
+    if cmdonly:
+        cmd = f'cd TESTDIR && {env} PYTHONPATH=. EXE {mark} {sel} {dry} {par} --benchmark-disable {tee} {log}'
+        return ipd.dev.strip_duplicate_spaces(cmd)
+    cmd = f'cd {testdir} && {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} --benchmark-disable {tee} {log}'
+    cmd = ipd.dev.strip_duplicate_spaces(cmd)
+    print(f'running: {cmd}')
+    if os.path.exists(log): os.remove(log)
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
         return cmd, executor.submit(ipd.dev.run, cmd), log
@@ -132,21 +137,25 @@ class TestsTool(CITool):
     def ruff(self, project):
         ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
 
-    def pytest(self,
-               slurm: bool = False,
-               gpu: str = '',
-               exe: str = sys.executable,
-               threads: int = 1,
-               log: Path = Path('pytest_ipd_ci_test_run.log'),
-               mark: str = '',
-               parallel: int = 1,
-               timeout: int = 60,
-               verbose: bool = True,
-               which: str = '',
-               dryrun: bool = False,
-               tee: bool = False,
-               mem: list[str] = ['16G'],
-               flags: str = ''):
+    def pytest(
+        self,
+        slurm: bool = False,
+        gpu: str = '',
+        exe: str = sys.executable,
+        threads: int = 1,
+        log: Path = Path('pytest_ipd_ci_test_run.log'),
+        mark: str = '',
+        parallel: int = 1,
+        timeout: int = 60,
+        verbose: bool = True,
+        which: str = '',
+        dryrun: bool = False,
+        tee: bool = False,
+        mem: list[str] = ['16G'],
+        flags: str = '',
+        testdir: str = '.',
+        cmdonly: bool = False,
+    ):
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
@@ -157,7 +166,15 @@ class TestsTool(CITool):
         nosel = ' and '.join([f'not {t}' for t in which.split()])
         jobs = []
         executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
-        kw = dict(env=env, mark=mark, dryrun=dryrun, executor=executor, tee=tee, gpu=gpu, flags=flags)
+        kw = dict(env=env,
+                  mark=mark,
+                  dryrun=dryrun,
+                  executor=executor,
+                  tee=tee,
+                  gpu=gpu,
+                  flags=flags,
+                  testdir=testdir,
+                  cmdonly=cmdonly)
         if not slurm:
             jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
         else:
@@ -169,10 +186,15 @@ class TestsTool(CITool):
                 jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
                 jobs.append(
                     run_pytest(exe=exe, sel=nosel, parallel=par, mem=mem[1 % len(mem)], log=f'{log}.parallel.log', **kw))
-        result = [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
-        for cmd, job, log in jobs:
-            os.system(f'cat {log}')
-        return result
+        if cmdonly:
+            for cmd in jobs:
+                print(cmd)
+            return jobs
+        else:
+            result = [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
+            for cmd, job, log in jobs:
+                os.system(f'cat {log}')
+            return result
 
     def check(self, path: Path = '.'):
         fail = False

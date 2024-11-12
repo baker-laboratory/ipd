@@ -1,21 +1,28 @@
 import os
 import pytest
+import rich
 
 typer = pytest.importorskip('typer')
 pytest.mark.skipif(int(typer.__version__.split('.')[1]) < 12, reason='ipd.sym.Helix breaks on numpy 2')
 
-from rich import print
 from typer.testing import CliRunner
 
 import ipd
 
 def main():
-    test_citool_update_library()
-    # test_clitool_pytest()
+    # test_citool_update_library()
+    test_clitool_pytest()
     # test_clitool_pytest_slurm_parallel()
     print('test clitool PASS')
 
-runner = CliRunner()
+def runipd(cmd):
+    runner = CliRunner()
+    tool = ipd.tools.IPDTool()
+    result = runner.invoke(tool.__app__, cmd)
+    if result.exit_code:
+        rich.inspect(result)
+    assert result.exit_code == 0
+    return result.stdout
 
 @pytest.mark.ci
 def test_citool_update_library():
@@ -36,22 +43,29 @@ def test_bar():
 
 os.chdir(f'{os.path.dirname(__file__)}/../../../..')
 
-# @pytest.mark.recursive
-# def test_clitool_pytest():
-#     tool = ipd.tools.ci.TestsTool()
-#     for cmd, result, log in tool.pytest(dryrun=True, mark='not recursive'):
-#         print(cmd)
-#         assert assert_that(cmd).is_equal_to(
-#             'OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/mlb/bin/python -mpytest -v -m "not recursive" --collect-only > pytest_ipd_ci_test_run.log'
-#         )
-#         print(dict(log))
+def test_clitool_pytest():
+    out = runipd('ci tests pytest --cmdonly')
+    assert out.strip(
+    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable > pytest_ipd_ci_test_run.log'
+
+    out = runipd("ci tests pytest --cmdonly --exe $exe --slurm --tee --gpu a4000")
+    assert out.strip(
+    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log'
+
+    out = runipd(
+        "ci tests pytest --cmdonly --exe $exe --slurm --parallel 4 --tee --which 'test_call_speed test_loss_grad'")
+    assert out.strip(
+    ) == '''cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.noparallel.log
+cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n -n 4 --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.parallel.log'''
+
+    # testdir = f'{ipd.projdir}/tests/crud'
 
 # def test_clitool_pytest_slurm_parallel():
 #     tool = ipd.tools.ci.TestsTool()
 #     cmd, result, log = zip(*tool.pytest(dryrun=True, parallel=4, slurm=True, which='test_foo test_bar'))
 #     assert cmd == (
-#         'OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/mlb/bin/python -mpytest -v -k "test_foo or test_bar" --collect-only > pytest_ipd_ci_test_run.log.noparallel.log',
-#         'OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/mlb/bin/python -mpytest -v -k "not test_foo and not test_bar" --collect-only > pytest_ipd_ci_test_run.log.parallel.log',
+#         'OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/mlb/bin/python -mpytest -v -k est_foo or test_bar" --collect-only > pytest_ipd_ci_test_run.log.noparallel.log',
+#         'OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/mlb/bin/python -mpytest -v -k ot test_foo and not test_bar" --collect-only > pytest_ipd_ci_test_run.log.parallel.log',
 #     )
 #     a, b = log
 #     assert a.selected == 2

@@ -20,3 +20,8 @@ def printed_string(thing):
         print(thing)
         strio.seek(0)
         return strio.read()
+
+def strip_duplicate_spaces(s):
+    while '  ' in s:
+        s = s.replace('  ', ' ')
+    return s

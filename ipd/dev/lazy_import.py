@@ -6,15 +6,28 @@ import typing
 from ipd.dev.code.inspect import caller_info
 from ipd.dev.contexts import onexit
 
-_skip_global_install = False
-_warned = set()
+def lazyimport(name: str, package: str = '', pip=False, mamba=False, channels='') -> ModuleType:
+    """Lazy import of a module. The module will be imported when it is first accessed.
 
-class LazyModule:
-    """Lazy import of a module.
-
-    If the module is not found it will try to install it using mamba or
-    pip.
+    :param name: The name of the module to import.
+    :type name: str
+    :param package: The name of the package to install if the module is not found.
+    :type package: str
+    :param pip: If True, try to install the package using pip.
+    :type pip: bool
+    :param mamba: If True, try to install the package using mamba.
+    :type mamba: bool
+    :param channels: The conda channels to use when installing the package using mamba.
+    :type channels: str
+    :return: The imported module.
+    :rtype: ModuleType
     """
+    if typing.TYPE_CHECKING:
+        return import_module(name)
+    return _LazyModule(name, package, pip, mamba, channels)
+
+class _LazyModule:
+    """A class to represent a lazily imported module."""
     __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels', '_callerinfo')
 
     def __init__(self, name: str, package: str = '', pip=False, mamba=False, channels=''):
@@ -43,7 +56,7 @@ class LazyModule:
         # raise e from e
         except Exception as e:
             callinfo = f'{self._callerinfo.filename}:{self._callerinfo.lineno}\n    {self._callerinfo.code}'
-            print(f'LazyModule: Failed to import module: {self._name}\nFile: {callinfo}', flush=True)
+            print(f'_LazyModule: Failed to import module: {self._name}\nFile: {callinfo}', flush=True)
             raise e
 
     def _mambathenpipimport(self):
@@ -60,7 +73,7 @@ class LazyModule:
 
     def _try_mamba_install(self):
         mamba = sys.executable.replace('/bin/python', '')
-        *mamba, env = mamba.split('/')
+        mamba, env = mamba.split('/')
         # mamba = '/'.join(mamba[:-1])+'/bin/mamba'
         mamba = 'mamba'
         cmd = f'{mamba} activate {env} && {mamba} install {self._channels} {self._package}'
@@ -87,7 +100,7 @@ class LazyModule:
                     sys.stderr.write(f'PIPIMPORT --user {self._package}\n')
                     try:
                         result = subprocess.check_call(f'{sys.executable} -mpip install --user {self._package}'.split())
-                        sys.stderr.write(result)
+                        sys.stderr.write(str(result))
                     except:  # noqa
                         pass
                 return import_module(self._name)
@@ -108,12 +121,9 @@ class LazyModule:
             n=self._name,
         )
 
-def lazyimport(*a, **kw) -> ModuleType:
-    if typing.TYPE_CHECKING:
-        return import_module(a[0])
-    return LazyModule(*a, **kw)
-
 _all_skipped_lazy_imports = set()
+_skip_global_install = False
+_warned = set()
 
 @onexit
 def print_skipped():
