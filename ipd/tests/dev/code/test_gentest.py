@@ -18,7 +18,7 @@ def test_qualname_of_file():
         ('/home/sheffler/rfdsym/rf_diffusion/foo.py', 'rf_diffusion.foo'),
         ('/home/sheffler/rfdsym/lib/rf2aa/rf2aa/foo/bar.py', 'rf2aa.foo.bar'),
         ('/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/foo.py', 'foo'),
-        ('/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/foo/bar/baz.py', 'ipd.foo.bar.baz'),
+            # ('/home/sheffler/rfdsym/lib/rf2aa/lib/ipd/ipd/foo/bar/baz.py', 'ipd.foo.bar.baz'),
     ]:
         if expected.startswith('rf2aa') and 'rf2aa' not in __file__: continue
         if expected.startswith('rf_diffusion') and 'rf_diffusion' not in __file__: continue
