@@ -8,6 +8,7 @@ version = '0.1'
 dependencies = [
     'assertpy',
     'colorlog',
+    'compact-json',
     'debugpy',
     # 'eliot-tree',
     'gitpython',
@@ -37,7 +38,7 @@ dependencies = [
     'pytest-dotenv',
     'python-box',
     'requests',
-    'RestrectedPython',
+    'RestrictedPython',
     'ruff',
     'seaborn',
     'submitit',
