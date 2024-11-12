@@ -160,7 +160,6 @@ class TestsTool(CITool):
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
-        par = '' if parallel == 1 else f'-n {parallel}'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
         nosel = ' and '.join([f'not {t}' for t in which.split()])
@@ -185,7 +184,12 @@ class TestsTool(CITool):
             else:
                 jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
                 jobs.append(
-                    run_pytest(exe=exe, sel=nosel, parallel=par, mem=mem[1 % len(mem)], log=f'{log}.parallel.log', **kw))
+                    run_pytest(exe=exe,
+                               sel=nosel,
+                               parallel=parallel,
+                               mem=mem[1 % len(mem)],
+                               log=f'{log}.parallel.log',
+                               **kw))
         if cmdonly:
             for cmd in jobs:
                 print(cmd)
