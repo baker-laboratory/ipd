@@ -1,8 +1,16 @@
+import atexit
 import io
 import os
 import sys
 import traceback
 from contextlib import contextmanager
+
+def onexit(func):
+    def wrapper(*args, **kw):
+        return func(*args, **kw)
+
+    atexit.register(wrapper)
+    return wrapper
 
 @contextmanager
 def cast(cls, self):

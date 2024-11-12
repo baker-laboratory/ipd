@@ -365,8 +365,8 @@ class RigidBody:
         self.bvhopcount += 1
         assert isinstance(other, RigidBody)
         if usebvh or (usebvh is None and self.usebvh):
-            count = ipd.cpp.bvh.bvh_count_pairs(self.contactbvh, other.contactbvh, self.position,
-                                                other.position, contactdist)
+            count = ipd.cpp.bvh.bvh_count_pairs(self.contactbvh, other.contactbvh, self.position, other.position,
+                                                contactdist)
         else:
             assert 0
             # import scipy.spatial

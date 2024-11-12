@@ -121,13 +121,7 @@ def _compute_symelems(
         for tag in keep:
             try:
                 axs_, cen_, hel_, iframe = tag[:3], tag[3:6], tag[6], int(tag[7])
-                se = SymElem(nfold,
-                             axs_,
-                             cen_,
-                             hel=hel_,
-                             lattice=lattice,
-                             isunit=True,
-                             latticetype=latticetype)
+                se = SymElem(nfold, axs_, cen_, hel=hel_, lattice=lattice, isunit=True, latticetype=latticetype)
                 seenit = symelems[se.label].copy()
                 if screw and se.label[:2] in symelems:
                     seenit += symelems[se.label[:2]]
@@ -571,8 +565,7 @@ def _shift_to_unitcell(symelems):
             cen = e.cen
             cen[:3] = cen[:3] % 1
             cen[:3][cen[:3] > 0.9999] = 0
-            newelems.append(SymElem(e.nfold, e.axis, cen, hel=e.hel, screw=e.screw, frame=e.frame,
-                                    isunit=True))
+            newelems.append(SymElem(e.nfold, e.axis, cen, hel=e.hel, screw=e.screw, frame=e.frame, isunit=True))
             # ic(e)
             # ax = list(sorted(np.abs(e.axis[:3])))
             # if np.allclose(ax, [0, 0, 1]):

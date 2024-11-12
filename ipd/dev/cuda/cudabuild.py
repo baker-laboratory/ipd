@@ -6,6 +6,7 @@ pytest.mark.skipif(not th.cuda.device_count(), 'cuda unavailable')
 import os
 
 import ipd
+from ipd.dev.error import change_exception
 
 mode = 'release'
 # mode = 'debug'
@@ -17,8 +18,19 @@ mode = 'release'
 
 os.environ['TORCH_CUDA_ARCH_LIST'] = ''
 
-@ipd.dev.change_exception(OSError=ImportError, RuntimeError=ImportError)
+@change_exception(OSError=ImportError, RuntimeError=ImportError)
 def build_extension(name, sources, incpath, module=None, verbose=False):
+    """Build a torch extension module from sources.
+
+    Args:
+        name (str): Name of the extension module.
+        sources (list): List of source files.
+        incpath (list): List of include paths.
+        module (module, optional): Module to add extension to.
+        verbose (bool, optional): Print verbose output.
+    Returns:
+        Extension module.
+    """
     import torch as th
     import torch.utils.cpp_extension
     # os.environ['CC'] = "gcc-9"

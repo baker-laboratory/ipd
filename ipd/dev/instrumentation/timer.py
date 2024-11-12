@@ -186,13 +186,7 @@ class Timer:
             for k, v in other.checkpoints.items():
                 self.checkpoints[k].extend(v)
 
-def checkpoint(kw,
-               label=None,
-               funcbegin=False,
-               dont_mod_label=False,
-               filename=None,
-               clsname=None,
-               funcname=None):
+def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=None, clsname=None, funcname=None):
     t = None
     if isinstance(kw, Timer):
         t = kw

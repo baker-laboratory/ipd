@@ -51,8 +51,7 @@ def hacky_xtal_maker(
             if symdef:
                 sdef_string = FN[-1].make_symdef(**kw)
                 if verbose:
-                    print("==================== SYMDEF (dump to " + tag + "_" + str(d) +
-                          ".sym) ====================")
+                    print("==================== SYMDEF (dump to " + tag + "_" + str(d) + ".sym) ====================")
                     print(sdef_string)
                     print("=====================================================================")
                 with open(tag + "_" + str(d) + ".sym", "w") as out:
@@ -77,7 +76,7 @@ def hacky_xtal_maker(
     cmd.set_view(v)
 
 class PymolSymElem(object):
-    """docstring for PymolSymElem"""
+    """Docstring for PymolSymElem."""
     def __init__(
             self,
             kind,
@@ -547,7 +546,7 @@ class PymolSymElem(object):
         return self.kind + " " + str(self.axis)
 
 class SymElemPosition(object):
-    """docstring for SymElemPosition"""
+    """Docstring for SymElemPosition."""
     def __init__(self, symelem, xform):
         super(SymElemPosition, self).__init__()
         self.symelem = symelem
@@ -557,7 +556,7 @@ class SymElemPosition(object):
         return self.symelem == other.symelem and self.xform == other.xform
 
 class SymElemGroupManager(object):
-    """docstring for SymElemGroupManager"""
+    """Docstring for SymElemGroupManager."""
     def __init__(self):
         super(SymElemGroupManager, self).__init__()
         self.node2elems = dict()
@@ -579,7 +578,7 @@ class SymElemGroupManager(object):
         self.node2elem[node].append(xelem)
 
 class SymTrieNode(object):
-    """docstring for SymTrieNode"""
+    """Docstring for SymTrieNode."""
     def __init__(self, generators, ielem, iframe, depth, position):
         super(SymTrieNode, self).__init__()
         self.generators = generators
@@ -616,7 +615,7 @@ class SymTrieNode(object):
         )
 
 class SymTrieSanityCheckVisitor(object):
-    """docstring for SymTrieSanityCheckVisitor"""
+    """Docstring for SymTrieSanityCheckVisitor."""
     def __init__(self):
         super(SymTrieSanityCheckVisitor, self).__init__()
         self.seenit = list()  # [ Xform() ]
@@ -676,8 +675,7 @@ def generate_sym_trie_recurse(
 
     # if verbose: print len(newheads),igen,len(generators)
     if depth > 1:  # and newheads:
-        generate_sym_trie_recurse(generators, depth - 1, opts, body, heads, newheads,
-                                  (igen + 1) % len(generators))
+        generate_sym_trie_recurse(generators, depth - 1, opts, body, heads, newheads, (igen + 1) % len(generators))
 
 def generate_sym_trie(generators, depth=10, opts=None, verbose=False):
     raise NotImplementedError("some bug needs to be fixed")
@@ -816,8 +814,7 @@ def makedx(sel="all", n=2, name=None):
         rot(dsel2, Ux, 180.0)
         for ic, c in enumerate(chains):
             cmd.alter("((%s) and chain %s )" % (dsel, c), "chain = '%s'" % ALLCHAIN[len(chains) * (i) + ic])
-            cmd.alter("((%s) and chain %s )" % (dsel2, c),
-                      "chain = '%s'" % ALLCHAIN[len(chains) * (i + n) + ic])
+            cmd.alter("((%s) and chain %s )" % (dsel2, c), "chain = '%s'" % ALLCHAIN[len(chains) * (i + n) + ic])
     cmd.create(name, "_TMP_D*")
     util.cbc(name)
     cmd.delete("_TMP_D*")
@@ -846,9 +843,7 @@ def makeicos(sel="all", name="ICOS", n=60):
 
 def make_d3oct(d3, cage, cage_trimer_chain="A", depth=4, maxrad=9e9):
     if verbose:
-        print(
-            cmd.super("((" + cage + ") and (chain " + cage_trimer_chain + "))",
-                      "((" + d3 + ") and (chain A))"))
+        print(cmd.super("((" + cage + ") and (chain " + cage_trimer_chain + "))", "((" + d3 + ") and (chain A))"))
     zcagecen = com(cage + " and name ca").z
     if verbose:
         print(zcagecen)
@@ -869,9 +864,7 @@ def make_d3oct(d3, cage, cage_trimer_chain="A", depth=4, maxrad=9e9):
 
 def make_d3tet(d3, cage, cage_trimer_chain="A", depth=4, maxrad=9e9):
     if verbose:
-        print(
-            cmd.super("((" + cage + ") and (chain " + cage_trimer_chain + "))",
-                      "((" + d3 + ") and (chain A))"))
+        print(cmd.super("((" + cage + ") and (chain " + cage_trimer_chain + "))", "((" + d3 + ") and (chain A))"))
     zcagecen = com(cage + " and name ca").z
     if verbose:
         print(zcagecen)
@@ -898,7 +891,7 @@ def show_node(node, **kwargs):
         node.show(xform=kwargs["xform"])
 
 class CountFrames(object):
-    """docstring for CountFrames"""
+    """Docstring for CountFrames."""
     def __init__(self):
         super(CountFrames, self).__init__()
         self.count = 0
@@ -924,7 +917,7 @@ def cgo_cyl_arrow(c1, c2, rad, col=(1, 1, 1), col2=None, arrowlen=4.0):
     return CGO
 
 class BuildCGO(object):
-    """docstring for BuildCGO"""
+    """Docstring for BuildCGO."""
     def __init__(
         self,
         nodes,
@@ -1007,18 +1000,9 @@ class BuildCGO(object):
                     if icen != 0 or node.parent:  # skip node 0 for root
                         self.add_segment(pcen, xcen, icen)
             if self.bounds_check(xcen):
-                self.add_sphere(x * (cen + Vec(0, 0, 0)),
-                                2.0,
-                                text="%s%i" % ("ABCD"[icen], node.depth),
-                                icol=icen)
-                self.add_sphere(x * (cen + Vec(2, 0, 0)),
-                                2.0,
-                                text="%s%i" % ("ABCD"[icen], node.depth),
-                                icol=icen)
-                self.add_sphere(x * (cen + Vec(0, 2, 0)),
-                                2.0,
-                                text="%s%i" % ("ABCD"[icen], node.depth),
-                                icol=icen)
+                self.add_sphere(x * (cen + Vec(0, 0, 0)), 2.0, text="%s%i" % ("ABCD"[icen], node.depth), icol=icen)
+                self.add_sphere(x * (cen + Vec(2, 0, 0)), 2.0, text="%s%i" % ("ABCD"[icen], node.depth), icol=icen)
+                self.add_sphere(x * (cen + Vec(0, 2, 0)), 2.0, text="%s%i" % ("ABCD"[icen], node.depth), icol=icen)
             pcen = xcen
 
         # show symelems
@@ -1046,8 +1030,7 @@ class BuildCGO(object):
         # should add duplicate checks here
         if c1.distance(c2) < 1.0:
             return
-        self.CGO.extend(
-            cgo_cyl_arrow(c1, c2, rad=0.5, col=self.colors[max(0, icol - 1)], col2=self.colors[icol]))
+        self.CGO.extend(cgo_cyl_arrow(c1, c2, rad=0.5, col=self.colors[max(0, icol - 1)], col2=self.colors[icol]))
 
     def show(self, verbose=False, **kwargs):
         v = cmd.get_view()
@@ -1062,7 +1045,7 @@ class BuildCGO(object):
 # TODO move to xyzMath
 
 class VecDict(object):
-    """docstring for VecDict"""
+    """Docstring for VecDict."""
     def __init__(self):
         super(VecDict, self).__init__()
         self.keys_ = list()
@@ -1091,7 +1074,7 @@ class VecDict(object):
             self.values_.append(val)
 
 class ComponentCenterVisitor(object):
-    """docstring for ComponentCenterVisitor"""
+    """Docstring for ComponentCenterVisitor."""
     def __init__(self, symelems, extranodes=[], label="NODES", colors=list(), showlinks=1, **kwargs):
         super(ComponentCenterVisitor, self).__init__()
         # if len(symelems) > 2:
@@ -1204,10 +1187,10 @@ class ComponentCenterVisitor(object):
                     assert stn.position * priCC == CC
 
     def show(
-        self,
-        component_pos=(Vec(0, -4, 4), Vec(0, 3, 3), Vec(11, 9, 3), Vec(9, 3, 11)),
-        showframes=True,
-        **kwargs,
+            self,
+            component_pos=(Vec(0, -4, 4), Vec(0, 3, 3), Vec(11, 9, 3), Vec(9, 3, 11)),
+            showframes=True,
+            **kwargs,
     ):
         self.sanitycheck()
         if not self.parentmap:
@@ -1238,9 +1221,8 @@ class ComponentCenterVisitor(object):
         if "one_component" not in kwargs:
             kwargs["one_component"] = False
 
-        XYZ_TEMPLATE = (
-            r"xyz  %-30s  %+012.9f,%+012.9f,%+012.9f  %+012.9f,%+012.9f,%+012.9f  %+014.9f,%+014.9f,%+014.9f" +
-            "\n")
+        XYZ_TEMPLATE = (r"xyz  %-30s  %+012.9f,%+012.9f,%+012.9f  %+012.9f,%+012.9f,%+012.9f  %+014.9f,%+014.9f,%+014.9f" +
+                        "\n")
         if not self.parentmap:
             self.makeCCtree()
         scale = 1.0
@@ -1514,7 +1496,7 @@ class ComponentCenterVisitor(object):
         return s
 
 class RosettaSymDef(object):
-    """docstring for RosettaSymDef"""
+    """Docstring for RosettaSymDef."""
     def __init__(self, virtuals=None, edges=None):
         super(RosettaSymDef, self).__init__()
         if not virtuals:

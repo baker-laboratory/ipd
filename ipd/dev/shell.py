@@ -1,13 +1,26 @@
+import collections
 import subprocess
 
-def bash(cmd):
-    result = subprocess.run(cmd, shell=True, capture_output=True)
-    return result.stdout.decode(), result.stderr.decode(), result.returncode
+BashResult = collections.namedtuple('BashResult', 'stdout, stderr, returncode')
 
-def run(command: str, echo: bool = False):
+def bash(cmd: str) -> BashResult:
+    """Run a bash command and return the stdout, stderr, and return code."""
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    return BashResult(result.stdout, result.stderr, result.returncode)
+
+def run(command: str, echo: bool = False, errok: bool = False) -> str:
+    """Run a shell command and return the stdout.
+
+    Args:
+        command (str): The command to run.
+        echo (bool): Whether to print the command before running it.
+        errok (bool): Whether to raise an error if the command fails.
+    Returns:
+        str: The stdout of the command.
+    """
     if echo: print(command, flush=True)
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
-    if result.returncode != 0:
+    if result.returncode != 0 and not errok:
         raise RuntimeError(f'Error running command: {command}\n{result.stderr}')
     else:
         return result.stdout

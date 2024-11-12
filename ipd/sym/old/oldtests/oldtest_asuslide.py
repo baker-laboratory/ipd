@@ -235,12 +235,7 @@ def asuslide_case4():
     fracremains = 1.0
     primaryframes = xtal.primary_frames(cellsize)
     cen = h.com(xyz.reshape(-1, xyz.shape[-1]))
-    frames = ipd.sym.frames(sym,
-                            ontop=primaryframes,
-                            cells=(-1, 1),
-                            cellsize=cellsize,
-                            center=cen,
-                            xtalrad=cellsize * 0.9)
+    frames = ipd.sym.frames(sym, ontop=primaryframes, cells=(-1, 1), cellsize=cellsize, center=cen, xtalrad=cellsize * 0.9)
     # frames = primaryframes
     cfracmin = 0.7
     cfracmax = 0.7
@@ -1496,8 +1491,7 @@ def test_asuslide_case2():
     ic(slid.asym.com(), slid.cellsize)
     ic("=======")
     # don't know why this is unstable... generally off by a few thou
-    assert np.allclose(slid.asym.com(), [1.81500000e01, -4.17462713e-04, 4.31305757e-15, 1.00000000e00],
-                       atol=0.1)
+    assert np.allclose(slid.asym.com(), [1.81500000e01, -4.17462713e-04, 4.31305757e-15, 1.00000000e00], atol=0.1)
     assert np.allclose(slid.cellsize, [58.96, 58.96, 58.96], atol=0.01)
 
     coords = ipd.hcentered(test_asuslide_case2_coords, singlecom=True)
@@ -1535,8 +1529,7 @@ def test_asuslide_case2():
     )
     # ipd.showme(slid)
     ic(slid.asym.com(), slid.cellsize)
-    assert np.allclose(slid.asym.com(), [1.81500000e01, -4.17462713e-04, 4.31305757e-15, 1.00000000e00],
-                       atol=0.1)
+    assert np.allclose(slid.asym.com(), [1.81500000e01, -4.17462713e-04, 4.31305757e-15, 1.00000000e00], atol=0.1)
 
     assert np.allclose(slid.cellsize, 57.34, atol=0.01)
 

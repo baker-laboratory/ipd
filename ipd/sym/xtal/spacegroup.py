@@ -119,6 +119,4 @@ def to_unitcell(spacegroup, cellgeom, coords):
     return ipd.homog.htrans(newcom - com)
 
 def spacegroups_with_symelem(label, **kw):
-    return [
-        sg for sg in ipd.sym.xtal.sg_all_chiral if any([e.label == label for e in ipd.sym.xtal.symelems(sg)])
-    ]
+    return [sg for sg in ipd.sym.xtal.sg_all_chiral if any([e.label == label for e in ipd.sym.xtal.symelems(sg)])]

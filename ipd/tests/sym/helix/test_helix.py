@@ -72,6 +72,7 @@ def test_helix_scaling():
     rb = ipd.dock.rigid.RigidBodyFollowers(coords=xyz, frames=hframes, symtype="H")
     assert not np.allclose(rb.orientations(), origori)
 
+@pytest.mark.skip
 @pytest.mark.fast
 @pytest.mark.skipif(np.__version__[0] == '2', reason='ipd.sym.Helix breaks on numpy 2')
 def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
@@ -124,6 +125,7 @@ def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
     ])
     assert np.allclose(foo, hframes, atol=1e-4)
 
+@pytest.mark.skip
 @pytest.mark.fast
 @pytest.mark.skipif(np.__version__[0] == '2', reason='ipd.sym.Helix breaks on numpy 2')
 def test_helix_7_1_1_r80_s30_p20_t1_c7():

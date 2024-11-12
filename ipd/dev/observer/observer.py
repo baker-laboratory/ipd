@@ -5,7 +5,8 @@ class ObserverError(Exception):
     pass
 
 class ObserverMethod:
-    '''This class is used to call a method on all observers that have that method.'''
+    """This class is used to call a method on all observers that have that
+    method."""
     def __init__(self, subject, method):
         self.subject = subject
         self.method = method
@@ -28,7 +29,7 @@ class ObserverMethod:
         return results
 
 class Subject:
-    '''This class is used to register observers and call their methods.'''
+    """This class is used to register observers and call their methods."""
     def __init__(self):
         self._observers = dict()
         self._allmethods = set()
@@ -47,7 +48,7 @@ class Subject:
         self._observers[cls] = observer
 
     def _set_config(self, conf):
-        '''register methods listed in conf.viz'''
+        """Register methods listed in conf.viz."""
         if 'viz' in conf:
             for k, v in conf.viz.items():
                 if k != 'settings':
@@ -69,8 +70,8 @@ class Subject:
 hub = Subject()
 
 class Observer(abc.ABC):
-    '''
-    Base class for all Observers, must define set_config and use it to configure themselves
+    """Base class for all Observers, must define set_config and use it to
+    configure themselves.
 
     A single instance of each subclass of Observer will be created and registered by the hub
     Subject. These instances will be accessible via hub[MyObserver]. For example, defining
@@ -83,7 +84,7 @@ class Observer(abc.ABC):
 
     will cause ipd.hub.thing_I_react_to(1,2) to call it's instance of thing_I_react_to
     the instance can be accessed via ipd.hub[MyObserver] or MyObserver()
-    '''
+    """
     _instances = dict()
 
     def __init_subclass__(cls, **kw):

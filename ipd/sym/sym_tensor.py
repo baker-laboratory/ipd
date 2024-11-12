@@ -1,5 +1,5 @@
-'''
-SymTensor is a subclass of torch.Tensor that is used to store symmetrical tensors.
+"""SymTensor is a subclass of torch.Tensor that is used to store symmetrical
+tensors.
 
 Make a SymTensor by calling symtensor(tensor) or SymManager.tensor(tensor). All SymTensors are a view
 into a full tensor of all sym + unsym data. A SymTensor may show only a
@@ -142,32 +142,29 @@ FullSlicedAll1DBasic([ 0,  1,  2,  3,  4, 17, 13, 17, 17,  7])
 >>> t._update()
 >>> t
 FullSlicedAll1DBasic([0, 1, 2, 0, 1, 2, 0, 1, 2, 7])
-'''
+"""
 
 import sys
-
-import ipd
-from ipd.dev.lazy_import import lazyimport
-
-th = lazyimport('torch')
-
 import functools
 
+import ipd
+
+import torch as th
 import numpy as np
 from torch import Tensor as T
 
 def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
-    '''Create a SymTensor object from a tensor
+    """Create a SymTensor object from a tensor.
 
-        Args:
-            tensor (torch.Tensor): the tensor to create a SymTensor from
-            cls (type): the class to create the tensor from
-            symdims (list): the dimensions that are symmetrical
-            idx (SymIndex): index for the tensor, if sparse
-            isidx (torch.Tensor): which entries are indices (pointers)
-        Returns:
-            SymTensor: a SymTensor object with the appropriates bases
-        '''
+    Args:
+        tensor (torch.Tensor): the tensor to create a SymTensor from
+        cls (type): the class to create the tensor from
+        symdims (list): the dimensions that are symmetrical
+        idx (SymIndex): index for the tensor, if sparse
+        isidx (torch.Tensor): which entries are indices (pointers)
+    Returns:
+        SymTensor: a SymTensor object with the appropriates bases
+    """
     try:
         tensor, origval, origtype, val = th.as_tensor(tensor), None, None, None
     except (TypeError, ValueError):
@@ -217,10 +214,11 @@ def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
     return symten
 
 class SymTensor(th.Tensor):
-    '''Base class for symmetrical tensors'''
+    """Base class for symmetrical tensors."""
     @classmethod
     def __torch_function__(cls, func, types, a=(), kw=None):
-        '''__torch_function__ is called when a torch function is called on a SymTensor'''
+        """__torch_function__ is called when a torch function is called on a
+        SymTensor."""
         if kw is None: kw = {}
         # if hasattr(cls, func.__name__): getattr(cls, func.__name__)(*a, **kw)
         if func not in _TORCH_FUNCS or not all(issubclass(t, (T, SymTensor)) for t in types):
@@ -283,7 +281,7 @@ class SymTensor(th.Tensor):
         return copy
 
     def __del__(self):
-        '''__del__ is strange, sometimes stuff doesn't exist anymore'''
+        """__del__ is strange, sometimes stuff doesn't exist anymore."""
         if hasattr(self, 'attr') and hasattr(self.attr, 'observers'):
             if self.attr.observers and self in self.attr.observers:
                 self.attr.observers.remove(self)
@@ -317,7 +315,7 @@ class SymTensor(th.Tensor):
 _TORCH_FUNCS = {}
 
 def implements_torch(torch_function):
-    """Register a torch function override for SymTensor"""
+    """Register a torch function override for SymTensor."""
     def decorator(func):
         functools.update_wrapper(func, torch_function)
         _TORCH_FUNCS[torch_function] = func
@@ -368,7 +366,7 @@ class Ordering(SymTensor):
         return super().__new__(cls, t, attr, **kw)
 
 class ChemType(SymTensor):
-    '''Base class for "residue" type masks: residue, lig, atomized, gp'''
+    """Base class for "residue" type masks: residue, lig, atomized, gp."""
     def __new__(cls, t: SymTensor, attr, **kw):
         # ic('ChemType')
         base = cls.__bases__[list(subbasenames.keys()).index(__class__)]
@@ -397,7 +395,7 @@ class Shape(SymSub, ChemType, Ordering):
     pass
 
 class OneDim(Shape):
-    '''Base class for 1D tensors'''
+    """Base class for 1D tensors."""
     def __new__(cls, t, attr, **kw):
         t = super().__new__(cls, t, attr, **kw)
         # ic('OneDim')
@@ -437,7 +435,7 @@ class OneDim(Shape):
         return self
 
 class TwoDim(Shape):
-    '''Base class for 2D tensors'''
+    """Base class for 2D tensors."""
     def __new__(cls, t, attr, **kw):
         t = super().__new__(cls, t, attr, **kw)
         # ic('TwoDim')
@@ -511,8 +509,7 @@ def make_sub_bases():
             base_types[name] = type(name, (Base, ), {})
 
             def make_prop(name):
-                return property(lambda self: type_maps[self.__class__][base_types[name]]
-                                (self, self.attr.copy()))
+                return property(lambda self: type_maps[self.__class__][base_types[name]](self, self.attr.copy()))
 
             setattr(Base, name.lower(), make_prop(name))
 

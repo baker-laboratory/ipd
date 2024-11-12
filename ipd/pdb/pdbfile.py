@@ -107,8 +107,7 @@ class PDBFile:
         if isinstance(ia, str):
             ia = ia.encode()
         if isinstance(ia, bytes):
-            return float(r.x[r.an == ia].iloc[0]), float(r.y[r.an == ia].iloc[0]), float(
-                r.z[r.an == ia].iloc[0])
+            return float(r.x[r.an == ia].iloc[0]), float(r.y[r.an == ia].iloc[0]), float(r.z[r.an == ia].iloc[0])
         raise ValueError(ia)
 
     def renumber_from_0(self, unique_chains=True):
@@ -498,8 +497,7 @@ class PDBFile:
         ca1 = chains[jchain].ca()[seqmatch.b:seqmatch.b + seqmatch.size]
         rms, _, xrmsfit = ipd.hrmsfit(ca0, ca1)
         if rms > tolerances.rms:
-            raise ValueError(
-                f"rmsd {rms:5.3f} between detected symmetric chains is above rms tolerance {tolerances.rms}")
+            raise ValueError(f"rmsd {rms:5.3f} between detected symmetric chains is above rms tolerance {tolerances.rms}")
         axis, ang, cen, hel = ipd.haxis_angle_cen_hel_of(xrmsfit)
         if hel > tolerances.translation:
             raise ValueError(f'translation along symaxis of {hel:5.3f} between "symmetric"'

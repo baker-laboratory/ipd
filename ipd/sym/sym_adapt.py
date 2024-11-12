@@ -15,7 +15,8 @@ th = lazyimport('torch')
 
 @singledispatch
 def _sym_adapt(thing, sym, isasym=None):
-    '''return a Symmable object that knows how to convert beteen input and a symmetrizable adapted form'''
+    """Return a Symmable object that knows how to convert beteen input and a
+    symmetrizable adapted form."""
     raise NotImplementedError(f"Don't know how to make SymAdapt for {type(thing)}")
 
 @_sym_adapt.register(type(None))
@@ -35,8 +36,8 @@ with contextlib.suppress(ImportError):
 
 @_sym_adapt.register(np.ndarray)
 def _(ary, sym, isasym):
-    if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32,
-                     np.int16, np.int8, np.uint8, bool):
+    if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16,
+                     np.int8, np.uint8, bool):
         return SymAdaptTensor(ary, sym, isasym, tlib='numpy')
     else:
         return SymAdaptNDArray(ary, sym, isasym)
@@ -57,11 +58,11 @@ def _(ary, sym, isasym):
 #                 return cls(thing, sym, isasym)
 
 class SymAdapt(ABC):
-    '''
-    You must define a subclass of SymAdapt for each type you want to symmetrize. Must have a kind and adapted property.
+    """You must define a subclass of SymAdapt for each type you want to
+    symmetrize. Must have a kind and adapted property.
 
     See the :SymAdaptIndep:`rf_diffusion.sym.sym_indep.SymAdaptIndep` class for an example.
-    '''
+    """
     def __init_subclass__(cls, **kw):
         if not hasattr(cls, 'adapts'):
             raise TypeError(f'class {name} must define adapted type via adapts = ThingType')
@@ -73,7 +74,7 @@ class SymAdapt(ABC):
 
     @abstractmethod
     def reconstruct(self, list_of_symmetrized):
-        '''restore from dict of components that have been symmetrized'''
+        """Restore from dict of components that have been symmetrized."""
 
     # @property
     # def kind(self) -> SymKind:
@@ -145,9 +146,11 @@ class SymAdaptMap(SymAdapt):
         return type(self.orig)(canonicals)
 
 class SymAdaptDataClass(SymAdapt):
-    '''
-    Base class for adapting dataclasses. All fields must be sym-adaptable and all tensor fields must have intepretable shapes, or dim names via add_tensor_dim_names
-    '''
+    """Base class for adapting dataclasses.
+
+    All fields must be sym-adaptable and all tensor fields must have
+    intepretable shapes, or dim names via add_tensor_dim_names
+    """
     adapts = None
 
     def __init__(self, dataclass, sym, isasym):
@@ -241,8 +244,7 @@ with contextlib.suppress(ImportError):
                     newshape = (sym.idx.L**2, *self.perm.shape[2:])
                     self.adapted = th.zeros(newshape, dtype=tensor.dtype, device=tensor.device)
                     m = (sym.idx.asym[None] * sym.idx.asym[:, None]).view(-1)
-                    self.adapted[m] = self.perm.rename(None).view(sym.idx.Nasym * sym.idx.Nasym,
-                                                                  *self.perm.shape[2:])
+                    self.adapted[m] = self.perm.rename(None).view(sym.idx.Nasym * sym.idx.Nasym, *self.perm.shape[2:])
                     self.adapted = self.adapted.view(sym.idx.L, sym.idx.L, *self.perm.shape[2:])
                 else:
                     newshape = (sym.idx.L, *self.perm.shape[1:])
@@ -302,11 +304,11 @@ with contextlib.suppress(ImportError):
             return x.to(self.orig.device).to(self.orig.dtype)
 
     class SymAdaptNDArray(SymAdapt):
-        '''Symmetrizable ndarray'''
+        """Symmetrizable ndarray."""
         adapts = np.ndarray
 
         def __init__(self, x, sym, isasym=None):
-            '''handles object and str dtypes'''
+            """Handles object and str dtypes."""
             self.orig = x
             self.sym = sym
             self.isasym = isasym
@@ -328,8 +330,7 @@ with contextlib.suppress(ImportError):
                     new[self.sym.idx.asym.cpu()] = self.orig
                 case _:
                     raise ValueError(
-                        f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}'
-                    )
+                        f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
             return new
 
         def reconstruct(self, ary):
@@ -534,9 +535,7 @@ with contextlib.suppress(ImportError):
                 if self.isasym is not None: assert self.isasym
                 symidx = self.sym.idx.symidx(self.idx)
                 self.asym = True
-                self.orig = th.zeros((len(symidx), *self.orig.shape[1:]),
-                                     dtype=self.orig.dtype,
-                                     device=self.sym.device)
+                self.orig = th.zeros((len(symidx), *self.orig.shape[1:]), dtype=self.orig.dtype, device=self.sym.device)
                 self.orig[:len(tensor)] = tensor
                 self.newidx = symidx
                 self.new = SimpleSparseTensor(idx=self.newidx, val=self.orig, isidx=self.isidx)

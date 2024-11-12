@@ -1,11 +1,8 @@
-import os
 import shutil
 import subprocess
 import threading
 import time
 from subprocess import check_output
-
-from ipd.dev.qt import isfalse_notify
 
 class FileFetcher(threading.Thread):
     def __init__(self, fname, cache):
@@ -36,9 +33,10 @@ class FileCache:
         pass
 
 class PrefetchLocalFileCache(FileCache):
-    '''
-    Copies files to a CONF temp directory. Will downloads files ahead of requested index in background.
-    '''
+    """Copies files to a CONF temp directory.
+
+    Will downloads files ahead of requested index in background.
+    """
     def __init__(self, fnames, numprefetch=7, path='/tmp/ppp/filecache'):
         self.path = path
         self.fetchers = {}
@@ -77,6 +75,7 @@ class PrefetchLocalFileCache(FileCache):
             if self.fnames[index] in self.available:
                 return localfname
             time.sleep(0.1)
+        from ipd.dev.qt import isfalse_notify
         isfalse_notify(os.path.exists(localfname))
 
     def cleanup(self):

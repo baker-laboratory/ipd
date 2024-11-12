@@ -9,9 +9,10 @@ from ipd.dev.state.toggle import ToggleOrSetWithMemory
 toggle_or_set = ToggleOrSetWithMemory()
 
 class StateManager:
-    '''
-    Developed for the Prettier Protein Project Pymol Plugin. Manages contextual state.
-    '''
+    """Developed for the Prettier Protein Project Pymol Plugin.
+
+    Manages contextual state.
+    """
     def __init__(self, config_file, state_file, statetypes, defaults, debugnames=None):
         self._statetype = statetypes
         self._config_file, self._state_file = config_file, state_file

@@ -66,7 +66,7 @@ def decompress_lzma_file(fn, overwrite=True, use_existing=False, missing_ok=Fals
                 out.write(inp.read())
 
 def fname_extensions(fname):
-    """split fname dir/base.ext.compression into parts"""
+    """Split fname dir/base.ext.compression into parts."""
     d, b = os.path.split(fname)
     s = b.split(".")
     if len(s) == 1:

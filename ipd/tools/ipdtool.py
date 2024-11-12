@@ -33,6 +33,7 @@ class IPDTool(CliBase):
         old = repo.head.commit
         repo.remotes.origin.pull()
         if repo.head.commit != old:
+            print(f'ipd: new head {repo.head.commit} old head {old}')
             ipd.dev.bash(f'{sys.executable} -mpip install -e {ipd.projdir}/..')
 
     def clone(self,

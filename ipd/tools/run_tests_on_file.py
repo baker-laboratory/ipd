@@ -46,14 +46,16 @@ def get_args(sysargv):
     parser = argparse.ArgumentParser()
     parser.add_argument("projects", type=str, nargs='+', default='')
     parser.add_argument("testfile", type=str, default='')
+    parser.add_argument("--pytest", action='store_true')
     args = parser.parse_args(sysargv[1:])
     return args.__dict__
 
 def file_has_main(fname):
     "check if file has a main block"
+    if not os.path.exists(fname): return False
     with open(fname) as inp:
         for line in inp:
-            if line.startswith("if __name__ == "):
+            if line.startswith("if __name__ == ") and not line.strip().endswith('{# in template #}'):
                 return True
     return False
 
@@ -92,6 +94,7 @@ def rindex(lst, val):
 
 def testfile_of(projects, path, bname, debug=False, **kw) -> str:
     "find testfile for a given file"
+    if bname.startswith('_'): return None
     root = '/' if path and path[0] == '/' else ''
     spath = path.split('/')
     i = max(rindex(spath, proj) for proj in projects)
@@ -106,7 +109,7 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
         post = f'{os.path.join(*post)}/' if post else ''
     # print(pre, post)
     t = f'{root}{pre}tests/{post}test_{bname}'
-    if debug or os.path.exists(t): return t
+    return t
 
 def dispatch(
         projects,
@@ -115,6 +118,7 @@ def dispatch(
         file_mappings=dict(),
         overrides=dict(),
         strict=True,
+        pytest=False,
         **kw,
 ):
     "dispatch command for a given file. see above"
@@ -138,13 +142,18 @@ def dispatch(
     if not file_has_main(fname) and not bname.startswith("test_"):
         testfile = testfile_of(projects, path, bname, **kw)
         if testfile:
+            if not os.path.exists(testfile):
+                print('autogen test file', testfile)
+                os.system(f'{sys.executable} -mipd code make_testfile {fname} {testfile}')
+                os.system(f'subl {testfile}')
             fname = testfile
             path, bname = os.path.split(fname)
 
     if bname == os.path.basename(__file__):
         test()
         sys.exit()
-    if not file_has_main(fname) and bname.startswith("test_"):
+
+    if pytest or (not file_has_main(fname) and bname.startswith("test_")):
         cmd = f"{sys.executable} -mpytest {pytest_args} {fname}"
     elif fname.endswith(".py") and bname != 'conftest.py':
         cmd = f"PYTHONPATH=. {sys.executable} " + fname
@@ -154,8 +163,7 @@ def dispatch(
 
 def main(projects, **kw):
     t = perf_counter()
-    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest',
-                                                                                 '')
+    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest', '')
     print("call:", sys.argv)
     print("cwd:", os.getcwd())
     print("cmd:", cmd)

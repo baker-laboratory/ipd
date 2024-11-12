@@ -11,17 +11,15 @@ from icecream import ic
 import ipd
 from ipd import h
 
-_rms = ipd.dev.LazyModule('ipd.fit.qcp_rms_cuda')
+_rms = ipd.dev.lazyimport('ipd.fit.qcp_rms_cuda')
 
 def scan_rms_seqpos(bb, tgt, ranges, cyclic=1, rmsout=False, maxdist=9e9, lasu=0, nthread=256, chainbreak=0):
-    '''
-    '''
+    """"""
     return _rms.qcp_scan_cuda(bb, tgt, ranges, cyclic, chainbreak, lasu, nthread, rmsout)
 
 def qcp_scan_AB(bb, tgt, L, **kw):
-    '''
-    scan bb to find best alignment of tgt, splitting matched points across L
-    '''
+    """Scan bb to find best alignment of tgt, splitting matched points across
+    L."""
     nreg = len(tgt)
     assert nreg > 1
     best = [None, 9e9, None, None]
@@ -36,10 +34,8 @@ def qcp_scan_AB(bb, tgt, L, **kw):
     return best
 
 def qcp_scan_ref(bb, tgt, ranges=None, cyclic=1, rmsout=False, maxdist=9e9):
-    '''
-    compute rmsds of tgt to bb, scanning ranges in bb
-    use the full cuda version instead, it's 4-20x faster
-    '''
+    """Compute rmsds of tgt to bb, scanning ranges in bb use the full cuda
+    version instead, it's 4-20x faster."""
     if bb.ndim == 2: bb = bb.unsqueeze(1)
     if tgt.ndim == 2: tgt = tgt.unsqueeze(1)
     Lasu = len(bb) // cyclic

@@ -76,8 +76,7 @@ def test_user_group(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class _SpecWithUser(ipd.crud.SpecBase):
-        userid: ipd.crud.ModelRef['UserZSpec'] = pydantic.Field(default='anonymous_coward',
-                                                                validate_default=True)
+        userid: ipd.crud.ModelRef['UserZSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
         ispublic: bool = True
         telemetry: bool = False
 
@@ -234,11 +233,10 @@ def test_many2many_sanity_check(tmpdir):
     helper_test_users_groups(tmpdir, LocalSQLModel, DBUserA, DBGroupA)
 
 def helper_create_db(tmpdir, LocalSQLModel):
-    engine = sqlmodel.create_engine(
-        f'sqlite:///{tmpdir}/test.db',
-        # connect_args={"check_same_thread": False},
-        # poolclass=sqlmodel.pool.StaticPool,
-    )
+    engine = sqlmodel.create_engine(f'sqlite:///{tmpdir}/test.db',
+                                    # connect_args={"check_same_thread": False},
+                                    # poolclass=sqlmodel.pool.StaticPool,
+                                    )
     print('metadata id', id(LocalSQLModel.metadata))
     LocalSQLModel.metadata.create_all(engine)
     session = sqlmodel.Session(engine)

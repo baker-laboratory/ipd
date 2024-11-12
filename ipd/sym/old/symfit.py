@@ -5,7 +5,7 @@ from ipd import Bunch
 from ipd import homog as hm
 
 def align(coords, symelem, **kw):
-    """assumes shape (nchain, nres, natom, 3|4)"""
+    """Assumes shape (nchain, nres, natom, 3|4)"""
     assert len(coords) > 1
     if symelem.iscyclic:
         return aligncx(coords, symelem, **kw)
@@ -16,7 +16,7 @@ def align(coords, symelem, **kw):
         raise NotImplementedError("hook up compute_symfit")
 
 def aligncx(coords, symelem, rmsthresh=1, axistol=0.02, angtol=0.05, centol=1.0, **kw):
-    """leaves center at 0 regardless of symelem"""
+    """Leaves center at 0 regardless of symelem."""
     assert len(coords) == symelem.nfold
 
     coords = coords.reshape(symelem.nfold, -1, *coords.shape[-2:])
@@ -308,8 +308,8 @@ def symops_from_frames(*, sym, frames, **kw):
     inplane = hm.hprojperp(axs, cen - frame1[:, :, 3])
     rad = np.sqrt(np.sum(inplane**2, axis=-1))
     hel = np.sum(axs * xrel[:, :, 3], axis=-1)
-    assert (len(frame1) == len(frame2) == len(xrel) == len(axs) == len(ang) == len(cen) == len(framecen) ==
-            len(rad) == len(hel))
+    assert (len(frame1) == len(frame2) == len(xrel) == len(axs) == len(ang) == len(cen) == len(framecen) == len(rad) ==
+            len(hel))
     errrad = np.minimum(10000, np.maximum(rad, 1.0))
     angdelta, err, closest = dict(), dict(), dict()
     point_angles = ipd.sym.sym_point_angles[sym]
@@ -848,9 +848,7 @@ def symfit_mc_play(
         if isamp % 10 == 0:
             frames = best[0]
         if isamp % 100 == 0 and not quiet:
-            print(
-                f"{isamp:6} {symfit.weighted_err:7.3} {naccept / (isamp + 1):7.3} {lowerr:7.3} {symfit.radius:9.3}"
-            )
+            print(f"{isamp:6} {symfit.weighted_err:7.3} {naccept / (isamp + 1):7.3} {lowerr:7.3} {symfit.radius:9.3}")
         cartsd = symfit.weighted_err / 45 * scalecartsamp * scalesamp
         cartsd = min(max_cartsd, cartsd)
         rotsd = cartsd / symfit.radius * scalerotsamp * scalesamp
@@ -899,10 +897,7 @@ def symfit_mc_play(
                     vizfresh = True
                     # symdupframes = ipd.sym.sym_frames[kw.sym][:, None] @ frames[None, :]
                     symdupframes = frames
-                    ipd.showme(symdupframes,
-                               name="xfitmc%05i" % isamp,
-                               col=None,
-                               **showme_opts.sub(vizfresh=vizfresh))
+                    ipd.showme(symdupframes, name="xfitmc%05i" % isamp, col=None, **showme_opts.sub(vizfresh=vizfresh))
 
                     # os.makedirs('symfit_movie', exist_ok=True)
                     # pymol.cmd.png(f'symfit_movie/symdup_{ipng:04}.png', )
@@ -1049,8 +1044,7 @@ def symfit_parallel_convergence_trials(**kw):
             print(
                 f"{nframes:4} iters {np.mean(niters):7.1f} ",
                 f"fail {len(badscores)/ntrials:5.3f} ",
-                " ".join(["%4.2f" % q
-                          for q in np.quantile(badscores, [0.0, 0.1, 0.25, 0.5, 1.0])] if badscores else "", ),
+                " ".join(["%4.2f" % q for q in np.quantile(badscores, [0.0, 0.1, 0.25, 0.5, 1.0])] if badscores else "", ),
             )
 
 def symfit_parallel_mc_scoreterms_trials(**kw):
@@ -1088,8 +1082,7 @@ def symfit_parallel_mc_scoreterms_trials(**kw):
             print(
                 f"{terms:4} iters {np.mean(niters):7.1f} ",
                 f"fail {len(badscores)/ntrials:5.3f} ",
-                " ".join(["%4.2f" % q
-                          for q in np.quantile(badscores, [0.0, 0.1, 0.25, 0.5, 1.0])] if badscores else "", ),
+                " ".join(["%4.2f" % q for q in np.quantile(badscores, [0.0, 0.1, 0.25, 0.5, 1.0])] if badscores else "", ),
             )
 
 def setup_test_frames(

@@ -1,4 +1,4 @@
-'''Symmetry checks'''
+"""Symmetry checks."""
 import ipd
 
 th = ipd.lazyimport('torch')

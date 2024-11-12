@@ -45,9 +45,7 @@ def asuslide(
     if not isinstance(cellsize, np.ndarray):
         cellsize = np.array(cellsize, dtype=np.float64)
     if printme:
-        coordstr = (repr(coords).replace(" ", "").replace("\n",
-                                                          "").replace("\t",
-                                                                      "").replace("float32", "np.float32"))
+        coordstr = (repr(coords).replace(" ", "").replace("\n", "").replace("\t", "").replace("float32", "np.float32"))
         framestr = repr(frames).replace(" ", "").replace("\n", "").replace("\t", "")
         print(f"""      #yapf: disable
       kw = {repr(dict(kw))}
@@ -448,7 +446,7 @@ def recenter_asu_frames(
     resetonfail=True,
     **kw,
 ):
-    """symelemsibs is ???"""
+    """Symelemsibs is ???"""
 
     assert 0
 

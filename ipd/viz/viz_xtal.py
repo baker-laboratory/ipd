@@ -203,9 +203,7 @@ def pymol_viz_Xtal(
         xshift2[:3, 3] *= scale
         showcube = toshow.dimension == 3 if showcube is None else showcube
         if showcube:
-            cgo = cgo_cube(ipd.homog.hxform(xshift2, [0, 0, 0]),
-                           ipd.homog.hxform(xshift2, [scale, scale, scale]),
-                           r=0.03)
+            cgo = cgo_cube(ipd.homog.hxform(xshift2, [0, 0, 0]), ipd.homog.hxform(xshift2, [scale, scale, scale]), r=0.03)
             if splitobjs:
                 pymol.cmd.load_cgo(cgo, f"{name}_cube")
         allcgo += cgo

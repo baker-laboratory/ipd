@@ -214,7 +214,7 @@ class Xtal:
         return _scaled_frames(cellsize, cen)
 
     def compute_frames(self, **kw):
-        '''this should be depricated, only needed for 2d stuff currently'''
+        """This should be depricated, only needed for 2d stuff currently."""
         if self.dimension == 3:
             self.unitframes = self.info.frames
             self.genframes = self.cellframes(cells=3, ontop=None)
@@ -227,8 +227,7 @@ class Xtal:
             self.unitelems = self.coverelems
         self.nsub = len(self.unitframes)
         if self.info is not None and self.info.nsub is not None:
-            assert (self.nsub == self.info.nsub
-                    ), f'nsub for "{self.name}" should be {self.info.nsub}, not {self.nsub}'
+            assert (self.nsub == self.info.nsub), f'nsub for "{self.name}" should be {self.info.nsub}, not {self.nsub}'
 
     def symcoords(self, asymcoords, cellsize=1, cells=1, flat=False, center=None, **kw):
         asymcoords = ipd.homog.hpoint(asymcoords)

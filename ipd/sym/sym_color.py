@@ -3,11 +3,12 @@ import ipd
 th = ipd.lazyimport('torch')
 
 def make_sequential_colors(colors):
-    '''
-    This function takes a list of colors and returns a new list of colors where the colors are
-    sequential. For example, if the input list is [7, 7, 2, 2, 3, 3], the output list will be
-    [0, 0, 1, 1, 2, 2].
-    '''
+    """This function takes a list of colors and returns a new list of colors
+    where the colors are sequential.
+
+    For example, if the input list is [7, 7, 2, 2, 3, 3], the output
+    list will be [0, 0, 1, 1, 2, 2].
+    """
     assert len(colors)
     colors = th.as_tensor(colors, dtype=int)
     colors += 1000000
@@ -27,8 +28,7 @@ def symslices_from_colors(
     Lasu: 'th.Tensor' = None,
     recolor: bool = True,
 ):
-    '''
-    This function takes a list of colors and returns a list of slices.
+    """This function takes a list of colors and returns a list of slices.
 
     The slices are such that
     the colors within each slice are the same. The slices are returned as a list of tuples. Each tuple
@@ -48,7 +48,7 @@ def symslices_from_colors(
     Returns:
         slices: list of tuples, each tuple contains the total number of colors in the list, the start
             index of the slice, and the end index of the slice
-    '''
+    """
     ignore = colors < 0
     # if th.any(ignore) and isasu:
     # raise NotImplementedError('ignoring negative colors not implemented for isasu=True')

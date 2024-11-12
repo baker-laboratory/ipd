@@ -6,7 +6,6 @@ from ipd.dev.lazy_import import lazyimport
 from ipd.dev.observer import hub as hub
 from ipd.dev.state.bunch import Bunch as Bunch
 
-ci = lazyimport('ipd.ci')
 crud = lazyimport('ipd.crud')
 cuda = lazyimport('ipd.dev.cuda')
 fit = lazyimport('ipd.fit')
@@ -29,13 +28,13 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 projdir = os.path.realpath(os.path.dirname(__file__))
 
 from icecream import ic
-from collections import defaultdict, namedtuple
+# from collections import defaultdict, namedtuple
 import builtins
 
 ic.configureOutput(includeContext=True)
-builtins.ic = ic
-builtins.defaultdict = defaultdict
-builtins.namedtuple = namedtuple
+setattr(builtins, 'ic', ic)
+# setattr(builtins, 'defaultdict', defaultdict)
+# setattr(builtins, 'namedtuple', namedtuple)
 
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
@@ -48,4 +47,4 @@ def __getattr__(name):
         return motif.get_global_motif_manager()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-dev.install_pre_commit_hook(projdir, '..')
+dev.install_ipd_pre_commit_hook(projdir, '..')

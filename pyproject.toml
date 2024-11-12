@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ['hatchling']
+build-backend = 'hatchling.build'
 
 [project]
-name = "ipd"
-version = "0.1"
+name = 'ipd'
+version = '0.1'
 dependencies = [
     'assertpy',
     'colorlog',
@@ -28,6 +28,7 @@ dependencies = [
     'pendulum',
     'pydantic',
     'pdot',
+    'pyright[nodejs]',
     'pytest',
     'pytest-sugar',
     'pytest-xdist',
@@ -36,6 +37,7 @@ dependencies = [
     'pytest-dotenv',
     'python-box',
     'requests',
+    'RestrectedPython',
     'ruff',
     'seaborn',
     'submitit',
@@ -55,31 +57,47 @@ crud = [
 ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-m 'not ci'"
+minversion = '6.0'
+addopts = '-m "not ci"'
 testpaths = [
-    "ipd/tests",
+    'ipd/tests',
 ]
 markers = [
-    "slow: marks tests as slow to run",
-    "fast: tests that run in a second or two",
-    "ci: tests that should only run in ci",
+    'slow: marks tests as slow to run',
+    'fast: tests that run in a second or two',
+    'ci: tests that should only run in ci',
 ]
 
+[tool.yapf]
+based_on_style = 'pep8'
+indent_width = 4
+column_limit = 123
+blank_line_before_nested_class_or_def = false
+blank_lines_around_top_level_definition = 1
+
 [tool.pyright]
-include = ["rf_diffusion", "lib/rf2aa/rf2aa", "lib/rf2aa/lib/ipd/ipd"]
+include = ['rf_diffusion', 'lib/rf2aa/rf2aa', 'lib/rf2aa/lib/ipd/ipd']
 exclude = [
-    "**/__pycache__",
+    '**/*.log',
+    'ipd/viz/*',
+    'ipd/homog/*',
+    'ipd/tests/*',
+    'ipd/voxel/*',
+    'ipd/samp/*',
+    'ipd/fit/*',
+    '*_viz.py',
+    'sym/xtal/*',
+    '**/__pycache__',
 ]
 defineConstant = { DEBUG = true }
-typeCheckingMode = "basic"
+typeCheckingMode = 'standard'
 reportMissingImports = true
 reportMissingTypeStubs = false
-pythonPlatform = "Linux"
-requires-python = ">=3.11"
-pythonVersion = "3.12"
+pythonPlatform = 'Linux'
+requires-python = '>=3.11'
+pythonVersion = '3.12'
 executionEnvironments = [
-  { root = "/home/sheffler/sw/MambaForge/envs/pyright/bin/python", pythonVersion = "3.12", pythonPlatform = "Linux", extraPaths = [] },
+  { root = '/home/sheffler/sw/MambaForge/envs/pyright/bin/python', pythonVersion = '3.12', pythonPlatform = 'Linux', extraPaths = [] },
 ]
 
 [tool.ruff]
@@ -94,16 +112,9 @@ lint.ignore = [
    'F841',
 
 ]
-lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?)|ic)$"
-line-length = 111
-target-version = "py39"
-format.quote-style = "single"
-format.indent-style = "space"
+lint.dummy-variable-rgx = '^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?)|ic)$'
+line-length = 123
+target-version = 'py39'
+format.quote-style = 'single'
+format.indent-style = 'space'
 format.docstring-code-format = true
-
-[tool.yapf]
-based_on_style = "pep8"
-indent_width = 4
-column_limit = 111
-blank_line_before_nested_class_or_def = false
-blank_lines_around_top_level_definition = 1

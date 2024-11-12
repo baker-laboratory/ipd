@@ -13,7 +13,7 @@ from ipd import h
 
 ic.configureOutput(includeContext=False)
 
-_sampling = ipd.dev.LazyModule('ipd.samp.sampling_cuda')
+_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
 
 def rayframe(rays, cross=None, primary='z', device='cpu'):
     ori = rays[:, :, 1]
@@ -67,8 +67,7 @@ class TipAtomTarget:
         # ipd.showme(self, name='ref')
         for tip in tips:
             ic(tip.xyz.shape)
-            _sampling.tip_atom_placer(vox, don, acc, tip.xyz.to('cuda'), tip.don.to('cuda'),
-                                      tip.acc.to('cuda'), kw)
+            _sampling.tip_atom_placer(vox, don, acc, tip.xyz.to('cuda'), tip.don.to('cuda'), tip.acc.to('cuda'), kw)
             for fd, fa in zip(fdon, facc):
                 cgo = list()
                 tip_atom_cgo(fd, fa, tip, cgo)
@@ -201,8 +200,7 @@ try:
         atomcol = dict(C=(1, 1, 1), O=(1, 0, 0), N=(0, 0, 1))
         acol = [atomcol[n[0]] for n in tip.aname]
         for fd, fa in zip(fdon.cpu(), facc.cpu()):
-            for rays, rcol, f, ftip in zip([tip.don, tip.acc], [(1, 1, 1), (1, 0, 0)], [fd, fa],
-                                           tip.donacc_frames()):
+            for rays, rcol, f, ftip in zip([tip.don, tip.acc], [(1, 1, 1), (1, 0, 0)], [fd, fa], tip.donacc_frames()):
                 if len(rays) == 0: continue
                 for ray, ft in zip(rays, ftip):
                     frame = f @ ft

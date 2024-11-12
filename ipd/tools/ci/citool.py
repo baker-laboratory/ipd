@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 
 import git
-from rich import print
 import submitit
 import ipd
 
@@ -20,8 +19,7 @@ class CITool(ipd.tools.IPDTool):
             'frame-flow': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/frame-flow.git',
             'fused_mpnn': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/fused_mpnn.git',
             'RF2-allatom': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/jue/RF2-allatom.git',
-            'rf_diffusion':
-            f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
+            'rf_diffusion': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
@@ -32,8 +30,10 @@ class CITool(ipd.tools.IPDTool):
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
                 print(f'Directory {repo_dir} exists. Fetching latest changes...')
-                # ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
-                ipd.dev.run(f'git --git-dir={repo_dir} fetch --all -f', echo=True)
+                try:
+                    ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
+                except RuntimeError:
+                    ipd.dev.run(f'git --git-dir={repo_dir} fetch --all -f', echo=True)
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)
@@ -50,7 +50,8 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
             init_submodules(subrepo, repolib)
 
 class RepoTool(CITool):
-    def setup_submodules(self, path: Path = '.', repolib: str = '~/bare_repos'):
+    def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos'):
+        """Setup submodules in a git repository from a bare repo library."""
         repo = git.Repo(path, search_parent_directories=True)
         repodir = repo.git.rev_parse('--show-toplevel')
         with ipd.dev.cd(path):
@@ -64,106 +65,143 @@ class Future:
         return self._result
 
 def run_pytest(
-    env,
-    exe,
-    log,
-    mark='',
-    sel='',
-    parallel=1,
-    mem='16G',
-    timeout=60,
+    env: str,
+    exe: str,
+    log: str,
+    mark: str = '',
+    sel: str = '',
+    parallel: int = 1,
+    mem: str = '16G',
+    timeout: int = 60,
     executor=None,
-    dryrun=False,
-    tee=False,
-    gpu='',
+    dryrun: bool = False,
+    tee: bool = False,
+    gpu: str = '',
+    flags: str = '',
+    testdir: str = '.',
+    cmdonly: bool = False,
 ):
     dry = '--collect-only' if dryrun else ''
-    tee = '2>&1 | tee' if tee else '>'
+    stee = '2>&1 | tee' if tee else '>'
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
-    cmd = f'{env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {tee} {log}'
-    while '  ' in cmd:
-        cmd = cmd.replace('  ', ' ')
+    if cmdonly:
+        cmd = f'cd TESTDIR && {env} PYTHONPATH=. EXE {mark} {sel} {dry} {par} --benchmark-disable {stee} {log}'
+        return ipd.dev.strip_duplicate_spaces(cmd)
+    cmd = f'cd {testdir} && {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} --benchmark-disable {stee} {log}'
+    cmd = ipd.dev.strip_duplicate_spaces(cmd)
+    print(f'running: {cmd}')
+    if os.path.exists(log): os.remove(log)
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
         return cmd, executor.submit(ipd.dev.run, cmd), log
     else:
-        return cmd, Future(ipd.dev.run(cmd)), log
+        return cmd, Future(ipd.dev.run(cmd, errok=True)), log
 
-def get_re(pattern, text):
+def get_re(pattern, text) -> int:
     result = re.findall(pattern, text)
     assert len(result) < 2
     if not result: return 0
     return int(result[0])
 
-def parse_pytest(fname):
+def parse_pytest(fname) -> ipd.Bunch[int]:
+    result = ipd.Bunch()
     if not os.path.exists(fname):
         print(f'missing {fname} in {os.getcwd()}')
-        return None
-    result = ipd.Bunch()
+        return result
     result.fname = fname
     content = Path(fname).read_text()
     # collecting ... collected 230 items / 2 deselected / 22 skipped / 228 selected
     # =============== 228/230 tests collected (2 deselected) in 0.81s ================
     os.system(f'grep "collecting ..." {fname}')
-    os.system(f'grep "==========" {fname} | grep -v FAILURES')
+    os.system(f'grep "===" {fname} | grep -v FAILURES')
     os.system(f'grep "FAILED" {fname}')
     # print(content)
-    result.ncollect = get_re(r'collecting ... collected (\d+) ', content)
-    result.deselected = get_re(r'collecting ... collected .* / (\d+) deselected', content)
-    result.skipped = get_re(r'collecting ... collected .* / (\d+) skipped', content)
-    result.selected = get_re(r'collecting ... collected .* / (\d+) selected', content)
+    result.ncollect = get_re(r'collected (\d+) ', content)
+    result.deselected = get_re(r'collected .* / (\d+) deselected', content)
+    result.skipped = get_re(r'collected .* / (\d+) skipped', content)
+    result.selected = get_re(r'collected .* / (\d+) selected', content)
     result.collected = get_re(r'===== .*?(\d+) tests collected .* =====', content)
-    result.passed = get_re(r'=====.*? (\d+) passed.* =====', content)
-    result.errors = get_re(r'=====.*? (\d+) errors.* =====', content)
-    result.failed = get_re(r'=====.*? (\d+) failed.* =====', content)
-    result.xfailed = get_re(r'=====.*? (\d+) xfailed.* =====', content)
-    result.xpassed = get_re(r'=====.*? (\d+) xpassed.* =====', content)
+    result.passed = get_re(r'=.*? (\d+) passed.* =', content)
+    result.errors = get_re(r'=.*? (\d+) error.* =', content)
+    result.failed = get_re(r'=.*? (\d+) failed.* =', content)
+    result.xfailed = get_re(r'=.*? (\d+) xfailed.* =', content)
+    result.xpassed = get_re(r'=.*? (\d+) xpassed.* =', content)
     return result
 
 class TestsTool(CITool):
-    def run(self):
-        TestsTool.ruff()
-        TestsTool.pytest()
-
     def ruff(self, project):
         ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
 
-    def pytest(self,
-               slurm: bool = False,
-               gpu: str = '',
-               exe: str = sys.executable,
-               threads: int = 1,
-               log: Path = Path('pytest_ipd_ci_test_run.log'),
-               mark: str = '',
-               parallel: int = 1,
-               timeout: int = 60,
-               verbose: bool = True,
-               which: str = '',
-               dryrun: bool = False,
-               tee: bool = False,
-               mem: list[str] = ['16G']):
+    def pytest(
+        self,
+        slurm: bool = False,
+        gpu: str = '',
+        exe: str = sys.executable,
+        threads: int = 1,
+        log: str = 'pytest_ipd_ci_test_run.log',
+        mark: str = '',
+        parallel: int = 1,
+        timeout: int = 60,
+        verbose: bool = True,
+        which: str = '',
+        dryrun: bool = False,
+        tee: bool = False,
+        mem: list[str] = ['16G'],
+        flags: str = '',
+        testdir: str = '.',
+        cmdonly: bool = False,
+    ):
+        """Run pytest with the given parameters.
+
+        Args:
+            slurm: bool: whether to run on slurm
+            gpu: str: gpu to use
+            exe: str: python executable
+            threads: int: number of threads
+            log: Path: log file
+            mark: str: pytest marks
+            parallel: int: number of parallel jobs
+            timeout: int: slurm timeout in minutes
+            verbose: bool: verbose output
+            which: str: which tests to run (-k)
+            dryrun: bool: dryrun (--collect-only)
+            tee: bool: tee outputn to stdout and log file
+            mem: list[str]: slurm memory requirements
+            flags: str: extra flags to pytest
+            testdir: str: test directory
+            cmdonly: bool: print command only
+        Returns:
+            list of tuples (cmd, job, log)
+        """
         # os.makedirs(os.path.dirname(log), exist_ok=True)
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
-        par = '' if parallel == 1 else f'-n {parallel}'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
         nosel = ' and '.join([f'not {t}' for t in which.split()])
         jobs = []
         executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
-        kw = dict(env=env, mark=mark, dryrun=dryrun, executor=executor, tee=tee, gpu=gpu)
+        kw = dict(env=env,
+                  mark=mark,
+                  dryrun=dryrun,
+                  executor=executor,
+                  tee=tee,
+                  gpu=gpu,
+                  flags=flags,
+                  testdir=testdir,
+                  cmdonly=cmdonly)
         if not slurm:
             jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
         else:
             if gpu:
-                executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
+                if executor is not None:
+                    executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
             if parallel == 1:
                 jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, log=log, mem=mem[0], **kw))
             else:
-                jobs.append(
-                    run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
+                jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
                 jobs.append(
                     run_pytest(exe=exe,
                                sel=nosel,
@@ -171,9 +209,17 @@ class TestsTool(CITool):
                                mem=mem[1 % len(mem)],
                                log=f'{log}.parallel.log',
                                **kw))
-        return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
+        if cmdonly:
+            for cmd in jobs:
+                print(cmd)
+            return jobs
+        else:
+            result = [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
+            for cmd, job, log in jobs:
+                os.system(f'cat {log}')
+            return result
 
-    def check(self, path: Path = '.'):
+    def check(self, path: str = '.'):
         fail = False
         for log in glob.glob('ruff*.log'):
             with open(log) as inp:

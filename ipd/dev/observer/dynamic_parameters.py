@@ -120,7 +120,8 @@ from ipd.dev.observer.observer import Observer
 Step = namedtuple('Step', 'design diffuse rfold')
 
 class StepObserver(Observer):
-    '''can be used to track the progress of a run, design step, diffusion step and rfold block step'''
+    """Can be used to track the progress of a run, design step, diffusion step
+    and rfold block step."""
     _subject = None
 
     # initialize once
@@ -140,7 +141,7 @@ class StepObserver(Observer):
         )
 
     def _add_observer(self, observer):
-        '''add an observer to the list of observers'''
+        """Add an observer to the list of observers."""
         self.observers.append(observer)
         observer._subject = self
         if self._nstep:
@@ -173,7 +174,7 @@ class StepObserver(Observer):
             observer._rfold_iter_begin(tag, **kw)
 
 class DynamicParameters(Mapping):
-    '''A central class that manages all dynamic parameters for a run'''
+    """A central class that manages all dynamic parameters for a run."""
     def __init__(self, ndesign=None, ndiffuse=None, nrfold=40, _testing=False):
         self._step = Step(None, None, None)
         self._nstep = Step(ndesign, ndiffuse, nrfold)
@@ -448,7 +449,7 @@ class _NotIn:
         self.vals = vals
 
 class DynamicParam(ABC):
-    """parameter that can change values through a process"""
+    """Parameter that can change values through a process."""
     def __init__(self, manager=None):
         self.manager = manager
 
@@ -556,8 +557,7 @@ class _Spline2D(DynamicParam):
         if not np.all(np.logical_and(-0.001 <= y, y <= 1.001)):
             raise ValueError(f'interpolation points {y} must be 0 <= y <= 1')
         self.interp = CloughTocher2DInterpolator(xy, z)
-        xx, yy = np.meshgrid(np.linspace(0, 1, manager._nstep.diffuse),
-                             np.linspace(0, 1, manager._nstep.rfold))
+        xx, yy = np.meshgrid(np.linspace(0, 1, manager._nstep.diffuse), np.linspace(0, 1, manager._nstep.rfold))
         try:
             self.interpvals = self.interp(xx, yy).astype(np.float32).T
             assert not np.any(np.isnan(self.interpvals))

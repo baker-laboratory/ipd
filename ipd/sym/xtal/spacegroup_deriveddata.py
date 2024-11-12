@@ -119,8 +119,7 @@ def _get_spacegroup_data():
                 sg_symelem_frame444_opids_dict[sym][:, ielem] = elem.frame_operator_ids(stdframes)
 
                 try:
-                    sg_symelem_frame444_compids_dict[sym][:,
-                                                          ielem] = elem.frame_component_ids(stdframes, perms)
+                    sg_symelem_frame444_compids_dict[sym][:, ielem] = elem.frame_component_ids(stdframes, perms)
                 except ComponentIDError:
                     print('!' * 80)
                     print('ERROR making component ids for symelem', sym, ielem)

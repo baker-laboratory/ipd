@@ -433,7 +433,7 @@ def xformpts(xform, stuff, **kw):
     return result
 
 def rmsfit(mobile, target):
-    """use kabsch method to get rmsd fit"""
+    """Use kabsch method to get rmsd fit."""
     assert mobile.shape == target.shape
     assert mobile.ndim > 1
     assert mobile.shape[-1] in (3, 4)
@@ -602,13 +602,11 @@ def intersect_planes(p1, n1, p2, n2):
                1 = disjoint (no intersection)
                2 = e two planes coincide
     """
-    """intersect two planes
-   :param plane1: first plane represented by ray
-   :type plane2: np.array shape=(..., 4, 2)
-   :param plane1: second planes represented by rays
-   :type plane2: np.array shape=(..., 4, 2)
-   :return: line: np.array shape=(...,4,2), status: int (0 = intersection returned, 1 = no intersection, 2 = e two planes coincide)
-   """
+    """Intersect two planes :param plane1: first plane represented by ray :type
+    plane2: np.array shape=(..., 4, 2) :param plane1: second planes represented
+    by rays :type plane2: np.array shape=(..., 4, 2) :return: line: np.array
+    shape=(...,4,2), status: int (0 = intersection returned, 1 = no
+    intersection, 2 = e two planes coincide)"""
     origshape = p1.shape
     # shape = origshape[:-1] or [1]
     assert p1.shape[-1] == 4
@@ -724,24 +722,21 @@ def frame(u, v, w, cen=None, primary='x', **kw):
 def Qs2Rs(Qs, shape=(3, 3)):
     Rs = th.zeros(Qs.shape[:-1] + shape, dtype=Qs.dtype, device=Qs.device)
 
-    Rs[..., 0, 0] = (Qs[..., 0] * Qs[..., 0] + Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] -
-                     Qs[..., 3] * Qs[..., 3])
+    Rs[..., 0, 0] = (Qs[..., 0] * Qs[..., 0] + Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] - Qs[..., 3] * Qs[..., 3])
     Rs[..., 0, 1] = 2 * Qs[..., 1] * Qs[..., 2] - 2 * Qs[..., 0] * Qs[..., 3]
     Rs[..., 0, 2] = 2 * Qs[..., 1] * Qs[..., 3] + 2 * Qs[..., 0] * Qs[..., 2]
     Rs[..., 1, 0] = 2 * Qs[..., 1] * Qs[..., 2] + 2 * Qs[..., 0] * Qs[..., 3]
-    Rs[..., 1, 1] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] + Qs[..., 2] * Qs[..., 2] -
-                     Qs[..., 3] * Qs[..., 3])
+    Rs[..., 1, 1] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] + Qs[..., 2] * Qs[..., 2] - Qs[..., 3] * Qs[..., 3])
     Rs[..., 1, 2] = 2 * Qs[..., 2] * Qs[..., 3] - 2 * Qs[..., 0] * Qs[..., 1]
     Rs[..., 2, 0] = 2 * Qs[..., 1] * Qs[..., 3] - 2 * Qs[..., 0] * Qs[..., 2]
     Rs[..., 2, 1] = 2 * Qs[..., 2] * Qs[..., 3] + 2 * Qs[..., 0] * Qs[..., 1]
-    Rs[..., 2, 2] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] +
-                     Qs[..., 3] * Qs[..., 3])
+    Rs[..., 2, 2] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] + Qs[..., 3] * Qs[..., 3])
 
     return Rs
 
 # ============================================================
 def normQ(Q):
-    """normalize a quaternions"""
+    """Normalize a quaternions."""
     return Q / th.linalg.norm(Q, keepdim=True, dim=-1)
 
 def Q2R(Q):

@@ -50,7 +50,7 @@ def test_pdbdump_sequential():
 def test_pdbdump(pdb1pgx):
     with tempfile.TemporaryDirectory() as d:
         # fname = f'{d}/xyz.pdb'
-        fname = "xyz.pdb"
+        fname = "/tmp/xyz.pdb"
         xyz, mask = pdb1pgx.atomcoords()
         xyz, mask = xyz[10:20], mask[10:20]
         ipd.pdb.dumppdb(fname, xyz, mask, nchain=1)

@@ -9,7 +9,7 @@ import numpy as np
 
 from ipd import h
 
-_sampling = ipd.dev.LazyModule('ipd.samp.sampling_cuda')
+_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
 
 def sort_inplace_topk(data, k):
     data = data.to('cuda')
@@ -61,9 +61,9 @@ def randxform(
         assert orimax is None
         if orisd > 0.4: raise ValueError('orisd must be less than 0.4')
         coeff = [
-            1.7849621e-01, 2.7500242e-01, 2.1911124e-03, -1.7134663e+00, 5.3797978e-01, 1.5170078e+01,
-            3.3340999e-01, -5.5727810e+01, -1.0274599e+01, 9.9600327e+01, 2.8866692e+01, -8.5288895e+01,
-            -3.1181292e+01, 2.8087727e+01, 1.1939758e+01
+            1.7849621e-01, 2.7500242e-01, 2.1911124e-03, -1.7134663e+00, 5.3797978e-01, 1.5170078e+01, 3.3340999e-01,
+            -5.5727810e+01, -1.0274599e+01, 9.9600327e+01, 2.8866692e+01, -8.5288895e+01, -3.1181292e+01, 2.8087727e+01,
+            1.1939758e+01
         ]
         std2qh = np.polynomial.Polynomial(coeff, domain=[0., 0.4326], window=[-1., 1.])
         orimax = orisd
@@ -90,10 +90,8 @@ def randxform(
     return x.to(device)
 
 def quat_torus_xform(resl, maxtip=th.pi / 6, ringang=2 * th.pi, bcc=True, device='cuda'):
-    '''
-    samples orientations in a hypercone -- tilts plus rotation around cone axis
-    recommend maxtip a multiple of resl
-    '''
+    """Samples orientations in a hypercone -- tilts plus rotation around cone
+    axis recommend maxtip a multiple of resl."""
     n1 = int(math.ceil(ringang / resl))
     n2 = int(math.ceil(maxtip / resl))
     n3 = n2 * 2 + 1
