@@ -139,11 +139,11 @@ def rotation_from_matrix(R, eps=1e-4):
 
     cosa = (torch.trace(R) - 1.0) / 2.0
     if abs(axis[2]) > eps:
-        sina = (R[1, 0] + (cosa - 1.0) * axis[0] * axis[1]) / axis[2]
+        sina = (R[1, 0] + (cosa-1.0) * axis[0] * axis[1]) / axis[2]
     elif abs(axis[1]) > eps:
-        sina = (R[0, 2] + (cosa - 1.0) * axis[0] * axis[2]) / axis[1]
+        sina = (R[0, 2] + (cosa-1.0) * axis[0] * axis[2]) / axis[1]
     else:
-        sina = (R[2, 1] + (cosa - 1.0) * axis[1] * axis[2]) / axis[0]
+        sina = (R[2, 1] + (cosa-1.0) * axis[1] * axis[2]) / axis[0]
     angle = torch.atan2(sina, cosa)
 
     return angle, axis
@@ -151,7 +151,7 @@ def rotation_from_matrix(R, eps=1e-4):
 def kabsch(pred, true):
     def rmsd(V, W, eps=1e-4):
         L = V.shape[0]
-        return torch.sqrt(torch.sum((V - W) * (V - W)) / L + eps)
+        return torch.sqrt(torch.sum((V-W) * (V-W)) / L + eps)
 
     def centroid(X):
         return X.mean(dim=-2, keepdim=True)
@@ -226,7 +226,7 @@ def get_symmetry(xyz, mask, rms_cut=2.5, nfold_cut=0.1, angle_cut=0.05, trans_cu
         u = cIJ / dIJ  # unit vector in plane of circle
         v = torch.cross(axis, u)  # unit vector from sym axis to p_mid
         r = dIJ / (2 * torch.sin(angle / 2))
-        d = torch.sqrt(r * r - dIJ * dIJ / 4)  # distance from mid-chord to center
+        d = torch.sqrt(r*r - dIJ*dIJ/4)  # distance from mid-chord to center
         point = p_mid - (d) * v
 
         # check if redundant
@@ -919,12 +919,12 @@ def find_symmsub_pair(Ltot, Lasu, k, pseudo_cycle=False):
     assert Ltot % Lasu == 0
     nchunk = Ltot // Lasu
 
-    N = 2 * k + 1  # total number of diagonals being accessed
+    N = 2*k + 1  # total number of diagonals being accessed
     symmsub = torch.ones((nchunk, nchunk)) * -1
     C = 0  # a marker for blocks of the same category
 
     for i in range(N):  # i      = 0, 1,2, 3,4, 5,6...
-        offset = int(((i + 1) // 2) * (math.pow(-1, i)))  # offset = 0,-1,1,-2,2,-3,3...
+        offset = int(((i+1) // 2) * (math.pow(-1, i)))  # offset = 0,-1,1,-2,2,-3,3...
 
         row = torch.arange(nchunk)
         col = torch.roll(row, offset)
@@ -988,7 +988,7 @@ def update_symm_Rs(xyz, Lasu, symmsub, allsymmRs, symopt):
 
     def dist_error(R0, T0, xyz, fittscale, w_clash=10.0):
         l1, l2 = dist_error_comp(R0, T0, xyz, fittscale)
-        return l1 + w_clash * l2
+        return l1 + w_clash*l2
 
     def Q2R(Q):
         Qs = torch.cat((torch.ones((1), device=Q.device), Q), dim=-1)
@@ -1057,7 +1057,7 @@ def update_symm_subs_track_module(xyz, pair, symmids, symmsub, allsymmRs, metasy
     for i in range(Osub):
         for j in range(Osub):
             idx_old = s_old[i, j].item()
-            sub_ij = pair[:, i * L:(i + 1) * L, j * L:(j + 1) * L, :].clone()
+            sub_ij = pair[:, i * L:(i+1) * L, j * L:(j+1) * L, :].clone()
             mag_ij = torch.max(sub_ij.flatten())  #torch.norm(sub_ij.flatten())
             if idx_old not in pairsub or mag_ij > pairmag[idx_old]:
                 pairmag[idx_old] = mag_ij
@@ -1072,8 +1072,8 @@ def update_symm_subs_track_module(xyz, pair, symmids, symmsub, allsymmRs, metasy
             idx_new = s_new[i, j].item()
             if idx_new in pairsub:
                 inew, jnew = pairsub[idx_new]
-                idx[i * L:(i + 1) * L, j * L:(j + 1) * L] = (Osub * L * torch.arange(inew * L, (inew + 1) * L)[:, None] +
-                                                             torch.arange(jnew * L, (jnew + 1) * L)[None, :])
+                idx[i * L:(i+1) * L, j * L:(j+1) * L] = (Osub * L * torch.arange(inew * L, (inew+1) * L)[:, None] +
+                                                         torch.arange(jnew * L, (jnew+1) * L)[None, :])
 
     pair = pair.reshape(1, -1, pair.shape[-1])[:, idx.flatten(), :].view(1, Osub * L, Osub * L, pair.shape[-1])
 

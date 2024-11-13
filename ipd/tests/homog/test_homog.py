@@ -266,7 +266,7 @@ def test_homo_rotation_single():
     r = hrot(list(axis0), float(ang0))
     a = fast_axis_of(r)
     n = hnorm(a)
-    assert np.all(abs(a / n - axis0) < 0.001)
+    assert np.all(abs(a/n - axis0) < 0.001)
     assert np.all(abs(np.arcsin(n / 2) - ang0) < 0.001)
 
 @pytest.mark.fast
@@ -283,7 +283,7 @@ def test_homo_rotation_array():
     r = hrot(axis0, ang0)
     a = fast_axis_of(r)
     n = hnorm(a)[..., np.newaxis]
-    assert np.all(abs(a / n - axis0) < 0.001)
+    assert np.all(abs(a/n - axis0) < 0.001)
     assert np.all(abs(np.arcsin(n[..., 0] / 2) - ang0) < 0.001)
 
 @pytest.mark.fast
@@ -990,13 +990,13 @@ def _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i):
     #    offset2 = hm.hnormalized(xalign @ pt2 - scale * tp2)
     #    offset2[3] = 0
     #    ok_pt2 = (np.allclose(offset2, ta2, atol=1e-3) or np.allclose(offset2, -ta2, atol=1e-3))
-    dis1 = np.linalg.norm((xalign @ pt1 - scale * tp1))
+    dis1 = np.linalg.norm((xalign@pt1 - scale*tp1))
     if dis1 > 0.009:
-        dis1 = np.sin(angle(xalign @ pt1 - scale * tp1, ta1)) * dis1
+        dis1 = np.sin(angle(xalign@pt1 - scale*tp1, ta1)) * dis1
 
-    dis2 = np.linalg.norm((xalign @ pt2 - scale * tp2))
+    dis2 = np.linalg.norm((xalign@pt2 - scale*tp2))
     if dis2 > 0.009:
-        dis2 = np.sin(angle(xalign @ pt2 - scale * tp2, ta2)) * dis2
+        dis2 = np.sin(angle(xalign@pt2 - scale*tp2, ta2)) * dis2
     ok_pt1 = abs(dis1) < 0.01  # this is *really* loose to allow very rare cases
     ok_pt2 = abs(dis2) < 0.01  # in 99999/100000 cases, much tighter
 
@@ -1561,13 +1561,13 @@ def torque_delta_sanitycheck():
     assert np.allclose(ax, ax2, atol=5e-4)
     assert np.allclose(ang * scale, ang2 * scale, atol=1e-5)
 
-    uv = a * u + b * v
+    uv = a*u + b*v
     anghat = np.linalg.norm(uv, axis=-1)
     axhat = uv / anghat[:, None]
     ax, ang = hm.axis_angle_of(hm.hrot(u, a) @ hm.hrot(v, b))
     assert np.allclose(ax, axhat, atol=5e-4)
 
-    uv = a * u + b * v
+    uv = a*u + b*v
     anghat = np.linalg.norm(uv, axis=-1)
     axhat = uv / anghat[:, None]
     ax, ang = hm.axis_angle_of(hm.hrot(u, a) @ hm.hrot(v, b))

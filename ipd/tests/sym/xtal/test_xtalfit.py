@@ -80,7 +80,7 @@ def DISABLED_test_xtalfit_I213_bk():
         y3f = cen3[1] + x[1]
         x2f = cen2[0] + x[0]
         y2f = cen2[1] + x[1]
-        return (x3f - y3f)**2 + (0.75 * x2f - 1.5 * y2f)**2
+        return (x3f - y3f)**2 + (0.75*x2f - 1.5*y2f)**2
 
     import scipy.optimize
 

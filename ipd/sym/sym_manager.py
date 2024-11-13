@@ -262,10 +262,10 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         match shapekind:
             case ShapeKind.ONEDIM:
                 for i in range(1, self.nsub):
-                    contig[i * N:(i + 1) * N] = contig[:N]
+                    contig[i * N:(i+1) * N] = contig[:N]
             case ShapeKind.TWODIM:
                 for i in range(1, self.nsub):
-                    contig[i * N:(i + 1) * N, i * N:(i + 1) * N] = contig[:N, :N]
+                    contig[i * N:(i+1) * N, i * N:(i+1) * N] = contig[:N, :N]
                 # for i in range(1, self.nsub - 1):
                 # contig[(i + 1) * N:(i + 2) * N, i * N:(i + 1) * N] = contig[N:2 * N, :N]
                 # contig[i * N:(i + 1) * N, (i + 1) * N:(i + 2) * N] = contig[:N, N:2 * N]

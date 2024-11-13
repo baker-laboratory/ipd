@@ -144,7 +144,7 @@ def scoreme(rb, xform, xsym, ncopy, maxcart, Ntop):
     cen1, rad = rb.boundcen, rb.boundrad
     if Ntop: cen1 = h.xform(xform[:Ntop], rb.boundcen)
     cen2 = h.xform(xsym, cen1)
-    inbounds = h.norm(cen1 - cen2) < 2 * rad + rb.func.arg[-1] + maxcart
+    inbounds = h.norm(cen1 - cen2) < 2*rad + rb.func.arg[-1] + maxcart
     # if len(xsym) == 23:
     #     ipd.showme(h.xform(xform[0], rb.xyz))
     #     for i, x in enumerate(xsym):

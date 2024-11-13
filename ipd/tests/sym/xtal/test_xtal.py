@@ -363,7 +363,7 @@ def helper_test_xtal_cryst1(xtalname, dump_pdbs=False):
         # ic(xtalname, len(s2), len(coords2))
         # ic(xtalname, len(s2 - s1), (64 - 27) * 3 * xtal.nsub)
         expected_ratio = (4**3 - 3**3) / 3**3
-        assert len(s2 - s1) == (64 - 27) * 3 * xtal.nsub
+        assert len(s2 - s1) == (64-27) * 3 * xtal.nsub
         assert len(s1 - s2) == 0, f"canonical frames mismatch {xtalname}"
         assert len(s1.intersection(s2)) == len(coords1), f"canonical frames mismatch {xtalname}"
 

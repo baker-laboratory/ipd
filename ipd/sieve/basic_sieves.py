@@ -16,7 +16,7 @@ def generate_O(coords):
     return coords[:, :5, :3].contiguous()
 
 def relax_thresh_max(progress, thresh):
-    mod = max(1, 0.3334 / (progress + 0.001))
+    mod = max(1, 0.3334 / (progress+0.001))
     return mod * thresh
 
 def relax_thresh_min(progress, thresh):

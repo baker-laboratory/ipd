@@ -236,7 +236,7 @@ def test_cyclic_sym_err(nsamp=100):
 
         tgtang3 = np.random.rand() * np.pi
         err3 = ipd.sym.cyclic_sym_err(pair, tgtang3)
-        angerr = (tgtang - tgtang3) * min(10000, max(1, rad))
+        angerr = (tgtang-tgtang3) * min(10000, max(1, rad))
         assert np.allclose(err3, np.sqrt(hlen**2 + angerr**2))
 
 @pytest.mark.fast

@@ -210,12 +210,12 @@ def lattice_vectors(lattice, cellgeom=None, strict=True):
         [
             0.0,
             b * sinC,
-            c * (cosA - cosB * cosC) / sinC,
+            c * (cosA - cosB*cosC) / sinC,
         ],
         [
             0.0,
             0.0,
-            c * sinB * np.sqrt(1.0 - ((cosB * cosC - cosA) / (sinB * sinC))**2),
+            c * sinB * np.sqrt(1.0 - ((cosB*cosC - cosA) / (sinB*sinC))**2),
         ],
     ])
     return lattice_vectors
@@ -226,7 +226,7 @@ def cell_volume(spacegroup, cellgeom):
     a, b, c, A, B, C = full_cellgeom(spacegroup, cellgeom)
     cosA, cosB, cosC = [np.cos(np.radians(_)) for _ in (A, B, C)]
     sinB, sinC = [np.sin(np.radians(_)) for _ in (B, C)]
-    return a * b * c * np.sqrt(1 - cosA**2 - cosB**2 - cosC**2 + 2 * cosA * cosB * cosC)
+    return a * b * c * np.sqrt(1 - cosA**2 - cosB**2 - cosC**2 + 2*cosA*cosB*cosC)
 
 def sg_is_chiral(sg):
     return sg in sg_all_chiral

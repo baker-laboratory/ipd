@@ -44,7 +44,7 @@ class ContactFunc(CudaFunc):
         ctend = float(self.arg[4])
         end = float(self.arg[5])
         if dist < clend: return cl
-        if dist < ctbeg: return cl + (ct - cl) * (dist - clend) / (ctbeg - clend)
+        if dist < ctbeg: return cl + (ct-cl) * (dist-clend) / (ctbeg-clend)
         if dist < ctend: return ct
-        if dist < end: return ct * (end - dist) / (end - ctend)
+        if dist < end: return ct * (end-dist) / (end-ctend)
         return 0

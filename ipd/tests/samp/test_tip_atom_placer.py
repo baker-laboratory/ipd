@@ -27,7 +27,7 @@ def test_place_tip_atoms():
 def helper_test_ray_frames(thing, inv=False):
     for frame, rays in zip(thing.donacc_frames(), [thing.don, thing.acc]):
         ori = rays[:, :, 1]
-        cen = rays[:, :, 0] + 2.7 * ori
+        cen = rays[:, :, 0] + 2.7*ori
         if len(frame) and inv:
             assert th.allclose(cen, h.xform(frame, h.point([0, 0, 0])), atol=1e-3)
             assert th.allclose(ori, h.xform(frame, h.vec([0, 0, 1])), atol=1e-3)

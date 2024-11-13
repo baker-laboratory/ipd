@@ -70,7 +70,7 @@ class SymSlice:
         self.asu[self.asuend:] = False
         self.sym = th.zeros((nsub, self.L), dtype=bool)
         for i in range(nsub):
-            self.sym[i, range(self.beg + i * self.Lasu, self.beg + (i + 1) * self.Lasu)] = True
+            self.sym[i, range(self.beg + i * self.Lasu, self.beg + (i+1) * self.Lasu)] = True
 
     def set_asu(self, toasu):
         """Set the asymmetric unit."""
@@ -193,7 +193,7 @@ class SymIndex:
         self.contiguous = -th.ones(self.Nasu * self.nsub, dtype=int)
         # ic(self.sub.shape, len(self.contiguous), self.Nasu * self.nsub)
         for i in range(self.nsub):
-            self.contiguous[i * self.Nasu:(i + 1) * self.Nasu] = th.where(self.sub[i])[0]
+            self.contiguous[i * self.Nasu:(i+1) * self.Nasu] = th.where(self.sub[i])[0]
 
         self.full = th.ones(self.L, dtype=bool)
         self.notsym = ~self.sym

@@ -17,7 +17,7 @@ _sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
 
 def rayframe(rays, cross=None, primary='z', device='cpu'):
     ori = rays[:, :, 1]
-    cen = rays[:, :, 0] + 2.7 * ori
+    cen = rays[:, :, 0] + 2.7*ori
     if cross is None: cross = h.randvec()
     return h.frame(cen, cen - ori, cen + cross, primary=primary, device=device)
 
@@ -143,7 +143,7 @@ def acc_n_ring(aname, xyz, nname, bname1, bname2):
     b2 = xyz[aname == bname2]
     h.cross(n - b1, n - b2)
     accp = h.point(n)
-    accv = h.normvec(n - (b1 + b2) / 2)
+    accv = h.normvec(n - (b1+b2) / 2)
     acc = th.stack([accp, accv], dim=2)
     assert acc.shape[1:] == (4, 2)
     return acc

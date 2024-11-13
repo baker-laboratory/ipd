@@ -334,13 +334,13 @@ def quat_to_rot(quat, dtype="f8", shape=(3, 3)):
     outshape = quat.shape[:-1]
     rot = np.zeros(outshape + shape, dtype=dtype)
     rot[..., 0, 0] = 1 - 2 * (qj**2 + qk**2)
-    rot[..., 0, 1] = 2 * (qi * qj - qk * qr)
-    rot[..., 0, 2] = 2 * (qi * qk + qj * qr)
-    rot[..., 1, 0] = 2 * (qi * qj + qk * qr)
+    rot[..., 0, 1] = 2 * (qi*qj - qk*qr)
+    rot[..., 0, 2] = 2 * (qi*qk + qj*qr)
+    rot[..., 1, 0] = 2 * (qi*qj + qk*qr)
     rot[..., 1, 1] = 1 - 2 * (qi**2 + qk**2)
-    rot[..., 1, 2] = 2 * (qj * qk - qi * qr)
-    rot[..., 2, 0] = 2 * (qi * qk - qj * qr)
-    rot[..., 2, 1] = 2 * (qj * qk + qi * qr)
+    rot[..., 1, 2] = 2 * (qj*qk - qi*qr)
+    rot[..., 2, 0] = 2 * (qi*qk - qj*qr)
+    rot[..., 2, 1] = 2 * (qj*qk + qi*qr)
     rot[..., 2, 2] = 1 - 2 * (qi**2 + qj**2)
     return rot
 
@@ -355,10 +355,10 @@ def quat_multiply(q, r):
     r0, r1, r2, r3 = np.moveaxis(r, -1, 0)
     assert np.all(q1 == q[..., 1])
     t = np.empty_like(q)
-    t[..., 0] = r0 * q0 - r1 * q1 - r2 * q2 - r3 * q3
-    t[..., 1] = r0 * q1 + r1 * q0 - r2 * q3 + r3 * q2
-    t[..., 2] = r0 * q2 + r1 * q3 + r2 * q0 - r3 * q1
-    t[..., 3] = r0 * q3 - r1 * q2 + r2 * q1 + r3 * q0
+    t[..., 0] = r0*q0 - r1*q1 - r2*q2 - r3*q3
+    t[..., 1] = r0*q1 + r1*q0 - r2*q3 + r3*q2
+    t[..., 2] = r0*q2 + r1*q3 + r2*q0 - r3*q1
+    t[..., 3] = r0*q3 - r1*q2 + r2*q1 + r3*q0
     return t
 
 def guess_is_degrees(angle):
@@ -473,13 +473,13 @@ def axis_angle_cen_hel_of(xforms):
 
 def angle_of(xforms, debug=False):
     tr = xforms[..., 0, 0] + xforms[..., 1, 1] + xforms[..., 2, 2]
-    cos = (tr - 1.0) / 2.0
+    cos = (tr-1.0) / 2.0
     angl = np.arccos(np.clip(cos, -1, 1))
     return angl
 
 def angle_of_degrees(xforms, debug=False):
     tr = xforms[..., 0, 0] + xforms[..., 1, 1] + xforms[..., 2, 2]
-    cos = (tr - 1.0) / 2.0
+    cos = (tr-1.0) / 2.0
     angl = np.arccos(np.clip(cos, -1, 1))
     return np.degrees(angl)
 
@@ -505,13 +505,13 @@ def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), 
     outshape = angle.shape if angle.shape else axis.shape[:-1]
     rot3 = np.zeros(outshape + shape, dtype=dtype)
     rot3[..., 0, 0] = aa + bb - cc - dd
-    rot3[..., 0, 1] = 2 * (bc + ad)
-    rot3[..., 0, 2] = 2 * (bd - ac)
-    rot3[..., 1, 0] = 2 * (bc - ad)
+    rot3[..., 0, 1] = 2 * (bc+ad)
+    rot3[..., 0, 2] = 2 * (bd-ac)
+    rot3[..., 1, 0] = 2 * (bc-ad)
     rot3[..., 1, 1] = aa + cc - bb - dd
-    rot3[..., 1, 2] = 2 * (cd + ab)
-    rot3[..., 2, 0] = 2 * (bd + ac)
-    rot3[..., 2, 1] = 2 * (cd - ab)
+    rot3[..., 1, 2] = 2 * (cd+ab)
+    rot3[..., 2, 0] = 2 * (bd+ac)
+    rot3[..., 2, 1] = 2 * (cd-ab)
     rot3[..., 2, 2] = aa + dd - bb - cc
     if shape == (4, 4):
         rot3[..., 3, 3] = 1.0
@@ -900,7 +900,7 @@ def hrmsfit(mobile, target):
         # ic(V - V1)
         # assert 0
     rot_m2t = hconvert(V @ W).T
-    trans_m2t = target_cen - rot_m2t @ mobile_cen
+    trans_m2t = target_cen - rot_m2t@mobile_cen
     xform_mobile_to_target = hconvert(rot_m2t, trans_m2t)
 
     mobile = mobile + mobile_cen
@@ -961,7 +961,7 @@ def h_point_line_dist(point, cen, norm):
 def intesect_line_plane(p0, n, l0, l):
     l = hm.hnormalized(l)
     d = hm.hdot(p0 - l0, n) / hm.hdot(l, n)
-    return l0 + l * d
+    return l0 + l*d
 
 def intersect_planes(plane1, plane2):
     """
@@ -1048,12 +1048,12 @@ def axis_ang_cen_of_planes(xforms, debug=False, ident_match_tol=1e-8):
         p1, p2 = _axis_ang_cen_magic_points_numpy
         tparallel = hdot(axis1, xforms1[..., :, 3])[..., None] * axis1
 
-        q1 = xforms1 @ p1 - tparallel
-        q2 = xforms1 @ p2 - tparallel
+        q1 = xforms1@p1 - tparallel
+        q2 = xforms1@p2 - tparallel
         n1 = hnormalized(q1 - p1)
         n2 = hnormalized(q2 - p2)
-        c1 = (p1 + q1) / 2.0
-        c2 = (p2 + q2) / 2.0
+        c1 = (p1+q1) / 2.0
+        c2 = (p2+q2) / 2.0
         plane1 = hray(c1, n1)
         plane2 = hray(c2, n2)
         isect, status = intersect_planes(plane1, plane2)
@@ -1110,8 +1110,8 @@ def line_line_closest_points_pa(pt1, ax1, pt2, ax2, verbose=0):
     R = hcross(C21, M / m2)
     t1 = hdot(R, ax2)[..., None]
     t2 = hdot(R, ax1)[..., None]
-    Q1 = pt1 - t1 * ax1
-    Q2 = pt2 - t2 * ax2
+    Q1 = pt1 - t1*ax1
+    Q2 = pt2 - t2*ax2
 
     if verbose:
         ic("C21", C21)
@@ -1174,7 +1174,7 @@ def halign2(a1, a2, b1, b2, doto=None, strict=False):
     aaxis = hnormalized(a1 + a2)
     baxis = hnormalized(b1 + b2)
     # baxis = np.where(hangle(aaxis, baxis) > , baxis, -baxis)
-    spinaxis = (aaxis + baxis) / 2
+    spinaxis = (aaxis+baxis) / 2
     arbitrary = _axis_ang_cen_magic_points_numpy[0]
     spinaxis = np.where(hnorm(spinaxis) > 0.00001, spinaxis, hcross(aaxis, arbitrary))
     Xmiddle = hrot(spinaxis, np.pi)
@@ -1228,7 +1228,7 @@ def rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_ang
     # ic('ytgt', ytgt, 'xdof', xdof, 'ydof', ydof)
 
     yhat = ytgt
-    xhat = xdof + (ytgt - ydof) * slope
+    xhat = xdof + (ytgt-ydof) * slope
     lhat = np.sqrt(xhat**2 + yhat**2)
 
     lhat = min(lhat, 1.0)
@@ -1325,7 +1325,7 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
         D = np.stack([ta1[:3], sl2[:3], ta2[:3]]).T
         A1offset, slide_dist, _ = np.linalg.inv(D) @ cen2_0[:3]
         # ic(A1offset, slide_dist)
-        Xalign[..., :, 3] = Xalign[..., :, 3] - (A1offset * ta1)
+        Xalign[..., :, 3] = Xalign[..., :, 3] - (A1offset*ta1)
 
     return Xalign, slide_dist
 
@@ -1359,7 +1359,7 @@ def scale_translate_lines_isect_lines(pt1, ax1, pt2, ax2, tp1, ta1, tp2, ta2):
     xalign = halign2(_ax1, _ax2, _ta1, _ta2)
     a, b = line_line_closest_points_pa(_pt1, _ax1, _pt2, _ax2)
     c, d = line_line_closest_points_pa(_tp1, _ta1, _tp2, _ta2)
-    _shift1 = xalign @ (b - a)
+    _shift1 = xalign @ (b-a)
     _shift2 = d - c
     if hdot(_shift1, _shift2) < 0:
         if np.allclose(angle(_ax1, _ax2), np.pi / 2):

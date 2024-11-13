@@ -200,7 +200,7 @@ class Xtal:
                         p, q = elem1.cen, elem2.cen
                     else:
                         p, q = ipd.homog.line_line_closest_points_pa(p1, ax1, p2, ax2)
-                    cens.append((p + q) / 2)
+                    cens.append((p+q) / 2)
             cen0 = np.mean(cens, axis=0)
         else:
             raise ValueError(f"unknown asucen xtalasumethod {xtalasumethod}")
@@ -208,7 +208,7 @@ class Xtal:
             opcens = [np.mean(ipd.homog.hxform(e.operators[1:], cen0), axis=0) for e in self.symelems]
             cen = np.mean(np.stack(opcens), axis=0)
             # this is arbitrary
-            cen = olig_nbr_wt * cen + (1 - olig_nbr_wt) * cen0
+            cen = olig_nbr_wt*cen + (1-olig_nbr_wt) * cen0
         else:
             cen = cen0
         return _scaled_frames(cellsize, cen)

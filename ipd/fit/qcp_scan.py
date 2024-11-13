@@ -24,7 +24,7 @@ def qcp_scan_AB(bb, tgt, L, **kw):
     assert nreg > 1
     best = [None, 9e9, None, None]
     for a in itertools.product(*[[0, 1] for i in range(nreg)]):
-        if sum(a) not in (nreg // 2, nreg - nreg // 2): continue
+        if sum(a) not in (nreg // 2, nreg - nreg//2): continue
         ranges = th.tensor([[L, 2 * L] if b else [0, L] for b in a], dtype=int, device=bb.device)
         # print(ranges)
         result = qcp_scan_ref(bb, tgt, ranges, **kw)
@@ -86,7 +86,7 @@ def _qcp_scan_impl(bb, tgt, ranges, sizes, Lasu=0, cyclic=1):
         w = torch.where(mask)[0]
         for j in range(cyclic):
             # ic(bb[w+j*Lasu])
-            cen += bb[w + j * Lasu].mean(1).reshape(shape)
+            cen += bb[w + j*Lasu].mean(1).reshape(shape)
     cen /= len(ranges) * cyclic
     # ic(cen)
     for i, mask in enumerate(ranges):
@@ -94,7 +94,7 @@ def _qcp_scan_impl(bb, tgt, ranges, sizes, Lasu=0, cyclic=1):
         shape[i] = sizes[i]
         w = torch.where(mask)[0]
         for j in range(cyclic):
-            mcen = bb[w + j * Lasu].reshape(shape) - cen.unsqueeze(-2)
+            mcen = bb[w + j*Lasu].reshape(shape) - cen.unsqueeze(-2)
             # ic(mcen.shape, tgt[i, ..., None, :].shape)
             # ic((mcen[..., None] * tgt[i, ..., None, :]).shape)
             iprod += (mcen[..., None] * tgt[i + j * len(ranges), ..., None, :]).sum(-3)
@@ -125,7 +125,7 @@ def _mark_overlapping_refpts(ranges, sizes, rms):
 def _qcp_scan_checks(bb, tgt, idx0, idx, rmsfull, cyclic, Lasu):
     idxasu = idx.clone()
     for i in range(1, cyclic):
-        idx = th.cat([idx, idxasu + i * Lasu])
+        idx = th.cat([idx, idxasu + i*Lasu])
     minrms = rmsfull.min()
     assert rmsfull[tuple(idx0)] == minrms
     selpts = bb[idx].contiguous().cpu()

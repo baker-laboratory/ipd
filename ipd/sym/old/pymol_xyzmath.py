@@ -176,7 +176,7 @@ class Vec(object):
         return Vec(-u.x, -u.y, -u.z)
 
     def __truediv__(u, a):
-        return u * (1.0 / a)
+        return u * (1.0/a)
 
     def __str__(self):
         return "(%f,%f,%f)" % (self.x, self.y, self.z)
@@ -472,7 +472,7 @@ class Mat(object):
             return Vec(m.colx() * v, m.coly() * v, m.colz() * v)
 
     def __truediv__(m, v):
-        return m * (1 / v)
+        return m * (1/v)
 
     def __add__(m, v):
         if isnum(v):
@@ -553,16 +553,16 @@ class Mat(object):
         """
         cos_theta = sin_cos_range((R.trace() - 1.0) / 2.0)
         if cos_theta > -1.0 + EPS and cos_theta < 1.0 - EPS:
-            x = (1.0 if R.zy > R.yz else -1.0) * sqrt(max(0.0, (R.xx - cos_theta) / (1.0 - cos_theta)))
-            y = (1.0 if R.xz > R.zx else -1.0) * sqrt(max(0.0, (R.yy - cos_theta) / (1.0 - cos_theta)))
-            z = (1.0 if R.yx > R.xy else -1.0) * sqrt(max(0.0, (R.zz - cos_theta) / (1.0 - cos_theta)))
+            x = (1.0 if R.zy > R.yz else -1.0) * sqrt(max(0.0, (R.xx - cos_theta) / (1.0-cos_theta)))
+            y = (1.0 if R.xz > R.zx else -1.0) * sqrt(max(0.0, (R.yy - cos_theta) / (1.0-cos_theta)))
+            z = (1.0 if R.yx > R.xy else -1.0) * sqrt(max(0.0, (R.zz - cos_theta) / (1.0-cos_theta)))
             theta = acos(cos_theta)
-            assert abs(x * x + y * y + z * z - 1) <= 0.01
+            assert abs(x*x + y*y + z*z - 1) <= 0.01
             return Vec(x, y, z), theta
         elif cos_theta >= 1.0 - EPS:
             return Vec(1.0, 0.0, 0.0), 0.0
         else:
-            nnT = (R + Imat) / 2.0
+            nnT = (R+Imat) / 2.0
             x, y, z = 0.0, 0.0, 0.0
             if nnT.xx > EPS:
                 x = sqrt(nnT.xx)
@@ -577,7 +577,7 @@ class Mat(object):
                 x = 0
                 y = 0
                 z = sqrt(nnT.zz)
-            assert abs(x * x + y * y + z * z - 1.0) <= 0.01
+            assert abs(x*x + y*y + z*z - 1.0) <= 0.01
             return Vec(x, y, z), pi
 
     def euler_angles(self):
@@ -620,11 +620,11 @@ class Mat(object):
         sin_psi = math.sin(psi)
         cos_theta = math.cos(theta)
         sin_theta = math.sin(theta)
-        self.xx = cos_psi * cos_phi - cos_theta * sin_phi * sin_psi
-        self.xy = cos_psi * sin_phi + cos_theta * cos_phi * sin_psi
+        self.xx = cos_psi*cos_phi - cos_theta*sin_phi*sin_psi
+        self.xy = cos_psi*sin_phi + cos_theta*cos_phi*sin_psi
         self.xz = sin_psi * sin_theta
-        self.yx = -sin_psi * cos_phi - cos_theta * sin_phi * cos_psi
-        self.yy = -sin_psi * sin_phi + cos_theta * cos_phi * cos_psi
+        self.yx = -sin_psi * cos_phi - cos_theta*sin_phi*cos_psi
+        self.yy = -sin_psi * sin_phi + cos_theta*cos_phi*cos_psi
         self.yz = cos_psi * sin_theta
         self.zx = sin_theta * sin_phi
         self.zy = -sin_theta * cos_phi
@@ -969,7 +969,7 @@ class Xform(object):
         if tocen.dot(p2 - p1) < 0.0:
             tocen = -tocen
 
-        cen = (p0 + p1) / 2.0 + tocen
+        cen = (p0+p1) / 2.0 + tocen
         return axis, ang, cen
 
     def pretty(self):
@@ -1149,8 +1149,8 @@ def line_line_closest_points(A1, C1, A2, C2):
     R = C21.cross(M / m2)
     t1 = R.dot(A2)
     t2 = R.dot(A1)
-    Q1 = C1 + t1 * A1
-    Q2 = C2 + t2 * A2
+    Q1 = C1 + t1*A1
+    Q2 = C2 + t2*A2
     return Q1, Q2
 
 def skew_lines_center(A1, C1, A2, C2):
@@ -1167,7 +1167,7 @@ def skew_lines_center(A1, C1, A2, C2):
     # >>> skew_lines_center(Ux,Uy,Uz,Ux)
     """
     p1, p2 = line_line_closest_points(A1, C1, A2, C2)
-    return (p1 + p2) / 2.0
+    return (p1+p2) / 2.0
 
 def skew_lines_relation(a1, c1, a2, c2):
     p1, p2 = line_line_closest_points(a1, c1, a2, c2)
@@ -1262,7 +1262,7 @@ def rotation_around_dof_to_set_vec_vec_angle(dofaxis, tgt0, v1, v2):
         b = sc1[1] - m * sc1[0]
         # print "mx+b",m,b
         d = cos(a2 / 180 * pi)
-        h0 = m * d + b
+        h0 = m*d + b
         h = h0 / sindeg(a2)
         # test = (-tgt <= a2+a1 <= +tgt) != (-tgt <= a2-a1 <= +tgt)
         # assert test == (-1 <= h <= 1)
@@ -1273,8 +1273,8 @@ def rotation_around_dof_to_set_vec_vec_angle(dofaxis, tgt0, v1, v2):
         # print asindeg(h)
         di = -dihedral_degrees(v1, Vec(0, 0, 0), dofaxis, v2)
         # print -di
-        ret0.append((di + xa) % 360.0)
-        ret0.append((di - xa) % 360.0)
+        ret0.append((di+xa) % 360.0)
+        ret0.append((di-xa) % 360.0)
     if not ret0:
         return []
     ret0.sort()
@@ -1295,8 +1295,8 @@ def ray_sphere_intersection(lin, l0in, cen, r):
     l0 = l0in - cen
     a = l.dot(l)
     b = l.dot(l0) * 2.0
-    c = l0.dot(l0) - r * r
-    disc = b * b - 4 * a * c
+    c = l0.dot(l0) - r*r
+    disc = b*b - 4*a*c
     if disc < 0:
         return None
     distSqrt = sqrt(disc)
@@ -1310,9 +1310,9 @@ def ray_sphere_intersection(lin, l0in, cen, r):
         t0, t1 = t1, t0
     if t1 >= 0:
         if t0 >= 0:
-            return l * t0 + l0 + cen
+            return l*t0 + l0 + cen
         else:
-            return l * t1 + l0 + cen
+            return l*t1 + l0 + cen
     return None
 
 def line_plane_intersection(l, l0, n, p0):
@@ -1330,7 +1330,7 @@ def line_plane_intersection(l, l0, n, p0):
     """
     n = n.normalized()
     d = (p0 - l0).dot(n) / l.dot(n)
-    return d, d * l + l0
+    return d, d*l + l0
 
 def slide_to_make_lines_intersect(dof, l, l0, m, m0):
     """
@@ -2387,7 +2387,7 @@ def symmetrize_xform(anchor, x, nf=None):  # ,debug=False):
     # print "cenlen",cenlen
     # print "math.tan(sang/2/180*pi)",math.tan(sang/2/180*pi)
     # print "(p2-p1).length()",(p2-p1).length()
-    cen = (p1 + p2) / 2 + cendir * cenlen
+    cen = (p1+p2) / 2 + cendir*cenlen
     # print cen
     return axs, cen, nf
 
