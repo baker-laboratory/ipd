@@ -11,9 +11,9 @@ class ProjecConfigtError(RuntimeError):
 def substitute_project_vars(*args, path: str = '.') -> list[str]:
     args = list(args)
     pyproj = pyproject(path)
-    for i, a in enumerate(args):
-        args[i] = a.replace('[gitroot]', git_root(path))
-        args[i] = a.replace('[projname]', pyproj.project.name)
+    for i in range(len(args)):
+        args[i] = args[i].replace('[gitroot]', f'{git_root(path)}/')
+        args[i] = args[i].replace('[projname]', pyproj.project.name)
     return args
 
 def git_root(path: str = '.') -> str:
