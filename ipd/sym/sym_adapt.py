@@ -11,7 +11,7 @@ import ipd
 from ipd.dev.lazy_import import lazyimport
 from ipd.sym.sym_kind import ShapeKind, SymKind, ValueKind
 
-th = lazyimport('torch')
+th = lazyimport('torch', warn=False)
 
 @singledispatch
 def _sym_adapt(thing, sym, isasym=None):
@@ -19,13 +19,13 @@ def _sym_adapt(thing, sym, isasym=None):
     symmetrizable adapted form."""
     raise NotImplementedError(f"Don't know how to make SymAdapt for {type(thing)}")
 
-@_sym_adapt.register(type(None))
+@_sym_adapt.register(type(None))  # type: ignore
 def _(*a, **kw):
     return None
 
 with contextlib.suppress(ImportError):
 
-    @_sym_adapt.register(th.Tensor)
+    @_sym_adapt.register(th.Tensor)  # type: ignore
     def _(tensor, sym, isasym):
         if all(n is None for n in tensor.names):
             return SymAdaptTensor(tensor, sym, isasym)
@@ -34,7 +34,7 @@ with contextlib.suppress(ImportError):
         else:
             return SymAdaptNamedDenseTensor(tensor, sym, isasym)
 
-@_sym_adapt.register(np.ndarray)
+@_sym_adapt.register(np.ndarray)  # type: ignore
 def _(ary, sym, isasym):
     if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16,
                      np.int8, np.uint8, bool):
@@ -53,7 +53,7 @@ def _(ary, sym, isasym):
 #             raise TypeError(f'class {name} must define adapted type via adapts = ThingType')
 #         if cls.adapts is not None:
 
-#             @_sym_adapt.register(cls.adapts)
+#             @_sym_adapt.register(cls.adapts)  # type: ignore
 #             def _(thing, sym, isasym=None):
 #                 return cls(thing, sym, isasym)
 
@@ -68,7 +68,7 @@ class SymAdapt(ABC):
             raise TypeError(f'class {name} must define adapted type via adapts = ThingType')
         if cls.adapts is not None:
 
-            @_sym_adapt.register(cls.adapts)
+            @_sym_adapt.register(cls.adapts)  # type: ignore
             def _(thing, sym, isasym=None):
                 return cls(thing, sym, isasym)
 
@@ -86,7 +86,7 @@ class SymAdapt(ABC):
             return f'{self.__class__.__name__}(orig={self.orig.shape}, new={self.new.shape})'
         return f'{self.__class__.__name__}(kind={self.kind}, orig={type(self.orig)})'
 
-@_sym_adapt.register(SymAdapt)
+@_sym_adapt.register(SymAdapt)  # type: ignore
 def _(thing, sym, isasym):
     return thing  # already sym adapted
 
@@ -202,7 +202,7 @@ with contextlib.suppress(ImportError):
         isidx: slice
         kind: kind = None
 
-    # @_sym_adapt.register(SimpleSparseTensor)
+    # @_sym_adapt.register(SimpleSparseTensor)  # type: ignore
     # def _(sparse, sym):
     # return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
 

@@ -394,7 +394,7 @@ class BunchChildSet(BunchChild, set):
 
 def bunchify(x):
     if isinstance(x, dict):
-        return Bunch(**x)
+        return Bunch(**{k: bunchify(v) for k, v in x.items()})
     elif isinstance(x, (list, tuple)):
         return type(x)(bunchify(v) for v in x)
     else:

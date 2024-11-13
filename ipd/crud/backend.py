@@ -11,8 +11,8 @@ from uuid import UUID, uuid4
 
 import fastapi
 import pydantic
-import sqlmodel.pool
 import sqlalchemy
+import sqlmodel.pool
 from sqlalchemy.orm import registry
 from sqlmodel.main import RelationshipInfo
 

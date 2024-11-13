@@ -294,7 +294,7 @@ def showaxes():
     pymol.cmd.load_cgo(obj, "axes")
 
 def cgo_cyl_arrow(c1, c2, r, col=(1, 1, 1), col2=None, arrowlen=4.0):
-    c1, c2 = ipd.hpoint(c1), ipd.hpoint(c2)
+    c1, c2 = ipd.homog.hpoint(c1), ipd.homog.hpoint(c2)
     if not col2:
         col2 = col
     CGO = []

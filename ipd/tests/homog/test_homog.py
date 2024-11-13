@@ -1542,7 +1542,7 @@ def test_symfit_180_bug():
 
 @pytest.mark.fast
 def test_hexpand():
-    pytest.importorskip("ipd_cpp")
+    pytest.importorskip("ipd.homog.hcom")
     gen = hrand(3)
     x0 = hexpand(gen, depth=4, ntrials=1000, deterministic=False)
     x1 = hexpand(gen, depth=4, ntrials=1000, deterministic=True)

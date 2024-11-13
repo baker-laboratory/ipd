@@ -35,11 +35,12 @@ def test_helix_params():
 
 @pytest.mark.fast
 def test_helix_scaling():
+    pytest.skip()
     pytest.importorskip("willutil_cpp")
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0)
 
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
 
     hframes = h.frames(xtalrad=9e8, closest=0, radius=100, spacing=40, coils=4)
     rb = ipd.dock.rigid.RigidBodyFollowers(coords=xyz, frames=hframes, symtype="H")

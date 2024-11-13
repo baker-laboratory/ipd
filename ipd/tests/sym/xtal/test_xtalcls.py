@@ -228,7 +228,7 @@ def test_dump_pdb():
     xtal = ipd.sym.Xtal(sym)
     csize = 150
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     # xyz[:, 1] -= 2
