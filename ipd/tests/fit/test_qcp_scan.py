@@ -157,7 +157,7 @@ def test_qcp_scan_AB():
         pts1 = th.randn((30, 3), dtype=th.float32, device='cuda')
         pts2 = th.randn((i, 3), dtype=th.float32, device='cuda')
         idx, rms, xfit = ipd.fit.qcp_scan_AB(pts1, pts2, 10)
-        assert i // 2 <= sum(10 <= idx) <= (i - i // 2)
+        assert i // 2 <= sum(10 <= idx) <= (i - i//2)
 
 @ipd.timed
 @pytest.mark.fast

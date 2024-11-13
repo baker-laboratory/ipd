@@ -121,7 +121,7 @@ def symcheck_INDEX_1D(idx, thing, **kw):
     symcheck_INDEX_common(idx, thing, **kw)
     assert 0
     for i in range(idx.nsub):
-        s = slice(i * Lasu, (i + 1) * Lasu)
+        s = slice(i * Lasu, (i+1) * Lasu)
         assert th.all(i == idx.subnum[thing[s]])
         th.testing.assert_close(idx.idx_sub_to_asu[thing[s]], thing[:Lasu], rtol=1e-5)
 

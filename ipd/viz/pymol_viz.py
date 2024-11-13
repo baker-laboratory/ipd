@@ -473,7 +473,7 @@ def show_ndarray_lines(
             if bothsides:
                 cgo.extend(cgo_sphere(ray[:3, 0] + ray[:3, 1], col=color, rad=spheres))
     if addtocgo is None:
-        cmd.load_cgo(cgo, name + "_%i" % i)
+        cmd.load_cgo(cgo, name + "_%i"%i)
     else:
         addtocgo.extend(cgo)
 
@@ -525,16 +525,16 @@ def show_ndarray_line_strip(
     toshow = toshow.reshape(-1)
     n = len(toshow) // breaks
     nextra, nheader = 16, 3
-    cgoary = np.empty((n + nextra) * breaks + 3)
+    cgoary = np.empty((n+nextra) * breaks + 3)
     # print(f'len cgoary {len(cgoary)} {breaks*n} breaks {breaks}')
     cgoary[0] = cgo.BEGIN
     cgoary[1] = cgo.LINE_STRIP
     cgoary[2] = cgo.VERTEX
     for i in range(breaks):
-        lb0 = (i + 0) * (n + nextra) + nheader + 4
-        ub0 = (i + 1) * (n + nextra) + nheader + 4 - nextra
-        lb1 = (i + 0) * n
-        ub1 = (i + 1) * n
+        lb0 = (i+0) * (n+nextra) + nheader + 4
+        ub0 = (i+1) * (n+nextra) + nheader + 4 - nextra
+        lb1 = (i+0) * n
+        ub1 = (i+1) * n
         cgoary[lb0 - 5:lb0 - 4] = cgo.COLOR
         cgoary[lb0 - 4:lb0 - 1] = col[i // breaks_groups]
         cgoary[lb0 - 1:lb0] = cgo.VERTEX
@@ -574,13 +574,13 @@ def generate_rainbow_gradient(n_values=100):
 
     # Generate the gradient by interpolating between each pair of colors
     num_colors = len(colors)
-    steps_per_color = n_values // (num_colors - 1)
+    steps_per_color = n_values // (num_colors-1)
     for i in range(num_colors - 1):
         start_color = np.array(colors[i])
         end_color = np.array(colors[i + 1])
         for j in range(steps_per_color):
             t = j / steps_per_color
-            gradient[i * steps_per_color + j] = (1 - t) * start_color + t * end_color
+            gradient[i*steps_per_color + j] = (1-t) * start_color + t*end_color
 
     # Manually set the last segment to the final color to ensure we cover all colors
     gradient[-steps_per_color:] = np.linspace(colors[-2], colors[-1], steps_per_color)

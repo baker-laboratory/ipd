@@ -412,7 +412,7 @@ def _ranges_to_sets(thing, n):
         assert len(thing[i]) == 2
         if any(isinstance(x, float) for x in thing[i]):
             thing[i] = [float(x) for x in thing[i]]
-        thing[i] = [int(n * x - 0.001) if isinstance(x, float) else x for x in thing[i]]
+        thing[i] = [int(n*x - 0.001) if isinstance(x, float) else x for x in thing[i]]
         thing[i] = [x + n if x < 0 else x for x in thing[i]]
         thing[i] = range(thing[i][0], thing[i][1] + 1)
     s = set()
@@ -532,7 +532,7 @@ class _Spline1D(DynamicParam):
         if not np.all(np.logical_and(-0.001 <= x, x <= 1.001)):
             raise ValueError(f'interpolation points {x} must be 0 <= x <= 1')
         self.spline = CubicSpline(x, y, **kw)
-        self.interpvals = self.spline(np.arange(n) / (n - 1))
+        self.interpvals = self.spline(np.arange(n) / (n-1))
 
     def value(self):
         design_step, diffuse_step, rfold_step = self.manager._step

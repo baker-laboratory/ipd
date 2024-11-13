@@ -147,12 +147,12 @@ def axis_angle_cen(xforms, ident_match_tol=1e-8, flipaxis=True):
     p1 = p1.to(xforms.dtype)
     p2 = p2.to(xforms.dtype)
     tparallel = dot(axis, xforms[..., :, 3])[..., None] * axis
-    q1 = xforms @ p1 - tparallel
-    q2 = xforms @ p2 - tparallel
+    q1 = xforms@p1 - tparallel
+    q2 = xforms@p2 - tparallel
     n1 = normalized(q1 - p1).reshape(-1, 4)
     n2 = normalized(q2 - p2).reshape(-1, 4)
-    c1 = (p1 + q1) / 2.0
-    c2 = (p2 + q2) / 2.0
+    c1 = (p1+q1) / 2.0
+    c2 = (p2+q2) / 2.0
 
     isect, norm, status = intersect_planes(c1, n1, c2, n2)
     cen1 = isect[..., :]
@@ -377,16 +377,16 @@ def rot3(axis, angle, shape=(3, 3), squeeze=True, dtype=None, device=None):
     # ic(a.dtype)
     if shape == (3, 3):
         rot = th.stack([
-            th.stack([aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac)], axis=-1),
-            th.stack([2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)], axis=-1),
-            th.stack([2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc], axis=-1),
+            th.stack([aa + bb - cc - dd, 2 * (bc+ad), 2 * (bd-ac)], axis=-1),
+            th.stack([2 * (bc-ad), aa + cc - bb - dd, 2 * (cd+ab)], axis=-1),
+            th.stack([2 * (bd+ac), 2 * (cd-ab), aa + dd - bb - cc], axis=-1),
         ],
                        axis=-2)
     elif shape == (4, 4):
         rot = th.stack([
-            th.stack([aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac), zero], axis=-1),
-            th.stack([2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab), zero], axis=-1),
-            th.stack([2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc, zero], axis=-1),
+            th.stack([aa + bb - cc - dd, 2 * (bc+ad), 2 * (bd-ac), zero], axis=-1),
+            th.stack([2 * (bc-ad), aa + cc - bb - dd, 2 * (cd+ab), zero], axis=-1),
+            th.stack([2 * (bd+ac), 2 * (cd-ab), aa + dd - bb - cc, zero], axis=-1),
             th.stack([zero, zero, zero, zero + 1], axis=-1),
         ],
                        axis=-2)
@@ -460,7 +460,7 @@ def rmsfit(mobile, target):
         # ic(V - V1)
         # assert 0
     rot_m2t = homog(V @ W).T
-    trans_m2t = target_cen - rot_m2t @ mobile_cen
+    trans_m2t = target_cen - rot_m2t@mobile_cen
     xform_mobile_to_target = homog(rot_m2t, trans_m2t)
 
     mobile = mobile + mobile_cen
@@ -565,7 +565,7 @@ def axis(xforms):
 
 def angle(xforms):
     tr = xforms[..., 0, 0] + xforms[..., 1, 1] + xforms[..., 2, 2]
-    cos = (tr - 1.0) / 2.0
+    cos = (tr-1.0) / 2.0
     angl = th.arccos(th.clip(cos, -1, 1))
     return angl
 

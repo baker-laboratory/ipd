@@ -110,7 +110,7 @@ class RigidBodyFollowers:
         if scalecoords:
             # ic(self.asym.xfromparent)
             assert np.allclose(self.asym.xfromparent[:3, :3], np.eye(3))
-            self.asym.moveby(ipd.htrans((scalefactor - 1) * self.asym.com()[:3]))
+            self.asym.moveby(ipd.htrans((scalefactor-1) * self.asym.com()[:3]))
 
         return self.cellsize
         # changed = any([b.scale_frame(scalefactor) for b in self.bodies])

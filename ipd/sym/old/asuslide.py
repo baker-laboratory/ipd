@@ -295,8 +295,8 @@ def slide_axis(
     if iflip == 0 and abs(total) > 0.01 and scaleslides != 1.0:
         # if slid into contact, apply scaleslides (-1) is to undo slide
         # ic(total, total + (scaleslides - 1) * total)
-        scaleslides_delta = ipd.homog.htrans((scaleslides - 1) * total * axis)
-        total += (scaleslides - 1) * total
+        scaleslides_delta = ipd.homog.htrans((scaleslides-1) * total * axis)
+        total += (scaleslides-1) * total
 
         assembly.asym.moveby(scaleslides_delta)
     if timer:
@@ -374,7 +374,7 @@ def slide_cellsize(
             break
         lastclose = close
         # ic(cellsize, flip, step)
-        delta = (cellsize + flip * step) / cellsize
+        delta = (cellsize + flip*step) / cellsize
         # ic(delta)
         # ic(cellsize, flip * step)
 
@@ -424,7 +424,7 @@ def slide_cellsize(
     if iflip == 0 and scaleslides != 1.0 and np.sum((cellsize - orig_cellsize)**2) > 0.001:
         # if slid into contact, apply scaleslides (-1) is to undo slide
 
-        newcellsize = (cellsize - orig_cellsize) * (scaleslides) + orig_cellsize
+        newcellsize = (cellsize-orig_cellsize) * (scaleslides) + orig_cellsize
         newdelta = newcellsize / cellsize
         # ic(cellsize, newcellsize)
         cellsize = newcellsize
@@ -475,7 +475,7 @@ def recenter_asu_frames(
     othercom /= len(assembly) - len(symelemsibs)
     comdir = ipd.homog.hnormalized(othercom - partnercom)
     halfdist = ipd.homog.hnorm(othercom - partnercom) / 2
-    center = (partnercom + othercom) / 2
+    center = (partnercom+othercom) / 2
     # ipd.showme(origcom, name='com')
     # ipd.showme(partnercom, name='partnercom')
     # ipd.showme(othercom, name='othercom')
@@ -489,7 +489,7 @@ def recenter_asu_frames(
                 axis = ipd.homog.hnormalized(othercom - partnercom)
                 dist = ipd.homog.hdot(axis, origcom - partnercom)
                 dist = halfdist - dist
-                newcen = origcom + axis * dist
+                newcen = origcom + axis*dist
             elif method == "toward_partner":
                 axis = ipd.homog.hnormalized(axis)
                 dist = halfdist / ipd.homog.hdot(axis, comdir)

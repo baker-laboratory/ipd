@@ -405,7 +405,7 @@ class PDBFile:
         assert nres * nfold == self.nres
         res = self.ri.unique()
         for ich in range(nfold):
-            for ires in range(nres * ich, nres * (ich + 1)):
+            for ires in range(nres * ich, nres * (ich+1)):
                 self.df.loc[self.df.ri == res[ires], "ch"] = "ABCDEFGHIJ"[ich].encode()
         return nfold
 

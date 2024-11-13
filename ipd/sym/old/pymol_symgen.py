@@ -41,11 +41,11 @@ def hacky_xtal_maker(
         if "component_pos" in list(kw.keys()):
             raise NotImplementedError("component_pos is no longer used")
             # nodes = kw["component_pos"][:1]
-        buildcgo = BuildCGO(nodes=nodes, label=tag + "_DEPTH%i" % d, **kw)
+        buildcgo = BuildCGO(nodes=nodes, label=tag + "_DEPTH%i"%d, **kw)
         symtrie.visit(buildcgo)
         buildcgo.show()
         if shownodes:
-            find_nodes = ComponentCenterVisitor(symelems=G, label=tag + "_NODES%i" % d, **kw)
+            find_nodes = ComponentCenterVisitor(symelems=G, label=tag + "_NODES%i"%d, **kw)
             symtrie.visit(find_nodes)
             FN.append(find_nodes)
             if symdef:
@@ -675,7 +675,7 @@ def generate_sym_trie_recurse(
 
     # if verbose: print len(newheads),igen,len(generators)
     if depth > 1:  # and newheads:
-        generate_sym_trie_recurse(generators, depth - 1, opts, body, heads, newheads, (igen + 1) % len(generators))
+        generate_sym_trie_recurse(generators, depth - 1, opts, body, heads, newheads, (igen+1) % len(generators))
 
 def generate_sym_trie(generators, depth=10, opts=None, verbose=False):
     raise NotImplementedError("some bug needs to be fixed")
@@ -750,7 +750,7 @@ def makecx(sel="all", name="TMP", n=5, axis=Uz):
     cmd.delete("TMP__C%i_*" % n)
     chains = ROSETTA_CHAINS
     for i in range(n):
-        cmd.create("TMP__C%i_%i" % (n, i), sel + " and (not TMP__C%i_*)" % n)
+        cmd.create("TMP__C%i_%i" % (n, i), sel + " and (not TMP__C%i_*)"%n)
     for i in range(n):
         rot("TMP__C%i_%i" % (n, i), axis, -360.0 * float(i) / float(n))
     for i in range(n):
@@ -799,7 +799,7 @@ if cmd is not None:
 
 def makedx(sel="all", n=2, name=None):
     if not name:
-        name = sel.replace("+", "").replace(" ", "") + "_D%i" % n
+        name = sel.replace("+", "").replace(" ", "") + "_D%i"%n
     cmd.delete(name)
     v = cmd.get_view()
     cmd.delete("_TMP_D%i_*" % n)
@@ -808,13 +808,13 @@ def makedx(sel="all", n=2, name=None):
     for i in range(n):
         dsel = "_TMP_D%i_%i" % (n, i)
         dsel2 = "_TMP_D%i_%i" % (n, n + i)
-        cmd.create(dsel, sel + " and (not _TMP_D%i_*)" % n)
+        cmd.create(dsel, sel + " and (not _TMP_D%i_*)"%n)
         rot(dsel, Uz, 360.0 * float(i) / float(n))
         cmd.create(dsel2, dsel)
         rot(dsel2, Ux, 180.0)
         for ic, c in enumerate(chains):
             cmd.alter("((%s) and chain %s )" % (dsel, c), "chain = '%s'" % ALLCHAIN[len(chains) * (i) + ic])
-            cmd.alter("((%s) and chain %s )" % (dsel2, c), "chain = '%s'" % ALLCHAIN[len(chains) * (i + n) + ic])
+            cmd.alter("((%s) and chain %s )" % (dsel2, c), "chain = '%s'" % ALLCHAIN[len(chains) * (i+n) + ic])
     cmd.create(name, "_TMP_D*")
     util.cbc(name)
     cmd.delete("_TMP_D*")
@@ -908,12 +908,12 @@ def cgo_cyl_arrow(c1, c2, rad, col=(1, 1, 1), col2=None, arrowlen=4.0):
     CGO.extend(cgo_cyl(c1, c2 + randnorm() * 0.0001, rad=rad, col=col, col2=col2))
     dirn = (c2 - c1).normalized()
     perp = projperp(dirn, Vec(0.2340790923, 0.96794275, 0.52037438472304783)).normalized()
-    arrow1 = c2 - dirn * arrowlen + perp * 2.0
-    arrow2 = c2 - dirn * arrowlen - perp * 2.0
+    arrow1 = c2 - dirn*arrowlen + perp*2.0
+    arrow2 = c2 - dirn*arrowlen - perp*2.0
     # -dirn to shift to sphere surf
-    CGO.extend(cgo_cyl(c2 - dirn * 3.0, arrow1 - dirn * 3.0, rad=rad, col=col2))
+    CGO.extend(cgo_cyl(c2 - dirn*3.0, arrow1 - dirn*3.0, rad=rad, col=col2))
     # -dirn to shift to sphere surf
-    CGO.extend(cgo_cyl(c2 - dirn * 3.0, arrow2 - dirn * 3.0, rad=rad, col=col2))
+    CGO.extend(cgo_cyl(c2 - dirn*3.0, arrow2 - dirn*3.0, rad=rad, col=col2))
     return CGO
 
 class BuildCGO(object):
@@ -1491,7 +1491,7 @@ class ComponentCenterVisitor(object):
             for icomp, dofs in enumerate(compdofjumps):
                 if not dofs:
                     continue
-                s = s.replace("JUMP__%s__to__%s" % dofs[0], "COMP_DOF_%i" % (icomp + 1))
+                s = s.replace("JUMP__%s__to__%s" % dofs[0], "COMP_DOF_%i" % (icomp+1))
 
         return s
 
@@ -1571,8 +1571,8 @@ class RosettaSymDef(object):
                     print("ERROR overlapping display center", cen)
                 # assert not cen in seenit
             seenit.append(cen)
-            CGO.extend(cgo_lineabs(cen, cen + X * XYlen, col=(1, 0, 0)))
-            CGO.extend(cgo_lineabs(cen, cen + Y * XYlen, col=(0, 1, 0)))
+            CGO.extend(cgo_lineabs(cen, cen + X*XYlen, col=(1, 0, 0)))
+            CGO.extend(cgo_lineabs(cen, cen + Y*XYlen, col=(0, 1, 0)))
         for name, vnames in list(self.edges.items()):
             v1name, v2name = vnames
             v1 = self.virtuals[v1name]
@@ -1582,7 +1582,7 @@ class RosettaSymDef(object):
             cen1 = self.displaycen(name, v1, offset=XYlen)
             cen2 = self.displaycen(name, v2, offset=XYlen)
             CGO.extend(cgo_lineabs(cen1, cen2, (1, 1, 1)))
-            upmid = (cen1 + 3.0 * cen2) / 4.0
+            upmid = (cen1 + 3.0*cen2) / 4.0
             CGO.extend(cgo_sphere(upmid))
             v = cmd.get_view()
             axes = [[v[0], v[3], v[6]], [v[1], v[4], v[7]], [v[2], v[5], v[8]]]

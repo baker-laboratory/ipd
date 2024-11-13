@@ -52,7 +52,7 @@ class Helix:
         frames = frames[dist <= xtalrad]
         if closest > 0:
             if closest_upper_only:
-                closest = 2 * (closest - 1) + 1
+                closest = 2 * (closest-1) + 1
             frames = frames[:closest]
             if closest_upper_only:
                 isupper = ipd.homog.hdot(ipd.homog.hnormalized([0, 1, 1]), frames[:, :, 3] - frames[0, :, 3]) >= 0
@@ -60,5 +60,5 @@ class Helix:
                 nframes = len(frames)
                 frames = frames[isupper]
                 # ic(frames.shape, nframes)
-                assert len(frames) - 1 == (nframes - 1) // 2
+                assert len(frames) - 1 == (nframes-1) // 2
         return frames

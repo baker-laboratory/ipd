@@ -256,7 +256,7 @@ def _find_compound_symelems(
             p, q = line_line_closest_points_pa(tcen, taxis, symcen, symaxis)
             timer.checkpoint("line_line_closest_points_pa")
             d = hnorm(p - q)
-            p = (p + q) / 2
+            p = (p+q) / 2
             ok = _inunit(p)
             ok = np.logical_and(ok, d < 0.001)
             if np.sum(ok) == 0:

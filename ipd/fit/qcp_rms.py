@@ -115,11 +115,11 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
     Szy2 = Szy * Szy
     Szx2 = Szx * Szx
 
-    SyzSzymSyySzz2 = 2.0 * (Syz * Szy - Syy * Szz)
+    SyzSzymSyySzz2 = 2.0 * (Syz*Szy - Syy*Szz)
     Sxx2Syy2Szz2Syz2Szy2 = Syy2 + Szz2 - Sxx2 + Syz2 + Szy2
 
-    C2 = -2.0 * (Sxx2 + Syy2 + Szz2 + Sxy2 + Syx2 + Sxz2 + Szx2 + Syz2 + Szy2)
-    C1 = 8.0 * (Sxx * Syz * Szy + Syy * Szx * Sxz + Szz * Sxy * Syx - Sxx * Syy * Szz - Syz * Szx * Sxy - Szy * Syx * Sxz)
+    C2 = -2.0 * (Sxx2+Syy2+Szz2+Sxy2+Syx2+Sxz2+Szx2+Syz2+Szy2)
+    C1 = 8.0 * (Sxx*Syz*Szy + Syy*Szx*Sxz + Szz*Sxy*Syx - Sxx*Syy*Szz - Syz*Szx*Sxy - Szy*Syx*Sxz)
 
     SxzpSzx = Sxz + Szx
     SyzpSzy = Syz + Szy
@@ -134,21 +134,21 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
     # print()
     # print("numba", SxzpSzx, SyzpSzy, SxypSyx, SyzmSzy, SxzmSzx, SxymSyx, SxxpSyy, SxxmSyy)
 
-    C0 = (Sxy2Sxz2Syx2Szx2 * Sxy2Sxz2Syx2Szx2 + (Sxx2Syy2Szz2Syz2Szy2 + SyzSzymSyySzz2) *
-          (Sxx2Syy2Szz2Syz2Szy2 - SyzSzymSyySzz2) + (-(SxzpSzx) * (SyzmSzy) + (SxymSyx) * (SxxmSyy - Szz)) *
-          (-(SxzmSzx) * (SyzpSzy) + (SxymSyx) * (SxxmSyy + Szz)) + (-(SxzpSzx) * (SyzpSzy) - (SxypSyx) * (SxxpSyy - Szz)) *
-          (-(SxzmSzx) * (SyzmSzy) - (SxypSyx) * (SxxpSyy + Szz)) + (+(SxypSyx) * (SyzpSzy) + (SxzpSzx) * (SxxmSyy + Szz)) *
-          (-(SxymSyx) * (SyzmSzy) + (SxzpSzx) * (SxxpSyy + Szz)) + (+(SxypSyx) * (SyzmSzy) + (SxzmSzx) * (SxxmSyy - Szz)) *
-          (-(SxymSyx) * (SyzpSzy) + (SxzmSzx) * (SxxpSyy - Szz)))
+    C0 = (Sxy2Sxz2Syx2Szx2*Sxy2Sxz2Syx2Szx2 + (Sxx2Syy2Szz2Syz2Szy2+SyzSzymSyySzz2) *
+          (Sxx2Syy2Szz2Syz2Szy2-SyzSzymSyySzz2) + (-(SxzpSzx) * (SyzmSzy) + (SxymSyx) *
+                                                   (SxxmSyy-Szz)) * (-(SxzmSzx) * (SyzpSzy) + (SxymSyx) * (SxxmSyy+Szz)) +
+          (-(SxzpSzx) * (SyzpSzy) - (SxypSyx) * (SxxpSyy-Szz)) * (-(SxzmSzx) * (SyzmSzy) - (SxypSyx) * (SxxpSyy+Szz)) +
+          (+(SxypSyx) * (SyzpSzy) + (SxzpSzx) * (SxxmSyy+Szz)) * (-(SxymSyx) * (SyzmSzy) + (SxzpSzx) * (SxxpSyy+Szz)) +
+          (+(SxypSyx) * (SyzmSzy) + (SxzmSzx) * (SxxmSyy-Szz)) * (-(SxymSyx) * (SyzpSzy) + (SxzmSzx) * (SxxpSyy-Szz)))
     # print(C0, C1, C2, E0)
     # Newton-Raphson
     mxEigenV = E0
     for i in range(50):
         oldg = mxEigenV
         x2 = mxEigenV * mxEigenV
-        b = (x2 + C2) * mxEigenV
+        b = (x2+C2) * mxEigenV
         a = b + C1
-        delta = ((a * mxEigenV + C0) / (2.0 * x2 * mxEigenV + b + a))
+        delta = ((a*mxEigenV + C0) / (2.0*x2*mxEigenV + b + a))
         mxEigenV -= delta
         # printf("\n diff[%3d]: %16g %16g %16g", i, mxEigenV - oldg,
         # evalprec*mxEigenV, mxEigenV)
@@ -161,7 +161,7 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
 
     # the math.fabs() is to guard against extremely small, but *negative* numbers due
     # to floating point error
-    rms = math.sqrt(math.fabs(2.0 * (E0 - mxEigenV) / npts))
+    rms = math.sqrt(math.fabs(2.0 * (E0-mxEigenV) / npts))
 
     # print(rms, npts)
     # printf("\n\n %16g %16g %16g \n", rms, E0, 2.0 * (E0 - mxEigenV)/npts)
@@ -184,18 +184,18 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
     a42 = a24
     a43 = a34
     a44 = Szz - SxxpSyy - mxEigenV
-    a3344_4334 = a33 * a44 - a43 * a34
-    a3244_4234 = a32 * a44 - a42 * a34
-    a3243_4233 = a32 * a43 - a42 * a33
-    a3143_4133 = a31 * a43 - a41 * a33
-    a3144_4134 = a31 * a44 - a41 * a34
-    a3142_4132 = a31 * a42 - a41 * a32
-    q1 = a22 * a3344_4334 - a23 * a3244_4234 + a24 * a3243_4233
-    q2 = -a21 * a3344_4334 + a23 * a3144_4134 - a24 * a3143_4133
-    q3 = a21 * a3244_4234 - a22 * a3144_4134 + a24 * a3142_4132
-    q4 = -a21 * a3243_4233 + a22 * a3143_4133 - a23 * a3142_4132
+    a3344_4334 = a33*a44 - a43*a34
+    a3244_4234 = a32*a44 - a42*a34
+    a3243_4233 = a32*a43 - a42*a33
+    a3143_4133 = a31*a43 - a41*a33
+    a3144_4134 = a31*a44 - a41*a34
+    a3142_4132 = a31*a42 - a41*a32
+    q1 = a22*a3344_4334 - a23*a3244_4234 + a24*a3243_4233
+    q2 = -a21 * a3344_4334 + a23*a3144_4134 - a24*a3143_4133
+    q3 = a21*a3244_4234 - a22*a3144_4134 + a24*a3142_4132
+    q4 = -a21 * a3243_4233 + a22*a3143_4133 - a23*a3142_4132
 
-    qsqr = q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4
+    qsqr = q1*q1 + q2*q2 + q3*q3 + q4*q4
 
     # The following code tries to calculate another column in the adjoint matrix
     #   when the norm of the current column is too small. Usually this block will
@@ -203,32 +203,32 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
     #   but it is most likely unnecessary.
 
     if (qsqr < evecprec):
-        q1 = a12 * a3344_4334 - a13 * a3244_4234 + a14 * a3243_4233
-        q2 = -a11 * a3344_4334 + a13 * a3144_4134 - a14 * a3143_4133
-        q3 = a11 * a3244_4234 - a12 * a3144_4134 + a14 * a3142_4132
-        q4 = -a11 * a3243_4233 + a12 * a3143_4133 - a13 * a3142_4132
-        qsqr = q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4
+        q1 = a12*a3344_4334 - a13*a3244_4234 + a14*a3243_4233
+        q2 = -a11 * a3344_4334 + a13*a3144_4134 - a14*a3143_4133
+        q3 = a11*a3244_4234 - a12*a3144_4134 + a14*a3142_4132
+        q4 = -a11 * a3243_4233 + a12*a3143_4133 - a13*a3142_4132
+        qsqr = q1*q1 + q2*q2 + q3*q3 + q4*q4
 
         if (qsqr < evecprec):
-            a1324_1423 = a13 * a24 - a14 * a23
-            a1224_1422 = a12 * a24 - a14 * a22
-            a1223_1322 = a12 * a23 - a13 * a22
-            a1124_1421 = a11 * a24 - a14 * a21
-            a1123_1321 = a11 * a23 - a13 * a21
-            a1122_1221 = a11 * a22 - a12 * a21
+            a1324_1423 = a13*a24 - a14*a23
+            a1224_1422 = a12*a24 - a14*a22
+            a1223_1322 = a12*a23 - a13*a22
+            a1124_1421 = a11*a24 - a14*a21
+            a1123_1321 = a11*a23 - a13*a21
+            a1122_1221 = a11*a22 - a12*a21
 
-            q1 = a42 * a1324_1423 - a43 * a1224_1422 + a44 * a1223_1322
-            q2 = -a41 * a1324_1423 + a43 * a1124_1421 - a44 * a1123_1321
-            q3 = a41 * a1224_1422 - a42 * a1124_1421 + a44 * a1122_1221
-            q4 = -a41 * a1223_1322 + a42 * a1123_1321 - a43 * a1122_1221
-            qsqr = q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4
+            q1 = a42*a1324_1423 - a43*a1224_1422 + a44*a1223_1322
+            q2 = -a41 * a1324_1423 + a43*a1124_1421 - a44*a1123_1321
+            q3 = a41*a1224_1422 - a42*a1124_1421 + a44*a1122_1221
+            q4 = -a41 * a1223_1322 + a42*a1123_1321 - a43*a1122_1221
+            qsqr = q1*q1 + q2*q2 + q3*q3 + q4*q4
 
             if (qsqr < evecprec):
-                q1 = a32 * a1324_1423 - a33 * a1224_1422 + a34 * a1223_1322
-                q2 = -a31 * a1324_1423 + a33 * a1124_1421 - a34 * a1123_1321
-                q3 = a31 * a1224_1422 - a32 * a1124_1421 + a34 * a1122_1221
-                q4 = -a31 * a1223_1322 + a32 * a1123_1321 - a33 * a1122_1221
-                qsqr = q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4
+                q1 = a32*a1324_1423 - a33*a1224_1422 + a34*a1223_1322
+                q2 = -a31 * a1324_1423 + a33*a1124_1421 - a34*a1123_1321
+                q3 = a31*a1224_1422 - a32*a1124_1421 + a34*a1122_1221
+                q4 = -a31 * a1223_1322 + a32*a1123_1321 - a33*a1122_1221
+                qsqr = q1*q1 + q2*q2 + q3*q3 + q4*q4
 
                 if (qsqr < evecprec):
                     # if qsqr is still too small, return the identity matrix.
@@ -255,13 +255,13 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
     ax = q1 * q2
 
     rot[0, 0] = a2 + x2 - y2 - z2
-    rot[1, 0] = 2 * (xy + az)
-    rot[2, 0] = 2 * (zx - ay)
-    rot[0, 1] = 2 * (xy - az)
+    rot[1, 0] = 2 * (xy+az)
+    rot[2, 0] = 2 * (zx-ay)
+    rot[0, 1] = 2 * (xy-az)
     rot[1, 1] = a2 - x2 + y2 - z2
-    rot[2, 1] = 2 * (yz + ax)
-    rot[0, 2] = 2 * (zx + ay)
-    rot[1, 2] = 2 * (yz - ax)
+    rot[2, 1] = 2 * (yz+ax)
+    rot[0, 2] = 2 * (zx+ay)
+    rot[1, 2] = 2 * (yz-ax)
     rot[2, 2] = a2 - x2 - y2 + z2
 
     return rms

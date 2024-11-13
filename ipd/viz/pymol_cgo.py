@@ -230,13 +230,13 @@ def cgo_fan(
     if arc > 10:
         arc = np.radians(arc)
     col2 = col2 or col
-    rot = ipd.homog.hrot(axis, arc / (ntri + 0), cen)
+    rot = ipd.homog.hrot(axis, arc / (ntri+0), cen)
 
     # ic(startpoint - cen)
     dirn = ipd.homog.hprojperp(axis, startpoint - cen)
     dirn = ipd.homog.hnormalized(dirn)
-    cen = cen + fanshift * axis
-    pt1 = cen + dirn * rad  # - thickness * axis * 0.5
+    cen = cen + fanshift*axis
+    pt1 = cen + dirn*rad  # - thickness * axis * 0.5
 
     shift = randspread * (np.random.rand() - 0.5) * axis
     cen += shift
@@ -304,12 +304,12 @@ def cgo_cyl_arrow(c1, c2, r, col=(1, 1, 1), col2=None, arrowlen=4.0):
     dirn = ipd.homog.hnormalized(c2 - c1)
     perp = ipd.homog.hnormalized(ipd.hprojperp(dirn, [0.2340790923, 0.96794275, 0.52037438472304783]))
     if arrowlen > 0:
-        arrow1 = c2 - dirn * arrowlen + perp * 2.0
-        arrow2 = c2 - dirn * arrowlen - perp * 2.0
+        arrow1 = c2 - dirn*arrowlen + perp*2.0
+        arrow2 = c2 - dirn*arrowlen - perp*2.0
         # -dirn to shift to sphere surf
-        CGO.extend(cgo_cyl(c2 - dirn * 3.0, arrow1 - dirn * 3.0, rad=r, col=col2))
+        CGO.extend(cgo_cyl(c2 - dirn*3.0, arrow1 - dirn*3.0, rad=r, col=col2))
         # -dirn to shift to sphere surf
-        CGO.extend(cgo_cyl(c2 - dirn * 3.0, arrow2 - dirn * 3.0, rad=r, col=col2))
+        CGO.extend(cgo_cyl(c2 - dirn*3.0, arrow2 - dirn*3.0, rad=r, col=col2))
     return CGO
 
 def showcube(*args, **kw):

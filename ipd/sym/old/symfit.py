@@ -455,7 +455,7 @@ def get_symops_isect(sym, cen1, cen2, axs1, axs2, nfold, max_nan=0.9, isect_outl
 
     p = p[~np.isnan(p)].reshape(-1, 4)
     q = q[~np.isnan(q)].reshape(-1, 4)
-    isect = (p + q) / 2
+    isect = (p+q) / 2
     assert len(isect) > 0
     center = np.mean(isect, axis=0)
 
@@ -479,7 +479,7 @@ def get_radius_err(frames, center, **kw):
     rad_err = np.sqrt(np.mean(radii**2)) - radius
     if rad_err < -0.001:
         print("WARNING rad_err", rad_err, radii)
-    framedist_err = max(0, radius / mindist - 5)
+    framedist_err = max(0, radius/mindist - 5)
     return radius, rad_err, framedist_err
 
 def best_axes_fit(sym, xsamp, nfolds, tgtaxes, tofitaxes, **kw):
@@ -890,7 +890,7 @@ def symfit_mc_play(
 
             if showme and delta < 0 and isamp - lastviz > vizinterval:
                 # pairs = ipd.sym.stupid_pairs_from_symops(symfit.symops)
-                col = (isamp / maxiters, 1 - isamp / maxiters, 1)  #######
+                col = (isamp / maxiters, 1 - isamp/maxiters, 1)  #######
 
                 if showsymdups:
                     vizfresh = not showfulltraj

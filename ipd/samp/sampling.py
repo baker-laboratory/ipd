@@ -94,7 +94,7 @@ def quat_torus_xform(resl, maxtip=th.pi / 6, ringang=2 * th.pi, bcc=True, device
     axis recommend maxtip a multiple of resl."""
     n1 = int(math.ceil(ringang / resl))
     n2 = int(math.ceil(maxtip / resl))
-    n3 = n2 * 2 + 1
+    n3 = n2*2 + 1
     # ic(n1, n2, n3)
     o = th.as_tensor([0, resl / 2])[:, None] if bcc else th.as_tensor([0])
     wx = th.linspace(0, ringang, n1).repeat_interleave(n3**2)

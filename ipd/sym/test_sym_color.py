@@ -33,7 +33,7 @@ def test_symslices_from_colors_fuzz(nsub, colors, isasu, unsymfrac, **kw):
     Lasu = th.full((6, ), -1)
     for t, uf in enumerate(unsymfrac):
         if uf is not None:
-            Lasu[t] = max(0, int((1 - uf) * th.sum(colors == t))) // (1 if isasu else nsub)
+            Lasu[t] = max(0, int((1-uf) * th.sum(colors == t))) // (1 if isasu else nsub)
     xfail = symslices_from_colors_should_fail(nsub, colors, Lasu, isasu)
     try:
         idx = ipd.sym.symslices_from_colors(nsub, colors, isasu, Lasu, recolor=False)

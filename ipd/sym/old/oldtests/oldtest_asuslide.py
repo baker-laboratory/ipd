@@ -254,7 +254,7 @@ def asuslide_case4():
         subiters=4,
         clashiters=0,
         receniters=0,
-        clashdis=4 * t + 4,
+        clashdis=4*t + 4,
         contactdis=14,
         contactfrac=0.1,
         cellscalelimit=1.5,
@@ -295,14 +295,14 @@ def asuslide_case3():
         # tooclosefunc=tooclose,
         cellsize=cellsize,
         maxstep=100,
-        step=4 * t + 2,
+        step=4*t + 2,
         iters=6,
         subiters=4,
         clashiters=0,
         receniters=0,
-        clashdis=4 * t + 4,
-        contactdis=t * (cdistmax - cdistmin) + cdistmin,
-        contactfrac=t * (cfracmax - cfracmin) + cfracmin,
+        clashdis=4*t + 4,
+        contactdis=t * (cdistmax-cdistmin) + cdistmin,
+        contactfrac=t * (cfracmax-cfracmin) + cfracmin,
         cellscalelimit=1.5,
         # vizsphereradius=2,
         towardaxis=True,
@@ -617,13 +617,13 @@ def asuslide_case2():
         frames=xtal.primary_frames(cellsize),
         cellsize=cellsize,
         maxstep=100,
-        step=6 * fracremains + 2,
+        step=6*fracremains + 2,
         iters=6,
         clashiters=0,
         receniters=3,
-        clashdis=4 * fracremains + 2,
-        contactdis=8 * fracremains + 8,
-        contactfrac=fracremains * 0.3 + 0.3,
+        clashdis=4*fracremains + 2,
+        contactdis=8*fracremains + 8,
+        contactfrac=fracremains*0.3 + 0.3,
         # vizsphereradius=2,
         towardaxis=True,
         alongaxis=False,
@@ -1035,7 +1035,7 @@ def test_asuslide_oct():
     assert np.allclose(np.eye(3), slid.asym.position[:3, :3])
     # slid.dump_pdb('test0.pdb')
 
-    xyz = xyz0 - ax2 * 30
+    xyz = xyz0 - ax2*30
     slid2 = asuslide(
         showme=0,
         sym=sym,
@@ -1057,7 +1057,7 @@ def test_asuslide_oct():
     assert np.allclose(slid.asym.com(), [67.39961966, 67.39961966, 25.00882048, 1.0])
     # slid.dump_pdb('test1.pdb')
 
-    xyz = xyz0 - ax2 * 20
+    xyz = xyz0 - ax2*20
     slid2 = asuslide(
         showme=0,
         sym=sym,

@@ -135,13 +135,13 @@ def quat_to_rot(quat, dtype="f8", shape=(3, 3)):
     outshape = quat.shape[:-1]
     rot = np.zeros(outshape + shape, dtype=dtype)
     rot[..., 0, 0] = 1 - 2 * (qj**2 + qk**2)
-    rot[..., 0, 1] = 2 * (qi * qj - qk * qr)
-    rot[..., 0, 2] = 2 * (qi * qk + qj * qr)
-    rot[..., 1, 0] = 2 * (qi * qj + qk * qr)
+    rot[..., 0, 1] = 2 * (qi*qj - qk*qr)
+    rot[..., 0, 2] = 2 * (qi*qk + qj*qr)
+    rot[..., 1, 0] = 2 * (qi*qj + qk*qr)
     rot[..., 1, 1] = 1 - 2 * (qi**2 + qk**2)
-    rot[..., 1, 2] = 2 * (qj * qk - qi * qr)
-    rot[..., 2, 0] = 2 * (qi * qk - qj * qr)
-    rot[..., 2, 1] = 2 * (qj * qk + qi * qr)
+    rot[..., 1, 2] = 2 * (qj*qk - qi*qr)
+    rot[..., 2, 0] = 2 * (qi*qk - qj*qr)
+    rot[..., 2, 1] = 2 * (qj*qk + qi*qr)
     rot[..., 2, 2] = 1 - 2 * (qi**2 + qj**2)
     return rot
 
@@ -156,10 +156,10 @@ def quat_multiply(q, r):
     r0, r1, r2, r3 = np.moveaxis(r, -1, 0)
     assert np.all(q1 == q[..., 1])
     t = np.empty_like(q)
-    t[..., 0] = r0 * q0 - r1 * q1 - r2 * q2 - r3 * q3
-    t[..., 1] = r0 * q1 + r1 * q0 - r2 * q3 + r3 * q2
-    t[..., 2] = r0 * q2 + r1 * q3 + r2 * q0 - r3 * q1
-    t[..., 3] = r0 * q3 - r1 * q2 + r2 * q1 + r3 * q0
+    t[..., 0] = r0*q0 - r1*q1 - r2*q2 - r3*q3
+    t[..., 1] = r0*q1 + r1*q0 - r2*q3 + r3*q2
+    t[..., 2] = r0*q2 + r1*q3 + r2*q0 - r3*q1
+    t[..., 3] = r0*q3 - r1*q2 + r2*q1 + r3*q0
     return t
 
 # update to numba 0.52 broke this

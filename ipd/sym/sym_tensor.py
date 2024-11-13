@@ -431,7 +431,7 @@ class OneDim(Shape):
         for i in range(1, self.attr.sym.nsub):
             val = self[:N]
             if ptr: val = self.attr.sym.idx.idx_asu_to_sub[i, val[:, self.attr.isidx].to(int)]
-            self[i * N:(i + 1) * N] = val
+            self[i * N:(i+1) * N] = val
         return self
 
 class TwoDim(Shape):
@@ -474,7 +474,7 @@ class TwoDim(Shape):
         for i in range(1, self.attr.sym.nsub):
             val = contig[:N, :N]
             if ptr: val = self.attr.sym.idx.idx_asu_to_sub[i, val[:, :, self.attr.isidx].to(int)]
-            contig[i * N:(i + 1) * N, i * N:(i + 1) * N] = val
+            contig[i * N:(i+1) * N, i * N:(i+1) * N] = val
         return self
 
 class Sparse1D(OneDim):

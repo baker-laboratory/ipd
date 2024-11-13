@@ -43,7 +43,7 @@ def guess_cx_axis(coords, nfold):
     coords = coords.reshape(coords.shape[0], -1, coords.shape[-1])
     ncheck = nfold if nfold > 2 else 1
     # ic(coords.shape)
-    fit = [ipd.hrmsfit(coords[idx[i]], coords[idx[(i + 1) % len(idx)]]) for i in range(ncheck)]
+    fit = [ipd.hrmsfit(coords[idx[i]], coords[idx[(i+1) % len(idx)]]) for i in range(ncheck)]
     rms, fit, xform = zip(*fit)
     axis, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(np.stack(xform))
     # ic(hel)
@@ -81,7 +81,7 @@ def xtalfit_I213(coords):
         y3f = cen3[1] + x[1]
         x2f = cen2[0] + x[0]
         y2f = cen2[1] + x[1]
-        return (x3f - y3f)**2 + (0.75 * x2f - 1.5 * y2f)**2
+        return (x3f - y3f)**2 + (0.75*x2f - 1.5*y2f)**2
 
     import scipy.optimize
 
@@ -184,8 +184,8 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
             cellgrad = cellsize.grad
             cartshiftgrad = cartshift.grad
             mul = 1
-            cellsize = (cellsize - mul * cellgrad).clone().detach().requires_grad_(True)
-            cartshift = (cartshift - mul * cartshiftgrad).clone().detach().requires_grad_(True)
+            cellsize = (cellsize - mul*cellgrad).clone().detach().requires_grad_(True)
+            cartshift = (cartshift - mul*cartshiftgrad).clone().detach().requires_grad_(True)
 
             ic(err)  # , cellsize, cartshift, cartshiftgrad)
 

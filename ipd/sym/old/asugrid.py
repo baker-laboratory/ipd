@@ -50,12 +50,12 @@ def place_asu_grid_multiscale(
             cellsize,
             *a,
             **kw.sub(
-                nsampcell=kw.nsampcell + (i - 1),
-                lbub=kw.lbub + (i - 1) * 0.03,
-                lbubcell=kw.lbubcell + (i - 1) * 0.01,
-                dnistcontact=(kw.distcontact[0], kw.distcontact[1] + (i - 1)),
-                distavoid=kw.distavoid - (i - 1),
-                distspread=kw.distspread + (i - 1),
+                nsampcell=kw.nsampcell + (i-1),
+                lbub=kw.lbub + (i-1) * 0.03,
+                lbubcell=kw.lbubcell + (i-1) * 0.01,
+                dnistcontact=(kw.distcontact[0], kw.distcontact[1] + (i-1)),
+                distavoid=kw.distavoid - (i-1),
+                distspread=kw.distspread + (i-1),
             ),
         )
         pos, cellsize = newpos[0], newcell[0]
@@ -160,7 +160,7 @@ def place_asu_grid(
     goodpos = posgrid[w[:][1]]
     # cellpos = goodpos / goodcell[:, None]
     # cellpos0 = pos0 / cellsize0
-    origdist = np.sqrt(ipd.homog.hnorm2(goodpos - refpos) + ((goodcell - refcell) * 1.1)**2)
+    origdist = np.sqrt(ipd.homog.hnorm2(goodpos - refpos) + ((goodcell-refcell) * 1.1)**2)
     order = np.argsort(origdist)
     goodcell, goodpos = goodcell[order], goodpos[order]
     # ic(origdist[order])

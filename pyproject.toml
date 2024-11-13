@@ -58,7 +58,7 @@ ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
 minversion = '6.0'
-addopts = '-m "not ci"'
+addopts = '-m "not ci" --disable-warnings'
 testpaths = [
     'ipd/tests',
 ]
@@ -74,9 +74,10 @@ indent_width = 4
 column_limit = 123
 blank_line_before_nested_class_or_def = false
 blank_lines_around_top_level_definition = 1
+arithmetic_precedence_indication = true
 
 [tool.pyright]
-include = ['rf_diffusion', 'lib/rf2aa/rf2aa', 'lib/rf2aa/lib/ipd/ipd']
+include = ['ipd']
 exclude = [
     '**/*.log',
     'ipd/viz/*',
@@ -96,9 +97,6 @@ reportMissingTypeStubs = false
 pythonPlatform = 'Linux'
 requires-python = '>=3.11'
 pythonVersion = '3.12'
-executionEnvironments = [
-  { root = '/home/sheffler/sw/MambaForge/envs/pyright/bin/python', pythonVersion = '3.12', pythonPlatform = 'Linux', extraPaths = [] },
-]
 
 [tool.ruff]
 lint.ignore = [

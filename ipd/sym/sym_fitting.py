@@ -64,7 +64,7 @@ def set_particle_radius_if_necessary(sym, xyz, Lasu, force_radius=None, disable_
         com = asu_com(sym, xyz[:, :Natom], Lasu, **kw)
         r = th.norm(com)
         if not 0.9 < r / force_radius < 1.1:
-            delta = (force_radius - r) * com / r
+            delta = (force_radius-r) * com / r
             xyz[:Lasu] += delta
             xyz[:Lsym] = th.einsum('sij,raj->srai', sym.symmRs, xyz[:Lasu]).reshape(Lsym, *xyz.shape[1:])
             print(f'set particle radius to {force_radius} from {r}')

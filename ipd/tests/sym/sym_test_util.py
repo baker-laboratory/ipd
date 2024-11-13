@@ -62,7 +62,7 @@ def symslices(draw, L=None, Lmin=20, Lmax=100, maxslice=None, bad=False, raw=Fal
         if good and good[-1][-1] > lb:
             overlaps.append((L, lb, ub))
             continue
-        while (ub - lb) % nsub:
+        while (ub-lb) % nsub:
             if len(badsym) == len(good): badsym.append((L, lb, ub))
             ub += 1
         if ub > L: break
@@ -73,7 +73,7 @@ def symslices(draw, L=None, Lmin=20, Lmax=100, maxslice=None, bad=False, raw=Fal
 
     if bad:
         olapok = len(overlaps) > len(good)
-        symok = any((ub - lb) % nsub for _, lb, ub in badsym)
+        symok = any((ub-lb) % nsub for _, lb, ub in badsym)
         if olapok and symok:
             if draw(st.integers(0, 1)): return nsub, overlaps
             else: return nsub, badsym
