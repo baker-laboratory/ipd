@@ -31,6 +31,8 @@ def test_make_testfile(tmpdir):
     os.system(f'cp {ipd.projdir}/../pyproject.toml {tmpdir}')
     ipd.dev.make_testfile(sourcefile, testfile)
     code = pathlib.Path(testfile).read_text()
+    code = code.replace(sourcefile, 'SOURCEFILE')
+    pathlib.Path(testfile).write_text(code)
     pathlib.Path(f'{tmpdir}/expected.py').write_text(EXPECTED)
     diff = ipd.dev.run(f'diff -wB {tmpdir}/expected.py {tmpdir}/testfile.py', errok=True)
     if diff:
@@ -90,6 +92,8 @@ def test_SomeOtherClass():
     # SomeOtherClass.triple(bar: sourcefile.Bar) -> sourcefile.Bar
     assert 0
 
+# please develop a comprehensive set of pytest tests, including edge cases and input validation, for the code in file:
+# SOURCEFILE, specifically the functions, classes and methods specified below:
 # please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function some_func with the following signature: sourcefile.some_func(a, *, b=5) -> None
 # please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function some_other_func with the following signature: sourcefile.some_other_func() -> sourcefile.Return
 # please write a comprehensive set of pytest tests, including edge cases and input validation, for the class Bar with the following member function signatures:

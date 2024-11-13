@@ -9,7 +9,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Annotated, Optional, Union
 
-import compact_json
 import fastapi
 import httpx
 import pydantic
@@ -139,10 +138,11 @@ class SpecBase(pydantic.BaseModel):
     def modellayer(cls) -> str:
         return layerof(cls)
 
-    def _copy_with_newid(self) -> typing.Self:
+    def _copy_with_newid(self) -> 'SpecBase':
         return self.__class__(**{**self.model_dump(), 'id': uuid.uuid4()})
 
     def errors(self) -> str:
+        if not hasattr(self, '_errors'): return ''
         return self._errors
 
     def __getitem__(self, k):
@@ -218,6 +218,7 @@ class SpecBase(pydantic.BaseModel):
 
     @profiler
     def str_compact(self, linelen=120, strip_labels='invars outvars name'.split(), **kw):
+        import compact_json
         formatter = compact_json.Formatter()
         formatter.indent_spaces = 2
         formatter.max_inline_complexity = 10
@@ -456,6 +457,7 @@ class ClientBase:
         remote = []
         if not isinstance(thing, SpecBase):
             thing, remote, extra = self.make_spec(modelkind, **thing)
+        if err := thing.errors(): return err
         if _dispatch_on_type and hasattr(self, f'upload_{modelkind}'):
             return getattr(self, f'upload_{modelkind}')(thing, **kw)
         # thing = thing.to_spec()

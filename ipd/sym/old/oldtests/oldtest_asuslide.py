@@ -134,7 +134,7 @@ def test_asuslide_L632_2(showme=False):
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 160
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     xyz[:, 1] -= 2
@@ -183,7 +183,7 @@ def test_asuslide_L632_ignoreimmobile(showme=False):
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 160
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     xyz[:, 0] -= 30
@@ -321,7 +321,7 @@ def test_asuslide_helix_case1(showme=False):
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7084203)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=20)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=20)
 
     h = ipd.sym.helix.Helix(turns=15, phase=0.5, nfold=1)
     spacing = 50
@@ -349,7 +349,7 @@ def test_asuslide_helix_nfold1(showme=False):
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
 
     h = ipd.sym.helix.Helix(turns=15, phase=0.5, nfold=1)
     spacing = 70
@@ -380,7 +380,7 @@ def test_asuslide_helix_nfold1_2():
     showmeopts = ipd.dev.Bunch(vizsphereradius=6)
 
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
 
     h = ipd.sym.helix.Helix(turns=8, phase=0.5, nfold=1)
     spacing = 70
@@ -415,7 +415,7 @@ def test_asuslide_helix_nfold3():
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
 
     h = ipd.sym.helix.Helix(turns=6, phase=0.5, nfold=3)
     spacing = 50
@@ -439,7 +439,7 @@ def test_asuslide_helix_nfold5():
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
 
     h = ipd.sym.helix.Helix(turns=4, phase=0.1, nfold=5)
     spacing = 40
@@ -467,7 +467,7 @@ def test_asuslide_L442():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 160
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     xyz[:, 1] -= 2
@@ -517,7 +517,7 @@ def test_asuslide_I4132_clashframes():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 200
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     xyz[:, :3] -= 2
@@ -706,7 +706,7 @@ def test_asuslide_I213():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 200
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     # asucen = xtal.asucen(method='closest', use_olig_nbrs=True, cellsize=csize)
     asucen = xtal.asucen(method="stored", cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
@@ -770,7 +770,7 @@ def test_asuslide_L632():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 160
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     xyz[:, 1] -= 2
@@ -814,7 +814,7 @@ def test_asuslide_I4132():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 360
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     xyz[:, 1] -= 2
@@ -890,7 +890,7 @@ def test_asuslide_p213():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 180
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(use_olig_nbrs=True, cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     xyz[:, 1] -= 2
@@ -988,7 +988,7 @@ def test_asuslide_oct():
     frames = ipd.sym.frames(sym, ontop=primary_frames)
 
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     xyz += ax2 * 20
     xyz += ax3 * 20
     xyz0 = xyz.copy()
@@ -1084,7 +1084,7 @@ def test_asuslide_P432_44(showme=False):
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 200
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(method="stored", cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     primary_frames = xtal.primary_frames(cellsize=csize)
@@ -1166,7 +1166,7 @@ def test_asuslide_P432_43(showme=False):
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 180
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(method="stored", cellsize=csize)
     xyz += ipd.homog.hvec(asucen)
     primary_frames = xtal.primary_frames(cellsize=csize)
@@ -1215,7 +1215,7 @@ def test_asuslide_F432():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 150
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(method="stored", cellsize=csize)
     # ic(asucen / csize)
     # assert 0
@@ -1266,7 +1266,7 @@ def test_asuslide_I432():
     xtal = ipd.sym.xtal.Xtal(sym)
     csize = 250
     np.random.seed(7)
-    xyz = ipd.tests.point_cloud(100, std=30, outliers=0)
+    xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     # ic(xyz.shape)
     # xyz += ipd.homog.hvec(xtal.asucen(method='stored', cellsize=csize))
     xyz += ipd.homog.hvec(xtal.asucen(method="closest", cellsize=csize))

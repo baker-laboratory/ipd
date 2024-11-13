@@ -171,7 +171,7 @@ def place_asu_grid(
     if clusterdist > 0 and len(goodpos) > 1:
         coords = ipd.homog.hxformpts(frames0, goodpos, outerprod=True)
         coords = coords.swapaxes(0, 1).reshape(len(goodpos), -1)
-        keep, clustid = ipd.cpp.cluster.cookie_cutter(coords, float(clusterdist))
+        keep, clustid = ipd.homog.hcom.cluster.cookie_cutter(coords, float(clusterdist))
         goodpos = goodpos[keep]
         goodcell = goodcell[keep]
 

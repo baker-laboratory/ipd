@@ -1,20 +1,32 @@
 import builtins
 import functools
 
-from ipd.dev.types.type_aliases import KW
+_WARNINGS_ISSUED = set()
 
-def change_exception(**kw: KW):
+def change_exception(**kw: dict[str, Exception]):
     """Decorator to change exceptions raised by a function."""
-    excmap = {getattr(builtins, k): v for k, v in kw.items()}
+    excmap: dict[Exception, Exception] = {getattr(builtins, k): v for k, v in kw.items()}  # type: ignore
 
     def deco(func):
         @functools.wraps(func)
         def wrap(*a, **kw):
             try:
                 return func(*a, **kw)
-            except tuple(excmap) as e:
-                raise excmap[e.__class__](str(e)) from e
+            except tuple(excmap) as e:  # type: ignore
+                raise excmap[e.__class__](str(e)) from e  # type: ignore
 
         return wrap
 
     return deco
+
+def WARNME(message, once=True):
+    if once and message not in _WARNINGS_ISSUED:
+        import traceback
+
+        print("-" * 80, flush=True)
+        print(message, flush=True)
+        traceback.print_stack()
+        _WARNINGS_ISSUED.add(message)
+        print("-" * 80)
+        return True
+    return False

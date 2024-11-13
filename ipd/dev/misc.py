@@ -5,8 +5,6 @@ import uuid
 
 import ipd
 
-_WARNINGS_ISSUED = set()
-
 def classname_or_str(T):
     return T if isinstance(T, str) else T.__name__
 
@@ -35,18 +33,6 @@ def printheader(*strs, char="-", width=80, printme=True, flush=True, frac=0.5, p
     if printme:
         print(msg, flush=flush, **kw)
     return msg
-
-def WARNME(message, once=True):
-    if once and message not in _WARNINGS_ISSUED:
-        import traceback
-
-        print("-" * 80, flush=True)
-        print(message, flush=True)
-        traceback.print_stack()
-        _WARNINGS_ISSUED.add(message)
-        print("-" * 80)
-        return True
-    return False
 
 def check_torch_to_numpy(stuff):
     if "torch" in sys.modules:
@@ -107,16 +93,6 @@ class Flusher:
     def close(self):
         self.out.close()
 
-def tobytes(s):
-    if isinstance(s, str):
-        return s.encode()
-    return s
-
-def tostr(s):
-    if isinstance(s, bytes):
-        return s.decode()
-    return s
-
 def todatetime(val):
     if isinstance(val, datetime.datetime): return val
     try:
@@ -130,10 +106,6 @@ def touuid(val):
         return uuid.UUID(val)
     except (TypeError, ValueError, AttributeError):
         return None
-
-def toname(val):
-    if isinstance(val, str) and val.isidentifier(): return val
-    return None
 
 def datetimetag():
     now = datetime.now()

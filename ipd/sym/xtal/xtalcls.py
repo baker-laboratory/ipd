@@ -10,6 +10,14 @@ cryst1_pattern_full = "CRYST1 %8.3f %8.3f %8.3f%7.2f%7.2f%7.2f %s\n"
 # CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 I 21 3
 # CRYST1  139.291  139.291  139.291  90.00  90.00  90.00 I 21 3
 
+_xtal_cache = {}
+
+def xtal(sym, **kw):
+    global _xtal_cache
+    if sym not in _xtal_cache:
+        _xtal_cache[sym] = ipd.sym.xtal.Xtal(sym, **kw)
+    return _xtal_cache[sym]
+
 class Xtal:
     def __init__(self, name="xtal", symelems=None, **kw):
         self.info = None
@@ -102,7 +110,7 @@ class Xtal:
         if ontop is not None and len(ontop) > 0:
             frames = ipd.sym.put_frames_on_top(frames, ontop, cellsize=cellsize, **kw)
 
-        assert ipd.hunique(frames)
+        assert ipd.homog.hnuique(frames)
         ipd.dev.checkpoint(kw)
 
         return frames.round(10)
@@ -322,10 +330,10 @@ class Xtal:
         # cache='nosave',
         **kw,
     ):
-        cachefile = ipd.package_data_path(f'xtal/lots_of_frames_{self.name.replace(" ","_")}.npy')
+        cachefile = ipd.dev.package_data_path(f'xtal/lots_of_frames_{self.name.replace(" ","_")}.npy')
         if self.dimension == 2:
             generators = np.concatenate([s.operators for s in self.symelems])
-            x, _ = ipd.cpp.geom.expand_xforms_rand(generators, depth=depth, radius=genradius, trials=trials)
+            x, _ = ipd.homog.hcom.geom.expand_xforms_rand(generators, depth=depth, radius=genradius, trials=trials)
             testpoint = [0.001, 0.002, 0.003]
             cens = ipd.homog.hxform(x, testpoint)
             inboundslow = np.all(cens >= -bound - 0.001, axis=-1)

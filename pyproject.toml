@@ -19,6 +19,7 @@ dependencies = [
     'ipykernel',
     'ipywidgets',
     'ipdb',
+    'jinja2',
     'more_itertools',
     'numba',
     'numpy',

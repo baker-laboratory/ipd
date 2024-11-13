@@ -1,23 +1,22 @@
-import inspect
-import traceback
 import tempfile
+import traceback
 
 import pydantic
 
 import ipd
 
-def maintest(namespace, fixtures=None):
+def maintest(namespace, fixtures=None, setup=lambda: None, funcsetup=lambda: None, just=None):
+    just = just or []
     fixtures, passed, failed = fixtures or {}, [], []
     with tempfile.TemporaryDirectory() as tmpdir:
+        ipd.dev.call_with_args_from(fixtures, setup)
         fixtures['tmpdir'] = tmpdir
-        for name, fn in [(n, f) for n, f in namespace.items() if n.startswith('test_')]:
-            print('=' * 20, fn.__name__, '=' * 20)
+        for name, func in [(n, f) for n, f in namespace.items() if n.startswith('test_')]:
+            if just and name not in just: continue
+            print('=' * 20, func.__name__, '=' * 20)
+            ipd.dev.call_with_args_from(fixtures, funcsetup)
             try:
-                for p in inspect.signature(fn).parameters:
-                    if p not in fixtures:
-                        raise ValueError(f'maintest: No fixture for test function: {fn.__qualname__} param: {p}')
-                args = {p: fixtures[p] for p in inspect.signature(fn).parameters}
-                fn(**args)
+                ipd.dev.call_with_args_from(fixtures, func)
                 passed.append(name)
             except pydantic.ValidationError as e:
                 print(e)
@@ -33,26 +32,13 @@ def maintest(namespace, fixtures=None):
     ipd.dev.global_timer.report()
     return passed, failed
 
-def maincrudtest(crud, namespace):
-    passed, failed = [], []
-    with crud() as (backend, server, client, testclient):
-        for name, fn in [(n, f) for n, f in namespace.items() if n.startswith('test_')]:
+def maincrudtest(crud, namespace, fixtures=None, funcsetup=lambda: None, **kw):
+    fixtures = fixtures or {}
+    with crud() as crud:
+        fixtures |= crud
+
+        def newfuncsetup(backend):
             backend._clear_all_data_for_testing_only()
-            print('=' * 20, fn.__name__, '=' * 20)
-            try:
-                args = {p: locals()[p] for p in inspect.signature(fn).parameters}
-                fn(**args)
-                passed.append(name)
-            except pydantic.ValidationError as e:
-                print(e)
-                print(e.errors())
-                print(traceback.format_exc())
-                failed.append(name)
+            ipd.dev.call_with_args_from(fixtures, funcsetup)
 
-    print(f'maincrudtest {namespace["__file__"]}:')
-    for p in passed:
-        print(f'    PASS {p}')
-    for f in failed:
-        print(f'    FAIL {f}')
-    ipd.dev.global_timer.report()
-    return passed, failed
+        return maintest(namespace, fixtures, funcsetup=newfuncsetup, **kw)

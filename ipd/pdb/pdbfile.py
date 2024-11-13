@@ -459,7 +459,7 @@ class PDBFile:
 
     @property
     def coords(self):
-        crd = ipd.hpoint(np.stack([self.df.x, self.df.y, self.df.z], axis=-1))
+        crd = ipd.homog.hpoint(np.stack([self.df.x, self.df.y, self.df.z], axis=-1))
         crd.flags.writeable = False
         return crd
 

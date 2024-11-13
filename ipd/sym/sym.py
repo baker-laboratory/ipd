@@ -169,12 +169,12 @@ def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize
     #    if i is not None:
     #       del frames2[i]
 
-    # assert ipd.hunique(np.stack(frames2))
+    # assert ipd.homog.hnuique(np.stack(frames2))
     if len(frames2) == 0:
         f = ontop
     else:
         f = np.stack(list(ontop) + frames2)
-    assert ipd.hunique(f)
+    assert ipd.homog.hnuique(f)
 
     ipd.dev.checkpoint(kw)
     return f

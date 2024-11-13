@@ -3,8 +3,6 @@ import os
 import inspect
 import re
 
-import jinja2
-
 import ipd
 
 def gitpath(path: str, cwd='.') -> str:
@@ -25,7 +23,9 @@ def qualname_of_file(sourcefile):
     return os.path.basename(sourcefile)
 
 def make_testfile(sourcefile, testifle):
+    import jinja2
     assert not os.path.exists(testifle)
+    os.makedirs(os.path.dirname(testifle), exist_ok=True)
     qualname = qualname_of_file(sourcefile)
     code = Path(sourcefile).read_text()
     prev_globals = set(globals().keys())
@@ -53,7 +53,7 @@ def make_testfile(sourcefile, testifle):
         c.__qualname__ = f'{qualname}.{n}'
     environment = jinja2.Environment(trim_blocks=True)
     template = environment.from_string(testfile_template)
-    testcode = template.render(funcs=funcs, classes=classes, methods=methods)
+    testcode = template.render(funcs=funcs, classes=classes, methods=methods, sourcefile=sourcefile)
     testcode = testcode.replace('ipd.dev.code.gentest', qualname)
     testcode = testcode.replace(f'.{qualname}', '')
     Path(testifle).write_text(testcode)
@@ -81,6 +81,8 @@ def test_{{clsname}}():
     assert 0
 
 {% endfor %}
+# please develop a comprehensive set of pytest tests, including edge cases and input validation, for the code in file:
+# {{sourcefile}}, specifically the functions, classes and methods specified below:
 {% for name, (func, sig) in funcs.items() %}
 # please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function {{func.__name__}} with the following signature: {{func.__qualname__}}{{ sig }}
 {% endfor %}

@@ -30,7 +30,7 @@ class CrudRun:
         self,
         port,
         dburl=None,
-        datadir='./datadir',
+        datadir='./server_datadir',
         loglevel='warning',
         local=False,
         workers=1,

@@ -302,7 +302,7 @@ def xtal_show_points(which, pointscale=1, pointshift=(0, 0, 0), scaleptrad=1, **
 
     colors = np.array([[(1, 1, 1)] * 30] * len(showpts))
     # ic(len(colors[which]))
-    return ipd.hpoint(showpts[which]), radius[which], colors[which]
+    return ipd.homog.hpoint(showpts[which]), radius[which], colors[which]
 
 def get_fanrefpoint(xtal):
     pt = [0, 1, 0, 1]

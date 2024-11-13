@@ -6,37 +6,39 @@ import typing
 from ipd.dev.code.inspect import caller_info
 from ipd.dev.contexts import onexit
 
-def lazyimport(name: str, package: str = '', pip=False, mamba=False, channels='') -> ModuleType:
+def lazyimport(name: str,
+               package: str = '',
+               pip: bool = False,
+               mamba: bool = False,
+               channels: str = '',
+               warn: bool = True) -> ModuleType:
     """Lazy import of a module. The module will be imported when it is first accessed.
 
-    :param name: The name of the module to import.
-    :type name: str
-    :param package: The name of the package to install if the module is not found.
-    :type package: str
-    :param pip: If True, try to install the package using pip.
-    :type pip: bool
-    :param mamba: If True, try to install the package using mamba.
-    :type mamba: bool
-    :param channels: The conda channels to use when installing the package using mamba.
-    :type channels: str
-    :return: The imported module.
-    :rtype: ModuleType
+    Args:
+        name (str): The name of the module to import.
+        package (str): The package to install if the module cannot be imported.
+        pip (bool): If True, try to install the package globally, then with --user, using pip.
+        mamba (bool): If True, try to install the package globally using mamba.
+        channels (str): The conda channels to use when installing the package.
+        warn (bool): If True, print a warning if the module cannot be imported.
+
     """
     if typing.TYPE_CHECKING:
         return import_module(name)
-    return _LazyModule(name, package, pip, mamba, channels)
+    return _LazyModule(name, package, pip, mamba, channels, warn)
 
 class _LazyModule:
     """A class to represent a lazily imported module."""
-    __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels', '_callerinfo')
+    __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels', '_callerinfo', '_warn')
 
-    def __init__(self, name: str, package: str = '', pip=False, mamba=False, channels=''):
+    def __init__(self, name: str, package: str = '', pip=False, mamba=False, channels='', warn=True):
         self._name = name
         self._package = package or name.split('.', maxsplit=1)[0]
         self._pip = pip
         self._mamba = mamba
         self._channels = channels
         self._callerinfo = caller_info(excludefiles=[__file__])
+        self._warn = warn
         # if name not in _DEBUG_ALLOW_LAZY_IMPORT:
         #     self.now()
         #     _all_skipped_lazy_imports.add(name)
@@ -56,7 +58,8 @@ class _LazyModule:
         # raise e from e
         except Exception as e:
             callinfo = f'{self._callerinfo.filename}:{self._callerinfo.lineno}\n    {self._callerinfo.code}'
-            print(f'_LazyModule: Failed to import module: {self._name}\nFile: {callinfo}', flush=True)
+            if self._warn:
+                print(f'_LazyModule: Failed to import module: {self._name}\nFile: {callinfo}', flush=True)
             raise e
 
     def _mambathenpipimport(self):

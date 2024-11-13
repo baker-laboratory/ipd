@@ -13,7 +13,7 @@ def get_rosetta_symfile_path(name):
     name = name.upper().replace("M_", "m_")
     if name.endswith(".sym"):
         name = name[:-4]
-    name = ipd.package_data_path(f"rosetta_symdef/{name}")
+    name = ipd.dev.package_data_path(f"rosetta_symdef/{name}")
     pattern = name + "*.sym"
     ic(pattern)
     g = glob.glob(pattern)

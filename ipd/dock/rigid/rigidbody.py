@@ -16,7 +16,7 @@ class RigidBodyFollowers:
         elif frames is not None:
             if coords is None:
                 raise ValueError("if no bodies specified, coords and frames/sym must be provided")
-            assert ipd.hunique(frames)
+            assert ipd.homog.hunique(frames)
             self.asym = RigidBody(coords, **kw)
             self.symbodies = [RigidBody(parent=self.asym, xfromparent=x, **kw) for x in frames[1:]]
             self.bodies = [self.asym] + self.symbodies
@@ -35,7 +35,7 @@ class RigidBodyFollowers:
                     ic(i)
                     assert 0
 
-        assert ipd.hunique(self.frames())
+        assert ipd.homog.hunique(self.frames())
         # assert 0
 
     def set_asym_coords(self, coords):
@@ -199,7 +199,7 @@ class RigidBody:
             self._xfromparent = xfromparent.copy()
         else:
             self._xfromparent = np.eye(4)
-        assert ipd.hvalid(self._xfromparent)
+        assert ipd.homog.hvalid(self._xfromparent)
 
         self._position = position
         self._coords = None
@@ -218,23 +218,23 @@ class RigidBody:
             contact_coords = contact_coords.copy()
             if recenter:
                 # oldcom =
-                self.tolocal = ipd.htrans(-ipd.hcom(coords))
+                self.tolocal = ipd.htrans(-ipd.homog.hcom(coords))
                 self.toglobal = ipd.hinv(self.tolocal)
                 coords = ipd.homog.hxform(self.tolocal, coords)
                 contact_coords = ipd.homog.hxform(self.tolocal, contact_coords)
                 # position must be set to move coords back to gloabal frame
                 self.position = self.toglobal.copy()
-            self._coords = ipd.hpoint(coords)
-            self._contact_coords = ipd.hpoint(contact_coords)
-            self._com = ipd.hcom(self._coords)
+            self._coords = ipd.homog.hpoint(coords)
+            self._contact_coords = ipd.homog.hpoint(contact_coords)
+            self._com = ipd.homog.hcom(self._coords)
             if usebvh:
-                self.bvh = ipd.cpp.bvh.BVH(coords[..., :3])
-                self.contactbvh = ipd.cpp.bvh.BVH(contact_coords[..., :3])
+                self.bvh = willutil_cpp.bvh.BVH(coords[..., :3])
+                self.contactbvh = willutil_cpp.bvh.BVH(contact_coords[..., :3])
         elif parent is not None:
             self.bvh = parent.bvh
             self.contactbvh = parent.contactbvh
             self._coords = parent._coords
-            self._com = ipd.hcom(self._coords)
+            self._com = ipd.homog.hcom(self._coords)
             parent.children.append(self)
             self.clashdis = parent.clashdis
             self.contactdis = parent.contactdis
@@ -281,7 +281,7 @@ class RigidBody:
         if x.ndim == 1:
             x = ipd.htrans(x)
         self.position = ipd.homog.hxform(x, self.position)
-        assert ipd.hvalid(self.position)
+        assert ipd.homog.hvalid(self.position)
 
     def move_about_com(self, x):
         x = np.asarray(x)
@@ -365,8 +365,8 @@ class RigidBody:
         self.bvhopcount += 1
         assert isinstance(other, RigidBody)
         if usebvh or (usebvh is None and self.usebvh):
-            count = ipd.cpp.bvh.bvh_count_pairs(self.contactbvh, other.contactbvh, self.position, other.position,
-                                                contactdist)
+            count = willutil_cpp.bvh.bvh_count_pairs(self.contactbvh, other.contactbvh, self.position, other.position,
+                                                     contactdist)
         else:
             assert 0
             # import scipy.spatial
@@ -388,12 +388,12 @@ class RigidBody:
     def hasclash(self, other, clashdis=None):
         self.bvhopcount += 1
         clashdis = clashdis or self.clashdis
-        isect = ipd.cpp.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position, clashdis)
+        isect = willutil_cpp.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position, clashdis)
         return isect
 
     def intersects(self, other, otherpos, mindis=10):
         self.bvhopcount += 1
-        isect = ipd.cpp.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos, mindis)
+        isect = willutil_cpp.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos, mindis)
         return isect
 
     def point_contact_count(self, other, contactdist=8):
@@ -446,8 +446,8 @@ class RigidBody:
         if usebvh or (usebvh is None and self.usebvh):
             if not buf:
                 buf = np.empty((100000, 2), dtype="i4")
-            pairs, overflow = ipd.cpp.bvh.bvh_collect_pairs(self.contactbvh, other.contactbvh, self.position,
-                                                            other.position, contactdist, buf)
+            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(self.contactbvh, other.contactbvh, self.position,
+                                                                 other.position, contactdist, buf)
             assert not overflow
         else:
             d = ipd.homog.hnorm(self.contact_coords[None] - other.contact_coords[:, None])
@@ -460,8 +460,8 @@ class RigidBody:
         if usebvh or (usebvh is None and self.usebvh):
             if not buf:
                 buf = np.empty((100000, 2), dtype="i4")
-            pairs, overflow = ipd.cpp.bvh.bvh_collect_pairs(self.bvh, other.bvh, self.position, other.position,
-                                                            contactdist, buf)
+            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(self.bvh, other.bvh, self.position, other.position,
+                                                                 contactdist, buf)
             assert not overflow
         else:
             d = ipd.homog.hnorm(self.coords[None] - other.coords[:, None])

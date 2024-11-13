@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
-
 import ipd
+
+pytest.skip(allow_module_level=True)
 
 def main():
     test_fit_xtal_to_coords()

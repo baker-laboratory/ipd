@@ -8,7 +8,7 @@ def bash(cmd: str) -> BashResult:
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     return BashResult(result.stdout, result.stderr, result.returncode)
 
-def run(command: str, echo: bool = False, errok: bool = False) -> str:
+def run(command: str, echo: bool = False, errok: bool = False, strip: str | bool = 'auto') -> str:
     """Run a shell command and return the stdout.
 
     Args:
@@ -22,5 +22,7 @@ def run(command: str, echo: bool = False, errok: bool = False) -> str:
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
     if result.returncode != 0 and not errok:
         raise RuntimeError(f'Error running command: {command}\n{result.stderr}')
-    else:
-        return result.stdout
+    out = result.stdout
+    if strip == 'auto': strip = out.count('\n') <= 1
+    if strip: out = out.strip()
+    return out
