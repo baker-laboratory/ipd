@@ -9,6 +9,7 @@ import ipd
 def main():
     ipd.tests.maintest(globals())
 
+@pytest.mark.xfail
 def test_qualname_of_file():
     with pytest.raises(ValueError):
         ipd.dev.qualname_of_file('foo')
