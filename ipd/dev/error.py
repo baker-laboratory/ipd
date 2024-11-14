@@ -19,8 +19,9 @@ def change_exception(**kw: dict[str, Exception]):
 
     return deco
 
-def WARNME(message, once=True):
-    if once and message not in _WARNINGS_ISSUED:
+def WARNME(message, once=True, tag=None):
+    tag = tag or message
+    if once and tag not in _WARNINGS_ISSUED:
         import traceback
 
         print("-" * 80, flush=True)
