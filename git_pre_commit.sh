@@ -21,12 +21,11 @@ else
     echo ruff failed; exit 1;
 fi
 
-cmd="PYTHONPATH=$ipd/lib python $ipd/ipd/tools/yapf_fast.py $src"
-PYTHONPATH=$ipd/lib python $ipd/ipd/tools/yapf_fast.py $src
-retcode=$?
-echo $retcode $cmd
+cmd="PYTHONPATH=$ipd python $ipd/ipd/tools/yapf_fast.py $src"
+echo $cmd
+eval $cmd
 
-if [ $retcode == 0 ]; then
+if [ $? == 0 ]; then
     echo files all formatted
 else
     echo some files changed, retry commit
