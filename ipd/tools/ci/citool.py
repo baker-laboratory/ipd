@@ -29,11 +29,9 @@ class CITool(ipd.tools.IPDTool):
         for repo, url in self.repos.items():
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
-                print(f'Directory {repo_dir} exists. Fetching latest changes...')
-                try:
-                    ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
-                except RuntimeError:
-                    ipd.dev.run(f'git --git-dir={repo_dir} fetch --all -f', echo=True)
+                print(f'Directory {repo_dir} exists... remove all heads and fetching latest changes...')
+                os.system(f'rm -rf {repo_dir}/refs/heads/*')
+                ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)
