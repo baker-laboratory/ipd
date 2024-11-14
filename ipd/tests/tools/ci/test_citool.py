@@ -52,8 +52,8 @@ def test_clitool_pytest():
     out = runipd(
         "ci tests pytest --cmdonly --exe $exe --slurm --parallel 4 --tee --which 'test_call_speed test_loss_grad'")
     assert out.strip(
-    ) == '''cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.noparallel.log
-cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.parallel.log'''
+    ) == '''cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.nopar.log
+cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.par.log'''
 
     # testdir = f'{ipd.projdir}/tests/crud'
 

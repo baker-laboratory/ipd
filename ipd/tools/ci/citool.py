@@ -7,6 +7,7 @@ from pathlib import Path
 
 import git
 import submitit
+
 import ipd
 
 class CITool(ipd.tools.IPDTool):
@@ -29,16 +30,14 @@ class CITool(ipd.tools.IPDTool):
         for repo, url in self.repos.items():
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
-                print(f'Directory {repo_dir} exists. Fetching latest changes...')
-                try:
-                    ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
-                except RuntimeError:
-                    ipd.dev.run(f'git --git-dir={repo_dir} fetch --all -f', echo=True)
+                print(f'Directory {repo_dir} exists... remove all heads and fetching latest changes...')
+                os.system(f'rm -rf {repo_dir}/refs/heads/*')
+                ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)
 
-def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
+def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos', recursive: bool = False):
     repolib = os.path.expanduser(repolib)
     with ipd.dev.cd(repo.git.rev_parse('--show-toplevel')):
         for sub in repo.submodules:
@@ -47,15 +46,16 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
             print('setup submodule', sub.path, subrepo, sub.hexsha)
             subrepo = git.Repo.clone_from(subrepo, sub.path)
             subrepo.git.checkout(sub.hexsha)
-            init_submodules(subrepo, repolib)
+            if recursive:
+                init_submodules(subrepo, repolib, True)
 
 class RepoTool(CITool):
-    def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos'):
+    def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos', recursive: bool = False):
         """Setup submodules in a git repository from a bare repo library."""
         repo = git.Repo(path, search_parent_directories=True)
         repodir = repo.git.rev_parse('--show-toplevel')
         with ipd.dev.cd(path):
-            init_submodules(repo, repolib)
+            init_submodules(repo, repolib, recursive)
 
 class Future:
     def __init__(self, result):
@@ -94,9 +94,9 @@ def run_pytest(
     if os.path.exists(log): os.remove(log)
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
-        return cmd, executor.submit(ipd.dev.run, cmd), log
+        return cmd, executor.submit(ipd.dev.run, cmd, capture=False), log
     else:
-        return cmd, Future(ipd.dev.run(cmd, errok=True)), log
+        return cmd, Future(ipd.dev.run(cmd, errok=True, capture=False)), log
 
 def get_re(pattern, text) -> int:
     result = re.findall(pattern, text)
@@ -131,7 +131,7 @@ def parse_pytest(fname) -> ipd.Bunch[int]:
 
 class TestsTool(CITool):
     def ruff(self, project):
-        ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True)
+        ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True, capture=False)
 
     def pytest(
         self,
@@ -151,7 +151,7 @@ class TestsTool(CITool):
         flags: str = '',
         testdir: str = '.',
         cmdonly: bool = False,
-    ):
+    ):  # sourcery skip: merge-list-appends-into-extend
         """Run pytest with the given parameters.
 
         Args:
@@ -180,10 +180,10 @@ class TestsTool(CITool):
         if verbose: exe += ' -v'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
-        nosel = ' and '.join([f'not {t}' for t in which.split()])
         jobs = []
         executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
-        kw = dict(env=env,
+        kw = dict(exe=exe,
+                  env=env,
                   mark=mark,
                   dryrun=dryrun,
                   executor=executor,
@@ -193,31 +193,22 @@ class TestsTool(CITool):
                   testdir=testdir,
                   cmdonly=cmdonly)
         if not slurm:
-            jobs.append(run_pytest(exe=exe, sel=sel, parallel=parallel, log=log, **kw))
+            jobs.append(run_pytest(sel=sel, parallel=parallel, log=log, **kw))  # type: ignore
         else:
-            if gpu:
-                if executor is not None:
-                    executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
+            if gpu and executor is not None:
+                executor.update_parameters(slurm_partition='gpu', slurm_gres=f'gpu:{gpu}:1')
             if parallel == 1:
-                jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, log=log, mem=mem[0], **kw))
+                jobs.append(run_pytest(sel=sel, parallel=1, log=log, mem=mem[0], **kw))  # type: ignore
             else:
-                jobs.append(run_pytest(exe=exe, sel=sel, parallel=1, mem=mem[0], log=f'{log}.noparallel.log', **kw))
-                jobs.append(
-                    run_pytest(exe=exe,
-                               sel=nosel,
-                               parallel=parallel,
-                               mem=mem[1 % len(mem)],
-                               log=f'{log}.parallel.log',
-                               **kw))
+                nosel = ' and '.join([f'not {t}' for t in which.split()])
+                jobs.append(run_pytest(sel=sel, parallel=1, mem=mem[0], log=f'{log}.nopar.log', **kw))  # type: ignore
+                jobs.append(run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log',
+                                       **kw))  # type: ignore
         if cmdonly:
-            for cmd in jobs:
-                print(cmd)
+            print(os.linesep.join(jobs))
             return jobs
         else:
-            result = [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
-            for cmd, job, log in jobs:
-                os.system(f'cat {log}')
-            return result
+            return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
 
     def check(self, path: str = '.'):
         fail = False
@@ -237,4 +228,4 @@ class TestsTool(CITool):
             print()
             fail |= result.errors
             fail |= result.failed
-        assert not fail
+        sys.exit(fail)
