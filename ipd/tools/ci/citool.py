@@ -38,7 +38,7 @@ class CITool(ipd.tools.IPDTool):
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
                 ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)
 
-def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
+def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos', recursive: bool = False):
     repolib = os.path.expanduser(repolib)
     with ipd.dev.cd(repo.git.rev_parse('--show-toplevel')):
         for sub in repo.submodules:
@@ -47,15 +47,16 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos'):
             print('setup submodule', sub.path, subrepo, sub.hexsha)
             subrepo = git.Repo.clone_from(subrepo, sub.path)
             subrepo.git.checkout(sub.hexsha)
-            init_submodules(subrepo, repolib)
+            if recursive:
+                init_submodules(subrepo, repolib, True)
 
 class RepoTool(CITool):
-    def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos'):
+    def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos', recursive: bool = False):
         """Setup submodules in a git repository from a bare repo library."""
         repo = git.Repo(path, search_parent_directories=True)
         repodir = repo.git.rev_parse('--show-toplevel')
         with ipd.dev.cd(path):
-            init_submodules(repo, repolib)
+            init_submodules(repo, repolib, recursive)
 
 class Future:
     def __init__(self, result):
