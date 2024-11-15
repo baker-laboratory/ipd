@@ -21,7 +21,7 @@ class MotifManager(ABC, metaclass=MetaMotifManager):
 
     @abstractmethod
     def __call__(self, *a, **kw):
-        self.apply_motifs(*a, **kw)
+        self.apply_motifs(*a, **kw)  # type: ignore
 
     def setup_for_motifs(self, thing):
         return thing
@@ -42,7 +42,8 @@ class NullMotifManager(MotifManager):
         return xyz
 
     @property
-    def have_motif(self):
+    def have_motif(self):  # type: ignore
+
         return False
 
 set_default_motif_manager('nomotif')

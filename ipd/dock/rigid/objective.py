@@ -41,8 +41,10 @@ class RBLatticeOverlapObjective:
     def __call__(self, state, **kw):
         assert isinstance(state, ipd.dev.Bunch)
         assert isinstance(state.scale, (int, float))
-        ic(state.scale)
-        self.rbojective.bodies[0].set_scale(state.scale)
+        ic(state.scale)  # type: ignore
+
+        self.rbojective.bodies[0].set_scale(state.scale)  # type: ignore
+
         return self.rbojective(state.position, **kw)
 
 class RBOverlapObjective:
@@ -70,8 +72,10 @@ class RBOverlapObjective:
         self.initial = initial.position.copy()
         self.initialcom = initial.com().copy()
         self.lever = lever or initial.rog()
-        self.contactfrac = max(0.001, contactfrac)
-        assert 0 <= contactfrac <= 1
+        self.contactfrac = max(0.001, contactfrac)  # type: ignore
+
+        assert 0 <= contactfrac <= 1  # type: ignore
+
         self.scoreframes = scoreframes
         self.clashframes = clashframes
         self.bodies = bodies
@@ -88,14 +92,16 @@ class RBOverlapObjective:
         self.minradius = minradius
 
     def __call__(self, position, verbose=False):
-        asym = self.bodies[0]
+        asym = self.bodies[0]  # type: ignore
+
         asym.position = position
 
         tmp1 = self.initial.copy()
         p = hproj(self.biasdir, hcart3(tmp1))
         pp = hprojperp(self.biasdir, hcart3(tmp1))
         tmp1[:3, 3] = p[:3] / self.biasradial + pp[:3]
-        tmp2 = self.bodies[0].position.copy()
+        tmp2 = self.bodies[0].position.copy()  # type: ignore
+
         p = hproj(self.biasdir, hcart3(tmp2))
         pp = hprojperp(self.biasdir, hcart3(tmp2))
         tmp2[:3, 3] = p[:3] / self.biasradial + pp[:3]
@@ -107,9 +113,12 @@ class RBOverlapObjective:
         fracs = list()
         # bods = self.bodies[1:] if self.scoreframes is None else [self.bodies[i] for i in self.scoreframes]
         dists = list()
-        for ib, b in enumerate(self.bodies):
-            for jb, b2 in enumerate(self.bodies):
-                if (ib, jb) in self.scoreframes:
+        for ib, b in enumerate(self.bodies):  # type: ignore
+
+            for jb, b2 in enumerate(self.bodies):  # type: ignore
+
+                if (ib, jb) in self.scoreframes:  # type: ignore
+
                     d = ipd.homog.hnorm(b.com() - b2.com())
                     d = max(0, d - asym.rog() * 3)
                     dists.append(d)
@@ -125,7 +134,8 @@ class RBOverlapObjective:
 
                     scores.append((max(diff11, diff12)**2))
                     scores.append((max(diff21, diff22)**2))
-                elif (ib, jb) in self.clashframes:
+                elif (ib, jb) in self.clashframes:  # type: ignore
+
                     dists = b.clash_distances(b2, self.clashdist)
                     # if len(dists):
                     # ic(dists)
@@ -167,7 +177,8 @@ class RBOverlapObjective:
         # scores[1] *= 2
         if verbose:
             # ic(scores)
-            ic(fracs)
+            ic(fracs)  # type: ignore
+
             # ic((self.driftpenalty * xdiff)**2)
             # ic((self.angpenalty * 10 * angdiff * ipd.homog.hnorm(ipd.hprojperp([1, 0, 0], asym.com())))**2)
         s = [

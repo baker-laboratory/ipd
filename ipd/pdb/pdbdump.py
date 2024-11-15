@@ -42,7 +42,7 @@ def pdb_format_atom_df(
         rn=rn.decode(),
         an=an.decode(),
         b=bfac,
-        elem=elem.decode(),
+        elem=elem.decode(),  # type: ignore
         **kw,
     )
 
@@ -222,7 +222,8 @@ def dump_pdb_from_points(
             for iatom, p in enumerate(respts[:len(anames)]):
                 if p[0] == skipval:
                     continue
-                if mask[ichain, ires, iatom]:
+                if mask[ichain, ires, iatom]:  # type: ignore
+
                     s = pdb_format_atom(
                         ia=atomconut,
                         x=p[0],
@@ -231,7 +232,7 @@ def dump_pdb_from_points(
                         ir=ires,
                         rn=resnames[ires],
                         an=anames[iatom],
-                        c=chain,
+                        c=chain,  # type: ignore
                     )
                     out.write(s)
                     atomconut += 1
@@ -254,9 +255,12 @@ def dump_pdb_from_ncac_points(fname, pts, nchain=1):
     with open(fname, "w") as out:
         for ichain, chainpts in enumerate(pts):
             for i, p in enumerate(chainpts):
-                a = pdb_format_atom(ia + 0, an="N", x=p[0, 0], y=p[0, 1], z=p[0, 2], ir=i, c=ichain)
-                b = pdb_format_atom(ia + 1, an="CA", x=p[1, 0], y=p[1, 1], z=p[1, 2], ir=i, c=ichain)
-                c = pdb_format_atom(ia + 2, an="C", x=p[2, 0], y=p[2, 1], z=p[2, 2], ir=i, c=ichain)
+                a = pdb_format_atom(ia + 0, an="N", x=p[0, 0], y=p[0, 1], z=p[0, 2], ir=i, c=ichain)  # type: ignore
+
+                b = pdb_format_atom(ia + 1, an="CA", x=p[1, 0], y=p[1, 1], z=p[1, 2], ir=i, c=ichain)  # type: ignore
+
+                c = pdb_format_atom(ia + 2, an="C", x=p[2, 0], y=p[2, 1], z=p[2, 2], ir=i, c=ichain)  # type: ignore
+
                 ia += 3
                 out.write(a)
                 out.write(b)

@@ -3,7 +3,7 @@ import glob
 import re
 
 import numpy as np
-from deferred_import import deferred_import
+from deferred_import import deferred_import  # type: ignore
 
 import ipd
 
@@ -14,8 +14,10 @@ def get_rosetta_symfile_path(name):
     if name.endswith(".sym"):
         name = name[:-4]
     name = ipd.dev.package_data_path(f"rosetta_symdef/{name}")
-    pattern = name + "*.sym"
-    ic(pattern)
+    pattern = name + "*.sym"  # type: ignore
+
+    ic(pattern)  # type: ignore
+
     g = glob.glob(pattern)
     assert len(g) == 1
     return g[0]

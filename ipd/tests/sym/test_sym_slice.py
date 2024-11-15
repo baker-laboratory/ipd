@@ -203,15 +203,16 @@ def test_chirals():
                          [101.000, 104.000, 112.000, 111.000, 0.6155], [101.000, 111.000, 112.000, 104.000,
                                                                         -0.6155]]).to(sym.device)
     idx = chirals[:, 0].to(int)
-    assert s.is_sym_subsequence(idx)
+    assert s.is_sym_subsequence(idx)  # type: ignore
 
 @pytest.mark.fast
 def test_nonprot():
     sym = ipd.tests.sym.create_test_sym_manager(symid='c3')
     sym.idx = [(120, 0, 60), (120, 60, 120)]
-    assert th.all(sym.idx.nonprot.cpu() == th.repeat_interleave(th.arange(2), 60))
+    assert th.all(sym.idx.nonprot.cpu() == th.repeat_interleave(th.arange(2), 60))  # type: ignore
+
     sym.idx = [33]
-    assert th.all(sym.idx.nonprot.cpu() == th.repeat_interleave(th.arange(1), 33))
+    assert th.all(sym.idx.nonprot.cpu() == th.repeat_interleave(th.arange(1), 33))  # type: ignore
 
 @pytest.mark.fast
 def test_slice2d():
@@ -219,16 +220,34 @@ def test_slice2d():
     sym.idx = [(12, 0, 6), (12, 6, 12)]
     d = th.arange(144).reshape(12, 12)
     assert th.all(
-        sym.idx.slice2d(d, 'asu') == th.tensor([[0, 1, 6, 7], [12, 13, 18, 19], [72, 73, 78, 79], [84, 85, 90, 91]]))
-    sym.idx.slice2d(d, 'asu', 1)
-    assert th.all(sym.idx.slice2d(d, 'asu') == 1)
-    sym.idx.slice2d(d, 'asu', th.arange(16).reshape(4, 4))
-    assert th.all(sym.idx.slice2d(d, 'asu') == th.arange(16).reshape(4, 4))
+        sym.idx.slice2d(d, 'asu') == th.tensor([  # type: ignore
+            [0, 1, 6, 7],
+            [12, 13, 18, 19],
+            [72, 73, 78, 79],
+            [
+                84,
+                85,
+                90,  # type: ignore
+                91
+            ]
+        ]))  # type: ignore
+
+    sym.idx.slice2d(d, 'asu', 1)  # type: ignore
+
+    assert th.all(sym.idx.slice2d(d, 'asu') == 1)  # type: ignore
+
+    sym.idx.slice2d(d, 'asu', th.arange(16).reshape(4, 4))  # type: ignore
+
+    assert th.all(sym.idx.slice2d(d, 'asu') == th.arange(16).reshape(4, 4))  # type: ignore
 
     d = th.arange(144).reshape(12, 12)
     assert th.all(
-        sym.idx.slice2d(d, th.tensor([0, 1, 6, 7])) == th.tensor([[0, 1, 6, 7], [12, 13, 18, 19], [72, 73, 78, 79],
-                                                                  [84, 85, 90, 91]]))
+        sym.idx.slice2d(d, th.tensor([0, 1, 6, 7])) == th.tensor([  # type: ignore
+            [0, 1, 6, 7],
+            [12, 13, 18, 19],
+            [72, 73, 78, 79],  # type: ignore
+            [84, 85, 90, 91]
+        ]))
 
 if __name__ == '__main__':
     test_slice2d()

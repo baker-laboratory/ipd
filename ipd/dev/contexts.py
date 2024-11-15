@@ -18,20 +18,22 @@ def cast(cls, self):
         orig, self.__class__ = self.__class__, cls
         yield self
     finally:
-        self.__class__ = orig
+        self.__class__ = orig  # type: ignore
 
 @contextmanager
 def redirect(stdout=sys.stdout, stderr=sys.stderr):
     _out, _err = sys.stdout, sys.stderr
     try:
-        sys.stdout.flush(), sys.stderr.flush()
+        sys.stdout.flush(), sys.stderr.flush()  # type: ignore
+
         if stderr == 'stdout': stderr = stdout
         if stdout is None: stdout = io.StringIO()
         if stderr is None: stderr = io.StringIO()
         sys.stdout, sys.stderr = stdout, stderr
         yield stdout, stderr
     finally:
-        sys.stdout.flush(), sys.stderr.flush()
+        sys.stdout.flush(), sys.stderr.flush()  # type: ignore
+
         sys.stdout, sys.stderr = _out, _err
 
 @contextmanager

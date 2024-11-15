@@ -96,7 +96,8 @@ def process_num_cells(cells):
         # ub = (cells - 1) // 2
         ub = cells // 2
         lb = ub - cells + 1
-        cells = [(a, b, c) for a, b, c in itertools.product(*[range(lb, ub + 1)] * 3)]
+        cells = [(a, b, c) for a, b, c in itertools.product(*[range(lb, ub + 1)] * 3)]  # type: ignore
+
     elif len(cells) == 2:
         lb, ub = cells
         cells = [(a, b, c) for a, b, c in itertools.product(*[range(lb, ub + 1)] * 3)]

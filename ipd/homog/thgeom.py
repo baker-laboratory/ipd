@@ -14,10 +14,12 @@ def get_dtype_dev(example, dtype=None, device=None):
                 example = e
                 break
     if device is None:
-        if isinstance(example, th.Tensor): device = example.device
+        if isinstance(example, th.Tensor): device = example.device  # type: ignore
+
         else: device = 'cpu'
     if dtype is None:
-        if isinstance(example, th.Tensor): dtype = example.dtype
+        if isinstance(example, th.Tensor): dtype = example.dtype  # type: ignore
+
         else: dtype = th.float32
     return dict(dtype=dtype, device=device)
 
@@ -33,7 +35,7 @@ def torch_min(func, iters=4, history_size=10, max_iter=4, line_search_fn="strong
     closure = functools.partial(func, lbfgs=lbfgs, **kw)
     for iter in range(iters):
         loss = lbfgs.step(closure)
-    return loss
+    return loss  # type: ignore
 
 def construct(rot=None, trans=None, dtype=None, device=None):
     kw = get_dtype_dev([rot, trans], dtype, device)
@@ -238,7 +240,8 @@ def randsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, device=None, 
     ang = th.randn(shape, **kw) * rot_sd * np.pi
     if centers is None: centers = [0, 0, 0, 1]
     else: assert centers.shape[:-1] in ((), shape)
-    x = rot(axis, ang, centers, degrees=False, **kw).squeeze()
+    x = rot(axis, ang, centers, degrees=False, **kw).squeeze()  # type: ignore
+
     trans = th.randn(x[..., :3, 3].shape, **kw) * cart_sd
     x[..., :3, 3] += trans
     return x
@@ -812,7 +815,8 @@ def valid(stuff, is_points=None, strict=False, **kw):
     if stuff.shape[-2:] == (4, 4) and not is_points:
         return valid44(stuff, **kw)
     if stuff.shape[-2:] == (4, 2) and not is_points:
-        return is_valid_rays(stuff)
+        return is_valid_rays(stuff)  # type: ignore
+
     elif stuff.shape[-1] == 4 and strict:
         return th.allclose(stuff[..., 3], 0) or th.allclose(stuff[..., 3], 1)
     elif stuff.shape[-1] == 4:
@@ -837,7 +841,8 @@ def valid44(x, improper_ok=False, debug=False, **kw):
     is_one_33 = th.allclose(x[..., 3, 3], th.tensor(1.0, dtype=x.dtype))
     is_zero_3_012 = th.allclose(x[..., 3, :3], th.tensor(0.0, dtype=x.dtype))
     ok = is_zero_3_012 and is_one_33 and detok
-    if debug and not ok: ic(improper_ok, det, detok, is_one_33, is_zero_3_012)
+    if debug and not ok: ic(improper_ok, det, detok, is_one_33, is_zero_3_012)  # type: ignore
+
     return ok
 
 def inv(x):

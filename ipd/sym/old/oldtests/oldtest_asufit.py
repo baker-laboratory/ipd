@@ -14,7 +14,7 @@ def main():
     # test_asufit_L6_32(showme=True)
     # test_asufit_oct(showme=True)
     # test_asufit_icos(showme=True)
-    ic("TEST asufit DONE")
+    ic("TEST asufit DONE")  # type: ignore
 
 def _gen_canonical_asu_cens():
     for sym in 'oct'.split():
@@ -27,7 +27,8 @@ def _gen_canonical_asu_cens():
 
 @pytest.mark.fast
 def test_canonical_asu_center():
-    ic(ipd.sym.canonical_asu_center('C3'))
+    ic(ipd.sym.canonical_asu_center('C3'))  # type: ignore
+
     assert np.allclose(ipd.sym.canonical_asu_center('C3'), [1, 0, 0, 1])
 
 @pytest.mark.xfail()
@@ -57,7 +58,8 @@ def test_asufit_oct(showme=False):
     lever = ipd.hrog(xyz) * 1.5
     """"""
     with ipd.dev.Timer():
-        ic("symfit")
+        ic("symfit")  # type: ignore
+
         # np.random.seed(7)
         mc = ipd.sym.asufit(
             sym,
@@ -108,7 +110,8 @@ def test_asufit_I4132(showme=False):
     asucen = xtal.asucen(cellsize=scale)
     # np.random.seed(2)
     asucen = xtal.asucen(cellsize=scale)
-    xyz = point_cloud(100, std=20, outliers=40)
+    xyz = point_cloud(100, std=20, outliers=40)  # type: ignore
+
     xyz += ipd.homog.hvec(asucen)
     xyz[:, 0] += +0.000 * scale
     xyz[:, 1] += -0.030 * scale
@@ -175,7 +178,7 @@ def test_asufit_I4132(showme=False):
         ipd.showme(ipd.homog.hxform(primary_frames[3], xyz), sphere=10, col=(0, 0, 1))
         ipd.showme(ipd.homog.hxform(primary_frames[4], xyz), sphere=10, col=(1, 1, 0))
 
-        from ipd.tests.sym.test_xtal import test_hxtal_viz
+        from ipd.tests.sym.test_xtal import test_hxtal_viz  # type: ignore
 
         test_hxtal_viz(
             spacegroup="I4132_322",
@@ -212,7 +215,8 @@ def test_asufit_I4132(showme=False):
     frames = ipd.hscaled(1 / scale, frames)
     lever = ipd.hrog(xyz) * 1.5
     with ipd.dev.Timer():
-        ic("symfit")
+        ic("symfit")  # type: ignore
+
         # np.random.seed(14)
         mc = ipd.sym.asufit(
             sym,
@@ -331,7 +335,8 @@ def test_asufit_P213(showme=False):
     lever = ipd.hrog(xyz) * 1.5
     """"""
     with ipd.dev.Timer():
-        ic("symfit")
+        ic("symfit")  # type: ignore
+
         # np.random.seed(7)
         mc = ipd.sym.asufit(
             sym,
@@ -399,7 +404,7 @@ def test_asufit_L6m322(showme=False):
     xyz[:, 2] += 18
     ss = np.array(list(ipd.pdb.dssp(xyz.reshape(-1, 4, 3))))
     xyz_contact = xyz.reshape(-1, 4, 3)[ss == "H"].reshape(-1, 3)
-    ic(xyz_contact.shape)
+    ic(xyz_contact.shape)  # type: ignore
 
     primary_frames = np.stack([
         np.eye(4),
@@ -412,7 +417,8 @@ def test_asufit_L6m322(showme=False):
     """"""
     for i in range(1):
         with ipd.dev.Timer():
-            ic("symfit")
+            ic("symfit")  # type: ignore
+
             # np.random.seed(7)
             mc = ipd.sym.asufit(
                 sym,
@@ -447,7 +453,7 @@ def test_asufit_L6m322(showme=False):
                 clashframes=[(1, 2), (1, 3), (2, 3)],
             )
     assert np.allclose(
-        mc.beststate.position,
+        mc.beststate.position,  # type: ignore
         np.array([
             [9.63284623e-01, 2.49202698e-01, -9.99037016e-02, -1.32625492e01],
             [-2.65707884e-01, 9.38228112e-01, -2.21646860e-01, 5.46007841e01],
@@ -462,7 +468,8 @@ def test_asufit_L6_32(showme=False):
     xtal = ipd.sym.xtal.Xtal(sym)
     scale = 100
 
-    xyz = point_cloud(100, std=10, outliers=20)
+    xyz = point_cloud(100, std=10, outliers=20)  # type: ignore
+
     xyz += ipd.homog.hvec(xtal.asucen()) * scale
 
     primary_frames = np.stack([np.eye(4), xtal.symelems[0].operators[1], xtal.symelems[1].operators[1]])
@@ -473,7 +480,8 @@ def test_asufit_L6_32(showme=False):
     ipd.showme(frames)
 
     with ipd.dev.Timer():
-        ic("symfit")
+        ic("symfit")  # type: ignore
+
         # np.random.seed(7)
         mc = ipd.sym.asufit(
             sym,
@@ -521,7 +529,8 @@ def test_asufit_icos(showme=False):
     # pdb = pdb.subset(atomnames=['CA'], chains=['A'])
     # xyz = np.stack([pdb.df['x'], pdb.df['y'], pdb.df['z']]).T
     # xyz[:, :3] += ipd.homog.hcom(xyz)[:3]
-    xyz = point_cloud(100, std=10, outliers=10)
+    xyz = point_cloud(100, std=10, outliers=10)  # type: ignore
+
     xyz[:, :3] += 140 * ipd.homog.hnormalized(ipd.sym.axes(sym)[2] * 4 + ipd.sym.axes(sym)[3])[:3]
     ax2 = ipd.sym.axes("icos")[2]
     ax3 = ipd.sym.axes("icos")[3]
@@ -530,7 +539,8 @@ def test_asufit_icos(showme=False):
 
     lever = ipd.hrog(xyz) * 1.5
     with ipd.dev.Timer():
-        ic("symfit")
+        ic("symfit")  # type: ignore
+
         # np.random.seed(7)
         mc = ipd.sym.asufit(
             sym,
@@ -564,7 +574,7 @@ def test_asufit_icos(showme=False):
             [0.0, 0.0, 0.0, 1.0],
         ])
         assert np.allclose(ref, mc.beststate.position)
-        ic("test_asufit_icos PASS!")
+        ic("test_asufit_icos PASS!")  # type: ignore
 
 if __name__ == "__main__":
     main()

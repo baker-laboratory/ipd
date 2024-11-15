@@ -15,7 +15,7 @@ def main():
     test_pdbdump(f.pdb1pgx())
     test_pdbdump_ncac(f.pdb1pgx())
     test_pdbdump_sequential()
-    ic("test_pdbdump.py DONE")
+    ic("test_pdbdump.py DONE")  # type: ignore
 
 def test_dump_pdb_nchain_nres_natom():
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom((10, 11, 12)) == (10, 11, 12)
@@ -31,7 +31,8 @@ def test_dump_pdb_nchain_nres_natom():
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nres=5) == (1, 5, 4)
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nresatom=5) == (1, 4, 5)
 
-    ic(ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=5))
+    ic(ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=5))  # type: ignore
+
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=3) == (4, 5, 3)
 
 def test_pdbdump_sequential():

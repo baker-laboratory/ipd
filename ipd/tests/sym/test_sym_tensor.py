@@ -18,7 +18,8 @@ ic.configureOutput(includeContext=False, contextAbsPath=True)
 def test_sym_tensor_copy():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C2')
     sym.idx = [(5, 0, 4)]
-    sym.idx.set_kind(th.zeros(5).to(int))
+    sym.idx.set_kind(th.zeros(5).to(int))  # type: ignore
+
     t = sym.tensor(th.arange(5))
     assert t.attr.sym is copy.deepcopy(t).attr.sym
     assert t.attr.sym is t.clone().attr.sym
@@ -39,10 +40,12 @@ def test_sym_tensor_copy():
 def test_sym_tensor_sort_typemap_dense_1D():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
-    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))
+    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))  # type: ignore
+
     for type1 in st.subbasenames[st.Ordering]:
         cls = st.sym_tensor_types[f'Full{type1}All1DBasic']
-        s = sym.tensor(th.arange(sym.idx.L), cls=cls)
+        s = sym.tensor(th.arange(sym.idx.L), cls=cls)  # type: ignore
+
         assert hasattr(s, 'attr')
         assert isinstance(s, cls)
         assert isinstance(s, getattr(st, type1))
@@ -65,10 +68,12 @@ def test_sym_tensor_sort_typemap_dense_1D():
 def test_sym_tensor_res_typemap_dense_1D():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
-    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))
+    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))  # type: ignore
+
     for type1 in st.subbasenames[st.ChemType]:
         cls = st.sym_tensor_types[f'FullSliced{type1}1DBasic']
-        s = sym.tensor(th.arange(sym.idx.L), cls=cls)
+        s = sym.tensor(th.arange(sym.idx.L), cls=cls)  # type: ignore
+
         assert hasattr(s, 'attr')
         assert isinstance(s, cls)
         assert isinstance(s, getattr(st, type1))
@@ -91,11 +96,13 @@ def test_sym_tensor_res_typemap_dense_1D():
 def test_sym_tensor_sym_typemap_dense_1D():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
-    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))
+    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))  # type: ignore
+
     for type1 in st.subbasenames[st.SymSub]:
         if type1 in ('Sub', 'NotSub'): continue
         cls = st.sym_tensor_types[f'{type1}SlicedAll1DBasic']
-        s = sym.tensor(th.arange(sym.idx.L), cls=cls)
+        s = sym.tensor(th.arange(sym.idx.L), cls=cls)  # type: ignore
+
         assert hasattr(s, 'attr')
         assert isinstance(s, cls)
         assert isinstance(s, getattr(st, type1))
@@ -116,11 +123,13 @@ def test_sym_tensor_sym_typemap_dense_1D():
                 setattr(s, type2l, orig)
         for i in range(sym.nsub):
             t = s.sub(i)
-            assert isinstance(t, st.Sub)
+            assert isinstance(t, st.Sub)  # type: ignore
+
             assert t.__class__.__name__ == cls.__name__.replace(type1, 'Sub'), cls.__name__
             assert th.all(t == t.attr.orig[getattr(sym.idx, 'sub')[i]])
             t = s.notsub(i)
-            assert isinstance(t, st.NotSub)
+            assert isinstance(t, st.NotSub)  # type: ignore
+
             assert t.__class__.__name__ == cls.__name__.replace(type1, 'NotSub'), cls.__name__
             assert th.all(t == t.attr.orig[getattr(sym.idx, 'notsub')[i]])
         with pytest.raises(st.SymTensorError):
@@ -130,15 +139,18 @@ def test_sym_tensor_sym_typemap_dense_1D():
 def test_sym_tensor_2d():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
-    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))
+    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))  # type: ignore
+
     for type1 in st.subbasenames[st.SymSub]:
         if type1 in ('Sub', 'NotSub'): continue
         cls = st.sym_tensor_types[f'{type1}SlicedAll2DBasic']
-        s = sym.tensor(th.arange(sym.idx.L**2).reshape(sym.idx.L, sym.idx.L), cls=cls)
+        s = sym.tensor(th.arange(sym.idx.L**2).reshape(sym.idx.L, sym.idx.L), cls=cls)  # type: ignore
+
         assert hasattr(s, 'attr')
         assert isinstance(s, cls)
         assert isinstance(s, getattr(st, type1))
-        assert th.all(s == sym.idx.slice2d(s.attr.orig, type1.lower(), dim=[0, 1]))
+        assert th.all(s == sym.idx.slice2d(s.attr.orig, type1.lower(), dim=[0, 1]))  # type: ignore
+
         for type2 in st.subbasenames[st.SymSub]:
             type2l = type2.lower()
             if type2 in ('Sub', 'NotSub'): continue
@@ -147,7 +159,8 @@ def test_sym_tensor_2d():
             assert t.__class__.__name__ == cls.__name__.replace(type1, type2), cls.__name__
             assert isinstance(t, getattr(st, type2))
             # ic( t , sym.idx.slice2d(t.attr.orig, type2l, dim=[0,1]))
-            assert th.all(t == sym.idx.slice2d(t.attr.orig, type2l, dim=[0, 1]))
+            assert th.all(t == sym.idx.slice2d(t.attr.orig, type2l, dim=[0, 1]))  # type: ignore
+
             orig = t.clone()
             new = th.randint(10000, 20000, (len(orig), len(orig)))
             setattr(s, type2l, new)
@@ -159,7 +172,8 @@ def test_sym_tensor_2d():
 def test_sym_tensor():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
-    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))
+    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))  # type: ignore
+
     t = sym.tensor(th.arange(10))
 
     t.asu = 17
@@ -255,7 +269,8 @@ def test_sym_tensor():
 def test_sym_tensor_sparse():
     sym = ipd.tests.sym.create_test_sym_manager(symid='C3')
     sym.idx = [(10, 0, 3), (10, 5, 8)]
-    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))
+    sym.idx.set_kind(th.tensor([0, 0, 0, 10, 1, 2, 2, 2, 2, 12], dtype=int))  # type: ignore
+
     t = sym.tensor(th.arange(10), cls=st.sym_tensor_types.FullSlicedAllSparse1DBasic)
 
 if __name__ == '__main__':

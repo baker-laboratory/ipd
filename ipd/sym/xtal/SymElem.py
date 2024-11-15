@@ -45,7 +45,7 @@ def symelem_of(frame, **kw):
         if not np.allclose(nfold, nfold.round()):
             raise SymElemAngErr(f"angle {an} implies nfold {nfold} which is non-integer")
     # ic(int(nfold), a, c, h, kw)
-    return SymElem(int(nfold.round()), axis=a, cen=c, hel=h, **kw)
+    return SymElem(int(nfold.round()), axis=a, cen=c, hel=h, **kw)  # type: ignore
 
 def _round(val):
     for v in [
@@ -168,7 +168,8 @@ class SymElem:
         # assert 0
         opids = np.arange(len(frames), dtype=np.int32)
         opsframes = einsum("oij,fjk->ofik", self.operators[1:], frames)
-        for iop, opframes in enumerate(opsframes):
+        for iop, opframes in enumerate(opsframes):  # type: ignore
+
             a, b = np.where(np.all(np.isclose(frames[None], opframes[:, None]), axis=(-1, -2)))
             opids[a] = np.minimum(opids[a], opids[b])
         for i, id in enumerate(sorted(set(opids))):
@@ -205,12 +206,13 @@ class SymElem:
             centest = einsum("fij,j->fi", frames[iframematch], self.cen)
             axstest = einsum("fij,j->fi", frames[iframematch], self.axis)
             if sanitycheck and self.iscompound:
-                assert np.allclose(centest, centest[0])
+                assert np.allclose(centest, centest[0])  # type: ignore
+
                 if not (self.istet or self.isoct):
-                    assert np.all(
-                        np.logical_or(
-                            np.all(np.isclose(axstest, axstest[0]), axis=1),
-                            np.all(np.isclose(axstest, -axstest[0]), axis=1),
+                    assert np.all(  # type: ignore
+                        np.logical_or(  # type: ignore
+                            np.all(np.isclose(axstest, axstest[0]), axis=1),  # type: ignore
+                            np.all(np.isclose(axstest, -axstest[0]), axis=1),  # type: ignore
                         ))
             if np.allclose(compid[iframematch], -1):
                 compid[iframematch] = fid
@@ -226,7 +228,8 @@ class SymElem:
     def frame_component_ids_bycenter(self, frames, sanitycheck=True):
         assert self.iscompound
         cen = einsum("fij,j->fi", frames, self.cen)
-        d = hnorm(cen[:, None] - cen[None])
+        d = hnorm(cen[:, None] - cen[None])  # type: ignore
+
         compid = np.ones(len(frames), dtype=np.int32) * -12345
         count = 0
         for i in range(len(d)):
@@ -280,7 +283,8 @@ class SymElem:
         match = np.where(match)[0]
         if len(match) != len(self.operators):
             cperr = ComponentIDError()
-            cperr.match = match
+            cperr.match = match  # type: ignore
+
             raise cperr
             ic(frames.shape)
             ic(match)
@@ -367,12 +371,14 @@ class SymElem:
         # raise ScrewError(f'screw translation out of unit cell')
         self.screw = unitcellfrac * self.nfold
         # ic(self.nfold, self.screw)
-        if not np.isclose(self.screw, round(self.screw)):
+        if not np.isclose(self.screw, round(self.screw)):  # type: ignore
+
             raise ScrewError(f"screw has non integer value {self.screw}")
         if self.screw >= max(2, self.nfold):  # C11 is ok
             raise ScrewError("screw dosent match nfold")
 
-        self.screw = int(round(self.screw))
+        self.screw = int(round(self.screw))  # type: ignore
+
         if self.nfold > 1:
             self.screw = self.screw % self.nfold
             self.hel = self.hel % cellextent
@@ -428,7 +434,7 @@ class SymElem:
         if hdot(self.axis, [1, 2, 3, 0]) < 0:
             self.axis = -self.axis
         if axis2 is not None and hdot(self.axis2, [1, 2, 3, 0]) < 0:
-            self.axis2 = -self.axis2
+            self.axis2 = -self.axis2  # type: ignore
 
         if adjust_cyclic_center and (axis2 is None) and np.isclose(hel, 0):  # cyclic
             assert 0, "this needs an audit"
@@ -540,10 +546,12 @@ class SymElem:
         if np.allclose(ax.round(), ax):
             ax = ax.astype("i")
         if self.istet:
-            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)
+            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)  # type: ignore
+
             s = f"SymElem('{self._init_args.nfold}', axis=[{axs}], axis2={[float(_) for _ in ax2[:3]]}, cen={[float(_) for _ in self.cen[:3]]}, label='{self.label}')"
         elif self.isoct:
-            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)
+            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)  # type: ignore
+
             s = f"SymElem('{self._init_args.nfold}', axis=[{axs}], axis2={[float(_) for _ in ax2[:3]]}, cen={[float(_) for _ in self.cen[:3]]}, label='{self.label}')"
         elif self.axis2 is None:
             if self.screw == 0:
@@ -616,7 +624,7 @@ def showsymelems(
             tmp[e.label].append(e)
         symelems = tmp
 
-    import pymol
+    import pymol  # type: ignore
 
     elemframes = np.eye(4).reshape(1, 4, 4)
     if lattice is None:
@@ -694,7 +702,8 @@ def showsymelems(
 
             cgo = []
 
-            for (tax, ax), (tax2, ax2), xyzlen in configs:
+            for (tax, ax), (tax2, ax2), xyzlen in configs:  # type: ignore
+
                 cylweight = weight
                 xyzlen = np.array(xyzlen)
                 if scan:
@@ -749,8 +758,10 @@ def _sanitycheck_compid_cens(elem, frames, compid):
         compframes = frames[compid == i]
         # ipd.showme(compframes @ elem.origin @ offset, scale=scale)
         cen = einsum("ij,j->i", compframes[0], elem.origin[:, 3])
-        assert np.allclose(cen, einsum("fij,j->fi", compframes, elem.origin[:, 3]))
-        assert not any([np.allclose(cen, s) for s in seenit])
+        assert np.allclose(cen, einsum("fij,j->fi", compframes, elem.origin[:, 3]))  # type: ignore
+
+        assert not any([np.allclose(cen, s) for s in seenit])  # type: ignore
+
         seenit.append(cen)
 
 def _make_operator_component_joint_ids(elem1, elem2, frames, fopid, fcompid, sanitycheck=True):
@@ -771,7 +782,8 @@ def _make_operator_component_joint_ids(elem1, elem2, frames, fopid, fcompid, san
         for i in range(np.max(opcompid)):
             compframes = frames[opcompid == i]
             cens = einsum("fij,j->fi", compframes, elem2.origin[:, 3])
-            if np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2)):
+            if np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2)):  # type: ignore
+
                 raise ComponentIDError
                 ic(elem1)
                 ic(elem2)
@@ -787,8 +799,9 @@ def _make_operator_component_joint_ids(elem1, elem2, frames, fopid, fcompid, san
                 showme(seenit, scale=10)
 
                 assert 0
-            assert not np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2))
-            seenit = np.concatenate([cens, seenit])
+            assert not np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2))  # type: ignore
+
+            seenit = np.concatenate([cens, seenit])  # type: ignore
 
     return opcompid
 

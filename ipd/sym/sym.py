@@ -38,7 +38,8 @@ def frames(
     sym = sym.lower()
 
     okexe = (SystemExit, ) if sgonly else (KeyError, AttributeError)
-    with contextlib.suppress(okexe):
+    with contextlib.suppress(okexe):  # type: ignore
+
         return ipd.sym.xtal.sgframes(sym, ontop=ontop, **kw)
     try:
         if ipd.sym.is_known_xtal(sym):
@@ -87,7 +88,8 @@ def frames(
         elif sym.startswith("c"):
             startax = ipd.homog.hvec([0, 0, 1])
         elif bbsym:
-            startax = axes(sym, bbnfold)
+            startax = axes(sym, bbnfold)  # type: ignore
+
         elif asym_of:
             startax = axes(sym, asym_of)
         else:
@@ -124,7 +126,8 @@ def frames(
         ipd.dev.checkpoint("frames sortframes")
 
     if torch:
-        import torch as th
+        import torch as th  # type: ignore
+
         return th.as_tensor(f, dtype=th.float64)
 
     ipd.dev.checkpoint(kw)
@@ -138,7 +141,8 @@ def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize
         return ontop
     celldeltas = [0]
     if allowcellshift:
-        celldeltas = list(itertools.product(*[np.arange(-1, 2) * cellsize] * 3))
+        celldeltas = list(itertools.product(*[np.arange(-1, 2) * cellsize] * 3))  # type: ignore
+
     diff = ipd.homog.hdiff(ontop, np.stack(frames2))
     w = np.nonzero(diff < 0.0001)
     if strict:
@@ -245,7 +249,8 @@ def axes(sym, nfold=None, all=False, cellsize=1, closest_to=None, **kw):
             elif closest_to is not None:
                 axes = symaxes_all[sym].copy()
                 for k, v in axes.items():
-                    axes[k] = v[np.argmax(np.abs(np.dot(v, ipd.homog.hvec(closest_to))))]
+                    axes[k] = v[np.argmax(np.abs(np.dot(v, ipd.homog.hvec(closest_to))))]  # type: ignore
+
             else:
                 axes = symaxes[sym].copy()
             if nfold:
@@ -304,7 +309,7 @@ def remove_if_same_axis(frames, bbaxes, onesided=True, partial_ok=False):
     uniq = np.array(uniq)
     return frames[uniq]
 
-_ambiguous_axes = Bunch(tet=[], oct=[(2, 4)], icos=[], d2=[], _strict=True)
+_ambiguous_axes = Bunch(tet=[], oct=[(2, 4)], icos=[], d2=[], _strict=True)  # type: ignore
 
 def ambiguous_axes(sym):
     return _ambiguous_axes[sym]
@@ -628,7 +633,7 @@ for icyc in range(2, 33):
     angles = 2 * np.pi * np.arange(icyc) / icyc
     # print(angles * 180 / np.pi)
     sym_frames[sym] = hrot([0, 0, 1, 0], angles)
-    sym_point_angles[sym] = {
+    sym_point_angles[sym] = {  # type: ignore
         icyc: [angles],
     }
     minsymang[sym] = np.pi / icyc / 2
@@ -671,7 +676,7 @@ def ndim(sym):
 
 def numpy_or_torch_array(source, example):
     if "torch" in sys.modules:
-        import torch
+        import torch  # type: ignore
 
         if torch.is_tensor(example):
             return torch.as_tensor(source)
@@ -700,18 +705,21 @@ def subframes(frames, bbsym, asym):
     assert frames.ndim == 3 and frames.shape[1:] == (4, 4)
     subframes = ipd.sym.frames(bbsym)
     coords = ipd.homog.hxform(frames, ipd.homog.hcom(asym, flat=True))
-    ic(coords)
-    ic(frames.shape)
-    ic(subframes.shape)
+    ic(coords)  # type: ignore
+
+    ic(frames.shape)  # type: ignore
+
+    ic(subframes.shape)  # type: ignore
+
     # relframes = frames[1:, None] @ ipd.homog.hinv(frames[None, :-1])
     relframes = frames[:, None] @ ipd.homog.hinv(frames[None, :])
-    ic(relframes.shape)
+    ic(relframes.shape)  # type: ignore
 
     axs, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(relframes)
 
     for i in range(len(frames)):
         axdist = ipd.homog.hpointlinedis(coords, cen[i, :], axs[i, :])
-        ic(axdist)
+        ic(axdist)  # type: ignore
 
     # what about multiple nfold axes???\
     # can distinguish by axis direction?
@@ -722,7 +730,7 @@ def subframes(frames, bbsym, asym):
     # closest axis
 
     axisdist = ipd.hprojperp(axs, cen)
-    ic(axisdist)
+    ic(axisdist)  # type: ignore
 
 # computed in ipd.sym.asufit.compute_canonical_asucen
 _canon_asucen = dict(
@@ -761,7 +769,8 @@ def canonical_asu_center(sym, cuda=False):
     sym = ipd.sym.map_sym_abbreviation(sym).lower()
     try:
         if cuda:
-            import torch as th
+            import torch as th  # type: ignore
+
             return th.tensor(_canon_asucen[sym], device='cuda')
         return _canon_asucen[sym]
     except KeyError as e:

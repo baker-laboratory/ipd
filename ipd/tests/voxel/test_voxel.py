@@ -11,7 +11,8 @@ from ipd import h
 pytest.importorskip('torch')
 pytest.importorskip('gemmi')
 pytest.importorskip('ipd.voxel.voxel_cuda')
-th = lazimport('torch')
+th = lazimport('torch')  # type: ignore
+
 from ipd.voxel.voxel_cuda import _voxel
 
 def main():
@@ -83,10 +84,12 @@ def test_numba_vox_create():
             ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl, grid.cuda())
 
     # ipd.showme(vox)
-    vox.grid = grid
+    vox.grid = grid  # type: ignore
+
     # ipd.showme(vox)
-    assert th.allclose(vox.lb, lb)
-    assert th.allclose(vox.grid, grid, atol=1e-3)
+    assert th.allclose(vox.lb, lb)  # type: ignore
+
+    assert th.allclose(vox.grid, grid, atol=1e-3)  # type: ignore
 
 def make_test_points(npts, bound, ngen=None):
     ngen = ngen or npts
@@ -129,7 +132,7 @@ def test_create_voxel_grid_clash():
         mintime = min(t.elapsed(), mintime)
         if i == 0: inittime = ttot.elapsed()
     print(
-        f'create clash   min {mintime*1000:7.3f}ms avg {(ttot.elapsed()-inittime)/nsamp*1000:7.3f}ms voxmean {vox.mean():7.3} shape {vox.shape}'
+        f'create clash   min {mintime*1000:7.3f}ms avg {(ttot.elapsed()-inittime)/nsamp*1000:7.3f}ms voxmean {vox.mean():7.3} shape {vox.shape}'  # type: ignore
     )
     assert mintime < 0.01
 
@@ -162,7 +165,7 @@ def test_create_voxel_grid_contact():
         mintime = min(t.elapsed(), mintime)
         if i == 0: inittime = ttot.elapsed()
     print(
-        f'create contact min {mintime*1000:7.3f}ms avg {(ttot.elapsed()-inittime)/nsamp*1000:7.3f}ms voxmean {vox.mean():7.3} shape {vox.shape}'
+        f'create contact min {mintime*1000:7.3f}ms avg {(ttot.elapsed()-inittime)/nsamp*1000:7.3f}ms voxmean {vox.mean():7.3} shape {vox.shape}'  # type: ignore
     )
     assert mintime < 0.01
 

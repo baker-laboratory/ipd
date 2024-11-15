@@ -4,7 +4,7 @@ import tempfile
 from ipd.pdb.pdbfile import PDBFile
 from ipd.viz.pymol_viz import pymol_load
 
-@pymol_load.register(PDBFile)
+@pymol_load.register(PDBFile)  # type: ignore
 def pymol_viz_pdbfile(
     pdb,
     name,
@@ -17,6 +17,6 @@ def pymol_viz_pdbfile(
 
         pdb.dump_pdb(f'{td}/{tag}.pdb')
 
-        from pymol import cmd
+        from pymol import cmd  # type: ignore
 
         cmd.load(f'{td}/{tag}.pdb')

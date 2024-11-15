@@ -66,7 +66,8 @@ class Xtal:
             cells = list(itertools.product(*[range(lb, ub + 1)] * 3))
 
         elif len(cells) == 2:
-            lb, ub = cells
+            lb, ub = cells  # type: ignore
+
             cells = list(itertools.product(*[range(lb, ub + 1)] * 3))
         elif len(cells) == 3:
             cells = list(
@@ -94,7 +95,8 @@ class Xtal:
                 asucen = self.asucen(cellsize)
             if center is None:
                 center = asucen
-            ic(center, asucen)
+            ic(center, asucen)  # type: ignore
+
             # if xtalrad is None: xtalrad = 0.5 * cellsize # ???
             center = ipd.homog.hpoint(center)
             asucen = ipd.homog.hpoint(asucen)
@@ -136,7 +138,8 @@ class Xtal:
         return ipd.homog.hxform(bestframe, coords)
 
     def symelems_to_unitcell(self):
-        for s in self.symelems:
+        for s in self.symelems:  # type: ignore
+
             if s.cen[0] < 0:
                 s.cen[0] += 1
             if s.cen[1] < 0:
@@ -155,7 +158,8 @@ class Xtal:
         ipd.dev.checkpoint(kw, funcbegin=True)
         frames = [np.eye(4)]
         # ic(self.name)
-        for s in self.symelems:
+        for s in self.symelems:  # type: ignore
+
             f = s.operators[[1, -1]] if contacting_only else s.operators[1:]
             frames += list(f)
         frames = np.stack(frames)
@@ -193,14 +197,17 @@ class Xtal:
         elif xtalasumethod == "closest_to_cen":
             elems = self.symelems
             # ic([e.cen for e in elems])
-            cen0 = np.mean(np.stack([e.cen for e in elems]), axis=0)
+            cen0 = np.mean(np.stack([e.cen for e in elems]), axis=0)  # type: ignore
+
             # ic(cen0)
             # assert 0
         elif xtalasumethod == "closest_approach":
             cens = []
-            for i1, elem1 in enumerate(self.symelems):
+            for i1, elem1 in enumerate(self.symelems):  # type: ignore
+
                 p1, ax1 = elem1.cen, elem1.axis
-                for i2, elem2 in enumerate(self.symelems):
+                for i2, elem2 in enumerate(self.symelems):  # type: ignore
+
                     if i2 <= i1:
                         continue
                     p2, ax2 = elem2.cen, elem2.axis
@@ -213,7 +220,8 @@ class Xtal:
         else:
             raise ValueError(f"unknown asucen xtalasumethod {xtalasumethod}")
         if use_olig_nbrs:
-            opcens = [np.mean(ipd.homog.hxform(e.operators[1:], cen0), axis=0) for e in self.symelems]
+            opcens = [np.mean(ipd.homog.hxform(e.operators[1:], cen0), axis=0) for e in self.symelems]  # type: ignore
+
             cen = np.mean(np.stack(opcens), axis=0)
             # this is arbitrary
             cen = olig_nbr_wt*cen + (1-olig_nbr_wt) * cen0
@@ -224,8 +232,10 @@ class Xtal:
     def compute_frames(self, **kw):
         """This should be depricated, only needed for 2d stuff currently."""
         if self.dimension == 3:
-            self.unitframes = self.info.frames
-            self.genframes = self.cellframes(cells=3, ontop=None)
+            self.unitframes = self.info.frames  # type: ignore
+
+            self.genframes = self.cellframes(cells=3, ontop=None)  # type: ignore
+
             self.coverelems = self.generate_cover_symelems(self.genframes)
             self.unitelems = self.generate_unit_symelems(self.genframes)
         else:
@@ -253,7 +263,8 @@ class Xtal:
     def cryst1(self, cellsize):
         if self.dimension != 3:
             return f"LAYER {self.spacegroup} {cellsize}"
-        if isinstance(cellsize, (int, float, np.int32, np.int64, np.float32, np.float64)):
+        if isinstance(cellsize, (int, float, np.int32, np.int64, np.float32, np.float64)):  # type: ignore
+
             cellsize = np.array([cellsize] * 3, dtype=np.float64)
         if len(cellsize) == 3:
             return cryst1_pattern % (*cellsize, self.spacegroup)
@@ -332,7 +343,8 @@ class Xtal:
     ):
         cachefile = ipd.dev.package_data_path(f'xtal/lots_of_frames_{self.name.replace(" ","_")}.npy')
         if self.dimension == 2:
-            generators = np.concatenate([s.operators for s in self.symelems])
+            generators = np.concatenate([s.operators for s in self.symelems])  # type: ignore
+
             x, _ = ipd.homog.hcom.geom.expand_xforms_rand(generators, depth=depth, radius=genradius, trials=trials)
             testpoint = [0.001, 0.002, 0.003]
             cens = ipd.homog.hxform(x, testpoint)
@@ -345,7 +357,7 @@ class Xtal:
             # np.save(cachefile, x)
         else:
             assert 0, 'should only be called for 2D stuff'
-        return x
+        return x  # type: ignore
 
     def generate_unit_frames(self, candidates, bbox=None, testpoint=None):
         if bbox is None: bbox = [(0, 0, 0), (1, 1, 1)]
@@ -359,7 +371,8 @@ class Xtal:
 
     def generate_unit_symelems(self, candidates):
         unitelems = []
-        for i, symelem in enumerate(self.symelems):
+        for i, symelem in enumerate(self.symelems):  # type: ignore
+
             elems = symelem.xformed(self.unitframes)
             for e, f in zip(elems, self.unitframes):
                 e.origin = f
@@ -370,7 +383,8 @@ class Xtal:
         if bbox is None: bbox = [(0, 0, 0), (1, 1, 1)]
         coverelems = []
         bbox = np.asarray(bbox) if bbox is not None else None
-        for i, symelem in enumerate(self.symelems):
+        for i, symelem in enumerate(self.symelems):  # type: ignore
+
             testpoint = symelem.cen[:3]
             cens = ipd.homog.hxform(candidates, testpoint)
             frames = candidates
@@ -394,7 +408,8 @@ def interp_xtal_cell_list(cells):
     if isinstance(cells, (int, float)):
         ub = cells // 2
         lb = ub - cells + 1
-        cells = list(itertools.product(*[range(lb, ub + 1)] * 3))
+        cells = list(itertools.product(*[range(lb, ub + 1)] * 3))  # type: ignore
+
     elif len(cells) == 2:
         lb, ub = cells
         cells = list(itertools.product(*[range(lb, ub + 1)] * 3))
@@ -412,7 +427,8 @@ def interp_xtal_cell_list(cells):
 _warn_asucen_xtalasumethod = True
 
 def _scaled_frames(cellsize, frames):
-    if isinstance(cellsize, (int, float, np.int64)):
+    if isinstance(cellsize, (int, float, np.int64)):  # type: ignore
+
         cellsize = np.array([cellsize, cellsize, cellsize])
     if len(cellsize) == 6:
         assert np.all(cellsize[3:] == 90)

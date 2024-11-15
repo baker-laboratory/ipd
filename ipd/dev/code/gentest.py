@@ -59,7 +59,7 @@ def make_testfile(sourcefile, testifle):
     Path(testifle).write_text(testcode)
     os.system(f'yapf -i {testifle}')
 
-testfile_template = '''
+testfile_template = """
 import pytest
 
 import ipd
@@ -97,4 +97,4 @@ if __name__ == '__main__':{# in template #}
 
     main()
 
-'''.lstrip()
+""".lstrip()

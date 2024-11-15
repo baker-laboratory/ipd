@@ -5,7 +5,7 @@ from ipd.sym.xtal.xtalcls import Xtal, interp_xtal_cell_list
 from ipd.sym.xtal.xtalinfo import SymElem
 from ipd.viz.pymol_viz import cgo_cube, cgo_cyl, cgo_fan, cgo_sphere, pymol_load
 
-@pymol_load.register(SymElem)
+@pymol_load.register(SymElem)  # type: ignore
 def pymol_viz_SymElem(
     toshow,
     name="SymElem",
@@ -31,7 +31,7 @@ def pymol_viz_SymElem(
     symelemcentercut=[0, 0, 0],
     **kw,
 ):
-    import pymol
+    import pymol  # type: ignore
 
     if state: state["seenit"][name] += 1
 
@@ -128,7 +128,8 @@ def pymol_viz_SymElem(
         )
 
     if addtocgo is None:
-        pymol.cmd.load_cgo(mycgo, f'{name}_{state["seenit"][name]}')
+        pymol.cmd.load_cgo(mycgo, f'{name}_{state["seenit"][name]}')  # type: ignore
+
         pymol.cmd.set_view(v)
     else:
         addtocgo.extend(mycgo)
@@ -136,7 +137,7 @@ def pymol_viz_SymElem(
         return mycgo
     return None
 
-@pymol_load.register(Xtal)
+@pymol_load.register(Xtal)  # type: ignore
 def pymol_viz_Xtal(
         toshow,
         name="xtal",
@@ -157,12 +158,14 @@ def pymol_viz_Xtal(
         pointcol=(0.5, 0.5, 0.5),
         **kw,
 ):
-    import pymol
+    import pymol  # type: ignore
 
-    state["seenit"][name] += 1
+    state["seenit"][name] += 1  # type: ignore
+
     if "cellsize" in kw:
         assert kw["cellsize"] == scale
-    name = f'{name}_{state["seenit"][name]}'
+    name = f'{name}_{state["seenit"][name]}'  # type: ignore
+
     # xcellshift = ipd.htrans(cellshift)
     allcgo = list() if addtocgo is None else addtocgo
     # for x in toshow.unitframes:
@@ -197,9 +200,11 @@ def pymol_viz_Xtal(
                         **kw,
                     )
         if splitobjs:
-            pymol.cmd.load_cgo(cgo, f"{name}_symelem{i}")
+            pymol.cmd.load_cgo(cgo, f"{name}_symelem{i}")  # type: ignore
+
         allcgo += cgo
-        xshift2 = xcellshift.copy()
+        xshift2 = xcellshift.copy()  # type: ignore
+
         xshift2[:3, 3] *= scale
         showcube = toshow.dimension == 3 if showcube is None else showcube
         if showcube:
@@ -218,7 +223,8 @@ def pymol_viz_Xtal(
             cgo += cgo_sphere(p, rad=pointradius, col=pointcol)
         # ic(px.shape)
         # assert 0
-        pymol.cmd.load_cgo(cgo, f"{name}_pts{i}")
+        pymol.cmd.load_cgo(cgo, f"{name}_pts{i}")  # type: ignore
+
     elif showpoints not in (None, False, 0):
         showpts = xtal_show_points(showpoints, **kw)
         frames = toshow.cellframes(cellsize=1, cells=cells)
@@ -228,19 +234,22 @@ def pymol_viz_Xtal(
         # for p, r, c in zip(*showpts):
         # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, p), rad=scale * r, col=c)
         if splitobjs:
-            pymol.cmd.load_cgo(cgo, f"{name}_pts{i}")
+            pymol.cmd.load_cgo(cgo, f"{name}_pts{i}")  # type: ignore
+
         allcgo += cgo
 
     if showgenframes:
         col = (1, 1, 1)
-        cgo = ipd.viz.cgo_frame_points(toshow.genframes, scale, showpts, **kw)
+        cgo = ipd.viz.cgo_frame_points(toshow.genframes, scale, showpts, **kw)  # type: ignore
+
         # cgo = list()
         # for i, frame in enumerate(toshow.genframes):
         # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, showpts[0]), rad=scale * 0.05, col=col)
         # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, showpts[1]), rad=scale * 0.03, col=col)
         # cgo += cgo_sphere(scale * ipd.homog.hxform(frame, showpts[2]), rad=scale * 0.02, col=col)
         if splitobjs:
-            pymol.cmd.load_cgo(cgo, f"{name}_GENPTS{i}")
+            pymol.cmd.load_cgo(cgo, f"{name}_GENPTS{i}")  # type: ignore
+
         allcgo += cgo
 
     if not splitobjs:

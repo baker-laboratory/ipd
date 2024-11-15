@@ -45,6 +45,7 @@ dependencies = [
     'submitit',
     'tqdm',
     'typer',
+    'validate-pyproject[all]',
     'yapf',
 ]
 [project.optional-dependencies]
@@ -81,17 +82,21 @@ arithmetic_precedence_indication = true
 [tool.pyright]
 include = ['ipd']
 exclude = [
-    '**/*.log',
-    'ipd/viz/*',
+    'ipd/crud/*',
+    'ipd/fit/*',
     'ipd/homog/*',
-    'ipd/tests/*',
+    'ipd/pdb/*',
     'ipd/voxel/*',
     'ipd/samp/*',
-    'ipd/fit/*',
+    'ipd/sym/old/*',
+    'ipd/sym/xtal/*',
+    'ipd/tests/*',
+    'ipd/viz/*',
     '*_viz.py',
-    'sym/xtal/*',
+    '**/*.log',
     '**/__pycache__',
 ]
+threads = 4
 defineConstant = { DEBUG = true }
 typeCheckingMode = 'standard'
 reportMissingImports = true

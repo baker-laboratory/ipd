@@ -6,8 +6,9 @@ from ipd.sym.xtal.spacegroup_util import *
 _memoized_frames = {}
 
 if "H32" in sg_frames_dict:
-    sg_frames_dict["R3"] = sg_frames_dict["H3"]
-    sg_frames_dict["R32"] = sg_frames_dict["H32"]
+    sg_frames_dict["R3"] = sg_frames_dict["H3"]  # type: ignore
+
+    sg_frames_dict["R32"] = sg_frames_dict["H32"]  # type: ignore
 
 sg_redundant = {"P2": "P121"}
 sg_all = [k for k in sg_pdbname if k not in sg_redundant]
@@ -30,17 +31,19 @@ def sgframes(
     cells = process_num_cells(cells)
     key = spacegroup, cellgeom, tuple(cells.flat), sortframes
     if key not in _memoized_frames:
-        unitframes = sg_frames_dict[spacegroup]
+        unitframes = sg_frames_dict[spacegroup]  # type: ignore
+
         if cellgeom == "unit":
             latticevec = np.eye(3)
         else:
             latticevec = lattice_vectors(spacegroup, cellgeom=cellgeom)
-        frames = latticeframes(unitframes, latticevec, cells)
+        frames = latticeframes(unitframes, latticevec, cells)  # type: ignore
 
         frames = prune_frames(frames, asucen, xtalrad, xtalcen)
         frames = sort_frames(frames, method=sortframes)
 
-        _memoized_frames[key] = frames.round(10)
+        _memoized_frames[key] = frames.round(10)  # type: ignore
+
         if len(_memoized_frames) > 10_000:
             ipd.WARNME("sgframes holding >10000 _memoized_frames")
 
@@ -49,24 +52,29 @@ def sgframes(
 def sgpermutations(spacegroup: str, cells=4):
     assert cells == 4
     spacegroup = spacegroup_canonical_name(spacegroup)
-    return sg_permutations444_dict[spacegroup]
+    return sg_permutations444_dict[spacegroup]  # type: ignore
 
 def symelems(spacegroup: str, psym=None, asdict=False, screws=True, cyclic=True):
     if isinstance(psym, int):
         psym = f"c{psym}"
     spacegroup = spacegroup_canonical_name(spacegroup)
-    se = sg_symelem_dict[spacegroup]
+    se = sg_symelem_dict[spacegroup]  # type: ignore
+
     if not screws:
-        se = [e for e in se if e.screw == 0]
+        se = [e for e in se if e.screw == 0]  # type: ignore
+
     if not cyclic:
-        se = [e for e in se if not e.iscyclic]
+        se = [e for e in se if not e.iscyclic]  # type: ignore
+
     if psym:
-        return [e for e in se if e.label == psym.upper()]
+        return [e for e in se if e.label == psym.upper()]  # type: ignore
 
     if asdict:
-        d = defaultdict(list)
+        d = defaultdict(list)  # type: ignore
+
         for e in se:
-            d[e.label].append(e)
+            d[e.label].append(e)  # type: ignore
+
         se = d
     return se
 
@@ -86,7 +94,7 @@ def prune_frames(frames, asucen, xtalrad, center=None):
 
 def copies_per_cell(spacegroup):
     spacegroup = spacegroup_canonical_name(spacegroup)
-    return len(sg_frames_dict[spacegroup])
+    return len(sg_frames_dict[spacegroup])  # type: ignore
 
 def cellgeom_from_lattice(lattice, radians=False):
     u, v, w = lattice.T

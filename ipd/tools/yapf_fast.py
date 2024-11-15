@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--hashfile", default='[gitroot]/.yapf_hash')
     parser.add_argument("--conffile", default='[gitroot]/pyproject.toml')
     args = parser.parse_args()
-    ipd.dev.yapf_fast(args.codedir, args.dryrun, args.excludefile, args.hashfile, args.conffile)
+    ipd.dev.yapf_fast(args.codedir, args.dryrun, args.excludefile, args.hashfile, args.conffile)  # type: ignore
 
 if __name__ == '__main__':
     main()

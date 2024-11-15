@@ -35,12 +35,13 @@ class CrudRun:
         local=False,
         workers=1,
         background=True,
-        Backend: ipd.crud.BackendBase = None,
-        Client: ipd.crud.ClientBase = None,
+        Backend: ipd.crud.BackendBase = None,  # type: ignore
+        Client: ipd.crud.ClientBase = None,  # type: ignore
         **kw,
     ):
         datadir = os.path.abspath(os.path.expanduser(datadir))
-        dburl = dburl or f'sqlite:///{datadir}/{self.Backend.mountpoint}.db'
+        dburl = dburl or f'sqlite:///{datadir}/{self.Backend.mountpoint}.db'  # type: ignore
+
         if not dburl.count('://'): dburl = f'sqlite:///{dburl}'
         os.makedirs(datadir, exist_ok=True)
         # print(f'creating db engine from url: \'{dburl}\'')

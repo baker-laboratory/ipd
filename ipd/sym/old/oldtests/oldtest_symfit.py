@@ -2,7 +2,7 @@ import numpy as np
 
 import ipd
 import ipd.homog as hm
-from ipd.sym import setup_test_frames, symfit_mc_play
+from ipd.sym import setup_test_frames, symfit_mc_play  # type: ignore
 
 def main():
     t = ipd.dev.Timer()
@@ -181,7 +181,7 @@ def main():
     t.report()
     print("test_symfit.py done")
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_extra_cyclic(nsamp=100):
     frames = ipd.sym.frames("c5")
     frames = ipd.homog.hrandsmall(len(frames)) @ frames
@@ -207,7 +207,7 @@ def test_extra_cyclic(nsamp=100):
     # fit = ipd.compute_symfit('c2', frames, penalize_redundant_cyclic_nth=2)
     # assert fit.redundant_cyclic_err < 0.001
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_cyclic_sym_err(nsamp=100):
     for i in range(nsamp):
         prex = hm.rand_xform()
@@ -239,7 +239,7 @@ def test_cyclic_sym_err(nsamp=100):
         angerr = (tgtang-tgtang3) * min(10000, max(1, rad))
         assert np.allclose(err3, np.sqrt(hlen**2 + angerr**2))
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_rel_xform_info():
     axs0 = [0, 0, 1, 0]
     ang0 = (2 * np.random.random() - 1) * np.pi
@@ -281,7 +281,7 @@ def test_rel_xform_info():
 
     assert np.allclose(xinfo.hel, np.sum(xinfo.axs * trans))
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_rel_xform_info_rand(nsamp=50):
     for i in range(nsamp):
         axs0 = [1, 0, 0, 0]
@@ -347,7 +347,7 @@ def test_rel_xform_info_rand(nsamp=50):
         assert np.allclose(hel0, xinfo.hel)
         assert np.allclose(rad0, xinfo.rad)
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_symops_cen_perfect(nframes=9):
     np.set_printoptions(
         precision=10,
@@ -539,7 +539,7 @@ def test_symops_cen_perfect(nframes=9):
 
         # ipd.viz.showme(list(symops3.values()), 'someops2')
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_symops_cen_imperfect(nsamp=20, manual=False, **kw):
     # np.set_printoptions(
     # precision=10,
@@ -609,7 +609,7 @@ def test_symops_cen_imperfect(nsamp=20, manual=False, **kw):
     if manual:
         return err
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_symfit_align_axes():
     kw = ipd.dev.Bunch()
     # kw.sym = np.random.choice('tet oct icos'.split())
@@ -645,7 +645,7 @@ def test_symfit_align_axes():
     # assert symfit.total_err < 10
     # assert 0
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_disambiguate_axes():
     sym = "oct"
     nfold, axis0 = list(), list()
@@ -745,7 +745,7 @@ def helper_test_symfit_dihedral(icyc, rand=True):
     #         assert 0
     # assert 0
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_symfit_dihedral():
     # helper_test_symfit_dihedral(2)
     helper_test_symfit_dihedral(3)
@@ -760,7 +760,7 @@ def test_symfit_dihedral():
 
     # assert 0
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_symfit_d2():
     syminfo = ipd.sym.get_syminfo("d2")
     symframes = syminfo.frames
@@ -769,7 +769,7 @@ def test_symfit_d2():
     helper_test_symfit_dihedral(2)
     # assert 0
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_symfit_d2_af2():
     frames = np.array([
         [[1, 0, 0, 0.0], [0, 1, 0, 0.0], [0, 0, 1, 0.0], [0, 0, 0, 1]],
@@ -795,7 +795,7 @@ def test_symfit_d2_af2():
     fit = ipd.sym.compute_symfit(frames=frames, sym="d2")
     # print(fit.total_err)
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_af2_example():
     frames = np.array([
         [
@@ -826,7 +826,7 @@ def test_af2_example():
     fit = ipd.sym.compute_symfit(sym="d3", frames=frames)
     # print(fit.weighted_err)
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_symfit_d3_nfold_error():
     frames = np.array([
         [

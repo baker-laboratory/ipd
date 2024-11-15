@@ -44,7 +44,7 @@ def test_make_testfile(tmpdir):
         print('-' * 80)
     assert code == EXPECTED or not diff
 
-CODE = '''
+CODE = """
 from pathlib import Path
 from os.path import exists
 from collections import namedtuple
@@ -66,9 +66,9 @@ class Bar:
 class SomeOtherClass:
     def triple(bar: Bar) -> Bar:
         return bar
-'''
+"""
 
-EXPECTED = '''
+EXPECTED = """
 import pytest
 
 import ipd
@@ -106,7 +106,7 @@ def test_SomeOtherClass():
 if __name__ == '__main__':
     main()
 
-'''.lstrip()
+""".lstrip()
 
 if __name__ == '__main__':
     main()

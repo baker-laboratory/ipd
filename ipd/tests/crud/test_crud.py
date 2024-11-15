@@ -11,7 +11,8 @@ import pydantic
 import pytest
 import sqlalchemy
 import sqlmodel.pool
-from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient  # type: ignore
+
 from sqlalchemy.orm import registry
 from sqlmodel import Field, Relationship
 
@@ -76,7 +77,10 @@ def test_user_group(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class _SpecWithUser(ipd.crud.SpecBase):
-        userid: ipd.crud.ModelRef['UserZSpec'] = pydantic.Field(default='anonymous_coward', validate_default=True)
+        userid: ipd.crud.ModelRef['UserZSpec'] = pydantic.Field(  # type: ignore
+            default='anonymous_coward',  # type: ignore
+            validate_default=True)  # type: ignore
+
         ispublic: bool = True
         telemetry: bool = False
 
@@ -84,7 +88,8 @@ def test_user_group(tmpdir):
         pass
 
     class UserZSpec(ipd.crud.SpecBase):
-        name: ipd.crud.Unique[str]
+        name: ipd.crud.Unique[str]  # type: ignore
+
         fullname: str = ''
         number: int = 0
         someid: UUID = pydantic.Field(default_factory=uuid4)
@@ -93,10 +98,12 @@ def test_user_group(tmpdir):
         groups: list['GroupZSpec'] = []
 
     class GroupZSpec(_SpecWithUser):
-        name: ipd.crud.Unique[str]
+        name: ipd.crud.Unique[str]  # type: ignore
+
         users: list['UserZSpec'] = []
-        userid: ipd.crud.ModelRef['UserZSpec', 'ownedgroups'] = pydantic.Field(default='anonymous_coward',
-                                                                               validate_default=True)
+        userid: ipd.crud.ModelRef['UserZSpec', 'ownedgroups'] = pydantic.Field(  # type: ignore
+            default='anonymous_coward',  # type: ignore
+            validate_default=True)
 
     models = dict(pollz=PollZSpec, userz=UserZSpec, groupz=GroupZSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models)
@@ -150,7 +157,7 @@ def test_one2many_parent(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
     class ParentChildSpec(ipd.crud.SpecBase):
-        parentid: ipd.crud.ModelRef['ParentChildSpec', 'children'] = None
+        parentid: ipd.crud.ModelRef['ParentChildSpec', 'children'] = None  # type: ignore
 
     models = dict(parentchild=ParentChildSpec)
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)

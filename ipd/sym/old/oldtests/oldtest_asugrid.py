@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import ipd
-from ipd.sym.asugrid import vispoints
+from ipd.sym.asugrid import vispoints  # type: ignore
 
 pytest.skip(allow_module_level=True)
 
@@ -47,11 +47,14 @@ def test_asugrid_case1():
     )
     # yapf: enable
 
-    frames = ipd.hscaled(newcell[0], frames)
+    frames = ipd.hscaled(newcell[0], frames)  # type: ignore
+
     sympos = ipd.homog.hxformpts(frames, newpos[0])
-    ic(sympos)
+    ic(sympos)  # type: ignore
+
     dist = ipd.homog.hnorm(sympos[:, None] - sympos[None])[0, 1:]
-    ic(dist)
+    ic(dist)  # type: ignore
+
     assert 0
 
 @pytest.mark.fast
@@ -107,7 +110,8 @@ def test_asugrid_I213_offposition2():
     )
     assert len(newpos)
     # ic(pos)
-    ic(newpos[0], newcell[0])
+    ic(newpos[0], newcell[0])  # type: ignore
+
     ipd.sym.asugrid.vispoints(newpos, newcell, frames, allframes)
 
 @pytest.mark.fast
@@ -339,7 +343,8 @@ def test_asugrid_P432_422():
         clusterdist=0.12,
     )
     print(repr(newpos))
-    ref
+    ref  # type: ignore
+
     assert np.allclose(
         newpos,
         np.array([

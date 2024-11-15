@@ -23,12 +23,16 @@ def rayframe(rays, cross=None, primary='z', device='cpu'):
 
 @dataclasses.dataclass
 class TipAtom:
-    xyz: th.Tensor
-    don: th.Tensor  # shape = N, 4, 2 ray
-    acc: th.Tensor  # shape = N, 4, 2 ray
+    xyz: th.Tensor  # type: ignore
+
+    don: th.Tensor  # shape = N, 4, 2 ray  # type: ignore
+
+    acc: th.Tensor  # shape = N, 4, 2 ray  # type: ignore
+
     resn: str
-    aname: np.array
-    _vizpos: th.Tensor = None
+    aname: np.array  # type: ignore
+
+    _vizpos: th.Tensor = None  # type: ignore
 
     def __post_init__(self):
         self.xyz = th.as_tensor(self.xyz)
@@ -61,8 +65,10 @@ class TipAtomTarget:
 
     def place_tip_atoms(self, tips, **kw):
         vox = th.zeros((1, 1, 1), device='cuda')
-        don = self.don.to('cuda')
-        acc = self.acc.to('cuda')
+        don = self.don.to('cuda')  # type: ignore
+
+        acc = self.acc.to('cuda')  # type: ignore
+
         fdon, facc = self.donacc_frames('cuda')
         # ipd.showme(self, name='ref')
         for tip in tips:
@@ -192,7 +198,7 @@ def find_don_acc(resn, aname, xyz):
     return don, acc
 
 try:
-    import pymol
+    import pymol  # type: ignore
 
     def tip_atom_cgo(fdon, facc, tip, cgo, **kw):
         if fdon.ndim == 2: fdon = fdon[None]

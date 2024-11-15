@@ -36,7 +36,7 @@ def printheader(*strs, char="-", width=80, printme=True, flush=True, frac=0.5, p
 
 def check_torch_to_numpy(stuff):
     if "torch" in sys.modules:
-        import torch
+        import torch  # type: ignore
 
         if torch.is_tensor(stuff):
             stuff = stuff.detach().cpu().numpy()
@@ -76,11 +76,15 @@ def stdout_tee(fname, with_stderr=False):
 
 def stdout_untee():
     tee = sys.stdout
-    tee.fd1.close()
-    sys.stdout = tee.fd2
-    if tee.with_stderr:
-        sys.stderr = sys.stderr.fd2
-    print("!!!!!!! stdout_untee", tee.fname)
+    tee.fd1.close()  # type: ignore
+
+    sys.stdout = tee.fd2  # type: ignore
+
+    if tee.with_stderr:  # type: ignore
+
+        sys.stderr = sys.stderr.fd2  # type: ignore
+
+    print("!!!!!!! stdout_untee", tee.fname)  # type: ignore
 
 class Flusher:
     def __init__(self, out):
@@ -108,11 +112,13 @@ def touuid(val):
         return None
 
 def datetimetag():
-    now = datetime.now()
+    now = datetime.now()  # type: ignore
+
     return now.strftime(ipd.DATETIME_FORMAT)
 
 def datetag(sep="_"):
-    now = datetime.now()
+    now = datetime.now()  # type: ignore
+
     if sep == "label":
         return now.strftime("y%Ym%md%d")
     return now.strftime(f"%Y{sep}%m{sep}%d")
@@ -136,7 +142,7 @@ def datetime_from_tag(tag):
     assert 0 < vals[3] <= 60  # hour
     assert 0 < vals[4] <= 60  # minute
     assert 0 < vals[5] <= 60  # second
-    return datetime(*vals)
+    return datetime(*vals)  # type: ignore
 
 def generic_equals(this, that, checktypes=False, debug=False):
     import numpy as np
@@ -160,7 +166,8 @@ def generic_equals(this, that, checktypes=False, debug=False):
     if isinstance(this, np.ndarray):
         return np.allclose(this, that)
     if hasattr(this, "equal_to"):
-        return this.equal_to(that)
+        return this.equal_to(that)  # type: ignore
+
     if debug:
         print("!!!!!!!!!!", type(this))
         if this != that:
@@ -177,13 +184,15 @@ class UnhashableSet:
             elif strict:
                 raise ValueError(f"UnhashableSet duplicate members {thing}")
 
-    def difference(a, b):
+    def difference(a, b):  # type: ignore
+
         a = list(a)
         b = list(b)
         assert isinstance(b, a.__class__)
         return [u for u in a if u not in b]
 
-    def intersection(a, b):
+    def intersection(a, b):  # type: ignore
+
         a = list(a)
         b = list(b)
         assert isinstance(b, a.__class__)
@@ -194,7 +203,8 @@ class UnhashableSet:
     def __iter__(self):
         return iter(self.stuff)
 
-    def __eq__(a, b):
+    def __eq__(a, b):  # type: ignore
+
         assert isinstance(b, a.__class__)
         a = list(a)
         b = list(b)

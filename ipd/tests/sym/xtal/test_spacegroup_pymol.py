@@ -67,7 +67,8 @@ def helper_test_spacegroup_frames_pymol(spacegroup, cellgeom, ncells, dump_pdbs=
         if crdref is None:
             return False
         pymol.cmd.delete("all")
-        crdtst = einsum("fij,cj->fci", frames, asymcrd).reshape(-1, 4)
+        crdtst = einsum("fij,cj->fci", frames, asymcrd).reshape(-1, 4)  # type: ignore
+
         ok = len(crdref) == 27 * len(asymcrd) * ipd.sym.copies_per_cell(spacegroup)
         if not ok:
             return False

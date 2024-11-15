@@ -30,4 +30,8 @@ def get_global_symmetry() -> SymmetryManager:
         raise RuntimeError('Global symmetry not set')
     return _global_symmetry
 
-_global_symmetry = create_sym_manager(symid='C1')
+try:
+    import torch  # noqa  # type: ignore
+    _global_symmetry = create_sym_manager(symid='C1')
+except ImportError:
+    _global_symmetry = None

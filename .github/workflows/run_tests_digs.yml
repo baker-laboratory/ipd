@@ -22,6 +22,15 @@ jobs:
       run: |
         ipd ci tests ruff ipd
 
+    - name: validate pyproject
+      run: |
+        validate-pyproject pyproject.toml
+
+    - name: run pyright
+      run: |
+        export PYTHONPATH=/home/bench/.conda/envs/ci/lib/python3.12/site-packages
+        /home/bench/.conda/envs/ci/bin/pyright -p pyproject.toml
+
     - name: run pytest digs
       run: |
         ipd ci tests pytest

@@ -149,9 +149,10 @@ import functools
 
 import ipd
 
-import torch as th
+import torch as th  # type: ignore
+
 import numpy as np
-from torch import Tensor as T
+from torch import Tensor as T  # type: ignore
 
 def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
     """Create a SymTensor object from a tensor.
@@ -194,19 +195,21 @@ def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
     elif len(symdims) == 1: dim = '1D'
     elif len(symdims) == 2: dim = '2D'
 
-    cls = cls or sym_tensor_types[f'FullSlicedAll{dim}{val}']
+    cls = cls or sym_tensor_types[f'FullSlicedAll{dim}{val}']  # type: ignore
+
     symten = tensor.as_subclass(cls)
-    attr = ipd.dev.Bunch(sym=sym,
-                         ordering=th.arange(sym.idx.L, dtype=int),
-                         symmask=th.ones(sym.idx.L, dtype=bool),
-                         resmask=th.ones(sym.idx.L, dtype=bool),
-                         origval=origval,
-                         origtype=origtype,
-                         origshape=origshape,
-                         orig=tensor.clone(),
-                         symdims=symdims,
-                         noupdate=False,
-                         symnoupdate=False)
+    attr = ipd.dev.Bunch(
+        sym=sym,
+        ordering=th.arange(sym.idx.L, dtype=int),  # type: ignore
+        symmask=th.ones(sym.idx.L, dtype=bool),  # type: ignore
+        resmask=th.ones(sym.idx.L, dtype=bool),  # type: ignore
+        origval=origval,
+        origtype=origtype,
+        origshape=origshape,
+        orig=tensor.clone(),
+        symdims=symdims,
+        noupdate=False,
+        symnoupdate=False)
 
     symten = cls(symten, attr)
     symten.attr.observers = set([symten])
@@ -224,7 +227,8 @@ class SymTensor(th.Tensor):
         if func not in _TORCH_FUNCS or not all(issubclass(t, (T, SymTensor)) for t in types):
             result = super().__torch_function__(func, types, a, kw)
             if isinstance(result, T):
-                result = result.set_attr(a)
+                result = result.set_attr(a)  # type: ignore
+
                 # ic(func, a, result)
             return result
         return _TORCH_FUNCS[func](*a, **kw)
@@ -232,7 +236,8 @@ class SymTensor(th.Tensor):
     def __new__(cls, t: 'SymTensor', attr) -> 'SymTensor':
         # ic('SymTensor')
         assert isinstance(t, SymTensor)
-        assert not t.as_subclass(T).requires_grad or not torch.is_grad_enabled()
+        assert not t.as_subclass(T).requires_grad or not torch.is_grad_enabled()  # type: ignore
+
         return t
         # new = t.as_subclass(cls).set_attr(t.attr)
         # new.attr.observers.add(new)
@@ -256,7 +261,7 @@ class SymTensor(th.Tensor):
         if isinstance(self.attr.orig, np.ndarray):
             assert self.attr.origval.ndim == 1
             return np.array([self.attr.origval[i] for i in self])
-        return self.full.sliced.reshape(self.attr.origshape)
+        return self.full.sliced.reshape(self.attr.origshape)  # type: ignore
 
     # def reshape(self, *a, **kw):
     # return th.Tensor.reshape(self, *a, **kw).as_subclass(self.__class__).set_attr(self.attr)
@@ -271,9 +276,10 @@ class SymTensor(th.Tensor):
         assert hasattr(self, 'attr')
         # print('__setitem__')
         if isinstance(val, th.Tensor):
-            if isinstance(slice, th.Tensor): ic(slice.shape)
+            if isinstance(slice, th.Tensor): ic(slice.shape)  # type: ignore
+
         self.as_subclass(T)[slice] = val.as_subclass(T) if isinstance(val, th.Tensor) else val
-        self._update()
+        self._update()  # type: ignore
 
     def __deepcopy__(self, memo):
         copy = self.clone()
@@ -334,25 +340,25 @@ class XYZ(Payload):
     def _symmetrize_orig(self):
         if self.attr.symnoupdate or self.attr.noupdate: return
         with self.updates_off():
-            self.attr.orig[:] = self.attr.sym.apply_symmetry(self.sym.contig).sliced.full
+            self.attr.orig[:] = self.attr.sym.apply_symmetry(self.sym.contig).sliced.full  # type: ignore
 
 class Pair(Payload):
     def _symmetrize_orig(self):
         if self.attr.symnoupdate or self.attr.noupdate: return
         with self.updates_off():
-            self.attr.orig[:] = self.attr.sym.apply_symmetry_pair(self.sym.contig).sliced.full
+            self.attr.orig[:] = self.attr.sym.apply_symmetry_pair(self.sym.contig).sliced.full  # type: ignore
 
 class Basic(Payload):
     def _symmetrize_orig(self):
         if self.attr.symnoupdate or self.attr.noupdate: return
         with self.updates_off():
-            self.sym.contig._symmetrize_orig_dim_unsafe()._update(force=True)
+            self.sym.contig._symmetrize_orig_dim_unsafe()._update(force=True)  # type: ignore
 
 class Ptr(Payload):
     def _symmetrize_orig(self):
         if self.attr.symnoupdate or self.attr.noupdate: return
         with self.updates_off():
-            self.sym.contig._symmetrize_orig_dim_unsafe(ptr=True)
+            self.sym.contig._symmetrize_orig_dim_unsafe(ptr=True)  # type: ignore
 
 class Ordering(SymTensor):
     '''Base class for sort type masks: sortres, sortsub'''
@@ -383,7 +389,8 @@ class SymSub(SymTensor):
         base = cls.__bases__[list(subbasenames.keys()).index(__class__)]
         symmask = (cls if cls.__bases__ == (__class__, ) else base).__name__.lower()
         attr.symmask = getattr(attr.sym.idx, symmask)
-        if issubclass(cls, (Sub, NotSub)):
+        if issubclass(cls, (Sub, NotSub)):  # type: ignore
+
             try:
                 attr.symmask = attr.symmask[isub]
             except IndexError:
@@ -422,7 +429,8 @@ class OneDim(Shape):
     def _update(self, force=False):
         if not force and self.attr.noupdate: return
         self.attr.orig[self.attr.idx] = self.as_subclass(T)
-        self._symmetrize_orig()
+        self._symmetrize_orig()  # type: ignore
+
         for o in self.attr.observers:
             o._update_view()
 
@@ -430,7 +438,8 @@ class OneDim(Shape):
         N = len(self) // self.attr.sym.nsub
         for i in range(1, self.attr.sym.nsub):
             val = self[:N]
-            if ptr: val = self.attr.sym.idx.idx_asu_to_sub[i, val[:, self.attr.isidx].to(int)]
+            if ptr: val = self.attr.sym.idx.idx_asu_to_sub[i, val[:, self.attr.isidx].to(int)]  # type: ignore
+
             self[i * N:(i+1) * N] = val
         return self
 
@@ -469,7 +478,8 @@ class TwoDim(Shape):
 
     def _symmetrize_orig_dim_unsafe(self, ptr=False):
         if self.attr.symnoupdate or self.attr.noupdate: return
-        contig = self.sym.contig
+        contig = self.sym.contig  # type: ignore
+
         N = len(contig) // self.attr.sym.nsub
         for i in range(1, self.attr.sym.nsub):
             val = contig[:N, :N]
@@ -515,8 +525,10 @@ def make_sub_bases():
 
     base_types['Sub'] = type('Sub', (SymSub, ), {})
     base_types['NotSub'] = type('NotSub', (SymSub, ), {})
-    SymSub.sub = lambda self, i: type_maps[self.__class__][Sub](self, self.attr.copy(), isub=i)
-    SymSub.notsub = lambda self, i: type_maps[self.__class__][NotSub](self, self.attr.copy(), isub=i)
+    SymSub.sub = lambda self, i: type_maps[self.__class__][Sub](self, self.attr.copy(), isub=i)  # type: ignore
+
+    SymSub.notsub = lambda self, i: type_maps[self.__class__][NotSub](self, self.attr.copy(), isub=i)  # type: ignore
+
     for k, v in base_types.items():
         setattr(M, k, v)
 

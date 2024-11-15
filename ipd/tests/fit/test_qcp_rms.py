@@ -109,7 +109,7 @@ def helper_test_qcp_raw_cuda(getfit):
     assert th.allclose(rms1.cpu(), rms2)
     if getfit:
         # ic(x1.shape, x2.shape)
-        assert th.allclose(x1.cpu(), x2, atol=1e-3)
+        assert th.allclose(x1.cpu(), x2, atol=1e-3)  # type: ignore
 
 @pytest.mark.fast
 def test_qcp_raw_cuda():

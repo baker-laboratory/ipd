@@ -40,7 +40,8 @@ _ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
 
 class ModelRef(type):
     def __class_getitem__(cls, T):
-        outerns = inspect.currentframe().f_back.f_globals
+        outerns = inspect.currentframe().f_back.f_globals  # type: ignore
+
         validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: process_modelref(x, y, outerns))
         if isinstance(T, tuple): T = tuple([ipd.dev.classname_or_str(T[0]), *T[1:]])
         else: T = ipd.dev.classname_or_str(T)
@@ -49,9 +50,11 @@ class ModelRef(type):
 @profiler
 def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
     assert not isinstance(val, int), 'int id is wrong, use uuid now'
-    if hasattr(val, 'id'): return val.id
+    if hasattr(val, 'id'): return val.id  # type: ignore
+
     with contextlib.suppress(TypeError, ValueError, AttributeError):
-        return uuid.UUID(val)
+        return uuid.UUID(val)  # type: ignore
+
     specname = valinfo.config['title']
     if not specname.endswith('Spec'): specname += 'Spec'
     cls = spec_namespace[specname]
@@ -115,7 +118,8 @@ class SpecBase(pydantic.BaseModel):
     def to_spec(self) -> 'SpecBase':
         if isinstance(self, SpecBase): return self
         dump = self.model_dump()
-        for k, v in dump.copy().items():
+        for k, v in dump.copy().items():  # type: ignore
+
             if k != 'id' and k.endswith('id'):
                 del dump[k]
                 dump[k[:-2]] = v
@@ -170,7 +174,8 @@ class SpecBase(pydantic.BaseModel):
         seenit = seenit or set()
         # if self.id in seenit: return {}
         fields = set(self.model_fields)
-        if hasattr(self, '__remote_props__'): fields |= set(self.__remote_props__)
+        if hasattr(self, '__remote_props__'): fields |= set(self.__remote_props__)  # type: ignore
+
         sfields = fields if showall else fields.intersection(showfields)
         rfields = fields if recurseall else fields.intersection(recursefields)
         # print('INFO', self.__class__.__name__, recurseall, showall, len(fields), len(sfields), len(rfields))
@@ -181,7 +186,8 @@ class SpecBase(pydantic.BaseModel):
                   seenit=seenit | {self.id},
                   parent=self.modelkind(),
                   shorten=shorten)
-        d = dict(name=self.name) if hasattr(self, 'name') else {}
+        d = dict(name=self.name) if hasattr(self, 'name') else {}  # type: ignore
+
         for attr in sorted(sfields - {'name', 'user'} - hidefields):
             if attr.endswith('id'): continue
             if parent and parent in attr: continue
@@ -225,7 +231,8 @@ class SpecBase(pydantic.BaseModel):
         formatter.max_inline_length = linelen
         val = self.info(**kw)
         # rich.print(val)
-        text = formatter.serialize(val).replace('"', '')
+        text = formatter.serialize(val).replace('"', '')  # type: ignore
+
         for label in strip_labels:
             text = text.replace(f'{label}: ', '')
         text = f'{self.__class__.__name__}{text}'
@@ -282,7 +289,8 @@ def make_client_models(clientcls, trimspecs, remote_props):
         for name, member in spec.__dict__.copy().items():
             if hasattr(member, '__layer__') and member.__layer__ == 'client':
                 assert callable(member)
-                body[name] = member
+                body[name] = member  # type: ignore
+
                 delattr(spec, name)
         for attr, field in spec.model_fields.copy().items():
             if attr.endswith('id'):
@@ -303,7 +311,8 @@ def make_client_models(clientcls, trimspecs, remote_props):
     return client_models
 
 class ClientModelBase(pydantic.BaseModel):
-    _client: 'ClientBase' = None
+    _client: 'ClientBase' = None  # type: ignore
+
     __sibling_models__: dict[str, 'ClientModelBase'] = {}
 
     @profiler
@@ -311,14 +320,16 @@ class ClientModelBase(pydantic.BaseModel):
         super().__init_subclass__(**kw)
         if not remote_props: return
         cls.__remote_props__ = remote_props
-        cls.__sibling_models__[cls.modelkind()] = cls
+        cls.__sibling_models__[cls.modelkind()] = cls  # type: ignore
+
         for attr, kind in cls.__remote_props__.items():
 
             def make_client_remote_model_property_closure(_cls=cls, _attr=attr, _kind=kind):
                 # print('client prop', cls.__name__, attr, kind)
 
                 def getter(self):
-                    val = self._client.getattr(_cls.modelkind(), self.id, _attr)
+                    val = self._client.getattr(_cls.modelkind(), self.id, _attr)  # type: ignore
+
                     if val is None:
                         return val
                         # raise AttributeError(f'kind {_cls.modelkind()} id {self.id} attr {_attr} is None')
@@ -342,7 +353,7 @@ class ClientModelBase(pydantic.BaseModel):
         self._client = client
 
     def __hash__(self):
-        return self.id
+        return self.id  # type: ignore
 
     def _validated(self):
         'noop, as validation should have happened at Spec stage'
@@ -364,7 +375,7 @@ class ClientModelBase(pydantic.BaseModel):
             super().__setattr__(name, val)
 
     def __eq__(self, other):
-        return self.id == other.id
+        return self.id == other.id  # type: ignore
 
 def client_obj_representer(dumper, obj):
     data = obj.dict()
@@ -391,7 +402,8 @@ class ClientBase:
     def __init__(self, server_addr_or_testclient):
         if isinstance(server_addr_or_testclient, str):
             self.testclient, self.server_addr = None, server_addr_or_testclient
-        elif isinstance(server_addr_or_testclient, fastapi.testclient.TestClient):
+        elif isinstance(server_addr_or_testclient, fastapi.testclient.TestClient):  # type: ignore
+
             self.testclient, self.server_addr = server_addr_or_testclient, None
         set_client(self)
 
@@ -420,7 +432,8 @@ class ClientBase:
             url = f'http://{self.server_addr}/api{url}'
             response = httpx.get(url)
         if response.status_code != 200:
-            reason = response.reason if hasattr(response, 'reason') else '???'
+            reason = response.reason if hasattr(response, 'reason') else '???'  # type: ignore
+
             raise ClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
                               f'REASON:   {reason}\n    CONTENT:  {response.content.decode()}')
         return ipd.dev.str_to_json(response.content.decode())
@@ -434,17 +447,21 @@ class ClientBase:
             response = self.testclient.post(url, content=body)
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = httpx.post(url, data=body)
+            response = httpx.post(url, data=body)  # type: ignore
+
         # ic(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
-            reason = response.reason if hasattr(response, 'reason') else '???'
+            reason = response.reason if hasattr(response, 'reason') else '???'  # type: ignore
+
             raise ClientError(f'POST failed "{url}"\n    BODY:     {body}\n    '
                               f'RESPONSE: {response}\n    REASON:   {reason}\n    '
                               f'CONTENT:  {response.content.decode()}')
         response = ipd.dev.str_to_json(response.content.decode())
-        with contextlib.suppress((TypeError, ValueError)):
-            return uuid.UUID(response)
+        with contextlib.suppress((TypeError, ValueError)):  # type: ignore
+
+            return uuid.UUID(response)  # type: ignore
+
         return response
 
     def remove(self, thing):
@@ -490,7 +507,8 @@ class ClientBase:
         extra = {k: kw[k] for k in set(kw) - set(args) - remoteprops}
         for k, v in remote.copy().items():
             if isinstance(v, ClientModelBase):
-                args[k] = v.id
+                args[k] = v.id  # type: ignore
+
                 del remote[k]
         # ic(cls, args, remote, extra)
         return cls.__spec__(**args), remote, extra
@@ -506,28 +524,35 @@ def add_basic_client_model_methods(clientcls):
     for _name, _cls in clientcls.__client_models__.items():
 
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):
-            def new(self, **kw) -> cls:
+            def new(self, **kw) -> cls:  # type: ignore
+
                 # return self.upload(kw, modelkind=cls.modelkind())
                 return self.upload(kw, modelkind=cls.modelkind())
 
             def count(self, **kw) -> int:
                 return self.get(f'/n{name}s', **kw)
 
-            def single(self, **kw) -> cls:
+            def single(self, **kw) -> cls:  # type: ignore
+
                 result = self.get(f'/{name}', **kw)
                 return cls(self, **result) if result else None
 
-            def singleornone(self, **kw) -> Union[cls, None]:
+            def singleornone(self, **kw) -> Union[cls, None]:  # type: ignore
+
                 result = self.get(f'/{name}s', **kw)
                 if not result: return None
-                if len(result) > 1: raise ClientError(f'singleornone {len(results)}>1 rslts {name} {cls} {kw}')
+                if len(result) > 1:
+                    raise ClientError(f'singleornone {len(results)}>1 rslts {name} {cls} {kw}')  # type: ignore
+
                 return cls(self, **result[0]) if result else None
 
-            def multi(self, _names=None, **kw) -> list[cls]:
+            def multi(self, _names=None, **kw) -> list[cls]:  # type: ignore
+
                 if _names: return [cls(self, **self.get(f'/{name}', name=n)) for n in _names]
                 return [cls(self, **x) for x in self.get(f'/{name}s', **kw)]
 
-            def getornew(self, **kw) -> cls:
+            def getornew(self, **kw) -> cls:  # type: ignore
+
                 if thing := singleornone(self, **kw):
                     for k, v in kw.items():
                         assert thing[k] == v
@@ -554,7 +579,8 @@ def model_method(func, layer):
         assert self.modellayer() == layer, err
         func(self, *a, **kw)
 
-    wrapper.__layer__ = layer
+    wrapper.__layer__ = layer  # type: ignore
+
     return wrapper
 
 def spec_method(func):

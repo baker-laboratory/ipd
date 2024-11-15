@@ -1,3 +1,4 @@
+import os
 import json
 import re
 from pathlib import Path
@@ -28,3 +29,8 @@ def tojson(thing):
     if hasattr(thing, 'model_dump_json'): return thing.model_dump_json()
     if hasattr(thing, 'json'): return thing.json()
     return str(thing)
+
+def set_from_file(fname):
+    if os.path.exists(fname):
+        return set(Path(fname).read_text().strip().split(os.linesep))
+    return set()

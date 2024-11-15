@@ -32,7 +32,8 @@ class RigidBodyFollowers:
         if self.asymexists:
             for i, b in enumerate(self.bodies):
                 if i > 0 and np.allclose(b.xfromparent, np.eye(4)):
-                    ic(i)
+                    ic(i)  # type: ignore
+
                     assert 0
 
         assert ipd.homog.hunique(self.frames())
@@ -141,7 +142,8 @@ class RigidBodyFollowers:
         asym = self.asym
         if not self.asym.isroot:
             asym = self.asym.parent
-        coords = asym.allcoords.copy()
+        coords = asym.allcoords.copy()  # type: ignore
+
         if not self.asym.isroot:
             coords = coords[1:]
         # ic(coords.shape)
@@ -228,8 +230,10 @@ class RigidBody:
             self._contact_coords = ipd.homog.hpoint(contact_coords)
             self._com = ipd.homog.hcom(self._coords)
             if usebvh:
-                self.bvh = willutil_cpp.bvh.BVH(coords[..., :3])
-                self.contactbvh = willutil_cpp.bvh.BVH(contact_coords[..., :3])
+                self.bvh = willutil_cpp.bvh.BVH(coords[..., :3])  # type: ignore
+
+                self.contactbvh = willutil_cpp.bvh.BVH(contact_coords[..., :3])  # type: ignore
+
         elif parent is not None:
             self.bvh = parent.bvh
             self.contactbvh = parent.contactbvh
@@ -248,7 +252,7 @@ class RigidBody:
         self.bvhopcount = 0
 
     def __len__(self):
-        return len(self._coords)
+        return len(self._coords)  # type: ignore
 
     @property
     def xfromparent(self):
@@ -274,7 +278,7 @@ class RigidBody:
     def state(self, state):
         assert self.parent is None
         self.position = state.position
-        self.set_scale(state.scale)
+        self.set_scale(state.scale)  # type: ignore
 
     def moveby(self, x):
         x = np.asarray(x)
@@ -365,8 +369,12 @@ class RigidBody:
         self.bvhopcount += 1
         assert isinstance(other, RigidBody)
         if usebvh or (usebvh is None and self.usebvh):
-            count = willutil_cpp.bvh.bvh_count_pairs(self.contactbvh, other.contactbvh, self.position, other.position,
-                                                     contactdist)
+            count = willutil_cpp.bvh.bvh_count_pairs(  # type: ignore
+                self.contactbvh,
+                other.contactbvh,
+                self.position,
+                other.position,  # type: ignore
+                contactdist)
         else:
             assert 0
             # import scipy.spatial
@@ -388,12 +396,14 @@ class RigidBody:
     def hasclash(self, other, clashdis=None):
         self.bvhopcount += 1
         clashdis = clashdis or self.clashdis
-        isect = willutil_cpp.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position, clashdis)
+        isect = willutil_cpp.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position, clashdis)  # type: ignore
+
         return isect
 
     def intersects(self, other, otherpos, mindis=10):
         self.bvhopcount += 1
-        isect = willutil_cpp.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos, mindis)
+        isect = willutil_cpp.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos, mindis)  # type: ignore
+
         return isect
 
     def point_contact_count(self, other, contactdist=8):
@@ -421,12 +431,18 @@ class RigidBody:
         assert cfrac[0] <= 1.0 and cfrac[1] <= 1.0
         if self.parent is not None:
             if cfrac[0] > 0.999 or cfrac[0] > 0.999:
-                ic(self.xfromparent)
-                ic(self._xfromparent)
-                ic(self.parent)
-                ic(other.xfromparent)
-                ic(other._xfromparent)
-                ic(other.parent)
+                ic(self.xfromparent)  # type: ignore
+
+                ic(self._xfromparent)  # type: ignore
+
+                ic(self.parent)  # type: ignore
+
+                ic(other.xfromparent)  # type: ignore
+
+                ic(other._xfromparent)  # type: ignore
+
+                ic(other.parent)  # type: ignore
+
                 assert 0
 
         return cfrac
@@ -446,11 +462,17 @@ class RigidBody:
         if usebvh or (usebvh is None and self.usebvh):
             if not buf:
                 buf = np.empty((100000, 2), dtype="i4")
-            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(self.contactbvh, other.contactbvh, self.position,
-                                                                 other.position, contactdist, buf)
+            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(  # type: ignore
+                self.contactbvh,
+                other.contactbvh,
+                self.position,  # type: ignore
+                other.position,
+                contactdist,
+                buf)
             assert not overflow
         else:
-            d = ipd.homog.hnorm(self.contact_coords[None] - other.contact_coords[:, None])
+            d = ipd.homog.hnorm(self.contact_coords[None] - other.contact_coords[:, None])  # type: ignore
+
             pairs = np.stack(np.where(d <= contactdist), axis=1)
         return pairs
 
@@ -460,8 +482,13 @@ class RigidBody:
         if usebvh or (usebvh is None and self.usebvh):
             if not buf:
                 buf = np.empty((100000, 2), dtype="i4")
-            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(self.bvh, other.bvh, self.position, other.position,
-                                                                 contactdist, buf)
+            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(  # type: ignore
+                self.bvh,
+                other.bvh,
+                self.position,
+                other.position,  # type: ignore
+                contactdist,
+                buf)
             assert not overflow
         else:
             d = ipd.homog.hnorm(self.coords[None] - other.coords[:, None])

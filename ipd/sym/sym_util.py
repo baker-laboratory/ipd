@@ -15,7 +15,7 @@ def get_coords_stack(pdblines):
     chains
     """
     atom_dtype = np.dtype([
-        ("chnid", np.unicode_, 1),
+        ("chnid", np.unicode_, 1),  # type: ignore
         ("resid", np.int32),
         ("X", np.float64, 3),
     ])

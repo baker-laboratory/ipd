@@ -12,7 +12,8 @@ class MetaSymManager(abc.ABCMeta):
         # sourcery skip: instance-method-first-arg-name
         """Register the SymmetryManager subclass."""
         super(MetaSymManager, cls).__init__(cls_name, cls_bases, cls_dict)
-        kind = cls.kind or cls_name
+        kind = cls.kind or cls_name  # type: ignore
+
         from ipd.sym.sym_factory import _sym_managers
         if kind in _sym_managers:
             raise TypeError(f'multiple SymmetryManagers with same kind!'

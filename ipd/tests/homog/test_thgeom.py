@@ -467,7 +467,7 @@ def test_torch_rmsfit_grad():
                 #     ic(std, i, float(rms))
                 # ic(th.norm(p.grad), th.norm(q.grad))
 
-            assert rms < 1e-3
+            assert rms < 1e-3  # type: ignore
 
 @pytest.mark.fast
 def test_th_axis_angle():  # noqa

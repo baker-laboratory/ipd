@@ -34,16 +34,23 @@ def test_dynparams_spline2D():
         (1.0, 0.0, 50),
         (1.0, 1.0, 100),
     ])
-    assert np.allclose(SS(diffuse=0, rfold=0).twod, 0.0)
-    assert np.allclose(SS(diffuse=0, rfold=39).twod, 50.0)
-    assert np.allclose(SS(diffuse=49, rfold=0).twod, 50.0)
-    assert np.allclose(SS(diffuse=49, rfold=39).twod, 100.0)
+    assert np.allclose(SS(diffuse=0, rfold=0).twod, 0.0)  # type: ignore
 
-    assert np.allclose(SS(diffuse=7, rfold=9).twod, 18.68132)
-    assert np.allclose(SS(diffuse=13, rfold=9).twod, 24.80377)
-    assert np.allclose(SS(diffuse=45, rfold=7).twod, 54.89272)
-    assert np.allclose(SS(diffuse=28, rfold=30).twod, 67.03297)
-    assert np.allclose(SS(diffuse=43, rfold=37).twod, 91.313446)
+    assert np.allclose(SS(diffuse=0, rfold=39).twod, 50.0)  # type: ignore
+
+    assert np.allclose(SS(diffuse=49, rfold=0).twod, 50.0)  # type: ignore
+
+    assert np.allclose(SS(diffuse=49, rfold=39).twod, 100.0)  # type: ignore
+
+    assert np.allclose(SS(diffuse=7, rfold=9).twod, 18.68132)  # type: ignore
+
+    assert np.allclose(SS(diffuse=13, rfold=9).twod, 24.80377)  # type: ignore
+
+    assert np.allclose(SS(diffuse=45, rfold=7).twod, 54.89272)  # type: ignore
+
+    assert np.allclose(SS(diffuse=28, rfold=30).twod, 67.03297)  # type: ignore
+
+    assert np.allclose(SS(diffuse=43, rfold=37).twod, 91.313446)  # type: ignore
 
     with pytest.raises(ValueError):
         dynp.newparam_spline_2d('linear1', diffuse_rfold=[(0, 0, 1)])
@@ -59,15 +66,15 @@ def test_dynparams_spline1D():
 
     dynp.newparam_spline_1d('linear1', diffuse=[(0, 1), (1, 9)])
     for i in range(9):
-        assert np.allclose(SS(diffuse=i).linear1, i + 1)
+        assert np.allclose(SS(diffuse=i).linear1, i + 1)  # type: ignore
 
     dynp.newparam_spline_1d('square', rfold=[(0, 0), (0.5, 16), (1, 64)])
     for i in range(9):
-        assert np.allclose(SS(rfold=i).square, i**2)
+        assert np.allclose(SS(rfold=i).square, i**2)  # type: ignore
 
     dynp.newparam_spline_1d('cube', design=[(0, 0), (0.25, 2**3), (0.5, 4**3), (1, 8**3)])
     for i in range(9):
-        assert np.allclose(SS(design=i).cube, i**3)
+        assert np.allclose(SS(design=i).cube, i**3)  # type: ignore
 
     with pytest.raises(ValueError):
         dynp.newparam_spline_1d('test', diffuse=7, rfold=9)

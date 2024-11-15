@@ -178,5 +178,6 @@ def quat_multiply(q, r):
 @jit
 def numba_quat_multiply(q, r):
     out = np.empty(4, dtype=q.dtype)
-    kernel_quat_multiply(q, r, out)
+    kernel_quat_multiply(q, r, out)  # type: ignore
+
     return out

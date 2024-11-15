@@ -5,7 +5,8 @@ import tempfile
 import ipd
 
 try:
-    import pymol
+    import pymol  # type: ignore
+
 except ImportError:
     pass
 
@@ -17,9 +18,11 @@ if 'pymol' in sys.modules:
         ipd.viz.show_ndarray_point_or_vec(vox.xyz - vox.lb, name=name + '_xyz', sphere=1, **kw)
         with tempfile.TemporaryDirectory() as d:
             vox.dump_ccp4(f'{d}/{name}_map.ccp4')
-            pymol.cmd.load(f'{d}/{name}_map.ccp4')
-            pymol.cmd.isomesh(f'{name}_iso_{str(random.random())[2:]}', f'{name}_map')
-            pymol.cmd.delete(f'{d}/{name}_map')
+            pymol.cmd.load(f'{d}/{name}_map.ccp4')  # type: ignore
+
+            pymol.cmd.isomesh(f'{name}_iso_{str(random.random())[2:]}', f'{name}_map')  # type: ignore
+
+            pymol.cmd.delete(f'{d}/{name}_map')  # type: ignore
 
     @ipd.viz.pymol_scene
     @ipd.viz.pymol_load.register(ipd.voxel.VoxRB)

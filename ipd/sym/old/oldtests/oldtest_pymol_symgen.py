@@ -1,9 +1,10 @@
 import ipd
-from ipd.sym.pymol_symgen import PymolSymElem, Vec
+from ipd.sym.pymol_symgen import PymolSymElem, Vec  # type: ignore
 
 try:
-    import pymol
-    from pymol import cmd
+    import pymol  # type: ignore
+
+    from pymol import cmd  # type: ignore
 
 except ImportError:
     pymol = None
@@ -22,7 +23,7 @@ def example_I213(cell=70, **kw):
         PymolSymElem("C3", axis=Vec(1, 1, 1) * 0.57735, cen=Vec(0, 0, 0) * cell, col=[0.1, 0.5, 1]),
     ]
 
-    hacky_xtal_maker(
+    hacky_xtal_maker(  # type: ignore
         G,
         cell,
         tag="I213",

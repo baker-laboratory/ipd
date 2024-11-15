@@ -3,7 +3,8 @@ import pytest
 pytest.importorskip('torch')
 import os
 
-import torch as th
+import torch as th  # type: ignore
+
 from numba import cuda
 
 import ipd as ipd
