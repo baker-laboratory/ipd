@@ -32,7 +32,7 @@ d379cfd2250583088b403e679aa81e57  ipd/dev/project_config.py
 1e803e9143a935aeec44be606552641a  ipd/dev/cli/clibase.py
 8db204af1d073019422e556c4aacf79e  ipd/dev/cli/__init__.py
 fbf08580dc735a9e69cb3e01fab94bbb  ipd/dev/misc.py
-7646297292d1796e882bcbea531d3591  ipd/dev/cuda/cudabuild.py
+34cdf8c23bd45e76e10fcae44eba5541  ipd/dev/cuda/cudabuild.py
 5d76d7727e366470859e3ec28d138ef5  ipd/dev/cuda/cudafunc.py
 6c136869f59ce7f45bebd63fece63e96  ipd/dev/cuda/__init__.py
 aec3c7d2859ebef952a4b76d6f2acd7d  ipd/dev/lazy_import.py
@@ -49,7 +49,7 @@ f0e7a3ec219081bed3c85eb999cd43ba  ipd/dock/rigid/rigidbody.py
 f6837f39612a6cfdb018c7c9216c4f01  ipd/viz/viz_xtal.py
 1ee38cbbbbeef10c8000216a54471480  ipd/viz/viz_bond.py
 47dbd91f617686101f98c9390ca4a0fe  ipd/viz/viz_rigidbody.py
-100c9ea3186237804a84ec6991d39d48  ipd/viz/pymol_viz.py
+a397eac1091d21734ff5a212da712b31  ipd/viz/pymol_viz.py
 ef2ec928b2c0a3afdad7cb56d4785207  ipd/viz/viz_deco.py
 be246d5350f58f44778f2fb7b6941232  ipd/viz/viz_helix.py
 597155bf9dc00cb02ce9963d3bcd3b46  ipd/viz/pymol_cgo.py
@@ -59,8 +59,8 @@ be246d5350f58f44778f2fb7b6941232  ipd/viz/viz_helix.py
 102b328dcd72423c06cfb2b0dc86167d  ipd/sym/sym_check.py
 548a20d14359af84c1c2dff97349496e  ipd/sym/xtal/spacegroup_util.py
 147977e6b400ad776c4fdf8f4e4cfae5  ipd/sym/xtal/spacegroup_deriveddata.py
-cf46f0b72741234d3fda2851c1243734  ipd/sym/xtal/xtalfit.py
-4132d42e740ae95c14472083d58c4fd5  ipd/sym/xtal/SymElem.py
+e7fc4cd78279ed9716704356ea4de1b9  ipd/sym/xtal/xtalfit.py
+cd87d23b742db8af94aca2c59465fab1  ipd/sym/xtal/SymElem.py
 e5b18aed50d036e057fe52aaf938a8cd  ipd/sym/xtal/xtalinfo.py
 2794fe518a9fe885f6b8dd5a5afa7d39  ipd/sym/xtal/spacegroup.py
 70cf883b3ff83a07a2230e10ae601ea6  ipd/sym/xtal/spacegroup_symelems.py
@@ -107,8 +107,8 @@ c21063821c7bd1df73406dfe9b3aa52f  ipd/sym/old/oldtests/oldtest_diffusion_sym.py
 113ccc3fa06dce50b13f2a3534e81005  ipd/sym/permutations.py
 32efa3822337fb0138e4a2f96842046d  ipd/sym/sym_kind.py
 83bbf0a88072fa297f4699e73b077b4e  ipd/sym/sym_adapt.py
-8e8fd3d9c2da47129ac54daea5f2cf0d  ipd/sym/test_sym_color.py
-b416432ab3fb68e87bf7cfab04ee0bb2  ipd/sym/sym_tensor.py
+71c8aae965e0660a44dd4788be67201a  ipd/sym/test_sym_color.py
+06cd0d5de0d8d48be2b108b055e17ef5  ipd/sym/sym_tensor.py
 81339431048f753543d3a6a70227649f  ipd/motif/motif_options.py
 206e7266e03615ec93df3499bf14c3a9  ipd/motif/motif_factory.py
 c270fa00927c8dc17ccfbf7474d31ae8  ipd/motif/__init__.py
@@ -124,7 +124,7 @@ f296501bcfa1a352cdabe466d680c7a0  ipd/tools/run_tests_on_file.py
 a856a6724325c5f7ee4d7f1dc958d6a8  ipd/tools/ci/citool.py
 dc4bd19680807e950fe2cea7438e146a  ipd/tools/ci/__init__.py
 701447eb7af2f4299b804c48fd64fa43  ipd/tools/__init__.py
-8c974dfb68394c5407ef323eb4d0562f  ipd/tools/yapf_fast.py
+5f99456e268129af6dee51a4b0b556f4  ipd/tools/yapf_fast.py
 d8cf3a47fa9be6e2363be649214e4562  ipd/tools/conda.py
 1c49164f5b46dafd2e8162d3a6f9598a  ipd/crud/crudcli.py
 ee9e9f3ce83b43cde49c2e1141683e25  ipd/crud/server.py
@@ -151,7 +151,7 @@ a2b0a054bcaaeda68d93dcd8263ba51f  ipd/__init__.py
 175588e5221ae7d9716f2e6aa007460e  ipd/homog/thgeom.py
 07ecc421e500ff57e74222f4083bf91a  ipd/homog/util.py
 c75838287874a830163861babde492b1  ipd/homog/__init__.py
-f24163e1fb466b093af20b3b84cb4607  ipd/voxel/voxel.py
+131bf1cc8c95a52296ebc1a2c011cf83  ipd/voxel/voxel.py
 badd17a3b1bebcbcf76dfdbcaa087b93  ipd/voxel/voxdock.py
 cdf600f86704aa65f1c013c47c77f9f6  ipd/voxel/voxel_cuda.py
 902df59d8ff3ef8975b7aaaf5f52c5c3  ipd/voxel/voxel_viz.py

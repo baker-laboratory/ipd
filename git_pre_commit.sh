@@ -22,10 +22,11 @@ else
     echo ruff failed; exit 1;
 fi
 
-if [ -f .pyright_hash ]; then
+if [ -f .pyright_hash_last_commit ]; then
     cmd="PYTHONPATH=$ipd python -m ipd code pyright $src --hashfile '.pyright_hash_last_commit'"
     echo $cmd
     eval $cmd
+    git add .pyright_hash_last_commit
     if [ $? == 0 ]; then
         echo pyright pass
     else
@@ -43,4 +44,3 @@ else
     echo yapf formatted some files, retry commit
     exit 1
 fi
-
