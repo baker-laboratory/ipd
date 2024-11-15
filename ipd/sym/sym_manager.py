@@ -591,8 +591,7 @@ class C1SymmetryManager(SymmetryManager):
     def apply_symmetry(self, xyz, pair=None, **kw):
         """no-op."""
         if xyz is None: return pair
-        if pair is None: return xyz
-        return xyz, pair
+        return xyz if pair is None else (xyz, pair)
 
     @property
     def is_dummy_sym(self) -> bool:
