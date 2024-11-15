@@ -8,18 +8,19 @@ from ipd.dev.instrumentation import timed as profile  # noqa
 from ipd.dev.lazy_import import *
 
 # runtime utils
+from ipd.dev.code import *
+from ipd.dev.funcs import *
 from ipd.dev.misc import *
-from ipd.dev.safe_eval import *
-from ipd.dev.strings import *
-from ipd.dev.shell import *
-from ipd.dev.serialization import *
-from ipd.dev.state import *
-from ipd.dev.storage import *
 from ipd.dev.observer import *
 from ipd.dev.project_config import *
-from ipd.dev.funcs import *
-from ipd.dev.code import *
+from ipd.dev.safe_eval import *
+from ipd.dev.serialization import *
+from ipd.dev.shell import *
+from ipd.dev.state import *
+from ipd.dev.storage import *
+from ipd.dev.strings import *
 
+# utils involving optional dependencies
 cli = lazyimport('ipd.dev.cli')
 cuda = lazyimport('ipd.dev.cuda')
 qt = lazyimport('ipd.dev.qt')

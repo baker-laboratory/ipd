@@ -62,7 +62,7 @@ def test_randxform_angle():
     print((quant2 * 1000).to(int).tolist())
     assert th.allclose(quant2[1:], quant1[1:], atol=1e-2)
 
-'''
+"""
 not unif
   3.500   0.000   0.062
   1.000   0.878   0.003
@@ -76,7 +76,7 @@ not unif
   0.200   0.995   0.180
   0.100   0.999   1.694
   0.050   1.000  11.560
-  '''
+  """
 
 @pytest.mark.fast
 def test_randxform_large_angle():

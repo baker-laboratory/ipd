@@ -1,5 +1,3 @@
-import json
-import sys
 import os
 import shutil
 import subprocess
@@ -70,7 +68,7 @@ def install_ipd_pre_commit_hook(projdir, path=None):
     ensure_pre_commit_packages()
 
 def ensure_pre_commit_packages():
-    for pkg in 'yapf ruff'.split():
+    for pkg in 'yapf ruff pyright'.split():
         if not shutil.which('yapf'):
             print(f'installing missing package: {pkg}')
             install_package('yapf')
@@ -80,53 +78,3 @@ def install_package(pkg):
         ipd.dev.run(f'pip install {pkg}', echo=True)
     except RuntimeError:
         ipd.dev.run(f'pip install --user {pkg}', echo=True)
-
-def get_pyright_errors(codedir: str) -> list[dict]:
-    """Run pyright and return parsed error output."""
-    try:
-        result = ipd.dev.run(f'pyright --output-json {codedir}')
-        output = json.loads(result)
-        return output.get("diagnostics", [])
-    except json.JSONDecodeError as e:
-        print(f"Error parsing pyright output: {e}")
-        sys.exit(1)
-
-def add_type_ignore_comments(errors: list[dict]) -> None:
-    """Add '# type: ignore' comments to lines with type errors."""
-    # Group errors by file
-    files_to_modify = {}
-    for error in errors:
-        filepath = error.get("file", "")
-        if not filepath:
-            continue
-
-        line_number = error.get("range", {}).get("start", {}).get("line", 0)
-        if line_number == 0:
-            continue
-
-        if filepath not in files_to_modify:
-            files_to_modify[filepath] = set()
-        files_to_modify[filepath].add(line_number)
-
-    # Process each file
-    for filepath, line_numbers in files_to_modify.items():
-        path = Path(filepath)
-        if not path.exists():
-            print(f"Warning: File not found: {filepath}")
-            continue
-
-        # Read file content
-        lines = path.read_text().splitlines()
-
-        # Add type: ignore comments
-        modified_lines = []
-        for i, line in enumerate(lines, 1):
-            if i in line_numbers:
-                # Check if line already has a type: ignore comment
-                if "# type: ignore" not in line:
-                    line += "  # type: ignore"
-            modified_lines.append(line)
-
-        # Write modified content back to file
-        path.write_text("\n".join(modified_lines) + "\n")
-        print(f"Modified {filepath}: added type: ignore to {len(line_numbers)} lines")
