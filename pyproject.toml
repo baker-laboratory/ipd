@@ -45,6 +45,7 @@ dependencies = [
     'submitit',
     'tqdm',
     'typer',
+    'validate-pyproject[all]',
     'yapf',
 ]
 [project.optional-dependencies]
@@ -81,18 +82,17 @@ arithmetic_precedence_indication = true
 [tool.pyright]
 include = ['ipd']
 exclude = [
-    # 'ipd/crud/*',
-    # 'ipd/dev/state/*',
-    # 'ipd/fit/*',
-    # 'ipd/homog/*',
-    # 'ipd/voxel/*',
-    # 'ipd/samp/*',
-    # 'ipd/sym/*',
-    # 'ipd/sym/old/*',
-    # 'ipd/sym/xtal/*',
-    # 'ipd/tests/*',
-    # 'ipd/viz/*',
-    # '*_viz.py',
+    'ipd/crud/*',
+    'ipd/fit/*',
+    'ipd/homog/*',
+    'ipd/pdb/*',
+    'ipd/voxel/*',
+    'ipd/samp/*',
+    'ipd/sym/old/*',
+    'ipd/sym/xtal/*',
+    'ipd/tests/*',
+    'ipd/viz/*',
+    '*_viz.py',
     '**/*.log',
     '**/__pycache__',
 ]

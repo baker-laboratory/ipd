@@ -15,6 +15,8 @@ else
     src='rf_diffusion'
 fi
 
+validate-pyproject pyproject.toml
+
 echo running: ruff check --fix $src
 if ruff check --fix $src; then
     echo ruff ok;

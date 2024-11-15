@@ -28,7 +28,7 @@ f00d84e04a169afa66404e2b15afe17a  ipd/dev/code/gentest.py
 c456465514665c4f125bc002d32ec905  ipd/dev/code/__init__.py
 b5c6dae449d59e56e13ff66d288b1335  ipd/dev/testing/hypothesis_strats.py
 2a32b73bb757ed76bc0bb734917ce005  ipd/dev/testing/__init__.py
-d379cfd2250583088b403e679aa81e57  ipd/dev/project_config.py
+a0d712e8a53765623c610a90b9555f07  ipd/dev/project_config.py
 1e803e9143a935aeec44be606552641a  ipd/dev/cli/clibase.py
 8db204af1d073019422e556c4aacf79e  ipd/dev/cli/__init__.py
 fbf08580dc735a9e69cb3e01fab94bbb  ipd/dev/misc.py

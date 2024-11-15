@@ -104,10 +104,10 @@ def install_ipd_pre_commit_hook(projdir, path=None):
     ensure_pre_commit_packages()
 
 def ensure_pre_commit_packages():
-    for pkg in 'yapf ruff pyright'.split():
+    for pkg in 'yapf ruff pyright validate-pyproject'.split():
         if not shutil.which('yapf'):
             print(f'installing missing package: {pkg}')
-            install_package('yapf')
+            install_package(pkg)
 
 def install_package(pkg):
     try:
