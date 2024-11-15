@@ -22,9 +22,13 @@ jobs:
       run: |
         ipd ci tests ruff ipd
 
+    - name: validate pyproject
+      run: |
+        validate-pyproject pyproject.toml
+
     - name: run pyright
       run: |
-        pyright
+        pyright -p pyproject.toml
 
     - name: run pytest digs
       run: |
