@@ -21,3 +21,8 @@ class CodeTool(ipd.tools.IPDTool):
             hashfile (str, optional): hash file. Defaults to '.yapf_hash'.
         """
         ipd.dev.yapf_fast(path, dryrun, excludefile, hashfile, conffile)
+
+class PyrightTool(CodeTool):
+    def comment_type_errors(self, path: str = '.'):
+        errors = ipd.dev.get_pyright_errors(path)
+        ipd.dev.add_type_ignore_comments(errors)
