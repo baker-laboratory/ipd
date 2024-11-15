@@ -114,5 +114,3 @@ def install_package(pkg):
         ipd.dev.run(f'pip install {pkg}', echo=True)
     except RuntimeError:
         ipd.dev.run(f'pip install --user {pkg}', echo=True)
-
-foo: str = 0  # type: ignore
