@@ -20,8 +20,6 @@ high_t = lazyimport('ipd.sym.high_t')
 helix = lazyimport('ipd.sym.helix')
 sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
-_global_symmetry = None
-
 def set_global_symmetry(sym: SymmetryManager):
     global _global_symmetry
     _global_symmetry = sym
@@ -31,3 +29,5 @@ def get_global_symmetry() -> SymmetryManager:
     if _global_symmetry is None:
         raise RuntimeError('Global symmetry not set')
     return _global_symmetry
+
+_global_symmetry = create_sym_manager(symid='C1')
