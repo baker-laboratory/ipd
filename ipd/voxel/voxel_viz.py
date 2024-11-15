@@ -6,7 +6,6 @@ import ipd
 
 try:
     import pymol  # type: ignore
-
 except ImportError:
     pass
 
@@ -19,9 +18,7 @@ if 'pymol' in sys.modules:
         with tempfile.TemporaryDirectory() as d:
             vox.dump_ccp4(f'{d}/{name}_map.ccp4')
             pymol.cmd.load(f'{d}/{name}_map.ccp4')  # type: ignore
-
             pymol.cmd.isomesh(f'{name}_iso_{str(random.random())[2:]}', f'{name}_map')  # type: ignore
-
             pymol.cmd.delete(f'{d}/{name}_map')  # type: ignore
 
     @ipd.viz.pymol_scene

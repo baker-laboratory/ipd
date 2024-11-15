@@ -115,7 +115,6 @@ class BackendBase:
         cls.__sqlmodel__ = SQL
         cls._BackendModelBase = make_backend_model_base(SQL)
         if isinstance(models, list): models = {m.modelkind(): m for m in models}  # type: ignore
-
         cls.__spec_models__ = process_specs(models)
         backend_info = ipd.crud.backend.make_backend_models(cls, SQL)
         cls.__backend_models__, cls.__remoteprops__, cls.__trimspecs__ = backend_info
@@ -159,7 +158,6 @@ class BackendBase:
         for mdl in self.__backend_models__.values():
             statement = sqlmodel.delete(mdl)
             result = self.session.exec(statement)  # type: ignore
-
             self.session.commit()
         self.initdb()
 
@@ -189,7 +187,6 @@ class BackendBase:
     def remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
         thing.ghost = True  # type: ignore
-
         self.session.add(thing)
         self.session.commit()
         # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing')
@@ -197,7 +194,6 @@ class BackendBase:
     def actually_remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
         thing.clear(self)  # type: ignore
-
         self.session.delete(thing)
         self.session.commit()
 
@@ -205,7 +201,6 @@ class BackendBase:
         cls = self.__backend_models__[kind]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')  # type: ignore
-
         thingattr = getattr(thing, attr)
         if hasattr(thingattr, 'modelkind'):
             table = self.__sqlmodel__.metadata.tables[f'db{thingattr.modelkind()}']
@@ -219,15 +214,12 @@ class BackendBase:
         cls = self.__backend_models__[kind]
         thing = self.session.exec(sqlmodel.select(cls).where(cls.id == id)).one()
         if not thing: raise ValueErrors(f'no {cls} id {id} found in database')  # type: ignore
-
         body = asyncio.run(request.body()).decode()
         # body = asyncio.run(request.body()).decode()
         with contextlib.suppress((AttributeError, ValueError)):  # type: ignore
-
             body = UUID(body)
         if attrkind:
             body = [] if body == '[]' else body[1:-1].split(',')  # type: ignore
-
             body = [UUID(id) for id in body]
             body = [coro for coro in list(map(getattr(self, f'i{attrkind}'), body))]
             setattr(thing, attr, body)
@@ -253,7 +245,6 @@ class BackendBase:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
         if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)  # type: ignore
-
         if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)  # noqa
         # print(statement)
         # if statement._get_embedded_bindparams():
@@ -339,30 +330,24 @@ def add_basic_backend_model_methods(backendcls):
                 return (getattr(self, f'i{name}')(newid, _ghost=True))
 
             def count(self, kw=None, request: fastapi.Request = None, response_model=int):  # type: ignore
-
                 # print('route', name, dbcls, kw, request, flush=True)
                 assert isinstance(self, BackendBase)
                 if request: return self.select(dbcls, _count=True, **request.query_params)  # type: ignore
-
                 elif kw: return self.select(dbcls, _count=True, **kw)
                 else: return self.select(dbcls, _count=True)
 
             def single(self, kw=None, request: fastapi.Request = None, response_model=Optional[dbcls]):  # type: ignore
-
                 # print('route', name, dbcls, kw, request, flush=True)
                 assert isinstance(self, BackendBase)
                 if request: return self.select(dbcls, _single=True, **request.query_params)  # type: ignore
-
                 elif kw: return self.select(dbcls, _single=True, **kw)
                 else: return self.select(dbcls, _single=True)
 
             def multi(self, kw=None, request: fastapi.Request = None, response_model=list[dbcls]):  # type: ignore
-
                 # print('route', name, dbcls, kw, request, flush=True)
                 # ipd.dev.global_timer.checkpoint('multi')
                 assert isinstance(self, BackendBase)
                 if request: return self.select(dbcls, **request.query_params)  # type: ignore
-
                 elif isinstance(kw, list): return [single(self, dict(name=n)) for n in kw]
                 elif kw: return self.select(dbcls, **kw)
                 else: return self.select(dbcls)
@@ -372,17 +357,14 @@ def add_basic_backend_model_methods(backendcls):
                 return count(self, kw)
 
             def bmulti(self, multi=multi, **kw) -> list[dbcls]:  # type: ignore
-
                 assert isinstance(self, BackendBase)
                 return multi(self, kw)
 
             def bsingle(self, single=single, **kw) -> Optional[dbcls]:  # type: ignore
-
                 assert isinstance(self, BackendBase)
                 return single(self, kw)
 
             def singleid(self, id: str, **kw) -> typing.Union[dbcls, None]:  # type: ignore
-
                 assert isinstance(self, BackendBase)
                 assert id
                 return self.select(dbcls, id=id, _single=True, **kw)
@@ -437,9 +419,7 @@ def check_list_T(kind, spec, attr, annotation, links, specbyname, models, rmfiel
         assert len(args) < 3
         if len(args) == 2: refname, link = args
         elif isinstance(args[0], str): refname, link = args[0], 'DEFAULT'  # type: ignore
-
         else: refname, link = args[0].__name__, 'DEFAULT'  # type: ignore
-
         # print(kind, attr, link, annotation)
         if not isinstance(refname, str): refname = refname.__name__
         links[tuple(sorted([spec.__name__, refname])), link].append((kind, attr, refname))
@@ -516,7 +496,6 @@ def make_backend_models(backendcls, SQL=None, debug=False):
                 elif tagged:
                     kw = {'sa_relationship_kwargs': dict()}
                 reffield = sqlmodel.Relationship(back_populates=f'{refattr}', **kw)  # type: ignore
-
                 idfield = sqlmodel.Field(foreign_key=f'{refname.lower()}.id')
                 if optional:
                     idfield = sqlmodel.Field(foreign_key=f'{refname.lower()}.id', nullable=True, default=None)

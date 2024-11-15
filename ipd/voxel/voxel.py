@@ -1,10 +1,8 @@
 import math
 
 import gemmi  # type: ignore
-
 import numpy as np
 import torch as th  # type: ignore
-
 from icecream import ic
 from numba import cuda
 
@@ -27,7 +25,6 @@ class Voxel:
         self.func = func
         self.create_threads = th.tensor([32, 2, 2])
         self.repulsive_only = th.empty(0, dtype=bool) if repulsive_only is None else repulsive_only  # type: ignore
-
         import ipd.samp.sampling_cuda
         self.boundcen, self.boundrad = ipd.samp.bounding_sphere(self.xyz)
         self.boundcen = h.point(self.boundcen.to('cuda'))
@@ -77,7 +74,6 @@ class Voxel:
                 voxpos = th.eye(4, device='cuda', dtype=th.float32)[None]
             else:
                 len(voxpos) == 1 or len(xyzpos) == 1  # type: ignore
-
         if nthread is None:
             if len(xyzpos) == 1: nthread = th.tensor([256, 1, 1])
             elif len(voxpos) == 1: nthread = th.tensor([1, 256, 1])
@@ -101,7 +97,6 @@ class Voxel:
             if len(xyzpos) > 1: xyzpos = xyzpos[ok]
             # ic(cen1.shape, cen2.shape, rad1, rad2)
         if repulsive_only is None: repulsive_only = th.empty(0, dtype=bool)  # type: ignore
-
         score = _voxel.score_voxel_grid(
             self.grid,
             voxposinv,
@@ -117,9 +112,7 @@ class Voxel:
         if boundscheck:
             # assert th.allclose(score[~ok], th.tensor(0.0), atol=1e-3)
             sok, score = score, th.zeros(len(ok), device='cuda')  # type: ignore
-
             score[ok] = sok  # type: ignore
-
         return score.reshape(outshape)
 
     def score_per_atom(self, xyz):
@@ -135,7 +128,6 @@ class Voxel:
         grid.set_size(*npgrid.shape)
         bound = np.array(grid.shape) * self.resl
         grid.set_unit_cell(gemmi.UnitCell(*bound, 90, 90, 90))  # type: ignore
-
         assert grid.shape == npgrid.shape
         assert np.allclose(grid.spacing, self.resl)
         ccp4 = gemmi.Ccp4Map()
@@ -148,12 +140,9 @@ class Voxel:
 @cuda.jit('void(f4[:, :], f4[:], f4[:], i4, f4, float16[:, :, :])', cache=True, fastmath=True)
 def create_voxel_numba(xyz, lb, rad, irad, resl, vox):
     ixyz = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x  # type: ignore
-
     if ixyz >= len(xyz): return
     ix = cuda.blockIdx.y * cuda.blockDim.y + cuda.threadIdx.y  # type: ignore
-
     iy = cuda.blockIdx.z * cuda.blockDim.z + cuda.threadIdx.z  # type: ignore
-
     # icen = ((xyz[ixyz] - lb) / resl).astype(int)
     icenx = int(xyz[ixyz, 0] - lb[0]) / resl
     iceny = int(xyz[ixyz, 1] - lb[1]) / resl

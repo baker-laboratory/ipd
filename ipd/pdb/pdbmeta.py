@@ -189,26 +189,19 @@ class PDBMetadata:
         for name, url in self.urls.items():
             fname = ipd.dev.package_data_path(f"pdb/meta/{name}.txt")
             if not replace and os.path.exists(fname + ".xz"):  # type: ignore
-
                 continue
             if name == "seqres":
                 fname += ".gz"  # type: ignore
-
             urllib.request.urlretrieve(url, fname)
             log.info(f"downloading {fname}")
             assert os.path.exists(fname)  # type: ignore
-
         # recompress seqres
         fn = ipd.dev.package_data_path("pdb/meta/seqres.txt")
         if not os.path.exists(fn + ".xz"):  # type: ignore
-
             with gzip.open(fn + ".gz") as inp:  # type: ignore
-
                 with lzma.open(fn + ".xz", "wb") as out:  # type: ignore
-
                     out.write(inp.read())
             os.remove(fn + ".gz")  # type: ignore
-
         for name in (
                 "author",
                 "compound",
@@ -228,7 +221,6 @@ class PDBMetadata:
         ):
             fname = ipd.dev.package_data_path(f"pdb/meta/{name}.txt")
             if os.path.exists(fname):  # could skipped download  # type: ignore
-
                 log.info(f"running xz {fname}")
                 os.system(f"xz {fname}")
 
@@ -238,9 +230,7 @@ class PDBMetadata:
         for name in names:
             fn = ipd.dev.package_data_path(f"pdb/meta/{name}.pickle")
             if os.path.exists(fn):  # type: ignore
-
                 os.remove(fn)  # type: ignore
-
             if name in self.metadata:
                 del self.metadata[name]
 
@@ -269,9 +259,7 @@ class PDBMetadata:
                     # print(pdb)
                 else:
                     code = pdb[:4].upper()  # type: ignore
-
                     chain = pdb[5]  # type: ignore
-
                     pdbseq[code][chain] = line.strip()
         return pdbseq
 

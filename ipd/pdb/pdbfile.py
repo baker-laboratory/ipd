@@ -247,7 +247,6 @@ class PDBFile:
             if np.sum(g.an == an) > 1:
                 if not quiet:
                     ic('warning duplicate atom', g, g.an)  # type: ignore
-
                 # assert np.sum(g.an == an) <= 1
             # assert np.sum(g.an == an) <= np.sum(g.an == b'CA') # e.g. O in HOH
             hasatom = np.sum(g.an == an) > 0
@@ -281,7 +280,6 @@ class PDBFile:
             pdb = pdb.subset(het=False)
         if not isinstance(atomname, (str, bytes)):
             coords, masks = zip(*[pdb.atomcoords(a, aaonly, nomask=nomask, **kw) for a in atomname])  # type: ignore
-
             # ic(len(coords))
             # ic([len(_) for _ in coords])
             coords = np.stack(coords).swapaxes(0, 1)
@@ -404,12 +402,9 @@ class PDBFile:
         if nfold == 1:
             return 1
         nres = self.nres // nfold  # type: ignore
-
         assert nres * nfold == self.nres  # type: ignore
-
         res = self.ri.unique()
         for ich in range(nfold):  # type: ignore
-
             for ires in range(nres * ich, nres * (ich+1)):
                 self.df.loc[self.df.ri == res[ires], "ch"] = "ABCDEFGHIJ"[ich].encode()
         return nfold
@@ -447,7 +442,6 @@ class PDBFile:
                 for ich, ch in enumerate(chains):
                     if chainA_contacts_only:
                         isect = body.intersects(chainbodies[ich], xforms[imodel], mindis=contact_distance)  # type: ignore
-
                         if not isect:
                             continue
                     newch = ipd.pdb.all_pymol_chains[startchain + len(keeppdbs)].encode()
@@ -476,7 +470,6 @@ class PDBFile:
         self.df.z = coords[:, 2]
 
     def sym_chain_groups(pdb, tolerances=_default_tol, **kw):  # type: ignore
-
         pdb.assign_chains_sym()
         chains = pdb.splitchains()
         groups = list()

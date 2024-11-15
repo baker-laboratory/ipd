@@ -3,7 +3,6 @@ from ipd.homog import *
 
 def compute_canonical_asucen(sym, neighbors=None):
     import torch as th  # type: ignore
-
     from ipd import h
     sym = ipd.sym.map_sym_abbreviation(sym).lower()
     frames = h.tocuda(ipd.sym.frames(sym))
@@ -14,7 +13,6 @@ def compute_canonical_asucen(sym, neighbors=None):
     mind2 = d2.min(dim=0)[0]
     if neighbors:
         ic(d2.shape)  # type: ignore
-
         sort = d2.sort(dim=0)[0]
         rank = sort[neighbors] - sort[neighbors - 1]
     else:
@@ -54,7 +52,6 @@ def asufit(
     **kw,
 ):
     ic("asufit", sym)  # type: ignore
-
     kw = ipd.dev.Bunch(kw)
     asym = ipd.dock.rigid.RigidBody(coords, contact_coords, **kw)
     if frames is None:
@@ -100,7 +97,6 @@ def asufit(
     if showme:
         ipd.showme(bodies, name="start", pngi=0, **kw)
     ic(asym.scale())  # type: ignore
-
     if dumppdb:
         asym.dumppdb("debugpdbs/asufit_000000.pdb", **kw)
     # assert 0
@@ -152,18 +148,14 @@ def asufit(
 
             if verbose:
                 ic("accept", i, mc.last)  # type: ignore
-
         if mc.new_best_last:
             ic("best", i, mc.best)  # type: ignore
-
     assert mc.beststate is not None
     # ic('end', mc.best)
     initscore = objfunc(mc.startstate, verbose=True)
     stopscore = objfunc(mc.beststate, verbose=True)
     ic("init", initscore)  # type: ignore
-
     ic("stop", stopscore)  # type: ignore
-
     # ic(mc.beststate[:3, :3])
     # ic(mc.beststate[:3, 3])
     # ic(mc.beststate)
@@ -179,7 +171,6 @@ def asufit(
     xyz = asym.coords
     cellsize = mc.beststate.scale
     ic(cellsize, xyz.shape)  # type: ignore
-
     TEST = 1
     if TEST:
         frames = ipd.hscaled(mc.beststate.scale, frames)

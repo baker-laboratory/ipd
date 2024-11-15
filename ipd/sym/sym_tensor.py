@@ -150,7 +150,6 @@ import functools
 import ipd
 
 import torch as th  # type: ignore
-
 import numpy as np
 from torch import Tensor as T  # type: ignore
 
@@ -196,7 +195,6 @@ def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
     elif len(symdims) == 2: dim = '2D'
 
     cls = cls or sym_tensor_types[f'FullSlicedAll{dim}{val}']  # type: ignore
-
     symten = tensor.as_subclass(cls)
     attr = ipd.dev.Bunch(
         sym=sym,
@@ -228,7 +226,6 @@ class SymTensor(th.Tensor):
             result = super().__torch_function__(func, types, a, kw)
             if isinstance(result, T):
                 result = result.set_attr(a)  # type: ignore
-
                 # ic(func, a, result)
             return result
         return _TORCH_FUNCS[func](*a, **kw)
@@ -237,7 +234,6 @@ class SymTensor(th.Tensor):
         # ic('SymTensor')
         assert isinstance(t, SymTensor)
         assert not t.as_subclass(T).requires_grad or not torch.is_grad_enabled()  # type: ignore
-
         return t
         # new = t.as_subclass(cls).set_attr(t.attr)
         # new.attr.observers.add(new)
@@ -277,7 +273,6 @@ class SymTensor(th.Tensor):
         # print('__setitem__')
         if isinstance(val, th.Tensor):
             if isinstance(slice, th.Tensor): ic(slice.shape)  # type: ignore
-
         self.as_subclass(T)[slice] = val.as_subclass(T) if isinstance(val, th.Tensor) else val
         self._update()  # type: ignore
 
@@ -390,7 +385,6 @@ class SymSub(SymTensor):
         symmask = (cls if cls.__bases__ == (__class__, ) else base).__name__.lower()
         attr.symmask = getattr(attr.sym.idx, symmask)
         if issubclass(cls, (Sub, NotSub)):  # type: ignore
-
             try:
                 attr.symmask = attr.symmask[isub]
             except IndexError:
@@ -430,7 +424,6 @@ class OneDim(Shape):
         if not force and self.attr.noupdate: return
         self.attr.orig[self.attr.idx] = self.as_subclass(T)
         self._symmetrize_orig()  # type: ignore
-
         for o in self.attr.observers:
             o._update_view()
 
@@ -439,7 +432,6 @@ class OneDim(Shape):
         for i in range(1, self.attr.sym.nsub):
             val = self[:N]
             if ptr: val = self.attr.sym.idx.idx_asu_to_sub[i, val[:, self.attr.isidx].to(int)]  # type: ignore
-
             self[i * N:(i+1) * N] = val
         return self
 
@@ -479,7 +471,6 @@ class TwoDim(Shape):
     def _symmetrize_orig_dim_unsafe(self, ptr=False):
         if self.attr.symnoupdate or self.attr.noupdate: return
         contig = self.sym.contig  # type: ignore
-
         N = len(contig) // self.attr.sym.nsub
         for i in range(1, self.attr.sym.nsub):
             val = contig[:N, :N]
@@ -526,9 +517,7 @@ def make_sub_bases():
     base_types['Sub'] = type('Sub', (SymSub, ), {})
     base_types['NotSub'] = type('NotSub', (SymSub, ), {})
     SymSub.sub = lambda self, i: type_maps[self.__class__][Sub](self, self.attr.copy(), isub=i)  # type: ignore
-
     SymSub.notsub = lambda self, i: type_maps[self.__class__][NotSub](self, self.attr.copy(), isub=i)  # type: ignore
-
     for k, v in base_types.items():
         setattr(M, k, v)
 

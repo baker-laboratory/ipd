@@ -12,7 +12,6 @@ import pytest
 import sqlalchemy
 import sqlmodel.pool
 from fastapi.testclient import TestClient  # type: ignore
-
 from sqlalchemy.orm import registry
 from sqlmodel import Field, Relationship
 
@@ -80,7 +79,6 @@ def test_user_group(tmpdir):
         userid: ipd.crud.ModelRef['UserZSpec'] = pydantic.Field(  # type: ignore
             default='anonymous_coward',  # type: ignore
             validate_default=True)  # type: ignore
-
         ispublic: bool = True
         telemetry: bool = False
 
@@ -89,7 +87,6 @@ def test_user_group(tmpdir):
 
     class UserZSpec(ipd.crud.SpecBase):
         name: ipd.crud.Unique[str]  # type: ignore
-
         fullname: str = ''
         number: int = 0
         someid: UUID = pydantic.Field(default_factory=uuid4)
@@ -99,7 +96,6 @@ def test_user_group(tmpdir):
 
     class GroupZSpec(_SpecWithUser):
         name: ipd.crud.Unique[str]  # type: ignore
-
         users: list['UserZSpec'] = []
         userid: ipd.crud.ModelRef['UserZSpec', 'ownedgroups'] = pydantic.Field(  # type: ignore
             default='anonymous_coward',  # type: ignore

@@ -27,14 +27,12 @@ def test_randxform_cen():
     cen = h.randpoint(2, device='cuda')
     x = ipd.samp.randxform(len(cen), cartmax=0, cen=cen)
     assert th.allclose(cen, h.xform(x, cen), atol=1e-3)  # type: ignore
-
     # assert 0
 
 @pytest.mark.fast
 def test_welzl_sphere():
     for npts in [1, 2, 3, 4, 5, 40, 100, 1000, 10_000]:
         xyz = th.randn((npts, 3))  # type: ignore
-
         cen, rad = ipd.samp.bounding_sphere(xyz)
         assert h.norm(xyz - cen).max() < rad + 0.001
 
@@ -47,24 +45,17 @@ def test_randxform_big():
 def test_randxform_angle():
     # maxang = 0.1
     qunif = h.normQ(th.randn((10_000_000, 4), device='cuda'))  # type: ignore
-
     ang1 = 2 * th.arccos(qunif[:, 0])  #th.atan2(qunif[:, 1:].norm(dim=-1), qunif[:, 0])  # type: ignore
-
     ang1 = th.minimum(2 * th.pi - ang1, ang1)  # type: ignore
-
     # ang2 = h.angle(h.Qs2Rs(qunif))
     # assert th.allclose(ang1, ang2, atol=1e-3)
     # ang = ang[ang < maxang]
     quant1 = th.quantile(ang1, th.arange(0, 1.001, 0.12, device='cuda'))  # type: ignore
-
     xform = ipd.samp.randxform(1_000_000)
     assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))  # type: ignore
-
     assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))  # type: ignore
-
     ang2 = ipd.h.angle(xform)
     quant2 = th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))  # type: ignore
-
     print((quant1 * 1000).to(int).tolist())
     print((quant2 * 1000).to(int).tolist())
     assert th.allclose(quant2[1:], quant1[1:], atol=1e-2)  # type: ignore
@@ -90,34 +81,23 @@ def test_randxform_large_angle():
     maxang = 1
 
     qunif = h.normQ(th.randn((10_000_000, 4), device='cuda'))  # type: ignore
-
     ang1 = 2 * th.arccos(qunif[:, 0])  #th.atan2(qunif[:, 1:].norm(dim=-1), qunif[:, 0])  # type: ignore
-
     ang1 = th.minimum(2 * th.pi - ang1, ang1)  # type: ignore
-
     ang1 = ang1[ang1 < maxang]
     quant1 = th.quantile(ang1, th.arange(0, 1.001, 0.12, device='cuda'))  # type: ignore
-
     quat_height = np.cos(np.clip(maxang, 0, th.pi) / 2)  # type: ignore
-
     quat = th.rand((1000000, 4), device='cuda')  # type: ignore
-
     quat[:, 0] = 0
     quat = quat[th.linalg.norm(quat, dim=1) <= 1]  # type: ignore
-
     scale = th.tan(th.acos(th.tensor(quat_height)))  # type: ignore
-
     quat *= scale
     quat[:, 0] = 1
     quat = h.normQ(quat)
     ang2 = 2 * th.arccos(quat[:, 0])  #th.atan2(qunif[:, 1:].norm(dim=-1), qunif[:, 0])  # type: ignore
-
     ang2 = th.minimum(2 * th.pi - ang2, ang2)  # type: ignore
-
     # ic(maxang, ang2.max())
     assert abs(ang2.max() - maxang) < 0.01
     quant2 = th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))  # type: ignore
-
     print('randxlarge 1rad unif', (quant1 * 1000).to(int).tolist())
     print('randxlarge 1rad qhat', (quant2 * 1000).to(int).tolist())
     # assert 0
@@ -127,23 +107,17 @@ def test_randxform_large_angle():
             for i in range(10):
                 xform = ipd.samp.randxform(5_000_000, orimax=maxang)
         assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))  # type: ignore
-
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))  # type: ignore
-
         ang2 = ipd.h.angle(xform)
         # ic(maxang, ang2.max())
         assert abs(maxang - ang2.max()) < 0.01
         quat_height = np.cos(np.clip(maxang, 0, th.pi) / 2)  # type: ignore
-
         print(f'{maxang:7.3f} {quat_height:7.3f} {t.elapsed()*1000:7.3f}ms')
 
     for maxang in th.arange(0.1, 3.14, 0.1):  # type: ignore
-
         xform = ipd.samp.randxform(100_000, orimax=maxang)
         assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))  # type: ignore
-
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))  # type: ignore
-
         ang2 = ipd.h.angle(xform)
         assert abs(maxang - ang2.max()) < 0.03
         # print(f'{maxang.item():7.3f} {ang2.max().item():7.3f} {ang2.std().item():7.3f}')
@@ -177,20 +151,16 @@ def test_randxform_small_angle():
     # avg = defaultdict(list)
     # std = defaultdict(list)
     for i, sd in enumerate(th.arange(0, 0.4, 0.025)):  # type: ignore
-
         # for i in range(10):
         # xform = ipd.samp.randxform_small_cuda(N, cartsd=0.1, orisd=sd)
         xform = ipd.samp.randxform(N, cartsd=0.1, orisd=sd)
         assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))  # type: ignore
-
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))  # type: ignore
-
         ang2 = ipd.h.angle(xform)
         # avg[sd.item()].append(float(ang2.mean()))
         # std[sd.item()].append(float(ang2.std()))
         # continue
         th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))  # type: ignore
-
         # xform = h.randsmall(N, rot_sd=sd, device='cuda', dtype=th.float32)
         # ang3 = ipd.h.angle(xform)
         # ic(ang3[:10])
@@ -217,15 +187,11 @@ def test_randxform_small_angle():
 def test_quat_angle():
     maxang = 0.1
     q = th.randn((10, 4), device='cuda')  # type: ignore
-
     q[:, 0] = maxang
     # ic(th.sqrt(1 - q[:, 0]**2))
     q[:, 1:] *= th.sqrt(1 - q[:, 0]**2)[:, None] / th.linalg.norm(q[:, 1:], keepdim=True, dim=-1)  # type: ignore
-
     assert th.allclose(th.linalg.norm(q, keepdim=True, dim=-1), th.tensor(1.0))  # type: ignore
-
     ang = th.atan2(q[:, 1:].norm(dim=-1), q[:, 0])  # type: ignore
-
     print(th.quantile(ang, th.arange(0, 1.001, 0.2, device='cuda')))  # type: ignore
 
 @pytest.mark.fast
@@ -246,7 +212,6 @@ def test_randxform_perf():
 
             def func():
                 return ipd.h.rand(N, dtype=th.float32, device='cuda')  # type: ignore
-
         else:
             assert th.allclose(  # type: ignore
                 ipd.samp.randxform(1, gentype=gentype, seed=0),  # type: ignore

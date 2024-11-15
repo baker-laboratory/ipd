@@ -26,7 +26,6 @@ class ClashFunc(CudaFunc):
         super().__init__([radlow, radhi], 'clash')
 
     def reference_impl(self, dist):  # type: ignore
-
         if dist > self.arg[1]: return 0.0
         if dist < self.arg[0]: return 1.0
         return (self.arg[1] - dist) / (self.arg[1] - self.arg[0])
@@ -37,7 +36,6 @@ class ContactFunc(CudaFunc):
         super().__init__([clashscore, contactscore, clashend, contactbeg, contactend, end], 'contact')
 
     def reference_impl(self, dist):  # type: ignore
-
         dist = float(dist)
         cl = float(self.arg[0])
         ct = float(self.arg[1])

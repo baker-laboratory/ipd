@@ -215,7 +215,6 @@ def test_hxform_list():
 def test_hxform():
     x = hrand()
     y = hxform(x, [1, 2, 3], homogout=True)  # type: ignore
-
     assert np.allclose(y, x @ hpoint([1, 2, 3]))
     y = hxform(x, [1, 2, 3])
     assert np.allclose(y, (x @ hpoint([1, 2, 3]))[:3])

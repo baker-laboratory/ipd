@@ -63,20 +63,15 @@ class Bunch(dict, Generic[T]):
                 _parent=(self, None),
                 _default=self._special['default'],  # type: ignore
                 _strict=self._special['strict_lookup'])  # type: ignore
-
         self.__dict__['_special']['autosave'] = orig
         assert self._special == special
 
     def _notify_changed(self, k=None, v=None):  # sourcery skip: extract-method
         if self._special['parent']:  # type: ignore
-
             parent, selfkey = self._special['parent']  # type: ignore
-
             return parent._notify_changed(f'{selfkey}.{k}', v)
         if self._special['autosave']:  # type: ignore
-
             ic(self._special['autosave'])  # type: ignore
-
             import yaml
             if k:
                 k = k.split('.')[0]
@@ -86,18 +81,12 @@ class Bunch(dict, Generic[T]):
                         _parent=(self, None),
                         _default=self._special['default'],  # type: ignore
                         _strict=self._special['strict_lookup'])  # type: ignore
-
             os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)  # type: ignore
-
             with open(self._special['autosave'] + '.tmp', 'w') as out:  # type: ignore
-
                 yaml.dump(unmake_autosave_hierarchy(self), out)
             shutil.move(self._special['autosave'] + '.tmp', self._special['autosave'])  # type: ignore
-
             with open(self._special['autoreload'], 'rb') as inp:  # type: ignore
-
                 self._special['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()  # type: ignore
-
                 # print('SAVE TO ', self.__dict__['_special']['autosave'])
 
     def default(self, key):
@@ -189,15 +178,12 @@ class Bunch(dict, Generic[T]):
                 if strict and not_empty:
                     raise ValueError(f"{k} not in this Bunch")
                 self[k] = []  # type: ignore
-
             if not isinstance(self[k], list):
                 self[k] = [self[k]]  # type: ignore
-
             o = other[k]
             if not isinstance(o, list):
                 o = [o]
                 self[k].extend(o)  # type: ignore
-
         return self
 
     def __contains__(self, k):
@@ -226,7 +212,6 @@ class Bunch(dict, Generic[T]):
             raise ValueError("_special is a reseved name for Bunch")
         if k == "__deepcopy__":
             return None  # type: ignore
-
         if self.__dict__['_special']["strict_lookup"] and k not in self:
             raise AttributeError(f"Bunch is missing value for key {k}")
         try:
@@ -239,9 +224,7 @@ class Bunch(dict, Generic[T]):
                 if self.__dict__['_special']["strict_lookup"]:
                     raise e
                 if self._special['storedefault']:  # type: ignore
-
                     self[k] = self.default(k)  # type: ignore
-
                     return self[k]
                 return self[k]
 
@@ -291,7 +274,6 @@ class Bunch(dict, Generic[T]):
         self._notify_changed(k)
 
     def copy(self):  # type: ignore
-
         self._autoreload_check()
         return Bunch.from_dict(super().copy())
 
@@ -310,11 +292,9 @@ class Bunch(dict, Generic[T]):
                 kw = vars(__BUNCH_SUB_ITEMS)
         newbunch = self.copy()
         newbunch._special = self.__dict__['_special']  # type: ignore
-
         for k, v in kw.items():
             if v is None and k in newbunch:
                 del newbunch[k]  # type: ignore
-
             elif not _onlynone or k not in self or self[k] is None:
                 if k not in exclude:
                     newbunch.__setattr__(k, v)
@@ -435,22 +415,17 @@ def make_autosave_hierarchy(x, _parent=None, seenit=None, _strict=True, _autosav
             _autoreload=_autosave,
             _default=_default,  # type: ignore
             _strict=_strict)  # type: ignore
-
         for k, v in x.items():
             kw['_parent'] = (x, k)
             x[k] = make_autosave_hierarchy(v, **kw)  # type: ignore
-
     elif isinstance(x, list):
         val = (make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
-
         x = BunchChildList(val, _parent=_parent)
     elif isinstance(x, set):
         val = (make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
-
         x = BunchChildSet(val, _parent=_parent)
     elif isinstance(x, (tuple, )):
         x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
-
     seenit.add(id(x))
     return x
 
@@ -462,16 +437,12 @@ def unmake_autosave_hierarchy(x, seenit=None, depth=0, verbose=False, _autosave=
         x = dict(**x)
         for k, v in x.items():
             x[k] = unmake_autosave_hierarchy(v, **kw)  # type: ignore
-
     elif isinstance(x, list):
         x = [unmake_autosave_hierarchy(v, **kw) for v in x]  # type: ignore
-
     elif isinstance(x, set):
         x = {unmake_autosave_hierarchy(v, **kw) for v in x}  # type: ignore
-
     elif isinstance(x, (tuple, )):
         x = type(x)(unmake_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
-
     seenit.add(id(x))
     return x
 

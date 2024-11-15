@@ -18,7 +18,6 @@ def make_test_points(npts, bound, ngen=None):
     ngen = ngen or npts * 2
     xyz = bound * th.randn((10 * ngen, 3)).to('cuda').to(th.float32)
     xyz = xyz[th.topk(-h.norm(xyz), npts).indices]  # type: ignore
-
     xyz = xyz[-bound < xyz[:, 0]]
     xyz = xyz[-bound < xyz[:, 1]]
     xyz = xyz[-bound < xyz[:, 2]]
@@ -93,7 +92,6 @@ def test_voxdock_c3():
     xyz = make_test_points(100, 20)
     xyz -= xyz.mean(0)
     rg = th.sqrt(th.mean(h.norm(xyz)**2))  # type: ignore
-
     rb = ipd.voxel.VoxRB(xyz, resl=1, func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10))
     # ipd.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
     N = 100_000
@@ -121,7 +119,6 @@ def asuvec_frames_minimal_z(sym):
         th.tensor(np.array(list(ipd.sym.axes(sym).values()))).mean(0),
         device='cuda',  # type: ignore
         dtype=th.float32)  # type: ignore
-
     iasu = th.argmax((xsym @ asuvec)[:, 2])
     asuvec = xsym[iasu] @ asuvec
     # xnbr = [th.eye(4, device='cuda')]
@@ -149,11 +146,8 @@ def asuvec_frames_minimal_z(sym):
 def scoreme(rb, xform, xsym, ncopy, maxcart, Ntop):
     cen1, rad = rb.boundcen, rb.boundrad
     if Ntop: cen1 = h.xform(xform[:Ntop], rb.boundcen)  # type: ignore
-
     cen2 = h.xform(xsym, cen1)  # type: ignore
-
     inbounds = h.norm(cen1 - cen2) < 2*rad + rb.func.arg[-1] + maxcart  # type: ignore
-
     # if len(xsym) == 23:
     #     ipd.showme(h.xform(xform[0], rb.xyz))
     #     for i, x in enumerate(xsym):
@@ -177,9 +171,7 @@ def test_voxdock_cage_T():
         showme=0,  # type: ignore
         resl=0.5,  # type: ignore
         niters=5)  # type: ignore
-
     ic(sc.min())  # type: ignore
-
     assert sc.min() < -100  # type: ignore
 
 @pytest.mark.fast
@@ -196,9 +188,7 @@ def test_voxdock_cage_O():
         showme=0,  # type: ignore
         resl=0.5,  # type: ignore
         niters=5)  # type: ignore
-
     ic(sc.min())  # type: ignore
-
     assert sc.min() < -150  # type: ignore
 
 @pytest.mark.fast
@@ -215,9 +205,7 @@ def test_voxdock_cage_I():
         showme=0,  # type: ignore
         resl=0.5,  # type: ignore
         niters=5)  # type: ignore
-
     ic(sc.min())  # type: ignore
-
     assert sc.min() < -200  # type: ignore
 
 def voxdock_cage(xyz,
@@ -235,7 +223,6 @@ def voxdock_cage(xyz,
     # print(f'voxdock_cage {sym} {xsym.shape} {asuvec}')
     xyz = xyz - xyz.mean(0)
     rg = th.sqrt(th.mean(h.norm(xyz)**2)) + 1  # type: ignore
-
     cen = asuvec[:3] * rg * {60: 5, 24: 3, 12: 2}[len(xsym)]
     xyz = xyz + cen
     if timer: timer.checkpoint('startup')
@@ -252,7 +239,6 @@ def voxdock_cage(xyz,
     for _iter in range(niters):
         maxcart, maxori = maxcart * 0.5, maxori * 0.5
         itop = sc.topk(Ntop, largest=False).indices  # type: ignore
-
         if timer: timer.checkpoint('topk')
         xform = th.tile(xform[itop], (N // Ntop, 1, 1))
         if timer: timer.checkpoint('tile')
@@ -268,7 +254,6 @@ def voxdock_cage(xyz,
     # return
     if showme:
         for i in sc.topk(10, largest=False).indices:  # type: ignore
-
             rb._vizpos = xsym @ xform[i]
             ipd.showme(rb, sphere=2)
     return xform, sc

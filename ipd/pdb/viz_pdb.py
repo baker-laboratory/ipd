@@ -18,5 +18,4 @@ def pymol_viz_pdbfile(
         pdb.dump_pdb(f'{td}/{tag}.pdb')
 
         from pymol import cmd  # type: ignore
-
         cmd.load(f'{td}/{tag}.pdb')

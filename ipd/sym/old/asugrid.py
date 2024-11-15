@@ -121,14 +121,12 @@ def place_asu_grid(
     refpos = scaleunit(cellsize0, refpos)
     refcell = cellsize if refcell is None else refcell
     pos[3], pos0[3], refpos[3] = 1, 1, 1  # type: ignore
-
     lbub = scaleunit(cellsize0, lbub)
     lbubcell = scaleunit(cellsize0, lbubcell)
     distcontact = scaleunit(cellsize0, distcontact)
     distavoid, distspread, clusterdist = scaleunit(cellsize0, [distavoid, distspread, clusterdist])
 
     samp = np.linspace(*lbub, nsamp)  # type: ignore
-
     xyz = np.meshgrid(samp, samp, samp)
     delta = np.stack(xyz, axis=3).reshape(-1, 3)
     delta = ipd.homog.hvec(delta)
@@ -136,7 +134,6 @@ def place_asu_grid(
     posgrid = posgrid[np.all(posgrid > 0, axis=1)]
     # ipd.showme(posgrid)
     cellsizes = cellsize + np.linspace(*lbubcell, nsampcell)  # type: ignore
-
     if nsampcell < 2:
         cellsizes = np.array([cellsize])
     # ic(frames0.shape, framesavoid0.shape)
@@ -154,12 +151,9 @@ def place_asu_grid(
 
     okavoid = davoidmin > distavoid
     okccontactmin = dcontactmin > distcontact[0]  # type: ignore
-
     okccontactmax = dcontactmax < distcontact[1]  # type: ignore
-
     okspread = dcontactmax - dcontactmin < distspread
     ic(np.sum(okavoid), np.sum(okccontactmin), np.sum(okccontactmax), np.sum(okspread))  # type: ignore
-
     ok = okavoid * okccontactmin * okccontactmax * okspread
     w = np.where(ok)
     goodcell = cellsizes[w[:][0]]

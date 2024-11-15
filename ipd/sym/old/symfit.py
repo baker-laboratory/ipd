@@ -74,7 +74,6 @@ def compute_symfit(
         raise ValueError(f"symmetry {sym} requires at least 3 subunits, {len(frames)} provided")
     if len(frames) > len(ipd.sym.sym_frames[sym]):
         raise ValueError(f"symmetry {sym} has at most {nnativeframes}, {len(frames)} supplied")  # type: ignore
-
     symops = ipd.sym.symops_from_frames(sym=sym, frames=frames, **kw)
     _checkpoint(kw, "symops_from_frames")
 
@@ -110,9 +109,7 @@ def compute_symfit(
         coms = fitframes @ target_sub_com_testpoint
         diff = ipd.homog.hdot(ipd.homog.hnormalized(target_sub_com), ipd.homog.hnormalized(coms))
         ic(diff)  # type: ignore
-
         ic(np.arccos(diff) * 180 / 3.1416)  # type: ignore
-
         # assert 0
     else:
         diff = np.sum((fitframes - np.eye(4))**2, axis=(1, 2))
@@ -722,7 +719,6 @@ def symfit_gradient(symfit):
     frametorq = np.zeros(shape=(symfit.nframes, 4))
 
     for key, torq in zip(sop.key, optorq):  # type: ignore
-
         print(key, torq)
         frametorq[key[0]] -= torq
         frametorq[key[1]] += torq
@@ -760,7 +756,6 @@ def symfit_mc_play(
     **kw,
 ):
     kw = ipd.dev.Bunch(kw, _strict=False)  # type: ignore
-
     if "timer" not in kw:
         kw.timer = ipd.dev.Timer()
 
@@ -839,7 +834,6 @@ def symfit_mc_play(
         )
 
     import pymol  # type: ignore
-
     pymol.cmd.turn("x", 20)
 
     lowerr = symfit.weighted_err

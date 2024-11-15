@@ -22,7 +22,6 @@ def main():
 def WIP_opcompid():
     f = ipd.sym.frames("P23", cells=4)
     ic(ipd.sym.xtal.symelems("P23"))  # type: ignore
-
     for ielem, se in enumerate(ipd.sym.xtal.symelems("P23")):
         fcompid = ipd.sym.xtal.sg_symelem_frame444_compids_dict["P23"][:, ielem]
         fopid = se.frame_operator_ids(f)
@@ -37,7 +36,6 @@ def WIP_opcompid():
             ids[ids == id] = i
         for i in range(max(ids)):
             ic(f[ids == i, :3, 3])  # type: ignore
-
         assert 0
 
 def WIP_P23_perm():
@@ -56,7 +54,6 @@ def WIP_P23_perm():
     ielem = 4
     ecen, eaxs = selems[ielem].cen, selems[ielem].axis
     ic(selems[ielem])  # type: ignore
-
     for icomp in range(np.max(compid[:, ielem])):
         # ic(np.max(frames[:, :3, 3]))
         selframes = compid[:, ielem] == icomp

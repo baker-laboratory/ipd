@@ -43,7 +43,6 @@ class NullMotifManager(MotifManager):
 
     @property
     def have_motif(self):  # type: ignore
-
         return False
 
 set_default_motif_manager('nomotif')

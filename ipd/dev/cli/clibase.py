@@ -12,12 +12,10 @@ class CliBase:
 
     @classmethod
     def mrca(_, classes: set[CB], cls: CB | None = None) -> CB | None:  # type: ignore
-
         classes = set(classes)
         cls = cls or _.__root__
         for c in cls.__children__:
             if val := cls.mcra(classes, c): return val  # type: ignore
-
         if classes.issubset(cls.__descendants__):
             return cls
 
@@ -36,25 +34,19 @@ class CliBase:
         parent: list[CB] = [b for b in cls.__bases__ if hasattr(b, '__app__')]
         assert len(parent) < 2
         cls.__app__: typer.Typer = typer.Typer(**typer_args)  # type: ignore
-
         cls.__parent__: CB | None = parent[0] if parent else None
         cls.__root__ = cls.__parent__.__root__ if parent else cls  # type: ignore
-
         cls.__children__: set[CB] = set()
         cls.__siblings__: set[CB] = set()
         cls.__ancestors__: set[CB] = {cls.__parent__} if parent else set()  # type: ignore
-
         cls.__descendants__: set[CB] = set()
         cls.__nesting_cmds__: list[str] = []
         if parent:
             cls.__siblings__ |= cls.__parent__.__children__  # type: ignore
-
             for sibling in cls.__siblings__:
                 sibling.__siblings__.add(cls)
             cls.__parent__.__children__.add(cls)  # type: ignore
-
             cls.__ancestors__ |= cls.__parent__.__ancestors__  # type: ignore
-
             for ancestor in cls.__ancestors__:
                 ancestor.__descendants__.add(cls)
             cls.__parent__.__app__.add_typer(cls.__app__, name=cls.__name__.replace('Tool', '').lower())  # type: ignore

@@ -1,11 +1,8 @@
 import ipd
 from ipd.sym.pymol_symgen import PymolSymElem, Vec  # type: ignore
-
 try:
     import pymol  # type: ignore
-
     from pymol import cmd  # type: ignore
-
 except ImportError:
     pymol = None
     cmd = None

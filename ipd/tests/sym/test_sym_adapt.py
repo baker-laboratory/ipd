@@ -71,7 +71,6 @@ def test_sym_adapt_tensor_1d():
     sym = ipd.sym.create_sym_manager(symid='c1', L=7)
     S = partial(_sym_adapt, sym=sym, isasym=None)
     S(th.randn(7, 3)).adapted[0].shape == (7, 1, 3)  # type: ignore
-
     S(th.randn(1, 1, 1, 7, 3, 4, 5, 6)).adapted[0].shape == (7, 60, 6)
 
     sym = ipd.sym.create_sym_manager(symid='c2')
@@ -128,7 +127,6 @@ def _dispatch_symfunc_on_type_shape(*a, **kw):
     """Take in args and decides what kind of symmetry func to use sortof a poor
     mans doubledispatch."""
     kw = ipd.dev.Bunch(kw, _strict=False)  # type: ignore
-
     if len(a) == 3:
         raise ValueError('apply_symmetry only accepts <= 2 args')
     if len(a) == 2:

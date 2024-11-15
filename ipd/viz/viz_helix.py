@@ -20,9 +20,7 @@ def pymol_viz_Helix(
     **kw,
 ):
     import pymol  # type: ignore
-
     state["seenit"][name] += 1  # type: ignore
-
     v = pymol.cmd.get_view()
     allcgo = list()
 
@@ -39,12 +37,10 @@ def pymol_viz_Helix(
 
     if splitobjs:
         pymol.cmd.load_cgo(cgo, f"{name}_GENPTS{i}")  # type: ignore
-
     allcgo += cgo
 
     if addtocgo is None:
         pymol.cmd.load_cgo(allcgo, f'{name}_{state["seenit"][name]}')  # type: ignore
-
         pymol.cmd.set_view(v)
     else:
         addtocgo.extend(allcgo)

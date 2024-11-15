@@ -18,10 +18,8 @@ def symcheck(sym, thing, kind=None, **kw):
     match kind:
         case SymKind(ShapeKind.SEQUENCE, _):
             return [symcheck(**kw.sub(thing=x, kind=None)) for x in adaptor.adapted]  # type: ignore
-
         case SymKind(ShapeKind.MAPPING, _):
             return {k: symcheck(key=k, **kw.sub(thing=x, kind=None)) for k, x in adaptor.adapted.items()}  # type: ignore
-
         case SymKind(_, ValueKind.XYZ):
             return symcheck_XYZ(**kw)
         case SymKind(_, ValueKind.INDEX):
@@ -124,7 +122,6 @@ def symcheck_INDEX_1D(idx, thing, **kw):
     assert 0
     for i in range(idx.nsub):
         s = slice(i * Lasu, (i+1) * Lasu)  # type: ignore
-
         assert th.all(i == idx.subnum[thing[s]])
         th.testing.assert_close(idx.idx_sub_to_asu[thing[s]], thing[:Lasu], rtol=1e-5)  # type: ignore
 
@@ -181,7 +178,6 @@ def symcheck_BASIC_2D(idx, thing, kind, sympair_protein_only=None, **kw):
                 asu = thing[s.beg:s.asuend, s.beg:s.asuend, ..., k]
                 if not th.allclose(sym, asu, atol=1e-3, rtol=1e-5):
                     ic(sym.device, sym.shape, asu.shape, s, i, k)  # type: ignore
-
                     # import torchshow
                     # torchshow.show([sym, asu])
                     th.testing.assert_close(sym, asu, atol=1e-3, rtol=1e-5)

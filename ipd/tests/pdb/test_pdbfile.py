@@ -9,7 +9,6 @@ def main():
 
     _test_cb_fillin()
     test_pdbfile_coords(f.pdb1pgx())  # type: ignore
-
     test_pdbfile_dump(f.pdb1pgx())
     test_pdb_bbcoords_sym(f.pdb1coi())
     test_pdb_masks(f.pdb1pgx())

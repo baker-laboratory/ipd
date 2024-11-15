@@ -78,7 +78,6 @@ def test_state_manager(tmpdir):  # sourcery skip: extract-duplicate-method
     at(state.foo).is_equal_to('baz')
     # print(conffile.read_text())
     print(state.polls._special)  # type: ignore
-
     assert not state.polls.__dict__['_special']['strict_lookup']
     conffile.write_text("""
         cmds: {}
@@ -93,7 +92,6 @@ def test_state_manager(tmpdir):  # sourcery skip: extract-duplicate-method
     assert state._conf.__dict__['_special']['strict_lookup']
     assert not state._state.__dict__['_special']['strict_lookup']
     assert state._state.polls is state.polls  # type: ignore
-
     assert not state.polls.__dict__['_special']['strict_lookup']
     assert isinstance(state.polls['foo bar'], ipd.dev.Bunch)
 

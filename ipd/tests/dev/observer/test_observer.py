@@ -23,7 +23,6 @@ def test_observer():
     assert not agent.foobar_called
     ipd.hub.blah(check_is_registered_method=False)
     with pytest.raises(ipd.dev.observer.ObserverError):  # type: ignore
-
         ipd.hub.blah(strict=True)
     assert not agent.foobar_called
     ipd.hub.foobar()

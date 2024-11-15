@@ -15,11 +15,9 @@ def get_dtype_dev(example, dtype=None, device=None):
                 break
     if device is None:
         if isinstance(example, th.Tensor): device = example.device  # type: ignore
-
         else: device = 'cpu'
     if dtype is None:
         if isinstance(example, th.Tensor): dtype = example.dtype  # type: ignore
-
         else: dtype = th.float32
     return dict(dtype=dtype, device=device)
 
@@ -241,7 +239,6 @@ def randsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, device=None, 
     if centers is None: centers = [0, 0, 0, 1]
     else: assert centers.shape[:-1] in ((), shape)
     x = rot(axis, ang, centers, degrees=False, **kw).squeeze()  # type: ignore
-
     trans = th.randn(x[..., :3, 3].shape, **kw) * cart_sd
     x[..., :3, 3] += trans
     return x
@@ -816,7 +813,6 @@ def valid(stuff, is_points=None, strict=False, **kw):
         return valid44(stuff, **kw)
     if stuff.shape[-2:] == (4, 2) and not is_points:
         return is_valid_rays(stuff)  # type: ignore
-
     elif stuff.shape[-1] == 4 and strict:
         return th.allclose(stuff[..., 3], 0) or th.allclose(stuff[..., 3], 1)
     elif stuff.shape[-1] == 4:
@@ -842,7 +838,6 @@ def valid44(x, improper_ok=False, debug=False, **kw):
     is_zero_3_012 = th.allclose(x[..., 3, :3], th.tensor(0.0, dtype=x.dtype))
     ok = is_zero_3_012 and is_one_33 and detok
     if debug and not ok: ic(improper_ok, det, detok, is_one_33, is_zero_3_012)  # type: ignore
-
     return ok
 
 def inv(x):

@@ -16,5 +16,4 @@ try:
 except ImportError:
     logging.warning('RestrictedPython not installed, exec and eval will be unsafe. pip install RestrictedPython')
     safe_eval = eval  # type: ignore
-
     safe_exec = exec  # type: ignore

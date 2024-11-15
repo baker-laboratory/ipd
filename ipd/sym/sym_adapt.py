@@ -66,7 +66,6 @@ class SymAdapt(ABC):
     def __init_subclass__(cls, **kw):
         if not hasattr(cls, 'adapts'):
             raise TypeError(f'class {name} must define adapted type via adapts = ThingType')  # type: ignore
-
         if cls.adapts is not None:  # type: ignore
 
             @_sym_adapt.register(cls.adapts)  # type: ignore
@@ -84,9 +83,7 @@ class SymAdapt(ABC):
 
     def __repr__(self):
         if isinstance(self.orig, (np.ndarray, th.Tensor)):  # type: ignore
-
             return f'{self.__class__.__name__}(orig={self.orig.shape}, new={self.new.shape})'  # type: ignore
-
         return f'{self.__class__.__name__}(kind={self.kind}, orig={type(self.orig)})'  # type: ignore
 
 @_sym_adapt.register(SymAdapt)  # type: ignore
@@ -112,7 +109,6 @@ class SymAdaptStr(SymAdapt):
         return x
 
     def reconstruct(self, canon, asym=False):  # type: ignore
-
         return ''.join(canon)
 
 class SymAdaptSequence(SymAdapt):
@@ -135,7 +131,6 @@ class SymAdaptSequence(SymAdapt):
         return [self.sym.sym_adapt(x) for x in self.orig]
 
     def reconstruct(self, canonicals):  # type: ignore
-
         return type(self.orig)(canonicals)
 
 class SymAdaptMap(SymAdapt):
@@ -148,7 +143,6 @@ class SymAdaptMap(SymAdapt):
         self.adapted = copy.copy(self.orig)
 
     def reconstruct(self, canonicals):  # type: ignore
-
         return type(self.orig)(canonicals)
 
 class SymAdaptDataClass(SymAdapt):
@@ -186,7 +180,6 @@ class SymAdaptDataClass(SymAdapt):
         self.adapted = d
 
     def reconstruct(self, symparts, **kw):  # type: ignore
-
         # print(f'SymAdaptDataClass.reconstruct {self.orig.__class__.__name__}')
         for k, v in symparts.items():
             if v is None: continue
@@ -205,9 +198,7 @@ with contextlib.suppress(ImportError):
     @dataclasses.dataclass
     class SimpleSparseTensor:
         val: th.Tensor  # type: ignore
-
         idx: th.Tensor  # type: ignore
-
         isidx: slice
         kind: kind = None  # type: ignore
 
@@ -266,7 +257,6 @@ with contextlib.suppress(ImportError):
             self.adapted = self.adapted.to(sym.device).to(self.orig.dtype)
 
         def reconstruct(self, x, **kw):  # type: ignore
-
             return x.rename(*self.perm.names).align_to(*self.orig.names).to(self.orig.device).to(
                 self.orig.dtype).rename(None)
 
@@ -289,7 +279,6 @@ with contextlib.suppress(ImportError):
                 assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.L)
                 self.asym = False
                 self.adapted = SimpleSparseTensor(idx=idx, val=self.perm, isidx=self.isidx)  # type: ignore
-
                 assert not isasym
             elif sym.idx.is_asym_subsequence(idx):
                 assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.Nasym)
@@ -301,7 +290,6 @@ with contextlib.suppress(ImportError):
                 symperm.rename_(*self.perm.names)
                 self.perm = symperm
                 self.adapted = SimpleSparseTensor(idx=symidx, val=symperm, isidx=self.isidx)  # type: ignore
-
                 if self.isidx:
                     self.adapted.val[:] = sym.idx.idx_asym_to_sym[self.adapted.val.to(int).rename(None)]
             else:
@@ -311,7 +299,6 @@ with contextlib.suppress(ImportError):
             self.adapted.val = self.adapted.val.rename(None).to(sym.device).to(self.orig.dtype)
 
         def reconstruct(self, x, **kw):  # type: ignore
-
             # ic(self.perm.names, self.orig.names)
             x = x.val.rename(*self.perm.names).align_to(*self.orig.names).rename(None)
             return x.to(self.orig.device).to(self.orig.dtype)
@@ -347,7 +334,6 @@ with contextlib.suppress(ImportError):
             return new
 
         def reconstruct(self, ary):  # type: ignore
-
             return ary
 
     ########## SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
@@ -425,15 +411,11 @@ with contextlib.suppress(ImportError):
             elif tensor_is_xyz(self.orig): valuekind = ipd.sym.ValueKind.XYZ
             elif self.isidx is not None: valuekind = ipd.sym.ValueKind.INDEX
             elif len(self.symdims) == 2 and len(self.orig) == 1: valuekind = ipd.sym.ValueKind.PAIR  # type: ignore
-
             else: valuekind = ipd.sym.ValueKind.BASIC
             if self._kind is not None: shapekind = self._kind.shapekind
             elif len(self.symdims) == 0: shapekind = ipd.sym.ShapeKind.SPARSE  # type: ignore
-
             elif len(self.symdims) == 1: shapekind = ipd.sym.ShapeKind.ONEDIM  # type: ignore
-
             elif len(self.symdims) == 2: shapekind = ipd.sym.ShapeKind.TWODIM  # type: ignore
-
             else: assert 0
             return SymKind(shapekind, valuekind)  # type: ignore
 
@@ -448,7 +430,6 @@ with contextlib.suppress(ImportError):
                 if self.tlib == 'torch': adapted.val = adapted.val.to(self.sym.device)
             else:
                 adapted = self.new.reshape(self.workshape).clone()  # type: ignore
-
                 if self.tlib == 'torch': adapted = adapted.to(self.sym.device)
                 if isinstance(self.isidx, (tuple, slice)):
                     adapted = adapted[self.isidx]
@@ -458,7 +439,6 @@ with contextlib.suppress(ImportError):
             return adapted
 
         def reconstruct(self, x, asym=False, asu=False, unsym=False, symonly=False):  # type: ignore
-
             assert asym + asu + unsym <= 1
             if isinstance(x, SimpleSparseTensor):
                 assert len(x.idx) == len(x.val)
@@ -524,45 +504,32 @@ with contextlib.suppress(ImportError):
         def _set_attrs_onedim(self, s):
             self.symdims = [0]
             self.symshape = list(self.new.shape)  # type: ignore
-
             self.workshape = self.new.shape  # type: ignore
-
             # if self.new.ndim > 1:
             # self.workshape = [self.new.shape[0], -1, self.new.shape[-1]]
             self.asymshape = [s.Nasym] + list(self.new.shape[1:])  # type: ignore
-
             self.asushape = [s.Nasu] + list(self.new.shape[1:])  # type: ignore
-
             self.unsymshape = [s.Nunsym] + list(self.new.shape[1:])  # type: ignore
-
             self.symonlyshape = [s.Nsymonly] + list(self.new.shape[1:])  # type: ignore
 
         def _set_attrs_twodim(self, s):
             self.symdims = [0, 1]
             self.symshape = list(self.new.shape)  # type: ignore
-
             self.workshape = self.new.shape  # type: ignore
-
             self.asymshape = [s.Nasym, s.Nasym] + list(self.new.shape[2:])  # type: ignore
-
             self.asushape = [s.Nasu, s.Nasu] + list(self.new.shape[2:])  # type: ignore
-
             self.unsymshape = [s.Nunsym, s.Nunsym] + list(self.new.shape[2:])  # type: ignore
-
             self.symonlyshape = [s.Nsymonly, s.Nsymonly] + list(self.new.shape[2:])  # type: ignore
 
         def _make_room_for_sym_sparse(self, tensor):
             # SPARSE
             s = self.sym.idx
             assert len(self.idx) == len(tensor)  # type: ignore
-
             if self.sym.idx.is_sym_subsequence(self.idx):
                 if self.isasym is not None: assert not self.isasym
                 self.asym = False
                 self.newidx = self.idx.clone()  # type: ignore
-
                 self.new = SimpleSparseTensor(idx=self.newidx, val=self.orig.clone(), isidx=self.isidx)  # type: ignore
-
                 assert len(self.new.idx) == len(self.new.val)
             elif self.sym.idx.is_asym_subsequence(self.idx):
                 if self.isasym is not None: assert self.isasym
@@ -572,7 +539,6 @@ with contextlib.suppress(ImportError):
                 self.orig[:len(tensor)] = tensor
                 self.newidx = symidx
                 self.new = SimpleSparseTensor(idx=self.newidx, val=self.orig, isidx=self.isidx)  # type: ignore
-
                 if self.isidx is not None:
                     tosym = self.new.val[:, self.isidx].to(int)
                     for i, x in enumerate(tosym):
@@ -581,9 +547,7 @@ with contextlib.suppress(ImportError):
                 assert len(self.new.idx) == len(self.new.val)
             else:
                 ic(self.sym)  # type: ignore
-
                 ic(self.idx)  # type: ignore
-
                 raise ValueError('sparse indices are not asym or sym compatible')
             self.symdims = []
             self.symshape = self.new.val.shape

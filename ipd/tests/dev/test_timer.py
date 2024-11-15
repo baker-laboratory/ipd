@@ -75,11 +75,9 @@ def test_summary():
         timer.checkpoint("foo")
 
     times = timer.report_dict(summary=sum)  # type: ignore
-
     assert allclose(times["foo"], 0.06, atol=0.02)
 
     times = timer.report_dict(summary=statistics.mean)  # type: ignore
-
     assert allclose(times["foo"], 0.02, atol=0.01)
 
     times = timer.report_dict(summary="mean")
