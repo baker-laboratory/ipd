@@ -28,7 +28,7 @@ jobs:
 
     - name: run pyright
       run: |
-        pyright -p pyproject.toml
+        /home/bench/.conda/envs/ci/bin/pyright -p pyproject.toml
 
     - name: run pytest digs
       run: |
