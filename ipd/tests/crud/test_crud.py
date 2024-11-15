@@ -11,7 +11,8 @@ import pydantic
 import pytest
 import sqlalchemy
 import sqlmodel.pool
-from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient  # type: ignore
+
 from sqlalchemy.orm import registry
 from sqlmodel import Field, Relationship
 

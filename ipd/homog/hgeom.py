@@ -1335,7 +1335,8 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
         # vector delta between pt2 and pt1
         d = hprojperp(ax1, pt2 - pt1)
         Xalign = halign2(ax1, d, ta1, sl2)  # align d to Y axis
-        Xalign[..., :, 3] = -Xalign @ pt1
+        Xalign[..., :, 3] = -Xalign @ pt1  # type: ignore
+
         slide_dist = (Xalign @ pt2)[..., 1]
     else:
         try:
@@ -1356,7 +1357,8 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
             ic("   ", ta2)  # type: ignore
 
             raise e
-        Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin
+        Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin  # type: ignore
+
         Xalign[..., 3, 3] = 1
         cen2_0 = Xalign @ pt2  # moving pt2 by Xalign
         D = np.stack([ta1[:3], sl2[:3], ta2[:3]]).T

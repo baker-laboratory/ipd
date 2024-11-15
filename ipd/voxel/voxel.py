@@ -19,14 +19,15 @@ class Voxel:
             xyz: th.Tensor,
             resl: float = 1,
             func: ipd.dev.cuda.CudaFunc = ipd.dev.cuda.ClashFunc(3, 4),  # type: ignore
-            repulsive_only: th.Tensor = None,
+            repulsive_only: th.Tensor = None,  # type: ignore
     ):
         assert th.cuda.is_available()
         self.xyz = th.as_tensor(xyz, device='cuda', dtype=th.float32)
         self.resl = float(resl)
         self.func = func
         self.create_threads = th.tensor([32, 2, 2])
-        self.repulsive_only = th.empty(0, dtype=bool) if repulsive_only is None else repulsive_only
+        self.repulsive_only = th.empty(0, dtype=bool) if repulsive_only is None else repulsive_only  # type: ignore
+
         import ipd.samp.sampling_cuda
         self.boundcen, self.boundrad = ipd.samp.bounding_sphere(self.xyz)
         self.boundcen = h.point(self.boundcen.to('cuda'))
@@ -99,7 +100,8 @@ class Voxel:
             if len(voxposinv) > 1: voxposinv = voxposinv[ok]
             if len(xyzpos) > 1: xyzpos = xyzpos[ok]
             # ic(cen1.shape, cen2.shape, rad1, rad2)
-        if repulsive_only is None: repulsive_only = th.empty(0, dtype=bool)
+        if repulsive_only is None: repulsive_only = th.empty(0, dtype=bool)  # type: ignore
+
         score = _voxel.score_voxel_grid(
             self.grid,
             voxposinv,
@@ -132,7 +134,8 @@ class Voxel:
         grid = gemmi.FloatGrid(npgrid)
         grid.set_size(*npgrid.shape)
         bound = np.array(grid.shape) * self.resl
-        grid.set_unit_cell(gemmi.UnitCell(*bound, 90, 90, 90))
+        grid.set_unit_cell(gemmi.UnitCell(*bound, 90, 90, 90))  # type: ignore
+
         assert grid.shape == npgrid.shape
         assert np.allclose(grid.spacing, self.resl)
         ccp4 = gemmi.Ccp4Map()

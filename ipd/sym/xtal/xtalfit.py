@@ -187,8 +187,9 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
             cellgrad = cellsize.grad
             cartshiftgrad = cartshift.grad
             mul = 1
-            cellsize = (cellsize - mul*cellgrad).clone().detach().requires_grad_(True)
-            cartshift = (cartshift - mul*cartshiftgrad).clone().detach().requires_grad_(True)
+            cellsize = (cellsize - mul*cellgrad).clone().detach().requires_grad_(True)  # type: ignore
+
+            cartshift = (cartshift - mul*cartshiftgrad).clone().detach().requires_grad_(True)  # type: ignore
 
             ic(err)  # , cellsize, cartshift, cartshiftgrad)  # type: ignore
 

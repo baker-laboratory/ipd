@@ -96,7 +96,8 @@ def _get_spacegroup_data():
             # print(sym, 'detect symelems', flush=True)
             print('_compute_symelems', flush=True)
             sg_symelem_dict[sym] = _compute_symelems(sym, frames)
-            sg_symelem_dict[sym] = list(itertools.chain(*sg_symelem_dict[sym].values()))  # flatten
+            sg_symelem_dict[sym] = list(itertools.chain(*sg_symelem_dict[sym].values()))  # flatten  # type: ignore
+
             print('_find_compound_symelems', flush=True)
             celems = _find_compound_symelems(sym, sg_symelem_dict[sym], stdframes, stdframes2, stdframes1)
             sg_symelem_dict[sym] += list(itertools.chain(*celems.values()))  # type: ignore

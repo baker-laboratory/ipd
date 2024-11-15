@@ -42,7 +42,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         # '/home/sheffler/sw/MambaForge/envs/TEST/lib/python3.12/site-packages/numba/cuda/',
         # f'{os.path.dirname(th.__file__)}/include/torch/csrc/api/include/torch',
     ]
-    extension = th.utils.cpp_extension.load(
+    extension = th.utils.cpp_extension.load(  # type: ignore
         name=name,
         sources=sources,
         is_python_module=True,

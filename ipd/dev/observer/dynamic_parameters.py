@@ -554,7 +554,8 @@ class _Spline1D(DynamicParam):
         self.spline = CubicSpline(x, y, **kw)
         self.interpvals = self.spline(np.arange(n) / (n-1))
 
-    def value(self):
+    def value(self):  # type: ignore
+
         design_step, diffuse_step, rfold_step = self.manager._step  # type: ignore
 
         if self.which == 'design': return self.interpvals[design_step]

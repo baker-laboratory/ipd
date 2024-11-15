@@ -61,9 +61,9 @@ def test_symslices_from_colors_one():
     nsub = 4
     idx = ipd.sym.symslices_from_colors(
         nsub=nsub,
-        colors=th.tensor([0, 1, -1, 1, 2, -1, 2], dtype=int),
+        colors=th.tensor([0, 1, -1, 1, 2, -1, 2], dtype=int),  # type: ignore
         isasu=True,
-        Lasu=th.tensor([-1, -1, 0, -1, -1, 0, -1], dtype=int),
+        Lasu=th.tensor([-1, -1, 0, -1, -1, 0, -1], dtype=int),  # type: ignore
     )
     idx = ipd.sym.SymIndex(nsub, idx)
     assert th.allclose(

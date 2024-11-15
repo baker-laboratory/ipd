@@ -48,7 +48,7 @@ def pymol_load(
 
 @pymol_load.register(str)  # type: ignore
 def _(toshow, name=None, state=_showme_state, **kw):
-    pymol.cmd.load(toshow, name)
+    pymol.cmd.load(toshow, name)  # type: ignore
 
 @pymol_load.register(prim.Cylinder)  # type: ignore
 def _(
@@ -207,7 +207,8 @@ def pymol_viz_list(
     name += "_%i" % state["seenit"][name]
     mycgo = list()
     v = pymol.cmd.get_view()
-    cmd.set("suspend_updates", "on")
+    cmd.set("suspend_updates", "on")  # type: ignore
+
     colors = get_different_colors(len(toshow) - len(topcolors), **kw.only("colorseed"))
     if len(topcolors) > 0:
         colors = colors * 0.5
@@ -218,7 +219,7 @@ def pymol_viz_list(
     pymol.cmd.set_view(v)
     name = name or "list"
     pymol.cmd.load_cgo(mycgo, name)
-    cmd.set("suspend_updates", "off")
+    cmd.set("suspend_updates", "off")  # type: ignore
 
 @pymol_load.register(np.ndarray)  # type: ignore
 def pymol_load_npndarray(
@@ -691,7 +692,8 @@ def show_array_ncacoh(
     # ic(toshow.shape)
 
     ipd.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
-    pymol.cmd.load(fname, name)
+    pymol.cmd.load(fname, name)  # type: ignore
+
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', 'name N+CA+C')
     return ipd.dev.Bunch(pymol_object=name)
@@ -713,7 +715,8 @@ def show_ndarray_n_ca_c(
 
     ipd.pdb.dumppdb(fname, toshow)
 
-    pymol.cmd.load(fname, name)
+    pymol.cmd.load(fname, name)  # type: ignore
+
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', f'{name} and name N+CA+C')
     return ipd.dev.Bunch(pymol_object=name)

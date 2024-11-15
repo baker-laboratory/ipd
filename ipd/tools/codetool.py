@@ -45,9 +45,10 @@ class CodeTool(ipd.tools.IPDTool):
             conffile (str, optional): config file. Defaults to 'pyproject.toml'.
         """
         if add_type_ignore_comments:
-            path, = ipd.dev.substitute_project_vars(path)
-            errors = ipd.dev.get_pyright_errors(path)
-            ipd.dev.add_type_ignore_comments(errors)
-            return
+            with ipd.dev.cd(ipd.dev.git_root()):
+                path, = ipd.dev.substitute_project_vars(path)
+                errors = ipd.dev.get_pyright_errors(path)
+                ipd.dev.add_type_ignore_comments(errors)
+                return
         cmd = 'pyright -p {conffile} {" ".join(changed_files)}'
         ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)

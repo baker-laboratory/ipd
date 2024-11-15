@@ -168,7 +168,8 @@ class SymElem:
         # assert 0
         opids = np.arange(len(frames), dtype=np.int32)
         opsframes = einsum("oij,fjk->ofik", self.operators[1:], frames)
-        for iop, opframes in enumerate(opsframes):
+        for iop, opframes in enumerate(opsframes):  # type: ignore
+
             a, b = np.where(np.all(np.isclose(frames[None], opframes[:, None]), axis=(-1, -2)))
             opids[a] = np.minimum(opids[a], opids[b])
         for i, id in enumerate(sorted(set(opids))):
@@ -205,12 +206,13 @@ class SymElem:
             centest = einsum("fij,j->fi", frames[iframematch], self.cen)
             axstest = einsum("fij,j->fi", frames[iframematch], self.axis)
             if sanitycheck and self.iscompound:
-                assert np.allclose(centest, centest[0])
+                assert np.allclose(centest, centest[0])  # type: ignore
+
                 if not (self.istet or self.isoct):
-                    assert np.all(
-                        np.logical_or(
-                            np.all(np.isclose(axstest, axstest[0]), axis=1),
-                            np.all(np.isclose(axstest, -axstest[0]), axis=1),
+                    assert np.all(  # type: ignore
+                        np.logical_or(  # type: ignore
+                            np.all(np.isclose(axstest, axstest[0]), axis=1),  # type: ignore
+                            np.all(np.isclose(axstest, -axstest[0]), axis=1),  # type: ignore
                         ))
             if np.allclose(compid[iframematch], -1):
                 compid[iframematch] = fid
@@ -226,7 +228,8 @@ class SymElem:
     def frame_component_ids_bycenter(self, frames, sanitycheck=True):
         assert self.iscompound
         cen = einsum("fij,j->fi", frames, self.cen)
-        d = hnorm(cen[:, None] - cen[None])
+        d = hnorm(cen[:, None] - cen[None])  # type: ignore
+
         compid = np.ones(len(frames), dtype=np.int32) * -12345
         count = 0
         for i in range(len(d)):
@@ -755,8 +758,10 @@ def _sanitycheck_compid_cens(elem, frames, compid):
         compframes = frames[compid == i]
         # ipd.showme(compframes @ elem.origin @ offset, scale=scale)
         cen = einsum("ij,j->i", compframes[0], elem.origin[:, 3])
-        assert np.allclose(cen, einsum("fij,j->fi", compframes, elem.origin[:, 3]))
-        assert not any([np.allclose(cen, s) for s in seenit])
+        assert np.allclose(cen, einsum("fij,j->fi", compframes, elem.origin[:, 3]))  # type: ignore
+
+        assert not any([np.allclose(cen, s) for s in seenit])  # type: ignore
+
         seenit.append(cen)
 
 def _make_operator_component_joint_ids(elem1, elem2, frames, fopid, fcompid, sanitycheck=True):
@@ -777,7 +782,8 @@ def _make_operator_component_joint_ids(elem1, elem2, frames, fopid, fcompid, san
         for i in range(np.max(opcompid)):
             compframes = frames[opcompid == i]
             cens = einsum("fij,j->fi", compframes, elem2.origin[:, 3])
-            if np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2)):
+            if np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2)):  # type: ignore
+
                 raise ComponentIDError
                 ic(elem1)
                 ic(elem2)
@@ -793,8 +799,9 @@ def _make_operator_component_joint_ids(elem1, elem2, frames, fopid, fcompid, san
                 showme(seenit, scale=10)
 
                 assert 0
-            assert not np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2))
-            seenit = np.concatenate([cens, seenit])
+            assert not np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2))  # type: ignore
+
+            seenit = np.concatenate([cens, seenit])  # type: ignore
 
     return opcompid
 
