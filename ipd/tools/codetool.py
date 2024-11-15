@@ -1,3 +1,5 @@
+from typing import Annotated
+import typer
 import ipd
 
 class CodeTool(ipd.tools.IPDTool):
@@ -6,11 +8,11 @@ class CodeTool(ipd.tools.IPDTool):
 
     def yapf(
         self,
-        path: str = '[projname]',
+        path: Annotated[str, typer.Argument()] = '[projname]',
         dryrun: bool = False,
         excludefile: str = '[gitroot].yapf_exclude',
-        hashfile='[gitroot].yapf_hash',
-        conffile='[gitroot]/pyproject.toml',
+        hashfile: str = '[gitroot].yapf_hash',
+        conffile: str = '[gitroot]/pyproject.toml',
     ):
         """run yapf on all python files in path
 
@@ -19,10 +21,33 @@ class CodeTool(ipd.tools.IPDTool):
             dryrun (bool, optional): dry run. Defaults to False.
             exclude (str, optional): exclude file. Defaults to '.yapf_exclude'.
             hashfile (str, optional): hash file. Defaults to '.yapf_hash'.
+            conffile (str, optional): config file. Defaults to 'pyproject.toml'.
         """
-        ipd.dev.yapf_fast(path, dryrun, excludefile, hashfile, conffile)
+        cmd = 'yapf -ip --style {conffile} -m {" ".join(changed_files)}'
+        ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
 
-class PyrightTool(CodeTool):
-    def typeignore(self, path: str):
-        errors = ipd.dev.get_pyright_errors(path)
-        ipd.dev.add_type_ignore_comments(errors)
+    def pyright(
+        self,
+        path: Annotated[str, typer.Argument()] = '[projname]',
+        add_type_ignore_comments: bool = False,
+        dryrun: bool = False,
+        excludefile: str = '[gitroot].pyright_exclude',
+        hashfile: str = '[gitroot].pyright_hash',
+        conffile: str = '[gitroot]/pyproject.toml',
+    ):
+        """run pyright on all python files in path
+
+        Args:
+            path (str, optional): path to run yapf on. Defaults to '.'.
+            dryrun (bool, optional): dry run. Defaults to False.
+            exclude (str, optional): exclude file. Defaults to '.yapf_exclude'.
+            hashfile (str, optional): hash file. Defaults to '.yapf_hash'.
+            conffile (str, optional): config file. Defaults to 'pyproject.toml'.
+        """
+        if add_type_ignore_comments:
+            path, = ipd.dev.substitute_project_vars(path)
+            errors = ipd.dev.get_pyright_errors(path)
+            ipd.dev.add_type_ignore_comments(errors)
+            return
+        cmd = 'pyright -p {conffile} {" ".join(changed_files)}'
+        ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
