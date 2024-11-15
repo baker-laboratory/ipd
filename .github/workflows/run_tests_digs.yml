@@ -28,6 +28,7 @@ jobs:
 
     - name: run pyright
       run: |
+        conda init
         conda activate ci
         /home/bench/.conda/envs/ci/bin/pyright -p pyproject.toml
 
