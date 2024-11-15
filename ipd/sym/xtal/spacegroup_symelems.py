@@ -303,8 +303,9 @@ def _find_compound_symelems(
 
     # remove redundant centers
     for psym in isects:
-        isects[psym] = list(sorted(isects[psym]))
-        isects[psym] = list({t[1:4]: t for t in isects[psym]}.values())
+        isects[psym] = list(sorted(isects[psym]))  # type: ignore
+
+        isects[psym] = list({t[1:4]: t for t in isects[psym]}.values())  # type: ignore
 
     # ic(isects['D2'])
     # assert 0
@@ -405,9 +406,12 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
             except ComponentIDError as cperr:
                 # if elem.label == 'D2':
                 # ic(cperr.match)
-                if len(cperr.match) >= len(bestbadiframes):
-                    if np.max(cperr.match) < np.max(bestbadiframes):
-                        bestbadiframes, bestbadelem = cperr.match, movedelem
+                if len(cperr.match) >= len(bestbadiframes):  # type: ignore
+
+                    if np.max(cperr.match) < np.max(bestbadiframes):  # type: ignore
+
+                        bestbadiframes, bestbadelem = cperr.match, movedelem  # type: ignore
+
                 continue
         if bestelem is None:
             print(
@@ -419,7 +423,8 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
                 bestbadiframes,
             )
             bestelem = bestbadelem
-        bestelem = bestelem.tounit(lattice)
+        bestelem = bestelem.tounit(lattice)  # type: ignore
+
         assert bestelem.isunit
         bestplaced.append(bestelem)
 

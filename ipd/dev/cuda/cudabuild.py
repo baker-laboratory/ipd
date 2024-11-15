@@ -18,7 +18,7 @@ mode = 'release'
 
 os.environ['TORCH_CUDA_ARCH_LIST'] = ''
 
-@change_exception(OSError=ImportError, RuntimeError=ImportError)
+@change_exception(OSError=ImportError, RuntimeError=ImportError)  # type: ignore
 def build_extension(name, sources, incpath, module=None, verbose=False):
     """Build a torch extension module from sources.
 
@@ -31,8 +31,10 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
     Returns:
         Extension module.
     """
-    import torch as th
-    import torch.utils.cpp_extension
+    import torch as th  # type: ignore
+
+    import torch.utils.cpp_extension  # type: ignore
+
     # os.environ['CC'] = "gcc-9"
     commonflags = ['-DEIGEN_NO_DEBUG'] if mode == 'release' else []
     # ic('start cuda build')

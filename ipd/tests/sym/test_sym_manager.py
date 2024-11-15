@@ -88,7 +88,8 @@ def test_sym_manager_2d_2slice():
     n = 13
     sym.idx = [(n, 0, 4), (n, 5, 11)]
     m = th.arange(n * n).reshape(n, n).to(int).to(sym.device)
-    asym = sym.idx.asym[None] * sym.idx.asym[:, None]
+    asym = sym.idx.asym[None] * sym.idx.asym[:, None]  # type: ignore
+
     # ic(asym.to(int))
     asym = m[asym].reshape(8, 8)
     msym = sym(asym)
@@ -138,7 +139,8 @@ def test_sym_asu_seq():
     ])
 
     sym.idx = [20]
-    assert sym.idx.Nasu == 10
+    assert sym.idx.Nasu == 10  # type: ignore
+
     assert sym.nsub == 2
 
     seq = th.arange(20)
@@ -230,7 +232,8 @@ def test_sym_slices():
     sym.idx = [(N, 0, 6), (N, 10, 16), (N, 20, 26)]
     symxyz = sym(xyz)
     # ipd.showme(symxyz[~sym.idx.unsym] * 30, name='FOOF')
-    assert th.allclose(xyz[sym.idx.asym], symxyz[sym.idx.asym])
+    assert th.allclose(xyz[sym.idx.asym], symxyz[sym.idx.asym])  # type: ignore
+
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz)
 
 @pytest.mark.fast

@@ -18,13 +18,19 @@ def _get_spacegroup_data():
     if have_package_data('spacegroup_data'):
         sgdata = load_package_data('spacegroup_data')
 
-    sg_frames_dict = sgdata.get('sg_frames_dict', dict())
-    sg_cheshire_dict = sgdata.get('sg_cheshire_dict', dict())
-    sg_symelem_dict = sgdata.get('sg_symelem_dict', dict())
-    sg_permutations444_dict = sgdata.get('sg_permutations444_dict', dict())
-    sg_symelem_frame444_opids_dict = sgdata.get('sg_symelem_frame444_opids_dict', dict())
-    sg_symelem_frame444_compids_dict = sgdata.get('sg_symelem_frame444_compids_dict', dict())
-    sg_symelem_frame444_opcompids_dict = sgdata.get('sg_symelem_frame444_opcompids_dict', dict())
+    sg_frames_dict = sgdata.get('sg_frames_dict', dict())  # type: ignore
+
+    sg_cheshire_dict = sgdata.get('sg_cheshire_dict', dict())  # type: ignore
+
+    sg_symelem_dict = sgdata.get('sg_symelem_dict', dict())  # type: ignore
+
+    sg_permutations444_dict = sgdata.get('sg_permutations444_dict', dict())  # type: ignore
+
+    sg_symelem_frame444_opids_dict = sgdata.get('sg_symelem_frame444_opids_dict', dict())  # type: ignore
+
+    sg_symelem_frame444_compids_dict = sgdata.get('sg_symelem_frame444_compids_dict', dict())  # type: ignore
+
+    sg_symelem_frame444_opcompids_dict = sgdata.get('sg_symelem_frame444_opcompids_dict', dict())  # type: ignore
 
     if not REBUILD_SPACEGROUP_DATA:
         return sgdata
@@ -45,7 +51,8 @@ def _get_spacegroup_data():
 
     ichiral = 0
     for isym, (sym, symtag) in enumerate(sg_tag.items()):
-        if sym in sgdata: continue
+        if sym in sgdata: continue  # type: ignore
+
         assert REBUILD_SPACEGROUP_DATA
 
         if symtag in sg_lattice:
@@ -92,7 +99,8 @@ def _get_spacegroup_data():
             sg_symelem_dict[sym] = list(itertools.chain(*sg_symelem_dict[sym].values()))  # flatten
             print('_find_compound_symelems', flush=True)
             celems = _find_compound_symelems(sym, sg_symelem_dict[sym], stdframes, stdframes2, stdframes1)
-            sg_symelem_dict[sym] += list(itertools.chain(*celems.values()))
+            sg_symelem_dict[sym] += list(itertools.chain(*celems.values()))  # type: ignore
+
             for ise, e in enumerate(sg_symelem_dict[sym]):
                 e.index = ise
                 print(f'{ise:2}', e.label, e, flush=True)
@@ -177,13 +185,19 @@ def _get_spacegroup_data():
     return sgdata
 
 _sgdata = _get_spacegroup_data()
-sg_frames_dict = _sgdata['sg_frames_dict']
-sg_cheshire_dict = _sgdata['sg_cheshire_dict']
-sg_symelem_dict = _sgdata['sg_symelem_dict']
-sg_permutations444_dict = _sgdata['sg_permutations444_dict']
-sg_symelem_frame444_opids_dict = _sgdata['sg_symelem_frame444_opids_dict']
-sg_symelem_frame444_compids_dict = _sgdata['sg_symelem_frame444_compids_dict']
-sg_symelem_frame444_opcompids_dict = _sgdata['sg_symelem_frame444_opcompids_dict']
+sg_frames_dict = _sgdata['sg_frames_dict']  # type: ignore
+
+sg_cheshire_dict = _sgdata['sg_cheshire_dict']  # type: ignore
+
+sg_symelem_dict = _sgdata['sg_symelem_dict']  # type: ignore
+
+sg_permutations444_dict = _sgdata['sg_permutations444_dict']  # type: ignore
+
+sg_symelem_frame444_opids_dict = _sgdata['sg_symelem_frame444_opids_dict']  # type: ignore
+
+sg_symelem_frame444_compids_dict = _sgdata['sg_symelem_frame444_compids_dict']  # type: ignore
+
+sg_symelem_frame444_opcompids_dict = _sgdata['sg_symelem_frame444_opcompids_dict']  # type: ignore
 
 # def makedata2():
 #   sg_symelem_frame444_opids_dict = dict()

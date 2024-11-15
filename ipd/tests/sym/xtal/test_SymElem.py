@@ -19,18 +19,34 @@ def main():
 @pytest.mark.fast
 def test_screw_elem_frames():
     f31a = ipd.homog.hrot([0, 0, 1], 120) @ ipd.homog.htrans([0, 0, 1 / 3])
-    assert ipd.sym.xtal.symelem_of(f31a) == SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=1 / 3, label="C31")
+    assert ipd.sym.xtal.symelem_of(f31a) == SymElem(
+        3,
+        axis=[0, 0, 1],
+        cen=[0.0, 0.0, 0.0],
+        hel=1 / 3,  # type: ignore
+        label="C31")  # type: ignore
 
     f31b = ipd.homog.hrot([0, 0, -1], 240) @ ipd.homog.htrans([0, 0, 1 / 3])
     assert np.allclose(f31a, f31b)
-    ipd.sym.xtal.symelem_of(f31a) == ipd.sym.xtal.symelem_of(f31b)
+    ipd.sym.xtal.symelem_of(f31a) == ipd.sym.xtal.symelem_of(f31b)  # type: ignore
 
     f31b = ipd.homog.hrot([0, 0, -1], 240) @ ipd.homog.htrans([0, 0, 1 / 3])
 
     f32a = ipd.homog.hrot([0, 0, 1], 120) @ ipd.homog.htrans([0, 0, 2 / 3])
-    assert ipd.sym.xtal.symelem_of(f32a) == SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=2 / 3, label="C32")
+    assert ipd.sym.xtal.symelem_of(f32a) == SymElem(
+        3,
+        axis=[0, 0, 1],
+        cen=[0.0, 0.0, 0.0],
+        hel=2 / 3,  # type: ignore
+        label="C32")  # type: ignore
+
     f32b = ipd.homog.hrot([0, 0, 1], 240) @ ipd.homog.htrans([0, 0, 1 / 3])
-    assert ipd.sym.xtal.symelem_of(f32b) == SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=2 / 3, label="C32")
+    assert ipd.sym.xtal.symelem_of(f32b) == SymElem(
+        3,
+        axis=[0, 0, 1],
+        cen=[0.0, 0.0, 0.0],
+        hel=2 / 3,  # type: ignore
+        label="C32")  # type: ignore
 
 @pytest.mark.fast
 def test_screw_elem():
@@ -39,7 +55,8 @@ def test_screw_elem():
     S3 = np.sqrt(3)
 
     assert SymElem(1, [0, 0, 1], hel=1).label == "C11"
-    assert SymElem(2, [0, 0, 1], hel=0.5).label == "C21"
+    assert SymElem(2, [0, 0, 1], hel=0.5).label == "C21"  # type: ignore
+
     assert SymElem(2, [0, 1, 1], hel=S2 / 2).label == "C21"
     assert SymElem(2, [1, 1, 1], hel=S3 / 2).label == "C21"
     with pytest.raises(ScrewError):
@@ -47,32 +64,45 @@ def test_screw_elem():
     with pytest.raises(ScrewError):
         print(SymElem(2, [0, 0, 1], hel=1))
     with pytest.raises(ScrewError):
-        print(SymElem(1, [0, 0, 1], hel=0.5))
-    with pytest.raises(ScrewError):
-        print(SymElem(1, [1, 2, 3], hel=0.5))
+        print(SymElem(1, [0, 0, 1], hel=0.5))  # type: ignore
 
-    assert SymElem(3, [0, 0, 1], hel=1 / 3).label == "C31"
-    assert SymElem(3, [0, 0, -1], hel=2 / 3).label == "C32"
+    with pytest.raises(ScrewError):
+        print(SymElem(1, [1, 2, 3], hel=0.5))  # type: ignore
+
+    assert SymElem(3, [0, 0, 1], hel=1 / 3).label == "C31"  # type: ignore
+
+    assert SymElem(3, [0, 0, -1], hel=2 / 3).label == "C32"  # type: ignore
+
     assert SymElem(3, [1, 1, 1], hel=S3 * 1 / 3).label == "C31"
     assert SymElem(3, [1, 1, 1], hel=S3 * 2 / 3).label == "C32"
     with pytest.raises(ScrewError):
         print(SymElem(3, [0, 0, 1], hel=1))
 
-    assert SymElem(4, [0, 0, 1], hel=0.25).label == "C41"
-    assert SymElem(4, [0, 0, 1], hel=0.50).label == "C42"
-    assert SymElem(4, [0, 0, 1], hel=0.75).label == "C43"
-    assert SymElem(4, [0, 0, 1], hel=-0.5).label == "C42"
-    assert SymElem(4, [0, 0, 1], hel=-0.25).label == "C43"
+    assert SymElem(4, [0, 0, 1], hel=0.25).label == "C41"  # type: ignore
+
+    assert SymElem(4, [0, 0, 1], hel=0.50).label == "C42"  # type: ignore
+
+    assert SymElem(4, [0, 0, 1], hel=0.75).label == "C43"  # type: ignore
+
+    assert SymElem(4, [0, 0, 1], hel=-0.5).label == "C42"  # type: ignore
+
+    assert SymElem(4, [0, 0, 1], hel=-0.25).label == "C43"  # type: ignore
+
     with pytest.raises(ScrewError):
-        print(SymElem(4, [0, 0, 1], hel=-0.51))
+        print(SymElem(4, [0, 0, 1], hel=-0.51))  # type: ignore
+
     with pytest.raises(ScrewError):
         print(SymElem(4, [0, 0, 1], hel=1))
 
-    assert SymElem(6, [0, 0, 1], hel=1 / 6).label == "C61"
-    assert SymElem(6, [0, 1, 0], hel=2 / 6).label == "C62"
-    assert SymElem(6, [1, 0, 0], hel=3 / 6).label == "C63"
-    assert SymElem(6, [0, 1, 0], hel=4 / 6).label == "C64"
-    assert SymElem(6, [0, 0, 1], hel=5 / 6).label == "C65"
+    assert SymElem(6, [0, 0, 1], hel=1 / 6).label == "C61"  # type: ignore
+
+    assert SymElem(6, [0, 1, 0], hel=2 / 6).label == "C62"  # type: ignore
+
+    assert SymElem(6, [1, 0, 0], hel=3 / 6).label == "C63"  # type: ignore
+
+    assert SymElem(6, [0, 1, 0], hel=4 / 6).label == "C64"  # type: ignore
+
+    assert SymElem(6, [0, 0, 1], hel=5 / 6).label == "C65"  # type: ignore
 
     for i in range(100):
         x = ipd.homog.hrand()
@@ -176,13 +206,15 @@ def check_frame_opids():
         # assert 0
         # ids = opids
         # ids = compids
-        ids = opcompids
+        ids = opcompids  # type: ignore
+
         offset = ipd.homog.htrans([0.002, 0.0025, 0.003])
         seenit = np.empty((0, 4))
         for i in range(np.max(ids)):
             assert np.sum(ids == i) > 0
             compframes = frames[ids == i]
-            ipd.showme(compframes @ elem.origin @ offset, scale=scale, name=f"id{i}")
+            ipd.showme(compframes @ elem.origin @ offset, scale=scale, name=f"id{i}")  # type: ignore
+
             # cens = einsum('fij,j->fi', compframes, elem.origin[:, 3])
             # assert not np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2))
             # seenit = np.concatenate([cens, seenit])

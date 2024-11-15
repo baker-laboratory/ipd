@@ -47,7 +47,8 @@ def main():
 
     if True:
         for xname in ipd.sym.all_xtal_names():
-            ic(xname)
+            ic(xname)  # type: ignore
+
             x = ipd.sym.Xtal(xname)
 
             # print(
@@ -67,7 +68,8 @@ def main():
     # test_xtal_cryst1_I_4_3_2(dump_pdbs=False)
     # assert 0
 
-    helper_test_coords_to_asucen_0("I 21 3")
+    helper_test_coords_to_asucen_0("I 21 3")  # type: ignore
+
     # assert 0
 
     test_hxtal_viz(
@@ -161,7 +163,7 @@ def main():
     test_symelem()
 
     # _test_hxtal_viz_gyroid(headless=False)
-    ic("test_xtal.py DONE")
+    ic("test_xtal.py DONE")  # type: ignore
 
 @pytest.mark.fast
 def test_xtal_performance():
@@ -194,24 +196,29 @@ def test_xtalrad_I213():
 
     pt = [2, 2, 2]
     symcoord = x.symcoords(pt, cellsize=10, cells=3, xtalrad=0.7, center=pt, ontop=None)
-    ic(symcoord.shape)
+    ic(symcoord.shape)  # type: ignore
+
     # ipd.showme(symcoord, kind='point')
     # assert 0
 
 def _analize_xtal_asu_placement(sym="I_4_3_2_432", showme=False):
     x = ipd.sym.Xtal(sym)
-    ic(x.asucen(method="closest_approach"))
-    ic(x.asucen(method="closest_to_cen"))
-    ic(x.asucen(method="closest_to_cen", use_olig_nbrs=True))
+    ic(x.asucen(method="closest_approach"))  # type: ignore
+
+    ic(x.asucen(method="closest_to_cen"))  # type: ignore
+
+    ic(x.asucen(method="closest_to_cen", use_olig_nbrs=True))  # type: ignore
+
     # ic(x.asucen(method='stored'))
     # assert 0
     ipd.sym.analyze_xtal_asu_placement(sym)
 
 def helper_test_coords_to_asucen_0():
-    xtal = ipd.sym.Xtal(sym)
+    xtal = ipd.sym.Xtal(sym)  # type: ignore
+
     cen0 = xtal.asucen()
 
-    ic(cen0)
+    ic(cen0)  # type: ignore
 
     frames = xtal.frames()
     for i, f in enumerate(frames):
@@ -437,7 +444,8 @@ def _test_hxtal_viz_gyroid(headless=True):
 
     # ipd.showme(xtal, headless=headless, fanshift=[-0.03, 0.05], fansize=[0.15, 0.12])
     # ipd.showme(xtal, headless=headless, fanshift=[-0.03, 0.05], fansize=[0.15, 0.12])
-    ipd.showme(xtal, headless=headless, showpoints=1)
+    ipd.showme(xtal, headless=headless, showpoints=1)  # type: ignore
+
     # for a, b, c in itertools.product(*[(0, 1)] * 3):
     #   # ipd.showme(xtal, cellshift=[a, b, c], showgenframes=a == b == c == 0)
     #   ipd.showme(xtal, cellshift=[a, b, c], headless=headless, fanshift=[-0.03, 0.05],

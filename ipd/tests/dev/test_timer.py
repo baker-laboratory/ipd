@@ -74,10 +74,12 @@ def test_summary():
         time.sleep(0.02)
         timer.checkpoint("foo")
 
-    times = timer.report_dict(summary=sum)
+    times = timer.report_dict(summary=sum)  # type: ignore
+
     assert allclose(times["foo"], 0.06, atol=0.02)
 
-    times = timer.report_dict(summary=statistics.mean)
+    times = timer.report_dict(summary=statistics.mean)  # type: ignore
+
     assert allclose(times["foo"], 0.02, atol=0.01)
 
     times = timer.report_dict(summary="mean")
@@ -90,7 +92,7 @@ def test_summary():
         timer.report(summary="foo")
 
     with pytest.raises(ValueError):
-        timer.report(summary=1)
+        timer.report(summary=1)  # type: ignore
 
 if __name__ == "__main__":
     test_auto()

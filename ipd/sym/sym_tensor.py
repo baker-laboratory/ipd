@@ -149,9 +149,10 @@ import functools
 
 import ipd
 
-import torch as th
+import torch as th  # type: ignore
+
 import numpy as np
-from torch import Tensor as T
+from torch import Tensor as T  # type: ignore
 
 def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
     """Create a SymTensor object from a tensor.
@@ -194,7 +195,8 @@ def symtensor(sym, tensor, cls=None, symdims=None, idx=None, isidx=None):
     elif len(symdims) == 1: dim = '1D'
     elif len(symdims) == 2: dim = '2D'
 
-    cls = cls or sym_tensor_types[f'FullSlicedAll{dim}{val}']
+    cls = cls or sym_tensor_types[f'FullSlicedAll{dim}{val}']  # type: ignore
+
     symten = tensor.as_subclass(cls)
     attr = ipd.dev.Bunch(sym=sym,
                          ordering=th.arange(sym.idx.L, dtype=int),
@@ -232,7 +234,8 @@ class SymTensor(th.Tensor):
     def __new__(cls, t: 'SymTensor', attr) -> 'SymTensor':
         # ic('SymTensor')
         assert isinstance(t, SymTensor)
-        assert not t.as_subclass(T).requires_grad or not torch.is_grad_enabled()
+        assert not t.as_subclass(T).requires_grad or not torch.is_grad_enabled()  # type: ignore
+
         return t
         # new = t.as_subclass(cls).set_attr(t.attr)
         # new.attr.observers.add(new)
@@ -271,7 +274,8 @@ class SymTensor(th.Tensor):
         assert hasattr(self, 'attr')
         # print('__setitem__')
         if isinstance(val, th.Tensor):
-            if isinstance(slice, th.Tensor): ic(slice.shape)
+            if isinstance(slice, th.Tensor): ic(slice.shape)  # type: ignore
+
         self.as_subclass(T)[slice] = val.as_subclass(T) if isinstance(val, th.Tensor) else val
         self._update()
 
@@ -383,7 +387,8 @@ class SymSub(SymTensor):
         base = cls.__bases__[list(subbasenames.keys()).index(__class__)]
         symmask = (cls if cls.__bases__ == (__class__, ) else base).__name__.lower()
         attr.symmask = getattr(attr.sym.idx, symmask)
-        if issubclass(cls, (Sub, NotSub)):
+        if issubclass(cls, (Sub, NotSub)):  # type: ignore
+
             try:
                 attr.symmask = attr.symmask[isub]
             except IndexError:
@@ -515,8 +520,10 @@ def make_sub_bases():
 
     base_types['Sub'] = type('Sub', (SymSub, ), {})
     base_types['NotSub'] = type('NotSub', (SymSub, ), {})
-    SymSub.sub = lambda self, i: type_maps[self.__class__][Sub](self, self.attr.copy(), isub=i)
-    SymSub.notsub = lambda self, i: type_maps[self.__class__][NotSub](self, self.attr.copy(), isub=i)
+    SymSub.sub = lambda self, i: type_maps[self.__class__][Sub](self, self.attr.copy(), isub=i)  # type: ignore
+
+    SymSub.notsub = lambda self, i: type_maps[self.__class__][NotSub](self, self.attr.copy(), isub=i)  # type: ignore
+
     for k, v in base_types.items():
         setattr(M, k, v)
 

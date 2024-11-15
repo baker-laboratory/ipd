@@ -2,7 +2,7 @@ import datetime
 import types
 import uuid
 from pathlib import Path
-from typing import Any, Optional, Type, Union, _AnnotatedAlias, get_args
+from typing import Any, Optional, Type, Union, _AnnotatedAlias, get_args  # type: ignore
 
 import pydantic
 import pydantic_core
@@ -65,8 +65,9 @@ class PydanticStrats:
         if orig is list and issubclass(args[0], pydantic.BaseModel): return None
         if isinstance(T, types.UnionType): T = self.pick_from_union_types(T.__args__)
         if isinstance(T, _AnnotatedAlias): T = get_args(args[0])[0]
-        if (strat := self.type_mapping.get(T, None)) is not None: return strat
-        raise Valuerror(f'cant make hypothesis strat for {T} {type(T)} {orig} {args}')
+        if (strat := self.type_mapping.get(T, None)) is not None: return strat  # type: ignore
+
+        raise Valuerror(f'cant make hypothesis strat for {T} {type(T)} {orig} {args}')  # type: ignore
 
     def postprocess_moodel_strategy(self, Model, strat):
         return strat

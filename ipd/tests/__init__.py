@@ -25,6 +25,6 @@ def load(fname):
 def force_pytest_skip(reason):
     import _pytest
 
-    raise _pytest.outcomes.Skipped(reason)
+    raise _pytest.outcomes.Skipped(reason)  # type: ignore
 
 __all__ = ['sym', 'make_deterministic', 'path', 'load']

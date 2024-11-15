@@ -14,7 +14,7 @@ def main():
     test_load_pdbs(f.pdbfnames())
     test_find_pdb_files()
 
-    ic("TEST_PDBREAD DONE")
+    ic("TEST_PDBREAD DONE")  # type: ignore
 
 def firstlines(s, num, skip):
     count = 0

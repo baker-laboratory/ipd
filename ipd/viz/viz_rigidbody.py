@@ -4,7 +4,7 @@ import ipd
 from ipd.dock.rigid.rigidbody import RigidBody, RigidBodyFollowers
 from ipd.viz.pymol_viz import cgo_sphere, pymol_load
 
-@pymol_load.register(RigidBodyFollowers)
+@pymol_load.register(RigidBodyFollowers)  # type: ignore
 def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, addtocgo=None, **kw):
     ipd.showme(bodies.bodies, name=name, topcolors=[(1, 1, 1)], **kw)
     return
@@ -26,7 +26,7 @@ def pymol_viz_RigidBodyFollowers(bodies, name="RigidBodyFollowers", state=None, 
     else:
         addtocgo.extend(cgo)
 
-@pymol_load.register(RigidBody)
+@pymol_load.register(RigidBody)  # type: ignore
 def pymol_viz_RigidBody(
         body,
         name="rigidbody",
@@ -40,10 +40,10 @@ def pymol_viz_RigidBody(
         **kw,
 ):
     kw = ipd.dev.Bunch(kw)
-    import pymol
+    import pymol  # type: ignore
 
     v = pymol.cmd.get_view()
-    state["seenit"][name] += 1
+    state["seenit"][name] += 1  # type: ignore
 
     assert 0 == np.sum(np.isnan(body.coords))
 
@@ -58,7 +58,7 @@ def pymol_viz_RigidBody(
 
         crds = body.coords
         for i in set(pairs[:, 0]):
-            cgo += cgo_sphere(crds[i], showpairsdist / 2, kw.col)
+            cgo += cgo_sphere(crds[i], showpairsdist / 2, kw.col)  # type: ignore
 
     if showpairswith is not None:
         assert 0
@@ -69,7 +69,8 @@ def pymol_viz_RigidBody(
             cgo += ipd.viz.cgo_lineabs(crds1[i], crds2[j])
 
     if addtocgo is None:
-        pymol.cmd.load_cgo(cgo, f'{name}_{state["seenit"][name]}')
+        pymol.cmd.load_cgo(cgo, f'{name}_{state["seenit"][name]}')  # type: ignore
+
         pymol.cmd.set_view(v)
     else:
         addtocgo.extend(cgo)

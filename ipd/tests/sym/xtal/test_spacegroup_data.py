@@ -9,7 +9,8 @@ def main():
     assert 0
 
 def _highindex():
-    m = set(re.findall(r"\[\d+\]", s))
+    m = set(re.findall(r"\[\d+\]", s))  # type: ignore
+
     m = [int(x[1:-1]) for x in m]
     print(max(m))
 

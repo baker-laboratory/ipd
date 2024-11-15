@@ -23,9 +23,9 @@ def make_sequential_colors(colors):
 
 def symslices_from_colors(
     nsub: int,
-    colors: 'th.Tensor',
+    colors: 'th.Tensor',  # type: ignore
     isasu: bool = True,
-    Lasu: 'th.Tensor' = None,
+    Lasu: 'th.Tensor' = None,  # type: ignore
     recolor: bool = True,
 ):
     """This function takes a list of colors and returns a list of slices.

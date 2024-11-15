@@ -2,7 +2,8 @@ import pytest
 
 pytest.importorskip('torch')
 import hypothesis
-import torch as th
+import torch as th  # type: ignore
+
 from hypothesis import strategies as st
 
 import ipd

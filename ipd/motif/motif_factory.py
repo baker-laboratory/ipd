@@ -12,7 +12,8 @@ class MetaMotifManager(abc.ABCMeta):
         # sourcery skip: instance-method-first-arg-name
         """Register the MotifManager subclass."""
         super(MetaMotifManager, cls).__init__(cls_name, cls_bases, cls_dict)
-        kind = cls.kind or cls_name
+        kind = cls.kind or cls_name  # type: ignore
+
         if kind in _motif_managers:
             raise TypeError(f'multiple MotifManagers with same kind!'
                             f'trying to add {kind}:{cls_name} to:\n{_motif_managers}')

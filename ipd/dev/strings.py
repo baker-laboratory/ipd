@@ -3,7 +3,6 @@ import io
 import re
 
 from ipd.dev.contexts import redirect
-from ipd.dev.safe_eval import safe_eval
 
 def get_all_annotations(cls):
     annotations = {}
@@ -11,8 +10,8 @@ def get_all_annotations(cls):
         annotations |= getattr(base, '__annotations__', {})
     return annotations
 
-def fstr(template):
-    return safe_eval(f'f"""{template}"""')
+def eval_fstring(template, namespace):
+    return eval(f'f"""{template}"""', namespace)
 
 def printed_string(thing, rich=True):
     with contextlib.suppress(ImportError):

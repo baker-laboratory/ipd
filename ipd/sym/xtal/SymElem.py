@@ -45,7 +45,7 @@ def symelem_of(frame, **kw):
         if not np.allclose(nfold, nfold.round()):
             raise SymElemAngErr(f"angle {an} implies nfold {nfold} which is non-integer")
     # ic(int(nfold), a, c, h, kw)
-    return SymElem(int(nfold.round()), axis=a, cen=c, hel=h, **kw)
+    return SymElem(int(nfold.round()), axis=a, cen=c, hel=h, **kw)  # type: ignore
 
 def _round(val):
     for v in [
@@ -280,7 +280,8 @@ class SymElem:
         match = np.where(match)[0]
         if len(match) != len(self.operators):
             cperr = ComponentIDError()
-            cperr.match = match
+            cperr.match = match  # type: ignore
+
             raise cperr
             ic(frames.shape)
             ic(match)
@@ -367,12 +368,14 @@ class SymElem:
         # raise ScrewError(f'screw translation out of unit cell')
         self.screw = unitcellfrac * self.nfold
         # ic(self.nfold, self.screw)
-        if not np.isclose(self.screw, round(self.screw)):
+        if not np.isclose(self.screw, round(self.screw)):  # type: ignore
+
             raise ScrewError(f"screw has non integer value {self.screw}")
         if self.screw >= max(2, self.nfold):  # C11 is ok
             raise ScrewError("screw dosent match nfold")
 
-        self.screw = int(round(self.screw))
+        self.screw = int(round(self.screw))  # type: ignore
+
         if self.nfold > 1:
             self.screw = self.screw % self.nfold
             self.hel = self.hel % cellextent
@@ -428,7 +431,7 @@ class SymElem:
         if hdot(self.axis, [1, 2, 3, 0]) < 0:
             self.axis = -self.axis
         if axis2 is not None and hdot(self.axis2, [1, 2, 3, 0]) < 0:
-            self.axis2 = -self.axis2
+            self.axis2 = -self.axis2  # type: ignore
 
         if adjust_cyclic_center and (axis2 is None) and np.isclose(hel, 0):  # cyclic
             assert 0, "this needs an audit"
@@ -540,10 +543,12 @@ class SymElem:
         if np.allclose(ax.round(), ax):
             ax = ax.astype("i")
         if self.istet:
-            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)
+            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)  # type: ignore
+
             s = f"SymElem('{self._init_args.nfold}', axis=[{axs}], axis2={[float(_) for _ in ax2[:3]]}, cen={[float(_) for _ in self.cen[:3]]}, label='{self.label}')"
         elif self.isoct:
-            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)
+            ax2 = (self.axis2 / np.max(np.abs(self.axis2))).round(6)  # type: ignore
+
             s = f"SymElem('{self._init_args.nfold}', axis=[{axs}], axis2={[float(_) for _ in ax2[:3]]}, cen={[float(_) for _ in self.cen[:3]]}, label='{self.label}')"
         elif self.axis2 is None:
             if self.screw == 0:
@@ -616,7 +621,7 @@ def showsymelems(
             tmp[e.label].append(e)
         symelems = tmp
 
-    import pymol
+    import pymol  # type: ignore
 
     elemframes = np.eye(4).reshape(1, 4, 4)
     if lattice is None:
@@ -694,7 +699,8 @@ def showsymelems(
 
             cgo = []
 
-            for (tax, ax), (tax2, ax2), xyzlen in configs:
+            for (tax, ax), (tax2, ax2), xyzlen in configs:  # type: ignore
+
                 cylweight = weight
                 xyzlen = np.array(xyzlen)
                 if scan:

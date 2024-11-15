@@ -39,7 +39,7 @@ def open_package_data(fname):
     if fname.endswith(".xz"):
         return open_lzma_cached(package_data_path(fname))
     else:
-        return open(package_data_path(fname))
+        return open(package_data_path(fname))  # type: ignore
 
 def save_package_data(stuff, fname):
     return save(stuff, package_data_path(fname))
@@ -99,17 +99,24 @@ def fname_extensions(fname):
     # ic(e)
     # ic(f'{b}.{e}' if e else b)
     directory = f"{d}/" if d else ""
-    base = f
-    ext = f".{e}" if e else ""
-    compression = f".{c}" if c else ""
+    base = f  # type: ignore
+
+    ext = f".{e}" if e else ""  # type: ignore
+
+    compression = f".{c}" if c else ""  # type: ignore
+
     basename = b
-    baseext = f"{f}.{e}" if e else f
+    baseext = f"{f}.{e}" if e else f  # type: ignore
+
     extcomp = ""
-    if e and c:
+    if e and c:  # type: ignore
+
         extcomp = f".{e}.{c}"
-    elif e:
+    elif e:  # type: ignore
+
         extcomp = f".{e}"
-    elif c:
+    elif c:  # type: ignore
+
         extcomp = f".{c}"
     uncomp = f"{directory}{baseext}"
 
@@ -132,7 +139,7 @@ def load(fname, **kw):
     if fname.count(".") == 0 or is_pickle_fname(fname):
         return load_pickle(fname, **kw)
     elif fname.endswith(".nc"):
-        import xarray
+        import xarray  # type: ignore
 
         return xarray.load_dataset(fname, **kw)
     elif fname.endswith(".npy"):
@@ -167,7 +174,8 @@ def load_pickle(fname, add_dotpickle=True, assume_lzma=False, **kw):
             fname += ".pickle"
     # print(f'load_pickle {fname} {opener}')
     with opener(fname, "rb") as inp:
-        stuff = pickle.load(inp)
+        stuff = pickle.load(inp)  # type: ignore
+
         if isinstance(stuff, dict):
             if "__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__" in stuff:
                 _special = stuff["__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__"]
@@ -184,7 +192,7 @@ def save(stuff, fname, **kw):
     if finfo.ext in (".pdb", ".cif"):
         ipd.pdb.dumpstruct(fname, stuff, **kw)
     elif finfo.ext == ".nc":
-        import xarray
+        import xarray  # type: ignore
 
         if not isinstance(stuff, xarray.Dataset):
             raise ValueError("can only save xarray.Dataset as .nc file")
@@ -228,7 +236,7 @@ def save_pickle(stuff, fname, add_dotpickle=True, uselzma=False, **kw):
     if not os.path.basename(fname).count("."):
         fname += ".pickle"
     with opener(fname, "wb") as out:
-        pickle.dump(stuff, out)
+        pickle.dump(stuff, out)  # type: ignore
 
 class open_lzma_cached:
     def __init__(self, fname, mode="rb"):

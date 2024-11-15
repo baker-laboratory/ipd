@@ -1,8 +1,10 @@
 import math
 
-import gemmi
+import gemmi  # type: ignore
+
 import numpy as np
-import torch as th
+import torch as th  # type: ignore
+
 from icecream import ic
 from numba import cuda
 
@@ -16,7 +18,7 @@ class Voxel:
             self,
             xyz: th.Tensor,
             resl: float = 1,
-            func: ipd.dev.cuda.CudaFunc = ipd.dev.cuda.ClashFunc(3, 4),
+            func: ipd.dev.cuda.CudaFunc = ipd.dev.cuda.ClashFunc(3, 4),  # type: ignore
             repulsive_only: th.Tensor = None,
     ):
         assert th.cuda.is_available()
@@ -73,7 +75,8 @@ class Voxel:
                 xyzpos = th.linalg.solve(voxpos, xyzpos).contiguous()
                 voxpos = th.eye(4, device='cuda', dtype=th.float32)[None]
             else:
-                len(voxpos) == 1 or len(xyzpos) == 1
+                len(voxpos) == 1 or len(xyzpos) == 1  # type: ignore
+
         if nthread is None:
             if len(xyzpos) == 1: nthread = th.tensor([256, 1, 1])
             elif len(voxpos) == 1: nthread = th.tensor([1, 256, 1])
@@ -111,8 +114,10 @@ class Voxel:
         ).reshape(-1)
         if boundscheck:
             # assert th.allclose(score[~ok], th.tensor(0.0), atol=1e-3)
-            sok, score = score, th.zeros(len(ok), device='cuda')
-            score[ok] = sok
+            sok, score = score, th.zeros(len(ok), device='cuda')  # type: ignore
+
+            score[ok] = sok  # type: ignore
+
         return score.reshape(outshape)
 
     def score_per_atom(self, xyz):
@@ -139,10 +144,13 @@ class Voxel:
 
 @cuda.jit('void(f4[:, :], f4[:], f4[:], i4, f4, float16[:, :, :])', cache=True, fastmath=True)
 def create_voxel_numba(xyz, lb, rad, irad, resl, vox):
-    ixyz = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+    ixyz = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x  # type: ignore
+
     if ixyz >= len(xyz): return
-    ix = cuda.blockIdx.y * cuda.blockDim.y + cuda.threadIdx.y
-    iy = cuda.blockIdx.z * cuda.blockDim.z + cuda.threadIdx.z
+    ix = cuda.blockIdx.y * cuda.blockDim.y + cuda.threadIdx.y  # type: ignore
+
+    iy = cuda.blockIdx.z * cuda.blockDim.z + cuda.threadIdx.z  # type: ignore
+
     # icen = ((xyz[ixyz] - lb) / resl).astype(int)
     icenx = int(xyz[ixyz, 0] - lb[0]) / resl
     iceny = int(xyz[ixyz, 1] - lb[1]) / resl

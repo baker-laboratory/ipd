@@ -24,13 +24,15 @@ def relax_thresh_min(progress, thresh):
     return mod * thresh
 
 class SS(ipd.sieve.Sieve):
-    from rf_diffusion.structure import assign_torch, get_bb_pydssp_seq_xyz_isgp_issm
+    from rf_diffusion.structure import assign_torch, get_bb_pydssp_seq_xyz_isgp_issm  # type: ignore
 
     def __call__(self, progress, indep, xyz, cache, **kw):
         if 'ss' not in cache:
             xyz = generate_O(xyz)
-            bb, isprot = get_bb_pydssp_seq_xyz_isgp_issm(indep.seq, xyz, indep.is_gp, indep.is_sm)
-            cache['ss'] = assign_torch(bb).to(float)
+            bb, isprot = get_bb_pydssp_seq_xyz_isgp_issm(indep.seq, xyz, indep.is_gp, indep.is_sm)  # type: ignore
+
+            cache['ss'] = assign_torch(bb).to(float)  # type: ignore
+
         thresh = relax_thresh_min(progress, self.min_helix)
         val = cache['ss'][:, 0].mean()
         ok = val > thresh

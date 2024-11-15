@@ -17,11 +17,11 @@ def main():
     # WIP_P23_perm()
     # test_icos_perm()
     test_icos_perm()
-    ic("PASS test_permutations")
+    ic("PASS test_permutations")  # type: ignore
 
 def WIP_opcompid():
     f = ipd.sym.frames("P23", cells=4)
-    ic(ipd.sym.xtal.symelems("P23"))
+    ic(ipd.sym.xtal.symelems("P23"))  # type: ignore
 
     for ielem, se in enumerate(ipd.sym.xtal.symelems("P23")):
         fcompid = ipd.sym.xtal.sg_symelem_frame444_compids_dict["P23"][:, ielem]
@@ -36,7 +36,8 @@ def WIP_opcompid():
         for i, id in enumerate(sorted(set(ids))):
             ids[ids == id] = i
         for i in range(max(ids)):
-            ic(f[ids == i, :3, 3])
+            ic(f[ids == i, :3, 3])  # type: ignore
+
         assert 0
 
 def WIP_P23_perm():
@@ -54,7 +55,8 @@ def WIP_P23_perm():
 
     ielem = 4
     ecen, eaxs = selems[ielem].cen, selems[ielem].axis
-    ic(selems[ielem])
+    ic(selems[ielem])  # type: ignore
+
     for icomp in range(np.max(compid[:, ielem])):
         # ic(np.max(frames[:, :3, 3]))
         selframes = compid[:, ielem] == icomp

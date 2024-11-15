@@ -26,15 +26,17 @@ def test_xtalfit_I213():
     fitsym = xtal.symcoords(asym, cells=0, cellsize=cell).reshape(-1, 4)
     rorig = ipd.homog.hrmsfit(ref, startsym)[0]
     rfit = ipd.homog.hrmsfit(ref, fitsym)[0]
-    ic(rorig)
-    ic(rfit)
+    ic(rorig)  # type: ignore
+
+    ic(rfit)  # type: ignore
 
     vals = list()
     for i in range(10):
         fitsym = xtal.symcoords(asym + ipd.homog.hrandvec(), cells=0, cellsize=cell + np.random.normal()).reshape(-1, 4)
         vals.append(ipd.homog.hrmsfit(ref, fitsym)[0] - rfit)
     vals = np.array(vals)
-    ic(np.min(vals), np.mean(vals))
+    ic(np.min(vals), np.mean(vals))  # type: ignore
+
     assert np.min(vals) > -0.2
 
 def DISABLED_test_xtalfit_I213_bk():
@@ -49,8 +51,10 @@ def DISABLED_test_xtalfit_I213_bk():
     # ipd.showme(coords[3])
     cacoords = coords[:, :, 1]
     xtal = ipd.sym.xtal.xtal("I213_32")
-    ax3, cen3 = guessaxis(cacoords, [0, 1, 2])
-    ax2, cen2 = guessaxis(cacoords, [0, 3])
+    ax3, cen3 = guessaxis(cacoords, [0, 1, 2])  # type: ignore
+
+    ax2, cen2 = guessaxis(cacoords, [0, 3])  # type: ignore
+
     if ipd.homog.hdot([1, 1, 1], ax3) < 0:
         ax3 = -ax3
     if ipd.homog.hdot([0, 0, 1], ax2) < 0:
@@ -71,7 +75,7 @@ def DISABLED_test_xtalfit_I213_bk():
     # ic(cen3, cen2)
     cen3 = ipd.homog.hcom(coords[:3, :, 1].mean(axis=0))
     cen2 = ipd.homog.hcom(coords[0, :, 1]) / 2 + ipd.homog.hcom(coords[3, :, 1]) / 2
-    ic(cen3, cen2)
+    ic(cen3, cen2)  # type: ignore
 
     # assert 0
 
@@ -83,11 +87,12 @@ def DISABLED_test_xtalfit_I213_bk():
         y2f = cen2[1] + x[1]
         return (x3f - y3f)**2 + (0.75*x2f - 1.5*y2f)**2
 
-    import scipy.optimize
+    import scipy.optimize  # type: ignore
 
     opt = scipy.optimize.minimize(loss, [0, 0], method="Powell", tol=0.3)
     x = opt.x
-    ic(opt.x)
+    ic(opt.x)  # type: ignore
+
     z = (cen3[0] + x[0] + cen3[1] + x[1]) / 2
     xdelta = ipd.homog.htrans([x[0], x[1], z - cen3[2]])
     cen2 = ipd.homog.hxform(xdelta, cen2)
@@ -95,10 +100,10 @@ def DISABLED_test_xtalfit_I213_bk():
     coords = ipd.homog.hxform(xdelta, coords)
     # ipd.pdb.dumppdb('xdelta.pdb', coords)
 
-    ic(cen2, cen3)
+    ic(cen2, cen3)  # type: ignore
 
     cell = (cen2[0] / 2 + cen2[1]) / 2 * 4
-    ic(cell)
+    ic(cell)  # type: ignore
 
     # xtal.dump_pdb('orig.pdb', coords0[0], cellsize=100.942)
     # xtal.dump_pdb('test.pdb', coords[0], cellsize=cell)
@@ -110,8 +115,9 @@ def DISABLED_test_xtalfit_I213_bk():
     fitsym = xtal.symcoords(coords[0], cells=0, cellsize=cell)[:, :, 1].reshape(-1, 4)
     rorig = ipd.homog.hrmsfit(ref, startsym)[0]
     rfit = ipd.homog.hrmsfit(ref, fitsym)[0]
-    ic(rorig)
-    ic(rfit)
+    ic(rorig)  # type: ignore
+
+    ic(rfit)  # type: ignore
 
     vals = list()
     for i in range(100):
@@ -119,7 +125,7 @@ def DISABLED_test_xtalfit_I213_bk():
                                 cellsize=cell + np.random.normal())[:, :, 1].reshape(-1, 4)
         vals.append(ipd.homog.hrmsfit(ref, fitsym)[0] - rfit)
     vals = np.array(vals)
-    ic(np.min(vals), np.mean(vals))
+    ic(np.min(vals), np.mean(vals))  # type: ignore
 
     # x = np.linspace(-cartbound, cartbound, 20)
     # y = np.linspace(-cartbound, cartbound, 20)

@@ -28,7 +28,8 @@ _xtal_asucens = {
 def all_xtal_names():
     if _xtal_info_dict is None:
         _populate__xtal_info_dict()
-    allxtals = [k for k in _xtal_info_dict if not k.startswith("DEBUG")]
+    allxtals = [k for k in _xtal_info_dict if not k.startswith("DEBUG")]  # type: ignore
+
     return allxtals
 
 def _populate__xtal_info_dict():
@@ -181,15 +182,15 @@ def _populate__xtal_info_dict():
         if k not in sg_symelem_dict: continue
         _xtal_info_dict[k] = ipd.dev.Bunch(
             spacegroup=k,
-            nsub=len(sg_frames_dict[k]),
+            nsub=len(sg_frames_dict[k]),  # type: ignore
             dimension=3,
-            symelems=sg_symelem_dict[k],
-            frames=sg_frames_dict[k],
-            cheshire=sg_cheshire_dict[k],
-            opids4=sg_symelem_frame444_opids_dict[k],
-            compids4=sg_symelem_frame444_compids_dict[k],
-            opcompids4=sg_symelem_frame444_opcompids_dict[k],
-            _strict=True,
+            symelems=sg_symelem_dict[k],  # type: ignore
+            frames=sg_frames_dict[k],  # type: ignore
+            cheshire=sg_cheshire_dict[k],  # type: ignore
+            opids4=sg_symelem_frame444_opids_dict[k],  # type: ignore
+            compids4=sg_symelem_frame444_compids_dict[k],  # type: ignore
+            opcompids4=sg_symelem_frame444_opcompids_dict[k],  # type: ignore
+            _strict=True,  # type: ignore
         )
 
 def C2(**kw):
@@ -258,10 +259,12 @@ def xtalinfo(name):
             name = alternate_names[name]
         else:
             raise ValueError(f'unknown xtal {name}')
-    if name not in _xtal_info_dict:
+    if name not in _xtal_info_dict:  # type: ignore
+
         name = name.replace("_", " ")
     # ic(name)
-    info = _xtal_info_dict[name]
+    info = _xtal_info_dict[name]  # type: ignore
+
     return name, info
 
 """

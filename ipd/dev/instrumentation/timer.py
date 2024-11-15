@@ -98,7 +98,8 @@ class Timer:
         value=None,
         traceback=None,
     ):
-        self.checkpoints["total"].append(time.perf_counter() - self._start)
+        self.checkpoints["total"].append(time.perf_counter() - self._start)  # type: ignore
+
         self._start = None
         if self.verbose:
             log.debug(f"Timer {self.name} finished")
@@ -150,7 +151,8 @@ class Timer:
         lines = [f"Times(name={self.name}, order={order}, summary={summary}):"]
         times = self.report_dict(order=order, summary=summary, timecut=timecut)
         if not times:
-            times["total$$$$"] = time.perf_counter() - self._start
+            times["total$$$$"] = time.perf_counter() - self._start  # type: ignore
+
         for cpoint, t in times.items():
             if not cpoint.count(pattern):
                 continue
@@ -171,7 +173,7 @@ class Timer:
     def total(self):
         if "total" in self.checkpoints:
             return sum(self.checkpoints["total"])
-        return time.perf_counter() - self._start
+        return time.perf_counter() - self._start  # type: ignore
 
     def __str__(self):
         return self.report(printme=False)
@@ -203,7 +205,8 @@ def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=N
     if not dont_mod_label:
         fulllabel = f"{fn}:{clsname}{func}"
     if label:
-        fulllabel += f":{label}"
+        fulllabel += f":{label}"  # type: ignore
+
     t.checkpoint(fulllabel, autolabel=label is None)
 
 def timed_func(func, *, label=None):
@@ -216,20 +219,25 @@ def timed_func(func, *, label=None):
     if inspect.iscoroutinefunction(func):
 
         @functools.wraps(func)
-        async def wrapper(*a, **kw):
+        async def wrapper(*a, **kw):  # type: ignore
+
             kwarg = dict(label=label, filename=filen, funcname=funcn)
-            checkpoint(kw, funcbegin=True, **kwarg)
+            checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
+
             val = await func(*a, **kw)
-            checkpoint(kw, **kwarg)
+            checkpoint(kw, **kwarg)  # type: ignore
+
             return val
     else:
 
         @functools.wraps(func)
         def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
-            checkpoint(kw, funcbegin=True, **kwarg)
+            checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
+
             val = func(*a, **kw)
-            checkpoint(kw, **kwarg)
+            checkpoint(kw, **kwarg)  # type: ignore
+
             return val
 
     return wrapper

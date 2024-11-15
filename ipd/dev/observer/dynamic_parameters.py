@@ -133,8 +133,9 @@ class StepObserver(Observer):
         # if not cls._subject._nstep and conf:
         return cls._subject
 
-    def set_config(self, conf):
-        self.__class__._subject.set_nstep(
+    def set_config(self, conf):  # type: ignore
+
+        self.__class__._subject.set_nstep(  # type: ignore
             design=conf.inference.num_designs,
             diffuse=conf.diffuser.T,
             rfold=40,
@@ -142,7 +143,8 @@ class StepObserver(Observer):
 
     def _add_observer(self, observer):
         """Add an observer to the list of observers."""
-        self.observers.append(observer)
+        self.observers.append(observer)  # type: ignore
+
         observer._subject = self
         if self._nstep:
             observer._set_nstep(self._nstep.design, self._nstep.diffuse, self._nstep.rfold)
@@ -150,27 +152,32 @@ class StepObserver(Observer):
     def set_nstep(self, design=None, diffuse=None, rfold=None):
         # ic('set_nstep', design, diffuse, rfold)
         self._nstep = Step(design, diffuse, rfold)
-        for observer in self.observers:
+        for observer in self.observers:  # type: ignore
+
             observer._set_nstep(design, diffuse, rfold)
 
     def set_step(self, design=None, diffuse=None, rfold=None):
         # ic('set_step', design, diffuse, rfold)
         if diffuse is not None:
             diffuse = self._nstep.diffuse - diffuse
-        for observer in self.observers:
+        for observer in self.observers:  # type: ignore
+
             observer._set_step(design, diffuse, rfold)
 
     def rfold_begin(self):
-        for observer in self.observers:
+        for observer in self.observers:  # type: ignore
+
             observer._rfold_begin()
 
     def rfold_end(self):
-        for observer in self.observers:
+        for observer in self.observers:  # type: ignore
+
             observer._rfold_end()
 
     def rfold_iter_begin(self, tag, **kw):
         # ic('rfold_iter_begin', tag)
-        for observer in self.observers:
+        for observer in self.observers:  # type: ignore
+
             observer._rfold_iter_begin(tag, **kw)
 
 class DynamicParameters(Mapping):
@@ -204,9 +211,11 @@ class DynamicParameters(Mapping):
                     levels = a if a else [True, False]
                     args[k] = ipd.dev.safe_eval(v)
                 if any(isinstance(v[0], (tuple, list)) for v in args.values()):
-                    self.newparam_true_in_range(name, overwrite=overwrite, levels=levels, **args)
+                    self.newparam_true_in_range(name, overwrite=overwrite, levels=levels, **args)  # type: ignore
+
                 else:
-                    self.newparam_true_on_steps(name, overwrite=overwrite, levels=levels, **args)
+                    self.newparam_true_on_steps(name, overwrite=overwrite, levels=levels, **args)  # type: ignore
+
             except ValueError:
                 raise ValueError(f'bad dynam param string "{value}"')
         else:
@@ -414,7 +423,8 @@ def _ranges_to_sets(thing, n):
             thing[i] = [float(x) for x in thing[i]]
         thing[i] = [int(n*x - 0.001) if isinstance(x, float) else x for x in thing[i]]
         thing[i] = [x + n if x < 0 else x for x in thing[i]]
-        thing[i] = range(thing[i][0], thing[i][1] + 1)
+        thing[i] = range(thing[i][0], thing[i][1] + 1)  # type: ignore
+
     s = set()
     for t in thing:
         s = s.union(set(t))
@@ -432,13 +442,16 @@ def _as_set(thing, n):
     except TypeError:
         thing = set([thing])
     if any(isinstance(x, float) for x in thing):
-        thing = {float(x) for x in thing}
+        thing = {float(x) for x in thing}  # type: ignore
+
     # process neg vals from end
     if isinstance(thing, range): thing = list(thing)
     # thing = [list(x) if isinstance(x,range) else x for x in thing]
-    thing = {x + 1 if (x < 0 and isinstance(x, float)) else x for x in thing}
+    thing = {x + 1 if (x < 0 and isinstance(x, float)) else x for x in thing}  # type: ignore
+
     thing = {int(n * x) if isinstance(x, float) else x for x in thing}
-    thing = {x if x >= 0 else x + n for x in thing}
+    thing = {x if x >= 0 else x + n for x in thing}  # type: ignore
+
     if invert:
         thing = set([_ for _ in range(n) if _ not in thing])
 
@@ -467,7 +480,7 @@ class DynamicParam(ABC):
 
     @property
     def progress(self):
-        return self.manager.progress()
+        return self.manager.progress()  # type: ignore
 
     @abstractmethod
     def value(self):
@@ -481,20 +494,23 @@ class _Not(DynamicParam):
         self.parent = parent
         self.manager = parent.manager
 
-    def value(self):
+    def value(self):  # type: ignore
+
         return not self.parent.value()
 
 class _TrueOnIters(DynamicParam):
     def __init__(self, manager, design, diffuse, rfold, levels=[True, False]):
         super().__init__(manager)
-        ndesign, ndiffuse, nrfold = self.manager._nstep
+        ndesign, ndiffuse, nrfold = self.manager._nstep  # type: ignore
+
         self.design_steps = _as_set(design, ndesign)
         self.diffuse_steps = _as_set(diffuse, ndiffuse)
         self.rfold_steps = _as_set(rfold, nrfold)
         self.levels = levels
 
     def value(self):
-        design_step, diffuse_step, rfold_step = self.manager._step
+        design_step, diffuse_step, rfold_step = self.manager._step  # type: ignore
+
         if self.design_steps is not None:
             # assert design_step is not None, 'DynamicParam missing _step info'
             if design_step is not None and design_step not in self.design_steps: return self.levels[1]
@@ -521,13 +537,17 @@ class _Spline1D(DynamicParam):
     def __init__(self, manager, design, diffuse, rfold, **kw):
         pytest.importorskip('scipy')
         import numpy as np
-        from scipy.interpolate import CubicSpline
+        from scipy.interpolate import CubicSpline  # type: ignore
+
         super().__init__(manager)
         if 1 != sum([design is not None, diffuse is not None, rfold is not None]):
             raise ValueError('add_spline_1d requires exactly one of design, diffuse, or rfold ')
-        self.which, vals, n = 'design', design, self.manager._nstep.design
-        if diffuse is not None: self.which, vals, n = 'diffuse', diffuse, self.manager._nstep.diffuse
-        if rfold is not None: self.which, vals, n = 'rfold', rfold, self.manager._nstep.rfold
+        self.which, vals, n = 'design', design, self.manager._nstep.design  # type: ignore
+
+        if diffuse is not None: self.which, vals, n = 'diffuse', diffuse, self.manager._nstep.diffuse  # type: ignore
+
+        if rfold is not None: self.which, vals, n = 'rfold', rfold, self.manager._nstep.rfold  # type: ignore
+
         x, y = [np.array(_) for _ in zip(*vals)]
         if not np.all(np.logical_and(-0.001 <= x, x <= 1.001)):
             raise ValueError(f'interpolation points {x} must be 0 <= x <= 1')
@@ -535,7 +555,8 @@ class _Spline1D(DynamicParam):
         self.interpvals = self.spline(np.arange(n) / (n-1))
 
     def value(self):
-        design_step, diffuse_step, rfold_step = self.manager._step
+        design_step, diffuse_step, rfold_step = self.manager._step  # type: ignore
+
         if self.which == 'design': return self.interpvals[design_step]
         elif self.which == 'diffuse': return self.interpvals[diffuse_step]
         elif self.which == 'rfold': return self.interpvals[rfold_step]
@@ -545,8 +566,10 @@ class _Spline2D(DynamicParam):
     def __init__(self, manager, diffuse_rfold, **kw):
         pytest.importorskip('scipy')
         import numpy as np
-        from scipy.interpolate import CloughTocher2DInterpolator
-        from scipy.spatial import QhullError
+        from scipy.interpolate import CloughTocher2DInterpolator  # type: ignore
+
+        from scipy.spatial import QhullError  # type: ignore
+
         super().__init__(manager)
         x, y, z = [np.array(_) for _ in zip(*diffuse_rfold)]
         if len(x) < 3:
@@ -572,5 +595,6 @@ class _Spline2D(DynamicParam):
             raise ValueError(msg)
 
     def value(self):
-        _, diffuse_step, rfold_step = self.manager._step
+        _, diffuse_step, rfold_step = self.manager._step  # type: ignore
+
         return self.interpvals[diffuse_step, rfold_step]

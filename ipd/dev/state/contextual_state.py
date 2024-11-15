@@ -22,17 +22,27 @@ class StateManager:
         self.sanity_check()
 
     def sanity_check(self):
-        assert self._conf._special['autosave']
-        assert self._conf._special['autoreload']
-        assert self._conf._special['strict_lookup']
-        assert self._conf._special['default'] == 'bunchwithparent'
-        assert self._state._special['autosave']
-        assert self._state._special['autoreload']
-        assert not self._state._special['strict_lookup']
-        assert self._state._special['default'] == 'bunchwithparent'
+        assert self._conf._special['autosave']  # type: ignore
+
+        assert self._conf._special['autoreload']  # type: ignore
+
+        assert self._conf._special['strict_lookup']  # type: ignore
+
+        assert self._conf._special['default'] == 'bunchwithparent'  # type: ignore
+
+        assert self._state._special['autosave']  # type: ignore
+
+        assert self._state._special['autoreload']  # type: ignore
+
+        assert not self._state._special['strict_lookup']  # type: ignore
+
+        assert self._state._special['default'] == 'bunchwithparent'  # type: ignore
+
         # assert self._state.polls._special['parent'] is self._state
-        assert not self._state.polls._special['strict_lookup']
-        assert self._state.polls._special['default'] == 'bunchwithparent'
+        assert not self._state.polls._special['strict_lookup']  # type: ignore
+
+        assert self._state.polls._special['default'] == 'bunchwithparent'  # type: ignore
+
         # print('state sanity check pass')
 
     def load(self):
@@ -54,11 +64,12 @@ class StateManager:
             with open(fname) as inp:
                 result |= Bunch(yaml.load(inp, yaml.CLoader))
         mahkw = dict(_strict=_strict, _autosave=fname, _default='bunchwithparent')
-        return make_autosave_hierarchy(result, **mahkw)
+        return make_autosave_hierarchy(result, **mahkw)  # type: ignore
 
     def save(self):
-        self._conf._notify_changed()
-        self._state._notify_changed()
+        self._conf._notify_changed()  # type: ignore
+
+        self._state._notify_changed()  # type: ignore
 
     def is_global_state(self, name):
         if name in self._statetype:
@@ -75,10 +86,12 @@ class StateManager:
         self._statetype[name] = statetype
 
     def __contains__(self, name):
-        if self.activepoll and name in self._state.polls[self.activepoll]:
+        if self.activepoll and name in self._state.polls[self.activepoll]:  # type: ignore
+
             return True
         if name in self._state: return True
-        if name in self._conf.opts: return True
+        if name in self._conf.opts: return True  # type: ignore
+
         return False
 
     def get(self, name, *, poll=None):
@@ -87,27 +100,38 @@ class StateManager:
         if not self.is_global_state(name): poll = poll or self.activepoll
         if name in self._debugnames: print(f'GET {name} global: {self.is_global_state(name)}')
         if self.is_global_state(name) or not poll:
-            if name not in self._conf.opts and name in self._defaults:
+            if name not in self._conf.opts and name in self._defaults:  # type: ignore
+
                 if name in self._debugnames: print(f'set default {name} to self._conf.opts')
-                setattr(self._conf.opts, name, self._defaults[name])
-            if name not in self._conf.opts:
+                setattr(self._conf.opts, name, self._defaults[name])  # type: ignore
+
+            if name not in self._conf.opts:  # type: ignore
+
                 if name in self._debugnames: print(f'get {name} from self._state')
-                return self._state[name]
+                return self._state[name]  # type: ignore
+
             if name in self._debugnames: print(f'get {name} from self._conf.opts')
-            return self._conf.opts[name]
+            return self._conf.opts[name]  # type: ignore
+
         assert self.is_per_poll_state(name)
-        if name not in self._state.polls[poll]:
-            if name in self._conf.opts:
+        if name not in self._state.polls[poll]:  # type: ignore
+
+            if name in self._conf.opts:  # type: ignore
+
                 if name in self._debugnames: print(f'get {name} set from conf.opts')
-                setattr(self._state.polls[poll], name, self._conf.opts[name])
+                setattr(self._state.polls[poll], name, self._conf.opts[name])  # type: ignore
+
             elif name in self._defaults:
                 if name in self._debugnames: print(f'get {name} set from default')
-                setattr(self._state.polls[poll], name, self._defaults[name])
+                setattr(self._state.polls[poll], name, self._defaults[name])  # type: ignore
+
             elif name in self._debugnames:
                 print(f'no attribute {name} associated with poll {poll}')
-        if name in self._state.polls[poll]:
+        if name in self._state.polls[poll]:  # type: ignore
+
             if name in self._debugnames: print(f'get {name} from perpoll')
-            return self._state.polls[poll][name]
+            return self._state.polls[poll][name]  # type: ignore
+
         if name in self._debugnames: print(f'get {name} not found')
         return None
 
@@ -117,9 +141,11 @@ class StateManager:
         if self.is_global_state(name) or not poll:
             with contextlib.suppress(ValueError):
                 self.get(name)
-            if name in self._conf.opts:
+            if name in self._conf.opts:  # type: ignore
+
                 if name in self._debugnames: print(f'set {name} in self._conf.opts')
-                return setattr(self._conf.opts, name, val)
+                return setattr(self._conf.opts, name, val)  # type: ignore
+
             else:
                 if name in self._debugnames: print(f'set {name} in self._state')
                 return setattr(self._state, name, val)
@@ -127,9 +153,11 @@ class StateManager:
             raise AttributeError(f'cant set per-poll attribute {name} with no active poll')
         if name in self._debugnames: print(f'set {name} perpoll to {val}')
         try:
-            setattr(self._state.polls[poll], name, val)
+            setattr(self._state.polls[poll], name, val)  # type: ignore
+
         except AttributeError as e:
-            print(self.polls._special)
+            print(self.polls._special)  # type: ignore
+
             raise e
 
     __getitem__ = get

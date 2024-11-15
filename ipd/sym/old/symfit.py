@@ -73,7 +73,7 @@ def compute_symfit(
     if not iscyclic and len(frames) < 3:
         raise ValueError(f"symmetry {sym} requires at least 3 subunits, {len(frames)} provided")
     if len(frames) > len(ipd.sym.sym_frames[sym]):
-        raise ValueError(f"symmetry {sym} has at most {nnativeframes}, {len(frames)} supplied")
+        raise ValueError(f"symmetry {sym} has at most {nnativeframes}, {len(frames)} supplied")  # type: ignore
 
     symops = ipd.sym.symops_from_frames(sym=sym, frames=frames, **kw)
     _checkpoint(kw, "symops_from_frames")
@@ -109,8 +109,10 @@ def compute_symfit(
     if target_sub_com is not None:
         coms = fitframes @ target_sub_com_testpoint
         diff = ipd.homog.hdot(ipd.homog.hnormalized(target_sub_com), ipd.homog.hnormalized(coms))
-        ic(diff)
-        ic(np.arccos(diff) * 180 / 3.1416)
+        ic(diff)  # type: ignore
+
+        ic(np.arccos(diff) * 180 / 3.1416)  # type: ignore
+
         # assert 0
     else:
         diff = np.sum((fitframes - np.eye(4))**2, axis=(1, 2))
@@ -719,7 +721,8 @@ def symfit_gradient(symfit):
     cenforce = np.zeros
     frametorq = np.zeros(shape=(symfit.nframes, 4))
 
-    for key, torq in zip(sop.key, optorq):
+    for key, torq in zip(sop.key, optorq):  # type: ignore
+
         print(key, torq)
         frametorq[key[0]] -= torq
         frametorq[key[1]] += torq
@@ -756,7 +759,7 @@ def symfit_mc_play(
     headless=False,
     **kw,
 ):
-    kw = ipd.dev.Bunch(kw, _strict=False)
+    kw = ipd.dev.Bunch(kw, _strict=False)  # type: ignore
 
     if "timer" not in kw:
         kw.timer = ipd.dev.Timer()
@@ -798,7 +801,7 @@ def symfit_mc_play(
     kw.penalize_redundant_cyclic_weight = 2.0
 
     # kw.choose_closest_frame = kw.choose_closest_frame or True
-    showme_opts = showopts.sub(
+    showme_opts = showopts.sub(  # type: ignore
         _onlynone=True,
         spheres=0.4,
         showme=showme,
@@ -835,7 +838,7 @@ def symfit_mc_play(
             **showme_opts,
         )
 
-    import pymol
+    import pymol  # type: ignore
 
     pymol.cmd.turn("x", 20)
 
@@ -970,7 +973,7 @@ def symfit_mc_play(
 
     # t.report()
 
-    return ipd.dev.Bunch(nsamp=isamp + 1, besterr=besterr, symerr=symerr, frames=frames, start_err=err0)
+    return ipd.dev.Bunch(nsamp=isamp + 1, besterr=besterr, symerr=symerr, frames=frames, start_err=err0)  # type: ignore
 
 def symframes_coherence(frames):
     frames = frames.reshape(-1, 4, 4)

@@ -1,5 +1,6 @@
 try:
-    import pymol  # noqa
+    import pymol  # noqa  # type: ignore
+
 except ImportError:
     pass
 

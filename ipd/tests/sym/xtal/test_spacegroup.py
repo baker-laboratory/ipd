@@ -8,7 +8,7 @@ import ipd
 def main():
     # _test_spacegroup_symelems()
 
-    test_spacegroup_frames_sanity_check()
+    test_spacegroup_frames_sanity_check()  # type: ignore
 
     test_spacegroup_lattice_transpose_bug()
 

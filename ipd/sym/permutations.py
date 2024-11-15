@@ -14,7 +14,7 @@ def symframe_permutations(frames, **kw):
     return perm
 
 def symframe_permutations_torch(frames, maxcols=None):
-    import torch
+    import torch  # type: ignore
 
     frames = torch.tensor(frames, device="cuda").to(torch.float32)
     perm = list()

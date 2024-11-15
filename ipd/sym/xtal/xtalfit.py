@@ -15,7 +15,7 @@ def npscorefunc(xtal, scom, state):
     return err
 
 def torchscorefunc(xtal, scom, cellsize, cartshift, grad=True):
-    import torch
+    import torch  # type: ignore
 
     dis2 = torch.tensor([0.0], requires_grad=grad)
     for i, (s, com) in enumerate(zip(xtal.symelems, scom)):
@@ -83,7 +83,7 @@ def xtalfit_I213(coords):
         y2f = cen2[1] + x[1]
         return (x3f - y3f)**2 + (0.75*x2f - 1.5*y2f)**2
 
-    import scipy.optimize
+    import scipy.optimize  # type: ignore
 
     # method = 'Nelder-Mead'
     method = "COBYLA"
@@ -141,10 +141,12 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
         for i in range(mcsteps):
             # if i % 100 == 199:
             # state = mc.beststate
-            prev = state.copy()
-            state.cellsize += step * np.random.randn()
+            prev = state.copy()  # type: ignore
+
+            state.cellsize += step * np.random.randn()  # type: ignore
+
             if not noshift:
-                state.cartshift += 0.02 * step * ipd.homog.hrandvec()
+                state.cartshift += 0.02 * step * ipd.homog.hrandvec()  # type: ignore
 
             acccepted = mc.try_this(state)
             if not acccepted:
@@ -168,7 +170,8 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
         return cellsize, cartshift.astype(coords.dtype)
 
     if domin:
-        import torch
+        import torch  # type: ignore
+
         # torch.autograd.set_detect_anomaly(True)
 
         # check
@@ -187,7 +190,7 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
             cellsize = (cellsize - mul*cellgrad).clone().detach().requires_grad_(True)
             cartshift = (cartshift - mul*cartshiftgrad).clone().detach().requires_grad_(True)
 
-            ic(err)  # , cellsize, cartshift, cartshiftgrad)
+            ic(err)  # , cellsize, cartshift, cartshiftgrad)  # type: ignore
 
         assert 0
 
@@ -208,11 +211,12 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
                 lasterr = err
                 laststate = cellsize, cartshift
             else:
-                cellsize, cartshift = laststate
+                cellsize, cartshift = laststate  # type: ignore
 
-            ic(cellsize, err, step)
+            ic(cellsize, err, step)  # type: ignore
+
             step *= 0.99
-        ic(besterr, beststate)
+        ic(besterr, beststate)  # type: ignore
 
     assert 0
 
@@ -221,7 +225,8 @@ def analyze_xtal_asu_placement(sym):
 
     xtal = Xtal(sym)
     cen = xtal.asucen(xtalasumethod="closest_to_cen", use_olig_nbrs=True)
-    ic(cen)
+    ic(cen)  # type: ignore
+
     side = np.linspace(0, 1, 13, endpoint=False)
     samp = np.meshgrid(side, side, side)
     samp = np.stack(samp, axis=3).reshape(-1, 3)
@@ -230,7 +235,8 @@ def analyze_xtal_asu_placement(sym):
 
     for i, pt in enumerate(samp):
         if i % 10 == 0:
-            ic(i, len(samp))
+            ic(i, len(samp))  # type: ignore
+
         ptsym = xtal.symcoords(pt, cells=3, ontop=None)
         # ipd.showme(ptsym * 5)
         # assert 0
@@ -245,30 +251,34 @@ def analyze_xtal_asu_placement(sym):
         mindis = np.round(np.min(delta), 3)
         if mindis > 0.001:
             mindisxtal[mindis].append(pt)
-    ic(len(samp))
+    ic(len(samp))  # type: ignore
 
     frames = xtal.cellframes(cells=3)
 
-    ic(list(mindisxtal.keys()))
+    ic(list(mindisxtal.keys()))  # type: ignore
+
     for k in reversed(sorted(mindisxtal.keys())):
         pts = mindisxtal[k]
         ptset = set()
         for i, pt in enumerate(pts):
             # ic(pt)
             ptset.add(tuple(np.round(xtal.coords_to_asucen(pt, frames=frames)[0], 3)))
-        ic(k)
+        ic(k)  # type: ignore
+
         for pt in ptset:
-            ic(pt, ipd.homog.hnorm(pt - cen), ipd.homog.hnorm(pt))
+            ic(pt, ipd.homog.hnorm(pt - cen), ipd.homog.hnorm(pt))  # type: ignore
+
     # assert 0
 
     keys = sorted(mindisxtal.keys())
     scale = 8
     for k in keys:
         v = mindisxtal[k]
-        ic(k, len(v))
+        ic(k, len(v))  # type: ignore
+
         ptsym = xtal.symcoords(v[0] * 8, cellsize=8, cells=2, ontop=None)
         # ipd.showme(ptsym, name=f'{k}')
-        ic(v[0])
+        ic(v[0])  # type: ignore
 
     for i, v in enumerate(mindisxtal[0.288]):
         ptsym = xtal.symcoords(v * 8, cellsize=8, cells=2, ontop=None)

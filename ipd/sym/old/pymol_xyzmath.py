@@ -1,4 +1,4 @@
-"""OOOOOOOLLLLDD Easy 3D Linear Algebra, like xyz\* in rosetta."""
+"""OOOOOOOLLLLDD Easy 3D Linear Algebra, like xyz\* in rosetta."""  # type: ignore
 
 import math
 import operator as op
@@ -52,8 +52,9 @@ class Vec(object):
     14.0
     >>> assert Vec(1,0,-0) == Vec(1,-0,0)
     """
-    def to_rosetta(v):
-        from rosetta.numeric import xyzVector_double_t
+    def to_rosetta(v):  # type: ignore
+
+        from rosetta.numeric import xyzVector_double_t  # type: ignore
 
         return xyzVector_double_t(v.x, v.y, v.z)
 
@@ -65,9 +66,11 @@ class Vec(object):
             if isnum(x):
                 self.x, self.y, self.z = (float(x), ) * 3
             elif isvec(x):
-                self.x, self.y, self.z = x.x, x.y, x.z
+                self.x, self.y, self.z = x.x, x.y, x.z  # type: ignore
+
             elif isiter(x):
-                i = iter(x)
+                i = iter(x)  # type: ignore
+
                 self.x, self.y, self.z = next(i), next(i), next(i)
             else:
                 raise NotImplementedError
@@ -101,15 +104,18 @@ class Vec(object):
             self.z = v
         raise IndexError
 
-    def dot(u, v):
+    def dot(u, v):  # type: ignore
+
         assert isvec(v)
         return u.x * v.x + u.y * v.y + u.z * v.z
 
-    def normdot(u, v):
+    def normdot(u, v):  # type: ignore
+
         assert isvec(v)
         return min(1.0, max(-1.0, u.dot(v) / u.length() / v.length()))
 
-    def angle(u, v):
+    def angle(u, v):  # type: ignore
+
         assert isvec(v)
         d = u.normdot(v)
         if d > 1.0 - EPS:
@@ -118,40 +124,49 @@ class Vec(object):
             return pi
         return acos(d)
 
-    def angle_degrees(u, v):
+    def angle_degrees(u, v):  # type: ignore
+
         return degrees(u.angle(v))
 
-    def lineangle(u, v):
+    def lineangle(u, v):  # type: ignore
+
         assert isvec(v)
         if u.length() < SQRTEPS or v.length < SQRTEPS:
             return 0.0
         ang = abs(acos(u.normdot(v)))
         return ang if ang < pi / 2.0 else pi - ang
 
-    def lineangle_degrees(u, v):
+    def lineangle_degrees(u, v):  # type: ignore
+
         if isvec(v):
             return degrees(u.lineangle(v))
         raise NotImplementedError
 
-    def length(u):
+    def length(u):  # type: ignore
+
         return sqrt(u.dot(u))
 
-    def length_squared(u):
+    def length_squared(u):  # type: ignore
+
         return u.dot(u)
 
-    def distance(u, v):
+    def distance(u, v):  # type: ignore
+
         assert isvec(v)
         return (u - v).length()
 
-    def distance_squared(u, v):
+    def distance_squared(u, v):  # type: ignore
+
         assert isvec(v)
         return (u - v).length_squared()
 
-    def cross(u, v):
+    def cross(u, v):  # type: ignore
+
         assert isvec(v)
         return Vec(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z, u.x * v.y - u.y * v.x)
 
-    def __mul__(u, a):
+    def __mul__(u, a):  # type: ignore
+
         if isnum(a):
             return Vec(u.x * a, u.y * a, u.z * a)
         elif isvec(a):
@@ -159,23 +174,28 @@ class Vec(object):
         else:
             return a.__rmul__(u)
 
-    def __rmul__(u, a):
+    def __rmul__(u, a):  # type: ignore
+
         return u * a
 
-    def __add__(u, v):
+    def __add__(u, v):  # type: ignore
+
         if isvec(v):
             return Vec(u.x + v.x, u.y + v.y, u.z + v.z)
         return v.__radd__(u)
 
-    def __sub__(u, v):
+    def __sub__(u, v):  # type: ignore
+
         if isvec(v):
             return Vec(u.x - v.x, u.y - v.y, u.z - v.z)
         return v.__rsub__(u)
 
-    def __neg__(u):
+    def __neg__(u):  # type: ignore
+
         return Vec(-u.x, -u.y, -u.z)
 
-    def __truediv__(u, a):
+    def __truediv__(u, a):  # type: ignore
+
         return u * (1.0/a)
 
     def __str__(self):
@@ -184,18 +204,22 @@ class Vec(object):
     def __repr__(self):
         return "Vec( %f, %f, %f )" % (self.x, self.y, self.z)
 
-    def normalize(u):
+    def normalize(u):  # type: ignore
+
         l = u.length()
         u.x /= l
         u.y /= l
         u.z /= l
 
-    def normalized(u):
-        v = Vec(u)
+    def normalized(u):  # type: ignore
+
+        v = Vec(u)  # type: ignore
+
         v.normalize()
         return v
 
-    def outer(u, v):
+    def outer(u, v):  # type: ignore
+
         assert isvec(v)
         return Mat(
             u.x * v.x,
@@ -216,7 +240,8 @@ class Vec(object):
     def rounded(self, sd):
         return Vec(round(self.x, sd), round(self.y, sd), round(self.z, sd))
 
-    def unit(v):
+    def unit(v):  # type: ignore
+
         if abs(v.x) > SQRTEPS:
             return v / v.x
         elif abs(v.y) > SQRTEPS:
@@ -224,19 +249,24 @@ class Vec(object):
         elif abs(v.z) > SQRTEPS:
             return v / v.z
 
-    def __len__(v):
+    def __len__(v):  # type: ignore
+
         return 3
 
-    def abs(v):
+    def abs(v):  # type: ignore
+
         return Vec(abs(v.x), abs(v.y), abs(v.z))
 
-    def tuple(v):
+    def tuple(v):  # type: ignore
+
         return (v.x, v.y, v.z)
 
-    def key(v):
-        return v.abs().unit().rounded(6).tuple()
+    def key(v):  # type: ignore
 
-    def round0(v):
+        return v.abs().unit().rounded(6).tuple()  # type: ignore
+
+    def round0(v):  # type: ignore
+
         if abs(v.x) < EPS:
             v.x = 0
         if abs(v.y) < EPS:
@@ -244,7 +274,8 @@ class Vec(object):
         if abs(v.z) < EPS:
             v.z = 0
 
-    def __lt__(u, v):
+    def __lt__(u, v):  # type: ignore
+
         if u.x == v.x:
             if u.y == v.y:
                 return u.z < v.z
@@ -277,8 +308,9 @@ def randnorm(n=None):
     >>> assert abs(randnorm().length()-1.0) < 0.0000001
     """
     if n is None:
-        return randvec().normalized()
-    return (randvec().normalized() for i in range(n))
+        return randvec().normalized()  # type: ignore
+
+    return (randvec().normalized() for i in range(n))  # type: ignore
 
 def coplanar(x1, x2, x3, x4):
     """
@@ -316,8 +348,9 @@ class Mat(object):
     >>> m = Mat(100,2,3,4,5,6,7,8,9)
     >>> assert m * ~m == Imat
     """
-    def to_rosetta(m):
-        from rosetta.numeric import xyzMatrix_double_t
+    def to_rosetta(m):  # type: ignore
+
+        from rosetta.numeric import xyzMatrix_double_t  # type: ignore
 
         r = xyzMatrix_double_t()
         r.xx(m.xx)
@@ -362,20 +395,27 @@ class Mat(object):
                 self.yx, self.yy, self.yz = xx.yx(), xx.yy(), xx.yz()
                 self.zx, self.zy, self.zz = xx.zx(), xx.zy(), xx.zz()
         elif yx is None and isvec(xx) and isvec(xy) and isvec(xz):
-            self.xx, self.xy, self.xz = xx.x, xy.x, xz.x
-            self.yx, self.yy, self.yz = xx.y, xy.y, xz.y
-            self.zx, self.zy, self.zz = xx.z, xy.z, xz.z
+            self.xx, self.xy, self.xz = xx.x, xy.x, xz.x  # type: ignore
+
+            self.yx, self.yy, self.yz = xx.y, xy.y, xz.y  # type: ignore
+
+            self.zx, self.zy, self.zz = xx.z, xy.z, xz.z  # type: ignore
+
         elif isnum(xx):
-            self.xx, self.xy, self.xz = float(xx), float(xy), float(xz)
-            self.yx, self.yy, self.yz = float(yx), float(yy), float(yz)
-            self.zx, self.zy, self.zz = float(zx), float(zy), float(zz)
+            self.xx, self.xy, self.xz = float(xx), float(xy), float(xz)  # type: ignore
+
+            self.yx, self.yy, self.yz = float(yx), float(yy), float(yz)  # type: ignore
+
+            self.zx, self.zy, self.zz = float(zx), float(zy), float(zz)  # type: ignore
+
         else:
             raise NotImplementedError
         # assert isnum(self.xx) and isnum(self.xy) and isnum(self.xz)
         # assert isnum(self.yx) and isnum(self.yy) and isnum(self.yz)
         # assert isnum(self.zx) and isnum(self.zy) and isnum(self.zz)
 
-    def row(m, i):
+    def row(m, i):  # type: ignore
+
         assert isint(i)
         if i == 0:
             return Vec(m.xx, m.xy, m.xz)
@@ -386,7 +426,8 @@ class Mat(object):
         else:
             assert 0 <= i and i <= 2
 
-    def col(m, i):
+    def col(m, i):  # type: ignore
+
         assert isint(i)
         if i == 0:
             return Vec(m.xx, m.yx, m.zx)
@@ -397,25 +438,31 @@ class Mat(object):
         else:
             assert 0 <= i and i <= 2
 
-    def rowx(m):
+    def rowx(m):  # type: ignore
+
         return m.row(0)
 
-    def rowy(m):
+    def rowy(m):  # type: ignore
+
         return m.row(1)
 
-    def rowz(m):
+    def rowz(m):  # type: ignore
+
         return m.row(2)
 
-    def colx(m):
+    def colx(m):  # type: ignore
+
         return m.col(0)
 
-    def coly(m):
+    def coly(m):  # type: ignore
+
         return m.col(1)
 
-    def colz(m):
+    def colz(m):  # type: ignore
+
         return m.col(2)
 
-    def __invert__(m):
+    def __invert__(m):  # type: ignore
         """
         >>> from random import random
         >>> for i in range(10):
@@ -435,7 +482,8 @@ class Mat(object):
             m.yy * m.xx - m.yx * m.xy,
         ) / m.det())
 
-    def __mul__(m, rhs):
+    def __mul__(m, rhs):  # type: ignore
+
         if isnum(rhs):
             return Mat(
                 rhs * m.xx,
@@ -465,16 +513,19 @@ class Mat(object):
         else:
             return rhs.__rmul__(m)
 
-    def __rmul__(m, v):
+    def __rmul__(m, v):  # type: ignore
+
         if isnum(v):
             return m * v
         elif isvec(v):
             return Vec(m.colx() * v, m.coly() * v, m.colz() * v)
 
-    def __truediv__(m, v):
+    def __truediv__(m, v):  # type: ignore
+
         return m * (1/v)
 
-    def __add__(m, v):
+    def __add__(m, v):  # type: ignore
+
         if isnum(v):
             return Mat(
                 v + m.xx,
@@ -502,39 +553,49 @@ class Mat(object):
         else:
             return v.__radd__(m)
 
-    def __sub__(m, v):
+    def __sub__(m, v):  # type: ignore
+
         return m + -v
 
-    def __neg__(m):
+    def __neg__(m):  # type: ignore
+
         return m * -1
 
-    def __str__(m):
+    def __str__(m):  # type: ignore
+
         return "Mat[ %s, %s, %s ]" % (str(m.rowx()), str(m.rowy()), str(m.rowz()))
 
-    def __repr__(m):
+    def __repr__(m):  # type: ignore
+
         return "Mat( %s, %s, %s )" % (repr(m.colx()), repr(m.coly()), repr(m.colz()))
 
-    def transpose(m):
+    def transpose(m):  # type: ignore
+
         m = Mat(m.xx, m.yx, m.zx, m.xy, m.yy, m.zy, m.xz, m.yz, m.zz)
 
-    def transposed(m):
+    def transposed(m):  # type: ignore
+
         return Mat(m.xx, m.yx, m.zx, m.xy, m.yy, m.zy, m.xz, m.yz, m.zz)
 
-    def det(m):
+    def det(m):  # type: ignore
+
         # a11  (a33  a22- a32  a23)- a21 ( a33  a12- a32  a13)+
         # a31(  a23  a12- a22  a13)
         return (m.xx * (m.zz * m.yy - m.zy * m.yz) - m.yx * (m.zz * m.xy - m.zy * m.xz) + m.zx *
                 (m.yz * m.xy - m.yy * m.xz))
 
-    def trace(m):
+    def trace(m):  # type: ignore
+
         return m.xx + m.yy + m.zz
 
-    def add_diagonal(m, v):
+    def add_diagonal(m, v):  # type: ignore
+
         return Mat(v.x + m.xx, m.xy, m.xz, m.yx, v.y + m.yy, m.yz, m.zx, m.zy, v.z + m.zz)
 
-    def is_rotation(m):
-        return (m.colx().isnormal() and m.coly().isnormal() and m.colz().isnormal() and m.rowx().isnormal()
-                and m.rowy().isnormal() and m.rowz().isnormal())
+    def is_rotation(m):  # type: ignore
+
+        return (m.colx().isnormal() and m.coly().isnormal() and m.colz().isnormal() and m.rowx().isnormal()  # type: ignore
+                and m.rowy().isnormal() and m.rowz().isnormal())  # type: ignore
 
     def __eq__(self, other):
         return (abs(self.xx - other.xx) < EPS and abs(self.xy - other.xy) < EPS and abs(self.xz - other.xz) < EPS
@@ -542,9 +603,9 @@ class Mat(object):
                 and abs(self.zx - other.zx) < EPS and abs(self.zy - other.zy) < EPS and abs(self.zz - other.zz) < EPS)
 
     def __neq__(self, odher):
-        return not self == other
+        return not self == other  # type: ignore
 
-    def rotation_axis(R):
+    def rotation_axis(R):  # type: ignore
         """
         >>> axis ,ang  = randnorm(),uniform(-pi,pi)
         >>> axis2,ang2 = rotation_matrix(axis,ang).rotation_axis()
@@ -706,7 +767,7 @@ def rotation_matrix_degrees(axis, angle):
     """
     return rotation_matrix(axis, radians(angle))
 
-@pytest.mark.fast
+@pytest.mark.fast  # type: ignore
 def test_rotation_mat():
     for i in range(100):
         a0 = randnorm()
@@ -715,16 +776,19 @@ def test_rotation_mat():
         if t0 < 0.01:
             continue
         if abs(t - pi) < EPS:
-            if (abs(a.x - a0.x) < 0.001 and abs(a.y - a0.y) < 0.001
-                    and abs(a.z - a0.z) < 0.001) or (abs(a.x + a0.x) < 0.001 and abs(a.y + a0.y) < 0.001
-                                                     and abs(a.z + a0.z) < 0.001):
+            if (abs(a.x - a0.x) < 0.001 and abs(a.y - a0.y) < 0.001  # type: ignore
+                    and abs(a.z - a0.z) < 0.001) or (abs(a.x + a0.x) < 0.001 and abs(a.y + a0.y) < 0.001  # type: ignore
+                                                     and abs(a.z + a0.z) < 0.001):  # type: ignore
+
                 continue
             else:
                 print(a0)
                 print(a)
                 return False
-        if not abs(t - t0) < EPS or not (a.normalized() - a0.normalized()).length() < EPS:
-            print(a0.normalized(), t0)
+        if not abs(t - t0) < EPS or not (a.normalized() - a0.normalized()).length() < EPS:  # type: ignore
+
+            print(a0.normalized(), t0)  # type: ignore
+
             print(a.normalized(), t)
             print("FAIL")
             return
@@ -845,7 +909,8 @@ class Xform(object):
     #    cen = -(X.R-Imat).transposed()*X.t
     #    return axis,ang,cen
 
-    def from_four_points(s, cen, a, b, c):
+    def from_four_points(s, cen, a, b, c):  # type: ignore
+
         s.t = cen
         e1 = (a - b).normalized()
         e3 = e1.cross(c - b).normalized()
@@ -857,16 +922,19 @@ class Xform(object):
         s.R = Mat(e1.x, e2.x, e3.x, e1.y, e2.y, e3.y, e1.z, e2.z, e3.z)
         return s
 
-    def from_two_vecs(s, a, b):
+    def from_two_vecs(s, a, b):  # type: ignore
+
         e1 = a.normalized()
         e2 = projperp(a, b).normalized()
         e3 = e1.cross(e2)
         return Xform(Mat(e1.x, e2.x, e3.x, e1.y, e2.y, e3.y, e1.z, e2.z, e3.z), V0)
 
-    def tolocal(s, x):
+    def tolocal(s, x):  # type: ignore
+
         return s.R.transposed() * (x - s.t)
 
-    def toglobal(s, x):
+    def toglobal(s, x):  # type: ignore
+
         return (s.R * x) + s.t
 
     def __invert__(self):
@@ -877,7 +945,8 @@ class Xform(object):
     def inverse(self):
         return ~self
 
-    def __mul__(X, o):
+    def __mul__(X, o):  # type: ignore
+
         if isvec(o):
             return X.R * o + X.t
         elif isxform(o):
@@ -893,32 +962,38 @@ class Xform(object):
         else:
             return o.__rmul__(X)
 
-    def __rmul__(X, o):
+    def __rmul__(X, o):  # type: ignore
+
         if ismat(o):
             return Xform(o * X.R, o * X.t)
         raise NotImplementedError
 
-    def __truediv__(X, o):
+    def __truediv__(X, o):  # type: ignore
+
         if isxform(o):
             return X * ~o
         return o.__rdiv__(X)
 
-    def __add__(X, v):
+    def __add__(X, v):  # type: ignore
+
         if isvec(v):
             return Xform(X.R, X.t + X.R * v)
         return v.__radd__(X)
 
-    def __radd__(X, v):
+    def __radd__(X, v):  # type: ignore
+
         if isvec(v):
             return Xform(X.R, X.t + v)
         raise NotImplementedError
 
-    def __sub__(X, v):
+    def __sub__(X, v):  # type: ignore
+
         if isvec(v):
             return Xform(X.R, X.t - X.R * v)
         return v.__rsub__(X)
 
-    def __rsub__(X, v):
+    def __rsub__(X, v):  # type: ignore
+
         if isvec(v):
             return Xform(X.R, X.t - v)
         raise NotImplementedError
@@ -929,23 +1004,28 @@ class Xform(object):
     def __repr__(self):
         return "Xform( %s, %s )" % (repr(self.R), repr(self.t))
 
-    def __eq__(X, Y):
+    def __eq__(X, Y):  # type: ignore
+
         assert isxform(Y)
         return X.R == Y.R and X.t == Y.t
 
     def __neq__(self, other):
         return not self == other
 
-    def rotation_axis(X):
+    def rotation_axis(X):  # type: ignore
+
         return X.R.rotation_axis()
 
-    def rotation_axis_center(X):
+    def rotation_axis_center(X):  # type: ignore
+
         axis, ang = X.R.rotation_axis()
 
         # these points lie on a circle who's center is the center of rotation
         p0 = Vec(0, 0, 0)
-        p1 = Vec(X * p0)
-        p2 = Vec(X * p1)
+        p1 = Vec(X * p0)  # type: ignore
+
+        p2 = Vec(X * p1)  # type: ignore
+
         p1 -= axis * (p1 - p0).dot(axis)
         p2 -= axis * (p2 - p1).dot(axis)
 
@@ -1202,7 +1282,8 @@ def align_skew_line_pairs(aa1, ac1, aa2, ac2, ba1, bc1, ba2, bc2):
     """
     acen = skew_lines_center(aa1, ac1, aa2, ac2)
     bcen = skew_lines_center(ba1, bc1, ba2, bc2)
-    R = alignvectors_minangle(aa1, aa2, ba1, ba2).R
+    R = alignvectors_minangle(aa1, aa2, ba1, ba2).R  # type: ignore
+
     return Xform(R, bcen - acen)
 
 def sindeg(x):
@@ -1480,11 +1561,14 @@ def expand_xforms(G, N=3, c=Vec(1, 3, 10), maxrad=9e9):
     """
     seenit = set()
     for Xs in chain(G, *(product(G, repeat=n) for n in range(2, N + 1))):
-        X = Xs if isinstance(Xs, Xform) else reduce(Xform.__mul__, Xs)
+        X = Xs if isinstance(Xs, Xform) else reduce(Xform.__mul__, Xs)  # type: ignore
+
         v = X * c
-        if (X * Vec(0, 0, 0)).length() > maxrad:
+        if (X * Vec(0, 0, 0)).length() > maxrad:  # type: ignore
+
             continue
-        key = (round(v.x, 3), round(v.y, 3), round(v.z, 3))
+        key = (round(v.x, 3), round(v.y, 3), round(v.z, 3))  # type: ignore
+
         if key not in seenit:
             seenit.add(key)
             yield X
@@ -1498,7 +1582,9 @@ def find_identities(G, n=6, c=Vec(1, 3, 10)):
     (2.000000,-2.000000,2.000000)
     """
     for x in expand_xforms(G, n, c):
-        if abs(x.R.xx - 1.0) < 0.0000001 and abs(x.R.yy - 1.0) < 0.0000001 and abs(x.R.zz - 1.0) < 0.0000001:
+        if abs(x.R.xx - 1.0) < 0.0000001 and abs(x.R.yy - 1.0) < 0.0000001 and abs(x.R.zz -  # type: ignore
+                                                                                   1.0) < 0.0000001:  # type: ignore
+
             yield x
 
 def get_cell_bounds_orthogonal_only(G, n=6, c=Vec(1, 3, 10)):
@@ -1509,7 +1595,8 @@ def get_cell_bounds_orthogonal_only(G, n=6, c=Vec(1, 3, 10)):
     (4.0, 4.0, 4.0)
     """
     mnx, mny, mnz = 9e9, 9e9, 9e9
-    for i in (I.t for I in find_identities(G, n)):
+    for i in (I.t for I in find_identities(G, n)):  # type: ignore
+
         if abs(i.x) > SQRTEPS and abs(i.y) < SQRTEPS and abs(i.z) < SQRTEPS:
             mnx = min(mnx, abs(i.x))
         if abs(i.x) < SQRTEPS and abs(i.y) > SQRTEPS and abs(i.z) < SQRTEPS:

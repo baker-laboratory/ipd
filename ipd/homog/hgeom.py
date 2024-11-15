@@ -13,10 +13,11 @@ def hconstruct(rot, trans=None):
     return x
 
 def isarray(x):
-    if isinstance(x, np.array):
+    if isinstance(x, np.array):  # type: ignore
+
         return True
     if "torch" in sys.modules:
-        import torch
+        import torch  # type: ignore
 
         if isinstance(x, torch.Tensor):
             return True
@@ -71,7 +72,8 @@ def hdist(x, y):
     shape2 = y.shape[:-2]
     a = x.reshape(shape1 + (1, ) * len(shape1) + (4, 4))
     b = y.reshape((1, ) * len(shape2) + shape2 + (4, 4))
-    ic(a.shape, b.shape)
+    ic(a.shape, b.shape)  # type: ignore
+
     dist = np.linalg.norm(a[..., :, 3] - b[..., :, 3], axis=-1)
     return dist
 
@@ -113,12 +115,13 @@ def hxform(x, stuff, homogout="auto", **kw):
     if isinstance(stuff, dict) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return {k: hxform(x, v) for k, v in stuff.items()}
     if hasattr(stuff, "xformed"):
-        return stuff.xformed(x)
+        return stuff.xformed(x)  # type: ignore
+
     orig = None
     if hasattr(stuff, "coords"):
         isxarray = False
         if "xarray" in sys.modules:
-            import xarray
+            import xarray  # type: ignore
 
             # coords is perhaps poor choice of convention
             # xarray.DataArry has coords member already...
@@ -129,7 +132,8 @@ def hxform(x, stuff, homogout="auto", **kw):
                 orig = stuff.copy()
             else:
                 orig = copy.copy(stuff)
-            stuff = stuff.coords
+            stuff = stuff.coords  # type: ignore
+
             assert x.ndim in (2, 3)
 
     stuff, origstuff = np.asarray(stuff), stuff
@@ -156,12 +160,15 @@ def hxform(x, stuff, homogout="auto", **kw):
         result = result[..., :3]
 
     if result.shape[-1] == 4 and not hvalid(result, **kw):
-        ic(x.shape)
-        ic(stuff.shape)
+        ic(x.shape)  # type: ignore
+
+        ic(stuff.shape)  # type: ignore
+
         # ic(result)
         for x in result:
             if not hvalid(x, **kw):
-                ic(x)
+                ic(x)  # type: ignore
+
                 assert 0
         # this is a bad copout.. should make this check handle nans correctly
         if not stuff.shape[-2:] == (4, 1):
@@ -177,11 +184,13 @@ def hxform(x, stuff, homogout="auto", **kw):
                     o = orig.copy()
                 else:
                     o = copy.copy(orig)
-                o.coords = x
+                o.coords = x  # type: ignore
+
                 r.append(o)
             result = r
         else:
-            orig.coords = result
+            orig.coords = result  # type: ignore
+
             result = orig
 
     assert result is not None
@@ -281,7 +290,8 @@ def rand_quat(shape=(), seed=None):
     q = np.random.randn(*shape, 4)
     q /= np.linalg.norm(q, axis=-1)[..., np.newaxis]
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return quat_to_upper_half(q)
 
 def rot_to_quat(xform):
@@ -486,7 +496,8 @@ def angle_of_degrees(xforms, debug=False):
 def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
     """Angle will override nfold."""
     if angle is None:
-        angle = 2 * np.pi / nfold
+        angle = 2 * np.pi / nfold  # type: ignore
+
     angle = np.array(angle, dtype=dtype)
 
     axis = np.array(axis, dtype=dtype)
@@ -717,7 +728,8 @@ def hrandpoint(shape=(), mean=0, std=1, seed=None):
         shape = (shape, )
     p = hpoint(np.random.randn(*(shape + (3, ))) * std + mean)
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return p
 
 def rand_vec(shape=(), seed=None):
@@ -730,7 +742,8 @@ def rand_vec(shape=(), seed=None):
     if isinstance(shape, int):
         shape = (shape, )
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return v
 
 def rand_unit(shape=(), seed=None):
@@ -742,7 +755,8 @@ def rand_unit(shape=(), seed=None):
         shape = (shape, )
     v = hnormalized(np.random.randn(*(shape + (3, ))))
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return v
 
 def angle(u, v, outerprod=False):
@@ -779,7 +793,8 @@ def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None):
     r[..., 3, 0] = 1
     r[..., :3, 1] = norm
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return r
 
 def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None):
@@ -793,10 +808,12 @@ def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None):
     if ang is None:
         ang = np.random.rand(*shape) * np.pi  # todo: make uniform!
     if cen is None:
-        cen = rand_point(shape)
+        cen = rand_point(shape)  # type: ignore
+
     # q = rand_quat(shape)
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return hrot(axis, ang, cen)
 
 def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, doto=None):
@@ -815,7 +832,8 @@ def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, d
     trans = np.random.normal(0, cart_sd, x[..., :3, 3].shape)
     x[..., :3, 3] += trans
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return x.squeeze() if doto is None else hxform(x, doto)
 
 rand_xform_small = hrandsmall
@@ -830,7 +848,8 @@ def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None):
     x = quat_to_xform(q)
     x[..., :3, 3] = np.random.randn(*shape, 3) * cart_sd + cart_cen
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return x
 
 rand_xform = hrand
@@ -845,7 +864,8 @@ def hrandrot(shape=(), seed=None):
     quat = rand_quat(shape)
     rot = quat_to_rot(quat)
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return hconvert(rot)
 
 def hrandrotsmall(shape=(), rot_sd=0.001, seed=None):
@@ -857,9 +877,11 @@ def hrandrotsmall(shape=(), rot_sd=0.001, seed=None):
         shape = (shape, )
     axis = rand_unit(shape)
     ang = np.random.normal(0, rot_sd, shape) * np.pi
-    r = rot(axis, ang, degrees=False).squeeze()
+    r = rot(axis, ang, degrees=False).squeeze()  # type: ignore
+
     if seed is not None:
-        np.random.set_state(randstate)
+        np.random.set_state(randstate)  # type: ignore
+
     return hconvert(r.squeeze())
 
 def hrms(a, b):
@@ -959,8 +981,10 @@ def h_point_line_dist(point, cen, norm):
     return hnorm(perp)
 
 def intesect_line_plane(p0, n, l0, l):
-    l = hm.hnormalized(l)
-    d = hm.hdot(p0 - l0, n) / hm.hdot(l, n)
+    l = hm.hnormalized(l)  # type: ignore
+
+    d = hm.hdot(p0 - l0, n) / hm.hdot(l, n)  # type: ignore
+
     return l0 + l*d
 
 def intersect_planes(plane1, plane2):
@@ -1114,14 +1138,22 @@ def line_line_closest_points_pa(pt1, ax1, pt2, ax2, verbose=0):
     Q2 = pt2 - t2*ax2
 
     if verbose:
-        ic("C21", C21)
-        ic("M", M)
-        ic("m2", m2)
-        ic("R", R)
-        ic("t1", t1)
-        ic("t2", t2)
-        ic("Q1", Q1)
-        ic("Q2", Q2)
+        ic("C21", C21)  # type: ignore
+
+        ic("M", M)  # type: ignore
+
+        ic("m2", m2)  # type: ignore
+
+        ic("R", R)  # type: ignore
+
+        ic("t1", t1)  # type: ignore
+
+        ic("t2", t2)  # type: ignore
+
+        ic("Q1", Q1)  # type: ignore
+
+        ic("Q2", Q2)  # type: ignore
+
     return Q1, Q2
 
 hlinesisect = line_line_closest_points_pa
@@ -1313,11 +1345,16 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
             # assert np.allclose(Xalign @ ax2, ta2, atol=0.0001)
             # ic(Xalign)
         except AssertionError as e:
-            ic("halign2 error")
-            ic("   ", ax1)
-            ic("   ", ax2)
-            ic("   ", ta1)
-            ic("   ", ta2)
+            ic("halign2 error")  # type: ignore
+
+            ic("   ", ax1)  # type: ignore
+
+            ic("   ", ax2)  # type: ignore
+
+            ic("   ", ta1)  # type: ignore
+
+            ic("   ", ta2)  # type: ignore
+
             raise e
         Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin
         Xalign[..., 3, 3] = 1
@@ -1408,9 +1445,11 @@ def scale_translate_lines_isect_lines(pt1, ax1, pt2, ax2, tp1, ta1, tp2, ta2):
     xalign[3, 3] = 1
 
     if np.any(np.isnan(xalign)):
-        ic("=============================")
-        ic(xalign)
-        ic(delta1, delta2)
+        ic("=============================")  # type: ignore
+
+        ic(xalign)  # type: ignore
+
+        ic(delta1, delta2)  # type: ignore
 
     # rays = np.array([
     #    hm.hray(xalign @ pt1, xalign @ ax1),
@@ -1464,7 +1503,7 @@ def hexpand(
 ):
     generators = np.asarray(generators).astype(np.float64)
     cen = np.asarray(cen).astype(np.float64)
-    x, _ = ipd.homog.hcom.geom.expand_xforms_rand(
+    x, _ = ipd.homog.hcom.geom.expand_xforms_rand(  # type: ignore
         generators,
         depth=depth,
         trials=ntrials,

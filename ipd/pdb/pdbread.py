@@ -139,7 +139,7 @@ def concatenate_models(df):
     return df
 
 def format_atom(atomi=0, atomn="ATOM", idx=" ", resn="ALA", chain="A", resi=0, insert=" ", x=0, y=0, z=0, occ=1, b=0):
-    return _atom_record_format.format(**locals())
+    return _atom_record_format.format(**locals())  # type: ignore
 
 ##@timed
 def find_pdb_files(files_or_pattern, maxsize=99e99, **kw):

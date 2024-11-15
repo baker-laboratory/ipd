@@ -188,21 +188,26 @@ class PDBMetadata:
     def update_source_files(self, replace=True):
         for name, url in self.urls.items():
             fname = ipd.dev.package_data_path(f"pdb/meta/{name}.txt")
-            if not replace and os.path.exists(fname + ".xz"):
+            if not replace and os.path.exists(fname + ".xz"):  # type: ignore
+
                 continue
             if name == "seqres":
-                fname += ".gz"
+                fname += ".gz"  # type: ignore
+
             urllib.request.urlretrieve(url, fname)
             log.info(f"downloading {fname}")
-            assert os.path.exists(fname)
+            assert os.path.exists(fname)  # type: ignore
 
         # recompress seqres
         fn = ipd.dev.package_data_path("pdb/meta/seqres.txt")
-        if not os.path.exists(fn + ".xz"):
-            with gzip.open(fn + ".gz") as inp:
-                with lzma.open(fn + ".xz", "wb") as out:
+        if not os.path.exists(fn + ".xz"):  # type: ignore
+
+            with gzip.open(fn + ".gz") as inp:  # type: ignore
+
+                with lzma.open(fn + ".xz", "wb") as out:  # type: ignore
+
                     out.write(inp.read())
-            os.remove(fn + ".gz")
+            os.remove(fn + ".gz")  # type: ignore
 
         for name in (
                 "author",
@@ -222,7 +227,8 @@ class PDBMetadata:
                 "clust100",
         ):
             fname = ipd.dev.package_data_path(f"pdb/meta/{name}.txt")
-            if os.path.exists(fname):  # could skipped download
+            if os.path.exists(fname):  # could skipped download  # type: ignore
+
                 log.info(f"running xz {fname}")
                 os.system(f"xz {fname}")
 
@@ -231,8 +237,10 @@ class PDBMetadata:
             names = [names]
         for name in names:
             fn = ipd.dev.package_data_path(f"pdb/meta/{name}.pickle")
-            if os.path.exists(fn):
-                os.remove(fn)
+            if os.path.exists(fn):  # type: ignore
+
+                os.remove(fn)  # type: ignore
+
             if name in self.metadata:
                 del self.metadata[name]
 
@@ -260,8 +268,10 @@ class PDBMetadata:
                     pdb = line[1:7]
                     # print(pdb)
                 else:
-                    code = pdb[:4].upper()
-                    chain = pdb[5]
+                    code = pdb[:4].upper()  # type: ignore
+
+                    chain = pdb[5]  # type: ignore
+
                     pdbseq[code][chain] = line.strip()
         return pdbseq
 
@@ -387,4 +397,4 @@ class PDBMetadata:
         return ipd.load_package_data("pdb/meta/lig/hetres_pdbs.pickle.xz")
 
 # nifty little, officially approved, hack to use class proterties on 'module'
-sys.modules[__name__] = PDBMetadata()
+sys.modules[__name__] = PDBMetadata()  # type: ignore

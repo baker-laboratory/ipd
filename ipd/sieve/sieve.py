@@ -46,15 +46,15 @@ class SieveManager:
 _manager = SieveManager()
 
 def create_sieve_manager(conf):
-    _manager.init_sieves(conf)
+    _manager.init_sieves(conf)  # type: ignore
 
 def apply(*a, **kw):
-    _manager.apply_sieves(*a, **kw)
+    _manager.apply_sieves(*a, **kw)  # type: ignore
 
 class Sieve:
     def __init_subclass__(cls, **kw):
         super().__init_subclass__(**kw)
-        _manager._sieve_classes[cls.__name__] = cls
+        _manager._sieve_classes[cls.__name__] = cls  # type: ignore
 
     def __init__(self, manager, conf):
         self.manager = manager
