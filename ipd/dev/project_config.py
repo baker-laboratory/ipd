@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 from os.path import abspath, exists, isdir, join
 from pathlib import Path
@@ -61,3 +62,16 @@ def install_ipd_pre_commit_hook(projdir, path=None):
     assert os.path.exists(frm)
     print(f'symlinking {frm} {to}')
     os.symlink(frm, to)
+    ensure_pre_commit_packages()
+
+def ensure_pre_commit_packages():
+    for pkg in 'yapf ruff'.split():
+        if not shutil.which('yapf'):
+            print(f'installing missing package: {pkg}')
+            install_package('yapf')
+
+def install_package(pkg):
+    try:
+        ipd.dev.run(f'pip install {pkg}', echo=True)
+    except RuntimeError:
+        ipd.dev.run(f'pip install --user {pkg}', echo=True)

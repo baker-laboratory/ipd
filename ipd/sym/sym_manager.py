@@ -68,7 +68,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         pass
 
     @abstractmethod
-    def apply_symmetry(self, xyz: 'th.Tensor', pair=None, update_symmsub=False, **kw) -> 'th.Tensor':
+    def apply_symmetry(self, xyz: 'th.Tensor', pair=None, **kw) -> 'th.Tensor':
         """All subclasses must implement this method.
 
         Calls will recieve only the part of the structure that needs to
@@ -467,7 +467,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return _sym_adapt(thing, self, isasym)
 
     @property
-    def is_dummy_sym(self):
+    def is_dummy_sym(self) -> bool:
         """Return True if this is a dummy symmetry manager."""
         return False
 
@@ -590,14 +590,11 @@ class C1SymmetryManager(SymmetryManager):
 
     def apply_symmetry(self, xyz, pair=None, **kw):
         """no-op."""
-        if xyz is None:
-            return pair
-        if pair is None:
-            return xyz
-        return xyz, pair
+        if xyz is None: return pair
+        return xyz if pair is None else (xyz, pair)
 
     @property
-    def is_dummy_sym(self):
+    def is_dummy_sym(self) -> bool:
         """Return True if this is a dummy symmetry manager."""
         return True
 
