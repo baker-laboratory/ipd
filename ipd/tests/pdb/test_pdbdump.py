@@ -32,7 +32,6 @@ def test_dump_pdb_nchain_nres_natom():
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nresatom=5) == (1, 4, 5)
 
     ic(ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=5))  # type: ignore
-
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=3) == (4, 5, 3)
 
 def test_pdbdump_sequential():

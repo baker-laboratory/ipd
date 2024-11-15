@@ -39,7 +39,6 @@ def frames(
 
     okexe = (SystemExit, ) if sgonly else (KeyError, AttributeError)
     with contextlib.suppress(okexe):  # type: ignore
-
         return ipd.sym.xtal.sgframes(sym, ontop=ontop, **kw)
     try:
         if ipd.sym.is_known_xtal(sym):
@@ -89,7 +88,6 @@ def frames(
             startax = ipd.homog.hvec([0, 0, 1])
         elif bbsym:
             startax = axes(sym, bbnfold)  # type: ignore
-
         elif asym_of:
             startax = axes(sym, asym_of)
         else:
@@ -127,7 +125,6 @@ def frames(
 
     if torch:
         import torch as th  # type: ignore
-
         return th.as_tensor(f, dtype=th.float64)
 
     ipd.dev.checkpoint(kw)
@@ -142,7 +139,6 @@ def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize
     celldeltas = [0]
     if allowcellshift:
         celldeltas = list(itertools.product(*[np.arange(-1, 2) * cellsize] * 3))  # type: ignore
-
     diff = ipd.homog.hdiff(ontop, np.stack(frames2))
     w = np.nonzero(diff < 0.0001)
     if strict:
@@ -250,7 +246,6 @@ def axes(sym, nfold=None, all=False, cellsize=1, closest_to=None, **kw):
                 axes = symaxes_all[sym].copy()
                 for k, v in axes.items():
                     axes[k] = v[np.argmax(np.abs(np.dot(v, ipd.homog.hvec(closest_to))))]  # type: ignore
-
             else:
                 axes = symaxes[sym].copy()
             if nfold:
@@ -677,7 +672,6 @@ def ndim(sym):
 def numpy_or_torch_array(source, example):
     if "torch" in sys.modules:
         import torch  # type: ignore
-
         if torch.is_tensor(example):
             return torch.as_tensor(source)
     return np.asarray(source)
@@ -706,21 +700,16 @@ def subframes(frames, bbsym, asym):
     subframes = ipd.sym.frames(bbsym)
     coords = ipd.homog.hxform(frames, ipd.homog.hcom(asym, flat=True))
     ic(coords)  # type: ignore
-
     ic(frames.shape)  # type: ignore
-
     ic(subframes.shape)  # type: ignore
-
     # relframes = frames[1:, None] @ ipd.homog.hinv(frames[None, :-1])
     relframes = frames[:, None] @ ipd.homog.hinv(frames[None, :])
     ic(relframes.shape)  # type: ignore
-
     axs, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(relframes)
 
     for i in range(len(frames)):
         axdist = ipd.homog.hpointlinedis(coords, cen[i, :], axs[i, :])
         ic(axdist)  # type: ignore
-
     # what about multiple nfold axes???\
     # can distinguish by axis direction?
     assert 0
@@ -770,7 +759,6 @@ def canonical_asu_center(sym, cuda=False):
     try:
         if cuda:
             import torch as th  # type: ignore
-
             return th.tensor(_canon_asucen[sym], device='cuda')
         return _canon_asucen[sym]
     except KeyError as e:

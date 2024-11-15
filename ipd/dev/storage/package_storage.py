@@ -100,23 +100,16 @@ def fname_extensions(fname):
     # ic(f'{b}.{e}' if e else b)
     directory = f"{d}/" if d else ""
     base = f  # type: ignore
-
     ext = f".{e}" if e else ""  # type: ignore
-
     compression = f".{c}" if c else ""  # type: ignore
-
     basename = b
     baseext = f"{f}.{e}" if e else f  # type: ignore
-
     extcomp = ""
     if e and c:  # type: ignore
-
         extcomp = f".{e}.{c}"
     elif e:  # type: ignore
-
         extcomp = f".{e}"
     elif c:  # type: ignore
-
         extcomp = f".{c}"
     uncomp = f"{directory}{baseext}"
 
@@ -140,7 +133,6 @@ def load(fname, **kw):
         return load_pickle(fname, **kw)
     elif fname.endswith(".nc"):
         import xarray  # type: ignore
-
         return xarray.load_dataset(fname, **kw)
     elif fname.endswith(".npy"):
         return np.load(fname, **kw)
@@ -175,7 +167,6 @@ def load_pickle(fname, add_dotpickle=True, assume_lzma=False, **kw):
     # print(f'load_pickle {fname} {opener}')
     with opener(fname, "rb") as inp:
         stuff = pickle.load(inp)  # type: ignore
-
         if isinstance(stuff, dict):
             if "__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__" in stuff:
                 _special = stuff["__I_WAS_A_BUNCH_AND_THIS_IS_MY_SPECIAL_STUFF__"]
@@ -193,7 +184,6 @@ def save(stuff, fname, **kw):
         ipd.pdb.dumpstruct(fname, stuff, **kw)
     elif finfo.ext == ".nc":
         import xarray  # type: ignore
-
         if not isinstance(stuff, xarray.Dataset):
             raise ValueError("can only save xarray.Dataset as .nc file")
         stuff.to_netcdf(fname)

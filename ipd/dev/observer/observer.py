@@ -89,7 +89,6 @@ class Observer(abc.ABC):
 
     def __init_subclass__(cls, **kw):
         super().__init__(cls, **kw)  # type: ignore
-
         hub._register_instance(cls())
 
     def __new__(cls, *args, **kw):

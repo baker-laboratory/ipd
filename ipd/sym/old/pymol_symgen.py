@@ -6,13 +6,10 @@ import re
 import sys
 
 from ipd.sym.pymol_xyzmath import RAD, SYMOCT, SYMTET, Mat, Ux, Uz, Vec, Xform, isvec, projperp, randnorm  # type: ignore
-
 try:
     from ipd.viz.pymol_cgo import cgo_cyl, cgo_sphere, cgo_segment  # noqa
     import pymol  # type: ignore
-
     from pymol import cmd  # type: ignore
-
 except ImportError:
     pymol = None
     cmd = None
@@ -32,7 +29,6 @@ def hacky_xtal_maker(
 ):
     print("hacky_xtal_maker")
     v = cmd.get_view()  # type: ignore
-
     CEN = [g.cen for g in G]
     FN = list()
     tag = "test" if "tag" not in kw else kw["tag"]
@@ -65,20 +61,15 @@ def hacky_xtal_maker(
     for fn in FN:
         fn.show(**kw)  # dumb order hack for pymol up/dn
     cmd.disable("all")  # type: ignore
-
     cmd.enable(tag + "_DEPTH%i" % (depth))  # type: ignore
-
     cmd.enable(tag + "_NODES%i" % (depth))  # type: ignore
-
     count = CountFrames()
     symtrie.visit(count)  # type: ignore
-
     if verbose:
         print("N Frames:", count.count)
 
     if showcell:
         cube(Vec(0, 0, 0), cell * Vec(1, 1, 1))  # type: ignore
-
     cmd.set_view(v)  # type: ignore
 
 class PymolSymElem(object):
@@ -172,7 +163,6 @@ class PymolSymElem(object):
         assert self.frames
         if not self.frames[0] == Xform():
             if verbose:  # type: ignore
-
                 print(self.kind, self.frames[0].pretty())
             assert self.frames[0] == Xform()
 
@@ -182,12 +172,9 @@ class PymolSymElem(object):
             label = "SymElem_%i" % _symelem_nshow
             _symelem_nshow += 1
         pymol.cmd.delete(label)  # type: ignore
-
         v = pymol.cmd.get_view()  # type: ignore
-
         CGO = self.cgo(**kwargs)
         pymol.cmd.load_cgo(CGO, label)  # type: ignore
-
         pymol.cmd.set_view(v)  # type: ignore
 
     def cgo(
@@ -300,7 +287,6 @@ class PymolSymElem(object):
             cen = x * self.cen
             cen.round0()
             CGO.extend(cgo_sphere(cen, 1.6 * vizsphereradius, col=(0.5, 0.5, 1)))  # type: ignore
-
             seen2, seen3 = list(), list()
             for f in self.frames:
                 c2b = x.R * f.R * (Vec(1, 0, 0).normalized() * length / 2.0)
@@ -311,18 +297,15 @@ class PymolSymElem(object):
                 c3b.round0()
                 if c2b not in seen2:
                     CGO.extend(cgo_cyl(cen, cen + c2b, radius, col=(1, 0, 0)))  # type: ignore
-
                     seen2.append(c2b)
                 if c3a not in seen3:
                     CGO.extend(cgo_cyl(cen + c3a, cen + c3b, radius, col=(0, 1, 0)))  # type: ignore
-
                     seen3.append(c3a)
                     seen3.append(c3b)
         elif self.kind == "O":
             cen = x * self.cen
             cen.round0()
             CGO.extend(cgo_sphere(cen, 1.6 * vizsphereradius, col=(0.5, 0.5, 1)))  # type: ignore
-
             seen2, seen3, seen4 = list(), list(), list()
             for f in self.frames:
                 c2a = x.R * f.R * (-Vec(1, 1, 0).normalized() * length / 2.0)
@@ -339,17 +322,14 @@ class PymolSymElem(object):
                 c4b.round0()
                 if c2b not in seen2:
                     CGO.extend(cgo_cyl(cen + c2a, cen + c2b, radius, col=(1, 0, 0)))  # type: ignore
-
                     seen2.append(c2a)
                     seen2.append(c2b)
                 if c3a not in seen3:
                     CGO.extend(cgo_cyl(cen + c3a, cen + c3b, radius, col=(0, 1, 0)))  # type: ignore
-
                     seen3.append(c3a)
                     seen3.append(c3b)
                 if c4a not in seen4:
                     CGO.extend(cgo_cyl(cen + c4a, cen + c4b, radius, col=(0, 0, 1)))  # type: ignore
-
                     seen4.append(c4a)
                     seen4.append(c4b)
         if showshape:
@@ -614,10 +594,8 @@ class SymTrieNode(object):
         if self.parent:
             if not self.parent.position == parentxform:
                 if verbose:  # type: ignore
-
                     print("parentxform mismatch!", self.parent.position.pretty())
                 if verbose:  # type: ignore
-
                     print("parentxform mismatch!", parentxform.pretty())
                 assert self.parent.position == parentxform
         xform = parentxform * self.generators[self.ielem].frames[self.iframe]
@@ -720,7 +698,6 @@ def generate_sym_trie(generators, depth=10, opts=None, verbose=False):
 ##########################################################################
 
 newpath = os.path.dirname(inspect.getfile(inspect.currentframe()))  # script directory  # type: ignore
-
 if newpath not in sys.path:
     sys.path.append(newpath)
 # from xyzMath import Vec, Mat, Xform, RAD, projperp, Ux, Uy, Uz
@@ -731,22 +708,17 @@ if newpath not in sys.path:
 
 def makesym(frames0, sele="all", newobj="MAKESYM", depth=None, maxrad=9e9, n=9e9, verbose=False):
     v = cmd.get_view()  # type: ignore
-
     cmd.delete(newobj)  # type: ignore
-
     sele = "((" + sele + ") and (not TMP_makesym_*))"
     selechains = cmd.get_chains(sele)  # type: ignore
-
     if verbose:
         print(selechains)
     if not depth:
         frames = frames0
     else:
         frames = expand_xforms(frames0, N=depth, maxrad=maxrad)  # type: ignore
-
     # order on COM transform dis
     cen = com(sele)  # type: ignore
-
     frames = sorted(frames, key=lambda x: cen.distance(x * cen))
 
     # make new objs
@@ -756,87 +728,57 @@ def makesym(frames0, sele="all", newobj="MAKESYM", depth=None, maxrad=9e9, n=9e9
         # if verbose: print i, x.pretty()
         tmpname = "TMP_makesym_%i" % i
         cmd.create(tmpname, sele)  # type: ignore
-
         for j, c in enumerate(selechains):
             cmd.alter(tmpname + " and chain " + c, "chain='%s'" % ROSETTA_CHAINS[len(selechains) * i + j])  # type: ignore
-
         xform(tmpname, x)  # type: ignore
-
     cmd.create(newobj, "TMP_makesym_*")  # type: ignore
-
     cmd.delete("TMP_makesym_*")  # type: ignore
-
     cmd.set_view(v)  # type: ignore
-
     # util.cbc()
 
 def makecx(sel="all", name="TMP", n=5, axis=Uz):
     if sel == "all":
         for i, o in enumerate(cmd.get_object_list()):  # type: ignore
-
             makecx(sel=o, name="TMP%i" % i, n=n, axis=axis)
         return
     v = cmd.get_view()  # type: ignore
-
     cmd.delete("TMP__C%i_*" % n)  # type: ignore
-
     chains = ROSETTA_CHAINS  # type: ignore
-
     for i in range(n):
         cmd.create("TMP__C%i_%i" % (n, i), sel + " and (not TMP__C%i_*)"%n)  # type: ignore
-
     for i in range(n):
         rot("TMP__C%i_%i" % (n, i), axis, -360.0 * float(i) / float(n))  # type: ignore
-
     for i in range(n):
         cmd.alter("TMP__C%i_%i" % (n, i), "chain = '%s'" % chains[i])  # type: ignore
-
     util.cbc("TMP__C*")  # type: ignore
-
     # for i in range(n): cmd.alter("TMP__C%i_%i"%(n, i),"resi=str(int(resi)+%i)"%(1000*i));
     # util.cbc("TMP__C*")
     cmd.create(name, "TMP__*")  # type: ignore
-
     cmd.delete("TMP__*")  # type: ignore
-
     cmd.set_view(v)  # type: ignore
-
     cmd.disable(sel)  # type: ignore
-
     cmd.enable(name)  # type: ignore
 
 def mofview():
     cmd.set("sphere_scale", 0.3)  # type: ignore
-
     cmd.hide("ev")  # type: ignore
-
     # cmd.show('sti')
     # cmd.show('lines', 'name n+ca+c')
     cmd.show("sti", "resn asp+das+cys+dcs+his+dhi+glu+dgu+zn+bpy and not hydro and not name n+c+o")  # type: ignore
-
     # cmd.show('sti', 'resn cys and name HG')
     cmd.show("sph", "name ZN")  # type: ignore
-
     # cmd.show('car')
     cmd.show("sti", "name n+ca+c+cb")  # type: ignore
-
     cmd.show("sph", "name cb and not resn asp+das+cys+dcs+his+dhi+glu+dgu")  # type: ignore
-
     # util.cbag('all')
     # cmd.color('green', 'name N')
 
     cmd.unbond("name zn", "all")  # type: ignore
-
     cmd.bond("name zn", "(not elem H+C) within 3 of name zn")  # type: ignore
-
     showline(Vec(-2, -1, 1) * 20, Vec(0, 0, 0))  # type: ignore
-
     showline(Vec(-1, -1, 0) * 20, Vec(0, 0, 0))  # type: ignore
-
     showaxes()  # type: ignore
-
     cmd.show("cgo")  # type: ignore
-
     # makec3(axis=Vec(1, 1, 1))
     # cmd.hide('sti')
     # util.cbag()
@@ -851,45 +793,29 @@ def makedx(sel="all", n=2, name=None):
     if not name:
         name = sel.replace("+", "").replace(" ", "") + "_D%i"%n
     cmd.delete(name)  # type: ignore
-
     v = cmd.get_view()  # type: ignore
-
     cmd.delete("_TMP_D%i_*" % n)  # type: ignore
-
     ALLCHAIN = ROSETTA_CHAINS  # type: ignore
-
     chains = cmd.get_chains(sel)  # type: ignore
-
     for i in range(n):
         dsel = "_TMP_D%i_%i" % (n, i)
         dsel2 = "_TMP_D%i_%i" % (n, n + i)
         cmd.create(dsel, sel + " and (not _TMP_D%i_*)"%n)  # type: ignore
-
         rot(dsel, Uz, 360.0 * float(i) / float(n))  # type: ignore
-
         cmd.create(dsel2, dsel)  # type: ignore
-
         rot(dsel2, Ux, 180.0)  # type: ignore
-
         for ic, c in enumerate(chains):
             cmd.alter(  # type: ignore
                 "((%s) and chain %s )" % (dsel, c),  # type: ignore
                 "chain = '%s'" % ALLCHAIN[len(chains) * (i) + ic])  # type: ignore
-
             cmd.alter(  # type: ignore
                 "((%s) and chain %s )" % (dsel2, c),  # type: ignore
                 "chain = '%s'" % ALLCHAIN[len(chains) * (i+n) + ic])  # type: ignore
-
     cmd.create(name, "_TMP_D*")  # type: ignore
-
     util.cbc(name)  # type: ignore
-
     cmd.delete("_TMP_D*")  # type: ignore
-
     cmd.set_view(v)  # type: ignore
-
     cmd.disable(sel)  # type: ignore
-
     cmd.enable(name)  # type: ignore
 
 for i in range(2, 21):
@@ -899,9 +825,7 @@ for i in range(2, 21):
 
 def makecxauto():
     for o in cmd.get_object_list():  # type: ignore
-
         n = int(re.search("_C\d+_", o).group(0)[2:-1])  # type: ignore
-
         makecx(o, n)  # type: ignore
 
 def maketet(sel="all", name="TET", n=12):
@@ -915,20 +839,15 @@ def makeicos(sel="all", name="ICOS", n=60):
 
 def make_d3oct(d3, cage, cage_trimer_chain="A", depth=4, maxrad=9e9):
     if verbose:  # type: ignore
-
         print(
             cmd.super(  # type: ignore
                 "((" + cage + ") and (chain " + cage_trimer_chain + "))",  # type: ignore
                 "((" + d3 + ") and (chain A))"))  # type: ignore
-
     zcagecen = com(cage + " and name ca").z  # type: ignore
-
     if verbose:  # type: ignore
-
         print(zcagecen)
     # return
     x = alignvectors(Vec(1, 1, 1), Vec(1, -1, 0), Vec(0, 0, 1), Vec(1, 0, 0))  # type: ignore
-
     # if verbose: print x * Vec(1,1,1), x*Vec(1,-1,0)
     # RAD(Ux,180), RAD(Uy,120),
     G = [
@@ -939,26 +858,20 @@ def make_d3oct(d3, cage, cage_trimer_chain="A", depth=4, maxrad=9e9):
     ]
     makesym(G, sele="((" + d3 + ") and ((chain A+B) and name CA))", depth=depth, maxrad=maxrad)
     cmd.show("sph", "MAKESYM")  # type: ignore
-
     # cmd.disable("all")
     cmd.enable("MAKESYM")  # type: ignore
 
 def make_d3tet(d3, cage, cage_trimer_chain="A", depth=4, maxrad=9e9):
     if verbose:  # type: ignore
-
         print(
             cmd.super(  # type: ignore
                 "((" + cage + ") and (chain " + cage_trimer_chain + "))",  # type: ignore
                 "((" + d3 + ") and (chain A))"))  # type: ignore
-
     zcagecen = com(cage + " and name ca").z  # type: ignore
-
     if verbose:  # type: ignore
-
         print(zcagecen)
     # return
     x = alignvectors(Vec(1, 1, 1), Vec(1, -1, 0), Vec(0, 0, 1), Vec(1, 0, 0))  # type: ignore
-
     # if verbose: print x * Vec(1,1,1), x*Vec(1,-1,0)
     # RAD(Ux,180), RAD(Uy,120),
     G = [
@@ -968,13 +881,11 @@ def make_d3tet(d3, cage, cage_trimer_chain="A", depth=4, maxrad=9e9):
     ]
     makesym(G, sele="((" + d3 + ") and ((chain A+B) and name CA))", depth=depth, maxrad=maxrad)
     cmd.show("sph", "MAKESYM")  # type: ignore
-
     # cmd.disable("all")
     cmd.enable("MAKESYM")  # type: ignore
 
 def print_node(node, **kwargs):
     if verbose:  # type: ignore
-
         print(kwargs["depth"] * "    ", node, kwargs["xform"].pretty())
 
 def show_node(node, **kwargs):
@@ -997,17 +908,14 @@ def cgo_cyl_arrow(c1, c2, rad, col=(1, 1, 1), col2=None, arrowlen=4.0):
     c1.round0()
     c2.round0()
     CGO.extend(cgo_cyl(c1, c2 + randnorm() * 0.0001, rad=rad, col=col, col2=col2))  # type: ignore
-
     dirn = (c2 - c1).normalized()
     perp = projperp(dirn, Vec(0.2340790923, 0.96794275, 0.52037438472304783)).normalized()
     arrow1 = c2 - dirn*arrowlen + perp*2.0
     arrow2 = c2 - dirn*arrowlen - perp*2.0
     # -dirn to shift to sphere surf
     CGO.extend(cgo_cyl(c2 - dirn*3.0, arrow1 - dirn*3.0, rad=rad, col=col2))  # type: ignore
-
     # -dirn to shift to sphere surf
     CGO.extend(cgo_cyl(c2 - dirn*3.0, arrow2 - dirn*3.0, rad=rad, col=col2))  # type: ignore
-
     return CGO
 
 class BuildCGO(object):
@@ -1087,15 +995,12 @@ class BuildCGO(object):
         for icen, cen in enumerate(self.nodes):
             xcen = x * cen
             if pcen:  # type: ignore
-
                 self.jumps.add(pcen.distance(xcen))
             if self.showlinks:
                 if self.bounds_check(pcen) or self.bounds_check(xcen):  # type: ignore
-
                     # if verbose: print "DEBUG",icen,px.pretty(),px==Xform()
                     if icen != 0 or node.parent:  # skip node 0 for root
                         self.add_segment(pcen, xcen, icen)  # type: ignore
-
             if self.bounds_check(xcen):
                 self.add_sphere(x * (cen + Vec(0, 0, 0)), 2.0, text="%s%i" % ("ABCD"[icen], node.depth), icol=icen)
                 self.add_sphere(x * (cen + Vec(2, 0, 0)), 2.0, text="%s%i" % ("ABCD"[icen], node.depth), icol=icen)
@@ -1119,7 +1024,6 @@ class BuildCGO(object):
         if text:
             pos = [cen.x + 1.0, cen.y + 1.0, cen.z + 1.0]
             v = cmd.get_view()  # type: ignore
-
             axes = [[v[0], v[3], v[6]], [v[1], v[4], v[7]], [v[2], v[5], v[8]]]
             # pymol.cgo.wire_text(self.CGO,pymol.vfont.plain,pos,text,axes)
         self.CGO.extend(cgo_sphere(cen, rad, col=self.colors[icol]))  # type: ignore
@@ -1132,13 +1036,9 @@ class BuildCGO(object):
 
     def show(self, verbose=False, **kwargs):
         v = cmd.get_view()  # type: ignore
-
         cmd.delete(self.label)  # type: ignore
-
         cmd.load_cgo(self.CGO, self.label)  # type: ignore
-
         cmd.set_view(v)  # type: ignore
-
         # for i,c in enumerate(self.nodes):
         # showsphere(c,1.5,col=self.colors[i])
         if verbose:
@@ -1254,7 +1154,6 @@ class ComponentCenterVisitor(object):
             self.makeCCtree()
         jset = VecDict()
         for c, p in list(self.parentmap.items()):  # type: ignore
-
             if p:
                 jset[c - p] = True
         jsetsort = VecDict()
@@ -1280,7 +1179,6 @@ class ComponentCenterVisitor(object):
         for priCC, CClist in list(self.priCCtoCClist.items()):
             for i1, n1 in enumerate(CClist):
                 if n1 not in list(self.parentmap.keys()):  # type: ignore
-
                     pass
                     # if verbose: print("NOT IN PARENTMAP:", n1)
                 for i2, n2 in enumerate(CClist):
@@ -1312,19 +1210,13 @@ class ComponentCenterVisitor(object):
                         cnx = stn.position * (pn + component_pos[ipn] + Vec(3, 0, 0))
                         cny = stn.position * (pn + component_pos[ipn] + Vec(0, 2, 0))
                         CGO.extend(cgo_sphere(cn, rad=2.5, col=self.colors[ipn]))  # type: ignore
-
                         CGO.extend(cgo_sphere(cnx, rad=1.7, col=self.colors[ipn]))  # type: ignore
-
                         CGO.extend(cgo_sphere(cny, rad=1.2, col=self.colors[ipn]))  # type: ignore
-
                         if self.showlinks:
                             CGO.extend(cgo_cyl_arrow(n, cn, rad=0.3, col=self.colors[ipn], arrowlen=2.0))
         v = cmd.get_view()  # type: ignore
-
         cmd.delete(self.label)  # type: ignore
-
         cmd.load_cgo(CGO, self.label)  # type: ignore
-
         cmd.set_view(v)  # type: ignore
 
     def make_symdef(self, **kwargs):
@@ -1360,15 +1252,12 @@ class ComponentCenterVisitor(object):
                 CC, STNs = val2
                 assert len(STNs) > 0
                 PCC = None if CC not in list(self.parentmap.keys()) else self.parentmap[CC]  # type: ignore
-
                 if PCC:
                     PCCName = "CMP%02i_CEN%03i" % node2num[PCC]
                 if PCC:
                     PCCDofBegName = PCCName + "_CELLDofBeg_%i_%i" % (icc, ip)  # NOTE icc FIRST!!!!  # type: ignore
-
                 if PCC:
                     PCCDofEndName = PCCName + "_CELLDofEnd_%i_%i" % (icc, ip)  # NOTE icc FIRST!!!  # type: ignore
-
                 if True:
                     CCDofBegName = "CMP%02i_CEN%03i" % (ip, icc)
                 if True:
@@ -1378,7 +1267,6 @@ class ComponentCenterVisitor(object):
                     DIR = (CC - PCC).normalized()
                 if PCC:
                     DIR2 = projperp(DIR, Vec(1, 2, 3)).normalized()  # type: ignore
-
                 if True:
                     ELEMDIR = STNs[0].position.R * self.symelems[ip].axis
                 if True:
@@ -1437,19 +1325,15 @@ class ComponentCenterVisitor(object):
                     )
                 if PCC:
                     edges.append((PCCName, PCCDofBegName))  # type: ignore
-
                 if PCC:
                     edges.append((PCCDofBegName, PCCDofEndName))  # type: ignore
-
                 if PCC:
                     edges.append((PCCDofEndName, CCDofBegName))  # type: ignore
-
                 if True:
                     edges.append((CCDofBegName, CCDofEndName))
                 # if True: edges.append( (CCDofEndName, CCDOFName) )
                 if PCC:
                     celldofjumps.append((PCCDofBegName, PCCDofEndName))  # type: ignore
-
                 if True:
                     compdofjumps[ip].append((CCDofBegName, CCDofEndName))
                 for isub, stn in enumerate(STNs):
@@ -1633,7 +1517,6 @@ class RosettaSymDef(object):
     def parse(self, s):
         for line in s.split("\n"):
             if verbose:  # type: ignore
-
                 print(line)
             if line.startswith("xyz"):
                 dummy, name, X, Y, O = re.split(r"\s+", line.strip())
@@ -1670,13 +1553,10 @@ class RosettaSymDef(object):
                 v1x = v1[0].normalized()
                 if jdir.distance(v1x) > 0.0001:
                     if verbose:  # type: ignore
-
                         print("connect_virtual ERROR", name, v1name, v2name)
                     if verbose:  # type: ignore
-
                         print("  jdir", jdir)
                     if verbose:  # type: ignore
-
                         print("  v1x ", v1x)
                     raise ValueError
 
@@ -1690,14 +1570,11 @@ class RosettaSymDef(object):
             cen = self.displaycen(name, xyo, offset=XYlen)
             if cen in seenit:
                 if verbose:  # type: ignore
-
                     print("ERROR overlapping display center", cen)
                 # assert not cen in seenit
             seenit.append(cen)
             CGO.extend(cgo_lineabs(cen, cen + X*XYlen, col=(1, 0, 0)))  # type: ignore
-
             CGO.extend(cgo_lineabs(cen, cen + Y*XYlen, col=(0, 1, 0)))  # type: ignore
-
         for name, vnames in list(self.edges.items()):
             v1name, v2name = vnames
             v1 = self.virtuals[v1name]
@@ -1707,12 +1584,9 @@ class RosettaSymDef(object):
             cen1 = self.displaycen(name, v1, offset=XYlen)
             cen2 = self.displaycen(name, v2, offset=XYlen)
             CGO.extend(cgo_lineabs(cen1, cen2, (1, 1, 1)))  # type: ignore
-
             upmid = (cen1 + 3.0*cen2) / 4.0
             CGO.extend(cgo_sphere(upmid))  # type: ignore
-
             v = cmd.get_view()  # type: ignore
-
             axes = [[v[0], v[3], v[6]], [v[1], v[4], v[7]], [v[2], v[5], v[8]]]
             # pymol.cgo.wire_text(CGO,pymol.vfont.plain,[upmid[0],upmid[1],upmid[2]],name)
 

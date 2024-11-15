@@ -24,14 +24,10 @@ def rayframe(rays, cross=None, primary='z', device='cpu'):
 @dataclasses.dataclass
 class TipAtom:
     xyz: th.Tensor  # type: ignore
-
     don: th.Tensor  # shape = N, 4, 2 ray  # type: ignore
-
     acc: th.Tensor  # shape = N, 4, 2 ray  # type: ignore
-
     resn: str
     aname: np.array  # type: ignore
-
     _vizpos: th.Tensor = None  # type: ignore
 
     def __post_init__(self):
@@ -66,9 +62,7 @@ class TipAtomTarget:
     def place_tip_atoms(self, tips, **kw):
         vox = th.zeros((1, 1, 1), device='cuda')
         don = self.don.to('cuda')  # type: ignore
-
         acc = self.acc.to('cuda')  # type: ignore
-
         fdon, facc = self.donacc_frames('cuda')
         # ipd.showme(self, name='ref')
         for tip in tips:

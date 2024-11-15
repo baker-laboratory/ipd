@@ -210,7 +210,6 @@ def test_nonprot():
     sym = ipd.tests.sym.create_test_sym_manager(symid='c3')
     sym.idx = [(120, 0, 60), (120, 60, 120)]
     assert th.all(sym.idx.nonprot.cpu() == th.repeat_interleave(th.arange(2), 60))  # type: ignore
-
     sym.idx = [33]
     assert th.all(sym.idx.nonprot.cpu() == th.repeat_interleave(th.arange(1), 33))  # type: ignore
 
@@ -231,15 +230,10 @@ def test_slice2d():
                 91
             ]
         ]))  # type: ignore
-
     sym.idx.slice2d(d, 'asu', 1)  # type: ignore
-
     assert th.all(sym.idx.slice2d(d, 'asu') == 1)  # type: ignore
-
     sym.idx.slice2d(d, 'asu', th.arange(16).reshape(4, 4))  # type: ignore
-
     assert th.all(sym.idx.slice2d(d, 'asu') == th.arange(16).reshape(4, 4))  # type: ignore
-
     d = th.arange(144).reshape(12, 12)
     assert th.all(
         sym.idx.slice2d(d, th.tensor([0, 1, 6, 7])) == th.tensor([  # type: ignore

@@ -51,6 +51,5 @@ class IPDTool(CliBase):
         elif 'github.com' in url and '@' not in url:
             url = url.replace('github.com', 'GITHUB_USER:GITHUB_TOKEN@github.com')
         url = self._fill_secrets(url)  # type: ignore
-
         # git.Repo.clone_from(url, path, branch=branch)
         os.system(f'git clone {url} {path} -b {branch} --recursive')

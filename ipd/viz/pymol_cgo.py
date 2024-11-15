@@ -6,9 +6,7 @@ import ipd
 
 try:
     import pymol  # type: ignore
-
     from pymol import cgo, cmd  # type: ignore
-
 except ImportError:
     pass
 
@@ -21,9 +19,7 @@ _numseg = 0
 def showcom(sel="all"):
     global _numcom
     cen = com(sel)  # type: ignore
-
     print("Center of mass: ", c)  # type: ignore
-
     mycgo = [
         cgo.COLOR,  # type: ignore
         1.0,
@@ -36,7 +32,6 @@ def showcom(sel="all"):
         1.0,
     ]  # white sphere with 3A radius
     pymol.cmd.load_cgo(mycgo, "com%i" % _numcom)  # type: ignore
-
     _numcom += 1
 
 def cgo_sphere(cen, rad=1, col=(1, 1, 1)):
@@ -44,22 +39,18 @@ def cgo_sphere(cen, rad=1, col=(1, 1, 1)):
     # white sphere with 3A radius
     # ic(col)
     mycgo = [cgo.COLOR, col[0], col[1], col[2]]  # type: ignore
-
     for c in cen:
         mycgo.extend([cgo.SPHERE, c[0], c[1], c[2], rad])  # type: ignore
-
     return mycgo
 
 def showsphere(cen, rad=1, col=(1, 1, 1), lbl=""):
     v = pymol.cmd.get_view()  # type: ignore
-
     if not lbl:
         global _numvec
         lbl = "sphere%i" % _numvec
         _numvec += 1
     mycgo = cgo_sphere(cen=cen, rad=rad, col=col)
     pymol.cmd.load_cgo(mycgo, lbl)  # type: ignore
-
     pymol.cmd.set_view(v)  # type: ignore
 
 def cgo_vecfrompoint(axis, cen, col=(1, 1, 1), lbl=""):
@@ -88,13 +79,9 @@ def showvecfrompoint(axis, cen, col=(1, 1, 1), lbl=""):
         lbl = "ray%i" % _numray
         _numray += 1
     pymol.cmd.delete(lbl)  # type: ignore
-
     v = pymol.cmd.get_view()  # type: ignore
-
     mycgo = cgo_vecfrompoints(axis, cen, col)  # type: ignore
-
     pymol.cmd.load_cgo(mycgo, lbl)  # type: ignore
-
     # pymol.cmd.load_cgo([cgo.COLOR, col[0],col[1],col[2],
     #             cgo.SPHERE,   cen[0],       cen[1],       cen[2],    0.08,
     #             cgo.CYLINDER, cen[0],       cen[1],       cen[2],
@@ -132,11 +119,8 @@ def showsegment(c1, c2, col=(1, 1, 1), lbl=""):
         lbl = "seg%i" % _numseg
         _numseg += 1
     pymol.cmd.delete(lbl)  # type: ignore
-
     v = pymol.cmd.get_view()  # type: ignore
-
     pymol.cmd.load_cgo(cgo_segment(c1=c1, c2=c2, col=col), lbl)  # type: ignore
-
     # pymol.cmd.load_cgo([cgo.COLOR, col[0],col[1],col[2],
     #             cgo.CYLINDER, c1[0],     c1[1],     c1[2],
     #                           c2[0],     c2[1],     c2[2], 0.02,
@@ -168,11 +152,8 @@ def showcyl(c1, c2, rad, col=(1, 1, 1), col2=None, lbl=""):
         lbl = "seg%i" % _numseg
         _numseg += 1
     pymol.cmd.delete(lbl)  # type: ignore
-
     v = pymol.cmd.get_view()  # type: ignore
-
     pymol.cmd.load_cgo(cgo_cyl(c1=c1, c2=c2, rad=rad, col=col, col2=col2), lbl)  # type: ignore
-
     pymol.cmd.set_view(v)  # type: ignore
 
 def showline(axis, cen, col=(1, 1, 1), lbl="", oneside=False):
@@ -181,9 +162,7 @@ def showline(axis, cen, col=(1, 1, 1), lbl="", oneside=False):
         lbl = "line%i" % _numline
         _numline += 1
     pymol.cmd.delete(lbl)  # type: ignore
-
     v = pymol.cmd.get_view()  # type: ignore
-
     OBJ = [
         cgo.BEGIN,  # type: ignore
         cgo.LINES,  # type: ignore
@@ -202,7 +181,6 @@ def showline(axis, cen, col=(1, 1, 1), lbl="", oneside=False):
         cgo.END,  # type: ignore
     ]
     pymol.cmd.load_cgo(OBJ, lbl)  # type: ignore
-
     pymol.cmd.set_view(v)  # type: ignore
 
 def cgo_lineabs(axis, cen, col=(1, 1, 1)):
@@ -230,12 +208,9 @@ def showlineabs(axis, cen, col=(1, 1, 1), lbl=""):
         lbl = "line%i" % _numline
         _numline += 1
     pymol.cmd.delete(lbl)  # type: ignore
-
     v = pymol.cmd.get_view()  # type: ignore
-
     mycgo = cgo_lineabs(axis, cen, col)
     pymol.cmd.load_cgo(mycgo, lbl)  # type: ignore
-
     pymol.cmd.set_view(v)  # type: ignore
 
 def cgo_fan(
@@ -280,27 +255,16 @@ def cgo_fan(
             pt2 -= thickness* axis
         obj += [
              cgo.BEGIN,  # type: ignore
-
              cgo.TRIANGLES,  # type: ignore
-
              cgo.COLOR,    col[0],  col[1],  col[2],  # type: ignore
-
              cgo.ALPHA, 1,  # type: ignore
-
              cgo.NORMAL,  axis[0], axis[1], axis[2],  # type: ignore
-
              cgo.VERTEX,  cen [0], cen [1], cen [2],  # type: ignore
-
              cgo.NORMAL,  axis[0], axis[1], axis[2],  # type: ignore
-
              cgo.VERTEX,  pt1 [0], pt1 [1], pt1 [2],  # type: ignore
-
              cgo.NORMAL,  axis[0], axis[1], axis[2],  # type: ignore
-
              cgo.VERTEX,  pt2 [0], pt2 [1], pt2 [2],  # type: ignore
-
              cgo.END,  # type: ignore
-
           ]
 
 
@@ -316,16 +280,12 @@ def showfan(axis, cen, rad, arc, col=(1, 1, 1), lbl="", **kw):
         lbl = "seg%i" % _numseg
         _numseg += 1
     pymol.cmd.delete(lbl)  # type: ignore
-
     v = pymol.cmd.get_view()  # type: ignore
-
     pymol.cmd.load_cgo(cgo_fan(axis=axis, cen=cen, rad=rad, arc=arc, col=col, **kw), lbl)  # type: ignore
-
     pymol.cmd.set_view(v)  # type: ignore
 
 def showaxes():
     v = pymol.cmd.get_view()  # type: ignore
-
     obj = [
         cgo.BEGIN,  # type: ignore
         cgo.LINES,  # type: ignore
@@ -390,27 +350,20 @@ def cgo_cyl_arrow(c1, c2, r, col=(1, 1, 1), col2=None, arrowlen=4.0):
 
 def showcube(*args, **kw):
     cmd.delete("CUBE")  # type: ignore
-
     v = cmd.get_view()  # type: ignore
-
     mycgo = cgo_cube(*args, **kw)
     cmd.load_cgo(mycgo, "CUBE")  # type: ignore
-
     cmd.set_view(v)  # type: ignore
 
 def showcell(*args, **kw):
     cmd.delete("CELL")  # type: ignore
-
     v = cmd.get_view()  # type: ignore
-
     mycgo = cgo_cell(*args, **kw)
     cmd.load_cgo(mycgo, "CELL")  # type: ignore
-
     cmd.set_view(v)  # type: ignore
 
 def cgo_cell(lattice, r=0.03):
     ic(lattice)  # type: ignore
-
     lattice = lattice.T
     a = [
         [0, 0, 0],

@@ -25,7 +25,6 @@ def redirect(stdout=sys.stdout, stderr=sys.stderr):
     _out, _err = sys.stdout, sys.stderr
     try:
         sys.stdout.flush(), sys.stderr.flush()  # type: ignore
-
         if stderr == 'stdout': stderr = stdout
         if stdout is None: stdout = io.StringIO()
         if stderr is None: stderr = io.StringIO()
@@ -33,7 +32,6 @@ def redirect(stdout=sys.stdout, stderr=sys.stderr):
         yield stdout, stderr
     finally:
         sys.stdout.flush(), sys.stderr.flush()  # type: ignore
-
         sys.stdout, sys.stderr = _out, _err
 
 @contextmanager

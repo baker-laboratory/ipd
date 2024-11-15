@@ -18,9 +18,7 @@ cgo = ipd.dev.lazyimport('pymol.cgo')
 cmd = ipd.dev.lazyimport('pymol.cmd')
 try:
     import pymol  # type: ignore
-
     from pymol import cgo, cmd  # type: ignore
-
 except ImportError:
     pass
 # from ipd.sym.symfit import RelXformInfo
@@ -208,7 +206,6 @@ def pymol_viz_list(
     mycgo = list()
     v = pymol.cmd.get_view()
     cmd.set("suspend_updates", "on")  # type: ignore
-
     colors = get_different_colors(len(toshow) - len(topcolors), **kw.only("colorseed"))
     if len(topcolors) > 0:
         colors = colors * 0.5
@@ -300,7 +297,6 @@ def get_different_colors(ncol, niter=1000, colorseed=1):
             maxmincoldis, best = np.min(cdis2), colors
 
     best = best[np.argsort(-np.min(best**2, axis=1))]  # type: ignore
-
     # ic(np.argsort(-np.min(best**2, axis=1)))
     # ic(best)
     # assert 0
@@ -308,7 +304,6 @@ def get_different_colors(ncol, niter=1000, colorseed=1):
     # paranoid sanity cheeck
     newrs = np.random.get_state()
     assert rs[0] == newrs[0] and np.all(rs[1] == newrs[1]) and rs[2:] == newrs[2:]  # type: ignore
-
     return best.copy()
 
     # if not 'seenit' in _showme_state:
@@ -381,7 +376,6 @@ def pymol_visualize_xforms(
         xform = xform.copy()
         xform[:3, 3] *= scale
         colorset = colorsets[ix % len(colorsets)]  # type: ignore
-
         # ic(colorset)
         cen = xform @ c0
         x = xform @ x0
@@ -389,7 +383,6 @@ def pymol_visualize_xforms(
         z = xform @ z0
         if bounds:
             bcen = tounitcellpts(lattice * scale, cen)  # type: ignore
-
             if np.any(bcen < bounds[0] - 0.0001):
                 continue
             if np.any(bcen > bounds[1] + 0.0001):
@@ -422,31 +415,21 @@ def pymol_visualize_xforms(
             col4 = [1, 0.25, 0.25] if color is None else color
 
         mycgo.extend(cgo_cyl(cen, x, 0.05 * weight, col1))  # type: ignore
-
         mycgo.extend(cgo_cyl(cen, y, 0.05 * weight, col2))  # type: ignore
-
         mycgo.extend(cgo_cyl(cen, z, 0.05 * weight, col3))  # type: ignore
-
         if showneg:
             mycgo.extend(cgo_cyl(cen, -x, 0.05 * weight, col1))  # type: ignore
-
             mycgo.extend(cgo_cyl(cen, -y, 0.05 * weight, col2))  # type: ignore
-
             mycgo.extend(cgo_cyl(cen, -z, 0.05 * weight, col3))  # type: ignore
-
         if spheres > 0:  # and ix % origlen == 0:
             mycgo.extend(cgo_sphere(cen, spheres, col=col4))  # type: ignore
-
     if center is not None:
         color = col if colors is None else colors[-1]  # type: ignore
-
         col1 = [1, 1, 1] if color is None else color
         mycgo += cgo_sphere(center, center_weight, col=col1)  # type: ignore
-
     if rays > 0:
         center = np.mean(xforms[:, :, 3], axis=0) if center is None else center
         color = col if colors is None else colors[-1]  # type: ignore
-
         col1 = [1, 1, 1] if color is None else color
         for ix, xform in enumerate(xforms):
             mycgo += cgo_cyl(center, xform[:, 3], rays, col=col1)
@@ -470,9 +453,7 @@ def show_ndarray_lines(
     name += "_%i" % state["seenit"][name]
     if col == "rand":
         col = get_different_colors(len(toshow), **kw.only("colorseed"))  # type: ignore
-
     if not isinstance(col[0], (list, np.ndarray, tuple)):  # type: ignore
-
         col = [col] * len(toshow)
 
     assert toshow.shape[-2:] == (4, 2)
@@ -491,7 +472,6 @@ def show_ndarray_lines(
                 cgo.extend(cgo_sphere(ray[:3, 0] + ray[:3, 1], col=color, rad=spheres))
     if addtocgo is None:
         cmd.load_cgo(cgo, name + "_%i"%i)  # type: ignore
-
     else:
         addtocgo.extend(cgo)
 
@@ -526,13 +506,11 @@ def show_ndarray_line_strip(
 
     if col == "rand":
         col = get_different_colors(breaks // breaks_groups, **kw.only("colorseed"))  # type: ignore
-
     if isinstance(col, list) and isinstance(col[0], (int, float)):
         col = [col] * breaks
     if isinstance(col, (tuple, str)):
         col = [col] * breaks
     col[:whitetopn] = [(1, 1, 1)] * whitetopn  # type: ignore
-
     # print('-' * 10)
     # print(col)
     # print('-' * 10)
@@ -628,7 +606,6 @@ def show_ndarray_point_or_vec(
     kw = ipd.dev.Bunch(kw)
     with contextlib.suppress(ImportError):
         import torch as th  # type: ignore
-
         if isinstance(toshow, th.Tensor):
             toshow = toshow.cpu().detach().numpy()
     if toshow.shape[-1] == 3:
@@ -663,14 +640,11 @@ def show_ndarray_point_or_vec(
                 color = colors[i]
             if chainbow:
                 color = RAINBOW[(len(RAINBOW) * i) // len(xyz)]  # type: ignore
-
             if p_or_v[3] > 0.999:
                 cgo += cgo_sphere(p_or_v, sphere, col=color)  # type: ignore
-
             elif np.abs(p_or_v[3]) < 0.001:
                 # cgo += cgo_vecfrompoint(p_or_v * 20, p_or_v, col=color)
                 cgo += cgo_vecfrompoint(p_or_v, [0, 0, 0], col=color)  # type: ignore
-
             else:
                 raise NotImplementedError
 
@@ -685,7 +659,6 @@ def show_array_ncacoh(
 ):
     tmpdir = tempfile.mkdtemp()
     fname = tmpdir + "/" + name + ".pdb"  # type: ignore
-
     assert toshow.shape[-2:] in [(5, 3), (5, 4)]
     if toshow.shape[-1] == 3:
         toshow = ipd.homog.hpoint(toshow)
@@ -693,7 +666,6 @@ def show_array_ncacoh(
 
     ipd.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
     pymol.cmd.load(fname, name)  # type: ignore
-
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', 'name N+CA+C')
     return ipd.dev.Bunch(pymol_object=name)
@@ -707,7 +679,6 @@ def show_ndarray_n_ca_c(
 ):
     tmpdir = tempfile.mkdtemp()
     fname = tmpdir + "/" + name + ".pdb"  # type: ignore
-
     assert toshow.shape[-2:] in [(3, 3), (3, 4)]
     if toshow.shape[-1] == 3:
         toshow = ipd.homog.hpoint(toshow)
@@ -716,7 +687,6 @@ def show_ndarray_n_ca_c(
     ipd.pdb.dumppdb(fname, toshow)
 
     pymol.cmd.load(fname, name)  # type: ignore
-
     pymol.cmd.hide('car')
     pymol.cmd.show('sti', f'{name} and name N+CA+C')
     return ipd.dev.Bunch(pymol_object=name)
@@ -750,10 +720,8 @@ def showme_pymol(
         return
 
     pymol.pymol_argv = ["pymol", '']  # type: ignore
-
     if headless:
         pymol.pymol_argv = ["pymol", "-c"]  # type: ignore
-
     if not _showme_state["launched"]:
         pymol.finish_launching()
         pymol.cmd.set("max_threads", 4)
@@ -812,7 +780,6 @@ def showme(*args, name=None, how="pymol", **kw):
         frame = inspect.currentframe()
         frame = inspect.getouterframes(frame)[2]
         string = inspect.getframeinfo(frame[0]).code_context[0].strip()  # type: ignore
-
         argsn = string[string.find('(') + 1:-1].split(',')
         names = []
         for i in argsn:

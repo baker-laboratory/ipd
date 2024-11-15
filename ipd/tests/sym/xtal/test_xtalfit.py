@@ -27,16 +27,13 @@ def test_xtalfit_I213():
     rorig = ipd.homog.hrmsfit(ref, startsym)[0]
     rfit = ipd.homog.hrmsfit(ref, fitsym)[0]
     ic(rorig)  # type: ignore
-
     ic(rfit)  # type: ignore
-
     vals = list()
     for i in range(10):
         fitsym = xtal.symcoords(asym + ipd.homog.hrandvec(), cells=0, cellsize=cell + np.random.normal()).reshape(-1, 4)
         vals.append(ipd.homog.hrmsfit(ref, fitsym)[0] - rfit)
     vals = np.array(vals)
     ic(np.min(vals), np.mean(vals))  # type: ignore
-
     assert np.min(vals) > -0.2
 
 def DISABLED_test_xtalfit_I213_bk():
@@ -52,9 +49,7 @@ def DISABLED_test_xtalfit_I213_bk():
     cacoords = coords[:, :, 1]
     xtal = ipd.sym.xtal.xtal("I213_32")
     ax3, cen3 = guessaxis(cacoords, [0, 1, 2])  # type: ignore
-
     ax2, cen2 = guessaxis(cacoords, [0, 3])  # type: ignore
-
     if ipd.homog.hdot([1, 1, 1], ax3) < 0:
         ax3 = -ax3
     if ipd.homog.hdot([0, 0, 1], ax2) < 0:
@@ -88,11 +83,9 @@ def DISABLED_test_xtalfit_I213_bk():
         return (x3f - y3f)**2 + (0.75*x2f - 1.5*y2f)**2
 
     import scipy.optimize  # type: ignore
-
     opt = scipy.optimize.minimize(loss, [0, 0], method="Powell", tol=0.3)
     x = opt.x
     ic(opt.x)  # type: ignore
-
     z = (cen3[0] + x[0] + cen3[1] + x[1]) / 2
     xdelta = ipd.homog.htrans([x[0], x[1], z - cen3[2]])
     cen2 = ipd.homog.hxform(xdelta, cen2)
@@ -101,10 +94,8 @@ def DISABLED_test_xtalfit_I213_bk():
     # ipd.pdb.dumppdb('xdelta.pdb', coords)
 
     ic(cen2, cen3)  # type: ignore
-
     cell = (cen2[0] / 2 + cen2[1]) / 2 * 4
     ic(cell)  # type: ignore
-
     # xtal.dump_pdb('orig.pdb', coords0[0], cellsize=100.942)
     # xtal.dump_pdb('test.pdb', coords[0], cellsize=cell)
 
@@ -116,9 +107,7 @@ def DISABLED_test_xtalfit_I213_bk():
     rorig = ipd.homog.hrmsfit(ref, startsym)[0]
     rfit = ipd.homog.hrmsfit(ref, fitsym)[0]
     ic(rorig)  # type: ignore
-
     ic(rfit)  # type: ignore
-
     vals = list()
     for i in range(100):
         fitsym = xtal.symcoords(coords[0] + ipd.homog.hrandvec(), cells=0,
@@ -126,7 +115,6 @@ def DISABLED_test_xtalfit_I213_bk():
         vals.append(ipd.homog.hrmsfit(ref, fitsym)[0] - rfit)
     vals = np.array(vals)
     ic(np.min(vals), np.mean(vals))  # type: ignore
-
     # x = np.linspace(-cartbound, cartbound, 20)
     # y = np.linspace(-cartbound, cartbound, 20)
     # samp = np.meshgrid(x, y)

@@ -252,7 +252,6 @@ def _find_compound_symelems(
             symcen = einsum("fij,j->fi", se_uniqaxisframes[i2], e2.cen)
             symaxis = einsum("fij,j->fi", se_uniqaxisframes[i2], e2.axis)
             taxis, tcen = [np.tile(x, (len(symcen), 1)) for x in (axis, cen)]  # type: ignore
-
             timer.checkpoint("symcenaxs")
             p, q = line_line_closest_points_pa(tcen, taxis, symcen, symaxis)
             timer.checkpoint("line_line_closest_points_pa")
@@ -263,17 +262,13 @@ def _find_compound_symelems(
             if np.sum(ok) == 0:
                 continue
             axis2 = symaxis[ok][0]  # type: ignore
-
             cen = p[ok][0]
             axis = einsum("fij,j->fi", se_uniqaxisframes[i2], axis)
             axis2 = einsum("fij,j->fi", se_uniqaxisframes[i2], axis2)
             cen = einsum("fij,j->fi", se_uniqaxisframes[i2], cen)
             axis = axis[_inunit(cen)]  # type: ignore
-
             axis2 = axis2[_inunit(cen)]  # type: ignore
-
             cen = cen[_inunit(cen)]  # type: ignore
-
             # ic(cen)
             pick = np.argmin(hnorm(cen - [0.003, 0.002, 0.001, 1]))
             axis = _flipaxs(axis[pick])
@@ -309,9 +304,7 @@ def _find_compound_symelems(
     # remove redundant centers
     for psym in isects:
         isects[psym] = list(sorted(isects[psym]))  # type: ignore
-
         isects[psym] = list({t[1:4]: t for t in isects[psym]}.values())  # type: ignore
-
     # ic(isects['D2'])
     # assert 0
     compound = defaultdict(list)
@@ -363,12 +356,10 @@ def _se_unique_axisline_frames(symelems, frames):
         for ifrm, frame in enumerate(frames):
             for f, saxs, scen in seenit:
                 d = line_line_distance_pa(xcen[ifrm], xaxs[ifrm], scen, saxs)  # type: ignore
-
                 if np.isclose(0, d):
                     break
             else:
                 seenit.append((frame, xaxs[ifrm], xcen[ifrm]))  # type: ignore
-
         uniqaxisframes.append(np.stack([f for f, a, c in seenit]))
     return uniqaxisframes
 
@@ -388,7 +379,6 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
             symcen = einsum("fij,j", frames, elem.cen)
             for elem2 in hasuniquecen:
                 d = hnorm(symcen[None] - elem2.cen.reshape(1, 4))  # type: ignore
-
                 if np.isclose(0, np.min(d)):
                     break
             else:
@@ -415,11 +405,8 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
                 # if elem.label == 'D2':
                 # ic(cperr.match)
                 if len(cperr.match) >= len(bestbadiframes):  # type: ignore
-
                     if np.max(cperr.match) < np.max(bestbadiframes):  # type: ignore
-
                         bestbadiframes, bestbadelem = cperr.match, movedelem  # type: ignore
-
                 continue
         if bestelem is None:
             print(
@@ -432,7 +419,6 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
             )
             bestelem = bestbadelem
         bestelem = bestelem.tounit(lattice)  # type: ignore
-
         assert bestelem.isunit
         bestplaced.append(bestelem)
 
@@ -494,18 +480,14 @@ def _symelem_is_same(elem, elem2, frames):
     assert elem.label[:2] == elem2.label[:2]
     axis = einsum("fij,j->fi", frames, elem2.axis)
     axsame = np.all(np.isclose(axis, elem.axis), axis=1)  # type: ignore
-
     axsameneg = np.all(np.isclose(-axis, elem.axis), axis=1)  # type: ignore
-
     axok = np.logical_or(axsame, axsameneg)
     if not np.any(axok):
         return False
     frames = frames[axok]
     axis = axis[axok]  # type: ignore
-
     cen = einsum("fij,j->fi", frames, elem2.cen)
     censame = np.all(np.isclose(cen, elem.cen), axis=1)  # type: ignore
-
     # ic(censame.shape)
     if any(censame):
         return True

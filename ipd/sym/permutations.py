@@ -15,7 +15,6 @@ def symframe_permutations(frames, **kw):
 
 def symframe_permutations_torch(frames, maxcols=None):
     import torch  # type: ignore
-
     frames = torch.tensor(frames, device="cuda").to(torch.float32)
     perm = list()
     for i, frame in enumerate(frames):
@@ -23,9 +22,7 @@ def symframe_permutations_torch(frames, maxcols=None):
         # ic(i, len(frames))
         local_frames = einsum("ij,fjk->fik", torch.linalg.inv(frame), frames)
         dist2 = torch.sum((local_frames[None] - frames[:, None])**2, axis=(2, 3))  # type: ignore
-
         idx = torch.argmin(dist2, axis=1)[:maxcols]  # type: ignore
-
         mindist = dist2[torch.arange(len(idx)), idx]
         missing = mindist > 1e-5
         idx[missing] = -1

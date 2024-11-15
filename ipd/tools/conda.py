@@ -28,7 +28,6 @@ class MambaTool(ipd.tools.IPDTool):
         packages = [d for d in env['dependencies'] if not isinstance(d, str) or not d.startswith('python=')]
         # print(packages)
         pippackages = packages[packages.index('pip') + 1]['pip']  # type: ignore
-
         packages = packages[:packages.index('pip')]
         if not overwrite:
             installed = ipd.dev.run('mamba list | tail +4', echo=False).split(os.linesep)
@@ -37,7 +36,6 @@ class MambaTool(ipd.tools.IPDTool):
             packages = [x for x in packages if not isinstalled(installed, x)]
             pippackages = [x for x in pippackages if not isinstalled(installed, x)]
         yes = '-y' if yes else ''  # type: ignore
-
         if sequential:
             for p in packages:
                 os.system(f'mamba install {yes} {channels} "{self._fill_secrets(p)}"')

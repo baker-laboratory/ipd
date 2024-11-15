@@ -1,7 +1,6 @@
 from ipd.viz.primitives import *
 from ipd.viz.pymol_cgo import *
 from ipd.viz.pymol_viz import *  # type: ignore
-
 from ipd.viz.pymol_viz import pymol_load as pymol_load
 from ipd.viz.viz_bond import *
 from ipd.viz.viz_deco import *

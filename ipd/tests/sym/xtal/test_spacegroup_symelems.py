@@ -50,7 +50,6 @@ def main():
         scan=20,
         weight=8,
         offset=0.0,  # type: ignore
-
         # lattice=ipd.sym.xtal.lattice_vectors(sym, [1.8, 1.6, 1.7, 70, 70, 110], strict=False),
         lattice=ipd.sym.xtal.lattice_vectors(sym, [1, 1.6, 1.7, 70, 70, 110], strict=False),
     )
@@ -169,9 +168,7 @@ def test_symelems_P622(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.5], hel=0.5, label='C21'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P622', val, debug, **kw)
@@ -549,16 +546,13 @@ def helper_test_symelem(sym, eref=None, debug=False, compound=False, **kw):
 
     etst = elems0.copy()
     eref = eref.copy()  # type: ignore
-
     if 'C11' in etst: del etst['C11']  # type: ignore
-
     if 'C11' in eref: del eref['C11']
 
     ok = True
     if eref is not None:
         vkey = set(eref.keys())
         tkey = set(etst.keys())  # type: ignore
-
         key = sorted(vkey.intersection(tkey))
         for k in vkey - tkey:
             ok = False
@@ -590,7 +584,6 @@ def helper_test_symelem(sym, eref=None, debug=False, compound=False, **kw):
     if not ok or debug:
         _printelems(sym, etst)
         showsymelems(sym, {**otherelems, **elems0}, scale=12, scan=12, offset=0, **kw)  # type: ignore
-
         assert ok
 
     if not compound:
@@ -611,19 +604,15 @@ def test_symelems_F4132(debug=False, **kw):
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.166666667, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.0, 0.166666667], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
        C41=[
           SymElem(4, axis=[0, 1, 0], cen=[0.25, 0.0, 0.0], hel=0.25, label='C41'),  # type: ignore
-
        ],
        C43=[
           SymElem(4, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.75, label='C43'),  # type: ignore
-
        ],
     )
     helper_test_symelem('F4132', val, debug, **kw)
@@ -644,19 +633,15 @@ def test_symelems_F432(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.166666667, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.0, 0.166666667], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
        C42=[
           SymElem(4, axis=[0, 0, 1], cen=[0.25, 0.25, 0.0], hel=0.5, label='C42'),  # type: ignore
-
        ],
     )
     helper_test_symelem('F432', val, debug, **kw)
@@ -673,17 +658,13 @@ def test_symelems_F23(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.16666666666666666, 0.16666666666666666, 0.0], hel=0.5773502691896257, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.16666666666666666, 0.0, 0.16666666666666666], hel=1.154700538368877, label='C32'),  # type: ignore
-
        ],
     )
     helper_test_symelem('F23', val, debug, **kw)
@@ -704,23 +685,17 @@ def test_symelems_I432(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 1], cen=[0.25, 0.0, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
           SymElem(2, axis=[-1, 1, 0], cen=[0.5, 0.0, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[1, -1, 1], cen=[0.333333333, 0.333333333, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, -1], cen=[0.333333333, 0.0, 0.333333333], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
        C42=[
           SymElem(4, axis=[0, 1, 0], cen=[0.5, 0.0, 0.0], hel=0.5, label='C42'),  # type: ignore
-
        ],
     )
     helper_test_symelem('I432', val, debug, **kw)
@@ -737,17 +712,13 @@ def test_symelems_R32(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[1, 0, 0], cen=[0.083333333, 0.166666667, 0.166666667], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[0, 0, 1], cen=[0.333333334, 0.0, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[0, 0, 1], cen=[0.666666667, 0.0, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
        ],
     )
     helper_test_symelem('R32', val, debug, **kw)
@@ -757,17 +728,12 @@ def test_symelems_P1211(debug=False, **kw):
     val = dict(
        C21=[
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, 0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 0.5], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C11=[
           SymElem(1, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P1211', val, debug, **kw)
@@ -783,13 +749,9 @@ def test_symelems_P2221(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[0.0, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P2221', val, debug, **kw)
@@ -803,13 +765,9 @@ def test_symelems_P21212(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 1, 0], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.25, 0.0, 0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 0.5], hel=0.5, label='C21'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P21212', val, debug, **kw)
@@ -828,9 +786,7 @@ def test_symelems_C121(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 1, 0], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.25, 0.0, 0.5], hel=0.5, label='C21'),  # type: ignore
-
        ],
     )
     helper_test_symelem('C121', val, debug, **kw)
@@ -876,11 +832,9 @@ def test_symelems_P23(debug=False, **kw):
        ],
        C31=[
           SymElem(3, axis=[1, -1, 1], cen=[0.333333333, 0.333333333, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, -1], cen=[0.333333333, 0.0, 0.333333333], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P23', val, debug, **kw)
@@ -896,17 +850,13 @@ def test_symelems_I213(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 0.25], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.166666667, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, 1], cen=[0.0, 0.333333333, 0.666666667], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
     )
     helper_test_symelem('I213', val, debug, **kw)
@@ -923,15 +873,12 @@ def test_symelems_I23(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[1, -1, 1], cen=[0.333333333, 0.333333333, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, -1], cen=[0.333333333, 0.0, 0.333333333], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
     )
     helper_test_symelem('I23', val, debug, **kw)
@@ -944,14 +891,12 @@ def test_symelems_I4(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.75, 0.75, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C4=[
           SymElem(4, axis=[0, 0, 1], cen=[-0.5, 0.5, 1.0], label='C4'),
        ],
        C42=[
           SymElem(4, axis=[0, 0, 1], cen=[0.0, 0.5, 0.0], hel=0.5, label='C42'),  # type: ignore
-
        ],
     )
     helper_test_symelem('I4', val, debug, **kw)
@@ -964,11 +909,9 @@ def test_symelems_I41(debug=False, **kw):
        ],
        C41=[
           SymElem(4, axis=[0, 0, 1], cen=[0.25, 0.75, 0.0], hel=0.25, label='C41'),  # type: ignore
-
        ],
        C43=[
           SymElem(4, axis=[0, 0, 1], cen=[0.25, 0.25, 0.0], hel=0.75, label='C43'),  # type: ignore
-
        ],
     )
     helper_test_symelem('I41', val, debug, **kw)
@@ -986,25 +929,19 @@ def test_symelems_I4132(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 1, 1], cen=[0.125, 0.25, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 1], cen=[0.375, 0.0, 0.25], hel=0.707106781, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.166666667, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, 1], cen=[0.0, 0.333333333, 0.666666667], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
        C41=[
           SymElem(4, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.25, label='C41'),  # type: ignore
-
        ],
        C43=[
           SymElem(4, axis=[0, 1, 0], cen=[0.5, 0.0, 0.25], hel=0.75, label='C43'),  # type: ignore
-
        ],
     )
     helper_test_symelem('I4132', val, debug, **kw)
@@ -1017,11 +954,9 @@ def test_symelems_R3(debug=False, **kw):
        ],
        C32=[
           SymElem(3, axis=[0, 0, 1], cen=[0.333333334, 0.0, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[0, 0, 1], cen=[0.333333334, 0.333333333, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
        ],
     )
     helper_test_symelem('R3', val, debug, **kw)
@@ -1035,15 +970,11 @@ def test_symelems_P3121(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.333333333], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.833333333], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
           SymElem(3, axis=[0, 0, 1], cen=[0.666666666, 0.333333333, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P3121', val, debug, **kw)
@@ -1052,17 +983,11 @@ def test_symelems_P3121(debug=False, **kw):
 def test_symelems_P212121(debug=False, **kw):
     val = dict(C21=[
        SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, 0.25], hel=0.5, label='C21'),  # type: ignore
-
        SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 0.25], hel=0.5, label='C21'),  # type: ignore
-
        SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 0.5], hel=0.5, label='C21'),  # type: ignore
-
     ], )
     helper_test_symelem('P212121', val, debug, **kw)
 
@@ -1071,15 +996,11 @@ def test_symelems_P31(debug=False, **kw):
     val = dict(
        C31=[
           SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
           SymElem(3, axis=[0, 0, 1], cen=[0.666666666, 0.333333333, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
           SymElem(3, axis=[0, 0, 1], cen=[0.333333333, 0.666666666, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
        ],
        C11=[
           SymElem(1, axis=[0, 1, 0], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P31', val, debug, **kw)
@@ -1089,15 +1010,11 @@ def test_symelems_P32(debug=False, **kw):
     val = dict(
        C32=[
           SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
           SymElem(3, axis=[0, 0, 1], cen=[0.666666666, 0.333333333, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
           SymElem(3, axis=[0, 0, 1], cen=[0.333333333, 0.666666666, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
        ],
        C11=[
           SymElem(1, axis=[0, 1, 0], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P32', val, debug, **kw)
@@ -1110,17 +1027,13 @@ def test_symelems_P213(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 0.25], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.16666666666666666, 0.16666666666666666, 0.0], hel=0.5773502691896257, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, 1], cen=[0.0, 0.3333333333333333, 0.6666666666666666], hel=1.154700538368877, label='C32'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P213', val, debug, **kw)
@@ -1134,15 +1047,11 @@ def test_symelems_P3221(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.166666667], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.666666667], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
           SymElem(3, axis=[0, 0, 1], cen=[0.666666666, 0.333333333, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P3221', val, debug, **kw)
@@ -1152,17 +1061,13 @@ def test_symelems_P41(debug=False, **kw):
     val = dict(
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C41=[
           SymElem(4, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.25, label='C41'),  # type: ignore
-
           SymElem(4, axis=[0, 0, 1], cen=[0.5, 0.5, 0.0], hel=0.25, label='C41'),  # type: ignore
-
        ],
        C11=[
           SymElem(1, axis=[0, 1, 0], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P41', val, debug, **kw)
@@ -1175,11 +1080,9 @@ def test_symelems_P41212(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[1, 1, 0], cen=[0.0, 0.5, 0.5], hel=0.707106781, label='C21'),  # type: ignore
-
        ],
        C41=[
           SymElem(4, axis=[0, 0, 1], cen=[0.0, 0.5, 0.0], hel=0.25, label='C41'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P41212', val, debug, **kw)
@@ -1195,21 +1098,16 @@ def test_symelems_P4132(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 0.25], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 1], cen=[0.125, 0.25, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.166666667, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, 1], cen=[0.0, 0.333333333, 0.666666667], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
        C41=[
           SymElem(4, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.25, label='C41'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P4132', val, debug, **kw)
@@ -1229,23 +1127,17 @@ def test_symelems_P4232(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 1, 1], cen=[0.25, 0.0, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 1], cen=[0.75, 0.0, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[1, -1, 1], cen=[0.333333333, 0.333333333, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, -1], cen=[0.333333333, 0.0, 0.333333333], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
        C42=[
           SymElem(4, axis=[0, 1, 0], cen=[0.5, 0.0, 0.0], hel=0.5, label='C42'),  # type: ignore
-
           SymElem(4, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C42'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P4232', val, debug, **kw)
@@ -1255,17 +1147,13 @@ def test_symelems_P43(debug=False, **kw):
     val = dict(
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C43=[
           SymElem(4, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.75, label='C43'),  # type: ignore
-
           SymElem(4, axis=[0, 0, 1], cen=[0.5, 0.5, 0.0], hel=0.75, label='C43'),  # type: ignore
-
        ],
        C11=[
           SymElem(1, axis=[0, 1, 0], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P43', val, debug, **kw)
@@ -1287,17 +1175,13 @@ def test_symelems_P432(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[-1, 0, 1], cen=[0.5, 0.5, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
           SymElem(2, axis=[-1, 1, 0], cen=[0.5, 0.0, 0.0], hel=0.707106781, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[1, -1, 1], cen=[0.333333333, 0.333333333, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, -1], cen=[0.333333333, 0.0, 0.333333333], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P432', val, debug, **kw)
@@ -1310,17 +1194,12 @@ def test_symelems_P43212(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.25, 0.0, 0.875], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.75, 0.125], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 1, 0], cen=[0.0, 0.5, 0.0], hel=0.7071067811865476, label='C21'),  # type: ignore
-
        ],
        C43=[
           SymElem(4, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.75, label='C43'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P43212', val, debug, **kw)
@@ -1336,21 +1215,16 @@ def test_symelems_P4332(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 1], cen=[0.375, 0.0, 0.25], hel=0.707106781, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[-1, 1, 1], cen=[0.166666667, 0.166666667, 0.0], hel=0.577350269, label='C31'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[1, 1, 1], cen=[0.0, 0.333333333, 0.666666667], hel=1.154700538, label='C32'),  # type: ignore
-
        ],
        C43=[
           SymElem(4, axis=[0, 1, 0], cen=[0.5, 0.0, 0.25], hel=0.75, label='C43'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P4332', val, debug, **kw)
@@ -1369,7 +1243,6 @@ def test_symelems_P6(debug=False, **kw):
        ],
        C11=[
           SymElem(1, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P6', val, debug, **kw)
@@ -1379,19 +1252,15 @@ def test_symelems_P61(debug=False, **kw):
     val = dict(
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[0, 0, 1], cen=[0.666666667, 0.333333333, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
        ],
        C61=[
           SymElem(6, axis=[0, 0, 1], cen=[1e-09, 0.0, 0.0], hel=0.166666667, label='C61'),  # type: ignore
-
        ],
        C11=[
           SymElem(1, axis=[0, 1, 0], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P61', val, debug, **kw)
@@ -1404,17 +1273,13 @@ def test_symelems_P6122(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C31=[
           SymElem(3, axis=[0, 0, 1], cen=[0.666666667, 0.333333333, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
        ],
        C61=[
           SymElem(6, axis=[0, 0, 1], cen=[1e-09, 0.0, 0.0], hel=0.166666667, label='C61'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P6122', val, debug, **kw)
@@ -1428,11 +1293,9 @@ def test_symelems_P62(debug=False, **kw):
        ],
        C32=[
           SymElem(3, axis=[0, 0, 1], cen=[0.666666667, 0.333333333, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
        ],
        C62=[
           SymElem(6, axis=[0, 0, 1], cen=[1e-09, 0.0, 0.0], hel=0.333333333, label='C62'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P62', val, debug, **kw)
@@ -1446,11 +1309,9 @@ def test_symelems_P63(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C63=[
           SymElem(6, axis=[0, 0, 1], cen=[1e-09, 0.0, 0.0], hel=0.5, label='C63'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P63', val, debug, **kw)
@@ -1464,11 +1325,9 @@ def test_symelems_P64(debug=False, **kw):
        ],
        C31=[
           SymElem(3, axis=[0, 0, 1], cen=[0.666666667, 0.333333333, 0.0], hel=0.333333333, label='C31'),  # type: ignore
-
        ],
        C64=[
           SymElem(6, axis=[0, 0, 1], cen=[1e-09, 0.0, 0.0], hel=0.666666667, label='C64'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P64', val, debug, **kw)
@@ -1478,19 +1337,15 @@ def test_symelems_P65(debug=False, **kw):
     val = dict(
        C21=[
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[0, 0, 1], cen=[0.666666667, 0.333333333, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
        ],
        C65=[
           SymElem(6, axis=[0, 0, 1], cen=[1e-09, 0.0, 0.0], hel=0.833333333, label='C65'),  # type: ignore
-
        ],
        C11=[
           SymElem(1, axis=[0, 1, 0], cen=[0.0, 0.0, 0.0], hel=1.0, label='C11'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P65', val, debug, **kw)
@@ -1503,17 +1358,13 @@ def test_symelems_P6522(debug=False, **kw):
        ],
        C21=[
           SymElem(2, axis=[1, 0, 0], cen=[0.25, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[0.5, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
        ],
        C32=[
           SymElem(3, axis=[0, 0, 1], cen=[0.666666667, 0.333333333, 0.0], hel=0.666666667, label='C32'),  # type: ignore
-
        ],
        C65=[
           SymElem(6, axis=[0, 0, 1], cen=[1e-09, 0.0, 0.0], hel=0.833333333, label='C65'),  # type: ignore
-
        ],
     )
     helper_test_symelem('P6522', val, debug, **kw)
@@ -1526,61 +1377,33 @@ def test_remove_redundant_screws():
     elems = {
        'C21': [
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[-0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, -0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, 0.25], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, -0.25], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[-0.25, 0.5, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, -0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, -0.25, 0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, -0.25, -0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.75, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, 0.75], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.75, 0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.75, -0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 1.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[-0.25, 1.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 0.75], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 1.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 1.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, -0.25, 1.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 1.25, 0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 1.25, -0.5], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.75, 1.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, 1.25], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.5, 0.0, 1.25], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 1.25, 1.0], hel=0.5, label='C21'),  # type: ignore
-
        ]
     }
     # ic(f4cel.shape)
@@ -1590,17 +1413,11 @@ def test_remove_redundant_screws():
     assert elems2 == {
        'C21': [
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 0, 1], cen=[-0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[1, 0, 0], cen=[0.0, -0.25, 0.0], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, 0.25], hel=0.5, label='C21'),  # type: ignore
-
           SymElem(2, axis=[0, 1, 0], cen=[0.0, 0.0, -0.25], hel=0.5, label='C21'),  # type: ignore
-
        ]
     }
 

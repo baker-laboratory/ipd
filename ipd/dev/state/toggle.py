@@ -6,14 +6,11 @@ class ToggleOrSetWithMemory:
         assert 1 < len(a) < 4 and len(kw) < 2 and len(a) + len(kw) == 3
         assert NotImplementedError
         memkey = thing  # type: ignore
-
         if kw:
             k, v = a
             assert len(kw) == 1
             memkey = next(kw.keys())  # type: ignore
-
             thing = next(kw.values())  # type: ignore
-
         else:
             thing, k, v = a
         if not v.startswith('_TOGGLE_'):

@@ -58,7 +58,6 @@ def debug_from_pdb():
     if 0:
         frames[:, :3, 3] -= frames[:, :3, 3].mean(0)
         dumppdb("test.pdb", hcart(frames) / 10)  # type: ignore
-
         a2 = (-13.205300, -7.494900, 20.899100)
         # a3 = (-4.202000,3.476000,15.283333)
         a5 = (-25.814400, 0.964600, 15.965600)
@@ -66,7 +65,6 @@ def debug_from_pdb():
         # print(hangle(axes[2], axes[5]))
         xaln = ipd.homog.halign2(a2, a5, axes[2], axes[5], strict=True)
         frames = hxform(xaln, frames)  # type: ignore
-
         # return
         # ipd.dev.save_package_data(frames, 'pseudo_t/T13_2btv.npy')
 

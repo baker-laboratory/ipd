@@ -41,10 +41,8 @@ def pymol_viz_RigidBody(
 ):
     kw = ipd.dev.Bunch(kw)
     import pymol  # type: ignore
-
     v = pymol.cmd.get_view()
     state["seenit"][name] += 1  # type: ignore
-
     assert 0 == np.sum(np.isnan(body.coords))
 
     cgo = list()
@@ -59,7 +57,6 @@ def pymol_viz_RigidBody(
         crds = body.coords
         for i in set(pairs[:, 0]):
             cgo += cgo_sphere(crds[i], showpairsdist / 2, kw.col)  # type: ignore
-
     if showpairswith is not None:
         assert 0
         crds1 = body.coords
@@ -70,7 +67,6 @@ def pymol_viz_RigidBody(
 
     if addtocgo is None:
         pymol.cmd.load_cgo(cgo, f'{name}_{state["seenit"][name]}')  # type: ignore
-
         pymol.cmd.set_view(v)
     else:
         addtocgo.extend(cgo)

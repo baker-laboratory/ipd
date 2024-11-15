@@ -12,7 +12,6 @@ pytest.importorskip('torch')
 pytest.importorskip('gemmi')
 pytest.importorskip('ipd.voxel.voxel_cuda')
 th = lazimport('torch')  # type: ignore
-
 from ipd.voxel.voxel_cuda import _voxel
 
 def main():
@@ -85,10 +84,8 @@ def test_numba_vox_create():
 
     # ipd.showme(vox)
     vox.grid = grid  # type: ignore
-
     # ipd.showme(vox)
     assert th.allclose(vox.lb, lb)  # type: ignore
-
     assert th.allclose(vox.grid, grid, atol=1e-3)  # type: ignore
 
 def make_test_points(npts, bound, ngen=None):

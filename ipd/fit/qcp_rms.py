@@ -85,7 +85,6 @@ def numba_qcp_rmsd_cuda_fixlen(iprod, E0, npts, getfit, nthread):
     rms = th.empty_like(E0)
     xfit = th.empty((len(E0) if getfit else 0, 4, 4), dtype=E0.dtype, device=E0.device)
     numba_kernel_qcp_raw[len(iprod), nthread](rms, xfit, iprod, E0, npts, getfit)  # type: ignore
-
     return rms, xfit
 
 @cuda.jit('f4( f4[:,:], f4[:,:], f4, f4, b1 )', cache=False, device=True)
@@ -270,7 +269,6 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
 @cuda.jit('void(f4[:],f4[:,:,:],f4[:,:,:],f4[:],f4,b1)', cache=False, fastmath=True)
 def numba_kernel_qcp_raw(rms, rot, iprod, E0, npts, getfit):
     i = cuda.grid(1)  # type: ignore
-
     if i < E0.shape[0]:
         rms[i] = numba_device_calc_rms_rot(rot[i], iprod[i], E0[i], npts, getfit)
 

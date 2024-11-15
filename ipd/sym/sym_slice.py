@@ -40,16 +40,13 @@ class SymSlice:
             if isinstance(mask, int): L, beg, symend = mask, 0, mask
             if isinstance(mask, tuple): L, beg, symend = mask
             mask = th.zeros(L, dtype=bool)  # type: ignore
-
             mask[range(beg, symend)] = True  # type: ignore
-
         self.mask = th.as_tensor(mask, dtype=bool)
         non0 = th.nonzero(self.mask)
         if len(non0):
             self.beg, self.end = int(non0[0]), int(non0[-1] + 1)
         else:
             self.beg, self.end = beg, beg  # type: ignore
-
         self.asuend = None
         self.fit = fit
         self.kind = kind
@@ -297,7 +294,6 @@ class SymIndex:
     def is_asu_subsequence(self, idx):
         try:
             return th.all(self.idx_asu_to_sym[idx] >= 0)  # type: ignore
-
         except IndexError:
             return False
 

@@ -95,7 +95,6 @@ def rindex(lst, val):
 def testfile_of(projects, path, bname, debug=False, **kw) -> str:
     "find testfile for a given file"
     if bname.startswith('_'): return None  # type: ignore
-
     root = '/' if path and path[0] == '/' else ''
     spath = path.split('/')
     i = max(rindex(spath, proj) for proj in projects)

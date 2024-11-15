@@ -48,13 +48,10 @@ def test_asugrid_case1():
     # yapf: enable
 
     frames = ipd.hscaled(newcell[0], frames)  # type: ignore
-
     sympos = ipd.homog.hxformpts(frames, newpos[0])
     ic(sympos)  # type: ignore
-
     dist = ipd.homog.hnorm(sympos[:, None] - sympos[None])[0, 1:]
     ic(dist)  # type: ignore
-
     assert 0
 
 @pytest.mark.fast
@@ -111,7 +108,6 @@ def test_asugrid_I213_offposition2():
     assert len(newpos)
     # ic(pos)
     ic(newpos[0], newcell[0])  # type: ignore
-
     ipd.sym.asugrid.vispoints(newpos, newcell, frames, allframes)
 
 @pytest.mark.fast
@@ -344,7 +340,6 @@ def test_asugrid_P432_422():
     )
     print(repr(newpos))
     ref  # type: ignore
-
     assert np.allclose(
         newpos,
         np.array([

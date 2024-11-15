@@ -24,7 +24,6 @@ def extract_t_asu(frames, t, sym="I"):
             if np.sum(d2 < 1) == 0:
                 break
         accepted = np.concatenate([accepted, [c]])  # type: ignore
-
         if len(accepted) == t:
             break
 
@@ -43,7 +42,6 @@ def pseudo_t_start(t):
     frames = ipd.dev.load_package_data(dat[t])
     assert len(frames) == 60 * t
     ic(frames.shape)  # type: ignore
-
     asu = extract_t_asu(frames, t)
     # ipd.showme(asu, weight=20, xyzlen=[20, 14, 8])
     # ipd.showme(ipd.sym.make('I', asu), weight=10, xyzlen=[10, 7, 4])
@@ -154,9 +152,7 @@ def create_pseudo_t(t, sym="I"):
         asyms.append(asym)
     losses = th.tensor(losses)
     ic(losses, min(losses))  # type: ignore
-
     asym = asyms[th.argmin(losses)]
     sym2 = h.xform(frames, asym2).reshape(-1, 4, 4)  # type: ignore
-
     # ipd.showme(sym2, weight=2, colorset=range(t))
     # ipd.showme(asym2, weight=4, colorset=range(t))

@@ -121,7 +121,6 @@ def asuslide(
         recenter_asu_frames(assembly, method="to_center", axis=axes, **kw)
         if printme:
             ic(f"recenter {centerasu}")  # type: ignore
-
         # if printme: ic(f'scale {cellsize}')
     if doscale and not alongaxis:
         cellsize = slide_scale(assembly, cellsize, step=scalestep, **kw)
@@ -148,22 +147,18 @@ def asuslide(
                         recenter_asu_frames(assembly, method=centerasu, axis=axisperp, **kw)
                         if printme:
                             ic(f"recenter {centerasu}")  # type: ignore
-
                     else:
                         # ic(axpos)
                         timer.checkpoint("slide_axis_perp_before")
                         slide = slide_axis(axisperp, assembly, perp=True, nbrs=None, step=step, **kw)  # type: ignore
-
                         # if printme: ic(f'slide along {axisperp[:3]} by {slide}')
                         timer.checkpoint("slide_axis_perp")
                 if i < alongaxis:  # type: ignore
-
                     slide = slide_axis(axis, assembly, nbrs="auto", step=step, **kw)
                     timer.checkpoint("slide_axis")
                     # printme: ic(f'slide along {axis[:3]} by {slide}')
                 if doscale and alongaxis:
                     slide = slide_axis(assembly.asym.com(), assembly, nbrs=None, step=step, **kw)  # type: ignore
-
                     timer.checkpoint("slide_axis")
                 elif doscale:
                     cellsize = slide_cellsize(assembly, cellsize, step=scalestep, **kw)
@@ -225,7 +220,6 @@ def slide_axis(
 
     iflip, flip = 0, -1.0
     startsclose = tooclosefunc(assembly, nbrs, **kw)  # type: ignore
-
     if startsclose:
         iflip, flip = -1, 1.0
 
@@ -272,7 +266,6 @@ def slide_axis(
         if showme:
             ipd.showme(assembly, name="slideaxis%f" % axis[0], **kw)
         close = tooclosefunc(assembly, nbrs, **kw)  # type: ignore
-
         if iflip and nobadsteps and close - lastclose > 0.01:
             break
         lastclose = close
@@ -282,7 +275,6 @@ def slide_axis(
             break
 
         if clashnbrs is not None and tooclosefunc(assembly, clashnbrs):  # type: ignore
-
             assert 0
             break
     # ic('slideaxis', perp, success)
@@ -364,7 +356,6 @@ def slide_cellsize(
 
     iflip, flip = 0, -1.0
     startsclose = bool(tooclosefunc(assembly, nbrs, **kw))  # type: ignore
-
     if startsclose:
         # ic('scale cell tooclose')
         iflip, flip = -1, 1.0
@@ -373,7 +364,6 @@ def slide_cellsize(
     success, lastclose = False, 1.0
     for i in range(maxstep):
         close = tooclosefunc(assembly, nbrs, **kw)  # type: ignore
-
         # ic('SLIDE CELLSIZE', i, bool(close), startsclose, nbrs)
         if iflip + bool(close):
             # print(f'{i} {close}', flush=True)
@@ -425,7 +415,6 @@ def slide_cellsize(
 
     if iflip == 0 and success:  # back off
         delta = 1.0 / delta  # type: ignore
-
         assembly.scale_frames(delta, safe=False)
         cellsize *= delta
 
@@ -514,7 +503,6 @@ def recenter_asu_frames(
 
     # ipd.showme(newcen, name='newcen')
     pos = assembly.asym.setcom(newcen)  # type: ignore
-
     if showme:
         ipd.showme(assembly, name="recenterasu", **kw)
 

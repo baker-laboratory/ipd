@@ -5,11 +5,9 @@ try:
         raise ImportError
     import numba
     from numba.types import float32, float64, int32, int64  # type: ignore
-
     jit = numba.njit(nogil=True, fastmath=True)
 
     def guvec(sigs, layout, func):  # type: ignore
-
         return numba.guvectorize(sigs, layout, nopython=True, fastmath=True)(func)  # nogil not supported
 
 except ImportError:

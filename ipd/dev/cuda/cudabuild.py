@@ -32,9 +32,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         Extension module.
     """
     import torch as th  # type: ignore
-
     import torch.utils.cpp_extension  # type: ignore
-
     # os.environ['CC'] = "gcc-9"
     commonflags = ['-DEIGEN_NO_DEBUG'] if mode == 'release' else []
     # ic('start cuda build')

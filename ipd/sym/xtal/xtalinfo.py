@@ -29,7 +29,6 @@ def all_xtal_names():
     if _xtal_info_dict is None:
         _populate__xtal_info_dict()
     allxtals = [k for k in _xtal_info_dict if not k.startswith("DEBUG")]  # type: ignore
-
     return allxtals
 
 def _populate__xtal_info_dict():
@@ -260,11 +259,9 @@ def xtalinfo(name):
         else:
             raise ValueError(f'unknown xtal {name}')
     if name not in _xtal_info_dict:  # type: ignore
-
         name = name.replace("_", " ")
     # ic(name)
     info = _xtal_info_dict[name]  # type: ignore
-
     return name, info
 
 """

@@ -37,7 +37,6 @@ def printheader(*strs, char="-", width=80, printme=True, flush=True, frac=0.5, p
 def check_torch_to_numpy(stuff):
     if "torch" in sys.modules:
         import torch  # type: ignore
-
         if torch.is_tensor(stuff):
             stuff = stuff.detach().cpu().numpy()
     return stuff
@@ -77,13 +76,9 @@ def stdout_tee(fname, with_stderr=False):
 def stdout_untee():
     tee = sys.stdout
     tee.fd1.close()  # type: ignore
-
     sys.stdout = tee.fd2  # type: ignore
-
     if tee.with_stderr:  # type: ignore
-
         sys.stderr = sys.stderr.fd2  # type: ignore
-
     print("!!!!!!! stdout_untee", tee.fname)  # type: ignore
 
 class Flusher:
@@ -113,12 +108,10 @@ def touuid(val):
 
 def datetimetag():
     now = datetime.now()  # type: ignore
-
     return now.strftime(ipd.DATETIME_FORMAT)
 
 def datetag(sep="_"):
     now = datetime.now()  # type: ignore
-
     if sep == "label":
         return now.strftime("y%Ym%md%d")
     return now.strftime(f"%Y{sep}%m{sep}%d")
@@ -167,7 +160,6 @@ def generic_equals(this, that, checktypes=False, debug=False):
         return np.allclose(this, that)
     if hasattr(this, "equal_to"):
         return this.equal_to(that)  # type: ignore
-
     if debug:
         print("!!!!!!!!!!", type(this))
         if this != that:
@@ -185,14 +177,12 @@ class UnhashableSet:
                 raise ValueError(f"UnhashableSet duplicate members {thing}")
 
     def difference(a, b):  # type: ignore
-
         a = list(a)
         b = list(b)
         assert isinstance(b, a.__class__)
         return [u for u in a if u not in b]
 
     def intersection(a, b):  # type: ignore
-
         a = list(a)
         b = list(b)
         assert isinstance(b, a.__class__)
@@ -204,7 +194,6 @@ class UnhashableSet:
         return iter(self.stuff)
 
     def __eq__(a, b):  # type: ignore
-
         assert isinstance(b, a.__class__)
         a = list(a)
         b = list(b)

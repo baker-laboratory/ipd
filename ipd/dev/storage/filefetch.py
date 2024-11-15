@@ -14,15 +14,12 @@ class FileFetcher(threading.Thread):
 
     def run(self):
         if os.path.exists(self.localfname): return  # type: ignore
-
         if os.path.exists(self.fname):  # type: ignore
-
             shutil.copyfile(self.fname, self.tmpfname)
         else:
             out = check_output(f'rsync digs:{self.fname} {self.tmpfname}'.split(), stderr=subprocess.STDOUT)
             print('rsynced')
             if out.lower().count(b'error'): notify(out)  # type: ignore
-
         shutil.move(self.tmpfname, self.localfname)
 
 class FileCache:
@@ -44,9 +41,7 @@ class PrefetchLocalFileCache(FileCache):
         self.path = path
         self.fetchers = {}
         os.makedirs(path, exist_ok=True)  # type: ignore
-
         self.available = set(os.listdir(path))  # type: ignore
-
         self.fnames = fnames
         self.numprefetch = numprefetch
         self[0]

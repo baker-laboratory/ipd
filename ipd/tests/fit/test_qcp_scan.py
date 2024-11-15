@@ -86,7 +86,6 @@ def helper_test_qcp_scan_cuda(N, Ncyc, natom, i=0, ntgt=0, bbhetero=False):
             assert th.allclose(rms2[tuple(idx - lbub[:, 0])], rms2[tuple(idx2 - lbub[:, 0])], atol=1e-3)
     except AssertionError as e:
         print('fail on', N, i, Ncyc, natom, seed)  # type: ignore
-
         raise e
 
 @ipd.timed
@@ -126,17 +125,13 @@ def helper_test_qcpscan_perf(nscan, nres, natom, cyclic, nsamp):
             for isamp in range(nsamp):
                 idx, rms, xfit = ipd.fit.qcp_scan_ref(bb, tgt, lbub, cyclic)
         assert all(idx == idx0)  # type: ignore
-
         assert abs(rms) < 0.001  # type: ignore
-
         assert th.allclose(xrand[:3, :3], xfit[:3, :3], atol=1e-4)  # type: ignore
-
         # ic(xrand[:3,3], xfit[:3,3])
         # ic(h.xform(xfit, tgt))
         # ic(h.xform(xrand, tgt))
         # ic(bb[idx])
         assert th.allclose(xrand[:3, 3], xfit[:3, 3], atol=1e-4)  # type: ignore
-
         rate = th.prod(lbub[:, 1] - lbub[:, 0]) / t.elapsed() / 1_000_000 * nsamp
         print(f'qcp_scan_ref torch        {nscan:4}s {nres:2}r {natom:3}a {cyclic:2}c rate {rate:8.3f}M')
     # lbub = th.tensor([[0, 50], [0, 50], [0, 50], [0, 50]], dtype=th.int32, device='cuda')

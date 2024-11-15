@@ -99,7 +99,6 @@ class Timer:
         traceback=None,
     ):
         self.checkpoints["total"].append(time.perf_counter() - self._start)  # type: ignore
-
         self._start = None
         if self.verbose:
             log.debug(f"Timer {self.name} finished")
@@ -152,7 +151,6 @@ class Timer:
         times = self.report_dict(order=order, summary=summary, timecut=timecut)
         if not times:
             times["total$$$$"] = time.perf_counter() - self._start  # type: ignore
-
         for cpoint, t in times.items():
             if not cpoint.count(pattern):
                 continue
@@ -206,7 +204,6 @@ def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=N
         fulllabel = f"{fn}:{clsname}{func}"
     if label:
         fulllabel += f":{label}"  # type: ignore
-
     t.checkpoint(fulllabel, autolabel=label is None)
 
 def timed_func(func, *, label=None):
@@ -220,13 +217,10 @@ def timed_func(func, *, label=None):
 
         @functools.wraps(func)
         async def wrapper(*a, **kw):  # type: ignore
-
             kwarg = dict(label=label, filename=filen, funcname=funcn)
             checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
-
             val = await func(*a, **kw)
             checkpoint(kw, **kwarg)  # type: ignore
-
             return val
     else:
 
@@ -234,10 +228,8 @@ def timed_func(func, *, label=None):
         def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
             checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
-
             val = func(*a, **kw)
             checkpoint(kw, **kwarg)  # type: ignore
-
             return val
 
     return wrapper

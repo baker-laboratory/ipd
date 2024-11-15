@@ -29,7 +29,6 @@ def get_pisces_file(max_seq_ident=50, maxresl=1.5, **kw):
     for si, resl in picesfiles:
         if si >= max_seq_ident and resl > maxresl:
             return picesfiles[lastkey]  # type: ignore
-
         lastkey = si, resl
     raise ValueError(f"cant find pisces set for si={max_seq_ident}, maxresl={maxresl}")
 
@@ -140,17 +139,14 @@ def download_pisces(path=None):
     if path is None:
         path = ipd.dev.package_data_path("pdb/pisces")
     os.makedirs(path, exist_ok=True)  # type: ignore
-
     import urllib
 
     for piscesfile in picesfiles.values():
         url = piscesurl + "/" + piscesfile
         fname = os.path.join(path, piscesfile)  # type: ignore
-
         if not os.path.exists(fname + ".xz"):
             print("downloading", piscesfile)
             urllib.request.urlretrieve(url, fname)  # type: ignore
-
             os.system("xz " + fname)
         else:
             print("already downloaded", piscesfile)
