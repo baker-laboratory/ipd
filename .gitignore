@@ -173,5 +173,5 @@ ppp_server_data
 slurm_logs_*
 .yapf_hash
 .pyright_hash
-.pyright_hash_last_commit
+# .pyright_hash_last_commit
 server_datadir
