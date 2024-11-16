@@ -31,7 +31,7 @@ def add_type_ignore_comments(errors: list[dict]) -> None:
         for i, line in enumerate(lines):
             if i in lineno and '# type: ignore' not in line:
                 assert line.strip()
-                line = line.rstrip() + '  # type: ignore\n'
+                line = f'{line.rstrip()}  # type: ignore'
             modified_lines.append(line)
 
         # Write modified content back to file

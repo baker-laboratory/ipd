@@ -1,8 +1,8 @@
 import contextlib
 import copy
 import itertools
-import typing
 from abc import ABC, abstractmethod
+from typing_extensions import TypeVar
 
 import assertpy
 import numpy as np
@@ -13,8 +13,9 @@ import ipd
 th = ipd.dev.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
 from ipd.sym.sym_adapt import _sym_adapt
+from ipd.sym.sym_index import SymIndex
 
-T = typing.TypeVar('T')
+T = TypeVar('T')
 
 class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     """The SymmetryManager class encapsulates symmetry related functionality
@@ -48,7 +49,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     from kwargs by adding a function argument is slightly more correct
     and more convenient.
     """
-    kind = None
+    kind: str = 'base'
+    SymIndexType: type[SymIndex] = SymIndex
 
     def __init__(self, opt, symid=None, device=None, **kw) -> None:
         """Create a SymmetryManager."""
@@ -127,7 +129,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             if pair is not None: return thing, pair  # type: ignore
             return thing
 
-        self._verify_index(thing)
+        self.verify_index(thing)
 
         thing = self.sym_adapt(thing, isasym=isasym)
         # print(f'sym {type(thing)}', key, flush=True)
@@ -409,9 +411,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             symdims = symdims[:1]
         return symdims
 
-    def tensor(self, *a, **kw):
-        return ipd.sym.sym_tensor.symtensor(self, *a, **kw)
-
     def mark_symmetrical(self, *args):
         for a in args:
             with contextlib.suppress(AttributeError):
@@ -427,22 +426,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return False
 
     @property
-    def in_multistep_protocol(self):
-        if 'rf_asym_only' not in self.opt._params: return False
-        return self.opt._params['rf_asym_only'] is not False
-
-    def multistep_adjusted_progress(self, t: float, T: float) -> tuple[float, float]:
-        asymsteps = self.opt._params['rf_asym_only'].diffuse_steps
-        assert min(asymsteps) == 0 and max(asymsteps) + 1 == len(asymsteps)
-        nasymstep = max(asymsteps) + 1
-        if t > T - nasymstep: n, N = t - T + nasymstep, nasymstep
-        else: n, N = t, T - nasymstep
-        # else: n, N = t, T
-        # return n / N, 1 / Neo
-        raise NotImplementedError('multistep_adjusted_progress not implemented')
-
-    @property
-    def idx(self) -> ipd.sym.SymIndex:  # type: ignore
+    def idx(self) -> SymIndex:
         """Return the idx of the symmetry managerm or a simple slice if
         None."""
         if not self._idx:
@@ -452,27 +436,22 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                 Lasu = self.opt.Lasu or L // self.opt.nsub
                 nsub = self.opt.nsub or L // Lasu
                 # ic(L,Lasu,nsub)
-                self._idx = ipd.sym.SymIndex(nsub, [(L, 0, Lasu * nsub)])
+                self._idx = self.SymIndexType(nsub, [(L, 0, Lasu * nsub)])
             except (TypeError, AttributeError):
-                return None
+                return None  # type: ignore
         return self._idx
 
     @idx.setter
-    def idx(self, idx):
+    def idx(self, idx: SymIndex):
         """Set the idx of the symmetry manager."""
-        if isinstance(idx, ipd.sym.SymIndex):
+        if isinstance(idx, self.SymIndexType):
             self._idx = idx
         elif self.nsub:  # type: ignore
-            self._idx = ipd.sym.SymIndex(self.nsub, idx)  # type: ignore
+            self._idx = self.SymIndexType(self.nsub, idx)  # type: ignore
         self._idx.to(self.device)  # type: ignore
 
-    def _verify_index(self, thing):
-        if self.idx:
-            # TODO: verify self.idx compatible with thing
-            pass
-        else:
-            if isinstance(thing, th.Tensor):
-                self.idx = len(thing)
+    def verify_index(self, thing):
+        pass
 
     def sym_adapt(self, thing, isasym=None) -> ipd.sym.SymAdapt:  # type: ignore
         """Return a SymAdapt object with metadata about the symmetry of the
@@ -515,9 +494,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         for axis in axes:
             onaxis |= ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
         return onaxis
-
-    def update_px0(self, indep, px0):
-        pass
 
     def __repr__(self):
         """Return a string representation of the SymmetryManager."""

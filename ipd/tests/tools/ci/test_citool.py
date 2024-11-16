@@ -43,17 +43,17 @@ os.chdir(f'{os.path.dirname(__file__)}/../../../..')
 def test_clitool_pytest():
     out = runipd('ci tests pytest --cmdonly')
     assert out.strip(
-    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable > pytest_ipd_ci_test_run.log'
+    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10 > pytest_ipd_ci_test_run.log'
 
     out = runipd("ci tests pytest --cmdonly --exe $exe --slurm --tee --gpu a4000")
     assert out.strip(
-    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log'
+    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log'
 
     out = runipd(
         "ci tests pytest --cmdonly --exe $exe --slurm --parallel 4 --tee --which 'test_call_speed test_loss_grad'")
     assert out.strip(
-    ) == """cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.nopar.log
-cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable 2>&1 | tee pytest_ipd_ci_test_run.log.par.log"""
+    ) == """cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.par.log
+cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.nopar.log"""
 
     # testdir = f'{ipd.projdir}/tests/crud'
 

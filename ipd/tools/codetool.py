@@ -24,7 +24,8 @@ class CodeTool(ipd.tools.IPDTool):
             conffile (str, optional): config file. Defaults to 'pyproject.toml'.
         """
         cmd = 'yapf -ip --style {conffile} -m {" ".join(changed_files)}'
-        ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
+        result = ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
+        raise typer.Exit(code=int(result.files_modified))
 
     def pyright(
         self,
@@ -51,4 +52,5 @@ class CodeTool(ipd.tools.IPDTool):
                 ipd.dev.add_type_ignore_comments(errors)
                 return
         cmd = 'pyright -p {conffile} {" ".join(changed_files)}'
-        ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
+        result = ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
+        raise typer.Exit(code=result.exitcode)

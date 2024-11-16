@@ -1,5 +1,7 @@
 name: run pytest on digs with slurm
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 permissions:
@@ -15,8 +17,7 @@ jobs:
     - name: setup
       run: |
         ipd update
-        ipd ci update_library
-        ipd ci repo setup_submodules
+        ipd ci update_library ipd
 
     - name: run ruff
       run: |
@@ -35,9 +36,20 @@ jobs:
       run: |
         ipd ci tests pytest
 
+    - name: Upload coverage reports to Codecov
+      run: |
+        curl -Os https://cli.codecov.io/latest/linux/codecov && chmod +x codecov
+        ./codecov --verbose upload-process --fail-on-error -t ${{ secrets.CODECOV_TOKEN }} -n 'service'-${{ github.run_id }} -F service -f coverage-service.xml
+
     - name: check test results
       run: |
         ipd ci tests check
+
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }}
+      uses: codecov/test-results-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     # - name: build docs
     #   run: |

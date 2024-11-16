@@ -1,9 +1,10 @@
-import contextlib
-import copy
-import dataclasses
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
+import contextlib
+import copy
 from functools import singledispatch
+import dataclasses
+from typing import Any
 
 import numpy as np
 
@@ -14,7 +15,7 @@ from ipd.sym.sym_kind import ShapeKind, SymKind, ValueKind
 th = lazyimport('torch', warn=False)
 
 @singledispatch
-def _sym_adapt(thing, sym, isasym=None):
+def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
     """Return a Symmable object that knows how to convert beteen input and a
     symmetrizable adapted form."""
     raise NotImplementedError(f"Don't know how to make SymAdapt for {type(thing)}")
@@ -42,26 +43,11 @@ def _(ary, sym, isasym):
     else:
         return SymAdaptNDArray(ary, sym, isasym)
 
-# class MetaSymAdapt(ABCMeta):
-#     '''Metaclass for SymAdapt, ensures all subclasses are registered here
-#     even if in other modules'''
-#     def __init__(cls, name, bases, dct):
-#         '''Register the SymAdapt base class'''
-#         super(MetaSymAdapt, cls).__init__(name, bases, dct)
-#         if bases == (ABC, ) and name == 'SymAdapt': return
-#         if not hasattr(cls, 'adapts'):
-#             raise TypeError(f'class {name} must define adapted type via adapts = ThingType')
-#         if cls.adapts is not None:
-
-#             @_sym_adapt.register(cls.adapts)  # type: ignore
-#             def _(thing, sym, isasym=None):
-#                 return cls(thing, sym, isasym)
-
 class SymAdapt(ABC):
-    """You must define a subclass of SymAdapt for each type you want to
-    symmetrize. Must have a kind and adapted property.
+    """You must define a subclass of SymAdapt for each type you want to symmetrize.
 
-    See the :SymAdaptIndep:`rf_diffusion.sym.sym_indep.SymAdaptIndep` class for an example.
+    Must have a kind and adapted property. See the :SymAdaptDataClass:`ipd.sim.SymAdaptDataClass` class for an example.
+    These classes are not meant for the end user, they will be used internally by the sym manager
     """
     def __init_subclass__(cls, **kw):
         if not hasattr(cls, 'adapts'):

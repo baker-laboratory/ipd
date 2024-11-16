@@ -1,3 +1,4 @@
+import collections
 import os
 import shutil
 import subprocess
@@ -8,6 +9,8 @@ import ipd
 
 class ProjecConfigtError(RuntimeError):
     pass
+
+RunOnChangedFilesResult = collections.namedtuple('RunOnChangedFilesResult', 'exitcode, files_modified')
 
 def run_on_changed_files(
     cmd_template: str,
@@ -34,14 +37,17 @@ def run_on_changed_files(
         files = set(prevhash.strip().split(os.linesep))
         exclude = ipd.dev.set_from_file(excludefile)
         prev = ipd.dev.set_from_file(hashfile)
+        exitcode, files_modified = 0, False
         if changed_files := {x.split()[1] for x in (files - prev)} - exclude:
             cmd = ipd.dev.eval_fstring(cmd_template, vars())
             print(cmd)
             if not dryrun:
-                os.system(cmd)
-                os.system(f'find {path} -name \\*.py -exec md5sum {{}} \\; > {hashfile}')
-                if prevhash != Path(hashfile).read_text():
-                    exit(-1)
+                exitcode = int(ipd.dev.run(cmd, capture=False, errok=True))
+                if not exitcode:
+                    os.system(f'find {path} -name \\*.py -exec md5sum {{}} \\; > {hashfile}')
+                    if prevhash != Path(hashfile).read_text():
+                        files_modified = True
+    return RunOnChangedFilesResult(exitcode, files_modified)
 
 def substitute_project_vars(*args, path: str = '.', **kw) -> list[str]:
     args = list(args)

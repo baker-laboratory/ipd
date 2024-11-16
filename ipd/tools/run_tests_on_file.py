@@ -26,17 +26,7 @@ _overrides = {
 
 # set to mannually map a file to another file
 _file_mappings = {
-    # 'sym_slice.py': ['tests/sym/test_sym_indep.py'],
-    # 'sym_slice.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
-    # 'sym_adapt.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
-    # 'sym_manager.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
-    # 'sym_manager.py': ['../rf2aa/tests/sym/test_sym_manager.py'],
-    # 'sym_manager.py': ['../rf2aa/tests/sym/test_sym_check.py'],
-    # 'sym_adapt.py': ['../rf2aa/tests/sym/test_sym_check.py'],
-    # 'sym_slice.py': ['../rf2aa/tests/sym/test_sym_check.py'],
-    # 'sym_adapt.py': ['../rf2aa/tests/sym/test_sym_manager.py'],
-    # 'sym_util.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
-    # 'thgeom.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
+    # ex: 'sym_slice.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
 }
 
 # postprocess command

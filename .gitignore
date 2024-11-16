@@ -175,3 +175,4 @@ slurm_logs_*
 .pyright_hash
 # .pyright_hash_last_commit
 server_datadir
+junit*.xml

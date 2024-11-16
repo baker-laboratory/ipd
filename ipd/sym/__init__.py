@@ -9,6 +9,7 @@ from ipd.sym.sym_factory import *
 from ipd.sym.sym_fitting import *
 from ipd.sym.sym_kind import *
 from ipd.sym.sym_slice import *
+from ipd.sym.sym_index import *
 from ipd.sym.sym_options import *
 from ipd.sym.sym_manager import *
 from ipd.sym.ipd_sym_manager import *
