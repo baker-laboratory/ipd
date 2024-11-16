@@ -149,7 +149,7 @@ class TestsTool(CITool):
         dryrun: bool = False,
         tee: bool = False,
         mem: list[str] = ['16G'],
-        flags: str = '--benchmark-disable --disable-warnings --durations=10',
+        flags: str = '',
         testdir: str = '.',
         cmdonly: bool = False,
     ):  # sourcery skip: merge-list-appends-into-extend
@@ -179,6 +179,7 @@ class TestsTool(CITool):
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
+        flags = f'{flags} --benchmark-disable --disable-warnings --cov --durations=10'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
         jobs = []
