@@ -154,7 +154,7 @@ class TestsTool(CITool):
         dryrun: bool = False,
         tee: bool = False,
         mem: list[str] = ['16G'],
-        flags: str = '--benchmark-disable --disable-warnings --durations=10',
+        flags: str = '',
         testdir: str = '.',
         cmdonly: bool = False,
     ):  # sourcery skip: merge-list-appends-into-extend
