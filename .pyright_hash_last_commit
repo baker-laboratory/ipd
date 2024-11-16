@@ -120,7 +120,7 @@ cd049a669212a4c388831eacd9ae5961  ipd/tools/ipdtool.py
 85cfb4b47a258031b30e8968fd27626b  ipd/tools/codetool.py
 dde2a7d2647b14b9d5207ab827d49c59  ipd/tools/pkg/pkgtool.py
 a7cad1ecfceb82e7685e2b5d77cec226  ipd/tools/run_tests_on_file.py
-1f9b2a84a6fc2444cbb412313131c19d  ipd/tools/ci/citool.py
+b2f3f5d06005469e68cffabe497823f5  ipd/tools/ci/citool.py
 dc4bd19680807e950fe2cea7438e146a  ipd/tools/ci/__init__.py
 701447eb7af2f4299b804c48fd64fa43  ipd/tools/__init__.py
 5f99456e268129af6dee51a4b0b556f4  ipd/tools/yapf_fast.py
