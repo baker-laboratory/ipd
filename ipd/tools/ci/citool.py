@@ -180,7 +180,7 @@ class TestsTool(CITool):
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
-        flags = f'{flags} --benchmark-disable --disable-warnings --cov --durations=10'
+        flags = f'{flags} --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
         jobs = []
@@ -206,6 +206,7 @@ class TestsTool(CITool):
                 nosel = ' and '.join([f'not {t}' for t in which.split()])
                 jobs.append(run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log', **kw))
                 kw['exe'] = None  # run the nonparallel tests on head node... they are quick
+                kw['flags'] = kw['flags'].replace('junit.xml', 'junit2.xml')
                 jobs.append(run_pytest(sel=sel, parallel=1, mem=mem[0], log=f'{log}.nopar.log', **kw))
         if not cmdonly:
             return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
