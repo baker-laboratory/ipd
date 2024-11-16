@@ -1,5 +1,7 @@
 name: run pytest on digs with slurm
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 permissions:
