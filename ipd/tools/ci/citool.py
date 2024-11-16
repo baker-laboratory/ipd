@@ -81,11 +81,13 @@ def parse_pytest(fname) -> ipd.Bunch[int]:
         return result
     result.fname = fname
     content = Path(fname).read_text()
-    # collecting ... collected 230 items / 2 deselected / 22 skipped / 228 selected
-    # =============== 228/230 tests collected (2 deselected) in 0.81s ================
+    print('*' * 80)
+    print(content)
+    print('*' * 80, flush=True)
     os.system(f'grep "collecting ..." {fname}')
     os.system(f'grep "===" {fname} | grep -v FAILURES')
     os.system(f'grep "FAILED" {fname}')
+    print('*' * 80)
     # print(content)
     result.ncollect = get_re(r'collected (\d+) ', content)
     result.deselected = get_re(r'collected .* / (\d+) deselected', content)
