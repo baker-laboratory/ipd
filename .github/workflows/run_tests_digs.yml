@@ -15,8 +15,7 @@ jobs:
     - name: setup
       run: |
         ipd update
-        ipd ci update_library
-        ipd ci repo setup_submodules
+        ipd ci update_library --libs ipd
 
     - name: run ruff
       run: |

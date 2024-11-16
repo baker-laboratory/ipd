@@ -25,10 +25,11 @@ class CITool(ipd.tools.IPDTool):
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
-    def update_library(self, path: Path = Path('~/bare_repos')):
+    def update_library(self, path: Path = Path('~/bare_repos'), libs: tuple[str] = ('*', )):
         path = path.expanduser()
         assert os.path.isdir(path)
         for repo, url in self.repos.items():
+            if libs != ('*', ) and repo not in libs: continue
             repo_dir = f'{path}/{repo}.git'
             if os.path.isdir(repo_dir):
                 print(f'Directory {repo_dir} exists... remove all heads and fetching latest changes...')
