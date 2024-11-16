@@ -209,6 +209,7 @@ class TestsTool(CITool):
                 nosel = ' and '.join([f'not {t}' for t in which.split()])
                 jobs.append(run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log', **kw))
                 kw['exe'] = None  # run the nonparallel tests on head node... they are quick
+                kw['flags'] = kw['flags'].replace('junit.xml', 'junit2.xml')
                 jobs.append(run_pytest(sel=sel, parallel=1, mem=mem[0], log=f'{log}.nopar.log', **kw))
         if not cmdonly:
             return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]

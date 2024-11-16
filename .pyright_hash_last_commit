@@ -120,7 +120,7 @@ cd049a669212a4c388831eacd9ae5961  ipd/tools/ipdtool.py
 85cfb4b47a258031b30e8968fd27626b  ipd/tools/codetool.py
 dde2a7d2647b14b9d5207ab827d49c59  ipd/tools/pkg/pkgtool.py
 a7cad1ecfceb82e7685e2b5d77cec226  ipd/tools/run_tests_on_file.py
-5f68ac1b6406ad943cf3c72371895e9f  ipd/tools/ci/citool.py
+f1184f263cb4eea6dec2d9f5429e8da1  ipd/tools/ci/citool.py
 dc4bd19680807e950fe2cea7438e146a  ipd/tools/ci/__init__.py
 701447eb7af2f4299b804c48fd64fa43  ipd/tools/__init__.py
 5f99456e268129af6dee51a4b0b556f4  ipd/tools/yapf_fast.py
@@ -200,7 +200,7 @@ a22d06112595d5f7f5c3c3b8c6483923  ipd/tests/test_pip_install.py
 f24136ee4403a2a58caf4000f0a4247d  ipd/tests/samp/test_tip_atom_placer.py
 ccf2c80c960ed2e22f2f24bce1de0d42  ipd/tests/samp/test_sampling.py
 920dd2425bcacc53c2879358ff0f1367  ipd/tests/tools/test_ipdtool.py
-478a9b5ce6f924b248d1e26425c2c03b  ipd/tests/tools/ci/test_citool.py
+6fded35ce10e4f13d568a0c2c01b9452  ipd/tests/tools/ci/test_citool.py
 526a0b55829fbada14d7e4c02d99582a  ipd/tests/tools/test_run_tests_on_file.py
 61adc32278ff40adfa7d7e5fe1ad0a3f  ipd/tests/crud/test_crud.py
 0e61e2cdd2dd14ea5df54a9ee06ca607  ipd/tests/pdb/test_pdbdump.py
