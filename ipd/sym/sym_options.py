@@ -6,6 +6,7 @@ from ipd.dev.lazy_import import lazyimport
 hydra = lazyimport('hydra')
 omegaconf = lazyimport('omegaconf')
 
+# these defaults mainly needed for testing
 default_params = dict(
     L=None,
     Lasu=None,
@@ -50,14 +51,11 @@ def parse(s):
 def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     """Reads all options in conf.sym, and anything in extra_params."""
     kw = ipd.dev.Bunch(kw)
-    if conf is None:
-        try:
-            path = '../../../../rf_diffusion/config/inference/sym.yaml'
-            cfg = omegaconf.OmegaConf.load(path)
-        except FileNotFoundError:
-            pass
-
-    if extra_params is None: extra_params = dict()
+    # if conf is None:
+    # with contextlib.suppress(FileNotFoundError):
+    # path = '../../../../rf_diffusion/config/inference/sym.yaml'
+    # cfg = omegaconf.OmegaConf.load(path)
+    if extra_params is None: extra_params = {}
     if isinstance(extra_params, Sequence):
         extra_params = {v.split('=')[0].lstrip('+'): parse(v.split('=')[1]) for v in extra_params}
 
@@ -84,9 +82,12 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if 'nsub' not in opt or not opt.nsub:
         if opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])  # type: ignore
         if opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])  # type: ignore
-        if opt.symid == 'T': opt.nsub = 12
-        if opt.symid == 'O': opt.nsub = 24
-        if opt.symid == 'I': opt.nsub = 60
+        if opt.symid == 'I':
+            opt.nsub = 60
+        elif opt.symid == 'O':
+            opt.nsub = 24
+        elif opt.symid == 'T':
+            opt.nsub = 12
     return opt
 
 def process_symmetry_options(opt, **kw):

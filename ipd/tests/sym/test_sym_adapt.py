@@ -144,7 +144,7 @@ def _dispatch_symfunc_on_type_shape(*a, **kw):
             return '_seq'
         else:
             return ext
-    types = 'indep seq xyz pair'.split()
+    types = 'banana seq xyz pair'.split()
     if len(a) == 0:
         if kw.xyz is not None or kw.pair is not None:
             for t in types:
@@ -157,11 +157,11 @@ def _dispatch_symfunc_on_type_shape(*a, **kw):
                 print(t, kw, t not in kw)
                 assert not kw[t]
             return '_seq'
-        if kw.indep is not None:
+        if kw.banana is not None:
             for t in types:
-                if t == 'indep': continue
+                if t == 'banana': continue
                 assert not kw[t]
-            return '_Indep'
+            return 'Banana'
 
 @pytest.mark.fast
 def test_apply_symmetry_dispatch():
@@ -184,14 +184,14 @@ def test_apply_symmetry_dispatch():
     assert D(pair=8) == ''
     assert D(xyz=8, pair=8) == ''
     assert D(seq='arst') == '_seq'
-    assert D(indep='arst') == '_Indep'
+    assert D(banana='arst') == 'Banana'
     assert D(xyz=8, foo=7) == ''
     with pytest.raises(AssertionError):
         D(xyz=8, seq=7)
     with pytest.raises(AssertionError):
-        D(xyz=8, indep=7)
+        D(xyz=8, banana=7)
     with pytest.raises(AssertionError):
-        D(seq=8, indep=3)
+        D(seq=8, banana=3)
 
     class Foo:
         pass

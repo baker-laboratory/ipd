@@ -13,9 +13,9 @@ class SieveManager:
         self._sieve_classes = {}
         self.sieves = []
 
-    def init_sieves(self, conf):
+    def init_sieves(self, conf, opt):
         self.conf = conf
-        self.opt = ipd.dev.DynamicParameters(conf.inference.num_designs, conf.diffuser.T, 40)
+        self.opt = opt
         self.opt.enabled = True  # default
         if 'sieve' not in conf: return
         for key in conf['sieve']:
@@ -30,23 +30,20 @@ class SieveManager:
             else:  # assume is parameter
                 self.opt.parse_dynamic_param(key, conf['sieve'][key], overwrite=True)
 
-    def apply_sieves(self, t, xyz, indep, **kw):
+    def apply_sieves(self, t, **kw):
         if not self.sieves: return
         if not self.opt.enabled: return
         cache = {}
         progress = 1.0 - t / self.conf.diffuser.T
-        xyz = ipd.symmetrize.asym(xyz)
-        indep = ipd.symmetrize.asym(indep)
-        # print("APPLY SIEVES")
         for sieve in self.sieves:
-            if not sieve(progress=progress, indep=indep, xyz=xyz, cache=cache, **kw):
+            if not sieve(progress=progress, cache=cache, **kw):
                 print(f'Sieve {sieve.__class__.__name__} FAIL, restarting design')
                 raise RedoThisDesign()
 
 _manager = SieveManager()
 
-def create_sieve_manager(conf):
-    _manager.init_sieves(conf)  # type: ignore
+def create_sieve_manager(conf: 'omegaconf.OmegaConf', opt: 'ipd.dev.DynamicParameters'):  # type: ignore
+    _manager.init_sieves(conf, opt)  # type: ignore
 
 def apply(*a, **kw):
     _manager.apply_sieves(*a, **kw)  # type: ignore
@@ -59,7 +56,6 @@ class Sieve:
     def __init__(self, manager, conf):
         self.manager = manager
         self.conf = conf
-        self.opt = ipd.dev.DynamicParameters(manager.conf.inference.num_designs, manager.conf.diffuser.T, 40)
-        self.opt.enabled = True  # default
+        self.opt = manager.opt.clone()
         for k, v in self.conf.items():
-            setattr(self, k, v)
+            self.opt.parse_dynamic_param(k, v, overwrite=True)

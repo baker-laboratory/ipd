@@ -107,6 +107,8 @@ for the four corners exactly
 
 """
 
+import contextlib
+import copy
 import sys
 from abc import ABC, abstractmethod
 from collections import namedtuple
@@ -179,13 +181,15 @@ class DynamicParameters(Mapping):
         self._step = Step(None, None, None)
         self._nstep = Step(ndesign, ndiffuse, nrfold)
         self._rfold_tags = set()
-        self._params = dict()
-        self._strict = not (ndesign is None or ndiffuse is None or nrfold is None)
-        self._parsed_params = dict()
+        self._params = {}
+        self._strict = (ndesign is not None and ndiffuse is not None and nrfold is not None)
+        self._parsed_params = {}
         if not _testing: StepObserver()._add_observer(self)
         self._sanity_check()
 
     ################## factory funcs for the various dynparam types #####################
+    def copy(self):
+        return copy.copy(self)
 
     def parse_dynamic_param(self, name, value, overwrite=False):
         if not isinstance(value, str) or not (value.count(':') or value.count('spline')):
@@ -195,30 +199,30 @@ class DynamicParameters(Mapping):
         elif value.startswith(('rfold:', 'diffuse:', 'design:')):
             self._parsed_params[name] = value
             try:
-                args = dict()
+                args = {}
                 for val in value.split('*'):
                     k, v, *a = val.split(':')
                     if a:
                         assert len(a) == 1
                         a = ipd.dev.safe_eval(a[0])
-                    levels = a if a else [True, False]
+                    levels = a if a else (True, False)
                     args[k] = ipd.dev.safe_eval(v)
                 if any(isinstance(v[0], (tuple, list)) for v in args.values()):
                     self.newparam_true_in_range(name, overwrite=overwrite, levels=levels, **args)  # type: ignore
                 else:
                     self.newparam_true_on_steps(name, overwrite=overwrite, levels=levels, **args)  # type: ignore
-            except ValueError:
-                raise ValueError(f'bad dynam param string "{value}"')
+            except ValueError as e:
+                raise ValueError(f'bad dynam param string "{value}"') from e
         else:
             raise ValueError(f'bad dynam param string "{value}"')
 
-    def newparam_true_on_steps(self, name, design=None, diffuse=None, rfold=None, levels=[True, False], **kw):
+    def newparam_true_on_steps(self, name, design=None, diffuse=None, rfold=None, levels=(True, False), **kw):
         self._add_param(name, _TrueOnIters(self, design, diffuse, rfold, levels), **kw)
 
-    def newparam_false_on_steps(self, name, design=None, diffuse=None, rfold=None, levels=[True, False], **kw):
+    def newparam_false_on_steps(self, name, design=None, diffuse=None, rfold=None, levels=(True, False), **kw):
         self._add_param(name, _Not(_TrueOnIters(self, design, diffuse, rfold, levels)), **kw)
 
-    def newparam_true_in_range(self, name, design=None, diffuse=None, rfold=None, levels=[True, False], **kw):
+    def newparam_true_in_range(self, name, design=None, diffuse=None, rfold=None, levels=(True, False), **kw):
         if design is not None and isinstance(design[0], (tuple, list)):
             design = _ranges_to_sets(design, self._nstep.design)
         if diffuse is not None and isinstance(diffuse[0], (tuple, list)):
@@ -390,7 +394,7 @@ class DynamicParameters(Mapping):
     def __repr__(self):
         mxlen = max(len(k) for k in self.keys())
         s = f'DynamicParameters{self._step},\n                  _nstep={self._nstep})\n'
-        notset = list()
+        notset = []
         for k, v in self._params.items():
             if v is None:
                 notset.append(k)
@@ -430,7 +434,7 @@ def _as_set(thing, n):
     try:
         thing = set(thing)
     except TypeError:
-        thing = set([thing])
+        thing = {thing}
     if any(isinstance(x, float) for x in thing):
         thing = {float(x) for x in thing}  # type: ignore
     # process neg vals from end
@@ -439,9 +443,7 @@ def _as_set(thing, n):
     thing = {x + 1 if (x < 0 and isinstance(x, float)) else x for x in thing}  # type: ignore
     thing = {int(n * x) if isinstance(x, float) else x for x in thing}
     thing = {x if x >= 0 else x + n for x in thing}  # type: ignore
-    if invert:
-        thing = set([_ for _ in range(n) if _ not in thing])
-
+    if invert: thing = {_ for _ in range(n) if _ not in thing}
     return thing
 
 class _NotIn:
@@ -459,10 +461,8 @@ class DynamicParam(ABC):
             getattr(self, 'parent').manager = manager
 
     def __str__(self):
-        try:
+        with contextlib.suppress(TypeError):
             self.value()
-        except TypeError:
-            pass
         return f'{self.__class__.__name__}'
 
     @property
@@ -485,7 +485,7 @@ class _Not(DynamicParam):
         return not self.parent.value()
 
 class _TrueOnIters(DynamicParam):
-    def __init__(self, manager, design, diffuse, rfold, levels=[True, False]):
+    def __init__(self, manager, design, diffuse, rfold, levels=(True, False)):
         super().__init__(manager)
         ndesign, ndiffuse, nrfold = self.manager._nstep  # type: ignore
         self.design_steps = _as_set(design, ndesign)
@@ -511,7 +511,7 @@ class _TrueOnIters(DynamicParam):
 
     def __str__(self):
         s = super().__str__()
-        extra = '' if self.levels == [True, False] else f' levels = {self.levels}'
+        extra = '' if self.levels == (True, False) else f' levels = {self.levels}'
         if self.design_steps: s += f' design:  {str(self.design_steps)}{extra}'
         if self.diffuse_steps: s += f' diffuse: {str(self.diffuse_steps)}{extra}'
         if self.rfold_steps: s += f' rfold:   {str(self.rfold_steps)}{extra}'

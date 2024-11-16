@@ -25,7 +25,7 @@ def torch_min(func, iters=4, history_size=10, max_iter=4, line_search_fn="strong
     import functools
 
     lbfgs = th.optim.LBFGS(
-        kw["indep"],
+        kw["indvar"],
         history_size=history_size,
         max_iter=max_iter,
         line_search_fn=line_search_fn,

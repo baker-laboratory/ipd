@@ -21,6 +21,11 @@
     },
     "build_systems": [
         {
+            "name": "runtest.py",
+            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ipd/tools/run_tests_on_file.py ipd $file &> ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        },
+        {
             "name": "ruff",
             "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/rfdsym312/bin/ruff check  2>&1 | tee ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
@@ -63,11 +68,6 @@
         {
             "name": "test pkgtool",
             "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd.tools.pkgtool 2>&1 | tee ide/sublime_build.log",
-            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
-        },
-        {
-            "name": "runtest.py",
-            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ipd/tools/run_tests_on_file.py ipd $file &> ide/sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {

@@ -4,6 +4,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
+from typing import Any
 
 import git
 import submitit
@@ -64,40 +65,6 @@ class Future:
     def result(self):
         return self._result
 
-def run_pytest(
-    env: str,
-    exe: str,
-    log: str,
-    mark: str = '',
-    sel: str = '',
-    parallel: int = 1,
-    mem: str = '16G',
-    timeout: int = 60,
-    executor=None,
-    dryrun: bool = False,
-    tee: bool = False,
-    gpu: str = '',
-    flags: str = '',
-    testdir: str = '.',
-    cmdonly: bool = False,
-):
-    dry = '--collect-only' if dryrun else ''
-    stee = '2>&1 | tee' if tee else '>'
-    sel = f'-k "{sel}"' if sel else ''
-    par = '' if parallel == 1 else f'-n {parallel}'
-    if cmdonly:
-        cmd = f'cd TESTDIR && {env} PYTHONPATH=. EXE {mark} {sel} {dry} {par} --benchmark-disable {stee} {log}'
-        return ipd.dev.strip_duplicate_spaces(cmd)
-    cmd = f'cd {testdir} && {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} --benchmark-disable {stee} {log}'
-    cmd = ipd.dev.strip_duplicate_spaces(cmd)
-    print(f'running: {cmd}')
-    if os.path.exists(log): os.remove(log)
-    if executor:
-        executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
-        return cmd, executor.submit(ipd.dev.run, cmd, capture=False), log
-    else:
-        return cmd, Future(ipd.dev.run(cmd, errok=True, capture=False)), log
-
 def get_re(pattern, text) -> int:
     result = re.findall(pattern, text)
     assert len(result) < 2
@@ -129,6 +96,40 @@ def parse_pytest(fname) -> ipd.Bunch[int]:
     result.xpassed = get_re(r'=.*? (\d+) xpassed.* =', content)
     return result
 
+def run_pytest(
+    env: str,
+    exe: str,
+    log: str,
+    mark: str = '',
+    sel: str = '',
+    parallel: int = 1,
+    mem: str = '16G',
+    timeout: int = 60,
+    executor=None,
+    dryrun: bool = False,
+    tee: bool = False,
+    gpu: str = '',
+    flags: str = '',
+    testdir: str = '.',
+    cmdonly: bool = False,
+):
+    dry = '--collect-only' if dryrun else ''
+    stee = '2>&1 | tee' if tee else '>'
+    sel = f'-k "{sel}"' if sel else ''
+    par = '' if parallel == 1 else f'-n {parallel}'
+    if cmdonly:
+        cmd = f'cd TESTDIR && {env} PYTHONPATH=. EXE {mark} {sel} {dry} {par} {flags} {stee} {log}'
+        return ipd.dev.strip_duplicate_spaces(cmd)
+    cmd = f'cd {testdir} && {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {flags} {stee} {log}'
+    cmd = ipd.dev.strip_duplicate_spaces(cmd)
+    print(f'running: {cmd}')
+    if os.path.exists(log): os.remove(log)
+    if executor:
+        executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
+        return cmd, executor.submit(ipd.dev.run, cmd, capture=False), log
+    else:
+        return cmd, Future(ipd.dev.run(cmd, errok=True, capture=False)), log
+
 class TestsTool(CITool):
     def ruff(self, project):
         ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True, capture=False)
@@ -148,7 +149,7 @@ class TestsTool(CITool):
         dryrun: bool = False,
         tee: bool = False,
         mem: list[str] = ['16G'],
-        flags: str = '',
+        flags: str = '--benchmark-disable --disable-warnings --durations=10',
         testdir: str = '.',
         cmdonly: bool = False,
     ):  # sourcery skip: merge-list-appends-into-extend
@@ -182,16 +183,16 @@ class TestsTool(CITool):
         sel = ' or '.join(which.split()) if which else ''
         jobs = []
         executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
-        kw = dict(exe=exe,
-                  env=env,
-                  mark=mark,
-                  dryrun=dryrun,
-                  executor=executor,
-                  tee=tee,
-                  gpu=gpu,
-                  flags=flags,
-                  testdir=testdir,
-                  cmdonly=cmdonly)
+        kw: dict[str, Any] = dict(exe=exe,
+                                  env=env,
+                                  mark=mark,
+                                  dryrun=dryrun,
+                                  executor=executor,
+                                  tee=tee,
+                                  gpu=gpu,
+                                  flags=flags,
+                                  testdir=testdir,
+                                  cmdonly=cmdonly)
         if not slurm:
             jobs.append(run_pytest(sel=sel, parallel=parallel, log=log, **kw))  # type: ignore
         else:
@@ -201,14 +202,13 @@ class TestsTool(CITool):
                 jobs.append(run_pytest(sel=sel, parallel=1, log=log, mem=mem[0], **kw))  # type: ignore
             else:
                 nosel = ' and '.join([f'not {t}' for t in which.split()])
-                jobs.append(run_pytest(sel=sel, parallel=1, mem=mem[0], log=f'{log}.nopar.log', **kw))  # type: ignore
-                jobs.append(run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log',
-                                       **kw))  # type: ignore
-        if cmdonly:
-            print(os.linesep.join(jobs))
-            return jobs
-        else:
+                jobs.append(run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log', **kw))
+                kw['exe'] = None  # run the nonparallel tests on head node... they are quick
+                jobs.append(run_pytest(sel=sel, parallel=1, mem=mem[0], log=f'{log}.nopar.log', **kw))
+        if not cmdonly:
             return [(cmd, job.result(), parse_pytest(log)) for cmd, job, log in jobs]
+        print(os.linesep.join(jobs))
+        return jobs
 
     def check(self, path: str = '.'):
         fail = False

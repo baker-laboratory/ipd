@@ -64,9 +64,9 @@ def to_canonical_frame(asym, frames):
     asym[:, :3, :3] = hori(halign(asym[:, :, 2], asym[:, :3, 3], doto=asym))
     return th.as_tensor(asym)
 
-def min_dist_loss(asym0, frames0, lbfgs, indep, **kw):
+def min_dist_loss(asym0, frames0, lbfgs, indvar, **kw):
     lbfgs.zero_grad()
-    asym = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0)
+    asym = th.einsum("aij,aj->ai", h.Q2R(indvar[0]), asym0)
     sym = th.einsum("sij,aj->sai", frames0, asym)
     d = th.norm(asym[None, None] - sym[:, :, None], dim=-1)
     d = th.where(d < 0.001, 9e9, d)
@@ -79,15 +79,15 @@ def min_pseudo_t_dist2(asym, sym="I"):
     frames = ipd.sym.frames(sym)
     frames0 = th.tensor(frames[:, :3, :3]).cuda().to(th.float32)
     asym0 = th.tensor(asym[:, :3, 3]).cuda().to(th.float32)
-    indep = [th.zeros((t, 3)).cuda().requires_grad_(True)]
+    indvar = [th.zeros((t, 3)).cuda().requires_grad_(True)]
     loss = h.torch_min(min_dist_loss, **vars())
-    asym[:, :3, 3] = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0).cpu().detach()
+    asym[:, :3, 3] = th.einsum("aij,aj->ai", h.Q2R(indvar[0]), asym0).cpu().detach()
     asym = to_canonical_frame(asym, frames)
     return loss, asym.numpy()
 
-def min_sym_environment_loss(asym0, frames0, lbfgs, indep, **kw):
+def min_sym_environment_loss(asym0, frames0, lbfgs, indvar, **kw):
     lbfgs.zero_grad()
-    asym = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0)
+    asym = th.einsum("aij,aj->ai", h.Q2R(indvar[0]), asym0)
     sym = th.einsum("sij,aj->sai", frames0, asym)
     d = th.norm(asym[None, None] - sym[:, :, None], dim=-1)
     d = th.where(d < 0.001, 9e9, d)
@@ -100,9 +100,9 @@ def min_pseudo_t_symerror(asym, sym="I"):
     frames = ipd.sym.frames(sym)
     frames0 = th.tensor(frames[:, :3, :3]).cuda().to(th.float32)
     asym0 = th.tensor(asym[:, :3, 3]).cuda().to(th.float32)
-    indep = [th.zeros((t, 3)).cuda().requires_grad_(True)]
+    indvar = [th.zeros((t, 3)).cuda().requires_grad_(True)]
     loss = h.torch_min(min_sym_environment_loss, **vars())
-    asym[:, :3, 3] = th.einsum("aij,aj->ai", h.Q2R(indep[0]), asym0).cpu().detach()
+    asym[:, :3, 3] = th.einsum("aij,aj->ai", h.Q2R(indvar[0]), asym0).cpu().detach()
     asym = to_canonical_frame(asym, frames)
     return loss, asym.numpy()
 

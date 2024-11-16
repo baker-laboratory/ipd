@@ -144,7 +144,7 @@ _DEBUG_ALLOW_LAZY_IMPORT = [
     'ipd.pdb',
     'ipd.samp',
     'ipd.samp.sampling_cuda',
-    'ipd.sieve',
+    'ipd.protocol',
     'ipd.sym',
     'ipd.tests',
     'ipd.tools',
