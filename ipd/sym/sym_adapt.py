@@ -51,6 +51,7 @@ class SymAdapt(ABC, Generic[T]):
     Must have a kind and adapted property. See the :_SymAdaptDataClass:`ipd.sim._SymAdaptDataClass` class for an example.
     These classes are not meant for the end user, they will be used internally by the sym manager
     """
+
     def __init_subclass__(cls, **kw):
         if not hasattr(cls, 'adapts'):
             raise TypeError(f'class {name} must define adapted type via adapts = ThingType')  # type: ignore

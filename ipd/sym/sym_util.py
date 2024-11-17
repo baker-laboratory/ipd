@@ -149,6 +149,7 @@ def rotation_from_matrix(R, eps=1e-4):
     return angle, axis
 
 def kabsch(pred, true):
+
     def rmsd(V, W, eps=1e-4):
         L = V.shape[0]
         return torch.sqrt(torch.sum((V-W) * (V-W)) / L + eps)
@@ -957,6 +958,7 @@ def find_symmsub_pair(Ltot, Lasu, k, pseudo_cycle=False):
     return symmsub.long()
 
 def update_symm_Rs(xyz, Lasu, symmsub, allsymmRs, symopt):
+
     def dist_error_comp(R0, T0, xyz, fittscale):
         Ts = xyz  #[:,:,1]
         B = xyz.shape[0]

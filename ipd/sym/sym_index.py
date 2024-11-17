@@ -43,6 +43,7 @@ class SymIndex:
         contig            (Tensor): map to contiguous numbering
         kind              (Tensor): residue kind, where 0 is 'standard'
     """
+
     def __init__(self, nsub: int, slices, debug=False):
         '''
         Args:

@@ -9,6 +9,7 @@ else:
 
 class VoxRB(ipd.voxel.Voxel):
     """Represents a rigid body with an associated Voxel score."""
+
     def __init__(self, *a, func=ipd.dev.cuda.ContactFunc(), **kw):
         super().__init__(*a, func=func, **kw)
         self._vizpos = th.eye(4)
@@ -20,6 +21,7 @@ class VoxRB(ipd.voxel.Voxel):
 
 class VoxRBSym:
     """Represents a symmetric rigid body with an associated Voxel score."""
+
     def __init__(self, rb, frames):
         super().__init__()
         self.rb = rb

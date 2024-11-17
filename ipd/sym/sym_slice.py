@@ -11,6 +11,7 @@ else:
 @dataclass
 class SymSlice:
     """A contiguous slice of an array to symmetrize."""
+
     @classmethod
     def make_symslice(cls, slice):
         """Construct a SymSlice from length, range, bools, or another

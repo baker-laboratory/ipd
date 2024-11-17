@@ -9,6 +9,7 @@ else:
     th = lazyimport('torch')
 
 class CudaFunc(abc.ABC):
+
     def __init__(self, arg, label):
         self.arg = th.as_tensor(arg).to('cuda').to(th.float32)
         self.label = label
@@ -25,6 +26,7 @@ class CudaFunc(abc.ABC):
         return _voxel.eval_func(dist, self.label, arg)
 
 class ClashFunc(CudaFunc):
+
     def __init__(self, radlow=3, radhi=4):
         assert radlow <= radhi
         super().__init__([radlow, radhi], 'clash')
@@ -35,6 +37,7 @@ class ClashFunc(CudaFunc):
         return (self.arg[1] - dist) / (self.arg[1] - self.arg[0])
 
 class ContactFunc(CudaFunc):
+
     def __init__(self, clashscore=10000, contactscore=-1, clashend=3, contactbeg=4, contactend=8, end=9):
         assert clashend <= contactbeg <= contactend <= end
         super().__init__([clashscore, contactscore, clashend, contactbeg, contactend, end], 'contact')

@@ -9,6 +9,7 @@ __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake
 T = TypeVar('T')
 
 class Bunch(dict, Generic[T]):
+
     def __init__(
         self,
         __arg_or_ns=None,
@@ -113,7 +114,7 @@ class Bunch(dict, Generic[T]):
                 return 'Bunch()'
             w = int(min(40, max(len(str(k)) for k in self)))
             for k, v in self.items():
-                s += f'  {k:{f'{w}'}} = {v}{os.linesep}'
+                s += f'  {k:{f"{w}"}} = {v}{os.linesep}'
             s += ')'
         return s
 
@@ -146,7 +147,7 @@ class Bunch(dict, Generic[T]):
                 return 'Bunch()'
             w = int(min(40, max(len(str(k)) for k in self)))
             for k, v in self.items():
-                s += f'  {k:{f'{w}'}} = {short(v)}{os.linesep}'
+                s += f'  {k:{f"{w}"}} = {short(v)}{os.linesep}'
             s += ')'
         print(s, flush=True)
         return s
@@ -364,6 +365,7 @@ class Bunch(dict, Generic[T]):
         return bunchify(d)
 
 class BunchChild:
+
     def __init__(self, *a, _parent, **kw):
         super().__init__(*a, **kw)
         assert isinstance(_parent[0], Bunch)
@@ -376,6 +378,7 @@ class BunchChild:
     #    return f'{self.__class__.__name__}<{super().__repr__()}>'
 
 class BunchChildList(BunchChild, list):
+
     def append(self, elmnt):
         super().append(elmnt)
         self._parent[0]._notify_changed(self._parent[1], elmnt)
@@ -385,6 +388,7 @@ class BunchChildList(BunchChild, list):
         self._parent[0]._notify_changed(f'{self._parent[1]}[{index}]', elem)
 
 class BunchChildSet(BunchChild, set):
+
     def add(self, elem):
         super().add(elem)
         self._parent[0]._notify_changed(self._parent[1], elem)

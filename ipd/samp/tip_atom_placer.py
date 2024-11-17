@@ -44,6 +44,7 @@ class TipAtom:
         return h.inv(rayframe(self.don)), h.inv(rayframe(self.acc))
 
 class TipAtomTarget:
+
     @staticmethod
     def from_pdb(fname, tgtres=None, clashthresh=2):
         pdb = ipd.pdb.readpdb(fname)

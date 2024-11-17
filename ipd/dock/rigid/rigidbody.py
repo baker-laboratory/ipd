@@ -3,6 +3,7 @@ import numpy as np
 import ipd
 
 class RigidBodyFollowers:
+
     def __init__(self, bodies=None, coords=None, frames=None, sym=None, cellsize=1, **kw):
         self.sym = sym.upper() if sym else None
         self.kw = kw
@@ -175,6 +176,7 @@ class RigidBodyFollowers:
         return len(self.bodies)
 
 class RigidBody:
+
     def __init__(
         self,
         coords=None,

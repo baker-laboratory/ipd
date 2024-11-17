@@ -1,5 +1,7 @@
+from abc import ABC, abstractmethod
 import contextlib
 import copy
+from dataclasses import dataclass
 import itertools
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
@@ -22,6 +24,7 @@ from ipd.sym.sym_index import SymIndex
 
 T = TypeVar('T')
 
+@dataclass
 class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # type: ignore
     """The SymmetryManager class encapsulates symmetry related functionality
     and parameters.
@@ -54,6 +57,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
     from kwargs by adding a function argument is slightly more correct
     and more convenient.
     """
+    symid: str
+    nsub: int
     kind: str = 'base'
     SymIndexType: type[SymIndex] = SymIndex
 
@@ -93,10 +98,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         ipd.hub.sym_manager_created(self)
 
     def add_properties(self):
+        self.symid = self.opt.symid
         locprops = dict(
             opt=[
-                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats',
-                'sym_enabled', 'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template', 'ligand_is_symmetric'
+                'nsub', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats', 'sym_enabled',
+                'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template', 'ligand_is_symmetric'
             ],
             idx=[
                 'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym', 'Nsym',
