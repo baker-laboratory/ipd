@@ -48,17 +48,19 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
         self.opt.nsub = len(self.symmsub)
         self.post_init()
 
-    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, disable_all_fitting=False, **_):  # type: ignore
+    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, disable_all_fitting=False, **kw):  # type: ignore
         """Apply symmetry to an object or xyz/pair."""
         opts.disable_all_fitting = disable_all_fitting
         xyz = ipd.sym.asu_to_best_frame_if_necessary(self, xyz, **opts)
         xyz = ipd.sym.set_particle_radius_if_necessary(self, xyz, **opts)
         xyz = ipd.sym.asu_to_canon_if_necessary(self, xyz, **opts)
 
-        assert pair is None
-
         xyz = th.einsum('fij,raj->frai', self._symmRs[self.symmsub],
                         xyz[:len(xyz) // self.nsub]).reshape(-1, *xyz.shape[1:])  # type: ignore
+        if pair is not None:
+            pair = self.apply_symmetry_pair(pair, **kw)
+            return xyz, pair
+
         return xyz
 
 ipd.sym.set_default_sym_manager('ipd')

@@ -174,7 +174,7 @@ def symcheck_INDEX_SPARSE(idx, thing, **kw):
     x, _, isidx = thing.val, thing.idx, thing.isidx
     if isidx is not None and isidx is not True:
         x = x[:, thing.isidx]
-    x = x.to(int)
+    x = x.to(int)  # type: ignore
     symcheck_INDEX_common(idx, x)
     sub = idx.subnum[x]
     asu = idx.idx_sym_to_sub[0, x[sub == 0]]

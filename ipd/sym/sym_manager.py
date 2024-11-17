@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import collections
 import contextlib
 import copy
 from dataclasses import dataclass
@@ -23,6 +24,10 @@ from ipd.sym.sym_adapt import _sym_adapt, SymAdapt
 from ipd.sym.sym_index import SymIndex
 
 T = TypeVar('T')
+XYZPair = collections.namedtuple('XYZPair', 'xyz pair')
+
+class XYZPairUnsupportedError(Exception):
+    pass
 
 @dataclass
 class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # type: ignore
@@ -121,7 +126,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                     name = name[1:]
                 setattr(self.__class__, prop, makeprop(location, name))
 
-    def __call__(self, thing: T = None, pair=None, key=None, isasym=None, **kw) -> T:
+    def __call__(self, thing: T, key=None, isasym=None, **kw) -> T:
         """This is the main entry point for applying symmetry to any object.
 
         The object can be a sequence, coordinates, or a pair of
@@ -137,43 +142,39 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
 
         kw = self.opt.to_bunch().sub(kw)
         if any([not self, key in self.skip_keys, thing is None]):
-            if pair is not None: return thing, pair  # type: ignore
             return thing
-
         self.verify_index(thing)
+        adaptor = self.sym_adapt(thing, isasym=isasym)  # type: ignore
+        kw.kind = adaptor.kind  # type: ignore
 
-        thing = self.sym_adapt(thing, isasym=isasym)  # type: ignore
-        # print(f'sym {type(thing)}', key, flush=True)
-        pair = self.sym_adapt(pair, isasym=isasym)
-        assert thing
-        kw.kind = thing.kind  # type: ignore
-        if pair:
-            orig = thing.adapted  # type: ignore
-            newxyz, newpair = self.apply_sym_slices_xyzpair(thing, pair, **kw)
+        if isinstance(thing, XYZPair):
+            xyzadapt, pairadapt = adaptor.adapted  # type: ignore
+            orig = xyzadapt.adapted  # type: ignore
+            newxyz, newpair = self.apply_sym_slices_xyzpair(xyzadapt, pairadapt, **kw)
             self.move_unsym_to_match_asu(orig, newxyz)
             if self.symid.startswith('C') and self.opt.center_cyclic:  # type: ignore
                 newxyz[self.idx.kind < 1, :, 2] -= newxyz[self.idx.kind < 1, 1, 2].mean()
-            newxyz = thing.reconstruct(newxyz)  # type: ignore
-            newpair = pair.reconstruct(newpair)
+            newxyz = xyzadapt.reconstruct(newxyz)  # type: ignore
+            newpair = pairadapt.reconstruct(newpair)
             newxyz[0] = ipd.sym.set_motif_placement_if_necessary(self, newxyz[0], **kw)
             # self.assert_symmetry_correct(newxyz, **kw)
             # self.assert_symmetry_correct(newpair, **kw)
             self.mark_symmetrical(newxyz, newpair)
-            return newxyz, newpair  # type: ignore
-        elif thing.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
-            result = thing.reconstruct([self(x, **kw) for x in thing.adapted])  # type: ignore
-        elif thing.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
-            result = thing.reconstruct(  # type: ignore
+            return XYZPair(newxyz, newpair)  # type: ignore
+        elif adaptor.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
+            result = adaptor.reconstruct([self(x, **kw) for x in adaptor.adapted])  # type: ignore
+        elif adaptor.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
+            result = adaptor.reconstruct(  # type: ignore
                 ipd.Bunch({  # type: ignore
                     k: self(x, key=k, **kw)
-                    for k, x in thing.adapted.items()  # type: ignore
+                    for k, x in adaptor.adapted.items()  # type: ignore
                 }))  # type: ignore
-        elif thing.kind.shapekind == ShapeKind.SCALAR:  # type: ignore
-            result = thing.orig  # type: ignore
-        elif th.is_tensor(thing.orig) and thing.orig.shape[-1] == 0:  # type: ignore
-            result = thing.orig  # type: ignore
+        elif adaptor.kind.shapekind == ShapeKind.SCALAR:  # type: ignore
+            result = adaptor.orig  # type: ignore
+        elif th.is_tensor(adaptor.orig) and adaptor.orig.shape[-1] == 0:  # type: ignore
+            result = adaptor.orig  # type: ignore
         else:
-            result = thing.reconstruct(self.apply_sym_slices(thing, **kw))  # type: ignore
+            result = adaptor.reconstruct(self.apply_sym_slices(adaptor, **kw))  # type: ignore
         self.mark_symmetrical(result)
         return result
 
@@ -182,7 +183,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         if isinstance(xyz, tuple): xyz, pair = xyz
         if origxyz.ndim == 2: xyz = xyz[:, None, :]  # type: ignore
         if len(xyz) == 1: xyz = xyz[0]
-        return xyz if pair is None else (xyz, pair)
+        return xyz if pair is None else XYZPair(xyz, pair)
 
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
         kw = ipd.dev.Bunch(kw)
@@ -190,6 +191,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
+        ic(xyz.shape, pair.shape)
         xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)

@@ -11,13 +11,31 @@ else:
 
 import assertpy
 import hypothesis
-from icecream import ic
 
 import ipd
 
 # ic.configureOutput(includeContext=False, contextAbsPath=True)
 
 pytestmark = pytest.mark.fast
+
+def main():
+    test_sym_xyzpair()
+    test_sym_asu_xyz()
+    test_atom_on_axis()
+    test_create_test_sym_manager()
+    test_sym_asu_seq()
+    test_sym_slices()
+    test_sym_manager_fuzz_basic_sym()
+    test_sym_manager_fuzz_fill_from_contiguous()
+    test_sym_manager_contiguous()
+    test_sym_manager_2d_2slice()
+    test_sym_manager_1d_2slice()
+    test_sym_manager_string_2slice()
+    test_sym_manager_string()
+    test_sym_manager_list()
+    test_sym_manager_dict()
+    test_sym_pair()
+    print('DONE')
 
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
@@ -148,8 +166,8 @@ def test_sym_asu_seq():
     seq = th.arange(20)
     seq = sym(seq)
     assert all(seq[10:] == seq[:10])
-    ic(seq.shape)
-    ic(sym.masym.shape)
+    # ic(seq.shape)
+    # ic(sym.masym.shape)
     asym = sym.asym(seq)
     asu = sym.asym(seq)
     assert all(asym == seq[:10])
@@ -255,6 +273,25 @@ def test_sym_pair():
     sym.assert_symmetry_correct(sympair)
 
 @pytest.mark.fast
+def test_sym_xyzpair():
+    sym = ipd.tests.sym.create_test_sym_manager([
+        'sym.symid=c3',
+        'sym.sympair_method=mean',
+        'sym.symmsub_k=2',
+        'sym.sympair_protein_only=False',
+        'sym.sympair_enabled=True',
+    ])
+    sym.idx = [(30, 0, 30)]
+    xyz = th.randn((1, 30, 3))
+    pair = th.randn((1, 30, 30, 10))
+    # import torchshow
+    # torchshow.show(pair.max(dim=-1).values)
+    symxp = sym(ipd.sym.XYZPair(xyz, pair))
+    assert isinstance(symxp, ipd.sym.XYZPair)
+    sym.assert_symmetry_correct(symxp.xyz)
+    sym.assert_symmetry_correct(symxp.pair)
+
+@pytest.mark.fast
 def test_create_test_sym_manager():
     assert ipd.sym.create_sym_manager().symid == 'C1'
     assert ipd.sym.create_sym_manager(symid='c3').symid == 'C3'
@@ -274,19 +311,4 @@ def test_atom_on_axis():
     assert not len(sym.is_on_symaxis(th.tensor([[1, 0, 8.0]])))
 
 if __name__ == '__main__':
-    test_sym_asu_xyz()
-    test_atom_on_axis()
-    test_create_test_sym_manager()
-    test_sym_asu_seq()
-    test_sym_slices()
-    test_sym_manager_fuzz_basic_sym()
-    test_sym_manager_fuzz_fill_from_contiguous()
-    test_sym_manager_contiguous()
-    test_sym_manager_2d_2slice()
-    test_sym_manager_1d_2slice()
-    test_sym_manager_string_2slice()
-    test_sym_manager_string()
-    test_sym_manager_list()
-    test_sym_manager_dict()
-    test_sym_pair()
-    print('DONE')
+    main()

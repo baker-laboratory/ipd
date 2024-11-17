@@ -57,7 +57,7 @@ c041756bcbd9ca738281f0905db5098a  ipd/viz/viz_helix.py
 f0f8422a53e61262fc9caf6930d412ac  ipd/viz/__init__.py
 3aed64df4079de503eac50be9e091974  ipd/viz/plot.py
 c4890e28068cb9682094558009f07897  ipd/sym/sym_index.py
-cb4dd0ead2043a5d058cef39347b9423  ipd/sym/sym_check.py
+a78c9628bb36183e484b7ab668741e12  ipd/sym/sym_check.py
 1001efe0f48ebc0cb2d1daf155bac4db  ipd/sym/xtal/spacegroup_util.py
 97e9c007617a2cb9597183817f046f41  ipd/sym/xtal/spacegroup_deriveddata.py
 fa0a0c5d46f2e976839e389f6b0a59d7  ipd/sym/xtal/xtalfit.py
@@ -71,12 +71,12 @@ b4367f31265c3a70b280502c241bee97  ipd/sym/xtal/spacegroup_contacts.py
 71f209abfd19957381ceb7c1ea357188  ipd/sym/xtal/xtalcls.py
 f10d7d148311c2a0a2679bb9fcbe0eb2  ipd/sym/xtal/spacegroup_frames.py
 771c4ff522e3d8f96579b32841a04f31  ipd/sym/sym.py
-d0196f3d7ac32a92aebbfdad24fd50b4  ipd/sym/sym_manager.py
+130dca1c59d4a27e9bf0423d072f3575  ipd/sym/sym_manager.py
 0cea076f398f5b518c279d627bb58b0a  ipd/sym/guess_symmetry.py
 91e3c714f0f4d12b50f975ddab020db4  ipd/sym/sym_color.py
 990b0afeeb6fb8182ceb58bd4e3db137  ipd/sym/sym_fitting.py
 3e5dda4c86f196b95af5ee271391ac90  ipd/sym/sym_slice.py
-15965e90aae182e89f0c9b35f2d13b54  ipd/sym/ipd_sym_manager.py
+290237078e8ea057c2ecdacfff6399cc  ipd/sym/ipd_sym_manager.py
 68c95d5bcfba4197ab04a03dd5c37e91  ipd/sym/helix/helix.py
 f3d94e832123ec66694c8e128507ed3a  ipd/sym/helix/__init__.py
 2d53a25687c43f3bef8ecd61000315de  ipd/sym/helix/helix_slide.py
@@ -107,7 +107,7 @@ c21063821c7bd1df73406dfe9b3aa52f  ipd/sym/old/oldtests/oldtest_diffusion_sym.py
 9178c24369d699eb8b431b23af236a8f  ipd/sym/old/oldtests/oldtest_asufit.py
 3f90fda8c09ccbd582ef7f541c667885  ipd/sym/permutations.py
 32efa3822337fb0138e4a2f96842046d  ipd/sym/sym_kind.py
-3556483ada51b3f1d659e5dd988649c0  ipd/sym/sym_adapt.py
+20293884f4978008278ecfe0e80156f0  ipd/sym/sym_adapt.py
 81339431048f753543d3a6a70227649f  ipd/motif/motif_options.py
 1d7eec97b65e8358258eb52ac3f7600e  ipd/motif/motif_factory.py
 c270fa00927c8dc17ccfbf7474d31ae8  ipd/motif/__init__.py
@@ -187,7 +187,7 @@ bd43d578aa579186ca33e793761ab71e  ipd/tests/sym/sym_test_util.py
 b55a0103524ac891fde0af980aadf921  ipd/tests/sym/test_sym_check.py
 03b39a21592dceb45aa84457dace2a06  ipd/tests/sym/high_t/test_high_t_from_file.py
 82c269a973509e2ab7c86f5c27f4d83b  ipd/tests/sym/high_t/test_pseudo_t.py
-37fbd9abaac252dfa053f2e368514569  ipd/tests/sym/test_sym_manager.py
+c2eb112a5554630dfabca0fb8a4703f9  ipd/tests/sym/test_sym_manager.py
 eb05eecf0a52adc95e197372a0490c82  ipd/tests/sym/__init__.py
 0bb64d36bc3026fcb120aea501091724  ipd/tests/sym/test_sym.py
 879d56ab9757a495d7ae47c641606827  ipd/tests/sym/test_sym_fitting.py
