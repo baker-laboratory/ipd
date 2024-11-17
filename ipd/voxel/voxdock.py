@@ -1,7 +1,11 @@
 import ipd
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 class VoxRB(ipd.voxel.Voxel):
     """Represents a rigid body with an associated Voxel score."""

@@ -2,7 +2,11 @@ import abc
 
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 class CudaFunc(abc.ABC):
     def __init__(self, arg, label):

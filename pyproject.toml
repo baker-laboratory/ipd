@@ -75,7 +75,7 @@ markers = [
 based_on_style = 'pep8'
 indent_width = 4
 column_limit = 123
-blank_line_before_nested_class_or_def = false
+blank_line_before_nested_class_or_def = true
 blank_lines_around_top_level_definition = 1
 arithmetic_precedence_indication = true
 

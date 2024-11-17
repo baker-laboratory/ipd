@@ -371,6 +371,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         if key in skip_keys: return thing
         if thing is None: return None  # type: ignore
         thing = self.sym_adapt(thing, isasym=False)  # type: ignore
+<<<<<<< HEAD
         if thing.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
             return thing.reconstruct([self.extract(x, mask) for x in thing.adapted], **kw)  # type: ignore
         if thing.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
@@ -390,6 +391,28 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             return thing.orig  # type: ignore
 
         raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')  # type: ignore
+=======
+        match thing.kind.shapekind:  # type: ignore
+            case ShapeKind.SEQUENCE:
+                return thing.reconstruct([self.extract(x, mask) for x in thing.adapted], **kw)  # type: ignore
+            case ShapeKind.MAPPING:
+                d = {
+                    k: self.extract(x, mask, key=k, skip_keys=skip_keys)
+                    for k, x in thing.adapted.items()  # type: ignore
+                }  # type: ignore
+                return thing.reconstruct(d, **kw)  # type: ignore
+            case ShapeKind.ONEDIM:
+                return thing.reconstruct(thing.adapted[mask], **kw)  # type: ignore
+            case ShapeKind.TWODIM:
+                x = thing.adapted[mask[None] * mask[:, None]]  # type: ignore
+                # ic(x.shape, mask.sum(), mask.shape, kw)
+                return thing.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)  # type: ignore
+            case ShapeKind.SPARSE:
+                assert len(thing.adapted.idx) == 0, 'spares not implemented yet'  # type: ignore
+                return thing.orig  # type: ignore
+            case _:
+                raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')  # type: ignore
+>>>>>>> 103ddd8 (some renaming and typing)
 
     def asym(self, thing: T, **kw) -> T:
         return self.extract(thing, self.masym, asym=True, **kw)  # type: ignore

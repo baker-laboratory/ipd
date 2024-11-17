@@ -2,7 +2,11 @@ from dataclasses import dataclass
 
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 @dataclass
 class SymSlice:
@@ -40,7 +44,7 @@ class SymSlice:
             if isinstance(mask, tuple): L, beg, symend = mask
             mask = th.zeros(L, dtype=bool)  # type: ignore
             mask[range(beg, symend)] = True  # type: ignore
-        self.mask = th.as_tensor(mask, dtype=bool)
+        self.mask = th.as_tensor(mask, dtype=bool)  # type: ignore
         non0 = th.nonzero(self.mask)
         if len(non0):
             self.beg, self.end = int(non0[0]), int(non0[-1] + 1)
@@ -67,7 +71,7 @@ class SymSlice:
         self.Lsym = self.Lasu * nsub
         self.asu = self.mask.clone()
         self.asu[self.asuend:] = False
-        self.sym = th.zeros((nsub, self.L), dtype=bool)
+        self.sym = th.zeros((nsub, self.L), dtype=bool)  # type: ignore
         for i in range(nsub):
             self.sym[i, range(self.beg + i * self.Lasu, self.beg + (i+1) * self.Lasu)] = True
 

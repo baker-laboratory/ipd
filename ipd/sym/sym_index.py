@@ -3,7 +3,11 @@ import math
 from ipd.lazy_import import lazyimport
 from ipd.sym.sym_slice import SymSlice
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 class SymIndex:
     """A collection of slices to symmetrize.
@@ -54,13 +58,13 @@ class SymIndex:
             s.set_nsub(self.nsub)
         self.L = len(self.slices[0].mask)
         self.sanity_check_pre()
-        self.unsym = th.ones(self.L, dtype=bool)
+        self.unsym = th.ones(self.L, dtype=bool)  # type: ignore
         for s in self.slices:
             self.unsym &= ~s.mask
         self.Nunsym = th.sum(self.unsym)
         self.Nsymonly = self.L - self.Nunsym
         self.symonly = ~self.unsym
-        self.asu = th.zeros(self.L, dtype=bool)
+        self.asu = th.zeros(self.L, dtype=bool)  # type: ignore
         for s in self.slices:
             self.asu |= s.asu
         self.asym = self.asu | self.unsym
@@ -86,32 +90,32 @@ class SymIndex:
         self.sym = self.sub.max(0).values
 
         self.idx_asu_to_asym = th.where(self.asu[self.asym].to(int))[0]
-        self.idx_asym_to_asu = -th.ones(self.Nasym, dtype=int)
-        self.idx_asym_to_asu[self.idx_asu_to_asym] = th.arange(self.Nasu)
+        self.idx_asym_to_asu = -th.ones(self.Nasym, dtype=int)  # type: ignore
+        self.idx_asym_to_asu[self.idx_asu_to_asym] = th.arange(self.Nasu)  # type: ignore
         self.idx_asym_to_sym = th.arange(self.L)[self.asym]
-        self.idx_sym_to_asym = -th.ones(self.L, dtype=int)
-        self.idx_sym_to_asym[self.asym] = th.arange(th.sum(self.asym))
+        self.idx_sym_to_asym = -th.ones(self.L, dtype=int)  # type: ignore
+        self.idx_sym_to_asym[self.asym] = th.arange(th.sum(self.asym))  # type: ignore
         self.idx_sym_to_asu = th.where(self.unsym, -1, self.idx_sym_to_asym)
         self.idx_sub_to_sym = th.stack([th.where(self.sub[i])[0] for i in range(self.nsub)])
-        self.idx_sym_to_sub = -th.ones((self.nsub, self.L), dtype=int)
-        self.idx_asu_to_sub = -th.ones((self.nsub, self.L), dtype=int)
+        self.idx_sym_to_sub = -th.ones((self.nsub, self.L), dtype=int)  # type: ignore
+        self.idx_asu_to_sub = -th.ones((self.nsub, self.L), dtype=int)  # type: ignore
         for i in range(self.nsub):
-            self.idx_sym_to_sub[i, self.sub[i]] = th.arange(self.Nasu)
+            self.idx_sym_to_sub[i, self.sub[i]] = th.arange(self.Nasu)  # type: ignore
             self.idx_asu_to_sub[i, self.asu] = th.where(self.sub[i])[0]
         self.subunit_masks = [m != -1 for m in self.idx_sym_to_sub]
         self.subnum = th.max(self.sub.to(int) * th.arange(nsub)[:, None], 0).values
         self.subnum[self.unsym] = -1
-        self.idx_sub_to_asu = -th.ones(self.L, dtype=int)
+        self.idx_sub_to_asu = -th.ones(self.L, dtype=int)  # type: ignore
         n = 0
         for s in self.slices:
             self.idx_sub_to_asu[s.mask] = n + th.arange(s.Lasu).repeat(nsub)
             n += s.Lasu
-        self.contiguous = -th.ones(self.Nasu * self.nsub, dtype=int)
+        self.contiguous = -th.ones(self.Nasu * self.nsub, dtype=int)  # type: ignore
         # ic(self.sub.shape, len(self.contiguous), self.Nasu * self.nsub)
         for i in range(self.nsub):
             self.contiguous[i * self.Nasu:(i+1) * self.Nasu] = th.where(self.sub[i])[0]
 
-        self.full = th.ones(self.L, dtype=bool)
+        self.full = th.ones(self.L, dtype=bool)  # type: ignore
         self.notsym = ~self.sym
         self.notasym = ~self.asym
         self.notasu = ~self.asu
@@ -119,7 +123,7 @@ class SymIndex:
         self.sliced = th.arange(self.L)
         self.contig = self.contiguous
 
-        self.kind = th.zeros(self.L, dtype=int)
+        self.kind = th.zeros(self.L, dtype=int)  # type: ignore
 
         if debug:
             print('full', self.full.to(int))
@@ -154,13 +158,13 @@ class SymIndex:
         idx = th.as_tensor(idx).to(self.unsym.device)
         if th.all(self.unsym[idx]): return True
         # if idx.max() < len(self.idx_asym_to_sym) and th.all(self.asym[self.idx_asym_to_sym[idx]]): return False
-        idx = th.as_tensor(idx, dtype=int)
+        idx = th.as_tensor(idx, dtype=int)  # type: ignore
         # ic(self.asym)
         replicates = th.bincount(idx)
         replicates = replicates[replicates != 0]
         if strict: assert len(replicates.unique()) == 1
         replicates = int(replicates[0])
-        idx = th.as_tensor(idx, dtype=int)
+        idx = th.as_tensor(idx, dtype=int)  # type: ignore
         idx = idx[~self.unsym[idx]]
         subcount = th.bincount(self.subnum[idx])
         asucount = th.bincount(self.idx_sub_to_asu[idx])
@@ -249,6 +253,21 @@ class SymIndex:
             t[idx[:, 0], idx[:, 1]] = val
             return t.reshape(t.shape)
 
+    def extract_asu(self, ary):
+        return ary[self.asu.to(ary.device)]
+
+    def extract_asym(self, ary):
+        return ary[self.asym.to(ary.device)]
+
+    def extract_unsym(self, ary):
+        return ary[self.unsym.to(ary.device)]
+
+    def extract_symonly(self, ary):
+        return ary[self.symonly.to(ary.device)]
+
+    def extract_sub(self, ary, isub):
+        return ary[self.sub[isub].to(ary.device)]
+
     def asymidx(self, idx):
         idx = idx.to(self.asym.device)
         return idx[self.asym[idx]]
@@ -290,14 +309,14 @@ class SymIndex:
         for s in self.slices:
             assert th.sum(s.mask & self.unsym) == 0
         A = th.arange
-        assert th.all(self.idx_asym_to_asu[self.idx_asu_to_asym[A(self.Nasu)]] == A(self.Nasu))
-        assert th.all(self.idx_sym_to_asym[self.idx_asym_to_sym[A(self.Nasym)]] == A(self.Nasym))
+        assert th.all(self.idx_asym_to_asu[self.idx_asu_to_asym[A(self.Nasu)]] == A(self.Nasu))  # type: ignore
+        assert th.all(self.idx_sym_to_asym[self.idx_asym_to_sym[A(self.Nasym)]] == A(self.Nasym))  # type: ignore
         for i in range(self.nsub):
-            assert th.all(self.idx_sym_to_sub[i, self.idx_sub_to_sym[i, A(self.Nasu)]] == A(self.Nasu))
-            assert th.all(self.idx_sym_to_sub[i, self.subnum == i] == A(self.Nasu))
+            assert th.all(self.idx_sym_to_sub[i, self.idx_sub_to_sym[i, A(self.Nasu)]] == A(self.Nasu))  # type: ignore
+            assert th.all(self.idx_sym_to_sub[i, self.subnum == i] == A(self.Nasu))  # type: ignore
             assert th.all(self.idx_asu_to_sub[i, self.asu] == th.where(self.sub[i])[0])
         s = self.subnum[self.contiguous]
-        assert all(i == j for i, j in zip(s, sorted(s)))
+        assert all(i == j for i, j in zip(s, sorted(s)))  # type: ignore
 
     def __repr__(self):
         slices = '\n    '.join(repr(s) for s in self.slices)

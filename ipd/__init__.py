@@ -2,17 +2,31 @@ import contextlib
 import os
 from typing import TYPE_CHECKING
 
-from ipd.lazy_import import lazyimport
-from ipd.bunch import *
-from ipd import observer as observer
-from ipd.observer import hub as hub
+from ipd.dev import Bunch as Bunch
+from ipd import dev
+from ipd.dev import observer as observer
+from ipd.dev.lazy_import import lazyimport
+from ipd.dev.observer import hub as hub
 
 if TYPE_CHECKING:
-    from ipd import crud, cuda, dev, fit, h, homog, motif, pdb, qt, samp, protocol, sym, tests, tools, viz, voxel
+    from ipd import crud
+    from ipd import cuda
+    from ipd import fit
+    from ipd import h
+    from ipd import homog
+    from ipd import motif
+    from ipd import pdb
+    from ipd import qt
+    from ipd import samp
+    from ipd import protocol
+    from ipd import sym
+    from ipd import tests
+    from ipd import tools
+    from ipd import viz
+    from ipd import voxel
 else:
     crud = lazyimport('ipd.crud')
     cuda = lazyimport('ipd.dev.cuda')
-    dev = lazyimport('ipd.dev')
     fit = lazyimport('ipd.fit')
     h = lazyimport('ipd.homog.thgeom')
     homog = lazyimport('ipd.homog')

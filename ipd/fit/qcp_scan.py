@@ -2,7 +2,11 @@ import itertools
 
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import numpy as np
 import torch.utils.cpp_extension  # type: ignore
