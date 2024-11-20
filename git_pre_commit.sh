@@ -11,7 +11,7 @@ elif [ $(basename $gitroot) == 'rf2aa' ]; then
     ipd="$gitroot/lib/ipd"
     src=rf2aa
 else
-    ipd="$gitroot/lib/rf2aa/lib/ipd"
+    ipd="$gitroot/lib/ipd"
     src='rf_diffusion'
 fi
 
