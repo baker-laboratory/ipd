@@ -1,7 +1,9 @@
-import sys
+from collections.abc import Sequence
 import contextlib
 import datetime
+import sys
 import uuid
+from typing import Any, overload
 
 import ipd
 
@@ -14,12 +16,28 @@ def ishex(val):
         return True
     return False
 
-def keyexists(thing, key):
-    if not isinstance(key, str): return [keyexists(thing, s) for s in key]
+@overload
+def key_exists_true(thing: Any, key: str) -> bool:
+    ...
+
+@overload
+def key_exists_true(thing: Any, key: Sequence[str]) -> Sequence[bool]:
+    ...
+
+def key_exists_true(thing: Any, key):
+    if not isinstance(key, str): return [key_exists_true(thing, s) for s in key]
     return key in thing and thing[key]
 
-def attrexists(thing, key):
-    if not isinstance(key, str): return [attrexists(thing, s) for s in key]
+@overload
+def attr_exists_true(thing: Any, key: str) -> bool:
+    ...
+
+@overload
+def attr_exists_true(thing: Any, key: Sequence[str]) -> Sequence[bool]:
+    ...
+
+def attr_exists_true(thing: Any, key):
+    if not isinstance(key, str): return [attr_exists_true(thing, s) for s in key]
     return hasattr(thing, key) and getattr(thing, key)
 
 def arraystr(array):

@@ -31,6 +31,7 @@ class CodeTool(ipd.tools.IPDTool):
         self,
         path: Annotated[str, typer.Argument()] = '[projname]',
         add_type_ignore_comments: bool = False,
+        remove_type_ignore_comments: bool = False,
         dryrun: bool = False,
         excludefile: str = '[gitroot].pyright_exclude',
         hashfile: str = '[gitroot].pyright_hash',
@@ -45,6 +46,10 @@ class CodeTool(ipd.tools.IPDTool):
             hashfile (str, optional): hash file. Defaults to '.yapf_hash'.
             conffile (str, optional): config file. Defaults to 'pyproject.toml'.
         """
+        if remove_type_ignore_comments:
+            with ipd.dev.cd(ipd.dev.git_root()):
+                path, = ipd.dev.substitute_project_vars(path)
+                ipd.dev.remove_type_ignore_comments(path)
         if add_type_ignore_comments:
             with ipd.dev.cd(ipd.dev.git_root()):
                 path, = ipd.dev.substitute_project_vars(path)
