@@ -91,23 +91,30 @@ def git_status(header=None, footer=None, printit=False):
         if printit: print(s)
         return s
 
-def install_ipd_pre_commit_hook(projdir, path=None):
-    if path: projdir = join(projdir, path)
-    projdir = abspath(projdir)
-    if isdir(join(projdir, '.git')):
-        hookdir = join(projdir, '.git/hooks')
-    else:
-        gitdir = Path(join(projdir, '.git')).read_text()
-        assert gitdir.startswith('gitdir: ')
-        hookdir = abspath(join(projdir, gitdir[7:].strip(), 'hooks'))
-    frm, to = abspath(f'{ipd.projdir}/../git_pre_commit.sh'), f'{hookdir}/pre-commit'
-    if exists(to): return
-    if os.path.exists(to): os.remove(to)
-    os.makedirs(hookdir, exist_ok=True)
-    assert os.path.exists(frm)
-    print(f'symlinking {frm} {to}')
-    os.symlink(frm, to)
-    ensure_pre_commit_packages()
+def install_ipd_pre_commit_hook(projdir, path=None, install_packages=False):
+    try:
+        if path: projdir = join(projdir, path)
+        projdir = abspath(projdir)
+        if isdir(join(projdir, '.git')):
+            hookdir = join(projdir, '.git/hooks')
+        else:
+            gitdir = Path(join(projdir, '.git')).read_text()
+            assert gitdir.startswith('gitdir: ')
+            hookdir = abspath(join(projdir, gitdir[7:].strip(), 'hooks'))
+        frm, to = abspath(f'{ipd.projdir}/../git_pre_commit.sh'), f'{hookdir}/pre-commit'
+        if exists(to): return
+        if os.path.islink(to): os.remove(to)  # remove broken symlink
+        os.makedirs(hookdir, exist_ok=True)
+        assert os.path.exists(frm)
+        print(f'symlinking {frm} {to}')
+        os.symlink(frm, to)
+        if install_packages:
+            ensure_pre_commit_packages()
+            print('pre-commit hook installed')
+        else:
+            print('pre-commit hook installed, but packages not installed')
+    except RuntimeError:
+        print('error installing pre-commit hook')
 
 def ensure_pre_commit_packages():
     for pkg in 'yapf ruff pyright validate-pyproject'.split():
