@@ -28,7 +28,7 @@ f00d84e04a169afa66404e2b15afe17a  ipd/dev/code/gentest.py
 c456465514665c4f125bc002d32ec905  ipd/dev/code/__init__.py
 e6167f6fd3fd4f9edf177f9e67e89d63  ipd/dev/testing/hypothesis_strats.py
 2a32b73bb757ed76bc0bb734917ce005  ipd/dev/testing/__init__.py
-4f2d36ad8a3686905358b84c0a09072a  ipd/dev/project_config.py
+896723e84bc4652c30a0c18808c8a888  ipd/dev/project_config.py
 8184a06d467f7d94a75b754ab8405591  ipd/dev/cli/clibase.py
 8db204af1d073019422e556c4aacf79e  ipd/dev/cli/__init__.py
 bdbbb06160d90d8aaabe06ef3619deb4  ipd/dev/misc.py
@@ -155,7 +155,7 @@ cdf600f86704aa65f1c013c47c77f9f6  ipd/voxel/voxel_cuda.py
 879883298e1e49dcd458f54c41a08abb  ipd/voxel/voxel_viz.py
 25d41b9b4ed97fe7221ff4586f67d33a  ipd/voxel/__init__.py
 925325a2cc0358a4f46f492ec5595d58  ipd/tests/check_test_results.py
-1e15916462505b49c2c437fd382aa009  ipd/tests/dev/test_project_config.py
+16512d1bb7a03dfd461289d4c93a40ee  ipd/tests/dev/test_project_config.py
 1038764a27c1196cdd81aaa8a754024e  ipd/tests/dev/observer/test_dynamic_parameters.py
 7d6c40c3c22ffe91f42cfabd053e5a32  ipd/tests/dev/observer/test_observer.py
 3c07a5140d65b78432aa0e19cdf97ab9  ipd/tests/dev/test_timer.py

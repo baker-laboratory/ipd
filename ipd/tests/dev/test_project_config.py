@@ -11,6 +11,8 @@ def test_install_ipd_pre_commit_hook(tmpdir):
         os.system('git init')
         ipd.dev.install_ipd_pre_commit_hook('.')
         assert os.path.exists('.git/hooks/pre-commit')
+        ipd.dev.install_ipd_pre_commit_hook('.')
+        ipd.dev.install_ipd_pre_commit_hook('.')
 
 # please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function git_root with the following signature: ipd.dev.project_config.git_root(path: str = '.') -> str
 # please develop a comprehensive set of pytest tests, including edge cases and input validation, for the function pyproject_file with the following signature: ipd.dev.project_config.pyproject_file(path: str = '.') -> str
