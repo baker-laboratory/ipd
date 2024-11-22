@@ -174,7 +174,7 @@ def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize
         f = ontop
     else:
         f = np.stack(list(ontop) + frames2)
-    assert ipd.homog.hnuique(f)
+    assert ipd.homog.hnuique(f)  # type: ignore
 
     ipd.dev.checkpoint(kw)
     return f
@@ -233,7 +233,7 @@ def axes(sym, nfold=None, all=False, cellsize=1, closest_to=None, **kw):
             else:
                 elems = copy.deepcopy(x.symelems.copy())
             for e in elems:
-                e.cen = ipd.hscaled(cellsize, e.cen)
+                e.cen = ipd.hscaled(cellsize, e.cen)  # type: ignore
             return elems
         else:
             if sym.startswith(("icos", "oct", "tet")):
@@ -688,7 +688,7 @@ def average_aligned_coords(coords, nsub=None, repeatfirst=1):
     assert len(coords) > 1
     assert nsub is None or nsub == len(coords)
 
-    fits = [ipd.hrmsfit(_, coords[0]) for _ in coords[1:]]
+    fits = [ipd.hrmsfit(_, coords[0]) for _ in coords[1:]]  # type: ignore
     rms, crds, _ = zip(*fits)
     crds = [coords[0]] * repeatfirst + list(crds)
     crd = numpy_or_torch_array(np.stack(crds).mean(0), orig)
@@ -708,7 +708,7 @@ def subframes(frames, bbsym, asym):
     axs, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(relframes)
 
     for i in range(len(frames)):
-        axdist = ipd.homog.hpointlinedis(coords, cen[i, :], axs[i, :])
+        axdist = ipd.homog.hpointlinedis(coords, cen[i, :], axs[i, :])  # type: ignore
         ic(axdist)  # type: ignore
     # what about multiple nfold axes???\
     # can distinguish by axis direction?
@@ -718,7 +718,7 @@ def subframes(frames, bbsym, asym):
     # priax =
     # closest axis
 
-    axisdist = ipd.hprojperp(axs, cen)
+    axisdist = ipd.hprojperp(axs, cen)  # type: ignore
     ic(axisdist)  # type: ignore
 
 # computed in ipd.sym.asufit.compute_canonical_asucen

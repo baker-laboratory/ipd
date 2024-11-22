@@ -60,6 +60,10 @@ class SymAdapt(ABC, Generic[T]):
             def _(thing, sym, isasym=None):
                 return cls(thing, sym, isasym)  # type: ignore
 
+    def __init__(self, x: T, sym: ipd.sym.SymmetryManager, isasym: bool):
+        self.orig: T
+        self.kind: ipd.sym.SymKind
+
     @abstractmethod
     def reconstruct(self, list_of_symmetrized) -> T:
         """Restore from dict of components that have been symmetrized."""
@@ -107,10 +111,10 @@ class SymAdaptSequence(SymAdapt):
         self.sym = sym
 
     @property
-    def kind(self):
+    def kind(self):  # type: ignore
         if self.orig and isinstance(self.orig[0], (int, float, str)):
-            return ipd.sym.SymKind(ipd.sym.ShapeKind.ONEDIM, ipd.sym.ValueKind.BASIC)
-        return ipd.sym.SymKind(ipd.sym.ShapeKind.SEQUENCE, ipd.sym.ValueKind.MIXED)
+            return ipd.sym.SymKind(ipd.sym.ShapeKind.ONEDIM, ipd.sym.ValueKind.BASIC)  # type: ignore
+        return ipd.sym.SymKind(ipd.sym.ShapeKind.SEQUENCE, ipd.sym.ValueKind.MIXED)  # type: ignore
 
     @property
     def adapted(self):
@@ -127,7 +131,7 @@ class SymAdaptMap(SymAdapt):
     def __init__(self, x, sym, isasym):
         self.orig = x
         self.sym = sym
-        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)
+        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)  # type: ignore
         self.adapted = copy.copy(self.orig)
 
     def reconstruct(self, canonicals):  # type: ignore
@@ -145,7 +149,7 @@ class SymAdaptDataClass(SymAdapt):
         self.orig = dataclass
         self.sym = sym
         self.isasym = isasym
-        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)
+        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)  # type: ignore
         # for f in dataclasses.fields(dataclass):
         #     v = getattr(dataclass, f.name)
         #     if v is None: continue
@@ -303,7 +307,7 @@ with contextlib.suppress(ImportError):
             assert x.ndim > 0
 
         @property
-        def kind(self):
+        def kind(self):  # type: ignore
             return SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
 
         @property
@@ -316,8 +320,7 @@ with contextlib.suppress(ImportError):
                 new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
                 new[self.sym.idx.asym.cpu()] = self.orig
             else:
-                raise ValueError(
-                    f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
+                raise ValueError(f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
             return new
 
         def reconstruct(self, ary):  # type: ignore
@@ -392,13 +395,13 @@ with contextlib.suppress(ImportError):
             # self.symdims, self.symshape, self.asymshape, self.workshape = self.make_symdims()
 
         @property
-        def kind(self) -> SymKind:
+        def kind(self) -> SymKind:  # type: ignore
             v = self.new.val if isinstance(self.new, SimpleSparseTensor) else self.new
             if self._kind is not None: valuekind = self._kind.valuekind
-            elif tensor_is_xyz(self.orig): valuekind = ipd.sym.ValueKind.XYZ
-            elif self.isidx is not None: valuekind = ipd.sym.ValueKind.INDEX
+            elif tensor_is_xyz(self.orig): valuekind = ipd.sym.ValueKind.XYZ  # type: ignore
+            elif self.isidx is not None: valuekind = ipd.sym.ValueKind.INDEX  # type: ignore
             elif len(self.symdims) == 2 and len(self.orig) == 1: valuekind = ipd.sym.ValueKind.PAIR  # type: ignore
-            else: valuekind = ipd.sym.ValueKind.BASIC
+            else: valuekind = ipd.sym.ValueKind.BASIC  # type: ignore
             if self._kind is not None: shapekind = self._kind.shapekind
             elif len(self.symdims) == 0: shapekind = ipd.sym.ShapeKind.SPARSE  # type: ignore
             elif len(self.symdims) == 1: shapekind = ipd.sym.ShapeKind.ONEDIM  # type: ignore

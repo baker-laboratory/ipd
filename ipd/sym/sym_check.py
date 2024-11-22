@@ -35,14 +35,14 @@ def get_kind_and_adaptor(sym, thing, kind):
         kind = thing.kind
     elif isinstance(thing, ipd.sym.SymAdapt):
         adaptor = thing
-        thing = adaptor.orig
-        kind = adaptor.kind
+        thing = adaptor.orig  # type: ignore
+        kind = adaptor.kind  # type: ignore
     else:
         adaptor = sym.sym_adapt(thing)
         kind = adaptor.kind
     if isinstance(thing, (th.Tensor, np.ndarray)):
-        while len(thing) == 1:
-            thing = thing[0]
+        while len(thing) == 1:  # type: ignore
+            thing = thing[0]  # type: ignore
     if isinstance(thing, ipd.sym.SimpleSparseTensor):
         thing.idx = thing.idx.to(sym.device)
         thing.val = thing.val.to(sym.device)
@@ -52,35 +52,35 @@ def get_kind_and_adaptor(sym, thing, kind):
 
 def symcheck_XYZ(*args, kind, **kw):
     'verify symmetry type XYZ'
-    if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:
-            symcheck_XYZ_1D(*args, kind=kind, **kw)
-    elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:
-            symcheck_XYZ_2D(*args, kind=kind, **kw)
-    elif kind.shapekind == ipd.sym.ShapeKind.SPARSE:
-            symcheck_XYZ_SPARSE(*args, kind=kind, **kw)
+    if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:  # type: ignore
+        symcheck_XYZ_1D(*args, kind=kind, **kw)
+    elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:  # type: ignore
+        symcheck_XYZ_2D(*args, kind=kind, **kw)
+    elif kind.shapekind == ipd.sym.ShapeKind.SPARSE:  # type: ignore
+        symcheck_XYZ_SPARSE(*args, kind=kind, **kw)
     else:
-            assert 0, f'bad ShapeKind {kind.shapekind}'
+        assert 0, f'bad ShapeKind {kind.shapekind}'
 
 def symcheck_INDEX(*args, kind, **kw):
     'verify symmetry type INDEX'
     assert isinstance(kw['idx'], ipd.sym.SymIndex)
 
-    if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:
+    if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:  # type: ignore
         symcheck_INDEX_1D(*args, kind=kind, **kw)
-    elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:
+    elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:  # type: ignore
         symcheck_INDEX_2D(*args, kind=kind, **kw)
-    elif kind.shapekind == ipd.sym.ShapeKind.SPARSE:
+    elif kind.shapekind == ipd.sym.ShapeKind.SPARSE:  # type: ignore
         symcheck_INDEX_SPARSE(*args, kind=kind, **kw)
     else:
         assert 0, f'bad ShapeKind {kind.shapekind}'
 
 def symcheck_BASIC(*args, kind, **kw):
     'verify symmetry type BASIC'
-    if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:
+    if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:  # type: ignore
         symcheck_BASIC_1D(*args, kind=kind, **kw)
-    elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:
+    elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:  # type: ignore
         symcheck_BASIC_2D(*args, kind=kind, **kw)
-    elif kind.shapekind == ipd.sym.ShapeKind.SPARSE:
+    elif kind.shapekind == ipd.sym.ShapeKind.SPARSE:  # type: ignore
         symcheck_BASIC_SPARSE(*args, kind=kind, **kw)
     else:
         assert 0, f'bad ShapeKind {kind.shapekind}'
@@ -99,7 +99,7 @@ def symcheck_XYZ_1D(sym, idx, thing, **kw):
         for i in range(idx.nsub):
             # ic(i, thing.shape, sym.symmRs.shape, sym.symid, sym.nsub,idx.nsub)
             tmp1 = thing[s.beg + i * s.Lasu:s.asuend + i * s.Lasu]
-            tmp2 = ipd.h.xform(ipd.h.homog(sym.symmRs[i]), thing[s.asu])
+            tmp2 = ipd.h.xform(ipd.h.homog(sym.symmRs[i]), thing[s.asu])  # type: ignore
             # ic(tmp1.shape,tmp2.shape)
             th.testing.assert_close(tmp1, tmp2.to(tmp1.dtype), atol=1e-3, rtol=1e-5, equal_nan=True)
 
@@ -189,26 +189,26 @@ def check_sym_asu(sym, xyz, symxyz, perm_ok=False, atol=1e-4):
     frames = th.as_tensor(ipd.sym.frames(sym.symid), dtype=xyz.dtype, device=xyz.device)
     s = sym.idx
     if sym.fit or sym.asu_to_best_frame:
-        rms, _, _ = ipd.h.rmsfit(xyz[s.asu], symxyz[s.asu])
+        rms, _, _ = ipd.h.rmsfit(xyz[s.asu], symxyz[s.asu])  # type: ignore
         if rms > 1e-3:
             print(f'ASU mismatck {rms}')
             return False
         if s.Nunsym >= 3:
-            rms, _, _ = ipd.h.rmsfit(xyz[s.unsym], symxyz[s.unsym])
+            rms, _, _ = ipd.h.rmsfit(xyz[s.unsym], symxyz[s.unsym])  # type: ignore
             if rms > 1e-3:
                 print(f'UNSYM mismatck {rms}')
                 return False
-        rms, _, _ = ipd.h.rmsfit(xyz[s.asym], symxyz[s.asym])
+        rms, _, _ = ipd.h.rmsfit(xyz[s.asym], symxyz[s.asym])  # type: ignore
         if rms > 1e-3:
             print(f'ASYM mismatch {rms}')
             return False
     else:
         th.testing.assert_close(xyz[sym.idx.asym], symxyz[sym.idx.asym], atol=1e-3, rtol=1e-5)
-    wusym = ipd.h.xform(frames, symxyz[masks[0]])
+    wusym = ipd.h.xform(frames, symxyz[masks[0]])  # type: ignore
     for i in range(sym.nsub):
         a = symxyz[masks[i]]
         b = wusym[i]
-        if perm_ok: b = wusym[th.argmin(ipd.h.norm((wusym - a).reshape(len(wusym), -1)))]
+        if perm_ok: b = wusym[th.argmin(ipd.h.norm((wusym - a).reshape(len(wusym), -1)))]  # type: ignore
         if not th.allclose(a, b, atol=1e-3, rtol=1e-5):
             print(masks[i].to(int))
             print(i, 'a', a)
