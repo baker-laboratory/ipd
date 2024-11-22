@@ -93,7 +93,7 @@ def git_status(header=None, footer=None, printit=False):
         return s
 
 def install_ipd_pre_commit_hook(projdir, path=None):
-    with contextlib.suppress(RuntimeError):
+    with contextlib.suppress(Exception):
         if path: projdir = join(projdir, path)
         projdir = abspath(projdir)
         if isdir(join(projdir, '.git')):
