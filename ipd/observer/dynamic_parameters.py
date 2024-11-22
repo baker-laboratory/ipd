@@ -113,8 +113,13 @@ import sys
 from abc import ABC, abstractmethod
 from collections import namedtuple
 from collections.abc import Iterable, Mapping
+from typing import TYPE_CHECKING
 
-import pytest
+with contextlib.suppress(ImportError):
+    import pytest
+
+if TYPE_CHECKING:
+    import pytest
 
 import ipd
 from ipd.observer.observer import Observer

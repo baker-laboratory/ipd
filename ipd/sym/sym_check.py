@@ -1,9 +1,16 @@
 """Symmetry checks."""
+import contextlib
+from typing import TYPE_CHECKING
 import ipd
 
 th = ipd.lazyimport('torch')
 
-import assertpy
+with contextlib.suppress(ImportError):
+    import assertpy
+
+if TYPE_CHECKING:
+    import assertpy
+
 import numpy as np
 
 from ipd.sym import ShapeKind, ValueKind

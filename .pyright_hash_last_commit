@@ -1,4 +1,4 @@
-7a2418b89a3fbe0a67a256c9ece1c918  ipd/bunch.py
+0b31b12d21aebf8e9076c364c60e76cb  ipd/bunch.py
 e68620b6e436dd518c5dc1f3f7ec87a0  ipd/fit/__init__.py
 daabd24e4e8cb00446d4dc18caed46d5  ipd/fit/qcp_rms_cuda.py
 834e9831222c868e0815a405989ebbc2  ipd/fit/qcp_scan.py
@@ -20,7 +20,7 @@ f10d7d148311c2a0a2679bb9fcbe0eb2  ipd/sym/xtal/spacegroup_frames.py
 1001efe0f48ebc0cb2d1daf155bac4db  ipd/sym/xtal/spacegroup_util.py
 fa0a0c5d46f2e976839e389f6b0a59d7  ipd/sym/xtal/xtalfit.py
 6a93afd30baae3e07be8cdf027013e45  ipd/sym/xtal/spacegroup_symelems.py
-95c732389383d513a8e76ce5ae65d294  ipd/sym/xtal/SymElem.py
+a7f00a1e54236a9f12000368da9d3b94  ipd/sym/xtal/SymElem.py
 b4367f31265c3a70b280502c241bee97  ipd/sym/xtal/spacegroup_contacts.py
 3f90fda8c09ccbd582ef7f541c667885  ipd/sym/permutations.py
 9161b28622a1bdc33cf4a5e580d859c7  ipd/sym/__init__.py
@@ -28,7 +28,7 @@ f440686a3563299f948328ce9eafac4e  ipd/sym/high_t/high_t_from_file.py
 7d677c8ae23f3d9a8ed03bb8a373b33c  ipd/sym/high_t/pseudo_t.py
 0eb0802d5653d50bb52f0446afe41638  ipd/sym/high_t/__init__.py
 771c4ff522e3d8f96579b32841a04f31  ipd/sym/sym.py
-a75face4c3c7756bbc30f900c1b2fa56  ipd/sym/sym_manager.py
+c0a167afd2326b6d2a049088a704535f  ipd/sym/sym_manager.py
 105f8e50e115fe0b4b903bce181765ed  ipd/sym/old/asuslide.py
 856c45da95c7310670a4e12e1a1b1107  ipd/sym/old/asufit.py
 4fcfee39e4c038ce21a4334ab0f4ff6b  ipd/sym/old/symfit.py
@@ -49,7 +49,7 @@ f67d996c0a438b721d68db9b2435c07e  ipd/sym/old/rosetta_symdef.py
 5060d7af6ff5f148f012cac4abef0ed5  ipd/sym/sym_index.py
 32efa3822337fb0138e4a2f96842046d  ipd/sym/sym_kind.py
 3679e5e0c2a25df5ee8adae12b44d2d0  ipd/sym/ipd_sym_manager.py
-410afaf18aca383737ff4db94af391ff  ipd/sym/sym_check.py
+050886e91348a85cffb3fe65edff9829  ipd/sym/sym_check.py
 ad3677491fc86a1c010a2d1e57ba1ab7  ipd/sym/sym_options.py
 0d30709fd7abac1ed648b3c70b666210  ipd/sym/sym_util.py
 2d01aa31e109527623519d16beacfd9b  ipd/sym/symframes.py
@@ -126,7 +126,7 @@ f45e30b7c06e3bf5a540ac6ce4da35ff  ipd/dev/types/__init__.py
 cdf600f86704aa65f1c013c47c77f9f6  ipd/voxel/voxel_cuda.py
 c59ff701df8e6d9d550c583537e22ae7  ipd/observer/__init__.py
 658bf3754e86035e00751bb98b2c1213  ipd/observer/observer.py
-26160e5e90a6f79845ebe9b454291598  ipd/observer/dynamic_parameters.py
+0afdbaebaf19ef5f41556f2596e5d6dd  ipd/observer/dynamic_parameters.py
 f5ff549aadbe250022e2b5373b704bae  ipd/dock/rigid/rigidbody.py
 3fcdd3b87106c5d2465c156bc5fb3b50  ipd/dock/rigid/objective.py
 1222c8776d9ed6b3401b9e8cca1afa19  ipd/dock/rigid/__init__.py

@@ -2,11 +2,16 @@ import contextlib
 import copy
 import itertools
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 from typing_extensions import TypeVar
 
-import assertpy
+with contextlib.suppress(ImportError):
+    from icecream import ic
+
+if TYPE_CHECKING:
+    from icecream import ic
+
 import numpy as np
-from icecream import ic
 
 import ipd
 
@@ -100,7 +105,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         )
         for location, props in locprops.items():
             for prop in props:
-                if location == 'opt': assertpy.assert_that(self.opt).contains(prop)
+                if location == 'opt': assert prop in self.opt
 
                 def makeprop(loc, p):
                     return property(lambda slf: getattr(getattr(slf, loc), p))
