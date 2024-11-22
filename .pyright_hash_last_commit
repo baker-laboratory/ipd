@@ -73,7 +73,7 @@ a99fc7f405e2e263f69435944f05fda3  ipd/pdb/viz_pdb.py
 c270fa00927c8dc17ccfbf7474d31ae8  ipd/motif/__init__.py
 1d7eec97b65e8358258eb52ac3f7600e  ipd/motif/motif_factory.py
 ecf8e1e77dfb1f8f9360f946a199f526  ipd/motif/motif_manager.py
-c01bac5df41f31332bd4f73bb4628fd0  ipd/tools/ci/citool.py
+ea95c5cd58a7c812dc2fd227a47abd49  ipd/tools/ci/citool.py
 dc4bd19680807e950fe2cea7438e146a  ipd/tools/ci/__init__.py
 8a8cc12623de9d5a894a2d0fe03237cd  ipd/tools/conda.py
 cd049a669212a4c388831eacd9ae5961  ipd/tools/ipdtool.py
