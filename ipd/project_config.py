@@ -1,3 +1,4 @@
+import contextlib
 import collections
 import os
 import shutil
@@ -92,22 +93,23 @@ def git_status(header=None, footer=None, printit=False):
         return s
 
 def install_ipd_pre_commit_hook(projdir, path=None):
-    if path: projdir = join(projdir, path)
-    projdir = abspath(projdir)
-    if isdir(join(projdir, '.git')):
-        hookdir = join(projdir, '.git/hooks')
-    else:
-        gitdir = Path(join(projdir, '.git')).read_text()
-        assert gitdir.startswith('gitdir: ')
-        hookdir = abspath(join(projdir, gitdir[7:].strip(), 'hooks'))
-    frm, to = abspath(f'{ipd.projdir}/../git_pre_commit.sh'), f'{hookdir}/pre-commit'
-    if exists(to): return
-    if os.path.islink(to): os.remove(to)  # remove broken symlink
-    os.makedirs(hookdir, exist_ok=True)
-    assert os.path.exists(frm)
-    print(f'symlinking {frm} {to}')
-    os.symlink(frm, to)
-    ensure_pre_commit_packages()
+    with contextlib.suppress(RuntimeError):
+        if path: projdir = join(projdir, path)
+        projdir = abspath(projdir)
+        if isdir(join(projdir, '.git')):
+            hookdir = join(projdir, '.git/hooks')
+        else:
+            gitdir = Path(join(projdir, '.git')).read_text()
+            assert gitdir.startswith('gitdir: ')
+            hookdir = abspath(join(projdir, gitdir[7:].strip(), 'hooks'))
+        frm, to = abspath(f'{ipd.projdir}/../git_pre_commit.sh'), f'{hookdir}/pre-commit'
+        if exists(to): return
+        if os.path.islink(to): os.remove(to)  # remove broken symlink
+        os.makedirs(hookdir, exist_ok=True)
+        assert os.path.exists(frm)
+        print(f'symlinking {frm} {to}')
+        os.symlink(frm, to)
+        ensure_pre_commit_packages()
 
 def ensure_pre_commit_packages():
     for pkg in 'yapf ruff pyright validate-pyproject'.split():
