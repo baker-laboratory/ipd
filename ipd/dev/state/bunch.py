@@ -3,7 +3,6 @@ import os
 import shutil
 from pathlib import Path
 from typing import Generic, TypeVar
-from icecream import ic
 
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
