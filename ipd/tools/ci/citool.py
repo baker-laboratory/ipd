@@ -1,3 +1,4 @@
+from functools import partial
 import glob
 import os
 import re
@@ -131,7 +132,7 @@ def run_pytest(
     if os.path.exists(log): os.remove(log)
     if executor:
         executor.update_parameters(timeout_min=timeout, slurm_mem=mem, cpus_per_task=parallel)
-        return cmd, executor.submit(ipd.dev.run, cmd, capture=False), log
+        return cmd, executor.submit(partial(ipd.dev.run, cmd, capture=False)), log
     else:
         return cmd, Future(ipd.dev.run(cmd, errok=True, capture=False)), log
 
