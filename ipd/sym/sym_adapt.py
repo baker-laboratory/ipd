@@ -60,7 +60,7 @@ class SymAdapt(ABC, Generic[T]):
             def _(thing, sym, isasym=None):
                 return cls(thing, sym, isasym)  # type: ignore
 
-    def __init__(self, x: T, sym: ipd.sym.SymmetryManager, isasym: bool):
+    def __init__(self, x: T, sym: 'ipd.sym.SymmetryManager', isasym: bool):
         self.orig: T
         self.kind: ipd.sym.SymKind
 

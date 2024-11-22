@@ -8,7 +8,7 @@ daabd24e4e8cb00446d4dc18caed46d5  ipd/fit/qcp_rms_cuda.py
 f3d94e832123ec66694c8e128507ed3a  ipd/sym/helix/__init__.py
 68c95d5bcfba4197ab04a03dd5c37e91  ipd/sym/helix/helix.py
 f08b1f5090e079acf6f52d2afdd5d765  ipd/sym/sym_slice.py
-4c8bc9da341f69b17f61863cfd222340  ipd/sym/sym_adapt.py
+4fb8d9f6a51f9144a3cd12dcb3fd6a61  ipd/sym/sym_adapt.py
 a7e4340d13a3c559ef9473b603eb6b41  ipd/sym/guess_symmetry.py
 f886154bb9fba65dbbbcd9ad80731119  ipd/sym/xtal/xtalinfo.py
 71f209abfd19957381ceb7c1ea357188  ipd/sym/xtal/xtalcls.py
