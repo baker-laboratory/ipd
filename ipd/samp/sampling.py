@@ -1,7 +1,7 @@
 import math
 
 import ipd
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 
 th = lazyimport('torch')
 

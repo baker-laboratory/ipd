@@ -4,15 +4,17 @@ import contextlib
 import copy
 from functools import singledispatch
 import dataclasses
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 import numpy as np
 
 import ipd
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 from ipd.sym.sym_kind import ShapeKind, SymKind, ValueKind
 
 th = lazyimport('torch', warn=False)
+
+T = TypeVar('T')
 
 @singledispatch
 def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
@@ -43,7 +45,7 @@ def _(ary, sym, isasym):
     else:
         return SymAdaptNDArray(ary, sym, isasym)
 
-class SymAdapt(ABC):
+class SymAdapt(ABC, Generic[T]):
     """You must define a subclass of SymAdapt for each type you want to symmetrize.
 
     Must have a kind and adapted property. See the :SymAdaptDataClass:`ipd.sim.SymAdaptDataClass` class for an example.
@@ -59,7 +61,7 @@ class SymAdapt(ABC):
                 return cls(thing, sym, isasym)  # type: ignore
 
     @abstractmethod
-    def reconstruct(self, list_of_symmetrized):
+    def reconstruct(self, list_of_symmetrized) -> T:
         """Restore from dict of components that have been symmetrized."""
 
     # @property
@@ -306,17 +308,16 @@ with contextlib.suppress(ImportError):
 
         @property
         def adapted(self):
-            match len(self.orig):
-                case self.sym.idx.L:
-                    if self.isasym is not None: assert not self.isasym
-                    new = self.orig.copy()
-                case self.sym.idx.Nasym:
-                    if self.isasym is not None: assert self.isasym
-                    new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
-                    new[self.sym.idx.asym.cpu()] = self.orig
-                case _:
-                    raise ValueError(
-                        f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
+            if len(self.orig) == self.sym.idx.L:
+                if self.isasym is not None: assert not self.isasym
+                new = self.orig.copy()
+            elif len(self.orig) == self.sym.idx.Nasym:
+                if self.isasym is not None: assert self.isasym
+                new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
+                new[self.sym.idx.asym.cpu()] = self.orig
+            else:
+                raise ValueError(
+                    f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
             return new
 
         def reconstruct(self, ary):  # type: ignore

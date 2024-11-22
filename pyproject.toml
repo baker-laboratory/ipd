@@ -101,7 +101,6 @@ defineConstant = { DEBUG = true }
 typeCheckingMode = 'standard'
 reportMissingImports = true
 reportMissingTypeStubs = false
-reportOverlappingOverload = false
 pythonPlatform = 'Linux'
 requires-python = '>=3.11'
 pythonVersion = '3.12'

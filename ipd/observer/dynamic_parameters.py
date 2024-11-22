@@ -117,7 +117,7 @@ from collections.abc import Iterable, Mapping
 import pytest
 
 import ipd
-from ipd.dev.observer.observer import Observer
+from ipd.observer.observer import Observer
 
 Step = namedtuple('Step', 'design diffuse rfold')
 

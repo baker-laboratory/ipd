@@ -5,10 +5,10 @@ from pathlib import Path
 
 import ipd
 
-def get_pyright_errors(path: str) -> list[dict]:
+def get_pyright_errors(codedir: str) -> list[dict]:
     """Run pyright and return parsed error output."""
     try:
-        result = ipd.dev.run(f'pyright --outputjson {path}', errok=True, echo=True)
+        result = ipd.dev.run(f'pyright --outputjson {codedir}', errok=True, echo=True)
         output = json.loads(result)
         # rich.print(output)
         return output.get('generalDiagnostics', [])
@@ -37,6 +37,3 @@ def add_type_ignore_comments(errors: list[dict]) -> None:
         # Write modified content back to file
         path.write_text('\n'.join(modified_lines) + '\n')
         print(f'Modified {fname}: added type: ignore to {len(lineno)} lines')
-
-def remove_type_ignore_comments(path: str = '.'):
-    pass

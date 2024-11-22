@@ -1,13 +1,14 @@
+import contextlib
 import os
 
-from ipd.dev import Bunch as Bunch
-from ipd import dev
-from ipd.dev import observer as observer
-from ipd.dev.lazy_import import lazyimport
-from ipd.dev.observer import hub as hub
+from ipd.lazy_import import lazyimport
+from ipd.bunch import *
+from ipd import observer as observer
+from ipd.observer import hub as hub
 
 crud = lazyimport('ipd.crud')
 cuda = lazyimport('ipd.dev.cuda')
+dev = lazyimport('ipd.dev')
 fit = lazyimport('ipd.fit')
 h = lazyimport('ipd.homog.thgeom')
 homog = lazyimport('ipd.homog')
@@ -27,14 +28,12 @@ STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 projdir = os.path.realpath(os.path.dirname(__file__))
 
-from icecream import ic
-# from collections import defaultdict, namedtuple
-import builtins
+with contextlib.suppress(ImportError):
+    from icecream import ic
+    import builtins
 
-ic.configureOutput(includeContext=True)
-setattr(builtins, 'ic', ic)
-# setattr(builtins, 'defaultdict', defaultdict)
-# setattr(builtins, 'namedtuple', namedtuple)
+    ic.configureOutput(includeContext=True)
+    setattr(builtins, 'ic', ic)
 
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
@@ -47,4 +46,5 @@ def __getattr__(name):
         return motif.get_global_motif_manager()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-dev.install_ipd_pre_commit_hook(projdir, '..')
+from ipd.project_config import install_ipd_pre_commit_hook
+install_ipd_pre_commit_hook(projdir, '..')

@@ -3,8 +3,6 @@ import sys
 from importlib import import_module
 from types import ModuleType
 import typing
-from ipd.dev.code.inspect import caller_info
-from ipd.dev.contexts import onexit
 
 def lazyimport(name: str,
                package: str = '',
@@ -32,6 +30,7 @@ class _LazyModule:
     __slots__ = ('_name', '_package', '_pip', '_mamba', '_channels', '_callerinfo', '_warn')
 
     def __init__(self, name: str, package: str = '', pip=False, mamba=False, channels='', warn=True):
+        from ipd.dev.code.inspect import caller_info
         self._name = name
         self._package = package or name.split('.', maxsplit=1)[0]
         self._pip = pip
@@ -128,15 +127,16 @@ _all_skipped_lazy_imports = set()
 _skip_global_install = False
 _warned = set()
 
-@onexit
-def print_skipped():
-    if _all_skipped_lazy_imports:
-        print(_all_skipped_lazy_imports)
+# from ipd.dev.contexts import onexit
+# @onexit
+# def print_skipped():
+#     if _all_skipped_lazy_imports:
+#         print(_all_skipped_lazy_imports)
 
 _DEBUG_ALLOW_LAZY_IMPORT = [
     'ipd.crud',
     'ipd.dev.cuda',
-    'ipd.dev.observer',
+    'ipd.observer',
     'ipd.dev.qt',
     'ipd.dev.sieve',
     'ipd.fit',

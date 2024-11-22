@@ -1,16 +1,18 @@
+import contextlib
 import ipd
-from ipd.sym.xtal.spacegroup_data import *
-from ipd.sym.xtal.spacegroup_deriveddata import *
-from ipd.sym.xtal.spacegroup_util import *
+with contextlib.suppress(ImportError):
+    from ipd.sym.xtal.spacegroup_data import *
+    from ipd.sym.xtal.spacegroup_deriveddata import *
+    from ipd.sym.xtal.spacegroup_util import *
 
-_memoized_frames = {}
+    _memoized_frames = {}
 
-if "H32" in sg_frames_dict:
-    sg_frames_dict["R3"] = sg_frames_dict["H3"]  # type: ignore
-    sg_frames_dict["R32"] = sg_frames_dict["H32"]  # type: ignore
-sg_redundant = {"P2": "P121"}
-sg_all = [k for k in sg_pdbname if k not in sg_redundant]
-sg_all_chiral = [k for k in sg_all if sg_is_chiral(k)]
+    if "H32" in sg_frames_dict:
+        sg_frames_dict["R3"] = sg_frames_dict["H3"]  # type: ignore
+        sg_frames_dict["R32"] = sg_frames_dict["H32"]  # type: ignore
+    sg_redundant = {"P2": "P121"}
+    sg_all = [k for k in sg_pdbname if k not in sg_redundant]
+    sg_all_chiral = [k for k in sg_all if sg_is_chiral(k)]
 
 def sgframes(
     spacegroup: str,

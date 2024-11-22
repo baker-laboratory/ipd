@@ -3,7 +3,7 @@ import os
 
 import yaml
 
-from ipd.dev.state.bunch import Bunch, make_autosave_hierarchy
+from ipd.bunch import Bunch, make_autosave_hierarchy
 from ipd.dev.state.toggle import ToggleOrSetWithMemory
 
 toggle_or_set = ToggleOrSetWithMemory()

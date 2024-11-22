@@ -2,7 +2,7 @@ import pytest
 
 import ipd
 
-class ObserverTest(ipd.dev.observer.Observer):  # type: ignore
+class ObserverTest(ipd.observer.Observer):  # type: ignore
     def __init__(self):
         super().__init__()
         self.foobar_called = False
@@ -22,7 +22,7 @@ def test_observer():
     agent = ipd.hub[ObserverTest]
     assert not agent.foobar_called
     ipd.hub.blah(check_is_registered_method=False)
-    with pytest.raises(ipd.dev.observer.ObserverError):  # type: ignore
+    with pytest.raises(ipd.observer.ObserverError):  # type: ignore
         ipd.hub.blah(strict=True)
     assert not agent.foobar_called
     ipd.hub.foobar()
