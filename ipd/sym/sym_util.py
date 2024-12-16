@@ -8,6 +8,55 @@ torch = ipd.lazyimport('torch')
 
 SYMA = 1.0
 
+def get_xforms(symid, opt, cenvec):
+    def calc_Ts(cenvec, radius, Rs):
+        A = radius * cenvec.to(torch.float32).cpu()
+        Ts = [R[:3,:3] @ A + R[:3,3] for R in Rs]
+        Ts = [T - Ts[0] for T in Ts]
+        return Ts
+    if opt.high_t_number != 1:
+        xforms = ipd.sym.high_t.get_exact_high_t_xforms(opt, cenvec)
+        subforms, _ = get_nneigh(xforms, opt.max_nsub)
+        return xforms, subforms
+    else:
+        Rs = ipd.sym.frames(symid, torch=True).to(torch.float32)
+    Ts = calc_Ts(cenvec, opt.radius, Rs)
+    xforms = []
+    for i, R in enumerate(Rs):
+        X = np.eye(4)
+        X[:3, :3] = R[:3,:3]
+        X[:3, 3] = Ts[i]
+        xforms.append(torch.tensor(X))
+    xforms = torch.stack(xforms)
+    subforms, _ = get_nneigh(xforms, opt.max_nsub)
+    return xforms, subforms
+
+def get_nneigh(xforms, nsub, w_t=1.0, w_r=1.0):
+    '''
+    Args:
+        xforms (list): list of xforms
+    Returns:
+        symsub (list): indices corresponding to nearest neighbors around main sub
+    '''
+    def comb_dist(T1, T2, w_t=1.0, w_r=1.0):
+        '''
+        Compute the combined distance.
+        '''
+        t1, t2 = T1[:3, 3], T2[:3, 3]
+        t_dist = torch.norm(t1 - t2)
+        R1, R2 = T1[:3, :3], T2[:3, :3]
+        rotation_diff = torch.matmul(R1.T, R2)
+        trace_value = torch.clip((torch.trace(rotation_diff) - 1) / 2, -1, 1)
+        r_dist = torch.acos(trace_value)
+        return w_t * t_dist + w_r * r_dist
+    dists = []
+    for T in xforms:
+        dists.append(comb_dist(xforms[0],T))
+    dists = torch.tensor(dists)
+    _, symsub = torch.topk(dists, k=nsub, largest=False)
+    subforms = xforms[symsub]
+    return subforms, symsub
+
 def get_coords_stack(pdblines):
     """Getting the Ca coords of input "high-T" pdb.
 
