@@ -2,6 +2,7 @@ import ipd
 from ipd import h
 import re
 import numpy as np
+import sys
 
 th = ipd.lazyimport('torch')
 
@@ -20,30 +21,18 @@ def get_approx_stubs(ca):
     stubs = h.xform(a_to_others, stub)
     return stubs
 
-def get_high_t_frames_from_file(fname):
-    ca = th.as_tensor(ipd.pdb.readpdb(fname).ca(splitchains=True))
-    stubs = get_approx_stubs(ca)
-    symframes = ipd.sym.frames('icos', torch=True)
-    asymframes = stubs @ h.inv(stubs[0])
-    frames = h.xform(symframes, asymframes)
-    return frames
-
-def get_exact_high_t_xforms(opt, cenvec):
+def get_high_t_from_file(opt):
     biomts = get_biomts(opt.sym_input_file)
     ca = th.as_tensor(ipd.pdb.readpdb(opt.sym_input_file).ca(splitchains=True)) #[Tn,Lasu,3]
-    asu_Ts, asu_xforms, asu_COMs = get_ASU_xforms(ca) # asu xforms wrt main chain
-    Rs, Ts = [], []
+    _, asu_Rs, asu_COMs = get_ASU_xforms(ca) # asu xforms wrt main chain
+    Rs = []
     for R in biomts:
-        for i,a in enumerate(asu_xforms):
+        for i,a in enumerate(asu_Rs):
             newR = (a @ R).to(th.float32)
             Rs.append(newR)
-            newT = R @ asu_COMs[i]
-            Ts.append(newT)
-    # Ts = smoothen(th.stack(Ts))
-    # print(Ts)
-    # Ts = Ts * opt.radius*100
-    # print(Ts)
-    # sys.exit()
+    Ts = smoothen(th.stack(biomts), th.stack(asu_COMs))
+    norms = Ts.norm(p=2, dim=1, keepdim=True)
+    Ts = Ts / norms * opt.radius
     Ts = [T - Ts[0] for T in Ts]
     xforms = []
     for i, R in enumerate(Rs):
@@ -53,72 +42,49 @@ def get_exact_high_t_xforms(opt, cenvec):
         xforms.append(th.tensor(X))
     return th.stack(xforms)
 
-# def smoothen(points, num_iterations=10):
-#     """
-#     Apply Lloyd's relaxation to smooth the points on the sphere.
-    
-#     Args:
-#         points (torch.Tensor): Initial set of points on the sphere, shape (N, 3).
-#         num_iterations (int): Number of iterations for the relaxation process.
-    
-#     Returns:
-#         torch.Tensor: Spherically smooth points, shape (N, 3).
-#     """
-#     for _ in range(num_iterations):
-#         new_points = []
-#         # For each point, move it to the centroid of its neighbors
-#         for i in range(len(points)):
-#             # Get the distances between the current point and all other points
-#             diff = points - points[i]  # Shape: (N, 3)
-#             distances = th.norm(diff, dim=1)  # Shape: (N,)
-#             # Compute the centroid of the neighbors (excluding the point itself)
-#             neighbor_indices = distances < th.mean(distances)  # Simple thresholding for neighbors
-#             neighbor_points = points[neighbor_indices]  # Select neighbors
-#             centroid = th.mean(neighbor_points, dim=0) # centroid
-#             new_point = centroid
-#             new_points.append(new_point)
-#         # Stack the new points and project back onto the sphere
-#         points = th.stack(new_points)/ th.stack(new_points).norm()
-#     return points
+def smoothen(Rs, Ts, nsteps=10, Tscale=0.1):
+    print('Smoothening transforms')
+    COM_Ts = Ts.mean(dim=0)
+    min_dist = compute_dist(Rs,Ts)
+    for n in range(nsteps):
+        print(min_dist)
+        new_dist = compute_dist(Rs,Ts)
+        while new_dist <= min_dist:
+            random_perturbations = (2* th.randn(1) -1 )* (Ts - COM_Ts) * Tscale
+            newTs = Ts + random_perturbations
+            new_dist = compute_dist(Rs, newTs)
+        Ts = newTs
+        min_dist = new_dist
+    newTs = []
+    for R in Rs:
+        for T in Ts:
+            newTs.append(R @ T)
+    print('Smoothed transforms')
+    return th.stack(newTs)
 
+def compute_dist(Rs, Ts):
+    newTs = []
+    for R in Rs:
+        for T in Ts:
+            newTs.append( R @ T)
+    newTs = th.stack(newTs)
+    dmap = th.cdist(newTs, newTs, p=2).to(th.float32)
+    diag = th.full((1,len(newTs)), 9999).to(th.float32)
+    indices = th.arange(len(newTs))
+    dmap[indices, indices] = diag
+    return dmap.min()
 
-# def smoothen(Rs, Ts, high_t_number):
-#     # heinous implementation of a spherical approximation of high T transforms
-#     Ts -= Ts.mean(dim=0) # center Ts at [0,0,0]
-#     norms = th.norm(Ts, dim=1, keepdim=True)
-#     Ts /= norms # normalize points
-#     ideal_pts = distribute_points_on_sphere(high_t_number*60) # find unit sphere
-#     R = rotation_about_origin(ideal_pts[0], Ts[0])
-#     ideal_pts = th.stack([R @ i for i in ideal_pts])
-#     dmap = th.cdist(ideal_pts, Ts, p=2)
-#     min_dists = th.argmin(dmap, dim=1)
-#     print(len(th.unique(min_dists)))
-#     return
-
-# def rotation_about_origin(p1, p2):
-#     axis = th.linalg.cross(p1, p2)
-#     sin = th.norm(axis)
-#     cos = th.dot(p1,p2)
-#     axis /= th.norm(axis)
-#     K = th.tensor([
-#         [0, -axis[2], axis[1]],
-#         [axis[2], 0, -axis[0]],
-#         [-axis[1], axis[0], 0]
-#     ])
-#     R = th.eye(3) +  sin * K + (1 - cos) * (K @ K)
-#     return R
-
-# def distribute_points_on_sphere(num_points):
-#     """Distribute points on a sphere using the Fibonacci sphere algorithm."""
-#     indices = np.arange(0, num_points, dtype=float) + 0.5
-#     phi = (1 + np.sqrt(5)) / 2  # Golden ratio
-#     theta = 2 * np.pi * indices / phi
-#     z = 1 - (2 * indices / num_points)
-#     xy_radius = np.sqrt(1 - z**2)
-#     x = xy_radius * np.cos(theta)
-#     y = xy_radius * np.sin(theta)
-#     points = np.vstack((x, y, z)).T
-#     return th.tensor(points)
+def distribute_points_on_sphere(num_points, r=1):
+    """Distribute points on a sphere using the Fibonacci sphere algorithm."""
+    indices = np.arange(0, num_points, dtype=float) + 0.5
+    phi = (1 + np.sqrt(5)) / 2  # Golden ratio
+    theta = 2 * np.pi * indices / phi
+    z = 1 - (2 * indices / num_points)
+    xy_radius = np.sqrt(1 - z**2)
+    x = xy_radius * np.cos(theta)
+    y = xy_radius * np.sin(theta)
+    points = np.vstack((x, y, z)).T * r
+    return th.tensor(points)
 
 def get_ASU_xforms(ca):
     asu_xforms = []

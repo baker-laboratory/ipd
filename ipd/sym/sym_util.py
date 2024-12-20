@@ -4,6 +4,8 @@ import numpy as np
 
 import ipd
 
+import sys
+
 torch = ipd.lazyimport('torch')
 
 SYMA = 1.0
@@ -14,8 +16,8 @@ def get_xforms(symid, opt, cenvec):
         Ts = [R[:3,:3] @ A + R[:3,3] for R in Rs]
         Ts = [T - Ts[0] for T in Ts]
         return Ts
-    if opt.high_t_number != 1:
-        xforms = ipd.sym.high_t.get_exact_high_t_xforms(opt, cenvec)
+    if 'H_K' in opt:
+        xforms = ipd.sym.high_t.get_pseudo_highT(opt)
         subforms, _ = get_nneigh(xforms, opt.max_nsub)
         return xforms, subforms
     else:

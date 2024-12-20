@@ -87,6 +87,10 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
             opt.nsub = 60
             if opt.high_t_number > 1:
                 opt.nsub = opt.nsub * opt.high_t_number
+            if 'H_K' in opt:
+                h = opt.H_K[0]
+                k = opt.H_K[1]
+                opt.nsub = opt.nsub * (h*h+k*k+h*k)
         elif opt.symid == 'O':
             opt.nsub = 24
         elif opt.symid == 'T':
@@ -106,12 +110,6 @@ def process_symmetry_options(opt, **kw):
         opt.Lasu = opt.repeat_length
         if opt.n_repeats:
             opt.L = opt.n_repeats * opt.repeat_length
-
-    if opt.has('sym_input_file'):
-        # opt.T_xforms = ipd.sym.generate_ASU_xforms(opt.sym_input_pdb)
-        # opt.high_t_number = len(opt.T_xforms)
-        assert opt.high_t_number != 1, 'Need to specifiy T number'        
-        # log.info(f'HIGH T - processed T{opt.high_t_number} symmetry')  # type: ignore
     return opt
 
 def resolve_option(name, kw, conf, default, strict=False):
