@@ -4,15 +4,17 @@ import contextlib
 import copy
 from functools import singledispatch
 import dataclasses
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 import numpy as np
 
 import ipd
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 from ipd.sym.sym_kind import ShapeKind, SymKind, ValueKind
 
 th = lazyimport('torch', warn=False)
+
+T = TypeVar('T')
 
 @singledispatch
 def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
@@ -43,7 +45,7 @@ def _(ary, sym, isasym):
     else:
         return SymAdaptNDArray(ary, sym, isasym)
 
-class SymAdapt(ABC):
+class SymAdapt(ABC, Generic[T]):
     """You must define a subclass of SymAdapt for each type you want to symmetrize.
 
     Must have a kind and adapted property. See the :SymAdaptDataClass:`ipd.sim.SymAdaptDataClass` class for an example.
@@ -58,8 +60,12 @@ class SymAdapt(ABC):
             def _(thing, sym, isasym=None):
                 return cls(thing, sym, isasym)  # type: ignore
 
+    def __init__(self, x: T, sym: 'ipd.sym.SymmetryManager', isasym: bool):
+        self.orig: T
+        self.kind: ipd.sym.SymKind
+
     @abstractmethod
-    def reconstruct(self, list_of_symmetrized):
+    def reconstruct(self, list_of_symmetrized) -> T:
         """Restore from dict of components that have been symmetrized."""
 
     # @property
@@ -105,10 +111,10 @@ class SymAdaptSequence(SymAdapt):
         self.sym = sym
 
     @property
-    def kind(self):
+    def kind(self):  # type: ignore
         if self.orig and isinstance(self.orig[0], (int, float, str)):
-            return ipd.sym.SymKind(ipd.sym.ShapeKind.ONEDIM, ipd.sym.ValueKind.BASIC)
-        return ipd.sym.SymKind(ipd.sym.ShapeKind.SEQUENCE, ipd.sym.ValueKind.MIXED)
+            return ipd.sym.SymKind(ipd.sym.ShapeKind.ONEDIM, ipd.sym.ValueKind.BASIC)  # type: ignore
+        return ipd.sym.SymKind(ipd.sym.ShapeKind.SEQUENCE, ipd.sym.ValueKind.MIXED)  # type: ignore
 
     @property
     def adapted(self):
@@ -125,7 +131,7 @@ class SymAdaptMap(SymAdapt):
     def __init__(self, x, sym, isasym):
         self.orig = x
         self.sym = sym
-        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)
+        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)  # type: ignore
         self.adapted = copy.copy(self.orig)
 
     def reconstruct(self, canonicals):  # type: ignore
@@ -143,7 +149,7 @@ class SymAdaptDataClass(SymAdapt):
         self.orig = dataclass
         self.sym = sym
         self.isasym = isasym
-        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)
+        self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)  # type: ignore
         # for f in dataclasses.fields(dataclass):
         #     v = getattr(dataclass, f.name)
         #     if v is None: continue
@@ -301,22 +307,20 @@ with contextlib.suppress(ImportError):
             assert x.ndim > 0
 
         @property
-        def kind(self):
+        def kind(self):  # type: ignore
             return SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
 
         @property
         def adapted(self):
-            match len(self.orig):
-                case self.sym.idx.L:
-                    if self.isasym is not None: assert not self.isasym
-                    new = self.orig.copy()
-                case self.sym.idx.Nasym:
-                    if self.isasym is not None: assert self.isasym
-                    new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
-                    new[self.sym.idx.asym.cpu()] = self.orig
-                case _:
-                    raise ValueError(
-                        f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
+            if len(self.orig) == self.sym.idx.L:
+                if self.isasym is not None: assert not self.isasym
+                new = self.orig.copy()
+            elif len(self.orig) == self.sym.idx.Nasym:
+                if self.isasym is not None: assert self.isasym
+                new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
+                new[self.sym.idx.asym.cpu()] = self.orig
+            else:
+                raise ValueError(f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
             return new
 
         def reconstruct(self, ary):  # type: ignore
@@ -391,13 +395,13 @@ with contextlib.suppress(ImportError):
             # self.symdims, self.symshape, self.asymshape, self.workshape = self.make_symdims()
 
         @property
-        def kind(self) -> SymKind:
+        def kind(self) -> SymKind:  # type: ignore
             v = self.new.val if isinstance(self.new, SimpleSparseTensor) else self.new
             if self._kind is not None: valuekind = self._kind.valuekind
-            elif tensor_is_xyz(self.orig): valuekind = ipd.sym.ValueKind.XYZ
-            elif self.isidx is not None: valuekind = ipd.sym.ValueKind.INDEX
+            elif tensor_is_xyz(self.orig): valuekind = ipd.sym.ValueKind.XYZ  # type: ignore
+            elif self.isidx is not None: valuekind = ipd.sym.ValueKind.INDEX  # type: ignore
             elif len(self.symdims) == 2 and len(self.orig) == 1: valuekind = ipd.sym.ValueKind.PAIR  # type: ignore
-            else: valuekind = ipd.sym.ValueKind.BASIC
+            else: valuekind = ipd.sym.ValueKind.BASIC  # type: ignore
             if self._kind is not None: shapekind = self._kind.shapekind
             elif len(self.symdims) == 0: shapekind = ipd.sym.ShapeKind.SPARSE  # type: ignore
             elif len(self.symdims) == 1: shapekind = ipd.sym.ShapeKind.ONEDIM  # type: ignore

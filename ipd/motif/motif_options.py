@@ -2,7 +2,7 @@ import contextlib
 from collections.abc import Sequence
 
 import ipd
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 from ipd.sym.sym_options import resolve_option
 
 hydra = lazyimport('hydra')

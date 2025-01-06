@@ -22,7 +22,7 @@ class RigidBodyFollowers:
             self.bodies = [self.asym] + self.symbodies
         self._cellsize = ipd.homog.to_xyz(cellsize)
         self.orig_cellsize = self._cellsize.copy()
-        self.is_point_symmetry = np.sum(ipd.homog.hnorm(ipd.hcart3(self.frames()))) < 0.0001
+        self.is_point_symmetry = np.sum(ipd.homog.hnorm(ipd.hcart3(self.frames()))) < 0.0001  # type: ignore
         self.rootbody = self.asym
         if not self.asymexists:
             self.bodies[0] = RigidBody(parent=self.asym, xfromparent=frames[0], **kw)
@@ -31,7 +31,7 @@ class RigidBodyFollowers:
 
         if self.asymexists:
             for i, b in enumerate(self.bodies):
-                if i > 0 and np.allclose(b.xfromparent, np.eye(4)):
+                if i > 0 and np.allclose(b.xfromparent, np.eye(4)):  # type: ignore
                     ic(i)  # type: ignore
                     assert 0
 
@@ -105,12 +105,12 @@ class RigidBodyFollowers:
             assert np.allclose(scalefactor[0], scalefactor[1])
 
         self._cellsize *= scalefactor
-        self.asym.scale = self.asym.scale * scalefactor
+        self.asym.scale = self.asym.scale * scalefactor  # type: ignore
 
         if scalecoords:
             # ic(self.asym.xfromparent)
-            assert np.allclose(self.asym.xfromparent[:3, :3], np.eye(3))
-            self.asym.moveby(ipd.htrans((scalefactor-1) * self.asym.com()[:3]))
+            assert np.allclose(self.asym.xfromparent[:3, :3], np.eye(3))  # type: ignore
+            self.asym.moveby(ipd.htrans((scalefactor-1) * self.asym.com()[:3]))  # type: ignore
 
         return self.cellsize
         # changed = any([b.scale_frame(scalefactor) for b in self.bodies])
@@ -130,10 +130,10 @@ class RigidBodyFollowers:
     def get_neighbors_by_axismatch(self, axis, perp=False):
         nbrs = list()
         for i in range(1, len(self.bodies)):
-            to_nbr_axs = ipd.axis_of(self.bodies[i].xfromparent)
-            ang = ipd.hangline(to_nbr_axs, axis)
+            to_nbr_axs = ipd.axis_of(self.bodies[i].xfromparent)  # type: ignore
+            ang = ipd.hangline(to_nbr_axs, axis)  # type: ignore
             # ic(perp, ang, axis, to_nbr_axs)
-            if (not perp and ang > 0.001) or (perp and abs(ang - np.pi / 2) < 0.001):
+            if (not perp and ang > 0.001) or (perp and abs(ang - np.pi / 2) < 0.001):  # type: ignore
                 nbrs.append(i)
         return nbrs
 
@@ -148,13 +148,13 @@ class RigidBodyFollowers:
         ipd.pdb.dumppdb(fname, coords, nchain=len(self.bodies), **kw)
 
     def frames(self):
-        return np.stack([b.xfromparent for b in self.bodies])
+        return np.stack([b.xfromparent for b in self.bodies])  # type: ignore
 
     def origins(self):
-        return np.stack([ipd.hcart3(b.xfromparent) for b in self.bodies])
+        return np.stack([ipd.hcart3(b.xfromparent) for b in self.bodies])  # type: ignore
 
     def orientations(self):
-        return np.stack([ipd.hori3(b.xfromparent) for b in self.bodies])
+        return np.stack([ipd.hori3(b.xfromparent) for b in self.bodies])  # type: ignore
 
     def coms(self):
         return np.stack([b.com() for b in self.bodies])
@@ -218,8 +218,8 @@ class RigidBody:
             contact_coords = contact_coords.copy()
             if recenter:
                 # oldcom =
-                self.tolocal = ipd.htrans(-ipd.homog.hcom(coords))
-                self.toglobal = ipd.hinv(self.tolocal)
+                self.tolocal = ipd.htrans(-ipd.homog.hcom(coords))  # type: ignore
+                self.toglobal = ipd.hinv(self.tolocal)  # type: ignore
                 coords = ipd.homog.hxform(self.tolocal, coords)
                 contact_coords = ipd.homog.hxform(self.tolocal, contact_coords)
                 # position must be set to move coords back to gloabal frame
@@ -252,7 +252,7 @@ class RigidBody:
 
     @property
     def xfromparent(self):
-        return ipd.hscaled(self.scale, self._xfromparent)
+        return ipd.hscaled(self.scale, self._xfromparent)  # type: ignore
 
     def scale_frame(self, scalefactor):
         self.scale *= scalefactor
@@ -279,14 +279,14 @@ class RigidBody:
     def moveby(self, x):
         x = np.asarray(x)
         if x.ndim == 1:
-            x = ipd.htrans(x)
+            x = ipd.htrans(x)  # type: ignore
         self.position = ipd.homog.hxform(x, self.position)
         assert ipd.homog.hvalid(self.position)
 
     def move_about_com(self, x):
         x = np.asarray(x)
         if x.ndim == 1:
-            x = ipd.htrans(x)
+            x = ipd.htrans(x)  # type: ignore
         com = self.com()
         self.moveby(-com)
         self.position = ipd.homog.hxform(x, self.position)
@@ -320,7 +320,7 @@ class RigidBody:
             raise ValueError("RigidBody position is 4,4 matrix (not point)")
         if self.parent is not None:
             # raise ValueError(f'RigidBody with parent cant have position set')
-            self.parent.position = ipd.hinv(self.xfromparent) @ newposition
+            self.parent.position = ipd.hinv(self.xfromparent) @ newposition  # type: ignore
         self._position = newposition.reshape(4, 4)
 
     @property

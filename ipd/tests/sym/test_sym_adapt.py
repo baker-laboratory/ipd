@@ -2,7 +2,7 @@ import pytest
 
 pytest.importorskip('torch')
 import ipd
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 from ipd.sym.sym_adapt import _sym_adapt
 
 th = lazyimport('torch')

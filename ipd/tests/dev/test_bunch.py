@@ -6,7 +6,7 @@ from argparse import Namespace
 import pytest
 import yaml
 
-from ipd.dev.state.bunch import *
+from ipd.bunch import *
 
 def main():
     from tempfile import mkdtemp

@@ -3,7 +3,7 @@
 The CUDA implementation is very fast, can compute > 100 million RMSDs
 per second on a single GPU.
 """
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 
 th = lazyimport('torch')
 

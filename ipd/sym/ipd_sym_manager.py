@@ -1,5 +1,5 @@
 import ipd
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 
 th = lazyimport('torch')
 
@@ -23,13 +23,16 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
     def init(self, *a, idx=None, **kw):
         """Create an IpdSymmetryManager."""
         super().init(*a, **kw)
-        self._symmRs = th.tensor(ipd.sym.frames(self.symid)[:, :3, :3], dtype=th.float32, device=self.device)
+        self._symmRs = th.tensor(
+            ipd.sym.frames(self.symid)[:, :3, :3],  # type: ignore
+            dtype=th.float32,  # type: ignore
+            device=self.device)  # type: ignore
         self.symmsub = th.arange(min(len(self._symmRs), self.opt.max_nsub))
-        if self.symid == 'I' and self.opt.max_nsub == 4:
+        if self.symid == 'I' and self.opt.max_nsub == 4:  # type: ignore
             self.asucen = th.as_tensor(ipd.sym.canonical_asu_center('icos4')[:3], device=self.device)
         else:
-            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center(self.symid)[:3], device=self.device)
-        self.asucenvec = ipd.h.normalized(self.asucen)
+            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center(self.symid)[:3], device=self.device)  # type: ignore
+        self.asucenvec = ipd.h.normalized(self.asucen)  # type: ignore
         if 'nsub' in self.opt and self.opt.nsub:
             # assert int(self.metasymm[1][0]) == self.opt.nsub
             if self.opt.has('Lasu'):
@@ -41,7 +44,7 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
         self.opt.nsub = len(self.symmsub)
         self.post_init()
 
-    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, disable_all_fitting=False, **_):
+    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, disable_all_fitting=False, **_):  # type: ignore
         """Apply symmetry to an object or xyz/pair."""
         opts.disable_all_fitting = disable_all_fitting
         xyz = ipd.sym.asu_to_best_frame_if_necessary(self, xyz, **opts)
@@ -51,7 +54,7 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
         assert pair is None
 
         xyz = th.einsum('fij,raj->frai', self._symmRs[self.symmsub],
-                        xyz[:len(xyz) // self.nsub]).reshape(-1, *xyz.shape[1:])
+                        xyz[:len(xyz) // self.nsub]).reshape(-1, *xyz.shape[1:])  # type: ignore
         return xyz
 
 ipd.sym.set_default_sym_manager('ipd')

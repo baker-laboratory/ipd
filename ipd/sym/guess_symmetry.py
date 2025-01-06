@@ -29,36 +29,19 @@ def guess_sym_from_directory(path, suffix=('.pdb', '.pdb.gz', '.cif', '.bcif')):
 
 def guess_symmetry(xyz):
     'ca only, nchain x nres x p'
-    match len(xyz):
-        case 1:
-            return 'C1'
-        case 2:
-            return 'C2'
-        case 3:
-            return 'C3'
-        case 4:
-            return 'C4'
-        case 5:
-            return 'C5'
-        case 6:
-            return 'C6'
-        case 7:
-            return 'C7'
-        case 8:
-            return 'C8'
-        case 9:
-            return 'C9'
-        case 10:
-            return 'C10'
-        case 11:
-            return 'C11'
-        case 12:
-            return 'tet'
-        case 24:
-            return 'oct'
-        case 30:
-            return 'icos'
-        case 60:
-            return 'icos'
-        case _:
-            return 'unknown'
+    if len(xyz) == 1: return 'C1'
+    if len(xyz) == 2: return 'C2'
+    if len(xyz) == 3: return 'C3'
+    if len(xyz) == 4: return 'C4'
+    if len(xyz) == 5: return 'C5'
+    if len(xyz) == 6: return 'C6'
+    if len(xyz) == 7: return 'C7'
+    if len(xyz) == 8: return 'C8'
+    if len(xyz) == 9: return 'C9'
+    if len(xyz) == 10: return 'C10'
+    if len(xyz) == 11: return 'C11'
+    if len(xyz) == 12: return 'tet'
+    if len(xyz) == 24: return 'oct'
+    if len(xyz) == 30: return 'icos'
+    if len(xyz) == 60: return 'icos'
+    return 'unknown'

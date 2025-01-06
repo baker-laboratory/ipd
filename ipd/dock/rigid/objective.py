@@ -156,7 +156,7 @@ class RBOverlapObjective:
             # angdiff2 = angdiff2 * axsdist2
             angdiff1 = 10 * angdiff1**2
             # angdiff2 = 10 * angdiff2**2
-            angdiffcen = ipd.homog.hnorm(asym.com()) * ipd.hangle(asym.com(), ax1 + ax2)
+            angdiffcen = ipd.homog.hnorm(asym.com()) * ipd.hangle(asym.com(), ax1 + ax2)  # type: ignore
 
         # ic(nf1rot, nf2rot)
         # ic(abs(zxang0 - zxang))

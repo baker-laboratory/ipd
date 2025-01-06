@@ -1,6 +1,6 @@
 import math
 
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 from ipd.sym.sym_slice import SymSlice
 
 th = lazyimport('torch')

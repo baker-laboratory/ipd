@@ -1,5 +1,6 @@
 import collections
 import inspect
+from typing import Optional
 import types
 
 def current_frame() -> types.FrameType:
@@ -7,7 +8,7 @@ def current_frame() -> types.FrameType:
     if frame is None: raise ValueError('frame is None')
     return frame
 
-def frame_parent(frame: types.FrameType | None) -> types.FrameType:
+def frame_parent(frame: Optional[types.FrameType]) -> types.FrameType:
     if frame is None: raise ValueError('frame is None')
     frame = frame.f_back
     if frame is None: raise ValueError('frame is None')

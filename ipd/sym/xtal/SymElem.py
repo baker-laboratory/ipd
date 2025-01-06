@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 import numpy as np
-from icecream import ic
 from opt_einsum import contract as einsum
 
 import ipd

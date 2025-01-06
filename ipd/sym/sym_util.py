@@ -44,7 +44,7 @@ def generate_ASU_xforms(pdb):
     xyz_stack = get_coords_stack(open(pdb))
     xforms = []
     for n in range(xyz_stack.shape[0]):
-        _, _, X = ipd.h.rmsfit(xyz_stack[n], xyz_stack[0])  # rms, fitxyz, X
+        _, _, X = ipd.h.rmsfit(xyz_stack[n], xyz_stack[0])  # rms, fitxyz, X  # type: ignore
         xforms.append(X)
     return xforms
 
@@ -886,13 +886,13 @@ def symm_subunit_matrix(symmid, symopt=None):
         pi = torch.pi
         Rs = [torch.eye(3)]
         if '2' in symmid:
-            Rs.append(torch.as_tensor(ipd.h.rot3(ax2, pi)))
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax2, pi)))  # type: ignore
         if '3' in symmid:
-            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, 2 / 3 * pi)))
-            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, -2 / 3 * pi)))
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, 2 / 3 * pi)))  # type: ignore
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax3, -2 / 3 * pi)))  # type: ignore
         if '5' in symmid:
-            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, 2 / 5 * pi)))
-            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, -2 / 5 * pi)))
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, 2 / 5 * pi)))  # type: ignore
+            Rs.append(torch.as_tensor(ipd.h.rot3(ax5, -2 / 5 * pi)))  # type: ignore
         Rs = torch.stack(Rs)
         nsub = len(Rs)
         symmatrix = (torch.arange(nsub)[:, None] - torch.arange(nsub)[None, :]) % nsub

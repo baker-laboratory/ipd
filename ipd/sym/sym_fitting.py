@@ -1,4 +1,4 @@
-from ipd.dev.lazy_import import lazyimport
+from ipd.lazy_import import lazyimport
 
 th = lazyimport('torch')
 import ipd
@@ -27,7 +27,7 @@ def asu_to_best_frame_if_necessary(sym,
         if th.any(th.isnan(xyz)): return xyz
         Natom = min(3, xyz.shape[1])
         com = sym_com(sym, xyz[:, :Natom], Lasu, **kw)
-        if ipd.h.norm(com[0]) < asu_to_best_frame_min_dist_to_origin: return xyz
+        if ipd.h.norm(com[0]) < asu_to_best_frame_min_dist_to_origin: return xyz  # type: ignore
         d2 = th.sum((com - sym.asucenvec.to(com.device))**2, dim=1)
         isub = th.argmin(d2)
         # ic(isub, com[isub], sym.asucenvec)
@@ -104,7 +104,7 @@ def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
         # ipd.showme(xyz[mask, 1], name='gp0', col=(1, 0, 0), sphere=0.3)
 
         # xyz[mask] = th.einsum('ij,raj->rai', R, xyz[mask]) + T
-        xyz[mask] = ipd.h.xform(xform, xyz[mask])
+        xyz[mask] = ipd.h.xform(xform, xyz[mask])  # type: ignore
 
         # ipd.showme(xyz[~mask, 1], name='prot1', sphere=0.3)
         # ipd.showme(xyz[mask, 1], name='gp1', col=(1, 0, 1), sphere=0.3)

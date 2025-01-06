@@ -1,7 +1,7 @@
 import logging
 
 try:
-    from ipd.dev.lazy_import import lazyimport
+    from ipd.lazy_import import lazyimport
     rp = lazyimport('RestrictedPython', pip=True)
 
     def safe_eval(code, **kw):
