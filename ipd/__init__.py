@@ -47,4 +47,4 @@ def __getattr__(name):
         return motif.get_global_motif_manager()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-dev.install_ipd_pre_commit_hook(projdir, '..')
+# dev.install_ipd_pre_commit_hook(projdir, '..')

@@ -205,5 +205,3 @@ class PseudoSymmGenerator:
         MAG = torch.linalg.norm(oris,dim=-1).max()
         oris = oris/MAG
         return oris.detach().numpy()
-
-# def resolve_symmetry(xyz, xforms):

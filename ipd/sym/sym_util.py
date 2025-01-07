@@ -10,6 +10,66 @@ torch = ipd.lazyimport('torch')
 
 SYMA = 1.0
 
+def sym_redock(xyz, Lasu, subforms, opt):
+    # resolve clashes in placed subunits
+    # could probably use this to optimize the radius as well
+    def clash_error_comp(R0, T0, xyz, fittscale):
+        xyz0 = xyz[:Lasu]
+        xyz0_corr = xyz0.reshape(-1,3) @ R0.T
+        xyz0_corr = xyz0_corr.reshape(xyz0.shape) + fittscale * T0
+        # compute clash
+        Xsymmall = xyz.clone()
+        for n,X in enumerate(subforms):
+            R = X[:3,:3].float().to(device=xyz.device)
+            T = X[:, -1][:3].to(device=xyz.device)
+            new_coords = xyz0_corr.reshape(-1, 3) @ R.T
+            new_coords = new_coords.reshape(xyz0_corr.shape) + T
+            Xsymmall[n*Lasu:(n+1)*Lasu] = new_coords
+        # compute clash loss
+        Xsymmall = Xsymmall[:,0,:]
+        dsymm = torch.cdist(Xsymmall, Xsymmall, p=2)
+        dsymm_2 = dsymm.clone()
+        # dsymm_2 = dsymm.clone().fill_diagonal_(9999) # avoid in-place operation
+        for i in range(0, len(Xsymmall), Lasu):
+            dsymm_2[i:i+Lasu, i:i+Lasu] = 9999
+        clash = torch.clamp(opt.fitwclash - dsymm_2, min=0)
+        loss = torch.sum(clash) / Lasu
+        return loss
+    
+    def Q2R(Q):
+        Qs = torch.cat((torch.ones((1), device=Q.device), Q), dim=-1)
+        Qs = normQ(Qs)
+        return Qs2Rs(Qs[None, :]).squeeze(0)
+    
+    with torch.enable_grad():
+        T0 = torch.zeros(3, device=xyz.device).requires_grad_(True)
+        Q0 = torch.zeros(3, device=xyz.device).requires_grad_(True)
+        lbfgs = torch.optim.LBFGS([T0, Q0], history_size=15, max_iter=3, line_search_fn="strong_wolfe")
+
+        def closure():
+            lbfgs.zero_grad()
+            loss = clash_error_comp(Q2R(Q0), T0, xyz, opt.fittscale)
+            loss.backward()  #retain_graph=True)
+            return loss
+
+        for e in range(5):
+            loss = lbfgs.step(closure)
+            print(loss)
+        
+        Q0 = Q0.detach()
+        T0 = T0.detach()
+        xyz0 = xyz[:Lasu].reshape(-1,3) @ (Q2R(Q0)).T
+        xyz0 = xyz0.reshape(xyz[:Lasu].shape) + opt.fittscale * T0
+
+    for n,X in enumerate(subforms):
+        R = X[:3,:3].float()
+        T = X[:, -1][:3]
+        new_coords = xyz0.reshape(-1, 3) @ R.T
+        new_coords = new_coords.reshape(xyz0.shape) + T
+        xyz[n*Lasu:(n+1)*Lasu] = new_coords
+
+    return xyz
+
 def get_xforms(symid, opt, cenvec):
     def calc_Ts(cenvec, radius, Rs):
         A = radius * cenvec.to(torch.float32).cpu()
