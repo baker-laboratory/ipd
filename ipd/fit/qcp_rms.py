@@ -13,7 +13,7 @@ from numba import cuda
 
 import ipd
 
-_rms = ipd.dev.lazyimport('ipd.fit.qcp_rms_cuda')
+_rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
 
 def rmsd(xyz1, xyz2, getfit=False, nthread=128, usenumba=False):
     """Compute RMSD of xyz1 to xyz2.

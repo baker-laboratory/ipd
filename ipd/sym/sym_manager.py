@@ -15,7 +15,7 @@ import numpy as np
 
 import ipd
 
-th = ipd.dev.lazyimport('torch')
+th = ipd.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
 from ipd.sym.sym_adapt import _sym_adapt, SymAdapt
 from ipd.sym.sym_index import SymIndex

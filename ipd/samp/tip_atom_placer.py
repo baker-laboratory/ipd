@@ -13,7 +13,7 @@ from ipd import h
 
 ic.configureOutput(includeContext=False)
 
-_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
+_sampling = ipd.lazyimport('ipd.samp.sampling_cuda')
 
 def rayframe(rays, cross=None, primary='z', device='cpu'):
     ori = rays[:, :, 1]

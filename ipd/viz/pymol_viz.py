@@ -13,9 +13,9 @@ from icecream import ic
 import ipd
 from ipd.viz.viz_deco import pymol_scene
 
-pymol = ipd.dev.lazyimport('pymol')
-cgo = ipd.dev.lazyimport('pymol.cgo')
-cmd = ipd.dev.lazyimport('pymol.cmd')
+pymol = ipd.lazyimport('pymol')
+cgo = ipd.lazyimport('pymol.cgo')
+cmd = ipd.lazyimport('pymol.cmd')
 try:
     import pymol  # type: ignore
     from pymol import cgo, cmd  # type: ignore

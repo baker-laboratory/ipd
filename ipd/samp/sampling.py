@@ -9,7 +9,7 @@ import numpy as np
 
 from ipd import h
 
-_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
+_sampling = ipd.lazyimport('ipd.samp.sampling_cuda')
 
 def sort_inplace_topk(data, k):
     data = data.to('cuda')

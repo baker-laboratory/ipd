@@ -36,9 +36,9 @@ e6167f6fd3fd4f9edf177f9e67e89d63  ipd/dev/testing/hypothesis_strats.py
 0afdbaebaf19ef5f41556f2596e5d6dd  ipd/observer/dynamic_parameters.py
 658bf3754e86035e00751bb98b2c1213  ipd/observer/observer.py
 c59ff701df8e6d9d550c583537e22ae7  ipd/observer/__init__.py
-834e9831222c868e0815a405989ebbc2  ipd/fit/qcp_scan.py
+f4d41848774fe265436b371d92c34702  ipd/fit/qcp_scan.py
 daabd24e4e8cb00446d4dc18caed46d5  ipd/fit/qcp_rms_cuda.py
-3c16e9a9336674642446d7d6f2a0d9b4  ipd/fit/qcp_rms.py
+815345d7608c6501411bc26214ef16e9  ipd/fit/qcp_rms.py
 e68620b6e436dd518c5dc1f3f7ec87a0  ipd/fit/__init__.py
 0b31b12d21aebf8e9076c364c60e76cb  ipd/bunch.py
 3fcdd3b87106c5d2465c156bc5fb3b50  ipd/dock/rigid/objective.py
@@ -48,7 +48,7 @@ f5ff549aadbe250022e2b5373b704bae  ipd/dock/rigid/rigidbody.py
 dd064d62a7e87945e9e8edb18cbdb013  ipd/viz/viz_xtal.py
 d93ec6d4cfefb4efc591e4119568cc93  ipd/viz/viz_bond.py
 0340cf92a54698f4da085e742985202f  ipd/viz/viz_rigidbody.py
-2279d5b5b8a19baafb18fe96beb245b7  ipd/viz/pymol_viz.py
+4a94ab2c76fa8bc92d47a40950fc0ae1  ipd/viz/pymol_viz.py
 7dab910eecac297a3e4fbb36fa847554  ipd/viz/viz_deco.py
 c041756bcbd9ca738281f0905db5098a  ipd/viz/viz_helix.py
 1f0f8cc93f3e374fbd2a1674c8d97d58  ipd/viz/pymol_cgo.py
@@ -70,7 +70,7 @@ b4367f31265c3a70b280502c241bee97  ipd/sym/xtal/spacegroup_contacts.py
 71f209abfd19957381ceb7c1ea357188  ipd/sym/xtal/xtalcls.py
 f10d7d148311c2a0a2679bb9fcbe0eb2  ipd/sym/xtal/spacegroup_frames.py
 771c4ff522e3d8f96579b32841a04f31  ipd/sym/sym.py
-c0a167afd2326b6d2a049088a704535f  ipd/sym/sym_manager.py
+66077debe6b0c6fb129ba3e8915dc0b8  ipd/sym/sym_manager.py
 a7e4340d13a3c559ef9473b603eb6b41  ipd/sym/guess_symmetry.py
 91e3c714f0f4d12b50f975ddab020db4  ipd/sym/sym_color.py
 8318908f847e3fd94b23cf266a9efd64  ipd/sym/sym_fitting.py
@@ -111,8 +111,8 @@ c21063821c7bd1df73406dfe9b3aa52f  ipd/sym/old/oldtests/oldtest_diffusion_sym.py
 1d7eec97b65e8358258eb52ac3f7600e  ipd/motif/motif_factory.py
 c270fa00927c8dc17ccfbf7474d31ae8  ipd/motif/__init__.py
 ecf8e1e77dfb1f8f9360f946a199f526  ipd/motif/motif_manager.py
-767c9289d129ae2b90ad54ca8803ca75  ipd/samp/sampling.py
-e2e606b87cc9c900e842e877c1236166  ipd/samp/tip_atom_placer.py
+26175f81dc05d94885577ecbeeec36e7  ipd/samp/sampling.py
+0a893e77aefe1e241ce38d6a127cd493  ipd/samp/tip_atom_placer.py
 8d38584cc5353047cf5390644b73b6f3  ipd/samp/sampling_cuda.py
 3b48a815afff056d4bd7380cd74a4bde  ipd/samp/__init__.py
 0c1d526c276de74f0b32ca03809efca2  ipd/project_config.py
@@ -120,7 +120,7 @@ cd049a669212a4c388831eacd9ae5961  ipd/tools/ipdtool.py
 85cfb4b47a258031b30e8968fd27626b  ipd/tools/codetool.py
 dde2a7d2647b14b9d5207ab827d49c59  ipd/tools/pkg/pkgtool.py
 a7cad1ecfceb82e7685e2b5d77cec226  ipd/tools/run_tests_on_file.py
-b2f3f5d06005469e68cffabe497823f5  ipd/tools/ci/citool.py
+004f1c50a4b291e036fd68423fb9fa85  ipd/tools/ci/citool.py
 dc4bd19680807e950fe2cea7438e146a  ipd/tools/ci/__init__.py
 701447eb7af2f4299b804c48fd64fa43  ipd/tools/__init__.py
 5f99456e268129af6dee51a4b0b556f4  ipd/tools/yapf_fast.py
@@ -150,7 +150,7 @@ a4e3155335bf2c6dc01d99e5f1788cdc  ipd/homog/hgeom.py
 e79a6ab1ad521ed05b4f13eb5cd850d2  ipd/homog/thgeom.py
 b543deb9a00ec2dc19f0d6f2d898fdb4  ipd/homog/util.py
 c75838287874a830163861babde492b1  ipd/homog/__init__.py
-1fe606df649dfaf7276778ebaa213b36  ipd/voxel/voxel.py
+f12c0084b60a47a40049708e521abe80  ipd/voxel/voxel.py
 74398a0df5fabef7e764b8d7489dee4a  ipd/voxel/voxdock.py
 cdf600f86704aa65f1c013c47c77f9f6  ipd/voxel/voxel_cuda.py
 879883298e1e49dcd458f54c41a08abb  ipd/voxel/voxel_viz.py
@@ -201,7 +201,7 @@ a22d06112595d5f7f5c3c3b8c6483923  ipd/tests/test_pip_install.py
 039408da66140037054f808b95299638  ipd/tests/samp/test_tip_atom_placer.py
 ccf2c80c960ed2e22f2f24bce1de0d42  ipd/tests/samp/test_sampling.py
 920dd2425bcacc53c2879358ff0f1367  ipd/tests/tools/test_ipdtool.py
-6fded35ce10e4f13d568a0c2c01b9452  ipd/tests/tools/ci/test_citool.py
+59ddeec174a471848b066b9fd2dbe860  ipd/tests/tools/ci/test_citool.py
 526a0b55829fbada14d7e4c02d99582a  ipd/tests/tools/test_run_tests_on_file.py
 61adc32278ff40adfa7d7e5fe1ad0a3f  ipd/tests/crud/test_crud.py
 0e61e2cdd2dd14ea5df54a9ee06ca607  ipd/tests/pdb/test_pdbdump.py

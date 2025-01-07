@@ -11,7 +11,7 @@ from icecream import ic
 import ipd
 from ipd import h
 
-_rms = ipd.dev.lazyimport('ipd.fit.qcp_rms_cuda')
+_rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
 
 def scan_rms_seqpos(bb, tgt, ranges, cyclic=1, rmsout=False, maxdist=9e9, lasu=0, nthread=256, chainbreak=0):
     """"""
