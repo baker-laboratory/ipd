@@ -1,19 +1,15 @@
-"""Symmetry checks."""
-import contextlib
-from typing import TYPE_CHECKING
+from icecream import ic
 import ipd
-
-th = ipd.lazyimport('torch')
-
-with contextlib.suppress(ImportError):
-    import assertpy
+from typing import TYPE_CHECKING
+import assertpy
+import numpy as np
+from ipd.sym import ShapeKind, SymKind, ValueKind
 
 if TYPE_CHECKING:
-    import assertpy
-
-import numpy as np
-
-from ipd.sym import ShapeKind, ValueKind
+    import torch as th
+else:
+    from ipd import lazyimport
+    th = lazyimport("torch")
 
 def symcheck(sym, thing, kind=None, **kw):
     thing, kind, adaptor = get_kind_and_adaptor(sym, thing, kind)
@@ -202,10 +198,8 @@ def symcheck_BASIC_1D(idx, thing, **kw):
 
 def symcheck_BASIC_2D(idx, thing, kind, sympair_protein_only=None, **kw):
     stopslice = None
-    if kind.valuekind == ValueKind.PAIR and sympair_protein_only:
-        stopslice = 1
-    if thing.ndim < 3:
-        thing = thing[..., None]
+    if kind.valuekind == ValueKind.PAIR and sympair_protein_only: stopslice = 1
+    if thing.ndim < 3: thing = thing[..., None]
     assertpy.assert_that(thing.shape[:2]).is_equal_to((idx.L, idx.L))
     assert not th.any(thing.isnan())
     for s in idx[:stopslice]:
@@ -215,7 +209,7 @@ def symcheck_BASIC_2D(idx, thing, kind, sympair_protein_only=None, **kw):
                 sym = thing[lb:ub, lb:ub, ..., k]
                 asu = thing[s.beg:s.asuend, s.beg:s.asuend, ..., k]
                 if not th.allclose(sym, asu, atol=1e-3, rtol=1e-5):
-                    ic(sym.device, sym.shape, asu.shape, s, i, k)  # type: ignore
+                    ic(sym.device, sym.shape, asu.shape, s, i, k)
                     # import torchshow
                     # torchshow.show([sym, asu])
                     th.testing.assert_close(sym, asu, atol=1e-3, rtol=1e-5)

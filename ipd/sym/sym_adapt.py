@@ -62,6 +62,7 @@ class SymAdapt(ABC, Generic[T]):
     orig: T
     kind: SymKind
     isasym: bool
+    adapted: Any
 
     def __init_subclass__(cls, **kw):
         if not hasattr(cls, 'adapts'):

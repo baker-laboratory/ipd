@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import torch as th
 else:
+    pytest.importorskip('torch')
     th = lazyimport('torch')
 
 import assertpy
@@ -19,6 +20,10 @@ import ipd
 pytestmark = pytest.mark.fast
 
 def main():
+    test_sym_pair_samechain()
+    test_sym_pair()
+    test_sym_manager_list_asym()
+    test_sym_manager_list_tensor_asym()
     test_sym_xyzpair()
     test_sym_asu_xyz()
     test_atom_on_axis()
@@ -34,8 +39,25 @@ def main():
     test_sym_manager_string()
     test_sym_manager_list()
     test_sym_manager_dict()
-    test_sym_pair()
     print('DONE')
+
+@pytest.mark.fast
+def test_sym_manager_list_asym():
+    sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
+    sym.idx = [(4, 0, 3)]
+    assert sym.asym(['abbb', 'bbcc', 'foo', 'bar']) == ['abbb', 'bar']
+
+@pytest.mark.fast
+def test_sym_manager_list_tensor_asym():
+    sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
+    sym.idx = [(4, 0, 3)]
+    thing = [th.randn(4) for _ in range(7)]
+    asymthing = sym.asu(thing)
+    assert isinstance(asymthing, list)
+    assert len(sym.asu(thing)) == 7
+    for s, t in zip(thing, asymthing):
+        assert isinstance(t, th.Tensor)
+        assert s[0] == t[0]
 
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
@@ -256,6 +278,24 @@ def test_sym_slices():
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz)
 
 @pytest.mark.fast
+def test_sym_pair_samechain():
+    sym = ipd.tests.sym.create_test_sym_manager([
+        'sym.symid=c2',
+        'sym.sympair_method=mean',
+        'sym.symmsub_k=2',
+        'sym.sympair_protein_only=False',
+        'sym.sympair_enabled=True',
+    ])
+    sym.idx = [(30, 0, 30)]
+    pair = th.zeros((30, 30))
+    pair[:10, :10] = 1
+    pair[10:15, 10:15] = 1
+    ipd.viz.showimage(pair)
+    sympair = sym(pair)
+    ipd.viz.showimage(sympair)
+    sym.assert_symmetry_correct(sympair)
+
+@pytest.mark.fast
 def test_sym_pair():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=c3',
@@ -266,10 +306,9 @@ def test_sym_pair():
     ])
     sym.idx = [(30, 0, 30)]
     pair = th.randn((1, 30, 30, 10))
-    # import torchshow
-    # torchshow.show(pair.max(dim=-1).values)
+    # ipd.viz.showimage(pair[0].max(-1).values)
     sympair = sym(pair)
-
+    # ipd.viz.showimage(sympair[0].max(-1).values)
     sym.assert_symmetry_correct(sympair)
 
 @pytest.mark.fast

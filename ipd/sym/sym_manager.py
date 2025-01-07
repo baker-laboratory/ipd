@@ -162,19 +162,15 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             self.mark_symmetrical(newxyz, newpair)
             return XYZPair(newxyz, newpair)  # type: ignore
         elif adaptor.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
-            result = adaptor.reconstruct([self(x, **kw) for x in adaptor.adapted])  # type: ignore
+            result = adaptor.reconstruct([self(x, **kw) for x in adaptor.adapted])
         elif adaptor.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
-            result = adaptor.reconstruct(  # type: ignore
-                ipd.Bunch({  # type: ignore
-                    k: self(x, key=k, **kw)
-                    for k, x in adaptor.adapted.items()  # type: ignore
-                }))  # type: ignore
+            result = adaptor.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in adaptor.adapted.items()}))
         elif adaptor.kind.shapekind == ShapeKind.SCALAR:  # type: ignore
-            result = adaptor.orig  # type: ignore
+            result = adaptor.orig
         elif th.is_tensor(adaptor.orig) and adaptor.orig.shape[-1] == 0:  # type: ignore
-            result = adaptor.orig  # type: ignore
+            result = adaptor.orig
         else:
-            result = adaptor.reconstruct(self.apply_sym_slices(adaptor, **kw))  # type: ignore
+            result = adaptor.reconstruct(self.apply_sym_slices(adaptor, **kw))
         self.mark_symmetrical(result)
         return result
 
@@ -288,6 +284,30 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             # contig[i * N:(i + 1) * N, (i + 1) * N:(i + 2) * N] = contig[:N, N:2 * N]
         return contig
 
+    def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
+        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)  # type: ignore
+        if isinstance(xyz, tuple): xyz, pair = xyz
+        if origxyz.ndim == 2: xyz = xyz[:, None, :]  # type: ignore
+        if len(xyz) == 1: xyz = xyz[0]
+        return xyz if pair is None else XYZPair(xyz, pair)
+
+    def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
+        kw = ipd.dev.Bunch(kw)
+        origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
+        origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
+        if origxyz.ndim == 2: xyz = xyz[:, None, :]
+        pair = pair.squeeze(-1)
+        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
+        xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
+        xyzpair_on_subset = len(xyz) != len(origxyz)
+        xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
+        pair = self.fill_from_contiguous(pairadaptor, origpair, pair, **kw)
+        xyz = self.move_unsym_to_match_asu(origxyz, xyz, move_all_nonprot=False)
+        if xyzpair_on_subset:
+            xyz = self(xyz, **kw.sub(fit=False, disable_all_fitting=True))  # type: ignore
+        ipd.hub.sym_xyzpair(xyz, pair=pair)
+        return xyz, pair
+
     def move_unsym_to_match_asu(self, orig, moved, move_all_nonprot=False):
         if not self.opt.move_unsym_with_asu: return moved
         tomove = self.munsym | (self.mnonprot if move_all_nonprot else False)  # type: ignore
@@ -369,6 +389,12 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                 new[idx[:, 0], idx[:, 1]] = contig.reshape(-1, *contig.shape[2:])
         return new
 
+    def asym(self, thing: T, **kw) -> T:
+        return self.extract(thing, self.masym, **kw)  # type: ignore
+
+    def asu(self, thing: T, **kw) -> T:
+        return self.extract(thing, self.masu, **kw)  # type: ignore
+
     def extract(self, thing: T, mask: 'th.Tensor', key=None, skip_keys=None, **kw) -> T:  # type: ignore
         """Extract the asu from an object.
 
@@ -402,22 +428,22 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
 =======
         match thing.kind.shapekind:  # type: ignore
             case ShapeKind.SEQUENCE:
-                return thing.reconstruct([self.extract(x, mask) for x in thing.adapted], **kw)  # type: ignore
+                return adaptor.reconstruct([self.extract(x, mask) for x in adaptor.adapted], **kw)  # type: ignore
             case ShapeKind.MAPPING:
                 d = {
                     k: self.extract(x, mask, key=k, skip_keys=skip_keys)
-                    for k, x in thing.adapted.items()  # type: ignore
+                    for k, x in adaptor.adapted.items()  # type: ignore
                 }  # type: ignore
-                return thing.reconstruct(d, **kw)  # type: ignore
+                return adaptor.reconstruct(d, **kw)  # type: ignore
             case ShapeKind.ONEDIM:
-                return thing.reconstruct(thing.adapted[mask], **kw)  # type: ignore
+                return adaptor.reconstruct(adaptor.adapted[mask], **kw)  # type: ignore
             case ShapeKind.TWODIM:
-                x = thing.adapted[mask[None] * mask[:, None]]  # type: ignore
+                x = adaptor.adapted[mask[None] * mask[:, None]]  # type: ignore
                 # ic(x.shape, mask.sum(), mask.shape, kw)
-                return thing.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)  # type: ignore
+                return adaptor.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)  # type: ignore
             case ShapeKind.SPARSE:
-                assert len(thing.adapted.idx) == 0, 'spares not implemented yet'  # type: ignore
-                return thing.orig  # type: ignore
+                assert len(adaptor.adapted.idx) == 0, 'spares not implemented yet'  # type: ignore
+                return adaptor.orig  # type: ignore
             case _:
                 raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')  # type: ignore
 >>>>>>> 103ddd8 (some renaming and typing)
@@ -611,6 +637,12 @@ class C1SymmetryManager(SymmetryManager):
         """no-op."""
         if xyz is None: return pair
         return xyz if pair is None else (xyz, pair)
+
+    def asym(self, thing, **kw):
+        return thing
+
+    def asu(self, thing, **kw):
+        return thing
 
     @property
     def is_dummy_sym(self) -> bool:

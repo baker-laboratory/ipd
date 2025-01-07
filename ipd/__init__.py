@@ -1,6 +1,6 @@
 import contextlib
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ipd.dev import Bunch as Bunch
 from ipd import dev
@@ -57,11 +57,15 @@ def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
 
-def __getattr__(name):
+def __getattr__(name) -> Any:
     if name == 'symmetrize':
-        return sym.get_global_symmetry()
+        symgr = sym.get_global_symmetry()
+        assert sym is not None
+        return symgr
     if name == 'motif_applier':
-        return motif.get_global_motif_manager()
+        mmgr = motif.get_global_motif_manager()
+        assert mmgr is not None
+        return mmgr
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 from ipd.project_config import install_ipd_pre_commit_hook
