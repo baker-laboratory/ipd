@@ -76,7 +76,7 @@ def get_xforms(symid, opt, cenvec):
         Ts = [R[:3,:3] @ A + R[:3,3] for R in Rs]
         Ts = [T - Ts[0] for T in Ts]
         return Ts
-    if 'H_K' in opt:
+    if opt.H_K is not None:
         xforms = ipd.sym.high_t.get_pseudo_highT(opt)
         subforms, _ = get_nneigh(xforms, opt.max_nsub)
         return xforms, subforms
