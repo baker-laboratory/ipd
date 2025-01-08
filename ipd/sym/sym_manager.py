@@ -4,7 +4,6 @@ import contextlib
 import copy
 from dataclasses import dataclass
 import itertools
-from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 from typing_extensions import TypeVar
 
@@ -284,30 +283,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             # contig[i * N:(i + 1) * N, (i + 1) * N:(i + 2) * N] = contig[:N, N:2 * N]
         return contig
 
-    def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
-        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)  # type: ignore
-        if isinstance(xyz, tuple): xyz, pair = xyz
-        if origxyz.ndim == 2: xyz = xyz[:, None, :]  # type: ignore
-        if len(xyz) == 1: xyz = xyz[0]
-        return xyz if pair is None else XYZPair(xyz, pair)
-
-    def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
-        kw = ipd.dev.Bunch(kw)
-        origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
-        origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
-        if origxyz.ndim == 2: xyz = xyz[:, None, :]
-        pair = pair.squeeze(-1)
-        xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
-        xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
-        xyzpair_on_subset = len(xyz) != len(origxyz)
-        xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
-        pair = self.fill_from_contiguous(pairadaptor, origpair, pair, **kw)
-        xyz = self.move_unsym_to_match_asu(origxyz, xyz, move_all_nonprot=False)
-        if xyzpair_on_subset:
-            xyz = self(xyz, **kw.sub(fit=False, disable_all_fitting=True))  # type: ignore
-        ipd.hub.sym_xyzpair(xyz, pair=pair)
-        return xyz, pair
-
     def move_unsym_to_match_asu(self, orig, moved, move_all_nonprot=False):
         if not self.opt.move_unsym_with_asu: return moved
         tomove = self.munsym | (self.mnonprot if move_all_nonprot else False)  # type: ignore
@@ -389,12 +364,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                 new[idx[:, 0], idx[:, 1]] = contig.reshape(-1, *contig.shape[2:])
         return new
 
-    def asym(self, thing: T, **kw) -> T:
-        return self.extract(thing, self.masym, **kw)  # type: ignore
-
-    def asu(self, thing: T, **kw) -> T:
-        return self.extract(thing, self.masu, **kw)  # type: ignore
-
     def extract(self, thing: T, mask: 'th.Tensor', key=None, skip_keys=None, **kw) -> T:  # type: ignore
         """Extract the asu from an object.
 
@@ -405,7 +374,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         if key in skip_keys: return thing
         if thing is None: return None  # type: ignore
         thing = self.sym_adapt(thing, isasym=False)  # type: ignore
-<<<<<<< HEAD
         if thing.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
             return thing.reconstruct([self.extract(x, mask) for x in thing.adapted], **kw)  # type: ignore
         if thing.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
@@ -425,28 +393,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             return thing.orig  # type: ignore
 
         raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')  # type: ignore
-=======
-        match thing.kind.shapekind:  # type: ignore
-            case ShapeKind.SEQUENCE:
-                return adaptor.reconstruct([self.extract(x, mask) for x in adaptor.adapted], **kw)  # type: ignore
-            case ShapeKind.MAPPING:
-                d = {
-                    k: self.extract(x, mask, key=k, skip_keys=skip_keys)
-                    for k, x in adaptor.adapted.items()  # type: ignore
-                }  # type: ignore
-                return adaptor.reconstruct(d, **kw)  # type: ignore
-            case ShapeKind.ONEDIM:
-                return adaptor.reconstruct(adaptor.adapted[mask], **kw)  # type: ignore
-            case ShapeKind.TWODIM:
-                x = adaptor.adapted[mask[None] * mask[:, None]]  # type: ignore
-                # ic(x.shape, mask.sum(), mask.shape, kw)
-                return adaptor.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)  # type: ignore
-            case ShapeKind.SPARSE:
-                assert len(adaptor.adapted.idx) == 0, 'spares not implemented yet'  # type: ignore
-                return adaptor.orig  # type: ignore
-            case _:
-                raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')  # type: ignore
->>>>>>> 103ddd8 (some renaming and typing)
 
     def asym(self, thing: T, **kw) -> T:
         return self.extract(thing, self.masym, asym=True, **kw)  # type: ignore

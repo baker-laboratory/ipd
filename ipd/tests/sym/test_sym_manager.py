@@ -290,9 +290,9 @@ def test_sym_pair_samechain():
     pair = th.zeros((30, 30))
     pair[:10, :10] = 1
     pair[10:15, 10:15] = 1
-    ipd.viz.showimage(pair)
+    # ipd.viz.showimage(pair)
     sympair = sym(pair)
-    ipd.viz.showimage(sympair)
+    # ipd.viz.showimage(sympair)
     sym.assert_symmetry_correct(sympair)
 
 @pytest.mark.fast

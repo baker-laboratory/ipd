@@ -2,11 +2,10 @@ import contextlib
 import os
 from typing import TYPE_CHECKING, Any
 
-from ipd.dev import Bunch as Bunch
-from ipd import dev
-from ipd.dev import observer as observer
-from ipd.dev.lazy_import import lazyimport
-from ipd.dev.observer import hub as hub
+from ipd.bunch import Bunch as Bunch, bunchify as bunchify
+from ipd import dev as dev
+from ipd.lazy_import import lazyimport
+from ipd.observer import hub as hub
 
 if TYPE_CHECKING:
     from ipd import crud

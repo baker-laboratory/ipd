@@ -24,10 +24,6 @@ def helix_slide(
     coords = coords.astype(np.float64)
 
     hframes = helix.frames(xtalrad=9e9, radius=cellsize[0], spacing=cellsize[2], coils=coils, closest=closest)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4b620d1 (some renaming and typing 2)
     assembly = ipd.dock.rigid.RigidBodyFollowers(  # type: ignore
         coords=coords,  # type: ignore
         frames=hframes,
@@ -35,17 +31,6 @@ def helix_slide(
         cellsize=cellsize,
         clashdis=8,
         contactdis=16)
-<<<<<<< HEAD
-=======
-    assembly = ipd.dock.rigid.RigidBodyFollowers(coords=coords,  # type: ignore
-                                                 frames=hframes,
-                                                 symtype="H",
-                                                 cellsize=cellsize,
-                                                 clashdis=8,
-                                                 contactdis=16)
->>>>>>> 103ddd8 (some renaming and typing)
-=======
->>>>>>> 4b620d1 (some renaming and typing 2)
     # if showme: assembly.dump_pdb(f'helix_slide____.pdb')
     hstep = np.array([0.00, 0.00, step])
     rstep = np.array([step, step, 0.00])

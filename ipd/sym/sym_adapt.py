@@ -20,8 +20,6 @@ else:
 
 T = TypeVar('T')
 
-T = TypeVar('T')
-
 @singledispatch
 def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
     """Return a Symmable object that knows how to convert beteen input and a
@@ -135,8 +133,8 @@ class _SymAdaptTuple(SymAdapt):
             return np.array(list(self.orig))
         return [self.sym.sym_adapt(x) for x in self.orig]
 
-    def reconstruct(self, canonicals):  # type: ignore
-        return type(self.orig)(*canonicals)
+    def reconstruct(self, list_of_symmetrized, **kw):  # type: ignore
+        return type(self.orig)(*list_of_symmetrized)
 
 class _SymAdaptSequence(SymAdapt):
     adapts = Sequence
@@ -157,8 +155,8 @@ class _SymAdaptSequence(SymAdapt):
             return np.array(list(self.orig))
         return [self.sym.sym_adapt(x) for x in self.orig]
 
-    def reconstruct(self, canonicals):  # type: ignore
-        return type(self.orig)(canonicals)
+    def reconstruct(self, list_of_symmetrized, **kw):  # type: ignore
+        return type(self.orig)(list_of_symmetrized)
 
 class _SymAdaptMap(SymAdapt):
     adapts = Mapping
@@ -169,8 +167,8 @@ class _SymAdaptMap(SymAdapt):
         self.kind = ipd.sym.SymKind(ipd.sym.ShapeKind.MAPPING, ipd.sym.ValueKind.MIXED)  # type: ignore
         self.adapted = copy.copy(self.orig)
 
-    def reconstruct(self, canonicals):  # type: ignore
-        return type(self.orig)(canonicals)
+    def reconstruct(self, list_of_symmetrized):  # type: ignore
+        return type(self.orig)(list_of_symmetrized)
 
 class _SymAdaptDataClass(SymAdapt):
     """Base class for adapting dataclasses.

@@ -3,7 +3,7 @@ import ipd
 from typing import TYPE_CHECKING
 import assertpy
 import numpy as np
-from ipd.sym import ShapeKind, SymKind, ValueKind
+from ipd.sym import ShapeKind, ValueKind
 
 if TYPE_CHECKING:
     import torch as th
@@ -55,7 +55,6 @@ def get_kind_and_adaptor(sym, thing, kind):
 
 def symcheck_XYZ(*args, kind, **kw):
     'verify symmetry type XYZ'
-<<<<<<< HEAD
     if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:  # type: ignore
         symcheck_XYZ_1D(*args, kind=kind, **kw)
     elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:  # type: ignore
@@ -64,23 +63,10 @@ def symcheck_XYZ(*args, kind, **kw):
         symcheck_XYZ_SPARSE(*args, kind=kind, **kw)
     else:
         assert 0, f'bad ShapeKind {kind.shapekind}'
-=======
-    match kind.shapekind:
-        case ipd.sym.ShapeKind.ONEDIM:  # type: ignore
-            symcheck_XYZ_1D(*args, kind=kind, **kw)
-        case ipd.sym.ShapeKind.TWODIM:  # type: ignore
-            symcheck_XYZ_2D(*args, kind=kind, **kw)
-        case ipd.sym.ShapeKind.SPARSE:  # type: ignore
-            symcheck_XYZ_SPARSE(*args, kind=kind, **kw)
-        case _:
-            assert 0, f'bad ShapeKind {kind.shapekind}'
->>>>>>> 103ddd8 (some renaming and typing)
 
 def symcheck_INDEX(*args, kind, **kw):
     'verify symmetry type INDEX'
     assert isinstance(kw['idx'], ipd.sym.SymIndex)
-
-<<<<<<< HEAD
     if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:  # type: ignore
         symcheck_INDEX_1D(*args, kind=kind, **kw)
     elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:  # type: ignore
@@ -100,29 +86,6 @@ def symcheck_BASIC(*args, kind, **kw):
         symcheck_BASIC_SPARSE(*args, kind=kind, **kw)
     else:
         assert 0, f'bad ShapeKind {kind.shapekind}'
-=======
-    match kind.shapekind:
-        case ipd.sym.ShapeKind.ONEDIM:  # type: ignore
-            symcheck_INDEX_1D(*args, kind=kind, **kw)
-        case ipd.sym.ShapeKind.TWODIM:  # type: ignore
-            symcheck_INDEX_2D(*args, kind=kind, **kw)
-        case ipd.sym.ShapeKind.SPARSE:  # type: ignore
-            symcheck_INDEX_SPARSE(*args, kind=kind, **kw)
-        case _:
-            assert 0, f'bad ShapeKind {kind.shapekind}'
-
-def symcheck_BASIC(*args, kind, **kw):
-    'verify symmetry type BASIC'
-    match kind.shapekind:
-        case ipd.sym.ShapeKind.ONEDIM:  # type: ignore
-            symcheck_BASIC_1D(*args, kind=kind, **kw)
-        case ipd.sym.ShapeKind.TWODIM:  # type: ignore
-            symcheck_BASIC_2D(*args, kind=kind, **kw)
-        case ipd.sym.ShapeKind.SPARSE:  # type: ignore
-            symcheck_BASIC_SPARSE(*args, kind=kind, **kw)
-        case _:
-            assert 0, f'bad ShapeKind {kind.shapekind}'
->>>>>>> 103ddd8 (some renaming and typing)
 
 def symcheck_INDEX_common(idx, thing, **kw):
     assert th.all(thing >= 0)

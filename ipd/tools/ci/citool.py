@@ -4,7 +4,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Any, Annotated
+from typing import Any, Annotated, Optional
 from typer import Argument
 
 import git
@@ -13,6 +13,7 @@ import submitit
 import ipd
 
 class CITool(ipd.tools.IPDTool):
+
     def __init__(self, secretfile: str = '~/.secrets'):
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
         self.secrets = ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
@@ -26,7 +27,7 @@ class CITool(ipd.tools.IPDTool):
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
-    def update_library(self, libs: Annotated[list[str] | None, Argument()] = None, path: Path = Path('~/bare_repos')):
+    def update_library(self, libs: Annotated[Optional[list[str]], Argument()] = None, path: Path = Path('~/bare_repos')):
         # sourcery skip: default-mutable-arg
         path = path.expanduser()
         assert os.path.isdir(path)
@@ -54,6 +55,7 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos', recursive: bo
                 init_submodules(subrepo, repolib, True)
 
 class RepoTool(CITool):
+
     def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos', recursive: bool = False):
         """Setup submodules in a git repository from a bare repo library."""
         repo = git.Repo(path, search_parent_directories=True)
@@ -62,6 +64,7 @@ class RepoTool(CITool):
             init_submodules(repo, repolib, recursive)
 
 class Future:
+
     def __init__(self, result):
         self._result = result
 
@@ -136,6 +139,7 @@ def run_pytest(
         return cmd, Future(ipd.dev.run(cmd, errok=True, capture=False)), log
 
 class TestsTool(CITool):
+
     def ruff(self, project):
         ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True, capture=False)
 

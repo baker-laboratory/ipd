@@ -51,38 +51,16 @@ def _test_cmd_str(cmd, ref):
         assert out == ref
 
 def test_clitool_pytest():
-<<<<<<< HEAD
-    ref = 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --durations=10 --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 > pytest_ipd_ci_test_run.log'
+    ref = 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 > pytest_ipd_ci_test_run.log'
     _test_cmd_str('ci tests pytest --cmdonly', ref)
 
-    ref = 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --durations=10 --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log'
+    ref = 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log'
     _test_cmd_str('ci tests pytest --cmdonly --exe $exe --slurm --tee --gpu a4000', ref)
 
-    ref = """cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable --disable-warnings --durations=10 --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.par.log
-cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable --disable-warnings --durations=10 --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.nopar.log"""
+    ref = """cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.par.log
+cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.nopar.log"""
     _test_cmd_str(
         "ci tests pytest --cmdonly --exe $exe --slurm --parallel 4 --tee --which 'test_call_speed test_loss_grad'", ref)
-=======
-    out = runipd('ci tests pytest --cmdonly')
-    assert out.strip(
-    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10 > pytest_ipd_ci_test_run.log'
-
-    out = runipd("ci tests pytest --cmdonly --exe $exe --slurm --tee --gpu a4000")
-    assert out.strip(
-    ) == 'cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log'
-
-    out = runipd(
-        "ci tests pytest --cmdonly --exe $exe --slurm --parallel 4 --tee --which 'test_call_speed test_loss_grad'")
-    assert out.strip(
-<<<<<<< HEAD
-    ) == """cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable --disable-warnings --cov --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.par.log
-cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable --disable-warnings --cov --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.nopar.log"""
->>>>>>> 6050cf2 (fix test_citool)
-=======
-    ) == """cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "not test_call_speed and not test_loss_grad" -n 4 --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.par.log
-cd TESTDIR && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. EXE -k "test_call_speed or test_loss_grad" --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10 2>&1 | tee pytest_ipd_ci_test_run.log.nopar.log"""
->>>>>>> 631828f (add junit.xml upload to codecov)
-
     # testdir = f'{ipd.projdir}/tests/crud'
 
 # def test_clitool_pytest_slurm_parallel():
