@@ -235,7 +235,7 @@ with contextlib.suppress(ImportError):
         if isasym is not None: return isasym
         if sym.L in tensor.shape: return False
         if sym.Nasym in tensor.shape: return True
-        ic(sym.L, sym.Nasym, tensor.shape)  # type: ignore
+        ic(sym.L, sym.Nasu, sym.Nasym, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
         assert idx is not None
 
     class _SymAdaptNamedDenseTensor(SymAdapt):

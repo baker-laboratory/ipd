@@ -16,10 +16,11 @@ default_params = dict(
     contig_is_symmetric=False,
     contig_relabel_chains=False,
     fit=None,
-    fittscale=1.0,
-    fitwclash=4.0,
+    fit_tscale=1.0,
+    fit_wclash=4.0,
     guideposts_are_symmetric=False,
     high_t_number=1,
+    H_K=None,
     ligand_is_symmetric=None,
     max_nsub=99,
     motif_copy_position_from_px0=False,
@@ -28,10 +29,10 @@ default_params = dict(
     nsub=None,
     pseudo_cycle=None,
     recenter_for_diffusion=None,
+    radius=1,
     recenter_xt_chains_on_px0=None,
     rfsym_enabled=None,
     subsymid=None,
-    start_radius=0,
     sym_enabled=True,
     symid='C1',
     symmetrize_repeats=None,
@@ -84,6 +85,12 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
         if opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])  # type: ignore
         if opt.symid == 'I':
             opt.nsub = 60
+            if opt.high_t_number > 1:
+                opt.nsub = opt.nsub * opt.high_t_number
+            if 'H_K' in opt:
+                h = opt.H_K[0]
+                k = opt.H_K[1]
+                opt.nsub = opt.nsub * (h*h + k*k + h*k)
         elif opt.symid == 'O':
             opt.nsub = 24
         elif opt.symid == 'T':
@@ -103,11 +110,6 @@ def process_symmetry_options(opt, **kw):
         opt.Lasu = opt.repeat_length
         if opt.n_repeats:
             opt.L = opt.n_repeats * opt.repeat_length
-
-    if opt.has('sym_input_pdb'):
-        opt.T_xforms = ipd.sym.generate_ASU_xforms(opt.sym_input_pdb)
-        opt.high_t_number = len(opt.T_xforms)
-        log.info(f'HIGH T - processed T{opt.high_t_number} symmetry')  # type: ignore
     return opt
 
 def resolve_option(name, kw, conf, default, strict=False):

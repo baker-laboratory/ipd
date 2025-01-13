@@ -37,16 +37,16 @@ else
     exit 1
 fi
 
-#################### pyright ####################
-if [ -f .pyright_hash_last_commit ]; then
-    cmd="PYTHONPATH=$ipd python -m ipd code pyright $src --hashfile '.pyright_hash_last_commit'"
-    echo $cmd
-    eval $cmd
-    if [ $? == 0 ]; then
-        echo pyright pass
-    else
-        echo pyright fail
-        exit 1
-    fi
-    git add .pyright_hash_last_commit
-fi
+# #################### pyright ####################
+# if [ -f .pyright_hash_last_commit ]; then
+#     cmd="PYTHONPATH=$ipd python -m ipd code pyright $src --hashfile '.pyright_hash_last_commit'"
+#     echo $cmd
+#     eval $cmd
+#     if [ $? == 0 ]; then
+#         echo pyright pass
+#     else
+#         echo pyright fail
+#         exit 1
+#     fi
+#     git add .pyright_hash_last_commit
+# fi

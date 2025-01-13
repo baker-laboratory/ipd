@@ -4,13 +4,9 @@ import contextlib
 import copy
 from dataclasses import dataclass
 import itertools
-from typing import TYPE_CHECKING
 from typing_extensions import TypeVar
 
 with contextlib.suppress(ImportError):
-    from icecream import ic
-
-if TYPE_CHECKING:
     from icecream import ic
 
 import numpy as np
@@ -186,7 +182,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
-        ic(xyz.shape, pair.shape)
+        # ic(xyz.shape, pair.shape)
         xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
@@ -373,12 +369,13 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         if skip_keys is None: skip_keys = []
         if key in skip_keys: return thing
         if thing is None: return None  # type: ignore
+        # ic('extract', type(thing), kw.keys())
         thing = self.sym_adapt(thing, isasym=False)  # type: ignore
         if thing.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
-            return thing.reconstruct([self.extract(x, mask) for x in thing.adapted], **kw)  # type: ignore
+            return thing.reconstruct([self.extract(x, mask, **kw) for x in thing.adapted], **kw)  # type: ignore
         if thing.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
             d = {
-                k: self.extract(x, mask, key=k, skip_keys=skip_keys)
+                k: self.extract(x, mask, key=k, skip_keys=skip_keys, **kw)
                 for k, x in thing.adapted.items()  # type: ignore
             }  # type: ignore
             return thing.reconstruct(d, **kw)  # type: ignore
@@ -479,7 +476,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
     def reset(self):
         self.skip_keys.clear()
         self.opt.symmsub = None
-        self._symmRs = self._symmRs.to(self.device)
 
     def is_on_symaxis(self, xyz):
         if len(xyz) == 0: return None
@@ -543,7 +539,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         return self.allsymmRs
 
     def apply_initial_offset(self, x):
-        return x + self.asucenvec.to(x.device).to(x.dtype) * self.opt.start_radius  # type: ignore
+        return x + self.asucenvec.to(x.device).to(x.dtype) * self.opt.radius  # type: ignore
 
     @property
     def frames(self):

@@ -122,8 +122,8 @@ def test_sym_fit_icos_unsym_multislice():
         'sym.asu_to_best_frame=true',
         'sym.max_nsub=3',
         'sym.fit=True',
-        '+fittscale=1',
-        '+fitwclash=1',
+        '+fit_tscale=1',
+        '+fit_wclash=1',
     ])
 
     N = 200

@@ -27,7 +27,7 @@ sym:
 
   # Symmetry options
   # recenter: True
-  start_radius: null
+  radius: null
   force_radius: null
   asu_to_best_frame: null
   fit: False

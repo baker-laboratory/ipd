@@ -188,7 +188,7 @@ class TestsTool(CITool):
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
-        flags = f'{flags} --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10'
+        flags = f'{flags} --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
         jobs = []
@@ -200,7 +200,7 @@ class TestsTool(CITool):
                                   executor=executor,
                                   tee=tee,
                                   gpu=gpu,
-                                  flags=flags.replace('junit.xml', 'junit2.xml'),
+                                  flags=flags,
                                   testdir=testdir,
                                   cmdonly=cmdonly)
         if not slurm:

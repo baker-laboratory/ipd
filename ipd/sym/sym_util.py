@@ -1,12 +1,120 @@
 import math
-
 import numpy as np
-
 import ipd
 
 torch = ipd.lazyimport('torch')
 
 SYMA = 1.0
+
+def sym_redock(xyz, Lasu, subforms, opt):
+    # resolve clashes in placed subunits
+    # could probably use this to optimize the radius as well
+    def clash_error_comp(R0, T0, xyz, fit_tscale):
+        xyz0 = xyz[:Lasu]
+        xyz0_corr = xyz0.reshape(-1, 3) @ R0.T
+        xyz0_corr = xyz0_corr.reshape(xyz0.shape) + fit_tscale*T0
+        # compute clash
+        Xsymmall = xyz.clone()
+        for n, X in enumerate(subforms):
+            R = X[:3, :3].float().to(device=xyz.device)
+            T = X[:, -1][:3].to(device=xyz.device)
+            new_coords = xyz0_corr.reshape(-1, 3) @ R.T
+            new_coords = new_coords.reshape(xyz0_corr.shape) + T
+            Xsymmall[n * Lasu:(n+1) * Lasu] = new_coords
+        # compute clash loss
+        Xsymmall = Xsymmall[:, 0, :]
+        dsymm = torch.cdist(Xsymmall, Xsymmall, p=2)
+        dsymm_2 = dsymm.clone()
+        # dsymm_2 = dsymm.clone().fill_diagonal_(9999) # avoid in-place operation
+        for i in range(0, len(Xsymmall), Lasu):
+            dsymm_2[i:i + Lasu, i:i + Lasu] = 9999
+        clash = torch.clamp(opt.fit_wclash - dsymm_2, min=0)
+        loss = torch.sum(clash) / Lasu
+        return loss
+
+    def Q2R(Q):
+        Qs = torch.cat((torch.ones((1), device=Q.device), Q), dim=-1)
+        Qs = normQ(Qs)
+        return Qs2Rs(Qs[None, :]).squeeze(0)
+
+    with torch.enable_grad():
+        T0 = torch.zeros(3, device=xyz.device).requires_grad_(True)
+        Q0 = torch.zeros(3, device=xyz.device).requires_grad_(True)
+        lbfgs = torch.optim.LBFGS([T0, Q0], history_size=15, max_iter=3, line_search_fn="strong_wolfe")
+
+        def closure():
+            lbfgs.zero_grad()
+            loss = clash_error_comp(Q2R(Q0), T0, xyz, opt.fit_tscale)
+            loss.backward()  #retain_graph=True)
+            return loss
+
+        for e in range(5):
+            loss = lbfgs.step(closure)
+            print(loss)
+
+        Q0 = Q0.detach()
+        T0 = T0.detach()
+        xyz0 = xyz[:Lasu].reshape(-1, 3) @ (Q2R(Q0)).T
+        xyz0 = xyz0.reshape(xyz[:Lasu].shape) + opt.fit_tscale * T0
+
+    for n, X in enumerate(subforms):
+        R = X[:3, :3].float()
+        T = X[:, -1][:3]
+        new_coords = xyz0.reshape(-1, 3) @ R.T
+        new_coords = new_coords.reshape(xyz0.shape) + T
+        xyz[n * Lasu:(n+1) * Lasu] = new_coords
+
+    return xyz
+
+def get_xforms(symid, opt, cenvec):
+
+    def calc_Ts(cenvec, radius, Rs):
+        A = radius * cenvec.to(torch.float32).cpu()
+        Ts = [R[:3, :3] @ A + R[:3, 3] for R in Rs]
+        Ts = [T - Ts[0] for T in Ts]
+        return Ts
+
+    if opt.H_K is not None:
+        xforms = ipd.sym.high_t.get_pseudo_highT(opt)
+        subforms, _ = get_nneigh(xforms, opt.max_nsub)
+        return xforms, subforms
+    else:
+        Rs = ipd.sym.frames(symid, torch=True).to(torch.float32)
+    Ts = calc_Ts(cenvec, opt.radius, Rs)
+    xforms = []
+    for i, R in enumerate(Rs):
+        X = np.eye(4)
+        X[:3, :3] = R[:3, :3]
+        X[:3, 3] = Ts[i]
+        xforms.append(torch.tensor(X))
+    xforms = torch.stack(xforms)
+    subforms, _ = get_nneigh(xforms, min(len(xforms), opt.max_nsub))
+    return xforms, subforms
+
+def get_nneigh(xforms, nsub, w_t=1.0, w_r=1.0):
+    '''
+    Args:
+        xforms (list): list of xforms
+    Returns:
+        symsub (list): indices corresponding to nearest neighbors around main sub
+    '''
+
+    def comb_dist(T1, T2, w_t=1.0, w_r=1.0):
+        '''
+        Compute the combined distance.
+        '''
+        t1, t2 = T1[:3, 3], T2[:3, 3]
+        t_dist = torch.norm(t1 - t2)
+        R1, R2 = T1[:3, :3], T2[:3, :3]
+        rotation_diff = torch.matmul(R1.T, R2)
+        trace_value = torch.clip((torch.trace(rotation_diff) - 1) / 2, -1, 1)
+        r_dist = torch.acos(trace_value)
+        return w_t*t_dist + w_r*r_dist
+
+    dists = torch.tensor([comb_dist(xforms[0], x) for x in xforms])
+    _, symsub = torch.topk(dists, k=nsub, largest=False)
+    subforms = xforms[symsub]
+    return subforms, symsub
 
 def get_coords_stack(pdblines):
     """Getting the Ca coords of input "high-T" pdb.
@@ -959,12 +1067,12 @@ def find_symmsub_pair(Ltot, Lasu, k, pseudo_cycle=False):
 
 def update_symm_Rs(xyz, Lasu, symmsub, allsymmRs, symopt):
 
-    def dist_error_comp(R0, T0, xyz, fittscale):
+    def dist_error_comp(R0, T0, xyz, fit_tscale):
         Ts = xyz  #[:,:,1]
         B = xyz.shape[0]
 
         Tcom = xyz[:, :Lasu].mean(dim=1, keepdim=True)  # LT center of mass for first ASU
-        Tcorr = torch.einsum('ij,brj->bri', R0, xyz[:, :Lasu] - Tcom) + Tcom + fittscale * T0[
+        Tcorr = torch.einsum('ij,brj->bri', R0, xyz[:, :Lasu] - Tcom) + Tcom + fit_tscale * T0[
             None, None, :]  # LT Rotated coordinates of first ASU by learned R0, then translated by learned T0
 
         # distance map loss
@@ -983,13 +1091,13 @@ def update_symm_Rs(xyz, Lasu, symmsub, allsymmRs, symopt):
         delsxall = Xsymmall[:, :Lasu, None] - Xsymmall[:, None, Lasu:]
         dsymm = torch.linalg.norm(delsxall, dim=-1)
 
-        clash = torch.clamp(symopt.fitwclash - dsymm, min=0)
+        clash = torch.clamp(symopt.fit_wclash - dsymm, min=0)
         loss2 = torch.sum(clash) / Lasu
 
         return loss1, loss2  # 0.0
 
-    def dist_error(R0, T0, xyz, fittscale, w_clash=10.0):
-        l1, l2 = dist_error_comp(R0, T0, xyz, fittscale)
+    def dist_error(R0, T0, xyz, fit_tscale, w_clash=10.0):
+        l1, l2 = dist_error_comp(R0, T0, xyz, fit_tscale)
         return l1 + w_clash*l2
 
     def Q2R(Q):
@@ -1010,7 +1118,7 @@ def update_symm_Rs(xyz, Lasu, symmsub, allsymmRs, symopt):
             def closure():
                 lbfgs.zero_grad()
                 i = 1 if xyz.shape[2] > 1 else 0
-                loss = dist_error(Q2R(Q0), T0, xyz[:, :, i], symopt.fittscale)
+                loss = dist_error(Q2R(Q0), T0, xyz[:, :, i], symopt.fit_tscale)
                 loss.backward()  #retain_graph=True)
                 return loss
 
@@ -1021,7 +1129,7 @@ def update_symm_Rs(xyz, Lasu, symmsub, allsymmRs, symopt):
             Q0 = Q0.detach()
             T0 = T0.detach()
             xyz = torch.einsum('ij,braj->brai', Q2R(Q0),
-                               xyz[:, :Lasu] - Tcom) + Tcom + symopt.fittscale * T0[None, None, :]
+                               xyz[:, :Lasu] - Tcom) + Tcom + symopt.fit_tscale * T0[None, None, :]
 
     xyz = torch.einsum('sij,braj->bsrai', allsymmRs[symmsub], xyz[:, :Lasu])
     xyz = xyz.reshape(B, -1, natoms, 3)  # (B,S,L,3,3) or (B,LASU*S,natoms,3)
