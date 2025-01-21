@@ -40,7 +40,7 @@ def sym_redock(xyz, Lasu, subforms, opt):
     with torch.enable_grad():
         T0 = torch.zeros(3, device=xyz.device).requires_grad_(True)
         Q0 = torch.zeros(3, device=xyz.device).requires_grad_(True)
-        lbfgs = torch.optim.LBFGS([T0, Q0], history_size=15, max_iter=3, line_search_fn="strong_wolfe")
+        lbfgs = torch.optim.LBFGS([T0, Q0], history_size=15, max_iter=20, line_search_fn="strong_wolfe")
 
         def closure():
             lbfgs.zero_grad()
@@ -48,9 +48,9 @@ def sym_redock(xyz, Lasu, subforms, opt):
             loss.backward()  #retain_graph=True)
             return loss
 
-        for e in range(5):
+        for e in range(3):
             loss = lbfgs.step(closure)
-            print(loss)
+            ic(loss)
 
         Q0 = Q0.detach()
         T0 = T0.detach()
@@ -139,22 +139,30 @@ def get_coords_stack(pdblines):
     L_chain_main = len(allatoms[allatoms['chnid'] == chains[0]])
     xyz_stack = []
     for c in chains:
-        assert len(allatoms[allatoms['chnid'] == c]) == L_chain_main, 'PDB file does not contain symmetric units!'
+        assert len(allatoms[allatoms['chnid'] == c]) == L_chain_main, 'PDB file does not contain symmetrically sized units!'
         xyz_stack.append(allatoms[allatoms['chnid'] == c]['X'])
-    # center the complex
-    COM = np.mean(xyz_stack, axis=(0, 1))
-    return torch.tensor(xyz_stack - COM)
+    return torch.tensor(xyz_stack)
 
-def generate_ASU_xforms(pdb):
-    """Takes in [N,L,3] Ca xyz stack to map transforms of ASU, should return
-    homogenous transforms for each subunit in the ASU We use this to generate
-    the ASU in the first place."""
-    xyz_stack = get_coords_stack(open(pdb))
+def get_xforms_from_file(opt):
+    """Takes in [N,L,3] Ca xyz stack to map transforms"""
+    xyz_stack = get_coords_stack(open(opt.input_pdb))
+    assert xyz_stack.shape[0] > 1, 'Input PDB file should more than one chain if wanting to mirror input symmetry'
     xforms = []
     for n in range(xyz_stack.shape[0]):
-        _, _, X = ipd.h.rmsfit(xyz_stack[n], xyz_stack[0])  # rms, fitxyz, X  # type: ignore
+        # centering the main subunit and then calculating xforms from there
+        rms, _, X = ipd.h.rmsfit((xyz_stack[n] - xyz_stack[0].mean(dim=0)), (xyz_stack[0] - xyz_stack[0].mean(dim=0)))  # rms, fitxyz, X
+        if rms > 2:
+            ic('WARNING: Input PDB contains subunits that have greater than 2A RMSD to main subunit. Consider using a more symmetric input file!')
         xforms.append(X)
-    return xforms
+    # get reference xform ( in the event of differences in user input )
+    asu_xyz = get_coords_stack(open(opt.asu_input_pdb))
+    rms, _, X = ipd.h.rmsfit((xyz_stack[0] - xyz_stack[0].mean(dim=0)), (asu_xyz[0] - asu_xyz[0].mean(dim=0)))
+    if rms > 2:
+        ic('WARNING: ASU input PDB has greater than 2A RMSD to reference input sym file. Check your inputs!')
+    xforms = [R @ X for R in xforms]
+    xforms = torch.stack(xforms)
+    subforms, _ = get_nneigh(xforms, min(opt.max_nsub, len(xforms)))
+    return xforms, subforms
 
 def normQ(Q):
     """Normalize a quaternions."""
