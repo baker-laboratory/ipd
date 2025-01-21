@@ -235,7 +235,7 @@ with contextlib.suppress(ImportError):
         if isasym is not None: return isasym
         if sym.L in tensor.shape: return False
         if sym.Nasym in tensor.shape: return True
-        ic(sym.L, sym.Nasu, sym.Nasym, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
+        ic(sym.L, sym.Nasu, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
         assert idx is not None
 
     class _SymAdaptNamedDenseTensor(SymAdapt):
@@ -317,7 +317,9 @@ with contextlib.suppress(ImportError):
                 self.perm = symperm
                 self.adapted = SimpleSparseTensor(idx=symidx, val=symperm, isidx=self.isidx)  # type: ignore
                 if self.isidx:
-                    self.adapted.val[:] = sym.idx.idx_asym_to_sym[self.adapted.val.to(int).rename(None)]  # type: ignore
+                    v = self.adapted.val.rename(None)
+                    is_not_index = v.to(int) != v
+                    self.adapted.val[:] = th.where(is_not_index, v, sym.idx.idx_asym_to_sym[v.to(int)])
             else:
                 raise ValueError(f'tensor {tensor.shape} not sym or asym compatible')
             assert len(self.adapted.idx) == len(self.adapted.val)

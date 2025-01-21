@@ -7,10 +7,28 @@ from hypothesis import strategies as st
 
 import ipd
 
-def symslices_from_colors_should_fail(nsub, colors, Lasu, isasu):
+def main():
+    test_colors_to_slices()
+    test_make_sequential_colors()
+    test_symslices_from_colors_one()
+    test_symslices_from_colors_fuzz()
+
+def test_colors_to_slices():
+    for nsub, cols, expected in [
+        [2, [0, 0, -1, -1, -1], [(7, 0, 4)]],
+        [2, [0], [(2, 0, 2)]],
+        [2, [0, 1, 2], [(6, 0, 2), (6, 2, 4), (6, 4, 6)]],
+        [2, [0, -1, 2], [(5, 0, 2), (5, 3, 5)]],
+    ]:
+        cols = th.as_tensor(cols)
+        slices = ipd.sym.symslices_from_colors(nsub=nsub, colors=cols, isasym=True)
+        # ic(nsub, cols, slices, expected)
+        assert slices == expected
+
+def symslices_from_colors_should_fail(nsub, colors, Lasu, isasym):
     if len(colors) == 0:
         return True
-    if not isasu:
+    if not isasym:
         for i, l in enumerate(Lasu):
             # print(i, l, int(th.sum(colors==i)) % nsub, nsub)
             if l is None and int(th.sum(colors == i)) % nsub != 0:
@@ -25,22 +43,22 @@ def symslices_from_colors_should_fail(nsub, colors, Lasu, isasu):
 @hypothesis.given(
     nsub=st.integers(1, 2),
     colors=st.lists(st.integers(0, 5), min_size=30, max_size=40).filter(lambda x: len(set(x)) == 6).map(sorted),
-    isasu=st.booleans(),
+    isasym=st.booleans(),
     unsymfrac=st.lists(st.one_of(st.none(), st.floats(0, 0.9)), min_size=3, max_size=3),
 )
-def test_symslices_from_colors_fuzz(nsub, colors, isasu, unsymfrac, **kw):
+def test_symslices_from_colors_fuzz(nsub, colors, isasym, unsymfrac, **kw):
     colors = th.tensor(colors)
     Lasu = th.full((6, ), -1)
     for t, uf in enumerate(unsymfrac):
         if uf is not None:
-            Lasu[t] = max(0, int((1-uf) * th.sum(colors == t))) // (1 if isasu else nsub)
-    xfail = symslices_from_colors_should_fail(nsub, colors, Lasu, isasu)
+            Lasu[t] = max(0, int((1-uf) * th.sum(colors == t))) // (1 if isasym else nsub)
+    xfail = symslices_from_colors_should_fail(nsub, colors, Lasu, isasym)
     try:
-        idx = ipd.sym.symslices_from_colors(nsub, colors, isasu, Lasu, recolor=False)
+        idx = ipd.sym.symslices_from_colors(nsub, colors, isasym, Lasu, recolor=False)
         for s in idx:
             assert s[1] < s[0]
             assert s[2] <= s[0]
-            if not isasu:
+            if not isasym:
                 assert th.all(colors[range(s[1], s[2])] == colors[s[1]])
         if idx:
             idx = ipd.sym.SymIndex(nsub, idx)
@@ -61,7 +79,7 @@ def test_symslices_from_colors_one():
     idx = ipd.sym.symslices_from_colors(
         nsub=nsub,
         colors=th.tensor([0, 1, -1, 1, 2, -1, 2], dtype=int),  # type: ignore
-        isasu=True,
+        isasym=True,
         Lasu=th.tensor([-1, -1, 0, -1, -1, 0, -1], dtype=int),  # type: ignore
     )
     idx = ipd.sym.SymIndex(nsub, idx)
@@ -74,6 +92,4 @@ def test_symslices_from_colors_one():
     )
 
 if __name__ == '__main__':
-    test_make_sequential_colors()
-    test_symslices_from_colors_one()
-    test_symslices_from_colors_fuzz()
+    main()

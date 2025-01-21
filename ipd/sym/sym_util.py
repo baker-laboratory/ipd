@@ -6,7 +6,7 @@ torch = ipd.lazyimport('torch')
 
 SYMA = 1.0
 
-def sym_redock(xyz, Lasu, subforms, opt):
+def sym_redock(xyz, Lasu, frames, opt):
     # resolve clashes in placed subunits
     # could probably use this to optimize the radius as well
     def clash_error_comp(R0, T0, xyz, fit_tscale):
@@ -15,7 +15,7 @@ def sym_redock(xyz, Lasu, subforms, opt):
         xyz0_corr = xyz0_corr.reshape(xyz0.shape) + fit_tscale*T0
         # compute clash
         Xsymmall = xyz.clone()
-        for n, X in enumerate(subforms):
+        for n, X in enumerate(frames):
             R = X[:3, :3].float().to(device=xyz.device)
             T = X[:, -1][:3].to(device=xyz.device)
             new_coords = xyz0_corr.reshape(-1, 3) @ R.T
@@ -57,7 +57,7 @@ def sym_redock(xyz, Lasu, subforms, opt):
         xyz0 = xyz[:Lasu].reshape(-1, 3) @ (Q2R(Q0)).T
         xyz0 = xyz0.reshape(xyz[:Lasu].shape) + opt.fit_tscale * T0
 
-    for n, X in enumerate(subforms):
+    for n, X in enumerate(frames):
         R = X[:3, :3].float()
         T = X[:, -1][:3]
         new_coords = xyz0.reshape(-1, 3) @ R.T
@@ -67,34 +67,34 @@ def sym_redock(xyz, Lasu, subforms, opt):
     return xyz
 
 def get_xforms(symid, opt, cenvec):
-
-    def calc_Ts(cenvec, radius, Rs):
-        A = radius * cenvec.to(torch.float32).cpu()
-        Ts = [R[:3, :3] @ A + R[:3, 3] for R in Rs]
-        Ts = [T - Ts[0] for T in Ts]
-        return Ts
-
     if opt.H_K is not None:
-        xforms = ipd.sym.high_t.get_pseudo_highT(opt)
-        subforms, _ = get_nneigh(xforms, opt.max_nsub)
-        return xforms, subforms
+        allframes = ipd.sym.high_t.get_pseudo_highT(opt)
     else:
-        Rs = ipd.sym.frames(symid, torch=True).to(torch.float32)
-    Ts = calc_Ts(cenvec, opt.radius, Rs)
-    xforms = []
-    for i, R in enumerate(Rs):
-        X = np.eye(4)
-        X[:3, :3] = R[:3, :3]
-        X[:3, 3] = Ts[i]
-        xforms.append(torch.tensor(X))
-    xforms = torch.stack(xforms)
-    subforms, _ = get_nneigh(xforms, min(len(xforms), opt.max_nsub))
-    return xforms, subforms
+        allframes = ipd.sym.frames(symid, torch=True).to(torch.float32)
+    frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
+    return allframes, frames
 
-def get_nneigh(xforms, nsub, w_t=1.0, w_r=1.0):
+    # def calc_Ts(cenvec, radius, Rs):
+    # A = radius * cenvec.to(torch.float32).cpu()
+    # Ts = [R[:3, :3] @ A + R[:3, 3] for R in Rs]
+    # Ts = [T - Ts[0] for T in Ts]
+    # return Ts
+    #
+    # Ts = calc_Ts(cenvec, opt.radius, Rs)
+    # allframes = []
+    # for i, R in enumerate(Rs):
+    # X = np.eye(4)
+    # X[:3, :3] = R[:3, :3]
+    # X[:3, 3] = Ts[i]
+    # allframes.append(torch.tensor(X))
+    # allframes = torch.stack(allframes)
+    # frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
+    # return allframes, frames
+
+def get_nneigh(allframes, nsub, w_t=1.0, w_r=1.0):
     '''
     Args:
-        xforms (list): list of xforms
+        allframes (list): list of allframes
     Returns:
         symsub (list): indices corresponding to nearest neighbors around main sub
     '''
@@ -111,10 +111,10 @@ def get_nneigh(xforms, nsub, w_t=1.0, w_r=1.0):
         r_dist = torch.acos(trace_value)
         return w_t*t_dist + w_r*r_dist
 
-    dists = torch.tensor([comb_dist(xforms[0], x) for x in xforms])
+    dists = torch.tensor([comb_dist(allframes[0], x) for x in allframes])
     _, symsub = torch.topk(dists, k=nsub, largest=False)
-    subforms = xforms[symsub]
-    return subforms, symsub
+    frames = allframes[symsub]
+    return frames, symsub
 
 def get_coords_stack(pdblines):
     """Getting the Ca coords of input "high-T" pdb.
@@ -150,11 +150,11 @@ def generate_ASU_xforms(pdb):
     homogenous transforms for each subunit in the ASU We use this to generate
     the ASU in the first place."""
     xyz_stack = get_coords_stack(open(pdb))
-    xforms = []
+    allframes = []
     for n in range(xyz_stack.shape[0]):
         _, _, X = ipd.h.rmsfit(xyz_stack[n], xyz_stack[0])  # rms, fitxyz, X  # type: ignore
-        xforms.append(X)
-    return xforms
+        allframes.append(X)
+    return allframes
 
 def normQ(Q):
     """Normalize a quaternions."""

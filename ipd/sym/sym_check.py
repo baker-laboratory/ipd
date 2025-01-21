@@ -99,9 +99,10 @@ def symcheck_XYZ_1D(sym, idx, thing, **kw):
         # ic(s.beg, s.asuend)
         # ic(s.Lasu)
         for i in range(idx.nsub):
+            frame = sym.frames[i] if hasattr(sym, 'frames') else ipd.h.homog(sym.symmRs[i])
             # ic(i, thing.shape, sym.symmRs.shape, sym.symid, sym.nsub,idx.nsub)
             tmp1 = thing[s.beg + i * s.Lasu:s.asuend + i * s.Lasu]
-            tmp2 = ipd.h.xform(ipd.h.homog(sym.symmRs[i]), thing[s.asu])  # type: ignore
+            tmp2 = ipd.h.xform(frame, thing[s.asu])  # type: ignore
             # ic(tmp1.shape,tmp2.shape)
             th.testing.assert_close(tmp1, tmp2.to(tmp1.dtype), atol=1e-3, rtol=1e-5, equal_nan=True)
 

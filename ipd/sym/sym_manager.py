@@ -12,6 +12,7 @@ with contextlib.suppress(ImportError):
 import numpy as np
 
 import ipd
+from ipd import h
 
 th = ipd.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
@@ -72,6 +73,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         self._idx = None
         self._post_init_args = ipd.dev.Bunch(kw)
         self._frames = None
+        self.x2local = self.x2global = self.xasuinit = th.eye(4, device=self.device)
         self.add_properties()
         self.init(**kw)
 
@@ -198,7 +200,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         adapted, contig, kw['Lasu'] = self.to_contiguous(thing, **kw)
         if thing.kind.valuekind == ValueKind.XYZ:
             assert thing.kind.shapekind == ShapeKind.ONEDIM  # type: ignore
-            contig = self.apply_symmetry_xyz_maybe_pair(contig, pari=None, origxyz=adapted, **kw)
+            contig = self.apply_symmetry_xyz_maybe_pair(contig, pair=None, origxyz=adapted, **kw)
         elif thing.kind.valuekind == ValueKind.INDEX:
             contig = self.apply_symmetry_index(adapted.idx, adapted.val, adapted.isidx, **kw)
         elif thing.kind.valuekind == ValueKind.BASIC:
@@ -210,7 +212,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             assert 0, f'bad kind {thing.kind}'  # type: ignore
         if len(contig) == 1: contig = contig[0]
         result = self.fill_from_contiguous(thing, adapted, contig, **kw)
-        if thing.kind.valuekind == ValueKind.XYZ:  # type: ignore
+        if thing.kind.valuekind == ValueKind.XYZ:
             result = self.move_unsym_to_match_asu(adapted, result)
         return result
 
@@ -248,7 +250,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
 
         return pair
 
-    def apply_symmetry_index(self, idx: T, val, isidx, **kw) -> T:
+    def apply_symmetry_index(self, idx: T, val: T, isidx, **kw) -> T:
         s = self.idx
         asu = val[s.asu[idx]]
         asuidx = idx[s.asu[idx]]  # type: ignore
@@ -386,8 +388,22 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             # ic(x.shape, mask.sum(), mask.shape, kw)
             return thing.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)  # type: ignore
         if thing.kind.shapekind == ShapeKind.SPARSE:  # type: ignore
-            assert len(thing.adapted.idx) == 0, 'spares not implemented yet'  # type: ignore
-            return thing.orig  # type: ignore
+            # ic(mask.shape, mask)
+            # ic(thing.adapted.idx.shape)
+            # ic(thing.adapted.val.shape)
+            v = thing.adapted.val.rename(None)
+            is_not_index = v.to(int) != v
+            # ic(is_not_index)
+            thing.adapted.val[:] = th.where(is_not_index, v, self.idx.idx_sym_to_asym[v.to(int)])
+            # ic(mask.shape, mask)
+            keep = mask[thing.adapted.idx]
+            # ic(keep.shape, keep)
+            thing.adapted.idx = thing.adapted.idx[keep]
+            thing.adapted.val = thing.adapted.val[keep, ...]
+            return thing.reconstruct(thing.adapted)
+
+            # assert len(thing.adapted.idx) == 0, 'sparse not implemented yet'  # type: ignore
+            # return thing.orig  # type: ignore
 
         raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')  # type: ignore
 
@@ -450,7 +466,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         self._idx.to(self.device)  # type: ignore
 
     def verify_index(self, thing):
-        pass
+        assert self._idx
 
     def sym_adapt(self, thing, isasym=None) -> ipd.sym.SymAdapt:  # type: ignore
         """Return a SymAdapt object with metadata about the symmetry of the
@@ -476,6 +492,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
     def reset(self):
         self.skip_keys.clear()
         self.opt.symmsub = None
+        self._idx = None
 
     def is_on_symaxis(self, xyz):
         if len(xyz) == 0: return None
@@ -539,7 +556,18 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         return self.allsymmRs
 
     def apply_initial_offset(self, x):
-        return x + self.asucenvec.to(x.device).to(x.dtype) * self.opt.radius  # type: ignore
+        dev = x.device
+        x = h.xform(self.x2global, x)
+        x[self.idx.asu] += self.asucenvec.to(x.device).to(x.dtype) * self.opt.radius
+        x[self.idx.asu] = h.xform(self.xasuinit, x[self.idx.asu]).to(x.device)
+        x = h.xform(self.x2local, x)
+        if self.opt.rand_rot_lig_gp:
+            asymtheo = self.idx.asym & ((self.idx.kind == 1) | (self.idx.kind == 12))
+            xrand = h.rand(cart_sd=0, cart_cen=x[asymtheo, 1].mean(0))
+            x[asymtheo] = h.xform(xrand, x[asymtheo])
+            ic(x[asymtheo, 1])
+        x = self(x)
+        return x.to(dev)
 
     @property
     def frames(self):

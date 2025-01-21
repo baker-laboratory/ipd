@@ -20,6 +20,7 @@ import ipd
 pytestmark = pytest.mark.fast
 
 def main():
+    test_unsym()
     test_sym_pair_samechain()
     test_sym_pair()
     test_sym_manager_list_asym()
@@ -40,6 +41,22 @@ def main():
     test_sym_manager_list()
     test_sym_manager_dict()
     print('DONE')
+
+@pytest.mark.fast
+def test_unsym():
+    sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3'])
+    sym.idx = ipd.sym.SymIndex(sym.nsub, [(7, 0, 3), (7, 4, 7)])
+    assert sym.idx.Nasym == 3
+    assert sym.idx.Nasu == 2
+    assert sym.idx.Nunsym == 1
+    sym.idx = ipd.sym.SymIndex(sym.nsub, [(17, 0, 3)])
+    assert sym.idx.Nasym == 15
+    assert sym.idx.Nasu == 1
+    assert sym.idx.Nunsym == 14
+    sym.idx = ipd.sym.SymIndex(sym.nsub, [(101, 0, 3), (101, 10, 13), (101, 20, 23), (101, 30, 33)])
+    assert sym.idx.Nasym == 101 - 2*4
+    assert sym.idx.Nasu == 4
+    assert sym.idx.Nunsym == 101 - 12
 
 @pytest.mark.fast
 def test_sym_manager_list_asym():

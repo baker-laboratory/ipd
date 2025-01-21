@@ -8,7 +8,6 @@ from typing import Any, Annotated, Optional
 from typer import Argument
 
 import git
-import submitit
 
 import ipd
 
@@ -185,6 +184,7 @@ class TestsTool(CITool):
             list of tuples (cmd, job, log)
         """
         # os.makedirs(os.path.dirname(log), exist_ok=True)
+        import submitit
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
