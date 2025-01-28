@@ -296,7 +296,7 @@ class SymIndex:
         assert all(s.sanity_check(self.nsub) for s in self.slices)
         assert all(len(s.mask) == self.L for s in self.slices)
         # for i, s in enumerate(self.slices):
-            # ic(i, s)
+        # ic(i, s)
         for i, s1 in enumerate(self.slices):
             for j, s2 in enumerate(self.slices[:i]):
                 assert th.sum(s1.mask & s2.mask) == 0

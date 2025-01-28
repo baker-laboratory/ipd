@@ -251,7 +251,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
 
         return pair
 
-
     def apply_symmetry_index(self, idx: T, val: T, isidx, **kw) -> T:
         """handles index data types where values must be reindexed in context of the symmetric object"""
         ic(self.symid, self.nsub, idx, val, isidx)

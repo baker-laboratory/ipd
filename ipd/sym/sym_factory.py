@@ -8,6 +8,7 @@ _default_sym_manager = 'base'
 class MetaSymManager(abc.ABCMeta):
     """Metaclass for SymmetryManager, ensures all subclasses are registered
     here even if in other modules."""
+
     def __init__(cls, cls_name, cls_bases, cls_dict):
         # sourcery skip: instance-method-first-arg-name
         """Register the SymmetryManager subclass."""

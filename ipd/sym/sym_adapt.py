@@ -355,7 +355,6 @@ with contextlib.suppress(ImportError):
         def kind(self):  # type: ignore
             return SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
 
-
         def reconstruct(self, ary, **kw):  # type: ignore
             return ary
 
