@@ -341,25 +341,22 @@ with contextlib.suppress(ImportError):
             self.sym = sym
             self.isasym = isasym  # type: ignore
             assert x.ndim > 0
+            if len(self.orig) == self.sym.idx.L:
+                if self.isasym is not None: assert not self.isasym
+                self.adapted = self.orig.copy()
+            elif len(self.orig) == self.sym.idx.Nasym:
+                if self.isasym is not None: assert self.isasym
+                self.adapted = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
+                self.adapted[self.sym.idx.asym.cpu()] = self.orig
+            else:
+                raise ValueError(f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
 
         @property
         def kind(self):  # type: ignore
             return SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
 
-        @property
-        def adapted(self):
-            if len(self.orig) == self.sym.idx.L:
-                if self.isasym is not None: assert not self.isasym
-                new = self.orig.copy()
-            elif len(self.orig) == self.sym.idx.Nasym:
-                if self.isasym is not None: assert self.isasym
-                new = np.empty((self.sym.idx.L, *self.orig.shape[1:]), dtype=self.orig.dtype)
-                new[self.sym.idx.asym.cpu()] = self.orig
-            else:
-                raise ValueError(f'unsupported length {len(self.orig)} L={self.sym.idx.L}, Lasym = {self.sym.idx.Nasym}')
-            return new
 
-        def reconstruct(self, ary):  # type: ignore
+        def reconstruct(self, ary, **kw):  # type: ignore
             return ary
 
     ########## _SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########

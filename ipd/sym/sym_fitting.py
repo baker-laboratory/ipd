@@ -23,11 +23,11 @@ def asu_to_best_frame_if_necessary(sym,
                                    xyz,
                                    Lasu,
                                    asu_to_best_frame=None,
-                                   disable_all_fitting=None,
+                                   fixed=None,
                                    asu_to_best_frame_min_dist_to_origin=7,
                                    **kw):
     """Align the asu if necessary."""
-    if asu_to_best_frame and not disable_all_fitting:
+    if asu_to_best_frame and not fixed:
         if th.any(th.isnan(xyz)): return xyz
         Natom = min(3, xyz.shape[1])
         com = sym_com(sym, xyz[:, :Natom], Lasu, **kw)
@@ -43,9 +43,9 @@ def asu_to_best_frame_if_necessary(sym,
             # assert 0
     return xyz
 
-def asu_to_canon_if_necessary(sym, xyz, Lasu, asu_to_canon=None, disable_all_fitting=None, **kw):
+def asu_to_canon_if_necessary(sym, xyz, Lasu, asu_to_canon=None, fixed=None, **kw):
     """Align the asu if necessary."""
-    if asu_to_canon and not disable_all_fitting:
+    if asu_to_canon and not fixed:
         if th.any(th.isnan(xyz)): return xyz
         xyz = asu_to_best_frame_if_necessary(sym, xyz, Lasu, True)
         oldcom = xyz[:Lasu].mean(dim=(0, 1))
@@ -57,9 +57,9 @@ def asu_to_canon_if_necessary(sym, xyz, Lasu, asu_to_canon=None, disable_all_fit
         xyz[:Lasu] += newcom - oldcom
     return xyz
 
-def set_particle_radius_if_necessary(sym, xyz, Lasu, force_radius=None, disable_all_fitting=None, **kw):
+def set_particle_radius_if_necessary(sym, xyz, Lasu, force_radius=None, fixed=None, **kw):
     """Set the particle radius if necessary."""
-    if force_radius and not disable_all_fitting:
+    if force_radius and not fixed:
         if th.any(th.isnan(xyz)): return xyz
         # ic('set_particle_radius_if_necessary')
         Natom = min(3, xyz.shape[1])
@@ -74,9 +74,9 @@ def set_particle_radius_if_necessary(sym, xyz, Lasu, force_radius=None, disable_
             print(f'set particle radius to {force_radius} from {r}')
     return xyz
 
-def set_motif_placement_if_necessary(sym, xyz, disable_all_fitting=None, **kw):
+def set_motif_placement_if_necessary(sym, xyz, fixed=None, **kw):
     """Set the particle radius if necessary."""
-    if disable_all_fitting:
+    if fixed:
         return xyz
     if sym.opt.motif_position == "AB" and sym.opt.motif_fit:
         gpbb = th.stack([
