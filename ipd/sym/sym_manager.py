@@ -555,9 +555,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
 
     def apply_initial_offset(self, x, resym=True):
         dev = x.device
+        assert th.allclose(th.eye(4, device=dev), self.x2local @ self.x2global, atol=1e-3)
         x = h.xform(self.x2global, x)
-        x[self.idx.asu] += self.asucenvec.to(x.device).to(x.dtype) * self.opt.radius
-        x[self.idx.asu] = h.xform(self.xasuinit, x[self.idx.asu]).to(x.device)
+        assert self.opt.radius == 0
+        x[self.idx.asu] += self.asucenvec.to(dev).to(x.dtype) * self.opt.radius
+        x[self.idx.asu] = h.xform(self.xasuinit, x[self.idx.asu]).to(dev)
         x = h.xform(self.x2local, x)
         if resym: x = self(x)
         return x.to(dev)
