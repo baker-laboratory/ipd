@@ -91,7 +91,7 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
             opt.nsub = 60
             if opt.high_t_number > 1:
                 opt.nsub = opt.nsub * opt.high_t_number
-            if 'H_K' in opt:
+            if 'H_K' in opt and opt.H_K is not None:
                 h = opt.H_K[0]
                 k = opt.H_K[1]
                 opt.nsub = opt.nsub * (h*h + k*k + h*k)

@@ -171,7 +171,7 @@ def dump_pdb_from_points(
         pts = ipd.homog.hxform(frames, pts)
     if mask is None:
         mask = np.ones(pts.shape[:-1], dtype=bool)
-    elif mask == 'nan0':
+    elif isinstance(mask, str) and mask == 'nan0':
         mask = ((pts == 0) | (np.isnan(pts))).sum(-1) != 3
     if not (pts.ndim in (2, 3, 4) and pts.shape[-1] in (3, 4)):
         raise ValueError(f"bad shape for points {pts.shape}")
