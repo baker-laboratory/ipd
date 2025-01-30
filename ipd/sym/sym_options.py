@@ -11,6 +11,7 @@ default_params = dict(
     L=None,
     Lasu=None,
     asu_to_best_frame=None,
+    asu_input_pdb=None,
     center_cyclic=False,
     copy_main_block_template=None,
     contig_is_symmetric=False,
@@ -21,6 +22,7 @@ default_params = dict(
     guideposts_are_symmetric=False,
     high_t_number=1,
     H_K=None,
+    input_pdb=None,
     ligand_is_symmetric=None,
     max_nsub=99,
     motif_copy_position_from_px0=False,
@@ -36,10 +38,10 @@ default_params = dict(
     sym_enabled=True,
     symid='C1',
     symmetrize_repeats=None,
-    sym_input_file=None,
     sympair_enabled=None,
     sympair_method=None,
     sympair_protein_only=None,
+    sym_redock=False,
 )
 
 def parse(s):
@@ -69,6 +71,8 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
         for key, val in conf.sym.items():
             opt.parse_dynamic_param(key, val)
     # ic(extra_params)
+    if conf:
+        opt.asu_input_pdb = conf.inference.input_pdb  # storing this in the sym manager as well for easy ref if needed
     for name, val in default_params.items():
         key = name.split('.')[-1]
         if key in opt: continue
