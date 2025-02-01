@@ -124,7 +124,14 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
                     name = name[1:]
                 setattr(self.__class__, prop, makeprop(location, name))
 
-    def __call__(self, thing: T, key=None, isasym=None, **kw) -> T:
+    def __call__(
+        self,
+        thing: T,
+        key=None,
+        isasym=None,
+        kind=None,
+        **kw,
+    ) -> T:
         """This is the main entry point for applying symmetry to any object.
 
         The object can be a sequence, coordinates, or a pair of
@@ -137,13 +144,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         with the asu copies to the symmetric subs. 'sequence' can be
         anything with shape that starts with L
         """
-
-        kw = self.opt.to_bunch().sub(kw)
-        if any([not self, key in self.skip_keys, thing is None]):
-            return thing
+        SCALAR = (bool, int, float)
+        if any([not self, key in self.skip_keys, thing is None, isinstance(thing, SCALAR)]): return thing
         self.verify_index(thing)
         adaptor = self.sym_adapt(thing, isasym=isasym)
-        kw.kind = adaptor.kind
+        kw = self.opt.to_bunch().sub(kind=adaptor.kind, **kw)
 
         if isinstance(thing, XYZPair):
             xyzadapt, pairadapt = adaptor.adapted
@@ -157,8 +162,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             newxyz[0] = ipd.sym.set_motif_placement_if_necessary(self, newxyz[0], **kw)
             # self.assert_symmetry_correct(newxyz, **kw)
             # self.assert_symmetry_correct(newpair, **kw)
-            self.mark_symmetrical(newxyz, newpair)
-            return XYZPair(newxyz, newpair)
+            return XYZPair(*self.mark_symmetrical(newxyz, newpair))
         elif adaptor.kind.shapekind == ShapeKind.SEQUENCE:
             result = adaptor.reconstruct([self(x, **kw) for x in adaptor.adapted])
         elif adaptor.kind.shapekind == ShapeKind.MAPPING:
@@ -169,8 +173,8 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             result = adaptor.orig
         else:
             result = adaptor.reconstruct(self.apply_sym_slices(adaptor, **kw))
-        self.mark_symmetrical(result)
-        return result
+
+        return self.mark_symmetrical(result)
 
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
         xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)
@@ -428,6 +432,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         for a in args:
             with contextlib.suppress(AttributeError):
                 a.__HAS_BEEN_SYMMETRIZED = True
+        return args[0] if len(args)==1 else args
 
     def is_symmetrical(self, obj):
         if hasattr(obj, '__HAS_BEEN_SYMMETRIZED'): return True
@@ -549,20 +554,27 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
 
     @property
     def full_symmetry(self):
-        if hasattr(self, '_full_symmetry'):
-            return self._full_symmetry
+        if hasattr(self, '_full_symmetry'): return self._full_symmetry
         return self.allsymmRs
 
     def apply_initial_offset(self, x, resym=True):
-        dev = x.device
+        ipd.hub.debug('symoffset_begin', x, sym=self)
+        xnew, dev = x.clone(), x.device
         assert th.allclose(th.eye(4, device=dev), self.x2local @ self.x2global, atol=1e-3)
-        x = h.xform(self.x2global, x)
+        xnew = h.xform(self.x2global, xnew)
+        ipd.hub.debug('symoffset_toglobal', xnew, sym=self)
         assert self.opt.radius == 0
-        if self.opt.radius != 0: x[self.idx.asu] += self.asucenvec.to(dev).to(x.dtype) * self.opt.radius
-        x[self.idx.asu] = h.xform(self.xasuinit, x[self.idx.asu]).to(dev)
-        x = h.xform(self.x2local, x)
-        if resym: x = self(x)
-        return x.to(dev)
+        if self.opt.radius != 0: xnew[self.idx.asu] += self.asucenvec.to(dev).to(xnew.dtype) * self.opt.radius
+        ipd.hub.debug('symoffset_radius', xnew, sym=self)
+        ic(self.xasuinit.device, xnew.device)
+        xnew = h.xform(self.xasuinit, xnew)
+        ic(self.xasuinit.device, xnew.device)
+        ipd.hub.debug('symoffset_asuinit', xnew, sym=self)
+        xnew = h.xform(self.x2local, xnew)
+        ipd.hub.debug('symoffset_tolocal', xnew, sym=self)
+        if resym: xnew = self(xnew, fixed=True)
+        ipd.hub.debug('symoffset_end', xnew, sym=self)
+        return xnew.to(dev)
 
     @property
     def frames(self):

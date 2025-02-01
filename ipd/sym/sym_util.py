@@ -70,7 +70,7 @@ def get_xforms(symid, opt, cenvec):
     if opt.H_K is not None:
         allframes = ipd.sym.high_t.get_pseudo_highT(opt)
     else:
-        allframes = ipd.sym.frames(symid, th=True).to(th.float32)
+        allframes = ipd.sym.frames(symid, torch=True).to(th.float32)
     frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
     return allframes, frames
 
