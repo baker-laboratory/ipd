@@ -105,7 +105,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         locprops = dict(
             opt=[
                 'nsub', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats', 'sym_enabled',
-                'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template', 'ligand_is_symmetric'
+                'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template', 'make_ligand_symmetric'
             ],
             idx=[
                 'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym', 'Nsym',
@@ -558,22 +558,20 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         return self.allsymmRs
 
     def apply_initial_offset(self, x, resym=True):
-        ipd.hub.debug('symoffset_begin', x, sym=self)
+        ipd.debug300('symoffset_begin', x, sym=self)
         xnew, dev = x.clone(), x.device
         assert th.allclose(th.eye(4, device=dev), self.x2local @ self.x2global, atol=1e-3)
         xnew = h.xform(self.x2global, xnew)
-        ipd.hub.debug('symoffset_toglobal', xnew, sym=self)
+        ipd.debug300('symoffset_toglobal', xnew, sym=self)
         assert self.opt.radius == 0
         if self.opt.radius != 0: xnew[self.idx.asu] += self.asucenvec.to(dev).to(xnew.dtype) * self.opt.radius
-        ipd.hub.debug('symoffset_radius', xnew, sym=self)
-        ic(self.xasuinit.device, xnew.device)
+        ipd.debug300('symoffset_radius', xnew, sym=self)
         xnew = h.xform(self.xasuinit, xnew)
-        ic(self.xasuinit.device, xnew.device)
-        ipd.hub.debug('symoffset_asuinit', xnew, sym=self)
+        ipd.debug300('symoffset_asuinit', xnew, sym=self)
         xnew = h.xform(self.x2local, xnew)
-        ipd.hub.debug('symoffset_tolocal', xnew, sym=self)
+        ipd.debug300('symoffset_tolocal', xnew, sym=self)
         if resym: xnew = self(xnew, fixed=True)
-        ipd.hub.debug('symoffset_end', xnew, sym=self)
+        ipd.debug300('symoffset_end', xnew, sym=self)
         return xnew.to(dev)
 
     @property

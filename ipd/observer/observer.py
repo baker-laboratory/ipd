@@ -1,5 +1,8 @@
 import abc
 import inspect
+import re
+
+null_func = lambda *a, **kw: None
 
 class ObserverError(Exception):
     pass
@@ -7,9 +10,11 @@ class ObserverError(Exception):
 class ObserverMethod:
     """This class is used to call a method on all observers that have that
     method."""
-    def __init__(self, subject, method):
+
+    def __init__(self, subject, method, **kw):
         self.subject = subject
         self.method = method
+        self.kw = kw
 
     def __call__(self, *args, strict=False, **kw):
         if self.method in 'set_config shutdown'.split():
@@ -19,18 +24,26 @@ class ObserverMethod:
             if strict: raise ObserverError(warn)
             if warn not in self.subject._warnings: self.subject._warnings.add(warn)
         results = list()
-        for observer in self.subject._observers.values():
-            try:
-                _METHOD_ = getattr(observer, self.method)
-            except AttributeError:
-                continue
-            if _METHOD_.__name__ != self.method: kw['methodname'] = self.method
-            results.append(_METHOD_(*args, **kw))
+        mergekw = {**self.kw, **kw}
+        if self.subject.call_is_allowed(*args, methodname=self.method, **mergekw):
+            for observer in self.subject._observers.values():
+                try:
+                    _METHOD_ = getattr(observer, self.method)
+                except AttributeError:
+                    continue
+                # for callable members not defined as metods e.g. self.alias = self.original
+                if _METHOD_.__name__ != self.method: kw['methodname'] = self.method
+                results.append(_METHOD_(*args, **mergekw))
         return results
+
+def process_regex(patterns):
+    if isinstance(patterns, str): patterns = [patterns]
+    return list(map(re.compile, patterns))
 
 class Subject:
     """This class is used to register observers and call their methods."""
-    def __init__(self):
+
+    def __init__(self, conf=None):
         self._observers = dict()
         self._allmethods = set()
         self._warnings = set()
@@ -50,6 +63,10 @@ class Subject:
     def _set_config(self, conf):
         """Register methods listed in conf.viz."""
         if 'viz' in conf:
+            self._debug_level = conf.viz.debug if conf else 0
+            self._debug_regex = process_regex(conf.viz.debug_regex if conf else '')
+            self._debug_not_regex = process_regex(conf.viz.debug_not_regex if conf else '')
+            self._debug_always_regex = process_regex(conf.viz.debug_always_regex if conf else '')
             for k, v in conf.viz.items():
                 if k != 'settings':
                     self._allmethods.add(k)
@@ -59,15 +76,36 @@ class Subject:
         # for e in self._warnings:
         # print(e)
 
-    def __getattr__(self, k: str):
-        if k == '_observers':
-            raise AttributeError
-        return ObserverMethod(self, k)
+    def call_is_allowed(self, *args, methodname='', **kw):
+        if methodname == 'debug':
+            if 'name' not in kw and args and isinstance(args[0], str): kw['name'] = args[0]
+            if 'name' not in kw: raise ValueError(f'ipd debug functions must be called with a name argument')
+            lvlok = kw.get('lvl', 100) <= self._debug_level
+            reok, forbid, force = (any(r.search(kw['name']) for r in pat) for pat in (
+                self._debug_regex,
+                self._debug_not_regex,
+                self._debug_always_regex,
+            ))
+            return force or (lvlok and reok and not forbid)
+        return True
+
+    def __getattr__(self, name: str):
+        if name.startswith('_'):
+            raise AttributeError(f'Subject has no attribute {name}')
+        elif name.startswith('debug'):
+            lvl = int(name[5:]) if name[5:].isdigit() else 100
+            return ObserverMethod(self, 'debug', lvl=lvl)
+        else:
+            return ObserverMethod(self, name)
 
     def __getitem__(self, cls):
         return self._observers[cls]
 
 hub = Subject()
+
+def hub_init_hydra(conf):
+    global hub
+    hub = Subject(conf)
 
 class Observer(abc.ABC):
     """Base class for all Observers, must define set_config and use it to

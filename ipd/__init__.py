@@ -61,10 +61,12 @@ def __getattr__(name) -> Any:
         symgr = sym.get_global_symmetry()
         assert sym is not None
         return symgr
-    if name == 'motif_applier':
+    elif name == 'motif_applier':
         mmgr = motif.get_global_motif_manager()
         assert mmgr is not None
         return mmgr
+    elif name.startswith('debug'):
+        return getattr(hub, name)
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 from ipd.project_config import install_ipd_pre_commit_hook

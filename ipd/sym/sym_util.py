@@ -6,7 +6,7 @@ th = ipd.lazyimport('torch')
 
 SYMA = 1.0
 
-def sym_redock(xyz, Lasu, frames, opt):
+def sym_redock(xyz, Lasu, frames, opt, **_):
     # resolve clashes in placed subunits
     # could probably use this to optimize the radius as well
     def clash_error_comp(R0, T0, xyz, fit_tscale):

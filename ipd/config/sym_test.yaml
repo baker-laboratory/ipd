@@ -22,7 +22,7 @@ sym:
 
   Lasu_prot: null
   Lasu_ligand: null
-  ligand_is_symmetric: True
+  make_ligand_symmetric: True
   contig_is_symmetric: False
 
   # Symmetry options
