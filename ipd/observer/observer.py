@@ -79,7 +79,7 @@ class Subject:
     def call_is_allowed(self, *args, methodname='', **kw):
         if methodname == 'debug':
             if 'name' not in kw and args and isinstance(args[0], str): kw['name'] = args[0]
-            if 'name' not in kw: raise ValueError(f'ipd debug functions must be called with a name argument')
+            if 'name' not in kw: raise ValueError('ipd debug functions must be called with a name argument')
             lvlok = kw.get('lvl', 100) <= self._debug_level
             reok, forbid, force = (any(r.search(kw['name']) for r in pat) for pat in (
                 self._debug_regex,

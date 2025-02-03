@@ -432,7 +432,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         for a in args:
             with contextlib.suppress(AttributeError):
                 a.__HAS_BEEN_SYMMETRIZED = True
-        return args[0] if len(args)==1 else args
+        return args[0] if len(args) == 1 else args
 
     def is_symmetrical(self, obj):
         if hasattr(obj, '__HAS_BEEN_SYMMETRIZED'): return True
