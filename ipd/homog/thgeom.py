@@ -243,16 +243,16 @@ def randsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, device=None, 
     x[..., :3, 3] += trans
     return x
 
-def rand_xform(shape=(), cart_cen=0, cart_sd=1, dtype=None, device=None):
+def rand_xform(shape=(), cart_cen=[0, 0, 0], cart_sd=1, dtype=None, device=None):
     kw = get_dtype_dev([cart_cen, cart_sd], dtype, device)
     if isinstance(shape, int):
         shape = (shape, )
     t = ipd.dev.Timer()
     q = th.randn(shape + (4, ), **kw)
     q = normQ(q)
-    # q = th.nn.functional.normalize(q)
-    x = quat_to_xform(q)
-    x[..., :3, 3] = th.randn(shape + (3, ), **kw) * cart_sd + cart_cen
+    cart_cen = th.as_tensor(cart_cen)
+    x = xform(trans(cart_cen), xform(quat_to_xform(q), trans(-cart_cen)))
+    x[..., :3, 3] += th.randn(shape + (3, ), **kw) * cart_sd
     x[..., 3, 3] = 1
     return x
 
