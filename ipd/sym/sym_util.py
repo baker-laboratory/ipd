@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import ipd
+from ipd import h
 
 th = ipd.lazyimport('torch')
 
@@ -68,15 +69,17 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
 
 def cyclic_vee_frames(symid, opt):
     cx = int(symid[11:])
-    cframes = ipd.sym.frames(f'c{cx}', torch=True)
-
-    ic(cx, opt.cyclic_vee_angle, opt.cyclic_vee_separation, opt.cyclic_vee_dihedral)
-
-    assert 0
+    frames = ipd.sym.frames(f'c{cx}', torch=True)
+    rotz = h.rot([0, 0, 1], np.radians(opt.cyclic_vee_dihedral))
+    rotx = h.rot([0, 1, 0], np.radians(90 - opt.cyclic_vee_angle / 2))
+    trans = h.trans([opt.cyclic_vee_separation / 2, 0, 0])
+    flipz = h.rot([0, 0, 1], [0, th.pi])
+    frames = h.xchain(flipz, trans, rotx, rotz, frames).reshape(-1, 4, 4)
+    return frames.to(th.float32)
 
 def get_xforms(symid, opt, cenvec):
     if opt.H_K is not None: allframes = ipd.sym.high_t.get_pseudo_highT(opt)
-    elif symid.lower().startswith('cyclic_vee_'): cyclic_vee_frames(symid, opt)
+    elif symid.lower().startswith('cyclic_vee_'): allframes = cyclic_vee_frames(symid, opt)
     else: allframes = ipd.sym.frames(symid, torch=True).to(th.float32)
     frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
     return allframes, frames
