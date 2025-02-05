@@ -499,7 +499,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
 
     def is_on_symaxis(self, xyz):
         if len(xyz) == 0: return None
-        axes = ipd.sym.axes(self.symid, all=True)
+        onaxis = th.zeros(len(xyz), dtype=bool)
+        try:
+            axes = ipd.sym.axes(self.symid, all=True)
+        except ValueError:
+            return onaxis
         onanyaxis = False
         for axis in itertools.chain(axes.values()):
             onanyaxis |= th.any(ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
@@ -508,7 +512,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             if len(axes) > 1: raise ValueError(f'atom on axes and dont know which subsymid {self.symid}')
             axes = axes[int(self.symid[1:])]
             if axes.ndim: axes = axes[None]
-        onaxis = th.zeros(len(xyz), dtype=bool)
         for axis in axes:
             onaxis |= ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
         return onaxis

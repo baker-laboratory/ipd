@@ -66,11 +66,18 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
 
     return xyz
 
+def cyclic_vee_frames(symid, opt):
+    cx = int(symid[11:])
+    cframes = ipd.sym.frames(f'c{cx}', torch=True)
+
+    ic(cx, opt.cyclic_vee_angle, opt.cyclic_vee_separation, opt.cyclic_vee_dihedral)
+
+    assert 0
+
 def get_xforms(symid, opt, cenvec):
-    if opt.H_K is not None:
-        allframes = ipd.sym.high_t.get_pseudo_highT(opt)
-    else:
-        allframes = ipd.sym.frames(symid, torch=True).to(th.float32)
+    if opt.H_K is not None: allframes = ipd.sym.high_t.get_pseudo_highT(opt)
+    elif symid.lower().startswith('cyclic_vee_'): cyclic_vee_frames(symid, opt)
+    else: allframes = ipd.sym.frames(symid, torch=True).to(th.float32)
     frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
     return allframes, frames
 

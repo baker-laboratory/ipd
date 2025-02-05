@@ -85,9 +85,10 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if opt.has('kind'):
         ipd.sym.set_default_sym_manager(opt.kind)
     if 'nsub' not in opt or not opt.nsub:
-        if opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])  # type: ignore
-        if opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])  # type: ignore
-        if opt.symid == 'I':
+        if opt.symid.startswith('CYCLIC_VEE_'): opt.nsub = 2 * int(opt.symid[11:])
+        elif opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])
+        elif opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])
+        elif opt.symid == 'I':
             opt.nsub = 60
             if opt.high_t_number > 1:
                 opt.nsub = opt.nsub * opt.high_t_number
