@@ -560,6 +560,16 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         if hasattr(self, '_full_symmetry'): return self._full_symmetry
         return self.allsymmRs
 
+    def place_global_symmetry(self):
+        self.opt.symcen_samp = list(map(_sample_range_or_float_value, self.opt.symcen))
+        self.x2local = h.trans(self.opt.symcen_samp, device=self.device, dtype=self.frames.dtype)
+        self.x2global = h.inv(self.x2local)
+        self.frames = h.xform(self.x2local, h.xform(self.frames, self.x2global))
+        self.allframes = h.xform(self.x2local, h.xform(self.allframes, self.x2global))
+        self.xasuinit = h.rot([0, 0, 1], self.opt.asurotzdeg / 180 * th.pi).cuda() @ self.xasuinit
+        self.xasuinit = h.trans(self.opt.asucen).cuda() @ self.xasuinit
+        assert th.allclose(th.eye(4, device=self.device), self.x2local @ self.x2global, atol=1e-3)
+
     def apply_initial_offset(self, x, resym=True):
         ipd.debug300('symoffset_begin', x, sym=self)
         xnew, dev = x.clone(), x.device
@@ -630,3 +640,8 @@ class C1SymmetryManager(SymmetryManager):
     def __bool__(self):
         """Return False if this is a dummy symmetry manager."""
         return False
+
+def _sample_range_or_float_value(inp):
+    if isinstance(inp, (int, float)): return inp
+    assert len(inp) == 2
+    return random.uniform(*inp)

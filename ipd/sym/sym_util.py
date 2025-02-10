@@ -69,15 +69,22 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
 
 def cyclic_vee_frames(symid, opt):
     cx = int(symid[11:])
-    frames = ipd.sym.frames(f'c{cx}', torch=True)
+    frames = ipd.sym.frames(f'c{cx}', torch=True).to(th.float32)
     rotz = h.rot([0, 0, 1], np.radians(opt.cyclic_vee_dihedral))
-    rotx = h.rot([0, 1, 0], np.radians(90 - opt.cyclic_vee_angle / 2))
-    trans = h.trans([opt.cyclic_vee_separation / 2, 0, 0])
-    flipz = h.rot([0, 0, 1], [0, th.pi])
-    frames = h.xchain(flipz, trans, rotx, rotz, frames).reshape(-1, 4, 4)
+    rotz180 = h.rot([0, 0, 1], np.pi)
+    # roty = h.rot([0, 1, 0], np.radians(90 - opt.cyclic_vee_angle / 2))
+    # trans = h.trans([opt.cyclic_vee_separation / 2, 0, 0])
+    # flipz = h.rot([0, 0, 1], [0, th.pi])
+    # frames = h.xchain(flipz, trans, roty, rotz, frames).reshape(-1, 4, 4)
+    roty = h.rot([0, 1, 0], np.radians(180 + opt.cyclic_vee_angle), [opt.cyclic_vee_separation / 2, 0, 0])
+    trans = h.trans([opt.cyclic_vee_separation, 0, 0])
+    frames1 = h.xform(rotz, frames)
+    frames2 = h.xchain(roty, trans, rotz180, rotz, frames)
+    frames = th.cat([frames1, frames2])
+    frames = h.xform(h.inv(frames[0]), frames)
     return frames.to(th.float32)
 
-def get_xforms(symid, opt, cenvec):
+def get_sym_frames(symid, opt, cenvec):
     if opt.H_K is not None: allframes = ipd.sym.high_t.get_pseudo_highT(opt)
     elif symid.lower().startswith('cyclic_vee_'): allframes = cyclic_vee_frames(symid, opt)
     else: allframes = ipd.sym.frames(symid, torch=True).to(th.float32)
@@ -154,7 +161,7 @@ def get_coords_stack(pdblines):
         xyz_stack.append(allatoms[allatoms['chnid'] == c]['X'])
     return th.tensor(xyz_stack)
 
-def get_xforms_from_file(opt):
+def get_sym_frames_from_file(opt):
     """Takes in [N,L,3] Ca xyz stack to map transforms"""
     xyz_stack = get_coords_stack(open(opt.input_pdb))
     assert xyz_stack.shape[0] > 1, 'Input PDB file should more than one chain if wanting to mirror input symmetry'
