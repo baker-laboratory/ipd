@@ -4,6 +4,7 @@ import contextlib
 import copy
 from dataclasses import dataclass
 import itertools
+import random
 from typing_extensions import TypeVar
 
 with contextlib.suppress(ImportError):
@@ -576,7 +577,6 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         assert th.allclose(th.eye(4, device=dev), self.x2local @ self.x2global, atol=1e-3)
         xnew = h.xform(self.x2global, xnew)
         ipd.debug300('symoffset_toglobal', xnew, sym=self)
-        assert self.opt.radius == 0
         if self.opt.radius != 0: xnew[self.idx.asu] += self.asucenvec.to(dev).to(xnew.dtype) * self.opt.radius
         ipd.debug300('symoffset_radius', xnew, sym=self)
         xnew = h.xform(self.xasuinit, xnew)
@@ -645,3 +645,4 @@ def _sample_range_or_float_value(inp):
     if isinstance(inp, (int, float)): return inp
     assert len(inp) == 2
     return random.uniform(*inp)
+

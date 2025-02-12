@@ -72,7 +72,8 @@ class SymAdapt(ABC, Generic[T]):
                 return cls(thing, sym, isasym)  # type: ignore
 
     def __init__(self, x: T, sym: 'ipd.sym.SymmetryManager', isasym: bool):
-        self.orig: T
+        self.orig: T = x
+        self.sym: 'ipd.sym.SymmetryManager' = sym
         self.kind: ipd.sym.SymKind
 
     @abstractmethod
@@ -87,7 +88,7 @@ class SymAdapt(ABC, Generic[T]):
     def __repr__(self):
         if isinstance(self.orig, (np.ndarray, th.Tensor)):  # type: ignore
             return f'{self.__class__.__name__}(orig={self.orig.shape}, new={self.new.shape})'  # type: ignore
-        return f'{self.__class__.__name__}(kind={self.kind}, orig={type(self.orig)})'  # type: ignore
+        return f'{self.__class__.__name__}(kind{self.kind}, orig={type(self.orig)})'  # type: ignore
 
 @_sym_adapt.register(SymAdapt)  # type: ignore
 def _(thing, sym, isasym):
