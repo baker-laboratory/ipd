@@ -3,13 +3,17 @@ import math
 import ipd
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import numpy as np
 
 from ipd import h
 
-_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
+_sampling = ipd.lazyimport('ipd.samp.sampling_cuda')
 
 def sort_inplace_topk(data, k):
     data = data.to('cuda')

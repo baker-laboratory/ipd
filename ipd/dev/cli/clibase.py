@@ -2,6 +2,7 @@ import typer
 
 import ipd
 from ipd.dev.types import KW
+from typing import Optional
 
 DEBUG = False
 CB = type['CliBase']
@@ -11,13 +12,13 @@ class CliBase:
     __init_called__ = set()
 
     @classmethod
-    def mrca(_, classes: set[CB], cls: CB | None = None) -> CB | None:  # type: ignore
+    def mrca(cls, classes: set[CB], clibase: Optional[CB] = None) -> Optional[CB]:
         classes = set(classes)
-        cls = cls or _.__root__
-        for c in cls.__children__:
-            if val := cls.mcra(classes, c): return val  # type: ignore
-        if classes.issubset(cls.__descendants__):
-            return cls
+        clibase = clibase or cls.__root__
+        for c in clibase.__children__:
+            if val := clibase.mcra(classes, c): return val  # type: ignore
+        if classes.issubset(clibase.__descendants__):
+            return clibase
 
     @classmethod
     def __add_all_cmds__(cls, self: 'CliBase', **kw: KW) -> None:

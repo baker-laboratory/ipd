@@ -2,7 +2,11 @@ import numpy as np
 
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import dataclasses
 
@@ -13,7 +17,7 @@ from ipd import h
 
 ic.configureOutput(includeContext=False)
 
-_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
+_sampling = ipd.lazyimport('ipd.samp.sampling_cuda')
 
 def rayframe(rays, cross=None, primary='z', device='cpu'):
     ori = rays[:, :, 1]
@@ -40,6 +44,7 @@ class TipAtom:
         return h.inv(rayframe(self.don)), h.inv(rayframe(self.acc))
 
 class TipAtomTarget:
+
     @staticmethod
     def from_pdb(fname, tgtres=None, clashthresh=2):
         pdb = ipd.pdb.readpdb(fname)

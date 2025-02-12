@@ -3,17 +3,78 @@ import pytest
 pytest.importorskip('torch')
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    pytest.importorskip('torch')
+    th = lazyimport('torch')
 
 import assertpy
 import hypothesis
-from icecream import ic
 
 import ipd
 
 # ic.configureOutput(includeContext=False, contextAbsPath=True)
 
 pytestmark = pytest.mark.fast
+
+def main():
+    test_unsym()
+    test_sym_pair_samechain()
+    test_sym_pair()
+    test_sym_manager_list_asym()
+    test_sym_manager_list_tensor_asym()
+    test_sym_xyzpair()
+    test_sym_asu_xyz()
+    test_atom_on_axis()
+    test_create_test_sym_manager()
+    test_sym_asu_seq()
+    test_sym_slices()
+    test_sym_manager_fuzz_basic_sym()
+    test_sym_manager_fuzz_fill_from_contiguous()
+    test_sym_manager_contiguous()
+    test_sym_manager_2d_2slice()
+    test_sym_manager_1d_2slice()
+    test_sym_manager_string_2slice()
+    test_sym_manager_string()
+    test_sym_manager_list()
+    test_sym_manager_dict()
+    print('DONE')
+
+@pytest.mark.fast
+def test_unsym():
+    sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3'])
+    sym.idx = ipd.sym.SymIndex(sym.nsub, [(7, 0, 3), (7, 4, 7)])
+    assert sym.idx.Nasym == 3
+    assert sym.idx.Nasu == 2
+    assert sym.idx.Nunsym == 1
+    sym.idx = ipd.sym.SymIndex(sym.nsub, [(17, 0, 3)])
+    assert sym.idx.Nasym == 15
+    assert sym.idx.Nasu == 1
+    assert sym.idx.Nunsym == 14
+    sym.idx = ipd.sym.SymIndex(sym.nsub, [(101, 0, 3), (101, 10, 13), (101, 20, 23), (101, 30, 33)])
+    assert sym.idx.Nasym == 101 - 2*4
+    assert sym.idx.Nasu == 4
+    assert sym.idx.Nunsym == 101 - 12
+
+@pytest.mark.fast
+def test_sym_manager_list_asym():
+    sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
+    sym.idx = [(4, 0, 3)]
+    assert sym.asym(['abbb', 'bbcc', 'foo', 'bar']) == ['abbb', 'bar']
+
+@pytest.mark.fast
+def test_sym_manager_list_tensor_asym():
+    sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
+    sym.idx = [(4, 0, 3)]
+    thing = [th.randn(4) for _ in range(7)]
+    asymthing = sym.asu(thing)
+    assert isinstance(asymthing, list)
+    assert len(sym.asu(thing)) == 7
+    for s, t in zip(thing, asymthing):
+        assert isinstance(t, th.Tensor)
+        assert s[0] == t[0]
 
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
@@ -144,8 +205,8 @@ def test_sym_asu_seq():
     seq = th.arange(20)
     seq = sym(seq)
     assert all(seq[10:] == seq[:10])
-    ic(seq.shape)
-    ic(sym.masym.shape)
+    # ic(seq.shape)
+    # ic(sym.masym.shape)
     asym = sym.asym(seq)
     asu = sym.asym(seq)
     assert all(asym == seq[:10])
@@ -234,6 +295,24 @@ def test_sym_slices():
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz)
 
 @pytest.mark.fast
+def test_sym_pair_samechain():
+    sym = ipd.tests.sym.create_test_sym_manager([
+        'sym.symid=c2',
+        'sym.sympair_method=mean',
+        'sym.symmsub_k=2',
+        'sym.sympair_protein_only=False',
+        'sym.sympair_enabled=True',
+    ])
+    sym.idx = [(30, 0, 30)]
+    pair = th.zeros((30, 30))
+    pair[:10, :10] = 1
+    pair[10:15, 10:15] = 1
+    # ipd.viz.showimage(pair)
+    sympair = sym(pair)
+    # ipd.viz.showimage(sympair)
+    sym.assert_symmetry_correct(sympair)
+
+@pytest.mark.fast
 def test_sym_pair():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=c3',
@@ -244,11 +323,29 @@ def test_sym_pair():
     ])
     sym.idx = [(30, 0, 30)]
     pair = th.randn((1, 30, 30, 10))
+    # ipd.viz.showimage(pair[0].max(-1).values)
+    sympair = sym(pair)
+    # ipd.viz.showimage(sympair[0].max(-1).values)
+    sym.assert_symmetry_correct(sympair)
+
+@pytest.mark.fast
+def test_sym_xyzpair():
+    sym = ipd.tests.sym.create_test_sym_manager([
+        'sym.symid=c3',
+        'sym.sympair_method=mean',
+        'sym.symmsub_k=2',
+        'sym.sympair_protein_only=False',
+        'sym.sympair_enabled=True',
+    ])
+    sym.idx = [(30, 0, 30)]
+    xyz = th.randn((1, 30, 3))
+    pair = th.randn((1, 30, 30, 10))
     # import torchshow
     # torchshow.show(pair.max(dim=-1).values)
-    sympair = sym(pair)
-
-    sym.assert_symmetry_correct(sympair)
+    symxp = sym(ipd.sym.XYZPair(xyz, pair))
+    assert isinstance(symxp, ipd.sym.XYZPair)
+    sym.assert_symmetry_correct(symxp.xyz)
+    sym.assert_symmetry_correct(symxp.pair)
 
 @pytest.mark.fast
 def test_create_test_sym_manager():
@@ -270,19 +367,4 @@ def test_atom_on_axis():
     assert not len(sym.is_on_symaxis(th.tensor([[1, 0, 8.0]])))
 
 if __name__ == '__main__':
-    test_sym_asu_xyz()
-    test_atom_on_axis()
-    test_create_test_sym_manager()
-    test_sym_asu_seq()
-    test_sym_slices()
-    test_sym_manager_fuzz_basic_sym()
-    test_sym_manager_fuzz_fill_from_contiguous()
-    test_sym_manager_contiguous()
-    test_sym_manager_2d_2slice()
-    test_sym_manager_1d_2slice()
-    test_sym_manager_string_2slice()
-    test_sym_manager_string()
-    test_sym_manager_list()
-    test_sym_manager_dict()
-    test_sym_pair()
-    print('DONE')
+    main()

@@ -762,4 +762,36 @@ def canonical_asu_center(sym, cuda=False):
             return th.tensor(_canon_asucen[sym], device='cuda')
         return _canon_asucen[sym]
     except KeyError as e:
-        raise ValueError(f'canonical_asu_center: unknown sym {sym}') from e
+        if cuda:
+            import torch as th  # type: ignore
+            return th.tensor(compute_canonical_asucen(sym), device='cuda')
+        return compute_canonical_asucen(sym)
+        # except KeyError as e:
+        #     raise ValueError(f'canonical_asu_center: unknown sym {sym}') from e
+
+def compute_canonical_asucen(sym, neighbors=None):
+    import torch as th  # type: ignore
+    from ipd import h
+    sym = ipd.sym.map_sym_abbreviation(sym).lower()
+    frames = ipd.sym.frames(sym)
+    x = h.randunit(int(5e5))
+    symx = h.xform(frames[1:], x)
+    d2 = th.sum((x[None] - symx)**2, dim=-1)
+
+    mind2 = d2.min(dim=0)[0]
+    if neighbors:
+        # ic(d2.shape)  # type: ignore
+        sort = d2.sort(dim=0)[0]
+        rank = sort[neighbors] - sort[neighbors - 1]
+    else:
+        rank = mind2
+
+    ibest = th.argmax(rank)
+    best = x[ibest]
+    dbest = th.sqrt(mind2[ibest])
+    symbest = h.xform(frames, best)
+    aln = th.sum(symbest * th.tensor([1, 2, 10]), dim=1)
+    best = symbest[th.argmax(aln)] / dbest * 2
+    if sym.startswith('c'):
+        best = th.tensor([h.norm(best), 0, 0])
+    return best.cpu().numpy()

@@ -1,4 +1,4 @@
-from ipd.dev import lazyimport
+from typing import TYPE_CHECKING
 from ipd.sym.guess_symmetry import *
 from ipd.sym.permutations import *
 from ipd.sym.sym import *
@@ -16,10 +16,19 @@ from ipd.sym.ipd_sym_manager import *
 from ipd.sym.sym_util import *
 from ipd.sym.symframes import *
 
-xtal = lazyimport('ipd.sym.xtal')
-high_t = lazyimport('ipd.sym.high_t')
-helix = lazyimport('ipd.sym.helix')
-sym_tensor = lazyimport('ipd.sym.sym_tensor')
+from ipd.sym.sym_adapt import _SymAdaptDataClass as _SymAdaptDataClass
+
+if TYPE_CHECKING:
+    from ipd.sym import xtal
+    from ipd.sym import high_t
+    from ipd.sym import helix
+    from ipd.sym import sym_tensor
+else:
+    from ipd.dev import lazyimport
+    xtal = lazyimport('ipd.sym.xtal')
+    high_t = lazyimport('ipd.sym.high_t')
+    helix = lazyimport('ipd.sym.helix')
+    sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
 def set_global_symmetry(sym: SymmetryManager):
     global _global_symmetry

@@ -1,18 +1,31 @@
 import contextlib
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+from ipd.bunch import Bunch as Bunch, bunchify as bunchify
+from ipd import dev as dev
 from ipd.lazy_import import lazyimport
-from ipd.bunch import *
-from ipd import observer as observer
 from ipd.observer import hub as hub
 
 if TYPE_CHECKING:
-    from ipd import crud, cuda, dev, fit, h, homog, motif, pdb, qt, samp, protocol, sym, tests, tools, viz, voxel
+    from ipd import crud
+    from ipd import cuda
+    from ipd import fit
+    from ipd import h
+    from ipd import homog
+    from ipd import motif
+    from ipd import pdb
+    from ipd import qt
+    from ipd import samp
+    from ipd import protocol
+    from ipd import sym
+    from ipd import tests
+    from ipd import tools
+    from ipd import viz
+    from ipd import voxel
 else:
     crud = lazyimport('ipd.crud')
     cuda = lazyimport('ipd.dev.cuda')
-    dev = lazyimport('ipd.dev')
     fit = lazyimport('ipd.fit')
     h = lazyimport('ipd.homog.thgeom')
     homog = lazyimport('ipd.homog')
@@ -43,11 +56,17 @@ def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
 
-def __getattr__(name):
+def __getattr__(name) -> Any:
     if name == 'symmetrize':
-        return sym.get_global_symmetry()
-    if name == 'motif_applier':
-        return motif.get_global_motif_manager()
+        symgr = sym.get_global_symmetry()
+        assert sym is not None
+        return symgr
+    elif name == 'motif_applier':
+        mmgr = motif.get_global_motif_manager()
+        assert mmgr is not None
+        return mmgr
+    elif name.startswith('debug'):
+        return getattr(hub, name)
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 from ipd.project_config import install_ipd_pre_commit_hook

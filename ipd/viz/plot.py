@@ -1,3 +1,9 @@
+def showimage(data, **kw):
+    import matplotlib.pyplot as plt
+    plt.imshow(data, **kw)
+    plt.colorbar()
+    plt.show()
+
 def scatter(x, y, show=True, **kw):
     from matplotlib import pyplot
 

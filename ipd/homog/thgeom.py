@@ -243,16 +243,16 @@ def randsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, device=None, 
     x[..., :3, 3] += trans
     return x
 
-def rand_xform(shape=(), cart_cen=0, cart_sd=1, dtype=None, device=None):
+def rand_xform(shape=(), cart_cen=[0, 0, 0], cart_sd=1, dtype=None, device=None):
     kw = get_dtype_dev([cart_cen, cart_sd], dtype, device)
     if isinstance(shape, int):
         shape = (shape, )
     t = ipd.dev.Timer()
     q = th.randn(shape + (4, ), **kw)
     q = normQ(q)
-    # q = th.nn.functional.normalize(q)
-    x = quat_to_xform(q)
-    x[..., :3, 3] = th.randn(shape + (3, ), **kw) * cart_sd + cart_cen
+    cart_cen = th.as_tensor(cart_cen)
+    x = xform(trans(cart_cen), xform(quat_to_xform(q), trans(-cart_cen)))
+    x[..., :3, 3] += th.randn(shape + (3, ), **kw) * cart_sd
     x[..., 3, 3] = 1
     return x
 
@@ -406,16 +406,22 @@ def rms(a, b):
     assert a.shape == b.shape
     return th.sqrt(th.sum(th.square(a - b)) / len(a))
 
-def xform(xform, stuff, homogout="auto", **kw):
+def xform(xform, stuff, homogout='auto', **kw):
     kwdt = get_dtype_dev([xform, stuff], None, None)
     xform = th.as_tensor(xform, **kwdt)
     nothomog = stuff.shape[-1] == 3
     if stuff.shape[-1] == 3:
         stuff = point(stuff, **kwdt)
     result = _thxform_impl(xform, stuff, **kw)
-    if homogout is False or homogout == "auto" and nothomog:
+    if homogout is False or homogout == 'auto' and nothomog:
         result = result[..., :3]
     return result
+
+def xchain(*xforms, **kw):
+    x, *xforms, stuff = xforms
+    for x1 in xforms:
+        x = xform(x, x1)
+    return xform(x.to(stuff.dtype), stuff, **kw)
 
 _xform = xform
 
@@ -744,14 +750,14 @@ def Q2R(Q):
     Qs = normQ(Qs)
     return Qs2Rs(Qs[None, :]).squeeze(0)
 
-def _thxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", improper_ok=False):
-    if is_points == "auto":
+def _thxform_impl(x, stuff, outerprod='auto', flat=False, is_points='auto', improper_ok=False):
+    if is_points == 'auto':
         is_points = not valid44(stuff, improper_ok=improper_ok)
         if is_points:
             if stuff.shape[-1] != 4 and stuff.shape[-2:] == (4, 1):
                 raise ValueError(f"hxform cant understand shape {stuff.shape}")
     if not is_points:
-        if outerprod == "auto":
+        if outerprod == 'auto':
             outerprod = x.shape[:-2] != stuff.shape[:-2]
         if outerprod:
             shape1 = x.shape[:-2]
@@ -766,7 +772,7 @@ def _thxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", impr
         if flat:
             result = result.reshape(-1, 4, 4)
     else:
-        if outerprod == "auto":
+        if outerprod == 'auto':
             outerprod = x.shape[:-2] != stuff.shape[:-1]
 
         if stuff.shape[-1] != 1:

@@ -5,7 +5,11 @@ per second on a single GPU.
 """
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import math
 
@@ -13,7 +17,7 @@ from numba import cuda
 
 import ipd
 
-_rms = ipd.dev.lazyimport('ipd.fit.qcp_rms_cuda')
+_rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
 
 def rmsd(xyz1, xyz2, getfit=False, nthread=128, usenumba=False):
     """Compute RMSD of xyz1 to xyz2.

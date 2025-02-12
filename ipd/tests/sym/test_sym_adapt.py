@@ -5,7 +5,11 @@ import ipd
 from ipd.lazy_import import lazyimport
 from ipd.sym.sym_adapt import _sym_adapt
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 from functools import partial
 

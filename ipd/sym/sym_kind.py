@@ -13,6 +13,8 @@ class ValueKind(Enum):
     PAIR = 26
     BASIC = 196883
     XYZ = 163
+    ROT33 = 33
+    HOMOG44 = 44
     INDEX = 691
     MIXED = 314159
 

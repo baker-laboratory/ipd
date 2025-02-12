@@ -11,16 +11,19 @@ default_params = dict(
     L=None,
     Lasu=None,
     asu_to_best_frame=None,
+    asu_input_pdb=None,
     center_cyclic=False,
     copy_main_block_template=None,
     contig_is_symmetric=False,
     contig_relabel_chains=False,
     fit=None,
-    fittscale=1.0,
-    fitwclash=4.0,
-    guideposts_are_symmetric=False,
+    fit_tscale=1.0,
+    fit_wclash=4.0,
+    make_guideposts_symmetric=False,
     high_t_number=1,
-    ligand_is_symmetric=None,
+    H_K=None,
+    input_pdb=None,
+    make_ligand_symmetric=None,
     max_nsub=99,
     motif_copy_position_from_px0=False,
     motif_position='fixed',
@@ -28,17 +31,17 @@ default_params = dict(
     nsub=None,
     pseudo_cycle=None,
     recenter_for_diffusion=None,
+    radius=1,
     recenter_xt_chains_on_px0=None,
     rfsym_enabled=None,
     subsymid=None,
-    start_radius=0,
     sym_enabled=True,
     symid='C1',
     symmetrize_repeats=None,
-    sym_input_file=None,
     sympair_enabled=None,
     sympair_method=None,
     sympair_protein_only=None,
+    sym_redock=False,
 )
 
 def parse(s):
@@ -68,6 +71,8 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
         for key, val in conf.sym.items():
             opt.parse_dynamic_param(key, val)
     # ic(extra_params)
+    if conf:
+        opt.asu_input_pdb = conf.inference.input_pdb  # storing this in the sym manager as well for easy ref if needed
     for name, val in default_params.items():
         key = name.split('.')[-1]
         if key in opt: continue
@@ -80,10 +85,17 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if opt.has('kind'):
         ipd.sym.set_default_sym_manager(opt.kind)
     if 'nsub' not in opt or not opt.nsub:
-        if opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])  # type: ignore
-        if opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])  # type: ignore
-        if opt.symid == 'I':
+        if opt.symid.startswith('CYCLIC_VEE_'): opt.nsub = 2 * int(opt.symid[11:])
+        elif opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])
+        elif opt.symid[0] == 'D': opt.nsub = 2 * int(opt.symid[1:])
+        elif opt.symid == 'I':
             opt.nsub = 60
+            if opt.high_t_number > 1:
+                opt.nsub = opt.nsub * opt.high_t_number
+            if 'H_K' in opt and opt.H_K is not None:
+                h = opt.H_K[0]
+                k = opt.H_K[1]
+                opt.nsub = opt.nsub * (h*h + k*k + h*k)
         elif opt.symid == 'O':
             opt.nsub = 24
         elif opt.symid == 'T':
@@ -103,11 +115,6 @@ def process_symmetry_options(opt, **kw):
         opt.Lasu = opt.repeat_length
         if opt.n_repeats:
             opt.L = opt.n_repeats * opt.repeat_length
-
-    if opt.has('sym_input_pdb'):
-        opt.T_xforms = ipd.sym.generate_ASU_xforms(opt.sym_input_pdb)
-        opt.high_t_number = len(opt.T_xforms)
-        log.info(f'HIGH T - processed T{opt.high_t_number} symmetry')  # type: ignore
     return opt
 
 def resolve_option(name, kw, conf, default, strict=False):

@@ -12,12 +12,11 @@ def compute_canonical_asucen(sym, neighbors=None):
 
     mind2 = d2.min(dim=0)[0]
     if neighbors:
-        ic(d2.shape)  # type: ignore
+        # ic(d2.shape)  # type: ignore
         sort = d2.sort(dim=0)[0]
         rank = sort[neighbors] - sort[neighbors - 1]
     else:
         rank = mind2
-    # ic(d2.shape, mind2.shape)
 
     ibest = th.argmax(rank)
     best = x[ibest]

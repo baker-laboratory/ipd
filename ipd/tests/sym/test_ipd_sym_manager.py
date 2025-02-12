@@ -3,7 +3,11 @@ import pytest
 pytest.importorskip('torch')
 from ipd.lazy_import import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import hypothesis
 from icecream import ic
@@ -118,8 +122,8 @@ def test_sym_fit_icos_unsym_multislice():
         'sym.asu_to_best_frame=true',
         'sym.max_nsub=3',
         'sym.fit=True',
-        '+fittscale=1',
-        '+fitwclash=1',
+        '+fit_tscale=1',
+        '+fit_wclash=1',
     ])
 
     N = 200
