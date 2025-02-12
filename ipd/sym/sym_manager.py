@@ -645,4 +645,3 @@ def _sample_range_or_float_value(inp):
     if isinstance(inp, (int, float)): return inp
     assert len(inp) == 2
     return random.uniform(*inp)
-
