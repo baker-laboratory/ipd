@@ -41,7 +41,7 @@ class CITool(ipd.tools.IPDTool):
                 ipd.dev.run(f'git --git-dir={repo_dir} fetch origin "*:*" -f', echo=True)
             else:
                 print(f'Directory {repo_dir} does not exist. Cloning repository...')
-                ipd.dev.run(f'cd {path} && git clone --bare {url}', echo=True)
+                ipd.dev.run(f'cd {path} && git clone --bare {url} {repo_dir}', echo=True)
 
 def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos', recursive: bool = False):
     repolib = os.path.expanduser(repolib)
@@ -49,13 +49,13 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos', recursive: bo
         for sub in repo.submodules:
             if os.path.exists(sub.path): shutil.rmtree(sub.path)
             subrepo = f'{repolib}/{os.path.basename(sub.url)}'
-            if subrepo in 'cifutils datahub'.split() and 'github.com' in sub.url:
-                subrepo = f'github-{subrepo}'
+            if sub.url.startswith('git@github.com'):
+                subrepo = subrepo.replace('datahub', 'github-datahub')
+                subrepo = subrepo.replace('cifutils', 'github-cifutils')
             print('setup submodule', sub.path, subrepo, sub.hexsha)
             subrepo = git.Repo.clone_from(subrepo, sub.path)
             subrepo.git.checkout(sub.hexsha)
-            if recursive:
-                init_submodules(subrepo, repolib, True)
+            if recursive: init_submodules(subrepo, repolib, True)
 
 class RepoTool(CITool):
     def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos', recursive: bool = False):
