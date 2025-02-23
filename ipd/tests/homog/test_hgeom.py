@@ -10,6 +10,11 @@ from ipd.homog import *
 ic.configureOutput(includeContext=True, contextAbsPath=True)
 
 def main():
+
+    test_closest_point_on_line()
+
+    test_uniqlastdim()
+
     test_hrmsfit()
     test_hcentered()
 
@@ -24,8 +29,6 @@ def main():
     test_hpow_float()
 
     test_hdiff()
-
-    test_hexpand()
 
     # test_d3_frames()
     test_hmean()
@@ -86,6 +89,32 @@ def main():
     test_axis_angle_180_bug()
 
     ic("test_homog.py DONE")
+
+@pytest.mark.fast
+def test_closest_point_on_line():
+    assert allclose([0, 0, 0, 1], closest_point_on_line([1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]))
+    assert allclose([0, 0, 1, 1], closest_point_on_line([1, 0, 1, 0], [0, 0, 0, 1], [0, 0, 1, 0]))
+    n = rand_unit(100)
+    p = hrandpoint(100)
+    t = hrandpoint(100)
+    c = closest_point_on_line(t, p, n)
+    assert allclose(np.pi / 2, angle(t - c, p - c))
+    d = np.sum((t - c)**2, axis=1)
+    d1 = np.sum((t - c + n/1000)**2, axis=1)
+    d2 = np.sum((t - c - n/1000)**2, axis=1)
+    assert np.all(d < d1)
+    assert np.all(d < d2)
+
+@pytest.mark.fast
+def test_uniqlastdim():
+    test = [
+        [1., 0, 0, 0],
+        [1.00001, 0, 0, 0],
+        [1.00002, 0, 0, 0],
+    ]
+    assert allclose(uniqlastdim(test), [[1, 0, 0, 0]])
+    test.append([2, 0, 0, 0])
+    assert allclose(uniqlastdim(test), [[1, 0, 0, 0], [2, 0, 0, 0]])
 
 @pytest.mark.fast
 def test_hcentered():
@@ -171,7 +200,9 @@ def test_hxform_ray():
 
 @pytest.mark.fast
 def test_hxform_stuff_coords():
+
     class Dummy:
+
         def __init__(self, p):
             self.coords = p
 
@@ -184,7 +215,9 @@ def test_hxform_stuff_coords():
 
 @pytest.mark.fast
 def test_hxform_stuff_xformed():
+
     class Dummy:
+
         def __init__(self, pos):
             self.pos = pos
 
@@ -200,7 +233,9 @@ def test_hxform_stuff_xformed():
 
 @pytest.mark.fast
 def test_hxform_list():
+
     class Dummy:
+
         def __init__(self, p):
             self.coords = p
 
@@ -1539,16 +1574,6 @@ def test_symfit_180_bug():
     # ic('axs', axs)
     # ic('ang', ang)
     # ic('cen', cen)
-
-@pytest.mark.fast
-def test_hexpand():
-    pytest.importorskip("ipd.homog.hcom")
-    gen = hrand(3)
-    x0 = hexpand(gen, depth=4, ntrials=1000, deterministic=False)
-    x1 = hexpand(gen, depth=4, ntrials=1000, deterministic=True)
-    x2 = hexpand(gen, depth=4, ntrials=1000, deterministic=True)
-    assert np.allclose(x1, x2, atol=1e-5)
-    assert not np.allclose(x0, x1, atol=1e-5)
 
 def torque_delta_sanitycheck():
     nsamp, scale = 1000, 0.0001

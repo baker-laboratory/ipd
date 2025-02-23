@@ -20,6 +20,7 @@ import ipd
 pytestmark = pytest.mark.fast
 
 def main():
+    test_sym_slices()
     test_unsym()
     test_sym_pair_samechain()
     test_sym_pair()
@@ -285,7 +286,7 @@ def test_sym_slices():
     # symxyz = sym(xyz)
     # assert symxyz.shape == (N, 3)
 
-    with pytest.raises(AssertionError):
+    with pytest.raises((AssertionError, RuntimeError)):
         sym.idx = [(N, 0, 5), (N, 10, 16), (N, 20, 26)]
 
     sym.idx = [(N, 0, 6), (N, 10, 16), (N, 20, 26)]

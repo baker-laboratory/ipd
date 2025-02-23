@@ -65,7 +65,7 @@ import pytest
 import ipd
 
 def main():
-    ipd.tests.testmain(namespace=globals())
+    ipd.tests.maintest(namespace=globals())
 
 {% for name, (func, sig) in funcs.items() %}
 def test_{{name}}():

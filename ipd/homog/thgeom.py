@@ -1,3 +1,4 @@
+import functools
 import sys
 
 import numpy as np
@@ -6,8 +7,9 @@ import ipd
 
 th = ipd.lazyimport("torch")
 h = sys.modules[__name__]
+from ipd.homog.npth_common import *
 
-def get_dtype_dev(example, dtype=None, device=None):
+def get_dtype_dev(example, dtype=None, device=None, **_):
     if isinstance(example, list) and len(example) < 100:
         for e in example:
             if isinstance(e, th.Tensor):
@@ -20,6 +22,20 @@ def get_dtype_dev(example, dtype=None, device=None):
         if isinstance(example, th.Tensor): dtype = example.dtype  # type: ignore
         else: dtype = th.float32
     return dict(dtype=dtype, device=device)
+
+def as_tensor(x, **kw):
+    if hasattr(x, 'data'): x = x.data
+    return th.as_tensor(x, **kw)
+
+def as_tensors(*tensors, **kw):
+    tkw = get_dtype_dev(tensors, **kw)
+    return [as_tensor(t, **tkw) for t in tensors]
+
+def close(*tensors, **kw):
+    return th.close(*as_tensors(*tensors, **kw), **kw)
+
+def allclose(*tensors, **kw):
+    return th.allclose(*as_tensors(*tensors, **kw), **kw)
 
 def torch_min(func, iters=4, history_size=10, max_iter=4, line_search_fn="strong_wolfe", **kw):
     import functools
@@ -243,20 +259,22 @@ def randsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, device=None, 
     x[..., :3, 3] += trans
     return x
 
-def rand_xform(shape=(), cart_cen=[0, 0, 0], cart_sd=1, dtype=None, device=None):
+def rand_xform(shape=(), cart_cen=[0., 0., 0.], cart_sd=1., dtype=None, device=None):
     kw = get_dtype_dev([cart_cen, cart_sd], dtype, device)
-    if isinstance(shape, int):
-        shape = (shape, )
-    t = ipd.dev.Timer()
+    if isinstance(shape, int): shape = (shape, )
+    # t = ipd.dev.Timer()
     q = th.randn(shape + (4, ), **kw)
     q = normQ(q)
-    cart_cen = th.as_tensor(cart_cen)
+    cart_cen = th.as_tensor(cart_cen, **kw)
     x = xform(trans(cart_cen), xform(quat_to_xform(q), trans(-cart_cen)))
     x[..., :3, 3] += th.randn(shape + (3, ), **kw) * cart_sd
     x[..., 3, 3] = 1
     return x
 
 rand = rand_xform
+
+def randtrans(*a, rot_sd=None, **kw):
+    return randsmall(*a, rot_sd=0, **kw)
 
 def rot_to_quat(xform):
     raise NotImplementedError
@@ -406,12 +424,19 @@ def rms(a, b):
     assert a.shape == b.shape
     return th.sqrt(th.sum(th.square(a - b)) / len(a))
 
-def xform(xform, stuff, homogout='auto', **kw):
-    kwdt = get_dtype_dev([xform, stuff], None, None)
-    xform = th.as_tensor(xform, **kwdt)
+def xform(xform, stuff=None, **kw):
+    if stuff is None: return functools.partial(xform_impl, xform, **kw)
+    return xform_impl(xform, stuff, **kw)
+
+X = ipd.dev.InfixOperator(xform)
+
+def xform_impl(xform, stuff, homogout='auto', dtype=None, device=None, isvec=None, **kw):
+    ddkw = get_dtype_dev([xform, stuff], dtype, device)
+    xform, stuff = (th.as_tensor(_, **ddkw) for _ in (xform, stuff))
     nothomog = stuff.shape[-1] == 3
     if stuff.shape[-1] == 3:
-        stuff = point(stuff, **kwdt)
+        if isvec: stuff = vec(stuff, **ddkw)
+        else: stuff = point(stuff, **ddkw)
     result = _thxform_impl(xform, stuff, **kw)
     if homogout is False or homogout == 'auto' and nothomog:
         result = result[..., :3]
@@ -426,17 +451,10 @@ def xchain(*xforms, **kw):
 _xform = xform
 
 def xformpts(xform, stuff, **kw):
-    return _xform(xform, stuff, is_points=True, **kw)
+    return _xform(xform, stuff, isxform=False, isvec=False, **kw)
 
-    # if result.shape[-1] == 4 and not ipd.homog.hvalid(result.cpu().detach().numpy(), **kw):
-    #   # ic(result[:10])
-    #   # is is a bad copout.. should make is check handle nans correctly
-    #   if not stuff.shape[-2:] == (4, 1):
-    #      raise ValueError(
-    #         f'malformed homogeneous coords with shape {stuff.shape}, if points and shape is (...,4,4) try is_points=True'
-    #      )
-
-    return result
+def xformvec(xform, stuff, **kw):
+    return _xform(xform, stuff, isxform=False, isvec=True, **kw)
 
 def rmsfit(mobile, target):
     """Use kabsch method to get rmsd fit."""
@@ -483,25 +501,25 @@ def rmsfit(mobile, target):
 #     return v
 
 def point(point, dtype=None, device=None, **kw):
-    kw = get_dtype_dev(point, dtype, device)
-    point = th.as_tensor(point, **kw)
+    ddkw = get_dtype_dev(point, dtype, device)
+    point = th.as_tensor(point, **ddkw)
     shape = point.shape[:-1]
-    points = th.cat([point[..., :3], th.ones(shape + (1, ), **kw)], axis=-1)
+    points = th.cat([point[..., :3], th.ones(shape + (1, ), **ddkw)], axis=-1)
     if points.dtype not in (th.float32, th.float64):
         points = points.to(th.float32)
     return points
 
 def vec(vec, dtype=None, device=None):
-    kw = get_dtype_dev(vec, dtype, device)
-    vec = th.as_tensor(vec, **kw)
+    ddkw = get_dtype_dev(vec, dtype, device)
+    vec = th.as_tensor(vec, **ddkw)
     if vec.dtype not in (th.float32, th.float64):
         vec = vec.to(th.float32)
     if vec.shape[-1] == 4:
         if th.any(vec[..., 3] != 0):
-            vec = th.cat([vec[..., :3], th.zeros(*vec.shape[:-1], 1, **kw)], dim=-1)
+            vec = th.cat([vec[..., :3], th.zeros(*vec.shape[:-1], 1, **ddkw)], dim=-1)
         return vec
     elif vec.shape[-1] == 3:
-        r = th.zeros(vec.shape[:-1] + (4, ), **kw)
+        r = th.zeros(vec.shape[:-1] + (4, ), **ddkw)
         r[..., :3] = vec
         return r
     else:
@@ -510,16 +528,16 @@ def vec(vec, dtype=None, device=None):
 def normvec(inp, dtype=None, device=None):
     return normalized(vec(inp, dtype, device))
 
-def normalized(a):
-    kw = get_dtype_dev(a)
-    return th.nn.functional.normalize(th.as_tensor(a, **kw), dim=-1)
-    # a = th.as_tensor(a)
-    # if (not a.shape and len(a) == 3) or (a.shape and a.shape[-1] == 3):
-    #    a, tmp = th.zeros(a.shape[:-1] + (4, ), dtype=a.type), a
-    #    a[..., :3] = tmp
-    # a2 = a[:]
-    # a2[..., 3] = 0
-    # return a2 / norm(a2)[..., None]
+def normalized(a, **kw):
+    ddkw = get_dtype_dev(a, **kw)
+    # return th.nn.functional.normalize(th.as_tensor(a, **ddkw), dim=-1)
+    a = th.as_tensor(a, **ddkw)
+    if (not a.shape and len(a) == 3) or (a.shape and a.shape[-1] == 3):
+        a, tmp = th.zeros(a.shape[:-1] + (4, ), **ddkw), a
+        a[..., :3] = tmp
+    a2 = a[:]
+    a2 = a2 * th.tensor([1, 1, 1, 0], **ddkw)
+    return a2 / norm(a2)[..., None]
 
 def norm(a):
     a = th.as_tensor(a)
@@ -544,36 +562,48 @@ def axis_angle(xforms):
     angl = angle(xforms)
     return axis_, angl
 
-def axis(xforms):
-    if xforms.shape[-2:] == (4, 4):
-        return normalized(
-            th.stack(
-                (
-                    xforms[..., 2, 1] - xforms[..., 1, 2],
-                    xforms[..., 0, 2] - xforms[..., 2, 0],
-                    xforms[..., 1, 0] - xforms[..., 0, 1],
-                    th.zeros(xforms.shape[:-2], dtype=xforms.dtype, device=xforms.device),
-                ),
-                axis=-1,
-            ))
-    if xforms.shape[-2:] == (3, 3):
-        return normalized(
-            th.stack(
-                (
-                    xforms[..., 2, 1] - xforms[..., 1, 2],
-                    xforms[..., 0, 2] - xforms[..., 2, 0],
-                    xforms[..., 1, 0] - xforms[..., 0, 1],
-                ),
-                axis=-1,
-            ))
-    else:
-        raise ValueError("wrong shape for xform/rotation matrix: " + str(xforms.shape))
+def axis(xforms, tol=1e-5):
+    ddkw = get_dtype_dev(xforms)
+    xforms, origshape = xforms.reshape(-1, *xforms.shape[-2:]), xforms.shape
+    ax = th.stack(
+        (
+            xforms[..., 2, 1] - xforms[..., 1, 2],
+            xforms[..., 0, 2] - xforms[..., 2, 0],
+            xforms[..., 1, 0] - xforms[..., 0, 1],
+            th.zeros(xforms.shape[:-2], **ddkw),
+        ),
+        axis=-1,
+    )
+    is180 = norm(ax) < tol
+    if th.any(is180):
+        x180 = xforms[is180]
+        isI = th.all(th.isclose(th.eye(3, **ddkw), x180[:, :3, :3], atol=tol), axis=(-2, -1))
+        if th.any(isI):
+            ax[th.where(is180)[0][isI]] = th.tensor([1, 0, 0, 0], **ddkw)
+            is180[th.where(is180)[0][isI]] = False
+            x180 = x180[~isI]
+        if th.any(is180):
+            eigval, eigvec = map(th.real, th.linalg.eig(x180[..., :3, :3]))
+            eigval_is_1 = th.abs(eigval - 1) < tol
+            ixform, ieigval = np.where(eigval_is_1)
+            ax[is180, :3] = eigvec[ixform, :, ieigval]
+    ax = normalized(ax)
+    ax = ax.reshape(*origshape[:-2], 4)
+    if xforms.shape[-2:] == (4, 4): return ax
+    elif xforms.shape[-2:] == (3, 3): return ax[..., :3]
+    else: raise ValueError("wrong shape for xform/rotation matrix: " + str(xforms.shape))
 
 def angle(xforms):
     tr = xforms[..., 0, 0] + xforms[..., 1, 1] + xforms[..., 2, 2]
     cos = (tr-1.0) / 2.0
     angl = th.arccos(th.clip(cos, -1, 1))
     return angl
+
+def line_angle(u, v):
+    u, v = normalized(u), normalized(v)
+    dot = (u * v).sum(-1)
+    ang = th.arccos(th.clip(dot, -1, 1))
+    return th.minimum(ang, th.pi - ang)
 
 def point_line_dist2(point, cen, norm):
     point, cen, norm = h.point(point), h.point(cen), h.normalized(norm)
@@ -750,15 +780,14 @@ def Q2R(Q):
     Qs = normQ(Qs)
     return Qs2Rs(Qs[None, :]).squeeze(0)
 
-def _thxform_impl(x, stuff, outerprod='auto', flat=False, is_points='auto', improper_ok=False):
-    if is_points == 'auto':
-        is_points = not valid44(stuff, improper_ok=improper_ok)
-        if is_points:
+def _thxform_impl(x, stuff, outerprod='auto', flat=False, isxform='auto', improper_ok=False):
+    if isxform == 'auto':
+        isxform = valid44(stuff, improper_ok=improper_ok)
+        if not isxform:
             if stuff.shape[-1] != 4 and stuff.shape[-2:] == (4, 1):
                 raise ValueError(f"hxform cant understand shape {stuff.shape}")
-    if not is_points:
-        if outerprod == 'auto':
-            outerprod = x.shape[:-2] != stuff.shape[:-2]
+    if isxform:
+        if outerprod == 'auto': outerprod = x.shape[:-2] != stuff.shape[:-2]
         if outerprod:
             shape1 = x.shape[:-2]
             shape2 = stuff.shape[:-2]
@@ -814,11 +843,11 @@ def _thxform_impl(x, stuff, outerprod='auto', flat=False, is_points='auto', impr
     # ic('result', result.shape)
     return result
 
-def valid(stuff, is_points=None, strict=False, **kw):
-    if stuff.shape[-2:] == (4, 4) and not is_points:
+def valid(stuff, isxform=True, strict=False, **kw):
+    if stuff.shape[-2:] == (4, 4) and isxform:
         return valid44(stuff, **kw)
-    if stuff.shape[-2:] == (4, 2) and not is_points:
-        return is_valid_rays(stuff)  # type: ignore
+    if stuff.shape[-2:] == (4, 2) and isxform:
+        return is_valid_rays(stuff)
     elif stuff.shape[-1] == 4 and strict:
         return th.allclose(stuff[..., 3], 0) or th.allclose(stuff[..., 3], 1)
     elif stuff.shape[-1] == 4:
@@ -857,3 +886,26 @@ def remove_diagonal_elements(a):
     n = len(a)
     elemsize = th.prod(th.tensor(a.shape[2:]))
     return a.flatten()[elemsize:].view(n - 1, n + 1, -1)[:, :-1].reshape(n, n - 1, *a.shape[2:])
+
+def toint(x):
+    return x.round().to(int)
+
+def uniqlastdim(x, tol=1e-4):
+    x = th.as_tensor(x)
+    origshape, x = x.shape, x.reshape(-1, x.shape[-1])
+    uniq = []
+    while len(x):
+        uniq.append(x[0])
+        different = th.cdist(x[0][None], x) > tol
+        x = x[different[0]]
+    return th.stack(uniq)
+
+def lineuniq(*a, frames=th.eye(4)[None], **kw):
+    result = ipd.homog.hgeom.lineuniq(*(x.detach().numpy() for x in a), frames=frames.detach().numpy(), **kw)
+    return tuple(map(th.as_tensor, result))
+
+def joinlastdim(u, v):
+    return th.cat([u, v], dim=-1)
+
+def point_line_dist_pa(p, cen, axis):
+    return th.sqrt(point_line_dist2(p, cen, axis))

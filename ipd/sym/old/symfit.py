@@ -4,6 +4,10 @@ import ipd
 from ipd import Bunch
 from ipd import homog as hm
 
+def symelems_from_frames(frames, center=True):
+    ic(frames.shape)
+    assert 0
+
 def align(coords, symelem, **kw):
     """Assumes shape (nchain, nres, natom, 3|4)"""
     assert len(coords) > 1

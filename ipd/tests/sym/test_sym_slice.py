@@ -27,7 +27,7 @@ def test_sym_slices_fuzz_bad(slices):
     try:
         s = ipd.sym.SymIndex(*slices)
         raise NotImplementedError('should have failed')
-    except (AssertionError):
+    except ((AssertionError, RuntimeError)):
         pass
 
 @pytest.mark.fast
@@ -54,7 +54,7 @@ def test_sym_slice_errors():
             th.Tensor([0, 1, 1, 1, 0, 1, 1, 1, 0]),
             th.Tensor([1]),
     ]:
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, RuntimeError)):
             s = ipd.sym.SymIndex(sym.nsub, [ipd.sym.SymSlice(slice)])
             print(s)
     with pytest.raises(AssertionError):

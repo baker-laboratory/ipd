@@ -26,7 +26,7 @@ _overrides = {
 
 # set to mannually map a file to another file
 _file_mappings = {
-    # ex: 'sym_slice.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
+    # 'hgeom.py': ['../rf2aa/tests/homog/test_homog.py'],
 }
 
 # postprocess command
@@ -157,13 +157,13 @@ def main(projects, **kw):
     print("call:", sys.argv)
     print("cwd:", os.getcwd())
     print("cmd:", cmd)
-    print(f"{' ide/runtests.py running cmd in cwd ':=^80}")
+    print(f"{' run_tests_on_file.py running cmd in cwd ':=^69}")
     sys.stdout.flush()
     os.system(cmd)
-    print(f"{' main command done ':=^80}")
+    print(f"{' main command done ':=^69}")
     os.system(post)
     t = perf_counter() - t
-    print(f"{f' runtests.py done, time {t:7.3f} ':=^80}")
+    print(f"{f' run_tests_on_file.py done, time {t:7.3f} ':=^69}")
 
 if __name__ == '__main__':
     args = get_args(sys.argv)

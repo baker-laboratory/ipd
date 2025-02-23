@@ -74,7 +74,7 @@ import pytest
 import ipd
 
 def main():
-    ipd.tests.testmain(namespace=globals())
+    ipd.tests.maintest(namespace=globals())
 
 def test_some_func():
     # some_func(a, *, b=5) -> None

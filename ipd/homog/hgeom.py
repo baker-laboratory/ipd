@@ -4,6 +4,15 @@ import sys
 
 import numpy as np
 
+from ipd.homog.npth_common import *
+
+def as_tensor(array, **kw):
+    if hasattr(array, 'data'): array = array.data
+    return np.asarray(array, **kw)
+
+def as_tensors(*arrays, **kw):
+    return tuple(as_tensor(inp, **kw) for inp in arrays)
+
 def hconstruct(rot, trans=None):
     x = np.zeros((rot.shape[:-2] + (4, 4)))
     x[..., :3, :3] = rot[..., :3, :3]
@@ -186,7 +195,7 @@ def hxform(x, stuff, homogout="auto", **kw):
 
     return result
 
-def _hxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", improper_ok=False):
+def _hxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", improper_ok=False, dtype=None):
     if is_points == "auto":
         is_points = not hvalid44(stuff, improper_ok=improper_ok)
         if is_points:
@@ -266,6 +275,7 @@ def quat_to_upper_half(quat):
     # ic(ineg3.shape)
     ineg = ineg0 + ineg1 + ineg2 + ineg3
     quat = quat.copy()
+    # TODO: is this right?
     quat[ineg] = -quat[ineg]
     return quat
 
@@ -687,10 +697,11 @@ def hnorm2(a):
 def normalized_3x3(a):
     return a / np.linalg.norm(a, axis=-1)[..., np.newaxis]
 
-def hnormalized(a):
+def hnormalized(a, dtype=None):
     a = np.asanyarray(a)
+    dtype = dtype or a.dtype
     if (not a.shape and len(a) == 3) or (a.shape and a.shape[-1] == 3):
-        a, tmp = np.zeros(a.shape[:-1] + (4, )), a
+        a, tmp = np.zeros(a.shape[:-1] + (4, ), dtype=dtype), a
         a[..., :3] = tmp
     a2 = a.copy()
     a2[..., 3] = 0
@@ -955,6 +966,13 @@ def h_point_line_dist(point, cen, norm):
     point = point - cen
     perp = hprojperp(norm, point)
     return hnorm(perp)
+
+def closest_point_on_line(target, cen, norm):
+    target = hpoint(target)
+    cen = hpoint(cen)
+    norm = hnormalized(norm)
+    cen2point = target - cen
+    return hdot(cen2point, norm)[..., None] * norm + cen
 
 def intesect_line_plane(p0, n, l0, l):
     l = hm.hnormalized(l)  # type: ignore
@@ -1459,9 +1477,10 @@ def hexpand(
     cen=[0, 0, 0],
     deterministic=True,
 ):
+    raise NotImplementedError('expand_xforms_rand lives in willutil_cpp now')
     generators = np.asarray(generators).astype(np.float64)
     cen = np.asarray(cen).astype(np.float64)
-    x, _ = ipd.homog.hcom.geom.expand_xforms_rand(  # type: ignore
+    x, _ = ipd.homog.hgeom.expand_xforms_rand(  # type: ignore
         generators,
         depth=depth,
         trials=ntrials,
@@ -1541,6 +1560,97 @@ def hconvert(rot=np.eye(3), trans=None, **kw):
     h[..., 3, :3] = 0
     h[..., 3, 3] = 1
     return h
+
+def lines_concurrent_isect(cen, axis, tol=1e-4):
+    cen, axis = as_tensors(cen, axis)
+    cen, axis = cen.reshape(-1, 4), axis.reshape(-1, 4)
+    assert cen.shape == axis.shape
+    if len(cen) == 1: return True, closest_point_on_line([0, 0, 0], cen, axis)
+    pt1, pt2 = line_line_closest_points_pa(cen[0], axis[0], cen[1], axis[1])
+    pt = (pt1+pt2) / 2
+    if np.sum((pt1 - pt2)**2) > tol * tol: return False, None
+    if len(cen) == 2: return True, pt
+    return all(point_line_dist_pa(pt, cen[2:], axis[2:]) < tol), pt
+
+def lines_all_concurrent(cen, axis, tol=1e-4):
+    """
+    test if all lines defined by cen and axis intersect at a common point
+    """
+    return lines_concurrent_isect(cen, axis, tol=tol)[0]
+
+def lineuniq(axis, cen, *extra, frames=np.eye(4)[None], closeto=..., tol=1e-3):
+    """
+    return unique set of lines, where lines in different frames are considered the same.
+    also checks anything in extras
+    """
+    assert axis.shape == cen.shape
+    if closeto is ...: closeto = normalized([10, .1, 999, 1])
+    frames = frames.reshape(-1, 4, 4)
+    ax = axis.reshape(-1, axis.shape[-1])
+    cn = cen.reshape(-1, cen.shape[-1])
+    extra = list(extra)
+    for i, e in enumerate(extra):
+        if e.ndim == 1: extra[i] = e[:, None]
+        extra[i] = e.reshape(-1, extra[i].shape[-1])
+        assert len(e) == len(ax)
+    uniq = []
+    for step in range(100):
+        # ic(ax.shape, cn.shape, frames.shape)
+        sax, scn = hxformvec(frames, ax[0]), hxformpts(frames, cn[0])
+        pdist = h_point_line_dist(cn[:, None], scn[None], sax[None])
+        adot = dot(sax[None], ax[:, None])
+        same = (np.abs(adot) > 1 - tol) & (pdist < tol)
+        same = same.any(axis=1)
+        for e in extra:
+            same &= np.sum((e[0] - e)**2, axis=1) < tol * tol
+        assert np.any(same)
+        which = np.argmin(h_point_line_dist(closeto, cn[same], ax[same]))
+        if hdot(ax[same][which], closeto) < 0: ax[same] *= -1
+        uniq.append((ax[same][which], cn[same][which], *(e[same][which] for e in extra)))
+        if np.all(same): break
+        ax, cn, extra = ax[~same], cn[~same], [e[~same] for e in extra]
+    else:
+        raise ValueError('too many steps of lineuniq')
+    return tuple(np.stack([x[i] for x in uniq]) for i in range(len(uniq[0])))
+
+def uniqlastdim(x, tol=1e-4):
+    x = np.asarray(x)
+    origshape, x = x.shape, x.reshape(-1, x.shape[-1])
+    uniq = []
+    while len(x):
+        uniq.append(x[0])
+        different = np.sum((x[0][None] - x)**2, axis=-1) > tol * tol
+        x = x[different]
+    return np.stack(uniq)
+
+def joinlastdim(u, v):
+    return np.concatenate([u, v], axis=-1)
+
+# compatibility with thgeom (torch version of these)
+xform = hxform
+inv = hinv
+axis_angle = axis_angle_of
+axis_angle_cen_hel = axis_angle_cen_hel_of
+allclose = np.allclose
+normalized = hnormalized
+dot = hdot
+point_line_dist_pa = h_point_line_dist
+
+def get_dtype_dev(example, dtype=None, **_):
+    if isinstance(example, list) and len(example) < 100:
+        for e in example:
+            if isinstance(e, np.ndarray):
+                example = e
+                break
+    if dtype is None:
+        if isinstance(example, np.ndarray): dtype = example.dtype  # type: ignore
+        else: dtype = th.float32
+    ic(com.shape)
+    return dict(dtype=dtype)
+
+def toint(x):
+    if isinstance(x, np.ndarray): return x.round().astype(int)
+    return round(x)
 
 _axis_ang_cen_magic_points_numpy = np.array([
     [

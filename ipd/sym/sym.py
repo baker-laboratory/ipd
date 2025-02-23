@@ -87,7 +87,7 @@ def frames(
         elif sym.startswith("c"):
             startax = ipd.homog.hvec([0, 0, 1])
         elif bbsym:
-            startax = axes(sym, bbnfold)  # type: ignore
+            startax = axes(sym, bbnfold)
         elif asym_of:
             startax = axes(sym, asym_of)
         else:
@@ -312,15 +312,15 @@ def ambiguous_axes(sym):
 _ = -1
 
 tetrahedral_axes = {
-    2: hnormalized([1, 0, 0]),
+    2: hnormalized([0, 0, 1]),
     3: hnormalized([1, 1, 1]),
-    "3b": hnormalized([1, 1, _]),  # other c3
+    "3b": hnormalized([_, 1, 1]),  # other c3
 }
-octahedral_axes = {2: hnormalized([1, 1, 0]), 3: hnormalized([1, 1, 1]), 4: hnormalized([1, 0, 0])}
+octahedral_axes = {2: hnormalized([1, 0, 1]), 3: hnormalized([1, 1, 1]), 4: hnormalized([0, 0, 1])}
 icosahedral_axes = {
-    2: hnormalized([1, 0, 0]),
-    3: hnormalized([0.934172, 0.000000, 0.356822]),
-    5: hnormalized([0.850651, 0.525731, 0.000000]),
+    2: hnormalized([0, 0, 1]),
+    3: hnormalized([0, 0.35682209, 0.93417236]),
+    5: hnormalized([0.525731, 0.000000, 0.850651]),
 }
 
 tetrahedral_axes_all = {
@@ -352,9 +352,9 @@ tetrahedral_axes_all = {
 octahedral_axes_all = {
     2:
     hnormalized([
-        [1, 1, 0],
-        [0, 1, 1],
         [1, 0, 1],
+        [0, 1, 1],
+        [1, 1, 0],
         [_, 1, 0],
         [0, _, 1],
         [_, 0, 1],
@@ -396,7 +396,6 @@ def _icosahedral_axes_all():
     a2 = a2[np.unique(np.around(a2, decimals=6), axis=0, return_index=True)[1]]
     a3 = a3[np.unique(np.around(a3, decimals=6), axis=0, return_index=True)[1]]
     a5 = a5[np.unique(np.around(a5, decimals=6), axis=0, return_index=True)[1]]
-
     a2 = np.stack([a for i, a in enumerate(a2) if np.all(np.sum(a * a2[:i], axis=-1) > -0.999)])
     a3 = np.stack([a for i, a in enumerate(a3) if np.all(np.sum(a * a3[:i], axis=-1) > -0.999)])
     a5 = np.stack([a for i, a in enumerate(a5) if np.all(np.sum(a * a5[:i], axis=-1) > -0.999)])
@@ -708,7 +707,7 @@ def subframes(frames, bbsym, asym):
     axs, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(relframes)
 
     for i in range(len(frames)):
-        axdist = ipd.homog.hpointlinedis(coords, cen[i, :], axs[i, :])  # type: ignore
+        axdist = ipd.homog.h_point_line_dist(coords, cen[i, :], axs[i, :])  # type: ignore
         ic(axdist)  # type: ignore
     # what about multiple nfold axes???\
     # can distinguish by axis direction?

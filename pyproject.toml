@@ -29,6 +29,7 @@ dependencies = [
     'plotly',
     'pendulum',
     'pydantic',
+    'pytantic_numpy',
     'pdot',
     'pyright[nodejs]',
     'pytest',
