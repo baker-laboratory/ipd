@@ -33,10 +33,10 @@ def symcheck(sym, thing, kind=None, **kw):
 def get_kind_and_adaptor(sym, thing, kind):
     if kind is not None:
         adaptor = sym.sym_adapt(thing)
-    elif isinstance(thing, ipd.sym.SimpleSparseTensor):
+    elif isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor):
         adaptor = None
         kind = thing.kind
-    elif isinstance(thing, ipd.sym.SymAdapt):
+    elif isinstance(thing, ipd.sym.sym_adapt.SymAdapt):
         adaptor = thing
         thing = adaptor.orig  # type: ignore
         kind = adaptor.kind  # type: ignore
@@ -46,7 +46,7 @@ def get_kind_and_adaptor(sym, thing, kind):
     if isinstance(thing, (th.Tensor, np.ndarray)):
         while len(thing) == 1:  # type: ignore
             thing = thing[0]  # type: ignore
-    if isinstance(thing, ipd.sym.SimpleSparseTensor):
+    if isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor):
         thing.idx = thing.idx.to(sym.device)
         thing.val = thing.val.to(sym.device)
     elif isinstance(thing, th.Tensor):
@@ -110,7 +110,7 @@ def symcheck_XYZ_2D(idx, thing, **kw):
     raise NotImplementedError('symcheck_XYZ_2D')
 
 def symcheck_XYZ_SPARSE(idx, thing, **kw):
-    assert isinstance(thing, ipd.sym.SimpleSparseTensor)
+    assert isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor)
     thing, idx, isidx = thing.val, thing.idx, thing.isidx
     assert not isidx
     raise NotImplementedError('symcheck_XYZ_SPARSE')
@@ -128,7 +128,7 @@ def symcheck_INDEX_2D(idx, thing, **kw):
 
 def symcheck_INDEX_SPARSE(idx, thing, **kw):
     assert isinstance(idx, ipd.sym.SymIndex)
-    assert isinstance(thing, ipd.sym.SimpleSparseTensor)
+    assert isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor)
     thing.val = thing.val.to(idx.sub.device)
     thing.idx = thing.idx.to(idx.sub.device)
     x, _, isidx = thing.val, thing.idx, thing.isidx
@@ -179,7 +179,7 @@ def symcheck_BASIC_2D(idx, thing, kind, sympair_protein_only=None, **kw):
                     th.testing.assert_close(sym, asu, atol=1e-3, rtol=1e-5)
 
 def symcheck_BASIC_SPARSE(idx, thing, **kw):
-    assert isinstance(thing, ipd.sym.SimpleSparseTensor)
+    assert isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor)
     thing, idx, isidx = thing.val, thing.idx, thing.isidx
     assert not isidx
     raise NotImplementedError('symcheck_BASIC_SPARSE')

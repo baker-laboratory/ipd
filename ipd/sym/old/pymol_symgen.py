@@ -74,6 +74,7 @@ def hacky_xtal_maker(
 
 class PymolSymElem(object):
     """Docstring for PymolSymElem."""
+
     def __init__(
             self,
             kind,
@@ -544,6 +545,7 @@ class PymolSymElem(object):
 
 class SymElemPosition(object):
     """Docstring for SymElemPosition."""
+
     def __init__(self, symelem, xform):
         super(SymElemPosition, self).__init__()
         self.symelem = symelem
@@ -554,6 +556,7 @@ class SymElemPosition(object):
 
 class SymElemGroupManager(object):
     """Docstring for SymElemGroupManager."""
+
     def __init__(self):
         super(SymElemGroupManager, self).__init__()
         self.node2elems = dict()
@@ -576,6 +579,7 @@ class SymElemGroupManager(object):
 
 class SymTrieNode(object):
     """Docstring for SymTrieNode."""
+
     def __init__(self, generators, ielem, iframe, depth, position):
         super(SymTrieNode, self).__init__()
         self.generators = generators
@@ -613,6 +617,7 @@ class SymTrieNode(object):
 
 class SymTrieSanityCheckVisitor(object):
     """Docstring for SymTrieSanityCheckVisitor."""
+
     def __init__(self):
         super(SymTrieSanityCheckVisitor, self).__init__()
         self.seenit = list()  # [ Xform() ]
@@ -894,6 +899,7 @@ def show_node(node, **kwargs):
 
 class CountFrames(object):
     """Docstring for CountFrames."""
+
     def __init__(self):
         super(CountFrames, self).__init__()
         self.count = 0
@@ -920,6 +926,7 @@ def cgo_cyl_arrow(c1, c2, rad, col=(1, 1, 1), col2=None, arrowlen=4.0):
 
 class BuildCGO(object):
     """Docstring for BuildCGO."""
+
     def __init__(
         self,
         nodes,
@@ -1048,6 +1055,7 @@ class BuildCGO(object):
 
 class VecDict(object):
     """Docstring for VecDict."""
+
     def __init__(self):
         super(VecDict, self).__init__()
         self.keys_ = list()
@@ -1077,6 +1085,7 @@ class VecDict(object):
 
 class ComponentCenterVisitor(object):
     """Docstring for ComponentCenterVisitor."""
+
     def __init__(self, symelems, extranodes=[], label="NODES", colors=list(), showlinks=1, **kwargs):
         super(ComponentCenterVisitor, self).__init__()
         # if len(symelems) > 2:
@@ -1499,6 +1508,7 @@ class ComponentCenterVisitor(object):
 
 class RosettaSymDef(object):
     """Docstring for RosettaSymDef."""
+
     def __init__(self, virtuals=None, edges=None):
         super(RosettaSymDef, self).__init__()
         if not virtuals:

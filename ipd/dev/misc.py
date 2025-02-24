@@ -42,6 +42,7 @@ def check_torch_to_numpy(stuff):
     return stuff
 
 class Tee:
+
     def __init__(self, fd1, fd2=sys.stdout):
         if isinstance(fd1, str):
             self.fname = fd1
@@ -82,6 +83,7 @@ def stdout_untee():
     print("!!!!!!! stdout_untee", tee.fname)  # type: ignore
 
 class Flusher:
+
     def __init__(self, out):
         self.out = out
 
@@ -168,6 +170,7 @@ def generic_equals(this, that, checktypes=False, debug=False):
     return this == that
 
 class UnhashableSet:
+
     def __init__(self, stuff, strict=True):
         self.stuff = list()
         for thing in stuff:

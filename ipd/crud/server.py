@@ -11,6 +11,7 @@ import uvicorn
 import ipd
 
 class Server(uvicorn.Server):
+
     def run_in_thread(self):
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
@@ -22,6 +23,7 @@ class Server(uvicorn.Server):
 
         # sys.exit()
 class CrudRun:
+
     def __getitem__(self, BackFront=tuple[ipd.crud.BackendBase, ipd.crud.ClientBase]):
         Backend, Client = BackFront
         return functools.partial(self.runserver, Client=Client, Backend=Backend)

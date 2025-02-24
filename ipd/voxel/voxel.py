@@ -12,6 +12,7 @@ from ipd import h
 _voxel = ipd.lazyimport('ipd.voxel.voxel_cuda')
 
 class Voxel:
+
     def __init__(
             self,
             xyz: th.Tensor,

@@ -9,6 +9,7 @@ from ipd.lazy_import import lazyimport
 hydra = lazyimport('hydra')
 
 def hydra_sandbox(func):
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         hydra_instance = None

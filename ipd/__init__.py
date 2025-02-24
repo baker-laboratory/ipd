@@ -15,9 +15,10 @@ if TYPE_CHECKING:
     from ipd import homog
     from ipd import motif
     from ipd import pdb
-    from ipd import qt
-    from ipd import samp
     from ipd import protocol
+    from ipd import qt
+    from ipd import rcsb
+    from ipd import samp
     from ipd import sym
     from ipd import tests
     from ipd import tools
@@ -31,9 +32,10 @@ else:
     homog = lazyimport('ipd.homog')
     motif = lazyimport('ipd.motif')
     pdb = lazyimport('ipd.pdb')
-    qt = lazyimport('ipd.dev.qt')
-    samp = lazyimport('ipd.samp')
     protocol = lazyimport('ipd.protocol')
+    qt = lazyimport('ipd.dev.qt')
+    rcsb = lazyimport('ipd.rcsb')
+    samp = lazyimport('ipd.samp')
     sym = lazyimport('ipd.sym')
     tests = lazyimport('ipd.tests')
     tools = lazyimport('ipd.tools')

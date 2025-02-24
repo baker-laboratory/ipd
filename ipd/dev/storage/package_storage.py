@@ -229,6 +229,7 @@ def save_pickle(stuff, fname, add_dotpickle=True, uselzma=False, **kw):
         pickle.dump(stuff, out)  # type: ignore
 
 class open_lzma_cached:
+
     def __init__(self, fname, mode="rb"):
         assert mode == "rb"
         cachefile = os.path.expanduser(os.path.relpath(f"~/.cache/ipd/{fname}"))

@@ -8,6 +8,7 @@ def list_classes(data):
     return seenit
 
 def change_class(data, clsmap) -> None:
+
     def visitor(x):
         if x.__class__ in clsmap:
             x.__class__ = clsmap[x.__class__]

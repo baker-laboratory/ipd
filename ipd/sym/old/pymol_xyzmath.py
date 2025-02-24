@@ -51,6 +51,7 @@ class Vec(object):
     14.0
     >>> assert Vec(1,0,-0) == Vec(1,-0,0)
     """
+
     def to_rosetta(v):  # type: ignore
         from rosetta.numeric import xyzVector_double_t  # type: ignore
         return xyzVector_double_t(v.x, v.y, v.z)
@@ -314,6 +315,7 @@ class Mat(object):
     >>> m = Mat(100,2,3,4,5,6,7,8,9)
     >>> assert m * ~m == Imat
     """
+
     def to_rosetta(m):  # type: ignore
         from rosetta.numeric import xyzMatrix_double_t  # type: ignore
         r = xyzMatrix_double_t()
@@ -826,6 +828,7 @@ class Xform(object):
     >>> x =                Xform( Mat( Vec( 0.816587, -0.306018, 0.489427 ), Vec( 0.245040, 0.951487, 0.186086 ), Vec( -0.522629, -0.032026, 0.851959 ) ), Vec( 1.689794, 1.535762, -0.964428 ) )
     >>> assert repr(x) == "Xform( Mat( Vec( 0.816587, -0.306018, 0.489427 ), Vec( 0.245040, 0.951487, 0.186086 ), Vec( -0.522629, -0.032026, 0.851959 ) ), Vec( 1.689794, 1.535762, -0.964428 ) )"
     """
+
     def __Xform__(self):
         return True
 

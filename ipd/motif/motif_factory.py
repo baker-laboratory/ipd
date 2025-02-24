@@ -8,6 +8,7 @@ _default_motif_manager = 'nomotif'
 class MetaMotifManager(abc.ABCMeta):
     """Metaclass for MotifManager, ensures all subclasses are registered here
     even if in other modules."""
+
     def __init__(cls, cls_name, cls_bases, cls_dict):
         # sourcery skip: instance-method-first-arg-name
         """Register the MotifManager subclass."""

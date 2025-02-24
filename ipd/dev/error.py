@@ -8,6 +8,7 @@ def change_exception(**kw: dict[str, Exception]):
     excmap: dict[Exception, Exception] = {getattr(builtins, k): v for k, v in kw.items()}  # type: ignore
 
     def deco(func):
+
         @functools.wraps(func)
         def wrap(*a, **kw):
             try:

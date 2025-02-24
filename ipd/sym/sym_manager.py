@@ -17,7 +17,7 @@ from ipd import h
 
 th = ipd.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
-from ipd.sym.sym_adapt import _sym_adapt, SymAdapt
+# from ipd.sym.sym_adapt import _sym_adapt, SymAdapt
 from ipd.sym.sym_index import SymIndex
 
 T = TypeVar('T')
@@ -202,7 +202,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         ipd.hub.sym_xyzpair(xyz, pair=pair)
         return xyz, pair
 
-    def apply_sym_slices(self, thing: SymAdapt[T], **kw) -> T:
+    def apply_sym_slices(self, thing: 'SymAdapt[T]', **kw) -> T:
         adapted, contig, kw['Lasu'] = self.to_contiguous(thing, **kw)
         if thing.kind.valuekind == ValueKind.XYZ:
             assert thing.kind.shapekind == ShapeKind.ONEDIM
@@ -472,10 +472,10 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     def verify_index(self, thing):
         assert self._idx
 
-    def sym_adapt(self, thing, isasym=None) -> ipd.sym.SymAdapt:
+    def sym_adapt(self, thing, isasym=None) -> 'ipd.sym.sym_adapt.SymAdapt':
         """Return a SymAdapt object with metadata about the symmetry of the
         thing."""
-        return _sym_adapt(thing, self, isasym)
+        return ipd.sym.sym_adapt._sym_adapt(thing, self, isasym)
 
     @property
     def is_dummy_sym(self) -> bool:

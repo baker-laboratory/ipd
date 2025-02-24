@@ -75,6 +75,7 @@ class BackendError(Exception):
 
 @profiler
 def make_backend_model_base(SQL):
+
     class BackendModelBase(SQL, SpecBase):
         id: UUID = sqlmodel.Field(primary_key=True, default_factory=uuid4)
 
@@ -310,6 +311,7 @@ def add_basic_backend_model_methods(backendcls):
     for _name, _dbcls in backendcls.__backend_models__.items():
 
         def make_basic_backend_model_methods_closure(name=_name, dbcls=_dbcls):
+
             def create(self, model: dict) -> typing.Union[str, int]:
                 # model = dbcls.parse_obj(model)
                 assert isinstance(self, BackendBase)

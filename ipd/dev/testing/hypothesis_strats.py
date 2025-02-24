@@ -8,6 +8,7 @@ import pydantic_core
 from hypothesis import strategies as st
 
 class PydanticStrats:
+
     def __init__(self, overrides=None, type_mapping=None, exclude_attrs=None):
         self.overrides = overrides or {}
         # self.urls_strat = st.text().filter(str.isidentifier).map(lambda s: f'https://example.com/{s}.git').map(

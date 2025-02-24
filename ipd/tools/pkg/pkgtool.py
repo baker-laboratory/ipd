@@ -10,14 +10,17 @@ def main():
     print('check_package_structure.py DONE')
 
 class PkgTool(CliBase):
+
     def cwd_package(self):
         return '/home/sheffler/ipd'
 
 class Config(PkgTool):
+
     def cmd_check(self):
         print('check_import')
 
 class Tests(PkgTool):
+
     def cmd_check(self):
         print('check_import')
 
@@ -25,6 +28,7 @@ class Tests(PkgTool):
         print('run_tests')
 
 class Imports(PkgTool):
+
     def cmd_check(self):
         print('check_import')
 

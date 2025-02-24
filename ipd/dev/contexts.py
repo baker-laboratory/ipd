@@ -5,7 +5,10 @@ import sys
 import traceback
 from contextlib import contextmanager
 
+import ipd
+
 def onexit(func):
+
     def wrapper(*args, **kw):
         return func(*args, **kw)
 
@@ -25,14 +28,23 @@ def redirect(stdout=sys.stdout, stderr=sys.stderr):
     _out, _err = sys.stdout, sys.stderr
     try:
         sys.stdout.flush(), sys.stderr.flush()  # type: ignore
-        if stderr == 'stdout': stderr = stdout
         if stdout is None: stdout = io.StringIO()
-        if stderr is None: stderr = io.StringIO()
+        if stderr == 'stdout': stderr = stdout
+        elif stderr is None: stderr = io.StringIO()
         sys.stdout, sys.stderr = stdout, stderr
         yield stdout, stderr
     finally:
         sys.stdout.flush(), sys.stderr.flush()  # type: ignore
         sys.stdout, sys.stderr = _out, _err
+
+@contextmanager
+def capture_stdio():
+    with redirect(None, 'stdout') as (out, err):
+        try:
+            yield out
+        finally:
+            out.seek(0)
+            err.seek(0)
 
 @contextmanager
 def cd(path):
@@ -43,7 +55,17 @@ def cd(path):
     finally:
         os.chdir(oldpath)
 
+@contextmanager
+def openfiles(*fnames, **kw):
+    files = [ipd.dev.openfile(f, **kw) for f in fnames]
+    if len(files) == 1: files = files[0]
+    try:
+        yield files
+    finally:
+        ipd.dev.closefiles(files)
+
 class TracePrints(object):
+
     def __init__(self):
         self.stdout = sys.stdout
 

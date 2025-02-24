@@ -60,7 +60,7 @@ def hvalid44(x, improper_ok=False, **kw):
     det = np.linalg.det(x[..., :3, :3])
     if improper_ok:
         det = np.abs(det)
-    detok = np.allclose(det, 1.0)
+    detok = np.allclose(det, 1.0, atol=1e-4)
 
     return all([np.allclose(x[..., 3, 3], 1), np.allclose(x[..., 3, :3], 0), detok])
 
@@ -98,18 +98,21 @@ def hdiff(x, y, lever=10.0):
     return diff
 
 def hxformx(x, stuff, **kw):
+    stuff = as_tensor(stuff)
     assert np.allclose(stuff[..., 3, :], [0, 0, 0, 1])
     result = hxform(x, stuff, is_points=False, **kw)
     assert np.allclose(stuff[..., 3, :], [0, 0, 0, 1])
     return result
 
 def hxformpts(x, stuff, **kw):
+    stuff = hpoint(stuff)
     assert np.allclose(stuff[..., 3], 1)
     result = hxform(x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 1)
     return result
 
 def hxformvec(x, stuff, **kw):
+    stuff = hvec(stuff)
     assert np.allclose(stuff[..., 3], 0)
     result = hxform(x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 0)
@@ -168,8 +171,8 @@ def hxform(x, stuff, homogout="auto", **kw):
         # ic(result)
         for x in result:
             if not hvalid(x, **kw):
-                ic(x)  # type: ignore
-                assert 0
+                ic(x, np.linalg.det(x))
+                assert 0, 'invalid transform'
         # this is a bad copout.. should make this check handle nans correctly
         if not stuff.shape[-2:] == (4, 1):
             raise ValueError(f"malformed homogeneous coords with shape {stuff.shape}, "
@@ -770,7 +773,7 @@ def line_angle(u, v, outerprod=False):
 def line_angle_degrees(u, v, outerprod=False):
     return np.degrees(line_angle(u, v, outerprod))
 
-def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None):
+def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None, dtype=np.float64):
     if seed is not None:
         randstate = np.random.get_state()
         np.random.seed(seed)
@@ -791,7 +794,7 @@ def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None):
         np.random.set_state(randstate)  # type: ignore
     return r
 
-def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None):
+def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None, dtype=np.float64):
     if seed is not None:
         randstate = np.random.get_state()
         np.random.seed(seed)
@@ -808,7 +811,7 @@ def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None):
         np.random.set_state(randstate)  # type: ignore
     return hrot(axis, ang, cen)
 
-def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, doto=None):
+def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, doto=None, dtype=np.float64):
     if seed is not None:
         randstate = np.random.get_state()
         np.random.seed(seed)
@@ -829,7 +832,7 @@ def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, d
 
 rand_xform_small = hrandsmall
 
-def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None):
+def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None, dtype=np.float64):
     if seed is not None:
         randstate = np.random.get_state()
         np.random.seed(seed)
@@ -844,7 +847,7 @@ def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None):
 
 rand_xform = hrand
 
-def hrandrot(shape=(), seed=None):
+def hrandrot(shape=(), seed=None, dtype=np.float64):
     if seed is not None:
         randstate = np.random.get_state()
         np.random.seed(seed)
@@ -1047,6 +1050,9 @@ def axis_ang_cen_of_eig(xforms, debug=False):
     cen = cen / cen[..., 3][..., None]  # normalize homogeneous coord
     cen = cen - axis * np.sum(axis * cen)
     return axis, angle, cen
+
+_axis_ang_cen_magic_points_numpy = np.array([[-32.09501046777237, 3.36227004372687, 35.34672781477340, 1.0],
+                                             [21.15113978202345, 12.55664537217840, -37.48294301885574, 1.0]])
 
 def axis_ang_cen_of_planes(xforms, debug=False, ident_match_tol=1e-8):
     """If angle is 0, will return axis along translation."""
@@ -1626,16 +1632,6 @@ def uniqlastdim(x, tol=1e-4):
 def joinlastdim(u, v):
     return np.concatenate([u, v], axis=-1)
 
-# compatibility with thgeom (torch version of these)
-xform = hxform
-inv = hinv
-axis_angle = axis_angle_of
-axis_angle_cen_hel = axis_angle_cen_hel_of
-allclose = np.allclose
-normalized = hnormalized
-dot = hdot
-point_line_dist_pa = h_point_line_dist
-
 def get_dtype_dev(example, dtype=None, **_):
     if isinstance(example, list) and len(example) < 100:
         for e in example:
@@ -1645,24 +1641,24 @@ def get_dtype_dev(example, dtype=None, **_):
     if dtype is None:
         if isinstance(example, np.ndarray): dtype = example.dtype  # type: ignore
         else: dtype = th.float32
-    ic(com.shape)
     return dict(dtype=dtype)
 
 def toint(x):
     if isinstance(x, np.ndarray): return x.round().astype(int)
     return round(x)
 
-_axis_ang_cen_magic_points_numpy = np.array([
-    [
-        -32.09501046777237,
-        3.36227004372687,
-        35.34672781477340,
-        1.0,
-    ],
-    [
-        21.15113978202345,
-        12.55664537217840,
-        -37.48294301885574,
-        1.0,
-    ],
-])
+def randtrans(*a, rot_sd=None, **kw):
+    return hrandsmall(*a, rot_sd=0, **kw)
+
+# compatibility with thgeom (torch version of these)
+inv = hinv
+axis_angle = axis_angle_of
+axis_angle_cen_hel = axis_angle_cen_hel_of
+allclose = np.allclose
+normalized = hnormalized
+dot = hdot
+point_line_dist_pa = h_point_line_dist
+rand = hrand
+xform = hxform
+xformvec = hxformvec
+xformpts = hxformpts

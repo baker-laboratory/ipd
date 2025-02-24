@@ -13,6 +13,7 @@ class StateManager:
 
     Manages contextual state.
     """
+
     def __init__(self, config_file, state_file, statetypes, defaults, debugnames=None):
         self._statetype = statetypes
         self._config_file, self._state_file = config_file, state_file

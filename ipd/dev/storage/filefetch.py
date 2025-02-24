@@ -5,6 +5,7 @@ import time
 from subprocess import check_output
 
 class FileFetcher(threading.Thread):
+
     def __init__(self, fname, cache):
         super().__init__()
         self.fname = fname
@@ -23,6 +24,7 @@ class FileFetcher(threading.Thread):
         shutil.move(self.tmpfname, self.localfname)
 
 class FileCache:
+
     def __init__(self, fnames, **kw):
         self.fnames = fnames
 
@@ -37,6 +39,7 @@ class PrefetchLocalFileCache(FileCache):
 
     Will downloads files ahead of requested index in background.
     """
+
     def __init__(self, fnames, numprefetch=7, path='/tmp/ppp/filecache'):
         self.path = path
         self.fetchers = {}

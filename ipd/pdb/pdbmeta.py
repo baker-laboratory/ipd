@@ -11,6 +11,7 @@ import ipd
 log = logging.getLogger(__name__)
 
 class PDBSearchResult:
+
     def __init__(self, pdbs):
         self.pdbs = pdbs
 

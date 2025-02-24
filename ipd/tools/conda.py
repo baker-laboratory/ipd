@@ -15,6 +15,7 @@ def isinstalled(installed, pkg):
     return pkg in installed
 
 class MambaTool(ipd.tools.IPDTool):
+
     def install_yaml(self,
                      envfile,
                      secrets: str = '',

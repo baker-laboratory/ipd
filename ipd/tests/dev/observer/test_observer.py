@@ -3,6 +3,7 @@ import pytest
 import ipd
 
 class ObserverTest(ipd.observer.Observer):  # type: ignore
+
     def __init__(self):
         super().__init__()
         self.foobar_called = False

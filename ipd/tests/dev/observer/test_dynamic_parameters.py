@@ -239,6 +239,7 @@ def test_dynparam_parse():
 
 @pytest.mark.fast
 def test_dynparam_askwargs():
+
     def foo(a, b, c):
         return int(a) + int(b) + int(c)
 

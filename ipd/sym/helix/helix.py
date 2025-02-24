@@ -4,6 +4,7 @@ import ipd
 
 class Helix:
     """Helical symmetry."""
+
     def __init__(self, turns, phase, nfold=1, turnsB=1):
         self.nfold = nfold
         self.turns = turns

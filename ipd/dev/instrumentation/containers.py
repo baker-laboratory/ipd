@@ -5,6 +5,7 @@ _1d_modifiers = set(('add remove append push pop extend intert clear discard __i
                      '__ior__ __ixor__ __irshift__ __ilshift__').split())
 
 class Instrumented:
+
     def __init_subclass__(cls):
         if hasattr(cls, '__on_change__'):
             tomodify = {}

@@ -17,6 +17,7 @@ _summary_types = dict(
 )
 
 class _TimerGetter:
+
     def __init__(self, timer, summary):
         self.timer = timer
         self.summary = summary
@@ -32,6 +33,7 @@ class _TimerGetter:
         return getattr(self, name)
 
 class Timer:
+
     def __init__(
         self,
         name="Timer",

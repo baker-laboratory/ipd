@@ -39,6 +39,7 @@ def set_client(client: 'ClientBase'):
 _ModelRefType = typing.Optional[typing.Union[uuid.UUID, str]]
 
 class ModelRef(type):
+
     def __class_getitem__(cls, T):
         outerns = inspect.currentframe().f_back.f_globals  # type: ignore
         validator = pydantic.BeforeValidator(lambda x, y, outerns=outerns: process_modelref(x, y, outerns))
@@ -72,6 +73,7 @@ def process_modelref(val: _ModelRefType, valinfo, spec_namespace):
     return val
 
 class Unique(type):
+
     def __class_getitem__(cls, T):
         return Annotated[T, 'UNIQUE']
 
@@ -243,6 +245,7 @@ class SpecBase(pydantic.BaseModel):
 
 @profiler
 class UploadOnMutateList(ipd.dev.Instrumented, list):
+
     def __init__(self, thing, attr, val, attrkind=''):
         super().__init__(val)
         self.thing, self.attr, self.attrkind = thing, attr, attrkind
@@ -381,6 +384,7 @@ yaml.add_constructor('!Pydantic', client_obj_constructor)
 
 @profiler
 class ClientBase:
+
     def __init_subclass__(cls, Backend, **kw):
         super().__init_subclass__(**kw)
         cls.__backend_models__ = Backend.__backend_models__
@@ -506,6 +510,7 @@ def add_basic_client_model_methods(clientcls):
     for _name, _cls in clientcls.__client_models__.items():
 
         def make_basic_client_model_methods_closure(cls=_cls, name=_name):
+
             def new(self, **kw) -> cls:  # type: ignore
                 # return self.upload(kw, modelkind=cls.modelkind())
                 return self.upload(kw, modelkind=cls.modelkind())
@@ -549,6 +554,7 @@ def add_basic_client_model_methods(clientcls):
             setattr(clientcls, attr, profiler(fn))
 
 def model_method(func, layer):
+
     @functools.wraps(func)
     def wrapper(self, *a, **kw):
         err = f'{inspect.signature(func)} only valid in {layer} model, not {self.__class__.__name__}'
