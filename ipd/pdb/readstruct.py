@@ -17,6 +17,13 @@ def readatoms(fname, **kw):
         elif fname.endswith(('.cif', '.bcif')): reader = readatoms_cif
         return reader(fname, file, **kw)
 
+def dumpatoms(atoms, fname):
+    from biotite.structure.io.pdb import PDBFile
+    assert fname.endswith('pdb')
+    pdb = PDBFile()
+    pdb.set_structure(atoms)
+    pdb.write(fname)
+
 def readatoms_cif(*a, **kw):
     cif, atom = cifread(*a, **kw)
     return atom

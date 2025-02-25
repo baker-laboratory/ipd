@@ -18,6 +18,7 @@ from ipd.dev.state import *
 from ipd.dev.storage import *
 from ipd.dev.strings import *
 from ipd.project_config import *
+from ipd.dev.tolerances import *
 
 from ipd.lazy_import import lazyimport as lazyimport
 # utils involving optional dependencies

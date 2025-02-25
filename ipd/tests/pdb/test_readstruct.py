@@ -1,4 +1,8 @@
+import pytest
+
 import ipd
+
+bio = pytest.importorskip('biotite')
 
 def main():
     ipd.tests.maintest(namespace=globals())

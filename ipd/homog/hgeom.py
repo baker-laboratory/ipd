@@ -1662,3 +1662,4 @@ rand = hrand
 xform = hxform
 xformvec = hxformvec
 xformpts = hxformpts
+rmsfit = hrmsfit

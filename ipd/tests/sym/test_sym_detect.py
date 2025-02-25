@@ -5,13 +5,22 @@ import ipd
 from ipd.homog import hgeom as h
 
 def main():
-    test_syminfo_from_frames_symid()
-    test_symaxis_closest_to()
-    test_symelems_from_frames()
+    test_syminfo_from_atomslist()
+    test_syminfo_from_frames_basic()
+    # test_symaxis_closest_to()
+    # test_symelems_from_frames()
     print('test_sym_detect.py PASS')
 
 @pytest.mark.fast
-def test_syminfo_from_frames_symid():
+def test_syminfo_from_atomslist():
+    bs = pytest.importorskip('biotite.structure')
+    atoms = ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/L2_D1_C3_Apo.pdb'), bychain=True)
+    syminfo = ipd.sym.syminfo_from_atomslist(list(atoms.values()), tol=1e-1)
+    assert syminfo.symid == 'C3'
+
+@ipd.dev.timed
+@pytest.mark.fast
+def test_syminfo_from_frames_basic():
     allsyms = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i in range(2, 13)]
     for symid in allsyms:
         frames = ipd.sym.frames(symid)
@@ -31,21 +40,21 @@ def test_symaxis_closest_to():
     golden0 = [[0.0000, 0.0000, 1.0000, 0.0000], [0.0000, 0.0000, 1.0000, 0.0000], [0.7071, 0.0000, 0.7071, 0.0000],
                [0.7071, 0.0000, 0.7071, 0.0000], [0.7071, 0.0000, 0.7071, 0.0000], [0.5774, 0.5774, 0.5774, 0.0000],
                [0.5774, 0.5774, 0.5774, 0.0000], [0.5774, 0.5774, 0.5774, 0.0000]]
-    closeaxes, _which = ipd.sym.symaxis_closest_to(frames0, testaxes0)
+    closeaxes, _which = ipd.sym.depricated_symaxis_closest_to(frames0, testaxes0)
     assert h.allclose(closeaxes, golden0, atol=1e-4)
 
     randrot = h.rand(cart_sd=0, dtype=np.float64)
     frames = h.xform(randrot, frames0)
     testaxes = h.xform(randrot, testaxes0)
     golden = h.xform(randrot, golden0)
-    closeaxes, _which = ipd.sym.symaxis_closest_to(frames, testaxes)
+    closeaxes, _which = ipd.sym.depricated_symaxis_closest_to(frames, testaxes)
     assert h.allclose(closeaxes, golden, atol=1e-4)
 
     randtrans = h.randtrans(cart_sd=1, dtype=np.float64)
     frames = h.xform(randtrans, frames0)
     testaxes = h.xformvec(randtrans, testaxes0)
     golden = h.xform(randtrans, golden0)
-    closeaxes, _which = ipd.sym.symaxis_closest_to(frames, testaxes)
+    closeaxes, _which = ipd.sym.depricated_symaxis_closest_to(frames, testaxes)
     assert h.allclose(closeaxes, golden, atol=1e-4)
 
 @pytest.mark.fast

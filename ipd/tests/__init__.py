@@ -3,6 +3,7 @@ import random
 import numpy as np
 import ipd as ipd
 from ipd.tests.maintest import *
+from ipd.tests import fixtures
 
 th = ipd.lazyimport('torch')
 sym = ipd.lazyimport('ipd.tests.sym')
@@ -27,4 +28,4 @@ def force_pytest_skip(reason):
 
     raise _pytest.outcomes.Skipped(reason)  # type: ignore
 
-__all__ = ['sym', 'make_deterministic', 'path', 'load']
+__all__ = ['sym', 'make_deterministic', 'path', 'load', 'fixtures']

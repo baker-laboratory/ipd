@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from ipd import qt
     from ipd import rcsb
     from ipd import samp
+    from ipd import sel
     from ipd import sym
     from ipd import tests
     from ipd import tools
@@ -36,6 +37,7 @@ else:
     qt = lazyimport('ipd.dev.qt')
     rcsb = lazyimport('ipd.rcsb')
     samp = lazyimport('ipd.samp')
+    sel = lazyimport('ipd.sel')
     sym = lazyimport('ipd.sym')
     tests = lazyimport('ipd.tests')
     tools = lazyimport('ipd.tools')
