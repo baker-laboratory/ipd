@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 else:
     th = lazyimport('torch')
 
-from ipd.sym.sym_adapt import _SymAdaptTensor
+from ipd.sym.sym_adapt import SymAdaptTensor
 
 @pytest.mark.fast
 def test_symcheck_mapping():
@@ -31,7 +31,7 @@ def test_symcheck():
     sym.assert_symmetry_correct(dict(a=[1, 1]))
     sym.assert_symmetry_correct([[1, 1], [7, 7], [13, 13]])
     sym.idx = [(20, 0, 4), (20, 10, 14)]
-    SAT = _SymAdaptTensor
+    SAT = SymAdaptTensor
     # sym.assert_symmetry_correct(SAT(th.tensor([0, 1, 2, 3, 5, 10, 12]), sym, idx=[0, 1, 2, 3, 5, 10, 12], isidx=True,))
     # x = sym(SAT(th.tensor([0, 1, 5, 10]), sym, idx=[0, 1, 5, 10], isidx=slice(None)))
     # sym.assert_symmetry_correct(x)

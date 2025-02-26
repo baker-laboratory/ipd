@@ -35,25 +35,25 @@ with contextlib.suppress(ImportError):
     @_sym_adapt.register(th.Tensor)  # type: ignore
     def _(tensor, sym, isasym):
         if all(n is None for n in tensor.names):
-            return _SymAdaptTensor(tensor, sym, isasym)
+            return SymAdaptTensor(tensor, sym, isasym)
         elif 'Lsparse' in tensor.names:
-            return _SymAdaptNamedSparseTensor(tensor, sym, isasym)
+            return SymAdaptNamedSparseTensor(tensor, sym, isasym)
         else:
-            return _SymAdaptNamedDenseTensor(tensor, sym, isasym)
+            return SymAdaptNamedDenseTensor(tensor, sym, isasym)
 
 @_sym_adapt.register(np.ndarray)  # type: ignore
 def _(ary, sym, isasym):
     if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16,
                      np.int8, np.uint8, bool):
-        return _SymAdaptTensor(ary, sym, isasym, tlib='numpy')
+        return SymAdaptTensor(ary, sym, isasym, tlib='numpy')
     else:
-        return _SymAdaptNDArray(ary, sym, isasym)
+        return SymAdaptNDArray(ary, sym, isasym)
 
 @dataclass
 class SymAdapt(ABC, Generic[T]):
     """You must define a subclass of SymAdapt for each type you want to symmetrize.
 
-    Must have a kind and adapted property. See the :_SymAdaptDataClass:`ipd.sim._SymAdaptDataClass` class for an example.
+    Must have a kind and adapted property. See the :SymAdaptDataClass:`ipd.sim.SymAdaptDataClass` class for an example.
     These classes are not meant for the end user, they will be used internally by the sym manager
     """
 
@@ -94,7 +94,7 @@ class SymAdapt(ABC, Generic[T]):
 def _(thing, sym, isasym):
     return thing  # already sym adapted
 
-class _SymAdaptStr(SymAdapt):
+class SymAdaptStr(SymAdapt):
     adapts = str
 
     def __init__(self, x, sym, isasym):
@@ -115,7 +115,7 @@ class _SymAdaptStr(SymAdapt):
     def reconstruct(self, canon, asym=False):  # type: ignore
         return ''.join(canon)
 
-class _SymAdaptTuple(SymAdapt):
+class SymAdaptTuple(SymAdapt):
     adapts = tuple
 
     def __init__(self, x, sym, isasym):
@@ -137,7 +137,7 @@ class _SymAdaptTuple(SymAdapt):
     def reconstruct(self, list_of_symmetrized, **kw):  # type: ignore
         return type(self.orig)(*list_of_symmetrized)
 
-class _SymAdaptSequence(SymAdapt):
+class SymAdaptSequence(SymAdapt):
     adapts = Sequence
 
     def __init__(self, x, sym, isasym):
@@ -159,7 +159,7 @@ class _SymAdaptSequence(SymAdapt):
     def reconstruct(self, list_of_symmetrized, **kw):  # type: ignore
         return type(self.orig)(list_of_symmetrized)
 
-class _SymAdaptMap(SymAdapt):
+class SymAdaptMap(SymAdapt):
     adapts = Mapping
 
     def __init__(self, x, sym, isasym):
@@ -171,7 +171,7 @@ class _SymAdaptMap(SymAdapt):
     def reconstruct(self, list_of_symmetrized):  # type: ignore
         return type(self.orig)(list_of_symmetrized)
 
-class _SymAdaptDataClass(SymAdapt):
+class SymAdaptDataClass(SymAdapt):
     """Base class for adapting dataclasses.
 
     All fields must be sym-adaptable and all tensor fields must have
@@ -191,7 +191,7 @@ class _SymAdaptDataClass(SymAdapt):
         #     else: print(f'{f.name:15} {[x.shape for x in v]}')
         self.orig.add_tensor_dim_names()
         d = {f.name: getattr(self.orig, f.name) for f in dataclasses.fields(self.orig)}  # no deepcopy
-        # print(f'_SymAdaptDataClass.adapted: {self.orig.__class__.__name__}')
+        # print(f'SymAdaptDataClass.adapted: {self.orig.__class__.__name__}')
         for k in d:
             if th.is_tensor(d[k]): d[k] = d[k].rename(*d[k].names)  # shallow copy that keeps names
         self.orig.remove_tensor_dim_names()
@@ -206,7 +206,7 @@ class _SymAdaptDataClass(SymAdapt):
         self.adapted = d
 
     def reconstruct(self, symparts, **kw):  # type: ignore
-        # print(f'_SymAdaptDataClass.reconstruct {self.orig.__class__.__name__}')
+        # print(f'SymAdaptDataClass.reconstruct {self.orig.__class__.__name__}')
         for k, v in symparts.items():
             if v is None: continue
             if isinstance(v, SimpleSparseTensor):
@@ -230,7 +230,7 @@ with contextlib.suppress(ImportError):
 
     # @_sym_adapt.register(SimpleSparseTensor)  # type: ignore
     # def _(sparse, sym):
-    # return _SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
+    # return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
 
     def check_isasym(tensor, sym, isasym, idx):
         if isasym is not None: return isasym
@@ -239,7 +239,7 @@ with contextlib.suppress(ImportError):
         ic(sym.L, sym.Nasu, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
         assert idx is not None
 
-    class _SymAdaptNamedDenseTensor(SymAdapt):
+    class SymAdaptNamedDenseTensor(SymAdapt):
         adapts = None
 
         def __init__(self, tensor, sym, isasym=None):  # sourcery skip: de-morgan
@@ -287,7 +287,7 @@ with contextlib.suppress(ImportError):
             return x.rename(*self.perm.names).align_to(*self.orig.names).to(self.orig.device).to(
                 self.orig.dtype).rename(None)
 
-    class _SymAdaptNamedSparseTensor(SymAdapt):
+    class SymAdaptNamedSparseTensor(SymAdapt):
         adapts = None
 
         def __init__(self, tensor, sym, isasym):
@@ -332,7 +332,7 @@ with contextlib.suppress(ImportError):
             x = x.val.rename(*self.perm.names).align_to(*self.orig.names).rename(None)
             return x.to(self.orig.device).to(self.orig.dtype)
 
-    class _SymAdaptNDArray(SymAdapt):
+    class SymAdaptNDArray(SymAdapt):
         """Symmetrizable ndarray."""
         adapts = np.ndarray
 
@@ -359,7 +359,7 @@ with contextlib.suppress(ImportError):
         def reconstruct(self, ary, **kw):  # type: ignore
             return ary
 
-    ########## _SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
+    ########## SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
 
     def tensor_keydims_to_front(x, keydim):
         if tensor_is_xyz(x):
@@ -398,7 +398,7 @@ with contextlib.suppress(ImportError):
     def tensor_is_xyz(x):
         return 2 <= x.ndim < 5 and x.shape[-1] == 3 and th.is_floating_point(x)
 
-    class _SymAdaptTensor(SymAdapt):
+    class SymAdaptTensor(SymAdapt):
         adapts = None
 
         def __init__(self, tensor, sym, isasym=None, idx=None, isidx=None, kind=None, tlib='torch'):

@@ -1,14 +1,17 @@
-import lark
+import contextlib
 import ipd
 
-with ipd.dev.open_package_file('sel/pymol_selection_algebra.lark') as pymol_grammar:
-    pymol_selection_parser = lark.Lark(pymol_grammar)
+with contextlib.suppress(ImportError):
+    import lark
 
-# ipd.sel.pymol
-def pymol(sel):
-    pymol_selection_parser.parse(sel)
+    with ipd.dev.open_package_file('sel/pymol_selection_algebra.lark') as pymol_grammar:
+        pymol_selection_parser = lark.Lark(pymol_grammar)
 
-class AtomTransformer(lark.Transformer):
+    # ipd.sel.pymol
+    def pymol(sel):
+        pymol_selection_parser.parse(sel)
 
-    def __init__(self, atoms):
-        self.atoms = atoms
+    class AtomTransformer(lark.Transformer):
+
+        def __init__(self, atoms):
+            self.atoms = atoms
