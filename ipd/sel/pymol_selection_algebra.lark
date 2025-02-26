@@ -2,22 +2,17 @@
 start: selection
 
 // Selection expressions
-# ?selection: maybe_assign_expr
-#
-# ?maybe_assign_expr: assign_expr
-#                   | or_expr
-#
-# assign_expr: IDENTIFIER "=" or_expr
-
-selection: or_expr
+selection: maybe_assign_expr
+maybe_assign_expr: assign_expr
+                  | or_expr
+assign_expr: IDENTIFIER "=" or_expr
+// selection: or_expr
 
 // Logical operations with precedence
 or_expr: and_expr (_OR and_expr)*
 and_expr: maybe_not_expr (_AND maybe_not_expr)*
-atom_expr: primary_selection
-          | "(" selection ")"
-maybe_not_expr: not_expr
-               | atom_expr
+atom_expr: primary_selection | "(" selection ")"
+maybe_not_expr: (not_expr | atom_expr)
 not_expr: _NOT atom_expr
 
 // Primary selections
@@ -39,7 +34,7 @@ primary_selection:
                   | path_selection
 
 // Generic selections
-generic_selection: "all" | "*" | "none" | "enabled"
+generic_selection: "all"|"*"|"none"|"enabled"
 
 // Named selections
 named_selection: IDENTIFIER
@@ -48,12 +43,12 @@ named_selection: IDENTIFIER
                 // | IDENTIFIER "*"
 
 // First/Last atom selections
-first_last_selection: ("first" | "last") selection
+first_last_selection: ("first"|"last") selection
 
 // Identifier selections
 
-identifier_sel_str: ("model" | "m." | "chain" | "c." | "segi" | "s." | "resn" | "r." | "name" | "n." | "alt" | "pepseq" | "ps." | "label") STRING_LIST
-identifier_sel_int: ("resi" | "i." | "index" | "idx." | "id" | "rank" ) INT_LIST
+identifier_sel_str: ("model"|"m."|"chain"|"c."|"segi"|"s."|"resn"|"r."|"name"|"n."|"alt"|"pepseq"|"ps."|"label") STRING_LIST
+identifier_sel_int: ("resi"|"i."|"index"|"idx."|"id"|"rank" ) INT_LIST
 identifier_selection: identifier_sel_str | identifier_sel_int
 
 // Lists with + syntax
@@ -67,32 +62,14 @@ id_matching_selection: selection "in" selection
                      | selection "like" selection
 
 // Entity expansion
-entity_expansion: byobject_selection
-                 | bysegi_selection
-                 | bychain_selection
-                 | byres_selection
-                 | bycalpha_selection
-                 | bymolecule_selection
-                 | byfragment_selection
-                 | byring_selection
-                 | bycell_selection
-
-byobject_selection: ("byobject") selection
-bysegi_selection: ("bysegi" | "bs.") selection
-bychain_selection: ("bychain" | "bc.") selection
-byres_selection: ("byres" | "br.") selection
-bycalpha_selection: ("bycalpha" | "bca.") selection
-bymolecule_selection: ("bymolecule" | "bm.") selection
-byfragment_selection: ("byfragment" | "bf.") selection
-byring_selection: ("byring") selection
-bycell_selection: ("bycell") selection
+entity_expansion: ("byobject"|"bysegi"|"bs."|"bychain"|"bc."|"byres"|"br."|"bycalpha"|"bca."|"bymolecule"|"bm."|"byfragment"|"bf."|"byring"|"bycell") selection
 
 // Bond expansion
 bond_expansion: bound_to_selection
                | neighbor_selection
 
-bound_to_selection: ("bound_to" | "bto.") selection
-neighbor_selection: ("neighbor" | "nbr.") selection
+bound_to_selection: ("bound_to"|"bto.") selection
+neighbor_selection: ("neighbor"|"nbr.") selection
 
 // Extend selection
 extend_selection: selection "extend" FLOAT
@@ -105,12 +82,12 @@ proximity_selection: within_selection
                     | near_to_selection
                     | beyond_selection
 
-within_selection: selection ("within" | "w.") FLOAT "of" selection
-around_selection: selection ("around" | "a.") FLOAT
-expand_selection: selection ("expand" | "x.") FLOAT
+within_selection: selection ("within"|"w.") FLOAT "of" selection
+around_selection: selection ("around"|"a.") FLOAT
+expand_selection: selection ("expand"|"x.") FLOAT
 gap_selection: selection "gap" FLOAT
-near_to_selection: selection ("near_to" | "nto.") FLOAT "of" selection
-beyond_selection: selection ("beyond" | "be.") FLOAT "of" selection
+near_to_selection: selection ("near_to"|"nto.") FLOAT "of" selection
+beyond_selection: selection ("beyond"|"be.") FLOAT "of" selection
 
 // Property selections
 property_selection: partial_charge_selection
@@ -122,19 +99,19 @@ property_selection: partial_charge_selection
                    | custom_prop_selection
                    | stereo_selection
 
-partial_charge_selection: ("partial_charge" | "pc.") COMPARISON
-formal_charge_selection: ("formal_charge" | "fc.") COMPARISON
+partial_charge_selection: ("partial_charge"|"pc.") COMPARISON
+formal_charge_selection: ("formal_charge"|"fc.") COMPARISON
 b_factor_selection: "b" COMPARISON
 occupancy_selection: "q" COMPARISON
 ss_selection: "ss" SS_TYPE
-elem_selection: ("elem" | "e.") ELEM_SYMBOL
+elem_selection: ("elem"|"e.") ELEM_SYMBOL
 custom_prop_selection: "p." IDENTIFIER COMPARISON
-stereo_selection: "stereo" ("R" | "S")
+stereo_selection: "stereo" ("R"|"S")
 
 // Comparison operators for properties
 COMPARISON: COMP_OP (FLOAT | INT)
-          | "in" INT "+" INT
-          COMP_OP: "<" | ">" | "=" | "<=" | ">=" | "!="
+          | "in" INT_RANGE
+COMP_OP: "<"|">"|"="|"<="|">="|"!="
 
 // Secondary structure types
 SS_TYPE: /[HST]+/ | STRING
@@ -145,26 +122,26 @@ ELEM_SYMBOL: /[A-Z][a-z]?/
 // Flag selections
 flag_selection: "bonded"
               | "protected"
-              | "fixed" | "fxd."
-              | "restrained" | "rst."
-              | "masked" | "msk."
-              | ("flag" | "f.") INT
+              | "fixed"|"fxd."
+              | "restrained"|"rst."
+              | "masked"|"msk."
+              | ("flag"|"f.") INT
 
 // Chemical class selections
-chemical_class: "organic" | "org."
-              | "inorganic" | "ino."
-              | "solvent" | "sol."
-              | "polymer" | "pol."
+chemical_class: "organic"|"org."
+              | "inorganic"|"ino."
+              | "solvent"|"sol."
+              | "polymer"|"pol."
               | "polymer.protein"
               | "polymer.nucleic"
               | "guide"
               | "hetatm"
-              | "hydrogens" | "h."
-              | "backbone" | "bb."
-              | "sidechain" | "sc."
+              | "hydrogens"|"h."
+              | "backbone"|"bb."
+              | "sidechain"|"sc."
               | "metals"
-              | "donors" | "don."
-              | "acceptors" | "acc."
+              | "donors"|"don."
+              | "acceptors"|"acc."
 
 // Coordinate selections
 coordinate_selection: state_selection
@@ -172,13 +149,13 @@ coordinate_selection: state_selection
                     | coord_comparison
 
 state_selection: "state" INT
-present_selection: "present" | "pr."
-coord_comparison: ("x" | "y" | "z") COMPARISON
+present_selection: "present"|"pr."
+coord_comparison: ("x"|"y"|"z") COMPARISON
 
 // Atom typing selections
 atom_typing: text_type_selection | numeric_type_selection
-text_type_selection: ("text_type" | "tt.") STRING
-numeric_type_selection: ("numeric_type" | "nt.") INT
+text_type_selection: ("text_type"|"tt.") STRING
+numeric_type_selection: ("numeric_type"|"nt.") INT
 
 // Path selection (1foo/G/X/444/CA format)
 path_selection: PATH
@@ -187,10 +164,10 @@ path_selection: PATH
 PATH: /[^\/\s]+(\/(([^\/\s]+)|\*))+/
 
 // Logical operators
-_OR: "or" | "|"
+_OR: "or"|"|"
 //| /\s+(?![a-zA-Z])/
-_AND: "and" | "&"
-_NOT: "not" | "!"
+_AND: "and"|"&"
+_NOT: "not"|"!"
 
 // Base types
 // IDENTIFIER: /[a-zA-Z][a-zA-Z0-9_]*/
@@ -198,7 +175,7 @@ IDENTIFIER: /\'?\"?[a-zA-Z][a-zA-Z0-9_]*\*?\"?\'?/
 STRING: /"[^"]*"/ | /'[^']*'/ | /[a-zA-Z0-9_]+/
 CHAIN_ID: /[A-Za-z0-9]/
 INT.2: /[-+]?[0-9]+/
-FLOAT.2: /[+-]?[0-9]*\.[0-9]+/
+FLOAT.2: /[+-]?[0-9]*\.[0-9]+/ | INT
 COLOR: /[a-zA-Z][a-zA-Z0-9_]*/
 
 // Ignore whitespace and comments

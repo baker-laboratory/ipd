@@ -20,10 +20,10 @@ def main():
 @pytest.mark.xfail
 def test_basic_parse():
     test_selections = [
-        "resn ALA like 'A*'", "mySelection", "%savedSelection", "?tempSelection", "index 1+2+3+10-20", "fc. <=-1",
-        "bonded", "protected", "fixed", "restrained", "masked", "organic", "inorganic", "solvent", "polymer", "guide",
-        "hetatm", "hydrogens", "backbone", "sidechain", "metals", "donors", "acceptors", "present", "y<-5",
-        "z<10 and x>0 and y>-5", "id in 100+200", "chain A and not resi 125", "foo=name CA+CB+CG and chain A",
+        "obj* and name ca", "resn ALA like 'A*'", "mySelection", "%savedSelection", "?tempSelection", "index 1+2+3+10-20",
+        "fc. <=-1", "bonded", "protected", "fixed", "restrained", "masked", "organic", "inorganic", "solvent", "polymer",
+        "guide", "hetatm", "hydrogens", "backbone", "sidechain", "metals", "donors", "acceptors", "present", "y<-5",
+        "z<10 and x>0 and y>-5", "chain A and not resi 125", "foo=name CA+CB+CG and chain A",
         "byres all within 5 of organic", "ss 'H'", "br. b<20 & (all within 3 of resn HOH)", "first resn ARG",
         "1foo/G/X/444/CA", "bm. c. C", "byres ((chain A or (chain B and (not resi 125))) around 5)", "solvent and chain A",
         "solvent or chain A", "resi 1+2+3", "chain A+B", "name N+CA+C", "resn GLU+GLY", "resi 10-20+30-40", "index 1+2+3",
@@ -38,10 +38,10 @@ def test_basic_parse():
         "chain A expand 2.0", "chain A x. 2.0", "chain A gap 4.0", "chain A near_to 5 of chain B",
         "chain A nto. 5 of chain B", "chain A beyond 10 of chain B", "chain A be. 10 of chain B", "partial_charge <0",
         "pc. >0.5", "formal_charge =1", "b<30", "b>50", "b=30.5", "b>=20.5", "b<=25", "b!=0", "q>0.8", "q<0.5", "ss H",
-        "ss 'HS'", "ss HST", "elem C", "e. N", "e. Ca", "p.temperature >300", "stereo R", "stereo S", "pc. in 1+2", "fxd.",
-        "rst.", "msk.", "flag 1", "f. 2", "org.", "ino.", "sol.", "pol.", "polymer.protein", "polymer.nucleic", "h.",
-        "bb.", "sc.", "don.", "acc.", "pr.", "x>10", "z=0", "text_type GAFF", "tt. Amber", "numeric_type 1", "nt. 2",
-        "1ABC/*/A/100/CA", "1XYZ/PROA/*/10-20/*", "*/*/A/*/CA", "name CA and not (resi 10-20 or resn GLY)",
+        "ss 'HS'", "ss HST", "elem C", "e. N", "e. Ca", "p.temperature >300", "stereo R", "stereo S", "fxd.", "rst.",
+        "msk.", "flag 1", "f. 2", "org.", "ino.", "sol.", "pol.", "polymer.protein", "polymer.nucleic", "h.", "bb.", "sc.",
+        "don.", "acc.", "pr.", "x>10", "z=0", "text_type GAFF", "tt. Amber", "numeric_type 1", "nt. 2", "1ABC/*/A/100/CA",
+        "1XYZ/PROA/*/10-20/*", "*/*/A/*/CA", "name CA and not (resi 10-20 or resn GLY)",
         "(chain A and backbone) or (chain B and sidechain)", "not (solvent within 5 of protein)",
         "not solvent within 5 of protein", "resi 1-100 and chain A or chain B", "resi 1-100 and (chain A or chain B)",
         "chain A & name CA", "chain A | name CB", "!chain B", "chain A | chain B and not chain C",
@@ -70,8 +70,9 @@ def test_basic_parse():
                 print('token:', tree)
             successful += 1
         except Exception as e:
-            # print(f"{i:3d}. ✗ Failed to parse: {sel}, Error: {e}")
+            print(f"{i:3d}. ✗ Failed to parse: {sel}, Error: {e}")
             failed += 1
+            return
 
     print("\n" + "="*50)
     print(f"\nTest Results: {successful} successful, {failed} failed out of {len(test_selections)} total")

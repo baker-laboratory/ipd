@@ -47,6 +47,8 @@ class Subject:
         self._observers = dict()
         self._allmethods = set()
         self._warnings = set()
+        self._debug_level = 0
+        self._debug_regex = self._debug_not_regex = self._debug_always_regex = ''
 
     def _register_instance(self, observer: 'Observer'):
         cls = observer.__class__

@@ -93,7 +93,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         """
         pass
 
-    def setup_for_symmetry(self, thing: T) -> T:
+    def setup_for_symmetry(self, thing: T, *_, **__) -> T:
         """Default implementation no-op."""
         return thing
 
@@ -640,6 +640,15 @@ class C1SymmetryManager(SymmetryManager):
     def __bool__(self):
         """Return False if this is a dummy symmetry manager."""
         return False
+
+    def copy_without_guideposts(self):
+        return self
+
+    def copy_with_full_sym(self):
+        return self
+
+    def copy_for_indep(self, _):
+        return self
 
 def _sample_range_or_float_value(inp):
     if isinstance(inp, (int, float)): return inp
