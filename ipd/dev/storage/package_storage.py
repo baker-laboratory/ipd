@@ -5,6 +5,7 @@ import os
 import pickle
 import ipd
 
+package_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
 data_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../data"))
 _compression_extensions = ("gz", "tgz", "xz", "txz")
 
@@ -39,7 +40,10 @@ def open_package_data(fname):
     if fname.endswith(".xz"):
         return open_lzma_cached(package_data_path(fname))
     else:
-        return open(package_data_path(fname))  # type: ignore
+        return open(package_data_path(fname))
+
+def open_package_file(fname):
+    return open(os.path.join(package_dir, fname))
 
 def save_package_data(stuff, fname):
     return save(stuff, package_data_path(fname))

@@ -26,7 +26,7 @@ _overrides = {
 
 # set to mannually map a file to another file
 _file_mappings = {
-    # 'hgeom.py': ['../rf2aa/tests/homog/test_homog.py'],
+    'pymol_selection_algebra.lark': ['ipd/tests/sel/test_sel_pymol.py'],
 }
 
 # postprocess command
