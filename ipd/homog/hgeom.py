@@ -1571,12 +1571,13 @@ def lines_concurrent_isect(cen, axis, tol=1e-4):
     cen, axis = as_tensors(cen, axis)
     cen, axis = cen.reshape(-1, 4), axis.reshape(-1, 4)
     assert cen.shape == axis.shape
-    if len(cen) == 1: return True, closest_point_on_line([0, 0, 0], cen, axis)
+    if len(cen) == 1: return True, cen, np.array([0])
     pt1, pt2 = line_line_closest_points_pa(cen[0], axis[0], cen[1], axis[1])
     pt = (pt1+pt2) / 2
-    if np.sum((pt1 - pt2)**2) > tol * tol: return False, None
-    if len(cen) == 2: return True, pt
-    return all(point_line_dist_pa(pt, cen[2:], axis[2:]) < tol), pt
+    if np.sum((pt1 - pt2)**2) > tol * tol: return False, None, None
+    if len(cen) == 2: return True, pt, hnorm(pt1 - pt2)
+    dist = point_line_dist_pa(pt, cen[2:], axis[2:])
+    return all(dist < tol), pt, dist
 
 def lines_all_concurrent(cen, axis, tol=1e-4):
     """
@@ -1584,12 +1585,13 @@ def lines_all_concurrent(cen, axis, tol=1e-4):
     """
     return lines_concurrent_isect(cen, axis, tol=tol)[0]
 
-def lineuniq(axis, cen, *extra, frames=np.eye(4)[None], closeto=..., tol=1e-3):
+def symmetrically_unique_lines(axis, cen, *extra, frames=np.eye(4)[None], closeto=..., tol=1e-3):
     """
     return unique set of lines, where lines in different frames are considered the same.
     also checks anything in extras
     """
     assert axis.shape == cen.shape
+    tol = ipd.dev.Tolerances(tol)
     if closeto is ...: closeto = normalized([10, .1, 999, 1])
     frames = frames.reshape(-1, 4, 4)
     ax = axis.reshape(-1, axis.shape[-1])
@@ -1600,15 +1602,21 @@ def lineuniq(axis, cen, *extra, frames=np.eye(4)[None], closeto=..., tol=1e-3):
         extra[i] = e.reshape(-1, extra[i].shape[-1])
         assert len(e) == len(ax)
     uniq = []
+    # ic(tol.isectol, tol.dottol, tol.extratol)
     for step in range(100):
         # ic(ax.shape, cn.shape, frames.shape)
         sax, scn = hxformvec(frames, ax[0]), hxformpts(frames, cn[0])
         pdist = h_point_line_dist(cn[:, None], scn[None], sax[None])
         adot = dot(sax[None], ax[:, None])
-        same = (np.abs(adot) > 1 - tol) & (pdist < tol)
+        same = (np.abs(adot) > 1 - tol.dottol)
+        # print('dot  ', same.any(axis=1).sum())
+        same &= (pdist < tol.isectol)
         same = same.any(axis=1)
+        # print('pdist', same.sum())
         for e in extra:
-            same &= np.sum((e[0] - e)**2, axis=1) < tol * tol
+            same &= np.sqrt(np.sum((e[0] - e)**2, axis=1)) < tol.extratol
+            # print('extra', same.sum())
+        # print('final', same.sum())
         assert np.any(same)
         which = np.argmin(h_point_line_dist(closeto, cn[same], ax[same]))
         if hdot(ax[same][which], closeto) < 0: ax[same] *= -1
@@ -1616,7 +1624,7 @@ def lineuniq(axis, cen, *extra, frames=np.eye(4)[None], closeto=..., tol=1e-3):
         if np.all(same): break
         ax, cn, extra = ax[~same], cn[~same], [e[~same] for e in extra]
     else:
-        raise ValueError('too many steps of lineuniq')
+        raise ValueError('too many steps of symmetrically_unique_lines')
     return tuple(np.stack([x[i] for x in uniq]) for i in range(len(uniq[0])))
 
 def uniqlastdim(x, tol=1e-4):
@@ -1663,3 +1671,5 @@ xform = hxform
 xformvec = hxformvec
 xformpts = hxformpts
 rmsfit = hrmsfit
+dist = hdist
+norm = hnorm

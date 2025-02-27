@@ -900,8 +900,10 @@ def uniqlastdim(x, tol=1e-4):
         x = x[different[0]]
     return th.stack(uniq)
 
-def lineuniq(*a, frames=th.eye(4)[None], **kw):
-    result = ipd.homog.hgeom.lineuniq(*(x.detach().numpy() for x in a), frames=frames.detach().numpy(), **kw)
+def symmetrically_unique_lines(*a, frames=th.eye(4)[None], **kw):
+    result = ipd.homog.hgeom.symmetrically_unique_lines(*(x.detach().numpy() for x in a),
+                                                        frames=frames.detach().numpy(),
+                                                        **kw)
     return tuple(map(th.as_tensor, result))
 
 def joinlastdim(u, v):

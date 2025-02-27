@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 import xarray as xr
@@ -10,15 +10,41 @@ class SymInfo:
     frames: np.ndarray
     symcen: np.ndarray
     symelem: xr.Dataset
+    helical: bool
+    axes_concurrent: bool
+    axes_dists: np.ndarray
+    coord_rms: np.ndarray = field(default_factory=lambda: np.array([0.0]))
+    guess_symid: str = None
 
-def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw) -> SymInfo:
+    def __post_init__(self):
+        if not self.guess_symid: self.guess_symid = self.symid
+
+    def __str__(self):
+        np.set_printoptions(suppress=True)
+        with ipd.dev.capture_stdio() as out:
+            print(f'SymInfo symid="{self.symid}"')
+            print(f'    {self.symelem.axis.data[:,:3]=}')
+            print(f'    {self.symelem.ang.data*180/np.pi=}')
+            print(f'    {self.symelem.cen.data[:,:3]=}')
+            print(f'    {self.symcen=}')
+            if self.symid == 'Unknown':
+                print('    debug info for Unknown sym:')
+                print(f'       {self.helical=}')
+                print(f'       {self.symelem.hel.data=}')
+                print(f'       {self.axes_concurrent=}')
+                print(f'       {self.axes_dists=}')
+        return out.read()
+
+def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=1e-4, **kw) -> SymInfo:
     """
     get frames from list of AtomArrays via. sequence and rms alignment, then compute SymInfo
     """
     tol = ipd.dev.Tolerances(**kw)
     frames, rms = _atomlist_seqaln_rmsfit(atomslist, **kw)
-    if np.any(rms > tol.rmstol): return None
-    return syminfo_from_frames(frames, **kw)
+    syminfo = syminfo_from_frames(frames, tol=tol, **kw)
+    syminfo.coord_rms = rms
+    if np.any(rms > tol.rmstol): syminfo.symid, syminfo.guess_symid = 'Unknown', syminfo.symid
+    return syminfo
 
 def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
     """
@@ -30,37 +56,39 @@ def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
     if len(frames) == 1: return SymInfo('C1', frames, None, None)
     selms = symelems_from_frames(frames, tol=tol)
     nfolds = set(selms.nfold.data)
-    isconcurrent, symcen = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isectol)
+    axes_concurrent, symcen, axes_dists = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isectol)
     helical = not h.allclose(selms.hel, 0, atol=tol.heltol)
-    if len(nfolds) == 1 and not helical and isconcurrent:
+    sym_info_args = dict(axes_concurrent=axes_concurrent, symcen=symcen, helical=helical, symelem=selms)
+    sym_info_args |= dict(frames=frames, axes_dists=axes_dists)
+    if len(nfolds) == 1 and not helical and axes_concurrent:
         # nf;, axs, ang, cen, hel = next(iter(selms.keys())), *(x[None] for x in (allaxs, allang, allcen, allhel))
         nf = int(selms.nfold[0])
         if all(selms.nfold == 0):
-            return SymInfo('HELIX', frames, symcen, selms)
-        elif len(selms.nfold) == 3 and h.allclose(selms.ang, np.pi) and h.allclose(selms.hel, 0) and isconcurrent:
-            return SymInfo('D2', frames, symcen, selms)
+            return SymInfo('HELIX', **sym_info_args)
+        elif len(selms.nfold) == 3 and h.allclose(selms.ang, np.pi) and h.allclose(selms.hel, 0) and axes_concurrent:
+            return SymInfo('D2', **sym_info_args)
         else:
-            return SymInfo(f'C{nf}', frames, symcen, selms)
+            return SymInfo(f'C{nf}', **sym_info_args)
     elif len(selms) == 1:
         raise NotImplementedError('')
-    elif isconcurrent and not helical:
+    elif axes_concurrent and not helical:
         if 2 in nfolds and 3 in nfolds:
             ax2, ax3 = (selms.axis[selms.nfold == i] for i in (2, 3))
             testang = h.angle(ax2, ax3)
-            if h.allclose(testang, npth.pi / 2): return SymInfo('D3', frames, symcen, selms)
-            if h.allclose(testang, 0.955316621): return SymInfo('T', frames, symcen, selms)
-            if h.allclose(testang, 0.615479714): return SymInfo('O', frames, symcen, selms)
-            if h.allclose(testang, 0.364863837): return SymInfo('I', frames, symcen, selms)
+            if h.allclose(testang, npth.pi / 2, atol=tol.cageang): return SymInfo('D3', **sym_info_args)
+            if h.allclose(testang, 0.955316621, atol=tol.cageang): return SymInfo('T', **sym_info_args)
+            if h.allclose(testang, 0.615479714, atol=tol.cageang): return SymInfo('O', **sym_info_args)
+            if h.allclose(testang, 0.364863837, atol=tol.cageang): return SymInfo('I', **sym_info_args)
             ic(testang)
             ic(selms)
             assert 0, f'unknown sym with nfold {nfolds} testang {testang}'
         elif len(nfolds) == 2 and 2 in nfolds:
             assert h.allclose(h.angle(*selms.axis[:2]), npth.pi / 2)
-            return SymInfo(f'D{max(nfolds)}', frames, symcen, selms)
+            return SymInfo(f'D{max(nfolds)}', **sym_info_args)
         ic(selms)
         assert 0, 'unknown sym'
     else:
-        return SymInfo('Unknown', frames, symcen, selms)
+        return SymInfo('Unknown', **sym_info_args)
 
 def symelems_from_frames(frames, tol=1e-4, **kw):
     """
@@ -72,7 +100,7 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
     axis, ang, cen, hel = h.axis_angle_cen_hel(rel[1:])
     axis[ang < 0] *= -1
     ang[ang < 0] *= -1
-    axis, cen, ang, hel = h.lineuniq(axis, cen, ang, hel, frames=rel)
+    axis, cen, ang, hel = h.symmetrically_unique_lines(axis, cen, ang, hel, frames=rel, tol=tol)
     ok = np.ones(len(axis), dtype=bool)
     result = list()
     for ax, cn, an, hl in zip(axis, cen, ang, hel):

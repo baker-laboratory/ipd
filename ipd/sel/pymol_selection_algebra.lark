@@ -56,6 +56,8 @@ INT_RANGE: INT ["-" INT]
 RESI_LIST: INT_RANGE ("+" INT_RANGE)*
 INT_LIST: INT_RANGE ("+" INT_RANGE)*
 STRING_LIST: STRING ("+" STRING)*
+ELEM: /[A-Z][A-Za-z]?/
+ELEM_LIST: ELEM ("+" ELEM)*
 
 // Identifier matching
 id_matching_selection: selection "in" selection
@@ -104,7 +106,7 @@ formal_charge_selection: ("formal_charge"|"fc.") COMPARISON
 b_factor_selection: "b" COMPARISON
 occupancy_selection: "q" COMPARISON
 ss_selection: "ss" SS_TYPE
-elem_selection: ("elem"|"e.") ELEM_SYMBOL
+elem_selection: ("elem"|"e.") ELEM_LIST
 custom_prop_selection: "p." IDENTIFIER COMPARISON
 stereo_selection: "stereo" ("R"|"S")
 
@@ -116,8 +118,6 @@ COMP_OP: "<"|">"|"="|"<="|">="|"!="
 // Secondary structure types
 SS_TYPE: /[HST]+/ | STRING
 
-// Element symbols
-ELEM_SYMBOL: /[A-Z][a-z]?/
 
 // Flag selections
 flag_selection: "bonded"
@@ -135,6 +135,8 @@ chemical_class: "organic"|"org."
               | "polymer.protein"
               | "polymer.nucleic"
               | "guide"
+              | "nucleic"
+              | "ligand"
               | "hetatm"
               | "hydrogens"|"h."
               | "backbone"|"bb."
@@ -183,3 +185,4 @@ COMMENT: /#[^\n]*/
 %import common.WS
 %ignore WS
 %ignore COMMENT
+
