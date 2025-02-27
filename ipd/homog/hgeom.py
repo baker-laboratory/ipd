@@ -1574,7 +1574,7 @@ def lines_concurrent_isect(cen, axis, tol=1e-4):
     if len(cen) == 1: return True, cen, np.array([0])
     pt1, pt2 = line_line_closest_points_pa(cen[0], axis[0], cen[1], axis[1])
     pt = (pt1+pt2) / 2
-    if np.sum((pt1 - pt2)**2) > tol * tol: return False, None, None
+    if not np.sqrt(np.sum((pt1 - pt2)**2)) < tol: return False, None, None
     if len(cen) == 2: return True, pt, hnorm(pt1 - pt2)
     dist = point_line_dist_pa(pt, cen[2:], axis[2:])
     return all(dist < tol), pt, dist
@@ -1608,7 +1608,7 @@ def symmetrically_unique_lines(axis, cen, *extra, frames=np.eye(4)[None], closet
         sax, scn = hxformvec(frames, ax[0]), hxformpts(frames, cn[0])
         pdist = h_point_line_dist(cn[:, None], scn[None], sax[None])
         adot = dot(sax[None], ax[:, None])
-        same = (np.abs(adot) > 1 - tol.dottol)
+        same = 1 - np.abs(adot) < tol.dottol
         # print('dot  ', same.any(axis=1).sum())
         same &= (pdist < tol.isectol)
         same = same.any(axis=1)

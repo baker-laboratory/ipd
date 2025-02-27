@@ -8,6 +8,7 @@ from ipd.lazy_import import lazyimport
 from ipd.observer import hub as hub
 
 if TYPE_CHECKING:
+    from ipd import atom
     from ipd import crud
     from ipd import cuda
     from ipd import fit
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
     from ipd import viz
     from ipd import voxel
 else:
+    atom = lazyimport('ipd.atom')
     crud = lazyimport('ipd.crud')
     cuda = lazyimport('ipd.dev.cuda')
     fit = lazyimport('ipd.fit')

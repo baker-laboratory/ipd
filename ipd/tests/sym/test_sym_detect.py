@@ -5,25 +5,20 @@ import ipd
 from ipd.homog import hgeom as h
 
 def main():
-    test_syminfo_from_frames_basic()
     test_syminfo_from_atomslist()
-    # test_symaxis_closest_to()
-    # test_symelems_from_frames()
+    test_syminfo_from_frames_basic()
+    test_symaxis_closest_to()
+    test_symelems_from_frames()
     print('test_sym_detect.py PASS')
-    ipd.global_timer.report()
+    ipd.dev.global_timer.report()
 
 @pytest.mark.fast
 def test_syminfo_from_atomslist():
     bs = pytest.importorskip('biotite.structure')
     atoms = ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/L2_D1_C3_Apo.pdb'), bychain=True)
-    syminfo = ipd.sym.syminfo_from_atomslist(list(atoms.values()),
-                                             tol=1e-1,
-                                             angtol=1e-2,
-                                             heltol=1,
-                                             isectol=1,
-                                             dottol=0.04,
-                                             extratol=1,
-                                             rmstol=3)
+    tol = ipd.dev.Tolerances(tol=1e-1, angtol=1e-2, heltol=1, isectol=1, dottol=0.04, extratol=1, rmstol=3, nftol=0.2)
+    syminfo = ipd.sym.syminfo_from_atomslist(list(atoms.values()), tol=tol)
+    ic(syminfo.tol_checks)
     assert syminfo.symid == 'C3'
 
 def helper_test_frames(frames, symid, **kw):
@@ -32,7 +27,7 @@ def helper_test_frames(frames, symid, **kw):
     # print(sinfo)
     se = sinfo.symelem
     assert sinfo.symid == symid, f'{symid=}, {sinfo.symid=}'
-    assert h.allclose(se.hel, 0, atol=tol.heltol)
+    assert all(se.hel < tol.heltol)
     cendist = h.point_line_dist_pa(sinfo.symcen, se.cen, se.axis)
     assert cendist.max() < tol.isectol
     ref = {k: v for k, v in ipd.sym.axes(symid).items() if isinstance(k, int)}
@@ -45,7 +40,7 @@ def helper_test_frames(frames, symid, **kw):
 def test_syminfo_from_frames_basic():
     allsyms = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i in range(2, 13)]
     for name, (symid, frames) in test_frames.items():
-        helper_test_frames(frames, symid, tol=1e-1, angtol=1e-2, heltol=1, isectol=1, dottol=0.04, extratol=1)
+        helper_test_frames(frames, symid, tol=1e-1, angtol=1e-2, heltol=1, isectol=1, dottol=0.04, extratol=1, nftol=0.2)
     for symid in allsyms:
         frames = ipd.sym.frames(symid)
         helper_test_frames(frames, symid, tol=1e-4)

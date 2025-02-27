@@ -1,4 +1,6 @@
+from collections.abc import Iterable
 from dataclasses import dataclass, field
+import sys
 
 import numpy as np
 import xarray as xr
@@ -15,6 +17,7 @@ class SymInfo:
     axes_dists: np.ndarray
     coord_rms: np.ndarray = field(default_factory=lambda: np.array([0.0]))
     guess_symid: str = None
+    tol_checks: dict = None
 
     def __post_init__(self):
         if not self.guess_symid: self.guess_symid = self.symid
@@ -35,11 +38,23 @@ class SymInfo:
                 print(f'       {self.axes_dists=}')
         return out.read()
 
+def detect(thing, tol=None, order=None, **kw):
+    tol = tol or ipd.dev.Tolerances(tol=1e-1, angtol=1e-2, heltol=1, isectol=1, dottol=0.04, extratol=1, nftol=0.2)
+    if isinstance(thing, np.ndarray) and thing.ndim == 3 and thing.shape[-2:] == (4, 4):
+        return syminfo_from_frames(thing, tol=tol, **kw)
+    if 'biotite' in sys.modules:
+        from biotite.structure import AtomArray
+        if order is not None and len(thing) % order == 0 and isinstance(thing, AtomArray):
+            thing = ipd.atom.split(thing, order)
+        if isinstance(thing, Iterable) and all(isinstance(a, AtomArray) for a in thing):
+            return syminfo_from_atomslist(thing, tol=tol, **kw)
+    raise ValueError(f'cant detect symmetry on object {type(thing)} order {order}')
+
 def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=1e-4, **kw) -> SymInfo:
     """
     get frames from list of AtomArrays via. sequence and rms alignment, then compute SymInfo
     """
-    tol = ipd.dev.Tolerances(**kw)
+    tol = ipd.dev.Tolerances(tol, **kw)
     frames, rms = _atomlist_seqaln_rmsfit(atomslist, **kw)
     syminfo = syminfo_from_frames(frames, tol=tol, **kw)
     syminfo.coord_rms = rms
@@ -57,9 +72,9 @@ def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
     selms = symelems_from_frames(frames, tol=tol)
     nfolds = set(selms.nfold.data)
     axes_concurrent, symcen, axes_dists = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isectol)
-    helical = not h.allclose(selms.hel, 0, atol=tol.heltol)
+    helical = not all(selms.hel < tol.heltol)
     sym_info_args = dict(axes_concurrent=axes_concurrent, symcen=symcen, helical=helical, symelem=selms)
-    sym_info_args |= dict(frames=frames, axes_dists=axes_dists)
+    sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tol_checks=tol.check_history())
     if len(nfolds) == 1 and not helical and axes_concurrent:
         # nf;, axs, ang, cen, hel = next(iter(selms.keys())), *(x[None] for x in (allaxs, allang, allcen, allhel))
         nf = int(selms.nfold[0])
@@ -75,10 +90,10 @@ def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
         if 2 in nfolds and 3 in nfolds:
             ax2, ax3 = (selms.axis[selms.nfold == i] for i in (2, 3))
             testang = h.angle(ax2, ax3)
-            if h.allclose(testang, npth.pi / 2, atol=tol.cageang): return SymInfo('D3', **sym_info_args)
-            if h.allclose(testang, 0.955316621, atol=tol.cageang): return SymInfo('T', **sym_info_args)
-            if h.allclose(testang, 0.615479714, atol=tol.cageang): return SymInfo('O', **sym_info_args)
-            if h.allclose(testang, 0.364863837, atol=tol.cageang): return SymInfo('I', **sym_info_args)
+            if abs(testang - npth.pi / 2) < tol.cageang: return SymInfo('D3', **sym_info_args)
+            if abs(testang - 0.955316621) < tol.cageang: return SymInfo('T', **sym_info_args)
+            if abs(testang - 0.615479714) < tol.cageang: return SymInfo('O', **sym_info_args)
+            if abs(testang - 0.364863837) < tol.cageang: return SymInfo('I', **sym_info_args)
             ic(testang)
             ic(selms)
             assert 0, f'unknown sym with nfold {nfolds} testang {testang}'
@@ -107,9 +122,9 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
         # ic(ax, float(an))
         for ax2, cn2, an2, hl2 in zip(axis, cen, ang, hel):
             cond = [
-                an > an2 + tol.angtol and _isintgt1(an / an2, tol),  # is int mul of other
+                an - an2 > tol.angtol and _isintgt1(an / an2, tol),  # is int mul of other
                 np.abs(hl2) < tol.heltol or _isintgt1(hl / hl2, tol),
-                npth.abs(h.dot(ax, ax2)) > 1 - tol.axistol,
+                npth.abs(1 - h.dot(ax, ax2)) < tol.axistol,
                 h.point_line_dist_pa(cn2, cn, ax) < tol.isectol,  # same line as other
             ]
             if all(cond): break
@@ -127,7 +142,7 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
     return result
 
 def _isintgt1(n, tol):
-    return n > 1.9 and ((n % 1.0 < tol.nftol) or (n % 1.0 > 1 - tol.nftol))
+    return n > 1.9 and min(n % 1.0, 1 - n%1) < tol.nftol
 
 def _align_atoms_seq(atoms1, atoms2):
     import biotite.structure as struc
