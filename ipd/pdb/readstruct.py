@@ -1,5 +1,4 @@
 import io
-import numpy as np
 
 import ipd
 
@@ -17,6 +16,11 @@ def readatoms(fname, **kw):
         elif fname.endswith(('.cif', '.bcif')): reader = readatoms_cif
         return reader(fname, file, **kw)
 
+def dump(thing, fname):
+    if isinstance(thing, (bstruc.AtomArray, bstruc.AtomArrayStack)):
+        return dumpatoms(thing, fname)
+    assert 0, f'dont know how to dump {type(thing)}'
+
 def dumpatoms(atoms, fname):
     from biotite.structure.io.pdb import PDBFile
     assert fname.endswith('pdb')
@@ -24,20 +28,34 @@ def dumpatoms(atoms, fname):
     pdb.set_structure(atoms)
     pdb.write(fname)
 
-def readatoms_cif(*a, **kw):
-    cif, atom = cifread(*a, **kw)
-    return atom
+def readatoms_cif(fname, file, biounit=None, **kw):
+    if biounit:
+        (cif, origatoms), nasu = cifread(fname, file, **kw), None
+        nasu = len(origatoms)
+        if biounit == 'largest':
+            assemblies = bpdbx.list_assemblies(cif)
+            atoms = []
+            for aid in assemblies.keys():
+                assembly = bpdbx.get_assembly(cif, aid, model=1)
+                if len(assembly) > len(atoms): atoms = assembly
+        else:
+            atoms = bpdbx.get_assembly(cif, biounit)
+        atoms = post_read(atoms, **kw)
+        if nasu: atoms = ipd.atom.split(atoms, order=len(atoms) // nasu)
+    else:
+        cif, atoms = cifread(fname, file, **kw)
+    return atoms
 
-def readatoms_pdb(*a, **kw):
-    pdb, atom = pdbread(*a, **kw)
-    return atom
+def readatoms_pdb(fname, file, **kw):
+    pdb, atoms = pdbread(fname, file, **kw)
+    return atoms
 
 def pdbread(fname, file=None, **kw):
     if ipd.dev.isbinfile(file):
         file = io.StringIO(file.read().decode())
     pdb = bpdb.PDBFile.read(file or fname)
-    atom = bpdb.get_structure(pdb)
-    return pdb, post_read(atom, **kw)
+    atoms = bpdb.get_structure(pdb)
+    return pdb, post_read(atoms, **kw)
 
 def cifread(fname, file=None, **kw):
     isbin = fname.endswith('.bcif')
@@ -45,27 +63,27 @@ def cifread(fname, file=None, **kw):
         file = io.StringIO(file.read().decode())
     reader = bpdbx.BinaryCIFFile if isbin else bpdbx.CIFFile
     cif = reader.read(file or fname)
-    atom = bpdbx.get_structure(cif)
-    return cif, post_read(atom, **kw)
+    # pdb = bpdb.PDBFile()
+    # pdb.set_structure(cif)
+    atoms = bpdbx.get_structure(cif)
+    # atoms._spacegroup = pdb.get_space_group()
+    return cif, post_read(atoms, **kw)
 
-def cifdump(fname, atom):
+def cifdump(fname, atoms):
     if not fname.endswith('.bcif'): fname += '.bcif'
-    if isinstance(atom, dict): atom = atom.values()
-    if not isinstance(atom, bstruc.AtomArray): atom = bstruc.concatenate(atom)
+    if isinstance(atoms, dict): atoms = atoms.values()
+    if not isinstance(atoms, bstruc.AtomArray): atoms = bstruc.concatenate(atoms)
     pdbx = bpdb.PDBFile()
-    bstruc.set_structure(pdbx, atom)
+    bstruc.set_structure(pdbx, atoms)
     bcif_file = bpdbx.BinaryCIFFile.from_pdbx_file(pdbx_file)
     bcif_file.write(fname)
 
-def post_read(atoms, bychain=False, caonly=False, **kw):
-    assert len(atoms) == 1
-    atoms = atoms[0]
+def post_read(atoms, chainlist=False, caonly=False, chaindict=False, het=True, **kw):
+    if isinstance(atoms, bstruc.AtomArrayStack):
+        assert len(atoms) == 1
+        atoms = atoms[0]
     if caonly: atoms = atoms[atoms.atom_name == 'CA']
-    if bychain: atoms = group_by_chain(atoms)
+    if not het: atoms = atoms[~atoms.hetero]
+    if chaindict: atoms = ipd.atom.chain_dict(atoms)
+    if chainlist: atoms = ipd.atom.split(atoms)
     return atoms
-
-def group_by_chain(atom_array):
-    """Group an AtomArray by chain_id and return a dictionary."""
-    chain_ids = np.unique(atom_array.chain_id)  # Get unique chain IDs
-    chain_groups = {chain: atom_array[atom_array.chain_id == chain] for chain in chain_ids}
-    return chain_groups

@@ -7,6 +7,7 @@ from ipd.dev.instrumentation import *
 from ipd.dev.instrumentation import timed as profile  # noqa
 
 # runtime utils
+from ipd.dev.objinfo import *
 from ipd.dev.code import *
 from ipd.dev.funcs import *
 from ipd.dev.misc import *

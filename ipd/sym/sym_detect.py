@@ -12,9 +12,9 @@ class SymInfo:
     frames: np.ndarray
     symcen: np.ndarray
     symelem: xr.Dataset
-    helical: bool
-    axes_concurrent: bool
-    axes_dists: np.ndarray
+    helical: bool = None
+    axes_concurrent: bool = None
+    axes_dists: np.ndarray = None
     coord_rms: np.ndarray = field(default_factory=lambda: np.array([0.0]))
     guess_symid: str = None
     tol_checks: dict = None
@@ -22,43 +22,59 @@ class SymInfo:
     def __post_init__(self):
         if not self.guess_symid: self.guess_symid = self.symid
 
+    @property
+    def order(self):
+        return len(self.frames)
+
     def __str__(self):
         np.set_printoptions(suppress=True)
         with ipd.dev.capture_stdio() as out:
             print(f'SymInfo symid="{self.symid}"')
-            print(f'    {self.symelem.axis.data[:,:3]=}')
-            print(f'    {self.symelem.ang.data*180/np.pi=}')
-            print(f'    {self.symelem.cen.data[:,:3]=}')
-            print(f'    {self.symcen=}')
+            print(f'{self.symcen=}')
+            print(f'{self.symelem.nfold.data=}')
+            axes = self.symelem.axis.data[:, :3]
+            print(f'axes:\n{axes}')
+            cens = self.symelem.cen.data[:, :3]
+            print(f'cens:\n{cens}')
+            print(f'{self.symelem.ang.data*180/np.pi=}')
+            print(f'{self.symelem.hel.data=}')
+            print(f'{self.symelem.nfold.data=}')
             if self.symid == 'Unknown':
                 print('    debug info for Unknown sym:')
                 print(f'       {self.helical=}')
-                print(f'       {self.symelem.hel.data=}')
                 print(f'       {self.axes_concurrent=}')
                 print(f'       {self.axes_dists=}')
         return out.read()
+
+    __repr__ = __str__
 
 def detect(thing, tol=None, order=None, **kw):
     tol = tol or ipd.dev.Tolerances(tol=1e-1, angtol=1e-2, heltol=1, isectol=1, dottol=0.04, extratol=1, nftol=0.2)
     if isinstance(thing, np.ndarray) and thing.ndim == 3 and thing.shape[-2:] == (4, 4):
         return syminfo_from_frames(thing, tol=tol, **kw)
+    atoms = thing
     if 'biotite' in sys.modules:
         from biotite.structure import AtomArray
-        if order is not None and len(thing) % order == 0 and isinstance(thing, AtomArray):
-            thing = ipd.atom.split(thing, order)
-        if isinstance(thing, Iterable) and all(isinstance(a, AtomArray) for a in thing):
-            return syminfo_from_atomslist(thing, tol=tol, **kw)
-    raise ValueError(f'cant detect symmetry on object {type(thing)} order {order}')
+        if order is not None and len(atoms) % order == 0 and isinstance(atoms, AtomArray):
+            atoms = ipd.atom.split(atoms, order)
+        if order is None and isinstance(atoms, AtomArray):
+            atoms = ipd.pdb.split(atoms, bychain=True)
+        if isinstance(atoms, Iterable) and all(isinstance(a, AtomArray) for a in atoms):
+            return syminfo_from_atomslist(atoms, tol=tol, **kw)
+    raise ValueError(f'cant detect symmetry on object {type(atoms)} order {order}')
 
 def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=1e-4, **kw) -> SymInfo:
     """
     get frames from list of AtomArrays via. sequence and rms alignment, then compute SymInfo
     """
     tol = ipd.dev.Tolerances(tol, **kw)
-    frames, rms = _atomlist_seqaln_rmsfit(atomslist, **kw)
+    from biotite.structure import AtomArray, AtomArrayStack
+    assert not isinstance(atomslist, (AtomArray, AtomArrayStack))
+    if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
+    frames, rms, match = ipd.atom.frames_by_seqaln_rmsfit(atomslist, **kw)
     syminfo = syminfo_from_frames(frames, tol=tol, **kw)
     syminfo.coord_rms = rms
-    if np.any(rms > tol.rmstol): syminfo.symid, syminfo.guess_symid = 'Unknown', syminfo.symid
+    syminfo.seqmatch = match
     return syminfo
 
 def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
@@ -76,14 +92,12 @@ def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
     sym_info_args = dict(axes_concurrent=axes_concurrent, symcen=symcen, helical=helical, symelem=selms)
     sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tol_checks=tol.check_history())
     if len(nfolds) == 1 and not helical and axes_concurrent:
-        # nf;, axs, ang, cen, hel = next(iter(selms.keys())), *(x[None] for x in (allaxs, allang, allcen, allhel))
-        nf = int(selms.nfold[0])
         if all(selms.nfold == 0):
             return SymInfo('HELIX', **sym_info_args)
         elif len(selms.nfold) == 3 and h.allclose(selms.ang, np.pi) and h.allclose(selms.hel, 0) and axes_concurrent:
             return SymInfo('D2', **sym_info_args)
         else:
-            return SymInfo(f'C{nf}', **sym_info_args)
+            return SymInfo(f'C{int(selms.nfold[0])}', **sym_info_args)
     elif len(selms) == 1:
         raise NotImplementedError('')
     elif axes_concurrent and not helical:
@@ -122,7 +136,7 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
         # ic(ax, float(an))
         for ax2, cn2, an2, hl2 in zip(axis, cen, ang, hel):
             cond = [
-                an - an2 > tol.angtol and _isintgt1(an / an2, tol),  # is int mul of other
+                not np.abs(an - an2) < tol.angtol and _isintgt1(an / an2, tol),  # is int mul of other
                 np.abs(hl2) < tol.heltol or _isintgt1(hl / hl2, tol),
                 npth.abs(1 - h.dot(ax, ax2)) < tol.axistol,
                 h.point_line_dist_pa(cn2, cn, ax) < tol.isectol,  # same line as other
@@ -131,11 +145,11 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
         else:  # if loop was not broken, is not a duplicate symelem
             ax, cn, nf = h.xform(frames[0], ax), h.xform(frames[0], cn), 2 * np.pi / an
             nf = h.toint(nf) if _isintgt1(nf, tol) else npth.zeros(an.shape, dtype=int)
-            fields = dict(nfold=('index', nf),
+            fields = dict(nfold=('index', [nf]),
                           axis=(['index', 'xyzw'], ax.reshape(-1, 4)),
-                          ang=('index', an),
+                          ang=('index', [an]),
                           cen=(('index', 'xyzw'), cn.reshape(-1, 4)),
-                          hel=('index', hl))
+                          hel=('index', [hl]))
             result.append(xr.Dataset(fields))
     result = xr.concat(result, 'index')
     result = result.set_coords('nfold')
@@ -143,25 +157,6 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
 
 def _isintgt1(n, tol):
     return n > 1.9 and min(n % 1.0, 1 - n%1) < tol.nftol
-
-def _align_atoms_seq(atoms1, atoms2):
-    import biotite.structure as struc
-    import biotite.sequence.align as align
-    seq1 = struc.to_sequence(atoms1)[0][0]
-    seq2 = struc.to_sequence(atoms2)[0][0]
-    matrix = align.SubstitutionMatrix.std_protein_matrix()
-    alignment = align.align_optimal(seq1, seq2, matrix)
-    return alignment[0]
-
-def _atomlist_seqaln_rmsfit(atomslist, **kw):
-    frames, rmsds = [np.eye(4)], [0]
-    for i, atm in enumerate(atomslist[1:]):
-        aln = _align_atoms_seq(atomslist[0], atm).trace
-        xyz1 = atomslist[0].coord[aln[aln[:, 0] >= 0, 0]]
-        xyz2 = atm.coord[aln[aln[:, 1] >= 0, 1]]
-        rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
-        frames.append(xfit), rmsds.append(rms)
-    return np.stack(frames), np.array(rms)
 
 def depricated_symaxis_closest_to(frames, axis, cen=..., closeto=...):
     h, npth = ipd.homog.get_tensor_libraries_for(frames)

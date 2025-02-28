@@ -1585,7 +1585,17 @@ def lines_all_concurrent(cen, axis, tol=1e-4):
     """
     return lines_concurrent_isect(cen, axis, tol=tol)[0]
 
-def symmetrically_unique_lines(axis, cen, *extra, frames=np.eye(4)[None], closeto=..., tol=1e-3):
+def symmetrically_unique_lines(
+    axis,
+    cen,
+    ang=None,
+    hel=None,
+    *extra,
+    frames=np.eye(4)[None],
+    closeto=...,
+    tol=1e-3,
+    **kw,
+):
     """
     return unique set of lines, where lines in different frames are considered the same.
     also checks anything in extras
@@ -1596,6 +1606,8 @@ def symmetrically_unique_lines(axis, cen, *extra, frames=np.eye(4)[None], closet
     frames = frames.reshape(-1, 4, 4)
     ax = axis.reshape(-1, axis.shape[-1])
     cn = cen.reshape(-1, cen.shape[-1])
+    an = ang.reshape(ang.shape[-1])
+    hl = hel.reshape(hel.shape[-1])
     extra = list(extra)
     for i, e in enumerate(extra):
         if e.ndim == 1: extra[i] = e[:, None]
@@ -1612,6 +1624,9 @@ def symmetrically_unique_lines(axis, cen, *extra, frames=np.eye(4)[None], closet
         # print('dot  ', same.any(axis=1).sum())
         same &= (pdist < tol.isectol)
         same = same.any(axis=1)
+        # ic(same.shape, an.shape, (an[0]-an).shape)
+        if an is not None: same &= np.sqrt((an[0] - an)**2) < tol.angtol
+        if hl is not None: same &= np.sqrt((hl[0] - hl)**2) < tol.heltol
         # print('pdist', same.sum())
         for e in extra:
             same &= np.sqrt(np.sum((e[0] - e)**2, axis=1)) < tol.extratol
@@ -1620,12 +1635,15 @@ def symmetrically_unique_lines(axis, cen, *extra, frames=np.eye(4)[None], closet
         assert np.any(same)
         which = np.argmin(h_point_line_dist(closeto, cn[same], ax[same]))
         if hdot(ax[same][which], closeto) < 0: ax[same] *= -1
-        uniq.append((ax[same][which], cn[same][which], *(e[same][which] for e in extra)))
+        uniq.append((ax[same][which], cn[same][which], an[same][which], hl[same][which], *(e[same][which] for e in extra)))
         if np.all(same): break
-        ax, cn, extra = ax[~same], cn[~same], [e[~same] for e in extra]
+        # ic(ax.shape, an.shape, same.shape, ang.shape)
+        ax, cn, an, hl, extra = ax[~same], cn[~same], an[~same], hl[~same], [e[~same] for e in extra]
+        # ic(ax.shape, an.shape, same.shape, ang.shape)
     else:
         raise ValueError('too many steps of symmetrically_unique_lines')
-    return tuple(np.stack([x[i] for x in uniq]) for i in range(len(uniq[0])))
+    result = tuple(np.stack([tup[i] for tup in uniq]) for i in range(len(uniq[0])))
+    return result
 
 def uniqlastdim(x, tol=1e-4):
     x = np.asarray(x)

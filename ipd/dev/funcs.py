@@ -1,9 +1,13 @@
 import functools
 import inspect
+import operator
 from pathlib import Path
 from typing import TypeVar, Callable
 
 T = TypeVar('T')
+
+def addreduce(iterable):
+    return functools.reduce(operator.add, iterable)
 
 def call_with_args_from(argpool, func: Callable[..., T]) -> T:
     params = inspect.signature(func).parameters

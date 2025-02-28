@@ -6,14 +6,15 @@ import pydantic
 import ipd
 
 def maintest(namespace, fixtures=None, setup=lambda: None, funcsetup=lambda: None, just=None):
+    print(f'maintest {namespace["__file__"]}:')
     just = just or []
     fixtures, passed, failed = fixtures or {}, [], []
     with tempfile.TemporaryDirectory() as tmpdir:
         ipd.dev.call_with_args_from(fixtures, setup)
         fixtures['tmpdir'] = tmpdir
-        for name, func in [(n, f) for n, f in namespace.items() if n.startswith('test_')]:
+        for name, func in [(n, f) for n, f in namespace.items() if n[:5] == 'test_' and callable(f)]:
             if just and name not in just: continue
-            print('=' * 20, func.__name__, '=' * 20)
+            print(f'{func.__name__:=^60}')
             ipd.dev.call_with_args_from(fixtures, funcsetup)
             try:
                 ipd.dev.call_with_args_from(fixtures, func)
@@ -23,12 +24,10 @@ def maintest(namespace, fixtures=None, setup=lambda: None, funcsetup=lambda: Non
                 print(e.errors())
                 print(traceback.format_exc())
                 failed.append(name)
-
-    print(f'maincrudtest {namespace["__file__"]}:')
-    for p in passed:
-        print(f'    PASS {p}')
-    for f in failed:
-        print(f'    FAIL {f}')
+    # for p in passed:
+    #     print(f'    PASS {p}')
+    # for f in failed:
+    #     print(f'    FAIL {f}')
     ipd.dev.global_timer.report()
     return passed, failed
 

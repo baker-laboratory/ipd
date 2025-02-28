@@ -4,21 +4,55 @@ import numpy as np
 import ipd
 from ipd.homog import hgeom as h
 
-def main():
-    test_syminfo_from_atomslist()
-    test_syminfo_from_frames_basic()
-    test_symaxis_closest_to()
-    test_symelems_from_frames()
-    print('test_sym_detect.py PASS')
-    ipd.dev.global_timer.report()
+TEST_PDBS = ['1dxh', '1g5q', '1n0e', '1wa3', '1a2n', '1n0e', '2tbv', '1bfr']
 
+def main():
+    ipd.tests.maintest(namespace=globals())
+    # ipd.tests.maintest(namespace=globals(), just='test_sym_detect_1wa3')
+
+def make_pdb_testfunc(pdbcode):
+
+    @pytest.mark.fast
+    def pdb_test_func():
+        pytest.importorskip('biotite')
+        atoms = ipd.pdb.readatoms(ipd.dev.package_testcif_path(pdbcode), biounit='largest', het=False)
+        tol = ipd.dev.Tolerances(
+            tol=1e-1,
+            # angtol=1e-2,
+            heltol=4,
+            isectol=2,
+            dottol=0.04,
+            extratol=0.2,
+            rmstol=3,
+            nftol=0.2,
+        )
+        syminfo = ipd.sym.syminfo_from_atomslist(atoms, tol=tol)
+        infersym = None
+        if syminfo.order == 12: infersym = 'T'
+        if syminfo.order == 24: infersym = 'O'
+        if syminfo.order == 60: infersym = 'I'
+        if syminfo.symid[0] == 'C': infersym = f'C{syminfo.order}'
+        if syminfo.symid[0] == 'D': infersym = f'C{syminfo.order/2}'
+        if infersym != syminfo.symid:
+            ic(infersym, syminfo, syminfo.tol_checks)
+        assert infersym == syminfo.symid, f'{infersym=} != {syminfo.symid}'
+
+    pdb_test_func.__name__ = pdb_test_func.__qualname__ = f'test_sym_detect_{pdbcode}'
+    pdb_test_func = ipd.dev.timed(pdb_test_func)
+    return pdb_test_func
+
+ipd.pdb.download_test_pdbs(TEST_PDBS)
+for code in TEST_PDBS:
+    globals()[f'test_sym_detect_{code}'] = make_pdb_testfunc(code)
+
+@ipd.dev.timed
 @pytest.mark.fast
 def test_syminfo_from_atomslist():
-    bs = pytest.importorskip('biotite.structure')
-    atoms = ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/L2_D1_C3_Apo.pdb'), bychain=True)
+    pytest.importorskip('biotite')
+    atoms = ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/L2_D1_C3_Apo.pdb'), chainlist=True)
     tol = ipd.dev.Tolerances(tol=1e-1, angtol=1e-2, heltol=1, isectol=1, dottol=0.04, extratol=1, rmstol=3, nftol=0.2)
-    syminfo = ipd.sym.syminfo_from_atomslist(list(atoms.values()), tol=tol)
-    ic(syminfo.tol_checks)
+    syminfo = ipd.sym.syminfo_from_atomslist(atoms, tol=tol)
+    # ic(syminfo.tol_checks)
     assert syminfo.symid == 'C3'
 
 def helper_test_frames(frames, symid, **kw):
@@ -45,6 +79,7 @@ def test_syminfo_from_frames_basic():
         frames = ipd.sym.frames(symid)
         helper_test_frames(frames, symid, tol=1e-4)
 
+@ipd.dev.timed
 @pytest.mark.fast
 def test_symaxis_closest_to():
     frames0 = ipd.sym.frames('oct')
@@ -69,6 +104,7 @@ def test_symaxis_closest_to():
     closeaxes, _which = ipd.sym.depricated_symaxis_closest_to(frames, testaxes)
     assert h.allclose(closeaxes, golden, atol=1e-4)
 
+@ipd.dev.timed
 @pytest.mark.fast
 def test_symelems_from_frames():
     frames0 = ipd.sym.frames('oct')

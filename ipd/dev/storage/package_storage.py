@@ -32,6 +32,9 @@ def load_package_data(fname):
     data = load(datapath)
     return data
 
+def package_testcif_path(pdbcode, emptyok=False):
+    return package_testdata_path(f'pdb/{pdbcode}.bcif.gz')
+
 def have_package_data(fname):
     datapath = package_data_path(fname, emptyok=False)
     return datapath is not None

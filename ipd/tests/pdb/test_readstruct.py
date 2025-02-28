@@ -12,9 +12,9 @@ def helper_test_readatoms(fname):
     atom = ipd.pdb.readatoms(fname)
     assert len(atom) == 2093
     assert 277 == sum(atom.atom_name == 'CA')
-    chatom = ipd.pdb.readatoms(fname, caonly=True, bychain=True)
+    chatom = ipd.pdb.readatoms(fname, caonly=True, chaindict=True)
     assert {k: len(v) for k, v in chatom.items()} == {'A': 267, 'B': 10}
-    assert all(chatom['A'].atom_name == 'CA')
+    assert all(chatom.A.atom_name == 'CA')
 
 def test_readatoms_bcif_gz():
     helper_test_readatoms('8u51.bcif.gz')
