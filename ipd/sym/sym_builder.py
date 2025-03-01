@@ -15,7 +15,7 @@ def build_from_components_abbas(atoms1: 'list[AtomArray]', atoms2: 'list[AtomArr
     """
     tol = ipd.dev.Tolerances(tol, **kw)
     rms, _, xfit = h.rmsfit(atoms2[0].coord, atoms1[0].coord)
-    if rms > tol.rmstol: return None
+    if rms > tol.rms_fit: return None
     for i, a2 in enumerate(atoms2):
         atoms2[i].coord = h.xform(xfit, a2.coord)
         atoms2[i].chain_id[:] = 'ABCDEFGHIJK'[i + len(atoms1)]

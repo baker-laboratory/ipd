@@ -5,6 +5,7 @@ import sys
 import numpy as np
 import xarray as xr
 import ipd
+import ipd.homog.hgeom as h
 
 @dataclass
 class SymInfo:
@@ -13,11 +14,28 @@ class SymInfo:
     symcen: np.ndarray
     symelem: xr.Dataset
     helical: bool = None
+    guess_symid: str = None
     axes_concurrent: bool = None
     axes_dists: np.ndarray = None
-    coord_rms: np.ndarray = field(default_factory=lambda: np.array([0.0]))
-    guess_symid: str = None
+
+    # debug: which tolerances caused rejection of sym
     tol_checks: dict = None
+
+    # if constructed from coords
+    rms: np.ndarray = field(default_factory=lambda: np.array([0.0]))
+    stub0: np.ndarray = None
+
+    # if multichain asu
+    t_number: int = 1
+    asurms: np.ndarray = None
+    seqmatch: np.ndarray = None
+    asumatch: np.ndarray = None
+    asuframes: np.ndarray = field(default_factory=lambda: np.eye(4)[None])
+    allframes: np.ndarray = None
+
+    # coords and multichain
+    asustub: np.ndarray = None
+    allstub: np.ndarray = None
 
     def __post_init__(self):
         if not self.guess_symid: self.guess_symid = self.symid
@@ -26,7 +44,11 @@ class SymInfo:
     def order(self):
         return len(self.frames)
 
-    def __str__(self):
+    @property
+    def pseudo_order(self):
+        return len(self.frames) * len(self.asuframes)
+
+    def tostr(self, verbose=True):
         np.set_printoptions(suppress=True)
         with ipd.dev.capture_stdio() as out:
             print(f'SymInfo symid="{self.symid}"')
@@ -39,56 +61,94 @@ class SymInfo:
             print(f'{self.symelem.ang.data*180/np.pi=}')
             print(f'{self.symelem.hel.data=}')
             print(f'{self.symelem.nfold.data=}')
-            if self.symid == 'Unknown':
-                print('    debug info for Unknown sym:')
-                print(f'       {self.helical=}')
-                print(f'       {self.axes_concurrent=}')
-                print(f'       {self.axes_dists=}')
+            if self.stub0 is not None:
+                print(f'{self.seqmatch.min()=}')
+                print('All biounit seq match fractions:\n', self.seqmatch, sep='')
+                print(f'{self.rms.mean()=}')
+                if verbose: print('All biounit RMS:\n', self.rms, sep='')
+                print('Monomer Stub:')
+                print(f'{self.stub0}')
+            if self.asurms is not None:
+                print('Multichain stuff:')
+                print(f'{self.t_number=}')
+                print(f'{self.asurms=}')
+                print(f'{self.asumatch=}')
+                print(f'{self.asuframes.shape=}')
+                print(f'{self.allframes.shape=}')
+            if self.symid == 'Unknown' or True:
+                print('Debug info for Unknown sym:')
+                print(f'   {self.helical=}')
+                print(f'   {self.axes_concurrent=}')
+                print(f'   {self.axes_dists=}')
+                print(self.tol_checks)
         return out.read()
 
-    __repr__ = __str__
+    __str__ = tostr
+    __repr__ = tostr
 
 def detect(thing, tol=None, order=None, **kw):
-    tol = tol or ipd.dev.Tolerances(tol=1e-1, angtol=1e-2, heltol=1, isectol=1, dottol=0.04, extratol=1, nftol=0.2)
-    if isinstance(thing, np.ndarray) and thing.ndim == 3 and thing.shape[-2:] == (4, 4):
+    tol = ipd.Tolerances(tol, **(symdetect_default_tolerances) | kw)
+    if ipd.homog.is_tensor(thing) and ipd.homog.is_xform_stack(thing):
         return syminfo_from_frames(thing, tol=tol, **kw)
-    atoms = thing
+
     if 'biotite' in sys.modules:
         from biotite.structure import AtomArray
         if order is not None and len(atoms) % order == 0 and isinstance(atoms, AtomArray):
             atoms = ipd.atom.split(atoms, order)
-        if order is None and isinstance(atoms, AtomArray):
+        elif order is None and isinstance(atoms, AtomArray):
             atoms = ipd.pdb.split(atoms, bychain=True)
-        if isinstance(atoms, Iterable) and all(isinstance(a, AtomArray) for a in atoms):
+        elif isinstance(atoms, Iterable) and all(isinstance(a, AtomArray) for a in atoms):
             return syminfo_from_atomslist(atoms, tol=tol, **kw)
     raise ValueError(f'cant detect symmetry on object {type(atoms)} order {order}')
 
-def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=1e-4, **kw) -> SymInfo:
+symdetect_default_tolerances = dict(
+    default=1e-1,
+    angtol=1e-2,
+    helical_shift=1,
+    isect=1,
+    dot_norm=0.04,
+    misc_lineuniq=1,
+    nfold=0.2,
+    seqmatch=0.7,
+    rms_fit=2,
+)
+
+def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=None, **kw) -> SymInfo:
     """
     get frames from list of AtomArrays via. sequence and rms alignment, then compute SymInfo
     """
-    tol = ipd.dev.Tolerances(tol, **kw)
     from biotite.structure import AtomArray, AtomArrayStack
     assert not isinstance(atomslist, (AtomArray, AtomArrayStack))
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
+    tol = ipd.Tolerances(tol, **(symdetect_default_tolerances | kw))
     frames, rms, match = ipd.atom.frames_by_seqaln_rmsfit(atomslist, **kw)
-    syminfo = syminfo_from_frames(frames, tol=tol, **kw)
-    syminfo.coord_rms = rms
-    syminfo.seqmatch = match
-    return syminfo
+    # ic(rms.max(), asurms.max())
+    # ic(match.min(axis=0), asumatch.min(axis=0))
+    si = syminfo_from_frames(frames, tol=tol, **kw)
+    si.rms, si.seqmatch = rms, match
+    si.stub0 = ipd.atom.stub(atomslist[0])
+    if len(np.unique(atomslist[0].chain_id)) > 1:  # multiple chains in asu
+        asu = ipd.atom.split(atomslist[0])
+        si.asuframes, si.asurms, si.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
+        si.t_number = np.sum(si.asumatch > tol.seqmatch)
+        si.stub0 = ipd.atom.stub(asu[0])
+        si.asustub = h.xform(si.asuframes, si.stub0)
+        si.allstub = h.xform(frames, si.asustub).swapaxes(0, 1)
+        si.allframes = h.xform(si.allstub, h.inv(si.stub0))
+    return si
 
-def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
+def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
     """
     infer sym elems and overall symmetry, return as SymInfo object
     """
-    tol = ipd.dev.Tolerances(tol, **kw)
+    tol = ipd.Tolerances(tol, **(symdetect_default_tolerances | kw))
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
     assert frames.ndim == 3 and frames.shape[1:] == (4, 4)
     if len(frames) == 1: return SymInfo('C1', frames, None, None)
     selms = symelems_from_frames(frames, tol=tol)
     nfolds = set(selms.nfold.data)
-    axes_concurrent, symcen, axes_dists = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isectol)
-    helical = not all(selms.hel < tol.heltol)
+    axes_concurrent, symcen, axes_dists = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isect)
+    helical = not all(selms.hel < tol.helical_shift)
     sym_info_args = dict(axes_concurrent=axes_concurrent, symcen=symcen, helical=helical, symelem=selms)
     sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tol_checks=tol.check_history())
     if len(nfolds) == 1 and not helical and axes_concurrent:
@@ -119,7 +179,7 @@ def syminfo_from_frames(frames: np.ndarray, tol=1e-4, **kw) -> SymInfo:
     else:
         return SymInfo('Unknown', **sym_info_args)
 
-def symelems_from_frames(frames, tol=1e-4, **kw):
+def symelems_from_frames(frames, tol=None, **kw):
     """
     compute a non-redundant set of simple symmetry elements from homog transforms
     """
@@ -136,10 +196,10 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
         # ic(ax, float(an))
         for ax2, cn2, an2, hl2 in zip(axis, cen, ang, hel):
             cond = [
-                not np.abs(an - an2) < tol.angtol and _isintgt1(an / an2, tol),  # is int mul of other
-                np.abs(hl2) < tol.heltol or _isintgt1(hl / hl2, tol),
+                not np.abs(an - an2) < tol.angle and _isintgt1(an / an2, tol),  # is int mul of other
+                np.abs(hl2) < tol.helical_shift or _isintgt1(hl / hl2, tol),
                 npth.abs(1 - h.dot(ax, ax2)) < tol.axistol,
-                h.point_line_dist_pa(cn2, cn, ax) < tol.isectol,  # same line as other
+                h.point_line_dist_pa(cn2, cn, ax) < tol.isect,  # same line as other
             ]
             if all(cond): break
         else:  # if loop was not broken, is not a duplicate symelem
@@ -156,7 +216,7 @@ def symelems_from_frames(frames, tol=1e-4, **kw):
     return result
 
 def _isintgt1(n, tol):
-    return n > 1.9 and min(n % 1.0, 1 - n%1) < tol.nftol
+    return n > 1.9 and min(n % 1.0, 1 - n%1) < tol.nfold
 
 def depricated_symaxis_closest_to(frames, axis, cen=..., closeto=...):
     h, npth = ipd.homog.get_tensor_libraries_for(frames)

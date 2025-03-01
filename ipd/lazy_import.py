@@ -4,16 +4,17 @@ from importlib import import_module
 from types import ModuleType
 import typing
 
-def lazyimport(name: str,
-               package: str = '',
+def lazyimport(*names: typing.Union[str, list[str], tuple[str]],
+               package: str = None,
                pip: bool = False,
                mamba: bool = False,
                channels: str = '',
-               warn: bool = True) -> ModuleType:
+               warn: bool = True,
+               importornone=False) -> ModuleType:
     """Lazy import of a module. The module will be imported when it is first accessed.
 
     Args:
-        name (str): The name of the module to import.
+        names (str): The name(s) of the module(s) to import.
         package (str): The package to install if the module cannot be imported.
         pip (bool): If True, try to install the package globally, then with --user, using pip.
         mamba (bool): If True, try to install the package globally using mamba.
@@ -21,9 +22,24 @@ def lazyimport(name: str,
         warn (bool): If True, print a warning if the module cannot be imported.
 
     """
-    if typing.TYPE_CHECKING:
-        return import_module(name)
-    return _LazyModule(name, package, pip, mamba, channels, warn)
+    if len(names) == 0: raise ValueError('package name is required')
+    elif len(names) == 1 and not isinstance(names[0], str): names = names[0]
+    elif len(names) == 1 and ' ' in names[0]: names = names[0].split()
+    if len(names) > 1:
+        if package: assert len(package) == len(names) and not isinstance(package, str)
+        else: package = (None, ) * len(names)
+        kw = dict(pip=pip, mamba=mamba, channels=channels, warn=warn, importornone=importornone)
+        return [lazyimport(name, package=pkg, **kw) for name, pkg in zip(names, package)]
+    if typing.TYPE_CHECKING or importornone:
+        try:
+            return import_module(names[0])
+        except ImportError:
+            return None
+    else:
+        return _LazyModule(names[0], package, pip, mamba, channels, warn)
+
+def importornone(*names):
+    return lazyimport(*names, importornone=True)
 
 class _LazyModule:
     """A class to represent a lazily imported module."""
@@ -107,9 +123,12 @@ class _LazyModule:
                         pass
                 return import_module(self._name)
 
+    def is_loaded(self):
+        return self._name in sys.modules
+
     @property
     def _module(self) -> ModuleType:
-        return sys.modules.get(self._name) or self.now()
+        return sys.modules.get(self._name, self.now())
 
     def __getattr__(self, name: str):
         return getattr(self._module, name)
@@ -133,41 +152,41 @@ _warned = set()
 #     if _all_skipped_lazy_imports:
 #         print(_all_skipped_lazy_imports)
 
-_DEBUG_ALLOW_LAZY_IMPORT = [
-    'ipd.crud',
-    'ipd.dev.cuda',
-    'ipd.observer',
-    'ipd.dev.qt',
-    'ipd.dev.sieve',
-    'ipd.fit',
-    'ipd.motif',
-    'ipd.pdb',
-    'ipd.samp',
-    'ipd.samp.sampling_cuda',
-    'ipd.protocol',
-    'ipd.sym',
-    'ipd.tests',
-    'ipd.tools',
-    'ipd.viz',
-    'ipd.viz.viz_pdb',
-    'ipd.voxel',
-    'pymol',
-    'pymol.cgo',
-    'pymol.cmd',
-    'sqlmodel',
-    'fastapi',
-    'torch',
-    'ipd.sym.high_t',
-    'omegaconf',
-    'ipd.dev.cli',
-    'hydra',
-    'ipd.sym.sym_tensor',
-    'ipd.homog',
-    'ipd.sym.xtal',
-    'RestricetedPython',
-    'ipd.homog.thgeom',
-    'ipd.homog.quat',
-    'ipd.sym.helix',
-    'ipd.dev.testing',
-    'ipd.tests.sym',
-]
+# _DEBUG_ALLOW_LAZY_IMPORT = [
+#     'ipd.crud',
+#     'ipd.dev.cuda',
+#     'ipd.observer',
+#     'ipd.dev.qt',
+#     'ipd.dev.sieve',
+#     'ipd.fit',
+#     'ipd.motif',
+#     'ipd.pdb',
+#     'ipd.samp',
+#     'ipd.samp.sampling_cuda',
+#     'ipd.protocol',
+#     'ipd.sym',
+#     'ipd.tests',
+#     'ipd.tools',
+#     'ipd.viz',
+#     'ipd.viz.viz_pdb',
+#     'ipd.voxel',
+#     'pymol',
+#     'pymol.cgo',
+#     'pymol.cmd',
+#     'sqlmodel',
+#     'fastapi',
+#     'torch',
+#     'ipd.sym.high_t',
+#     'omegaconf',
+#     'ipd.dev.cli',
+#     'hydra',
+#     'ipd.sym.sym_tensor',
+#     'ipd.homog',
+#     'ipd.sym.xtal',
+#     'RestricetedPython',
+#     'ipd.homog.thgeom',
+#     'ipd.homog.quat',
+#     'ipd.sym.helix',
+#     'ipd.dev.testing',
+#     'ipd.tests.sym',
+# ]

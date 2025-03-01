@@ -890,13 +890,14 @@ def remove_diagonal_elements(a):
 def toint(x):
     return x.round().to(int)
 
-def uniqlastdim(x, tol=1e-4):
+def uniqlastdim(x, tol=None):
+    tol = ipd.Tolerances(tol)
     x = th.as_tensor(x)
     origshape, x = x.shape, x.reshape(-1, x.shape[-1])
     uniq = []
     while len(x):
         uniq.append(x[0])
-        different = th.cdist(x[0][None], x) > tol
+        different = th.cdist(x[0][None], x) > tol.uniq_lastdim
         x = x[different[0]]
     return th.stack(uniq)
 

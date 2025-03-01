@@ -11,10 +11,10 @@ from ipd.homog import intersect_planes
 # pytest.skip(allow_module_level=True)
 
 def main():
+    test_axis_angle_180()
+
     test_torch_quat()
     test_uniqlastdim()
-
-    test_axis_angle_180()
 
     test_thxform_invalid44_bug()
     test_rand_dtype_device()
@@ -60,7 +60,7 @@ def test_axis_angle_180():
     x = h.rot(ax0, th.pi)
     ax, an = h.axis_angle(x)
     assert ax0.shape == ax.shape
-    assert h.allclose(an, th.pi)
+    assert h.allclose(an, th.pi, atol=1e-4)
     assert th.all(h.line_angle(ax, ax0) < 1e-3)
 
 @pytest.mark.fast

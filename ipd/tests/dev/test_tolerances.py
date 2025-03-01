@@ -1,10 +1,11 @@
+import pytest
 import numpy as np
 import ipd
 
 def main():
     ipd.tests.maintest(namespace=globals())
 
-def test_Tolerances():
+def test_tolerances_comparison_operators():
     tol = ipd.dev.Tolerances(1e-4, foo=4)
     tol.default < 1
     assert tol.default.n_checks == 1
@@ -27,9 +28,44 @@ def test_Tolerances():
     5 >= tol.foo
     assert tol.foo.n_checks == 3
     assert tol.foo.n_passes == 2
-    5 <= tol.foo
+    5.0 <= tol.foo
     assert tol.foo.n_checks == 4
     assert tol.foo.n_passes == 2
+
+def test_tolerances_numpy():
+    tol = ipd.dev.Tolerances(1e-4, foo=4)
+    assert np.all(tol.foo > np.eye(4))
+
+def test_tolerances_torch():
+    tol = ipd.dev.Tolerances(1e-4, foo=4)
+    if th := ipd.importornone('torch'):
+        assert th.all(tol.foo > th.eye(4))
+
+def test_tolerances_xarray():
+    tol = ipd.dev.Tolerances(1e-4, foo=4)
+    if xr := ipd.importornone('xarray'):
+        assert np.all(tol.foo > xr.DataArray([1, 3, 3]))
+
+def test_tolerances_numpy_right():
+    tol = ipd.dev.Tolerances(1e-4, foo=4)
+    assert np.all(np.eye(4) < tol.foo)
+
+def test_tolerances_torch_right():
+    tol = ipd.dev.Tolerances(1e-4, foo=4)
+    if th := ipd.importornone('torch'):
+        assert th.all(th.eye(4) < tol.foo)
+
+def test_tolerances_xarray_right():
+    tol = ipd.dev.Tolerances(1e-4, foo=4)
+    if xr := ipd.importornone('xarray'):
+        assert np.all(xr.DataArray([1, 3, 3]) < tol.foo)
+
+def test_tolerances_xarray_dataset_unsupported():
+    tol = ipd.dev.Tolerances(1e-4, foo=4)
+    if xr := ipd.importornone('xarray'):
+        ds = xr.Dataset(dict(foo=xr.DataArray([1, 3, 3])))
+        with pytest.raises(TypeError):
+            np.all(tol.foo > ds)
 
 if __name__ == '__main__':
     main()

@@ -1614,22 +1614,22 @@ def symmetrically_unique_lines(
         extra[i] = e.reshape(-1, extra[i].shape[-1])
         assert len(e) == len(ax)
     uniq = []
-    # ic(tol.isectol, tol.dottol, tol.extratol)
+    # ic(tol.isect, tol.dot_norm, tol.misc_lineuniq)
     for step in range(100):
         # ic(ax.shape, cn.shape, frames.shape)
         sax, scn = hxformvec(frames, ax[0]), hxformpts(frames, cn[0])
         pdist = h_point_line_dist(cn[:, None], scn[None], sax[None])
         adot = dot(sax[None], ax[:, None])
-        same = 1 - np.abs(adot) < tol.dottol
+        same = 1 - np.abs(adot) < tol.dot_norm
         # print('dot  ', same.any(axis=1).sum())
-        same &= (pdist < tol.isectol)
+        same &= (pdist < tol.isect)
         same = same.any(axis=1)
         # ic(same.shape, an.shape, (an[0]-an).shape)
-        if an is not None: same &= np.sqrt((an[0] - an)**2) < tol.angtol
-        if hl is not None: same &= np.sqrt((hl[0] - hl)**2) < tol.heltol
+        if an is not None: same &= np.sqrt((an[0] - an)**2) < tol.angle
+        if hl is not None: same &= np.sqrt((hl[0] - hl)**2) < tol.helical_shift
         # print('pdist', same.sum())
         for e in extra:
-            same &= np.sqrt(np.sum((e[0] - e)**2, axis=1)) < tol.extratol
+            same &= np.sqrt(np.sum((e[0] - e)**2, axis=1)) < tol.misc_lineuniq
             # print('extra', same.sum())
         # print('final', same.sum())
         assert np.any(same)

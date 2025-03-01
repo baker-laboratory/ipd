@@ -5,25 +5,38 @@ import pydantic
 
 import ipd
 
-def maintest(namespace, fixtures=None, setup=lambda: None, funcsetup=lambda: None, just=None):
+def maintest(
+    namespace,
+    fixtures=None,
+    setup=lambda: None,
+    funcsetup=lambda: None,
+    just=None,
+    exclude=None,
+    nofail=False,
+):
     print(f'maintest {namespace["__file__"]}:')
-    just = just or []
+    just, exclude = just or [], exclude or []
     fixtures, passed, failed = fixtures or {}, [], []
     with tempfile.TemporaryDirectory() as tmpdir:
         ipd.dev.call_with_args_from(fixtures, setup)
         fixtures['tmpdir'] = tmpdir
         for name, func in [(n, f) for n, f in namespace.items() if n[:5] == 'test_' and callable(f)]:
-            if just and name not in just: continue
-            print(f'{func.__name__:=^60}')
-            ipd.dev.call_with_args_from(fixtures, funcsetup)
             try:
-                ipd.dev.call_with_args_from(fixtures, func)
-                passed.append(name)
-            except pydantic.ValidationError as e:
-                print(e)
-                print(e.errors())
-                print(traceback.format_exc())
-                failed.append(name)
+                if just and name not in just: continue
+                if name in exclude: continue
+                print(f'{func.__name__:=^60}')
+                ipd.dev.call_with_args_from(fixtures, funcsetup)
+                try:
+                    ipd.dev.call_with_args_from(fixtures, func, timed=True)
+                    passed.append(name)
+                except pydantic.ValidationError as e:
+                    print(e)
+                    print(e.errors())
+                    print(traceback.format_exc())
+                    failed.append(name)
+            except AssertionError:
+                if nofail: continue
+                raise
     # for p in passed:
     #     print(f'    PASS {p}')
     # for f in failed:

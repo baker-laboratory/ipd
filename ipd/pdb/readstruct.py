@@ -10,6 +10,7 @@ bpdbx = lazyimport('biotite.structure.io.pdbx')
 
 @ipd.dev.iterize_on_first_param_path
 def readatoms(fname, **kw):
+    if not ipd.importornone('biotite'): raise ImportError('ipd.pdb.readatoms requires biotite')
     with ipd.dev.openfiles(fname, **kw) as file:
         fname = ipd.dev.decompressed_fname(fname)
         if fname.endswith('.pdb'): reader = readatoms_pdb

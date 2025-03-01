@@ -4,13 +4,16 @@ import operator
 from pathlib import Path
 from typing import TypeVar, Callable
 
+import ipd
+
 T = TypeVar('T')
 
 def addreduce(iterable):
     return functools.reduce(operator.add, iterable)
 
-def call_with_args_from(argpool, func: Callable[..., T]) -> T:
+def call_with_args_from(argpool, func: Callable[..., T], timed: bool = False) -> T:
     params = inspect.signature(func).parameters
+    if timed: func = ipd.dev.timed(func)
     for p in params:
         if p not in argpool:
             raise ValueError(

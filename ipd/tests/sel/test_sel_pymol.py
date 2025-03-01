@@ -1,17 +1,8 @@
-# try:
-# from biotite.structure import AtomArray
-# import biotite.structure.io as strucio
-# except ModuleNotFoundError:
-# pytest.skip(allow_module_level=True)
 import pytest
 
 pytest.importorskip('lark')
 
-import ipd
 from ipd.sel.sel_pymol import pymol_selection_parser
-
-small_protein = ipd.tests.fixtures.small_atoms()
-mixed_structure = ipd.tests.fixtures.mixed_atoms()
 
 def main():
     # ipd.tests.maintest(namesace=globals())
