@@ -86,9 +86,9 @@ def mean_along(vecs, along=None):
     tot = th.sum(flipped, axis=0)
     return normalized(tot)
 
-def com_flat(points, closeto=None, closefrac=0.5):
-    if closeto is not None:
-        dist = norm(points - closeto)
+def com_flat(points, target=None, closefrac=0.5):
+    if target is not None:
+        dist = norm(points - target)
         close = th.argsort(dist)[:closefrac * len(dist)]
         points = points[close]
     return th.mean(points, axis=-2)

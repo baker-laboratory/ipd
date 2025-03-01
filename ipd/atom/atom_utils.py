@@ -10,6 +10,13 @@ def is_atomarray(atoms):
     from biotite.structure import AtomArray
     return isinstance(atoms, AtomArray)
 
+def is_atomarraystack(atoms):
+    from biotite.structure import AtomArrayStack
+    return isinstance(atoms, AtomArrayStack)
+
+def is_atoms(atoms):
+    return is_atomarray(atoms) or is_atomarraystack(atoms)
+
 def split(atoms, order=None, bychain=None):
     if not order and bychain is None: bychain = True
     if ipd.atom.is_atomarray(atoms):

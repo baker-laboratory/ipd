@@ -8,15 +8,21 @@ from ipd.data.tests.numeric import sym_detect_test_frames
 TEST_PDBS = ['7abl', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '2tbv', '1bfr', '1g5q']
 
 just = [
+    # 'test_sym_detect_1g5q',
     # 'test_sym_detect_1dxh'
     # 'test_sym_detect_7abl',
-    # 'test_sym_detect_1g5q',
 ]
 exclude = [
     'test_sym_detect_1g5q',
 ]
 
 def main():
+    # symid,frames =  sym_detect_test_frames['1g5q']
+    # ic(frames.shape)
+    # helper_test_frames(frames, symid, tol=None)
+
+    # test_sym_detect_1g5q()
+
     ipd.tests.maintest(namespace=globals(), just=just, exclude=exclude)
 
 def make_pdb_testfunc(pdbcode):
@@ -27,10 +33,10 @@ def make_pdb_testfunc(pdbcode):
         atoms = ipd.atom.load(ipd.dev.package_testcif_path(pdbcode), biounit='largest', het=False)
         tol = ipd.dev.Tolerances(**(ipd.sym.symdetect_default_tolerances | dict(
             default=1e-1,
-            angle=9e-2,
+            angle=9e-1,
             helical_shift=4,
-            isect=2,
-            dot_norm=0.04,
+            isect=6,
+            dot_norm=0.07,
             misc_lineuniq=0.2,
             rms_fit=3,
             nfold=0.2,

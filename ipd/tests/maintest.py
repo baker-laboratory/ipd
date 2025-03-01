@@ -14,7 +14,7 @@ def maintest(
     exclude=None,
     nofail=False,
 ):
-    print(f'maintest {namespace["__file__"]}:')
+    print(f'maintest {namespace["__file__"]}:', flush=True)
     just, exclude = just or [], exclude or []
     fixtures, passed, failed = fixtures or {}, [], []
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -24,23 +24,23 @@ def maintest(
             try:
                 if just and name not in just: continue
                 if name in exclude: continue
-                print(f'{func.__name__:=^60}')
+                print(f'{func.__name__:=^60}', flush=True)
                 ipd.dev.call_with_args_from(fixtures, funcsetup)
                 try:
                     ipd.dev.call_with_args_from(fixtures, func, timed=True)
                     passed.append(name)
                 except pydantic.ValidationError as e:
-                    print(e)
-                    print(e.errors())
-                    print(traceback.format_exc())
+                    print(e, flush=True)
+                    print(e.errors(), flush=True)
+                    print(traceback.format_exc(), flush=True)
                     failed.append(name)
             except AssertionError:
                 if nofail: continue
                 raise
     # for p in passed:
-    #     print(f'    PASS {p}')
+    #     print(f'    PASS {p}', flush=True)
     # for f in failed:
-    #     print(f'    FAIL {f}')
+    #     print(f'    FAIL {f}', flush=True)
     ipd.dev.global_timer.report()
     return passed, failed
 

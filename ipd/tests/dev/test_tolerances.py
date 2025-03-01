@@ -67,5 +67,17 @@ def test_tolerances_xarray_dataset_unsupported():
         with pytest.raises(TypeError):
             np.all(tol.foo > ds)
 
+def test_tolerances_copy():
+    tol = ipd.Tolerances(1)
+    tol.foo == 1
+    tol2 = tol.copy()
+    tol2.foo == 2
+    tol2.foo == 1
+    tol.foo == 0
+    assert tol.foo.n_checks == 2
+    assert tol.foo.n_passes == 1
+    assert tol2.foo.n_checks == 3
+    assert tol2.foo.n_passes == 2
+
 if __name__ == '__main__':
     main()

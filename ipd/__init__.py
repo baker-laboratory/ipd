@@ -3,7 +3,7 @@ import os
 from typing import TYPE_CHECKING, Any
 
 from ipd import dev as dev
-from ipd.dev.error import panicprint as panicprint
+from ipd.dev.error import panic as panic
 from ipd.bunch import Bunch as Bunch, bunchify as bunchify
 from ipd.lazy_import import importornone as importornone, lazyimport as lazyimport
 from ipd.observer import hub as hub
@@ -60,6 +60,7 @@ with contextlib.suppress(ImportError):
 
     ic.configureOutput(includeContext=True)
     setattr(builtins, 'ic', ic)
+    setattr(builtins, 'panic', panic)
 
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme

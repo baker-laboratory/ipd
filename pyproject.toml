@@ -35,7 +35,7 @@ dependencies = [
     'pytest-cov',
     'pytest-benchmark',
     'pytest-dotenv',
-    'python-box',
+    'rich',
     'requests',
     'RestrictedPython',
     'ruff',

@@ -1109,7 +1109,8 @@ def line_line_distance_pa(pt1, ax1, pt2, ax2):
     i = abs(d) > 0.00001
     r[i] = n[i] / d[i]
     pp = hnorm(hprojperp(ax1, pt2 - pt1))
-    return np.where(np.abs(hdot(ax1, ax2)) > 0.9999, pp, r)
+    dist = np.where(np.abs(hdot(ax1, ax2)) > 0.9999, pp, r)
+    return dist
 
 def line_line_distance(ray1, ray2):
     pt1, pt2 = ray1[..., :, 0], ray2[..., :, 0]
@@ -1576,7 +1577,7 @@ def lines_concurrent_isect(cen, axis, tol=1e-4):
     pt = (pt1+pt2) / 2
     if not np.sqrt(np.sum((pt1 - pt2)**2)) < tol: return False, None, None
     if len(cen) == 2: return True, pt, hnorm(pt1 - pt2)
-    dist = point_line_dist_pa(pt, cen[2:], axis[2:])
+    dist = point_line_dist_pa(pt, cen, axis)
     return all(dist < tol), pt, dist
 
 def lines_all_concurrent(cen, axis, tol=1e-4):
@@ -1592,8 +1593,10 @@ def symmetrically_unique_lines(
     hel=None,
     *extra,
     frames=np.eye(4)[None],
-    closeto=...,
+    target=None,
     tol=1e-3,
+    lineuniq_method='closest',
+    lever=100,
     **kw,
 ):
     """
@@ -1602,7 +1605,7 @@ def symmetrically_unique_lines(
     """
     assert axis.shape == cen.shape
     tol = ipd.dev.Tolerances(tol)
-    if closeto is ...: closeto = normalized([10, .1, 999, 1])
+    if target is None: target = normalized([10, .1, 999, 0])
     frames = frames.reshape(-1, 4, 4)
     ax = axis.reshape(-1, axis.shape[-1])
     cn = cen.reshape(-1, cen.shape[-1])
@@ -1633,9 +1636,16 @@ def symmetrically_unique_lines(
             # print('extra', same.sum())
         # print('final', same.sum())
         assert np.any(same)
-        which = np.argmin(h_point_line_dist(closeto, cn[same], ax[same]))
-        if hdot(ax[same][which], closeto) < 0: ax[same] *= -1
-        uniq.append((ax[same][which], cn[same][which], an[same][which], hl[same][which], *(e[same][which] for e in extra)))
+        if lineuniq_method == 'closest':
+            which = np.argmin(h_point_line_dist(target, cn[same], ax[same]))
+            sel = lambda x: x[same][which]
+            if hdot(sel(ax), target) < 0: ax[same] *= -1
+            pick = sel(ax), sel(cn), sel(an), sel(hl), *(sel(e) for e in extra)
+        else:
+            cax, ccn = sym_closest_lines_if_already_close(ax[same], cn[same], frames, target=target)
+            sel = lambda x: x[same].mean()
+            pick = cax.mean(0), ccn.mean(0), sel(an), sel(hl), *(sel(e) for e in extra)
+        uniq.append(pick)
         if np.all(same): break
         # ic(ax.shape, an.shape, same.shape, ang.shape)
         ax, cn, an, hl, extra = ax[~same], cn[~same], an[~same], hl[~same], [e[~same] for e in extra]
@@ -1644,6 +1654,40 @@ def symmetrically_unique_lines(
         raise ValueError('too many steps of symmetrically_unique_lines')
     result = tuple(np.stack([tup[i] for tup in uniq]) for i in range(len(uniq[0])))
     return result
+
+def _target_axis_cen(target):
+    if len(target) == 2 and target[1] is None: target = target[0]
+    if len(target) == 2:
+        if np.allclose(target[0, 3], 1) and np.allclose(target[0, 3], 0): target = target[[1, 0]]
+        return hvec(target[0]), hpoint(target[1])
+    if len(target) == 1: return hvec(target[0]), None
+    if len(target) in (3, 4): return hvec(target), None
+    raise ValueError('bad target, must be vec or (vec, point)')
+
+def line_line_diff_pa(p1, n1, p2, n2, lever, directed=False):
+    assert np.allclose(p1[..., 3], 1)
+    assert np.allclose(n1[..., 3], 0)
+    assert np.allclose(p2[..., 3], 1)
+    assert np.allclose(n2[..., 3], 0)
+    dist = line_line_distance_pa(p1, n1, p2, n2)
+    dist += (angle if directed else line_angle)(n1, n2) * lever
+    return dist
+
+def sym_closest_lines_if_already_close(axis, cen, frames, target, lever=100):
+    if len(axis) > 1:
+        symaxis = xformvec(frames, axis[1:])
+        symcen = xformpts(frames, cen[1:])
+        symdist = line_line_diff_pa(cen[0], axis[0], symcen, symaxis, lever)
+        closest = np.argmin(symdist, axis=0)
+        axis[1:] = symaxis[closest, range(len(closest))]
+        cen[1:] = symcen[closest, range(len(closest))]
+    target = _target_axis_cen(target)
+    axis[hdot(axis, axis[0]) < -0.1] *= -1
+    tgtaxis, tgtcen = _target_axis_cen(target)
+    if tgtcen is None: dist = angle(xform(frames, axis[0]), tgtaxis)
+    else: dist = line_line_diff_pa(xform(frames, cen[0]), xform(frames, axis[0]), tgtcen, tgtaxis, lever, directed=True)
+    axis, cen = xform(frames[np.argmin(dist)], [axis, cen])
+    return axis, cen
 
 def uniqlastdim(x, tol=1e-4):
     x = np.asarray(x)

@@ -40,15 +40,15 @@ class HaltAndCatchFire(Exception):
 
 _panic_print_n_calls = 0
 
-def panicprint(*a, allowcalls=1, **kw):
+def panic(*a, allowcalls=1, **kw):
     global _panic_print_n_calls
     if allowcalls <= (_panic_print_n_calls := _panic_print_n_calls + 1):
         with ipd.dev.capture_stdio() as msg:
             print()
-            print(f'{"panicprint":!^60}')
+            print(f'{" PANIC! ":!^60}')
             print(*a, **kw)
             print('!' * 60)
-            raise HaltAndCatchFire(msg.read())
+        raise HaltAndCatchFire(msg.read())
     else:
-        print(f'{f" panicprint {_panic_print_n_calls} ":!^60}')
+        print(f'{f" PANIC! {_panic_print_n_calls} ":!^60}')
         print(*a, **kw)

@@ -1,5 +1,7 @@
-import sys
+import attrs
 from collections import ChainMap
+import copy
+import sys
 
 import numpy as np
 
@@ -21,15 +23,19 @@ class Tolerances:
             self._default_tol = default or 1e-4
 
     def __getattr__(self, name):
-        if name not in self.checkers:
-            threshold = float(self.kw.get(name, self._default_tol))
-            self.checkers[name] = _Checker(threshold)
-        return self.checkers[name]
+        if name in self.__dict__: return self.__dict__[name]
+        if not name.startswith('_') and 'checkers' in self.__dict__:
+            if name not in self.__dict__['checkers']:
+                threshold = float(self.kw.get(name, self._default_tol))
+                self.checkers[name] = Checker(threshold)
+            return self.checkers[name]
+        raise AttributeError(f'Tolerances object has no attribute {name}')
 
     def reset(self):
         for c in self.checkers.values():
             c.n_checks = 0
             c.n_passes = 0
+        return self
 
     def check_history(self):
         history = ipd.Bunch()
@@ -38,12 +44,19 @@ class Tolerances:
             history[k] = ipd.Bunch(frac=frac, tol=c.threshold, total=c.n_checks, passes=c.n_passes)
         return history
 
-class _Checker:
+    def copy(self):
+        return copy.deepcopy(self)
 
-    def __init__(self, threshold):
-        self.threshold = threshold
-        self.n_passes = 0
-        self.n_checks = 0
+    def __str__(self):
+        with ipd.dev.capture_stdio() as out:
+            ipd.dev.print_table(self.check_history(), key='Tolerances object')
+        return out.read()
+
+@attrs.define
+class Checker:
+    threshold: float
+    n_checks: int = 0
+    n_passes: int = 0
 
     def _record(self, result):
         if isinstance(result, bool):
