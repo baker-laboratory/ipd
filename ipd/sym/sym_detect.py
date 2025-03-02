@@ -1,67 +1,21 @@
 from collections.abc import Iterable
-from dataclasses import dataclass, field
 import sys
-
+from typing import Union
+import attrs
 import numpy as np
 import xarray as xr
 import ipd
 import ipd.homog.hgeom as h
 
-@dataclass
-class SymInfo:
-    symid: str
-    frames: np.ndarray
-    symcen: np.ndarray
-    symelem: xr.Dataset
-    helical: bool = None
-    guess_symid: str = None
-    axes_concurrent: bool = None
-    axes_dists: np.ndarray = None
-    provenance: ipd.Bunch = field(default_factory=ipd.Bunch)
-
-    # debug: which tolerances caused rejection of sym
-    tolerances: ipd.Tolerances = None
-    tol_checks: dict = None
-
-    # if constructed from coords
-    rms: np.ndarray = field(default_factory=lambda: np.array([0.0]))
-    stub0: np.ndarray = None
-
-    # if multichain asu
-    t_number: int = 1
-    asurms: np.ndarray = None
-    seqmatch: np.ndarray = None
-    asumatch: np.ndarray = None
-    asuframes: np.ndarray = field(default_factory=lambda: np.eye(4)[None])
-    allframes: np.ndarray = None
-
-    # coords and multichain
-    asustub: np.ndarray = None
-    allstub: np.ndarray = None
-
-    def __post_init__(self):
-        if not self.guess_symid: self.guess_symid = self.symid
-        if self.tolerances:
-            self.tolerances = self.tolerances.copy()
-            self.tol_checks = self.tolerances.check_history()
-        self.allframes = self.frames
-
-    @property
-    def order(self):
-        return len(self.frames)
-
-    @property
-    def pseudo_order(self):
-        return len(self.frames) * len(self.asuframes)
-
-    @property
-    def multichain(self):
-        return len(self.asuframes) > 1
-
-    def __repr__(self):
-        return syminfo_to_str(self)
-
-def detect(thing, tol=None, order=None, **kw):
+def detect(
+    thing: Union['np.ndarray', 'torch.Tensor', 'AtomArray', 'Iterable[AtomArray]'],
+    tol: Union[ipd.Tolerances, float, None] = None,
+    order: int = None,
+    **kw,
+):
+    """
+    detect symmetry from frames (N,4,4), Atomarray or Iterable[AtomArray]
+    """
     tol = ipd.Tolerances(tol, **(symdetect_default_tolerances) | kw)
     if ipd.homog.is_tensor(thing) and ipd.homog.is_xform_stack(thing):
         return syminfo_from_frames(thing, tol=tol, **kw)
@@ -75,9 +29,84 @@ def detect(thing, tol=None, order=None, **kw):
             return syminfo_from_atomslist(atoms, tol=tol, **kw)
     raise ValueError(f'cant detect symmetry on object {type(atoms)} order {order}')
 
+@attrs.define
+class SymInfo:
+    """
+    Groups togethes various infomation about a symmetry, returned from ipd.sym.detect
+    """
+    symid: str
+    frames: np.ndarray
+    symcen: np.ndarray
+    symelem: xr.Dataset
+
+    guess_symid: str = None
+    order: int = None
+    t_number: int = 1
+    pseudo_order: int = None
+    is_helical: bool = None
+    is_multichain: bool = None
+    is_point: bool = None
+    is_1d: bool = None
+    is_2d: bool = None
+    is_3d: bool = None
+    is_cyclic: bool = None
+    is_dihedral: bool = None
+    provenance: ipd.Bunch = attrs.field(factory=ipd.Bunch)
+
+    unique_nfold: list = None
+    nfaxis: dict[int, np.ndarray] = None
+    origin: np.ndarray = None
+    toorigin: np.ndarray = None
+
+    # debug: which tolerances caused rejection of sym
+    axes_dists: np.ndarray = None
+    tolerances: ipd.Tolerances = None
+    tol_checks: dict = None
+
+    # if constructed from coords
+    rms: np.ndarray = attrs.field(factory=lambda: np.array([0.0]))
+    stub0: np.ndarray = None
+
+    # if is_multichain asu
+    asurms: np.ndarray = None
+    seqmatch: np.ndarray = None
+    asumatch: np.ndarray = None
+    asuframes: np.ndarray = attrs.field(factory=lambda: np.eye(4)[None])
+    allframes: np.ndarray = None
+
+    # coords and is_multichain
+    asustub: np.ndarray = None
+    allstub: np.ndarray = None
+
+    def __attrs_post_init__(self):
+        if not self.guess_symid: self.guess_symid = self.symid
+        if self.tolerances:
+            self.tolerances = self.tolerances.copy()
+            self.tol_checks = self.tolerances.check_history()
+        self.allframes = self.frames
+        self.order = len(self.frames)
+        self.pseudo_order = len(self.frames) * len(self.asuframes)
+        self.is_multichain = len(self.asuframes) > 1
+        self.unique_nfold = nf = list(sorted(np.unique(self.nfold)))
+        self.is_cyclic = len(nf) < 2 and not self.is_helical and not self.symid == 'D2'
+        self.is_dihedral = len(nf) == 2 and 2 in nf and self.order // nf[1] == 2 or self.symid == 'D2'
+        self.nfaxis = {int(nf): self.axis[self.nfold == nf] for nf in self.unique_nfold}
+        self.symcen = self.symcen.reshape(4)
+        self.origin, self.toorigin = syminfo_get_origin(self)
+
+    def __getattr__(self, name):
+        try:
+            return self.symelem[name].data
+        except KeyError:
+            pass
+        raise AttributeError(f'SymInfo has no attribute {name}')
+
+    def __repr__(self):
+        return syminfo_to_str(self)
+
 symdetect_default_tolerances = dict(
     default=1e-1,
-    angtol=1e-2,
+    angle=1e-2,
     helical_shift=1,
     isect=1,
     dot_norm=0.04,
@@ -102,7 +131,7 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=N
     return syminfo
 
 def _add_multichain_info(si: SymInfo, atomslist, frames, tol):
-    if len(np.unique(atomslist[0].chain_id)) > 1:
+    if si.is_multichain:
         asu = ipd.atom.split(atomslist[0])
         si.asuframes, si.asurms, si.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
         si.t_number = np.sum(si.asumatch > tol.seqmatch)
@@ -121,7 +150,7 @@ def _add_multichain_info(si: SymInfo, atomslist, frames, tol):
     assert h.allclose(h.xform(si.allframes, si.stub0), si.allstub)
 
 def _check_frames_with_asu_for_supersym(syminfo):
-    if not syminfo.multichain or syminfo.axes_concurrent and syminfo.order > 30: return
+    if not syminfo.is_multichain or syminfo.is_point and syminfo.order > 30: return
     tol = syminfo.tolerances.copy().reset()
     jointframes = syminfo.allframes.reshape(-1, 4, 4)
     si = syminfo_from_frames(jointframes, tol=tol, lineuniq_method='mean')
@@ -138,27 +167,28 @@ def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
     if len(frames) == 1: return SymInfo('C1', frames, None, None)
     selms = symelems_from_frames(frames, tol=tol, **kw)
     nfolds = set(selms.nfold.data)
-    axes_concurrent, symcen, axes_dists = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isect)
-    helical = not all(selms.hel < tol.helical_shift)
-    sym_info_args = dict(axes_concurrent=axes_concurrent, symcen=symcen, helical=helical, symelem=selms)
+    is_point, symcen, axes_dists = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isect)
+    is_helical = not all(selms.hel < tol.helical_shift)
+    sym_info_args = dict(is_point=is_point, symcen=symcen, is_helical=is_helical, symelem=selms)
     sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tolerances=tol)
-    if len(nfolds) == 1 and not helical and axes_concurrent:
+    if is_point: sym_info_args |= dict(is_1d=False, is_2d=False, is_3d=False)
+    if len(nfolds) == 1 and not is_helical and is_point:
         if all(selms.nfold == 0):
             return SymInfo('HELIX', **sym_info_args)
-        elif len(selms.nfold) == 3 and h.allclose(selms.ang, np.pi) and h.allclose(selms.hel, 0) and axes_concurrent:
+        elif len(selms.nfold) == 3 and h.allclose(selms.ang, np.pi) and h.allclose(selms.hel, 0) and is_point:
             return SymInfo('D2', **sym_info_args)
         else:
             return SymInfo(f'C{int(selms.nfold[0])}', **sym_info_args)
     elif len(selms) == 1:
         raise NotImplementedError('')
-    elif axes_concurrent and not helical:
+    elif is_point and not is_helical:
         if 2 in nfolds and 3 in nfolds:
             ax2, ax3 = (selms.axis[selms.nfold == i] for i in (2, 3))
             testang = h.line_angle(ax2, ax3).min()
-            if abs(testang - npth.pi / 2) < tol.cageang: return SymInfo('D3', **sym_info_args)
-            if abs(testang - 0.955316621) < tol.cageang: return SymInfo('T', **sym_info_args)
-            if abs(testang - 0.615479714) < tol.cageang: return SymInfo('O', **sym_info_args)
-            if abs(testang - 0.364863837) < tol.cageang: return SymInfo('I', **sym_info_args)
+            if abs(testang - ipd.sym.magic_angle_DTOI.D) < tol.cageang: return SymInfo('D3', **sym_info_args)
+            if abs(testang - ipd.sym.magic_angle_DTOI.T) < tol.cageang: return SymInfo('T', **sym_info_args)
+            if abs(testang - ipd.sym.magic_angle_DTOI.O) < tol.cageang: return SymInfo('O', **sym_info_args)
+            if abs(testang - ipd.sym.magic_angle_DTOI.I) < tol.cageang: return SymInfo('I', **sym_info_args)
             ic(testang)
             ic(selms)
             assert 0, f'unknown sym with nfold {nfolds} testang {testang}'
@@ -233,27 +263,68 @@ def depricated_symaxis_closest_to(frames, axis, cen=None, target=None):
     bestcen = symcen[which, npth.arange(len(which))].reshape(origshape)
     return h.xform(frame0, bestaxis), h.xform(frame0, bestcen)
 
-def syminfo_to_str(self, verbose=True):
+def syminfo_get_origin(si):
+    """get the symmetry origin as a frame that aligns symaxes to canonical ant translates to symcen"""
+    nf = si.unique_nfold
+    if not si.is_point:
+        return syminfo_get_origin_nonpoint(sel)
+    elif si.is_cyclic:
+        origin = h.align([0, 0, 1], si.axis[0]) @ h.trans(si.symcen)
+    elif si.is_dihedral:
+        ax2, axx = si.nfaxis[2][0], si.nfaxis[nf[1 % len(nf)]][0]
+        if si.symid == 'D2': axx = si.nfaxis[2][-1]
+        origin = h.align2([0, 0, 1], [1, 0, 0], ax2, axx) @ h.trans(si.symcen)
+    else:
+        # se = si.symelem.sel(index=si.nfold < 4)  # for DTIO, only need 2fold and 3fold
+        # angbetweenaxes = h.line_angle(se.axis.data[None], se.axis.data[:, None])
+        # magic = list(ipd.sym.magic_angle_DTOI.values())
+        # ismagicangle = h.tensor_in(angbetweenaxes, magic, atol=si.tolerances.angle)
+        # uniq = np.unique(ismagicangle)
+        # uniq = uniq[uniq != -1]
+        # magicang = uniq[0]
+        # ic(magicang)
+        # fitaxis = list(set([tuple(np.sort(x)) for x in np.where(ismagicangle >= 0)]))
+        # ic(fitaxis)
+        # bestpair = fitaxis[np.argmin(np.abs(magicang - angbetweenaxes[tuple(zip(*fitaxis))]))]
+        assert 2 in nf and 3 in nf
+        origax2, origax3 = ipd.sym.axes(si.symid)[2], ipd.sym.axes(si.symid)[3]
+        ax2, ax3 = si.nfaxis[2][0], si.nfaxis[3][0]
+        ic(si.axis)
+        origin = h.align2(origax2, origax3, ax2, ax3) @ h.trans(si.symcen)
+        assert h.valid44(origin)
+    return origin, h.inv(origin)
+
+def syminfo_to_str(si, verbose=True):
+    """returns text tables with the data in this SymInfo"""
     npopt = np.get_printoptions()
     np.set_printoptions(precision=6, suppress=True)
+    textmap = {'nfold': 'nf', '[': '', ']': '', '__REGEX__': False}
+    targ = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
     with ipd.dev.capture_stdio() as out:
-        textmap = {'nfold': 'nf', '[': '', ']': '', '__REGEX__': False}
-        tabes = []
-        head = dict(symid=self.symid, guess=self.guess_symid, symcen=list(self.symcen.round(3))[:3])
-        headtable = ipd.dev.make_table(dict(foo=head), key=False, textmap=textmap)
-        setable = ipd.dev.make_table_dataset(self.symelem, textmap=textmap)
-        asutable = ipd.dev.make_table(
-            [[self.t_number, self.asurms, self.asumatch, self.asuframes.shape, self.allframes.shape]],
-            header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'])
-        geomtable = ipd.dev.make_table([[self.helical, self.axes_concurrent, self.axes_dists]],
-                                       header=['helical', 'axes concurrent', 'axes dists'],
-                                       textmap=textmap)
-        checktable = ipd.dev.make_table(self.tol_checks, key='Geom Tests')
+        symcen = '\n'.join(f'{x:7.3f}' for x in si.symcen.reshape(4)[:3])
+        head = dict(symid=si.symid, guess=si.guess_symid, symcen=symcen, origin=si.origin)
+        headtable = ipd.dev.make_table(dict(foo=head), key=False, strip=False, **targ)
+        setable = ipd.dev.make_table_dataset(si.symelem, **targ)
+        asutable = ipd.dev.make_table([[si.t_number, si.asurms, si.asumatch, si.asuframes.shape, si.allframes.shape]],
+                                      header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'])
+        geomtable = ipd.dev.make_table([[si.is_helical, si.is_point, si.axes_dists]],
+                                       header=['is_helical', 'axes concurrent', 'axes dists'],
+                                       **targ)
+        checktable = ipd.dev.make_table(si.tol_checks, key='Geom Tests')
         tables = [[headtable], [geomtable], [asutable], [setable], [checktable]]
-        if self.stub0 is not None:
+        if si.stub0 is not None:
+            rmstable = ipd.dev.make_table([[si.seqmatch.min(), si.rms.max()]], header=['worst seq match', 'worst rms'])
             tables.append([rmstable])
-            rmstable = ipd.dev.make_table([[self.seqmatch.min(), self.rms.max()]], header=['worst seq match', 'worst rms'])
         ipd.dev.print_table(tables, header=['SymInfo'])
-
     np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
     return out.read()
+
+# def enclosing_function():
+#     def kwcheck(kw, func=None, checktypos=True):
+#         if func is None:
+#             WHAT DO I DO HERE?????
+#         sig = inspect.signature(func)
+#         params = list(sig.parameters.keys())
+#         return = {k: v for k, v in kw.items() if k in params}
+
+#     I_want_this_function(arg1, arg2, arg3=7, **kwcheck(kwargs))

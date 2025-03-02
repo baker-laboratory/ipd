@@ -10,7 +10,8 @@ from ipd.homog import *
 ic.configureOutput(includeContext=True, contextAbsPath=True)
 
 def main():
-
+    ipd.tests.maintest(namespace=globals())
+    return
     test_closest_point_on_line()
 
     test_uniqlastdim()

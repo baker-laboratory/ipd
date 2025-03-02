@@ -44,3 +44,20 @@ def toname(val):
 def toidentifier(val):
     if isinstance(val, str) and val.isidentifier(): return val
     return None
+
+from difflib import get_close_matches
+
+def find_close_strings(word, string_list, n=3, cutoff=0.6):
+    """
+  Finds close matches to a given word from a list of strings.
+
+  Args:
+    word: The word to find close matches for.
+    string_list: A list of strings to search within.
+    n: The maximum number of close matches to return.
+    cutoff: The minimum similarity score (0-1) for a string to be considered a match.
+
+  Returns:
+    A list of close matches, or an empty list if no matches are found.
+  """
+    return get_close_matches(word, string_list, n=n, cutoff=cutoff)

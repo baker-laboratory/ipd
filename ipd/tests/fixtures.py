@@ -2,6 +2,8 @@ import contextlib
 import numpy as np
 import ipd
 
+np.set_printoptions(suppress=True)
+
 def pdbcontents():
     return ipd.dev.load_package_data("tests/pdb/1pgx.pdb1.gz")
 

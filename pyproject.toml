@@ -1,15 +1,21 @@
 [build-system]
-requires = ['hatchling']
-build-backend = 'hatchling.build'
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+# [build-system]
+# requires = ["setuptools >= 61.0"]
+# build-backend = "setuptools.build_meta"
+# [build-system]
+# requires = ["pdm-backend"]
+# build-backend = "pdm.backend"
 
 [project]
 name = 'ipd'
 version = '0.1'
+requires-python = '>=3.9,<3.99' # for woodys old pipeline stuff
 dependencies = [
     'assertpy',
     'colorlog',
     'compact-json',
-    'debugpy',
     # 'eliot-tree',
     'gitpython',
     'hydra-core',
@@ -17,42 +23,56 @@ dependencies = [
     'icecream',
     'jinja2',
     'lark',
-    'more_itertools',
+    # 'more_itertools',
     'numba',
     'numpy',
+    'xarray',
     'opt_einsum',
     # 'pre-commit',
     'pandas',
-    'plotly',
-    'pendulum',
     'pydantic',
-    'numpydantic',
+    'rich',
+    'requests',
+    'RestrictedPython',
+    'ruff',
+    'seaborn',
+    'tqdm',
+    'typer',
+    'validate-pyproject[all]',
+    'yapf',
+    "torch>=2.6.0",
+]
+[project.optional-dependencies]
+ci = [
+    'submitit',
+]
+crud = [
+    'fastapi[standard]',
+    'psycopg2',
+    'sqlmodel',
+    'uvicorn[standard]',
     'pdot',
-    'pyright[nodejs]',
+]
+ml = [
+    'torch',
+]
+dev = [
+    'debugpy',
     'pytest',
     'pytest-sugar',
     'pytest-xdist',
     'pytest-cov',
     'pytest-benchmark',
     'pytest-dotenv',
-    'rich',
-    'requests',
-    'RestrictedPython',
-    'ruff',
-    'seaborn',
-    'submitit',
-    'tqdm',
-    'typer',
-    'validate-pyproject[all]',
-    'xarray',
-    'yapf',
+    'pyright[nodejs]',
 ]
-[project.optional-dependencies]
-crud = [
-    'fastapi[standard]',
-    'psycopg2',
-    'sqlmodel',
-    'uvicorn[standard]',
+test = [
+    'pytest',
+    'pytest-sugar',
+    'pytest-xdist',
+    'pytest-cov',
+    'pytest-benchmark',
+    'pytest-dotenv',
 ]
 
 [project.scripts]

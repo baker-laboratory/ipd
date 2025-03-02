@@ -566,7 +566,7 @@ def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
     return r
 
 def hpoint(point):
-    point = np.asanyarray(point)
+    point = as_tensor(point)
     if point.shape[-1] == 4:
         if np.allclose(point[..., 3], 1):
             # if True:
@@ -583,13 +583,13 @@ def hpoint(point):
         raise ValueError("point must len 3 or 4")
 
 def hpointorvec(point):
-    point = np.asanyarray(point)
+    point = as_tensor(point)
     if point.shape[-1] == 4:
         return point.copy()
     return hpoint(point)
 
 def hvec(vec):
-    vec = np.asanyarray(vec)
+    vec = as_tensor(vec)
     if vec.shape[-1] == 4:
         vec = vec.copy()
         vec[..., 3] = 0
@@ -694,14 +694,14 @@ def hnorm(a):
     return np.sqrt(np.sum(a[..., :3]**2, axis=-1))
 
 def hnorm2(a):
-    a = np.asanyarray(a)
+    a = hvec(a)
     return np.sum(a[..., :3] * a[..., :3], axis=-1)
 
 def normalized_3x3(a):
     return a / np.linalg.norm(a, axis=-1)[..., np.newaxis]
 
 def hnormalized(a, dtype=None):
-    a = np.asanyarray(a)
+    a = hvec(a)
     dtype = dtype or a.dtype
     if (not a.shape and len(a) == 3) or (a.shape and a.shape[-1] == 3):
         a, tmp = np.zeros(a.shape[:-1] + (4, ), dtype=dtype), a
@@ -1629,6 +1629,9 @@ def symmetrically_unique_lines(
         same = same.any(axis=1)
         # ic(same.shape, an.shape, (an[0]-an).shape)
         if an is not None: same &= np.sqrt((an[0] - an)**2) < tol.angle
+
+        # spot the comment
+
         if hl is not None: same &= np.sqrt((hl[0] - hl)**2) < tol.helical_shift
         # print('pdist', same.sum())
         for e in extra:
@@ -1720,6 +1723,14 @@ def toint(x):
 def randtrans(*a, rot_sd=None, **kw):
     return hrandsmall(*a, rot_sd=0, **kw)
 
+def tensor_in(x, targets, atol=1e-3):
+    atol = float(atol)
+    targets = list(targets)
+    result = -np.ones_like(x, dtype=int)
+    for i, t in enumerate(targets):
+        result = np.where(np.isclose(x, t, atol=atol), i, result)
+    return result
+
 # compatibility with thgeom (torch version of these)
 inv = hinv
 axis_angle = axis_angle_of
@@ -1735,3 +1746,9 @@ xformpts = hxformpts
 rmsfit = hrmsfit
 dist = hdist
 norm = hnorm
+align2 = halign2
+align = halign
+trans = htrans
+valid = hvalid
+valid_norm = hvalid_norm
+valid44 = hvalid44

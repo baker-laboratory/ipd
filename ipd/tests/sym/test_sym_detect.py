@@ -6,24 +6,20 @@ from ipd.homog import hgeom as h
 from ipd.data.tests.numeric import sym_detect_test_frames
 
 TEST_PDBS = ['7abl', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '2tbv', '1bfr', '1g5q']
+ALLSYMS = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i in range(2, 13)]
 
-just = [
-    # 'test_sym_detect_1g5q',
-    # 'test_sym_detect_1dxh'
-    # 'test_sym_detect_7abl',
-]
-exclude = [
-    'test_sym_detect_1g5q',
-]
+config_test = ipd.Bunch(
+    re_only=[
+        # 'test_sym_detect_frames_ideal_[^_]+$',
+        'test_sym_detect_frames_ideal_xformed_[^_]+$',
+    ],
+    only=[],
+    # re_exclude=['test_sym_detect_1g5q'],
+    exclude=[],
+)
 
 def main():
-    # symid,frames =  sym_detect_test_frames['1g5q']
-    # ic(frames.shape)
-    # helper_test_frames(frames, symid, tol=None)
-
-    # test_sym_detect_1g5q()
-
-    ipd.tests.maintest(namespace=globals(), just=just, exclude=exclude)
+    ipd.tests.maintest(namespace=globals(), config=config_test)
 
 def make_pdb_testfunc(pdbcode):
 
@@ -58,17 +54,65 @@ def make_pdb_testfunc(pdbcode):
         err = f'T number mismatch {syminfo.t_number=}, {infer_t=} {syminfo.pseudo_order=} {syminfo.order=}'
         assert syminfo.t_number == infer_t, err
 
-    pdb_test_func.__name__ = pdb_test_func.__qualname__ = f'test_sym_detect_{pdbcode}'
-    pdb_test_func = ipd.dev.timed(pdb_test_func)
+    pdb_test_func.__name__ = pdb_test_func.__qualname__ = f'test_sym_detect_pdb_{pdbcode}'
+    # pdb_test_func = ipd.dev.timed(pdb_test_func)
     return pdb_test_func
 
 ipd.pdb.download_test_pdbs(TEST_PDBS)
 for code in TEST_PDBS:
-    if f'test_sym_detect_{code}' in exclude: continue
     globals()[f'test_sym_detect_{code}'] = make_pdb_testfunc(code)
 
-@ipd.dev.timed
-@pytest.mark.fast
+for symid0 in ALLSYMS:
+
+    def make_ideal_frame_funcs(symid):
+
+        def func_ideal():
+            helper_test_frames(ipd.sym.frames(symid), symid)
+
+        def func_ideal_xformed():
+            origin = h.rand(cart_sd=44)
+            frames = ipd.sym.frames(symid)
+            xframes = h.xform(origin, frames)
+            sinfo = helper_test_frames(xframes, symid)
+            assert sinfo.is_cyclic == (sinfo.symid[0] == 'C')
+            assert sinfo.is_dihedral == (sinfo.symid[0] == 'D')
+            if sinfo.is_cyclic:
+                assert h.allclose(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0])
+            elif sinfo.symid == 'D2':
+                pass
+            else:
+                for nf, ax in ipd.sym.axes(sinfo.symid).items():
+                    if isinstance(nf, str): continue
+                    ic(sinfo.symid, nf, sinfo.nfaxis[nf], h.xform(origin, ax))
+                    assert np.allclose(sinfo.nfaxis[nf], h.xform(origin, ax))
+            # assert h.allclose(sinfo.origin[:3, :3], origin[:3, :3])
+            # TODO: fix origin
+
+        return func_ideal, func_ideal_xformed
+
+    ideal, xformed = make_ideal_frame_funcs(symid0)
+
+    ideal.__name__ = ideal.__qualname__ = f'test_sym_detect_frames_ideal_{symid0}'
+    xformed.__name__ = xformed.__qualname__ = f'test_sym_detect_frames_ideal_xformed{symid0}'
+    globals()[f'test_sym_detect_frames_ideal_{symid0}'] = ideal
+    globals()[f'test_sym_detect_frames_ideal_xformed_{symid0}'] = xformed
+
+def helper_test_frames(frames, symid, tol=None, **kw):
+    tol = ipd.Tolerances(tol, **kw)
+    sinfo = ipd.sym.syminfo_from_frames(frames, tol=tol, **kw)
+    # print(sinfo)
+    se = sinfo.symelem
+    assert sinfo.symid == symid, f'{symid=}, {sinfo.symid=}'
+    assert all(se.hel < tol.helical_shift)
+    cendist = h.point_line_dist_pa(sinfo.symcen, se.cen, se.axis)
+    assert cendist.max() < tol.isect
+    ref = {k: v for k, v in ipd.sym.axes(symid).items() if isinstance(k, int)}
+    for nf in sinfo.nfold:
+        # ic(ipd.sym.axes(sinfo.symid)[nf], sinfo.origin)
+        axis = h.xform(sinfo.origin, ipd.sym.axes(sinfo.symid)[nf])
+        # assert h.allclose(sinfo.toorigin @ sinfo.axis,
+    return sinfo
+
 def test_syminfo_from_atomslist():
     pytest.importorskip('biotite')
     atoms = ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/L2_D1_C3_Apo.pdb'), chainlist=True)
@@ -84,30 +128,11 @@ def test_syminfo_from_atomslist():
     # ic(syminfo.tol_checks)
     assert syminfo.symid == 'C3'
 
-def helper_test_frames(frames, symid, tol=None, **kw):
-    tol = ipd.Tolerances(tol, **kw)
-    sinfo = ipd.sym.syminfo_from_frames(frames, tol=tol, **kw)
-    # print(sinfo)
-    se = sinfo.symelem
-    assert sinfo.symid == symid, f'{symid=}, {sinfo.symid=}'
-    assert all(se.hel < tol.helical_shift)
-    cendist = h.point_line_dist_pa(sinfo.symcen, se.cen, se.axis)
-    assert cendist.max() < tol.isect
-    ref = {k: v for k, v in ipd.sym.axes(symid).items() if isinstance(k, int)}
-    print('redo me')
-    # for nf in ([] if symid in 'D2 '.split() else ref):
-    # assert h.allclose(ref[nf], se.axis[se.nfold == nf][0])
-
 @ipd.dev.timed
-@pytest.mark.fast
-def test_syminfo_from_frames_basic():
-    allsyms = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i in range(2, 13)]
+def test_syminfo_from_frames_examples():
     for name, (symid, frames) in sym_detect_test_frames.items():
         tol = ipd.Tolerances(1e-1, angle=1e-2, helical_shift=1, isect=1, dot_norm=0.04, misc_lineuniq=1, nfold=0.2)
         helper_test_frames(frames, symid, tol=tol)
-    for symid in allsyms:
-        frames = ipd.sym.frames(symid)
-        helper_test_frames(frames, symid)
 
 @ipd.dev.timed
 @pytest.mark.fast

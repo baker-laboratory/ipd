@@ -37,6 +37,7 @@ def get_args(sysargv):
     parser.add_argument("projects", type=str, nargs='+', default='')
     parser.add_argument("testfile", type=str, default='')
     parser.add_argument("--pytest", action='store_true')
+    parser.add_argument("--quiet", action='store_true')
     args = parser.parse_args(sysargv[1:])
     return args.__dict__
 
@@ -151,16 +152,16 @@ def dispatch(
         cmd = f"{sys.executable} -mpytest {pytest_args}"
     return cmd, _post[bname]
 
-def main(projects, **kw):
+def main(projects, quiet=False, **kw):
     t = perf_counter()
     cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest', '')
-    print("call:", sys.argv)
-    print("cwd:", os.getcwd())
-    print("cmd:", cmd)
-    print(f"{' run_tests_on_file.py running cmd in cwd ':=^69}")
-    sys.stdout.flush()
+    if not quiet:
+        print("call:", sys.argv)
+        print("cwd:", os.getcwd())
+        print("cmd:", cmd)
+        print(f"{' run_tests_on_file.py running cmd in cwd ':=^69}")
+        sys.stdout.flush()
     os.system(cmd)
-    print(f"{' main command done ':=^69}")
     os.system(post)
     t = perf_counter() - t
     print(f"{f' run_tests_on_file.py done, time {t:7.3f} ':=^69}")

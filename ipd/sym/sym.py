@@ -794,3 +794,10 @@ def compute_canonical_asucen(sym, neighbors=None):
     if sym.startswith('c'):
         best = th.tensor([h.norm(best), 0, 0])
     return best.cpu().numpy()
+
+magic_angle_DTOI = ipd.Bunch(
+    D=float(np.pi / 2),
+    T=0.955316621,
+    O=0.615479714,
+    I=0.364863837,
+)

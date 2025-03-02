@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, Any
 
 from ipd import dev as dev
 from ipd.dev.error import panic as panic
+from ipd.dev.funcs import kwcheck as kwcheck, kwcall as kwcall
+from ipd.dev.format import print_table as print_table
 from ipd.bunch import Bunch as Bunch, bunchify as bunchify
 from ipd.lazy_import import importornone as importornone, lazyimport as lazyimport
 from ipd.observer import hub as hub

@@ -71,6 +71,9 @@ class Checker:
             self.n_passes += np.sum(np.array(result))
         return result
 
+    def __float__(self):
+        return self.threshold
+
     def __gt__(self, val):
         return self._record(self.threshold > val)
 
