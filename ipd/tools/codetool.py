@@ -80,4 +80,4 @@ class CodeTool(ipd.tools.IPDTool):
                 raise typer.Exit()
         with open(path, 'w') as out:
             out.write(new)
-            out.write('THIS FILE WAS FILTERED THRU `ipd code filter_python_output <fname>`')
+            out.write('\nTHIS FILE WAS FILTERED THRU `ipd code filter_python_output {path}`')

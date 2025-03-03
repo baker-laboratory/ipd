@@ -4,8 +4,6 @@ import pydantic
 
 import ipd
 
-ipd.dev.onexit(ipd.dev.global_timer.report)
-
 def maintest(
         namespace,
         fixtures=None,
@@ -17,11 +15,8 @@ def maintest(
         **kw,
 ):
     print(f'maintest {namespace["__file__"]}:', flush=True)
-    ipd.kwcall(
-        ipd.dev.filter_namespace_funcs,
-        config,
-        namespace,
-    )
+    ipd.dev.onexit(ipd.dev.global_timer.report)
+    ipd.kwcall(ipd.dev.filter_namespace_funcs, config, namespace)
     test_classes, test_funcs = [], []
     for name, obj in namespace.items():
         if name.startswith('Test') and isinstance(obj, type) and not hasattr(obj, '__unittest_skip__'):

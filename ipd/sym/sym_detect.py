@@ -20,12 +20,13 @@ def detect(
     if ipd.homog.is_tensor(thing) and ipd.homog.is_xform_stack(thing):
         return syminfo_from_frames(thing, tol=tol, **kw)
     if 'biotite' in sys.modules:
+        atoms = thing
         from biotite.structure import AtomArray
         if order is not None and len(atoms) % order == 0 and isinstance(atoms, AtomArray):
             atoms = ipd.atom.split(atoms, order)
         elif order is None and isinstance(atoms, AtomArray):
-            atoms = ipd.pdb.split(atoms, bychain=True)
-        elif isinstance(atoms, Iterable) and all(isinstance(a, AtomArray) for a in atoms):
+            atoms = ipd.atom.split(atoms, bychain=True)
+        if isinstance(atoms, Iterable) and all(isinstance(a, AtomArray) for a in atoms):
             return syminfo_from_atomslist(atoms, tol=tol, **kw)
     raise ValueError(f'cant detect symmetry on object {type(atoms)} order {order}')
 
@@ -143,31 +144,31 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=N
     _check_frames_with_asu_for_supersym(syminfo)
     return syminfo
 
-def _add_multichain_info(si: SymInfo, atomslist, frames, tol):
-    if si.is_multichain:
+def _add_multichain_info(sinfo: SymInfo, atomslist, frames, tol):
+    if sinfo.is_multichain:
         asu = ipd.atom.split(atomslist[0])
-        si.asuframes, si.asurms, si.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
-        si.t_number = np.sum(si.asumatch > tol.seqmatch)
-        si.stub0 = ipd.atom.stub(asu[0])
-        si.asustub = h.xform(si.asuframes, si.stub0)
-        si.allstub = h.xform(frames, si.asustub)
-        si.allframes = h.xform(si.allstub, h.inv(si.stub0))
+        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
+        sinfo.t_number = np.sum(sinfo.asumatch > tol.seqmatch)
+        sinfo.stub0 = ipd.atom.stub(asu[0])
+        sinfo.asustub = h.xform(sinfo.asuframes, sinfo.stub0)
+        sinfo.allstub = h.xform(frames, sinfo.asustub)
+        sinfo.allframes = h.xform(sinfo.allstub, h.inv(sinfo.stub0))
     else:
-        si.asuframes, si.asurms, si.asumatch = np.eye(4)[None], np.zeros(1), np.ones(1)
-        si.t_number = 1
-        si.stub0 = ipd.atom.stub(atomslist[0])
-        si.asustub = si.stub0[None]
-        si.allstub = h.xform(frames, si.asustub)
-        si.allframes = frames[:, None]
-    assert si.allframes.shape == si.allstub.shape
-    assert h.allclose(h.xform(si.allframes, si.stub0), si.allstub)
+        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = np.eye(4)[None], np.zeros(1), np.ones(1)
+        sinfo.t_number = 1
+        sinfo.stub0 = ipd.atom.stub(atomslist[0])
+        sinfo.asustub = sinfo.stub0[None]
+        sinfo.allstub = h.xform(frames, sinfo.asustub)
+        sinfo.allframes = frames[:, None]
+    assert sinfo.allframes.shape == sinfo.allstub.shape
+    assert h.allclose(h.xform(sinfo.allframes, sinfo.stub0), sinfo.allstub)
 
 def _check_frames_with_asu_for_supersym(syminfo):
-    if not syminfo.is_multichain or syminfo.is_point and syminfo.order > 30: return
+    if not syminfo.is_multichain or syminfo.order > 30: return
     tol = syminfo.tolerances.copy().reset()
     jointframes = syminfo.allframes.reshape(-1, 4, 4)
-    si = syminfo_from_frames(jointframes, tol=tol, lineuniq_method='mean')
-    print(si)
+    sinfo = syminfo_from_frames(jointframes, tol=tol, lineuniq_method='mean')
+    print(sinfo)
     assert 0
 
 def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
@@ -228,6 +229,7 @@ def symelems_from_frames(frames, tol=None, **kw):
     axis, ang, cen, hel = h.axis_angle_cen_hel(rel[1:])
     axis[ang < 0] *= -1
     ang[ang < 0] *= -1
+    ipd.print_table(dict(axis=axis, ang=ang, cen=cen, hel=hel), nohomog=True)
     axis, cen, ang, hel = h.symmetrically_unique_lines(axis, cen, ang, hel, frames=rel, tol=tol, **kw)
     ok = np.ones(len(axis), dtype=bool)
     result = list()
@@ -257,22 +259,22 @@ def symelems_from_frames(frames, tol=None, **kw):
 def _isintgt1(n, tol):
     return n > 1.9 and min(n % 1.0, 1 - n%1) < tol.nfold
 
-def syminfo_get_origin(si):
+def syminfo_get_origin(sinfo):
     """get the symmetry origin as a frame that aligns symaxes to canonical ant translates to symcen"""
-    nf = si.unique_nfold
-    if not si.is_point:
+    nf = sinfo.unique_nfold
+    if not sinfo.is_point:
         return syminfo_get_origin_nonpoint(sel)
-    elif si.is_cyclic:
-        origin = h.align([0, 0, 1], si.axis[0]) @ h.trans(si.symcen)
-    elif si.is_dihedral:
-        ax2, axx = si.nfaxis[2][0], si.nfaxis[nf[1 % len(nf)]][0]
-        if si.symid == 'D2': axx = si.nfaxis[2][-1]
-        origin = h.align2([0, 0, 1], [1, 0, 0], ax2, axx) @ h.trans(si.symcen)
+    elif sinfo.is_cyclic:
+        origin = h.align([0, 0, 1], sinfo.axis[0]) @ h.trans(sinfo.symcen)
+    elif sinfo.is_dihedral:
+        ax2, axx = sinfo.nfaxis[2][0], sinfo.nfaxis[nf[1 % len(nf)]][0]
+        if sinfo.symid == 'D2': axx = sinfo.nfaxis[2][-1]
+        origin = h.align2([0, 0, 1], [1, 0, 0], ax2, axx) @ h.trans(sinfo.symcen)
     else:
-        # se = si.symelem.sel(index=si.nfold < 4)  # for DTIO, only need 2fold and 3fold
+        # se = sinfo.symelem.sel(index=sinfo.nfold < 4)  # for DTIO, only need 2fold and 3fold
         # angbetweenaxes = h.line_angle(se.axis.data[None], se.axis.data[:, None])
         # magic = list(ipd.sym.magic_angle_DTOI.values())
-        # ismagicangle = h.tensor_in(angbetweenaxes, magic, atol=si.tolerances.angle)
+        # ismagicangle = h.tensor_in(angbetweenaxes, magic, atol=sinfo.tolerances.angle)
         # uniq = np.unique(ismagicangle)
         # uniq = uniq[uniq != -1]
         # magicang = uniq[0]
@@ -281,34 +283,36 @@ def syminfo_get_origin(si):
         # ic(fitaxis)
         # bestpair = fitaxis[np.argmin(np.abs(magicang - angbetweenaxes[tuple(zip(*fitaxis))]))]
         assert 2 in nf and 3 in nf
-        origax2, origax3 = ipd.sym.axes(si.symid)[2], ipd.sym.axes(si.symid)[3]
-        ax2, ax3 = si.nfaxis[2][0], si.nfaxis[3][0]
-        ic(si.axis)
-        origin = h.align2(origax2, origax3, ax2, ax3) @ h.trans(si.symcen)
+        origax2, origax3 = ipd.sym.axes(sinfo.symid)[2], ipd.sym.axes(sinfo.symid)[3]
+        ax2, ax3 = sinfo.nfaxis[2][0], sinfo.nfaxis[3][0]
+        ic(sinfo.axis)
+        origin = h.align2(origax2, origax3, ax2, ax3) @ h.trans(sinfo.symcen)
         assert h.valid44(origin)
     return origin, h.inv(origin)
 
-def syminfo_to_str(si, verbose=True):
+def syminfo_to_str(sinfo, verbose=True):
     """returns text tables with the data in this SymInfo"""
     npopt = np.get_printoptions()
     np.set_printoptions(precision=6, suppress=True)
     textmap = {'nfold': 'nf', '[': '', ']': '', '__REGEX__': False}
     targ = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
-    if si.symid == 'C1': return 'SymInfo(C1)'
+    if sinfo.symid == 'C1': return 'SymInfo(C1)'
     with ipd.dev.capture_stdio() as out:
-        symcen = '\n'.join(f'{x:7.3f}' for x in si.symcen.reshape(4)[:3])
-        head = dict(symid=si.symid, guess=si.guess_symid, symcen=symcen, origin=si.origin)
+        symcen = '\n'.join(f'{x:7.3f}' for x in sinfo.symcen.reshape(4)[:3])
+        head = dict(symid=sinfo.symid, guess=sinfo.guess_symid, symcen=symcen, origin=sinfo.origin)
         headtable = ipd.dev.make_table(dict(foo=head), key=False, strip=False, **targ)
-        setable = ipd.dev.make_table_dataset(si.symelem, **targ)
-        asutable = ipd.dev.make_table([[si.t_number, si.asurms, si.asumatch, si.asuframes.shape, si.allframes.shape]],
-                                      header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'])
-        geomtable = ipd.dev.make_table([[si.is_helical, si.is_point, si.axes_dists]],
+        setable = ipd.dev.make_table_dataset(sinfo.symelem, **targ)
+        asutable = ipd.dev.make_table(
+            [[sinfo.t_number, sinfo.asurms, sinfo.asumatch, sinfo.asuframes.shape, sinfo.allframes.shape]],
+            header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'])
+        geomtable = ipd.dev.make_table([[sinfo.is_helical, sinfo.is_point, sinfo.axes_dists]],
                                        header=['is_helical', 'axes concurrent', 'axes dists'],
                                        **targ)
-        checktable = ipd.dev.make_table(si.tol_checks, key='Geom Tests')
+        checktable = ipd.dev.make_table(sinfo.tol_checks, key='Geom Tests')
         tables = [[headtable], [geomtable], [asutable], [setable], [checktable]]
-        if si.stub0 is not None:
-            rmstable = ipd.dev.make_table([[si.seqmatch.min(), si.rms.max()]], header=['worst seq match', 'worst rms'])
+        if sinfo.stub0 is not None:
+            rmstable = ipd.dev.make_table([[sinfo.seqmatch.min(), sinfo.rms.max()]],
+                                          header=['worst seq match', 'worst rms'])
             tables.append([rmstable])
         ipd.dev.print_table(tables, header=['SymInfo'])
     np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])

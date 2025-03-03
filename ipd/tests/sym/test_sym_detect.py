@@ -10,11 +10,12 @@ ALLSYMS = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i
 
 config_test = ipd.Bunch(
     re_only=[
+        r'test_chelsea_tube1',
         # r'test_sym_detect_frames_ideal_[^_]+$',
         # r'test_sym_detect_frames_ideal_xformed_[^_]+$',
         # r'.*symelem.*'
         # r'test.*_D\d+',
-        r'test.*noised.*'
+        # r'test.*noised.*'
     ],
     only=[],
     # re_exclude=['test_sym_detect_1g5q'],
@@ -24,10 +25,16 @@ config_test = ipd.Bunch(
 def main():
     ipd.tests.maintest(namespace=globals(), config=config_test, verbose=1)
 
+def test_chelsea_tube1():
+    atoms = ipd.atom.load(ipd.dev.package_testdata_path('pdb/chelsea_tube_1.pdb.gz'))
+    sinfo = ipd.sym.detect(atoms, allbyall=True)
+    print(sinfo.axis)
+    assert 0
+
 def helper_test_frames(frames, symid, tol=None, origin=np.eye(4), ideal=False, **kw):
     if ideal: tol = ipd.Tolerances(tol, **ipd.sym.symdetect_ideal_tolerances)
     else: tol = ipd.Tolerances(tol, **ipd.sym.symdetect_default_tolerances)
-    sinfo = ipd.sym.syminfo_from_frames(frames, tol=tol, **kw)
+    sinfo = ipd.sym.detect(frames, tol=tol, **kw)
     # print(sinfo)
     se = sinfo.symelem
     assert sinfo.symid == symid, f'{symid=}, {sinfo.symid=}'
@@ -108,7 +115,7 @@ def make_pdb_testfunc(pdbcode):
             rms_fit=3,
             nfold=0.2,
         )))
-        syminfo = ipd.sym.syminfo_from_atomslist(atoms, tol=tol)
+        syminfo = ipd.sym.detect(atoms, tol=tol)
         infersym = None
         ic(syminfo.frames.shape)
         if syminfo.order == 1: infersym = 'C1'

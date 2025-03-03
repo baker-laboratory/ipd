@@ -7,9 +7,10 @@ from contextlib import contextmanager
 
 import ipd
 
-def onexit(func):
+def onexit(func, msg=None):
 
     def wrapper(*args, **kw):
+        if msg is not None: print(msg)
         return func(*args, **kw)
 
     atexit.register(wrapper)

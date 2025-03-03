@@ -156,6 +156,7 @@ class Timer:
             if scale == 1000: lines[-1] += "ms"
         r = os.linesep.join(lines)
         if printme:
+            print()
             if file is None: print(r, flush=True)
             else:
                 with open(file, "w") as out:
