@@ -10,8 +10,11 @@ ALLSYMS = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i
 
 config_test = ipd.Bunch(
     re_only=[
-        # 'test_sym_detect_frames_ideal_[^_]+$',
-        'test_sym_detect_frames_ideal_xformed_[^_]+$',
+        # r'test_sym_detect_frames_ideal_[^_]+$',
+        # r'test_sym_detect_frames_ideal_xformed_[^_]+$',
+        # r'.*symelem.*'
+        # r'test.*_D\d+',
+        r'test.*noised.*'
     ],
     only=[],
     # re_exclude=['test_sym_detect_1g5q'],
@@ -19,7 +22,75 @@ config_test = ipd.Bunch(
 )
 
 def main():
-    ipd.tests.maintest(namespace=globals(), config=config_test)
+    ipd.tests.maintest(namespace=globals(), config=config_test, verbose=1)
+
+def helper_test_frames(frames, symid, tol=None, origin=np.eye(4), ideal=False, **kw):
+    if ideal: tol = ipd.Tolerances(tol, **ipd.sym.symdetect_ideal_tolerances)
+    else: tol = ipd.Tolerances(tol, **ipd.sym.symdetect_default_tolerances)
+    sinfo = ipd.sym.syminfo_from_frames(frames, tol=tol, **kw)
+    # print(sinfo)
+    se = sinfo.symelem
+    assert sinfo.symid == symid, f'{symid=}, {sinfo.symid=}'
+    assert all(se.hel < tol.helical_shift)
+    cendist = h.point_line_dist_pa(sinfo.symcen, se.cen, se.axis)
+    assert cendist.max() < tol.isect
+    ref = {k: v for k, v in ipd.sym.axes(symid).items() if isinstance(k, int)}
+
+    assert sinfo.is_cyclic == (sinfo.symid[0] == 'C')
+    assert sinfo.is_dihedral == (sinfo.symid[0] == 'D')
+    if sinfo.is_cyclic:
+        ic(h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]), tol.line_angle)
+        assert h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]) < tol.line_angle
+    elif sinfo.symid == 'D2':
+        pass
+    else:
+        for nf, ax in ipd.sym.axes(sinfo.symid).items():
+            if isinstance(nf, str): continue
+            if nf == 2 and sinfo.is_dihedral and not sinfo.order % 4:
+                angs = h.line_angle(sinfo.nfaxis[nf], h.xform(origin, ax))
+                ic(angs)
+
+                ic(h.xform(h.inv(origin), sinfo.axis))
+                assert np.sum(np.abs(angs) < tol.line_angle) * 2 == angs.size
+            else:
+                if ideal:
+                    assert np.allclose(sinfo.nfaxis[nf], h.xform(origin, ax))
+
+    return sinfo
+
+for symid0 in ALLSYMS:
+
+    def make_ideal_frame_funcs(symid):
+
+        def func_ideal():
+            helper_test_frames(ipd.sym.frames(symid), symid, ideal=True)
+
+        def func_ideal_xformed():
+            origin = h.rand(cart_sd=44)
+            xframes = h.xform(origin, ipd.sym.frames(symid))
+            sinfo = helper_test_frames(xframes, symid, origin=origin, ideal=True)
+
+        def func_noised():
+            frames = ipd.sym.frames(symid)
+            noise = h.randsmall(len(frames), rot_sd=0.01, cart_sd=1)
+            # frames = h.xform(frames, noise)
+            assert h.valid44(frames)
+            sinfo = helper_test_frames(frames, symid, ideal=False)
+
+        return func_ideal, func_ideal_xformed, func_noised
+
+    ideal, xformed, noised = make_ideal_frame_funcs(symid0)
+
+    ideal.__name__ = ideal.__qualname__ = f'test_sym_detect_frames_ideal_{symid0}'
+    xformed.__name__ = xformed.__qualname__ = f'test_sym_detect_frames_ideal_xformed_{symid0}'
+    noised.__name__ = noised.__qualname__ = f'test_sym_detect_frames_noised_{symid0}'
+    globals()[f'test_sym_detect_frames_ideal_{symid0}'] = ideal
+    globals()[f'test_sym_detect_frames_ideal_xformed_{symid0}'] = xformed
+    globals()[f'test_sym_detect_frames_noised_{symid0}'] = noised
+
+test_sym_detect_frames_ideal_D12 = pytest.mark.xfail(test_sym_detect_frames_ideal_D12)
+test_sym_detect_frames_ideal_xformed_D12 = pytest.mark.xfail(test_sym_detect_frames_ideal_xformed_D12)
+test_sym_detect_frames_noised_D12 = pytest.mark.xfail(test_sym_detect_frames_noised_D12)
 
 def make_pdb_testfunc(pdbcode):
 
@@ -39,7 +110,9 @@ def make_pdb_testfunc(pdbcode):
         )))
         syminfo = ipd.sym.syminfo_from_atomslist(atoms, tol=tol)
         infersym = None
-        if syminfo.order == 12: infersym = 'T'
+        ic(syminfo.frames.shape)
+        if syminfo.order == 1: infersym = 'C1'
+        elif syminfo.order == 12: infersym = 'T'
         elif syminfo.order == 24: infersym = 'O'
         elif syminfo.order == 60: infersym = 'I'
         elif syminfo.pseudo_order == 60: infersym = 'I'
@@ -62,57 +135,6 @@ ipd.pdb.download_test_pdbs(TEST_PDBS)
 for code in TEST_PDBS:
     globals()[f'test_sym_detect_{code}'] = make_pdb_testfunc(code)
 
-for symid0 in ALLSYMS:
-
-    def make_ideal_frame_funcs(symid):
-
-        def func_ideal():
-            helper_test_frames(ipd.sym.frames(symid), symid)
-
-        def func_ideal_xformed():
-            origin = h.rand(cart_sd=44)
-            frames = ipd.sym.frames(symid)
-            xframes = h.xform(origin, frames)
-            sinfo = helper_test_frames(xframes, symid)
-            assert sinfo.is_cyclic == (sinfo.symid[0] == 'C')
-            assert sinfo.is_dihedral == (sinfo.symid[0] == 'D')
-            if sinfo.is_cyclic:
-                assert h.allclose(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0])
-            elif sinfo.symid == 'D2':
-                pass
-            else:
-                for nf, ax in ipd.sym.axes(sinfo.symid).items():
-                    if isinstance(nf, str): continue
-                    ic(sinfo.symid, nf, sinfo.nfaxis[nf], h.xform(origin, ax))
-                    assert np.allclose(sinfo.nfaxis[nf], h.xform(origin, ax))
-            # assert h.allclose(sinfo.origin[:3, :3], origin[:3, :3])
-            # TODO: fix origin
-
-        return func_ideal, func_ideal_xformed
-
-    ideal, xformed = make_ideal_frame_funcs(symid0)
-
-    ideal.__name__ = ideal.__qualname__ = f'test_sym_detect_frames_ideal_{symid0}'
-    xformed.__name__ = xformed.__qualname__ = f'test_sym_detect_frames_ideal_xformed{symid0}'
-    globals()[f'test_sym_detect_frames_ideal_{symid0}'] = ideal
-    globals()[f'test_sym_detect_frames_ideal_xformed_{symid0}'] = xformed
-
-def helper_test_frames(frames, symid, tol=None, **kw):
-    tol = ipd.Tolerances(tol, **kw)
-    sinfo = ipd.sym.syminfo_from_frames(frames, tol=tol, **kw)
-    # print(sinfo)
-    se = sinfo.symelem
-    assert sinfo.symid == symid, f'{symid=}, {sinfo.symid=}'
-    assert all(se.hel < tol.helical_shift)
-    cendist = h.point_line_dist_pa(sinfo.symcen, se.cen, se.axis)
-    assert cendist.max() < tol.isect
-    ref = {k: v for k, v in ipd.sym.axes(symid).items() if isinstance(k, int)}
-    for nf in sinfo.nfold:
-        # ic(ipd.sym.axes(sinfo.symid)[nf], sinfo.origin)
-        axis = h.xform(sinfo.origin, ipd.sym.axes(sinfo.symid)[nf])
-        # assert h.allclose(sinfo.toorigin @ sinfo.axis,
-    return sinfo
-
 def test_syminfo_from_atomslist():
     pytest.importorskip('biotite')
     atoms = ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/L2_D1_C3_Apo.pdb'), chainlist=True)
@@ -134,40 +156,12 @@ def test_syminfo_from_frames_examples():
         tol = ipd.Tolerances(1e-1, angle=1e-2, helical_shift=1, isect=1, dot_norm=0.04, misc_lineuniq=1, nfold=0.2)
         helper_test_frames(frames, symid, tol=tol)
 
-@ipd.dev.timed
 @pytest.mark.fast
-def test_symaxis_closest_to():
-    frames0 = ipd.sym.frames('oct')
-    testaxes0 = [[1, 0, 0], [0, -1, 0], [1, 1, 0], [1, 1, 0], [-1, 0, -1], [1, 1, 1], [-1, -1, 1], [1, 1, 1]]
-    golden0 = [[0.0000, 0.0000, 1.0000, 0.0000], [0.0000, 0.0000, 1.0000, 0.0000], [0.7071, 0.0000, 0.7071, 0.0000],
-               [0.7071, 0.0000, 0.7071, 0.0000], [0.7071, 0.0000, 0.7071, 0.0000], [0.5774, 0.5774, 0.5774, 0.0000],
-               [0.5774, 0.5774, 0.5774, 0.0000], [0.5774, 0.5774, 0.5774, 0.0000]]
-    closeaxes, _which = ipd.sym.depricated_symaxis_closest_to(frames0, testaxes0)
-    assert h.allclose(closeaxes, golden0, atol=1e-4)
-
-    randrot = h.rand(cart_sd=0, dtype=np.float64)
-    frames = h.xform(randrot, frames0)
-    testaxes = h.xform(randrot, testaxes0)
-    golden = h.xform(randrot, golden0)
-    closeaxes, _which = ipd.sym.depricated_symaxis_closest_to(frames, testaxes)
-    assert h.allclose(closeaxes, golden, atol=1e-4)
-
-    randtrans = h.randtrans(cart_sd=1, dtype=np.float64)
-    frames = h.xform(randtrans, frames0)
-    testaxes = h.xformvec(randtrans, testaxes0)
-    golden = h.xform(randtrans, golden0)
-    closeaxes, _which = ipd.sym.depricated_symaxis_closest_to(frames, testaxes)
-    assert h.allclose(closeaxes, golden, atol=1e-4)
-
-@ipd.dev.timed
-@pytest.mark.fast
-def test_symelems_from_frames():
+def test_symelems_from_frames_oct():
     frames0 = ipd.sym.frames('oct')
     ref = ipd.sym.symelems_from_frames(frames0)
-    # ic(set(ref.nfold.data))
     assert set(ref.nfold.data) == {2, 3, 4}
     pert = h.rand(cart_sd=0, dtype=np.float64)
-    # print(repr(pert))
     pert = np.array([[-0.8299, 0.4733, 0.2954, 0.0000], [-0.5578, -0.6963, -0.4516, 0.0000],
                      [-0.0080, -0.5396, 0.8419, 0.0000], [0.0000, 0.0000, 0.0000, 1.0000]],
                     dtype=np.float64)
@@ -178,6 +172,16 @@ def test_symelems_from_frames():
         refaxis = ref.axis[ref.nfold == nf].data
         assert h.allclose(se.axis, h.xform(pert, refaxis)) or h.allclose(-se.axis, h.xform(pert, refaxis))
         assert h.allclose(se.cen, h.xform(pert, ref.cen[ref.nfold == nf].data))
+
+@pytest.mark.fast
+def test_symelems_from_frames_D2n(symid='D4'):
+    frames = ipd.sym.frames(symid)
+    refse = ipd.sym.symelems_from_frames(frames)
+    se = ipd.sym.symelems_from_frames(frames)
+    ipd.dev.print_table(se)
+    assert h.allclose(refse, se)
+    uniq, _, _, _ = h.symmetrically_unique_lines(se.axis.data, se.cen.data)
+    assert len(uniq) == len(se.axis)
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,4 @@
 import attrs
-from collections import ChainMap
 import copy
 import sys
 
@@ -11,7 +10,7 @@ class Tolerances:
 
     def __init__(self, parent=None, default=None, **kw):
         if isinstance(parent, Tolerances):
-            self.kw = ChainMap(kw, parent.kw)
+            self.kw = parent.kw | kw
             self.checkers = parent.checkers
             self._default_tol = parent._default_tol
         else:
@@ -21,6 +20,7 @@ class Tolerances:
             self.kw = kw
             self.checkers = {}
             self._default_tol = default or 1e-4
+        self.checkers = {name: Checker(tol, 0, 0) for name, tol in kw.items()} | self.checkers
 
     def __getattr__(self, name):
         if name in self.__dict__: return self.__dict__[name]
@@ -47,9 +47,10 @@ class Tolerances:
     def copy(self):
         return copy.deepcopy(self)
 
-    def __str__(self):
+    def __repr__(self):
         with ipd.dev.capture_stdio() as out:
-            ipd.dev.print_table(self.check_history(), key='Tolerances object')
+            if hist := self.check_history():
+                ipd.dev.print_table(hist, key='Tolerances', justify='right')
         return out.read()
 
 @attrs.define

@@ -1,3 +1,4 @@
+from collections.abc import Mapping, Iterable
 import re
 
 import numpy as np
@@ -17,6 +18,7 @@ def make_table(thing, **kw):
     raise TypeError(f'cant make table for {type(thing)}')
 
 def print_table(thing, **kw):
+    if not thing: return '<empty table>'
     table = make_table(thing, **kw)
     console.print(table)
 
@@ -29,24 +31,56 @@ def make_table_list(lst, title=None, header=[], **kw):
         t.add_row(*row)
     return t
 
-def make_table_bunch(bunch, title=None, **kw):
-    return make_table_dict(bunch, title, **kw)
+def make_table_bunch(bunch, **kw):
+    return make_table_dict(bunch, **kw)
 
-def make_table_dict(dic, title=None, key='key', **kw):
+def make_table_dict(mapping, **kw):
+    assert isinstance(mapping, Mapping)
+    vals = list(mapping.values())
+    # assert all(type(v)==type(vals[0]) for v in vals)
+    if isinstance(vals[0], Mapping):
+        return make_table_dict_of_dict(mapping, **kw)
+    if isinstance(vals[0], Iterable) and not isinstance(vals[0], str):
+        return make_table_dict_of_iter(mapping, **kw)
+    return make_table_dict_of_any(mapping, **kw)
+
+def make_table_dict_of_dict(mapping, title=None, key='key', **kw):
+    vals = list(mapping.values())
+    assert all(v.keys() == vals[0].keys() for v in vals)
     t = Table(title=title)
     if key: ipd.kwcall(t.add_column, kw, to_renderable(key, **kw))
-    for k in ipd.first(dic.values()).keys():
+    for k in vals[0].keys():
         ipd.kwcall(t.add_column, kw, k)
-    for k, v in dic.items():
-        row = [k] * bool(key) + [to_renderable(f, **kw) for f in v.values()]
+    for k, submap in mapping.items():
+        row = [k] * bool(key) + [to_renderable(f, **kw) for f in submap.values()]
         t.add_row(*row)
+    return t
+
+def make_table_dict_of_iter(mapping, title=None, **kw):
+    assert all(len(v) == len(vals[0]) for v in vals)
+    vals = list(mapping.values())
+    t = Table(title=title)
+    for k in mapping.keys():
+        ipd.kwcall(t.add_column, kw, k)
+    for i in range(len(vals[0])):
+        row = [to_renderable(mapping[k][i], **kw) for k in mapping]
+        t.add_row(*row)
+    return t
+
+def make_table_dict_of_any(mapping, title=None, **kw):
+    vals = list(mapping.values())
+    t = Table(title=title)
+    for k in mapping.keys():
+        ipd.kwcall(t.add_column, kw, k)
+    row = [to_renderable(mapping[k], **kw) for k in mapping]
+    t.add_row(*row)
     return t
 
 def make_table_dataset(dataset, title=None, **kw):
     table = Table()
     cols = list(dataset.coords) + list(dataset.keys())
-    [ipd.kwcall(table.add_column, kw, to_renderable(c, **kw)) for c in cols]
-    cols = [*cols]
+    for c in cols:
+        ipd.kwcall(table.add_column, kw, to_renderable(c, **kw))
     for nf in np.unique(dataset['nfold']):
         ds = dataset.sel(index=dataset['nfold'] == nf)
         for i in ds.index:

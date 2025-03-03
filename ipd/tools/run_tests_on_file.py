@@ -15,6 +15,7 @@ _file_mappings can be set to mannually map a file to another file
 import argparse
 import os
 import sys
+from pathlib import Path
 from collections import defaultdict
 from time import perf_counter
 from assertpy import assert_that
@@ -38,6 +39,7 @@ def get_args(sysargv):
     parser.add_argument("testfile", type=str, default='')
     parser.add_argument("--pytest", action='store_true')
     parser.add_argument("--quiet", action='store_true')
+    parser.add_argument("--filter_build_log", action='store_true')
     args = parser.parse_args(sysargv[1:])
     return args.__dict__
 
@@ -152,7 +154,7 @@ def dispatch(
         cmd = f"{sys.executable} -mpytest {pytest_args}"
     return cmd, _post[bname]
 
-def main(projects, quiet=False, **kw):
+def main(projects, quiet=False, filter_build_log=False, **kw):
     t = perf_counter()
     cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest', '')
     if not quiet:
@@ -164,6 +166,10 @@ def main(projects, quiet=False, **kw):
     os.system(cmd)
     os.system(post)
     t = perf_counter() - t
+    if filter_build_log:
+        p = Path('ide/sublime_build.log')
+        assert p.exists()
+
     print(f"{f' run_tests_on_file.py done, time {t:7.3f} ':=^69}")
 
 if __name__ == '__main__':

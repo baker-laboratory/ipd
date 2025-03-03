@@ -9,86 +9,16 @@ from ipd.homog import *
 
 ic.configureOutput(includeContext=True, contextAbsPath=True)
 
+config_test = ipd.Bunch(
+    re_only=[],
+    only=[],
+    re_exclude=[],
+    exclude=[],
+)
+
 def main():
-    ipd.tests.maintest(namespace=globals())
+    ipd.tests.maintest(namespace=globals(), config=config_test)
     return
-    test_closest_point_on_line()
-
-    test_uniqlastdim()
-
-    test_hrmsfit()
-    test_hcentered()
-
-    test_halign()
-
-    test_hxform_stuff_coords()
-    test_hxform_stuff_xformed()
-    test_hxform()
-    test_hxform_ray()
-
-    test_hpow()
-    test_hpow_float()
-
-    test_hdiff()
-
-    # test_d3_frames()
-    test_hmean()
-
-    torque_delta_sanitycheck()
-    test_symfit_180_bug()
-    # assert 0
-
-    # test_axis_angle_of_rand()
-    # test_axis_angle_of()
-    # test_axis_angle_180_bug()
-
-    # assert 0
-
-    test_axis_ang_cen_of_rand_180()
-
-    # test_sym()
-    test_homo_rotation_single()
-    test_homo_rotation_center()
-    test_homo_rotation_array()
-    test_homo_rotation_angle()
-    test_htrans()
-    test_hcross()
-    test_axis_angle_of()
-    test_axis_angle_of_rand()
-    test_axis_angle_of_3x3_rand()
-    test_is_valid_rays()
-    test_hrandray()
-    test_proj_prep()
-    test_point_in_plane()
-    test_ray_in_plane()
-    test_intersect_planes()
-    test_intersect_planes_rand()
-    test_axis_ang_cen_of_rand()
-    test_axis_angle_vs_axis_angle_cen_performance(N=1000)
-    test_hinv_rand()
-    test_hframe()
-    test_line_line_dist()
-    test_line_line_closest_points()
-    test_dihedral()
-    test_angle()
-    test_align_around_axis()
-    test_halign2_minangle()
-    test_halign2_una_case()
-    test_calc_dihedral_angle()
-    test_align_lines_dof_dihedral_rand_single()
-    test_align_lines_dof_dihedral_rand_3D()
-    test_align_lines_dof_dihedral_rand(n=100)
-    test_align_lines_dof_dihedral_basic()
-    test_place_lines_to_isect_F432()
-    test_place_lines_to_isect_onecase()
-    test_place_lines_to_isect_F432_null()
-    test_scale_translate_lines_isect_lines_p4132()
-    test_scale_translate_lines_isect_lines_nonorthog()
-    test_scale_translate_lines_isect_lines_arbitrary()
-    test_scale_translate_lines_isect_lines_cases()
-    test_xform_around_dof_for_vector_target_angle()
-    test_axis_angle_180_bug()
-
     ic("test_homog.py DONE")
 
 @pytest.mark.fast

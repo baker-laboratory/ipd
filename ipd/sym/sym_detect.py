@@ -87,12 +87,15 @@ class SymInfo:
         self.order = len(self.frames)
         self.pseudo_order = len(self.frames) * len(self.asuframes)
         self.is_multichain = len(self.asuframes) > 1
-        self.unique_nfold = nf = list(sorted(np.unique(self.nfold)))
+        self.unique_nfold = nf = []
+        if self.order > 1:
+            self.unique_nfold = nf = list(sorted(np.unique(self.nfold)))
         self.is_cyclic = len(nf) < 2 and not self.is_helical and not self.symid == 'D2'
         self.is_dihedral = len(nf) == 2 and 2 in nf and self.order // nf[1] == 2 or self.symid == 'D2'
         self.nfaxis = {int(nf): self.axis[self.nfold == nf] for nf in self.unique_nfold}
-        self.symcen = self.symcen.reshape(4)
-        self.origin, self.toorigin = syminfo_get_origin(self)
+        if self.order > 1:
+            self.symcen = self.symcen.reshape(4)
+            self.origin, self.toorigin = syminfo_get_origin(self)
 
     def __getattr__(self, name):
         try:
@@ -114,6 +117,16 @@ symdetect_default_tolerances = dict(
     nfold=0.2,
     seqmatch=0.7,
     rms_fit=2,
+)
+symdetect_ideal_tolerances = dict(
+    default=1e-4,
+    angle=1e-4,
+    helical_shift=1e-4,
+    isect=1e-4,
+    dot_norm=1e-4,
+    misc_lineuniq=1e-4,
+    nfold=1e-4,
+    seqmatch=0.99,
 )
 
 def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=None, **kw) -> SymInfo:
@@ -165,37 +178,42 @@ def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
     assert ipd.homog.is_xform_stack(frames)
     if len(frames) == 1: return SymInfo('C1', frames, None, None)
-    selms = symelems_from_frames(frames, tol=tol, **kw)
-    nfolds = set(selms.nfold.data)
-    is_point, symcen, axes_dists = h.lines_concurrent_isect(selms.cen, selms.axis, tol=tol.isect)
-    is_helical = not all(selms.hel < tol.helical_shift)
-    sym_info_args = dict(is_point=is_point, symcen=symcen, is_helical=is_helical, symelem=selms)
+    se = symelems_from_frames(frames, tol=tol, **kw)
+    nfolds = set(se.nfold.data)
+    is_point, symcen, axes_dists = h.lines_concurrent_isect(se.cen, se.axis, tol=tol.isect)
+    is_helical = not np.all(np.abs(se.hel) < tol.helical_shift)
+    sym_info_args = dict(is_point=is_point, symcen=symcen, is_helical=is_helical, symelem=se)
     sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tolerances=tol)
     if is_point: sym_info_args |= dict(is_1d=False, is_2d=False, is_3d=False)
     if len(nfolds) == 1 and not is_helical and is_point:
-        if all(selms.nfold == 0):
+        if all(se.nfold == 0):
             return SymInfo('HELIX', **sym_info_args)
-        elif len(selms.nfold) == 3 and h.allclose(selms.ang, np.pi) and h.allclose(selms.hel, 0) and is_point:
+        elif all([
+                is_point,
+                len(se.nfold) >= 3,
+                np.all(np.abs(se.ang - np.pi) < tol.angle),
+                np.all(np.abs(se.hel) < tol.helical_shift)
+        ]):
             return SymInfo('D2', **sym_info_args)
         else:
-            return SymInfo(f'C{int(selms.nfold[0])}', **sym_info_args)
-    elif len(selms) == 1:
+            return SymInfo(f'C{int(se.nfold[0])}', **sym_info_args)
+    elif len(se) == 1:
         raise NotImplementedError('')
     elif is_point and not is_helical:
         if 2 in nfolds and 3 in nfolds:
-            ax2, ax3 = (selms.axis[selms.nfold == i] for i in (2, 3))
+            ax2, ax3 = (se.axis[se.nfold == i] for i in (2, 3))
             testang = h.line_angle(ax2, ax3).min()
-            if abs(testang - ipd.sym.magic_angle_DTOI.D) < tol.cageang: return SymInfo('D3', **sym_info_args)
-            if abs(testang - ipd.sym.magic_angle_DTOI.T) < tol.cageang: return SymInfo('T', **sym_info_args)
-            if abs(testang - ipd.sym.magic_angle_DTOI.O) < tol.cageang: return SymInfo('O', **sym_info_args)
-            if abs(testang - ipd.sym.magic_angle_DTOI.I) < tol.cageang: return SymInfo('I', **sym_info_args)
-            ic(testang)
-            ic(selms)
+            magicang = ipd.sym.magic_angle_DTOI
+            if abs(testang - magicang.D) < tol.cageang: return SymInfo('D3', **sym_info_args)
+            if abs(testang - magicang.T) < tol.cageang: return SymInfo('T', **sym_info_args)
+            if abs(testang - magicang.O) < tol.cageang: return SymInfo('O', **sym_info_args)
+            if abs(testang - magicang.I) < tol.cageang: return SymInfo('I', **sym_info_args)
             assert 0, f'unknown sym with nfold {nfolds} testang {testang}'
         elif len(nfolds) == 2 and 2 in nfolds:
-            assert h.allclose(h.angle(*selms.axis[:2]), npth.pi / 2)
+            # ipd.dev.print_table(se)
+            not2_vs_2ang = h.angle(se.axis[se.nfold == 2], se.axis[se.nfold != 2])
+            assert np.all(np.abs(not2_vs_2ang - np.pi / 2) < tol.line_angle)
             return SymInfo(f'D{max(nfolds)}', **sym_info_args)
-        ic(selms)
         assert 0, 'unknown sym'
     else:
         return SymInfo('Unknown', **sym_info_args)
@@ -239,30 +257,6 @@ def symelems_from_frames(frames, tol=None, **kw):
 def _isintgt1(n, tol):
     return n > 1.9 and min(n % 1.0, 1 - n%1) < tol.nfold
 
-def depricated_symaxis_closest_to(frames, axis, cen=None, target=None):
-    h, npth = ipd.homog.get_tensor_libraries_for(frames)
-    ddkw = h.get_dtype_dev([frames, axis])
-    if target is None: target = h.normalized([2, 1, 9, 0], **ddkw)
-    axis = h.xform(h.inv(frames[0]), h.normalized(axis), **ddkw)
-    if cen is None:
-        cen = npth.zeros(axis.shape, **ddkw)
-        cen[..., 3] = 1
-    assert h.allclose(axis[..., 3], 0)
-    assert h.allclose(cen[..., 3], 1)
-    cen = h.xform(h.inv(frames[0]), cen, **ddkw)
-    frame0, frames = frames[0], h.xform(h.inv(frames[0]), frames)
-    assert h.allclose(0, frames[:, :3, 3])
-    assert axis.shape == cen.shape
-    origshape, axis, cen = axis.shape, axis.reshape(-1, axis.shape[-1]), cen.reshape(-1, cen.shape[-1])
-    symaxes = h.xform(frames, axis)
-    symcen = h.xform(frames, cen)
-    # ic(symaxes.shape, symcen.shape)
-    # TODO: maybe do a line/point distace w/cen? h.line_line_diff_pa
-    which = npth.argmax(h.dot(symaxes, target), axis=0)
-    bestaxis = symaxes[which, npth.arange(len(which))].reshape(origshape)
-    bestcen = symcen[which, npth.arange(len(which))].reshape(origshape)
-    return h.xform(frame0, bestaxis), h.xform(frame0, bestcen)
-
 def syminfo_get_origin(si):
     """get the symmetry origin as a frame that aligns symaxes to canonical ant translates to symcen"""
     nf = si.unique_nfold
@@ -300,6 +294,7 @@ def syminfo_to_str(si, verbose=True):
     np.set_printoptions(precision=6, suppress=True)
     textmap = {'nfold': 'nf', '[': '', ']': '', '__REGEX__': False}
     targ = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
+    if si.symid == 'C1': return 'SymInfo(C1)'
     with ipd.dev.capture_stdio() as out:
         symcen = '\n'.join(f'{x:7.3f}' for x in si.symcen.reshape(4)[:3])
         head = dict(symid=si.symid, guess=si.guess_symid, symcen=symcen, origin=si.origin)
@@ -318,13 +313,3 @@ def syminfo_to_str(si, verbose=True):
         ipd.dev.print_table(tables, header=['SymInfo'])
     np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
     return out.read()
-
-# def enclosing_function():
-#     def kwcheck(kw, func=None, checktypos=True):
-#         if func is None:
-#             WHAT DO I DO HERE?????
-#         sig = inspect.signature(func)
-#         params = list(sig.parameters.keys())
-#         return = {k: v for k, v in kw.items() if k in params}
-
-#     I_want_this_function(arg1, arg2, arg3=7, **kwcheck(kwargs))

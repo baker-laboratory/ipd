@@ -1604,7 +1604,10 @@ def symmetrically_unique_lines(
     also checks anything in extras
     """
     assert axis.shape == cen.shape
-    tol = ipd.dev.Tolerances(tol)
+    tol = ipd.dev.Tolerances(tol, **kw)
+    assert axis.shape == cen.shape
+    if ang is None: ang = np.ones(len(cen))
+    if hel is None: hel = np.zeros(len(cen))
     if target is None: target = normalized([10, .1, 999, 0])
     frames = frames.reshape(-1, 4, 4)
     ax = axis.reshape(-1, axis.shape[-1])
@@ -1731,15 +1734,28 @@ def tensor_in(x, targets, atol=1e-3):
         result = np.where(np.isclose(x, t, atol=atol), i, result)
     return result
 
+def allclose(a, b, atol=1e-3, **kw):
+    if isinstance(a, (np.ndarray, list, int, float)):
+        return ipd.kwcall(np.allclose, kw, a, b, atol=atol)
+    xr = ipd.importornone('xarray')
+    if xr and isinstance(a, xr.DataArray):
+        return ipd.kwcall(np.allclose, kw, a, b, atol=atol)
+    if xr and isinstance(a, xr.Dataset):
+        if list(a.keys()) != list(b.keys()): return False
+        if list(a.coords) != list(b.coords): return False
+        for k in list(a.keys()) + list(a.coords):
+            return ipd.kwcall(np.allclose, kw, a[k], b[k], atol=atol)
+    raise TypeError(f'bad types for allclose {type(a)} {type(b)}')
+
 # compatibility with thgeom (torch version of these)
 inv = hinv
 axis_angle = axis_angle_of
 axis_angle_cen_hel = axis_angle_cen_hel_of
-allclose = np.allclose
 normalized = hnormalized
 dot = hdot
 point_line_dist_pa = h_point_line_dist
 rand = hrand
+randsmall = hrandsmall
 xform = hxform
 xformvec = hxformvec
 xformpts = hxformpts

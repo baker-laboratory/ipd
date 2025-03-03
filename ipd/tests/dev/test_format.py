@@ -13,7 +13,7 @@ bunch = ipd.Bunch(
     cageang=ipd.Bunch(frac=0.5, tol=0.1, total=2, passes=1),
 )
 
-def test_print_table():
+def test_make_table_dict_of_dict():
     ipd.dev.print_table(bunch)
 
 # def test_print_table_bunch():

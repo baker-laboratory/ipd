@@ -55,3 +55,29 @@ class CodeTool(ipd.tools.IPDTool):
         cmd = 'pyright -p {conffile} {" ".join(changed_files)}'
         result = ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
         raise typer.Exit(code=result.exitcode)
+
+    def filter_python_output(self, path: Annotated[str, typer.Argument()]):
+        # possible way to hangle kwargs
+        # def main(item: list[str] = typer.Option(None, "--item", "-i", help="Key-value pairs (key=value)", allow_multiple=True)):
+        # kwargs = {}
+        # if item:
+        # for i in item:
+        # try:
+        # key, value = i.split("=", 1)
+        # kwargs[key] = value
+        # except ValueError:
+        # print(f"Invalid format for item: {i}. Expected key=value")
+        with open(path) as inp:
+            text = inp.read()
+        with open(f'{path}.orig', 'w') as out:
+            out.write(text)
+        try:
+            new = ipd.dev.filter_python_output(text, entrypoint='codetool', preset='ipd_boilerplate')
+        except RuntimeError as e:
+            with open(path, 'w') as out:
+                out.write('ERROR WHEN RUNNING `ipd code filter_python_output <fname>`')
+                out.write(e)
+                raise typer.Exit()
+        with open(path, 'w') as out:
+            out.write(new)
+            out.write('THIS FILE WAS FILTERED THRU `ipd code filter_python_output <fname>`')
