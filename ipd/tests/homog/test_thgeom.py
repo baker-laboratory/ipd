@@ -5,40 +5,14 @@ import numpy as np
 from icecream import ic
 
 import ipd as ipd
-from ipd import h
+import ipd.homog.thgeom as h
 from ipd.homog import intersect_planes
 
 # pytest.skip(allow_module_level=True)
 
 def main():
-    test_axis_angle_180()
-
-    test_torch_quat()
-    test_uniqlastdim()
-
-    test_thxform_invalid44_bug()
-    test_rand_dtype_device()
-    test_randsmall_dtype_device()
-    test_th_axis_angle_cen_hel_vec()
-
-    test_th_vec()
-    test_th_rog()
-    # assert 0, 'DONE'
-    test_torch_rmsfit()
-    test_th_misc()
-    test_axisangcenhel_roundtrip()
-    test_th_intersect_planes()
-    test_th_axis_angle_cen_hel()
-    test_th_rot_single()
-    test_th_rot_56789()
-    test_th_axis_angle_hel()
-    test_th_axis_angle()
-
-    test_torch_grad()
-    test_th_axis_angle_cen_rand()
-    test_torch_rmsfit_grad()
-
-    ic("test_thgeom.py DONE")
+    # ipd.tests.maintest(globals())
+    ipd.tests.maintest(globals(), nocapture=['test_th_axis_angle'])
 
 @pytest.mark.fast
 def test_uniqlastdim():
@@ -521,6 +495,7 @@ def test_th_axis_angle():  # noqa
     assert np.allclose(hel.detach(), 0)
     ax2, an2, h2 = ipd.homog.axis_angle_hel_of(x.detach())
     assert th.allclose(th.linalg.norm(ax, axis=-1), th.ones_like(ax))
+    ic(ax2, ax)
     assert np.allclose(ax2, ax.detach())
     assert np.allclose(an2, an.detach())
     assert np.allclose(h2, hel.detach())

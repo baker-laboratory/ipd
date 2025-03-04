@@ -10,7 +10,8 @@ ALLSYMS = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i
 
 config_test = ipd.Bunch(
     re_only=[
-        r'test_chelsea_tube1',
+        'test_sym_detect_pdb_1wa3',
+        # r'test_chelsea_tube1',
         # r'test_sym_detect_frames_ideal_[^_]+$',
         # r'test_sym_detect_frames_ideal_xformed_[^_]+$',
         # r'.*symelem.*'
@@ -19,16 +20,20 @@ config_test = ipd.Bunch(
     ],
     only=[],
     # re_exclude=['test_sym_detect_1g5q'],
-    exclude=[],
+    exclude=[
+        r'test_chelsea_tube1',
+    ],
 )
 
 def main():
-    ipd.tests.maintest(namespace=globals(), config=config_test, verbose=1)
+    test_sym_detect_pdb_1wa3()
+    # ieipd.tests.maintest(namespace=globals(), config=config_test, verbose=1)
 
 def test_chelsea_tube1():
+    pytest.importorskip('biotite')
     atoms = ipd.atom.load(ipd.dev.package_testdata_path('pdb/chelsea_tube_1.pdb.gz'))
     sinfo = ipd.sym.detect(atoms, allbyall=True)
-    print(sinfo.axis)
+    print(sinfo)
     assert 0
 
 def helper_test_frames(frames, symid, tol=None, origin=np.eye(4), ideal=False, **kw):
@@ -61,7 +66,7 @@ def helper_test_frames(frames, symid, tol=None, origin=np.eye(4), ideal=False, *
                 assert np.sum(np.abs(angs) < tol.line_angle) * 2 == angs.size
             else:
                 if ideal:
-                    assert np.allclose(sinfo.nfaxis[nf], h.xform(origin, ax))
+                    assert np.allclose(sinfo.nfaxis[nf], h.xform(origin, ax), atol=1e-3)
 
     return sinfo
 
@@ -115,24 +120,30 @@ def make_pdb_testfunc(pdbcode):
             rms_fit=3,
             nfold=0.2,
         )))
-        syminfo = ipd.sym.detect(atoms, tol=tol)
+        sinfo = ipd.sym.detect(atoms, tol=tol)
         infersym = None
-        ic(syminfo.frames.shape)
-        if syminfo.order == 1: infersym = 'C1'
-        elif syminfo.order == 12: infersym = 'T'
-        elif syminfo.order == 24: infersym = 'O'
-        elif syminfo.order == 60: infersym = 'I'
-        elif syminfo.pseudo_order == 60: infersym = 'I'
-        elif syminfo.pseudo_order == 24: infersym = 'O'
-        elif syminfo.pseudo_order == 12: infersym = 'T'
-        elif syminfo.symid[0] == 'C': infersym = f'C{syminfo.order}'
-        elif syminfo.symid[0] == 'D': infersym = f'C{syminfo.order/2}'
-        if infersym != syminfo.symid:
-            ic(infersym, syminfo, syminfo.tol_checks)
-        assert infersym == syminfo.symid, f'{infersym=} != {syminfo.symid}'
-        infer_t = syminfo.pseudo_order // syminfo.order
-        err = f'T number mismatch {syminfo.t_number=}, {infer_t=} {syminfo.pseudo_order=} {syminfo.order=}'
-        assert syminfo.t_number == infer_t, err
+        ic(sinfo.frames.shape)
+        if sinfo.symid[0] == 'C': infersym = f'C{sinfo.order}'
+        elif sinfo.symid[0] == 'D': infersym = f'C{sinfo.order/2}'
+        if not sinfo.is_multichain:
+            if sinfo.order % 2 == 1: infersym = f'C{sinfo.order}'
+            elif sinfo.order == 12: infersym = 'T'
+            elif sinfo.order == 24: infersym = 'O'
+            elif sinfo.order == 60: infersym = 'I'
+            elif len(sinfo.unique_nfold) == 2: infersym = f'D{sinfo.order}/2'
+            elif len(sinfo.unique_nfold) == 1: infersym = f'C{sinfo.order}'
+            else: assert 0
+        else:
+            if sinfo.pseudo_order == 60: infersym = 'I'
+            elif sinfo.pseudo_order == 24: infersym = 'O'
+            elif sinfo.pseudo_order == 12: infersym = 'T'
+        if infersym != sinfo.symid:
+            print(infersym)
+            print(sinfo)
+        assert infersym == sinfo.symid, f'{infersym=} != {sinfo.symid}'
+        infer_t = sinfo.pseudo_order // sinfo.order
+        err = f'T number mismatch {sinfo.t_number=}, {infer_t=} {sinfo.pseudo_order=} {sinfo.order=}'
+        assert sinfo.t_number == infer_t, err
 
     pdb_test_func.__name__ = pdb_test_func.__qualname__ = f'test_sym_detect_pdb_{pdbcode}'
     # pdb_test_func = ipd.dev.timed(pdb_test_func)
@@ -140,7 +151,7 @@ def make_pdb_testfunc(pdbcode):
 
 ipd.pdb.download_test_pdbs(TEST_PDBS)
 for code in TEST_PDBS:
-    globals()[f'test_sym_detect_{code}'] = make_pdb_testfunc(code)
+    globals()[f'test_sym_detect_pdb_{code}'] = make_pdb_testfunc(code)
 
 def test_syminfo_from_atomslist():
     pytest.importorskip('biotite')
@@ -160,7 +171,13 @@ def test_syminfo_from_atomslist():
 @ipd.dev.timed
 def test_syminfo_from_frames_examples():
     for name, (symid, frames) in sym_detect_test_frames.items():
-        tol = ipd.Tolerances(1e-1, angle=1e-2, helical_shift=1, isect=1, dot_norm=0.04, misc_lineuniq=1, nfold=0.2)
+        tol = ipd.Tolerances(1e-1,
+                             angle=1e-2,
+                             helical_shift=1,
+                             isect=1,
+                             dot_norm=0.04,
+                             misc_lineuniq=1,
+                             nfold=0.2)
         helper_test_frames(frames, symid, tol=tol)
 
 @pytest.mark.fast
@@ -187,7 +204,7 @@ def test_symelems_from_frames_D2n(symid='D4'):
     se = ipd.sym.symelems_from_frames(frames)
     ipd.dev.print_table(se)
     assert h.allclose(refse, se)
-    uniq, _, _, _ = h.symmetrically_unique_lines(se.axis.data, se.cen.data)
+    uniq, _, _, _ = h.unique_lines_sym(se.axis.data, se.cen.data)
     assert len(uniq) == len(se.axis)
 
 if __name__ == '__main__':

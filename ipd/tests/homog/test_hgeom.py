@@ -4,7 +4,7 @@ from icecream import ic
 
 import ipd
 import ipd.homog as hm
-from ipd import h
+import ipd.homog.thgeom as h
 from ipd.homog import *
 
 ic.configureOutput(includeContext=True, contextAbsPath=True)
@@ -20,6 +20,10 @@ def main():
     ipd.tests.maintest(namespace=globals(), config=config_test)
     return
     ic("test_homog.py DONE")
+
+@pytest.mark.fast
+def test_hxform_chain():
+    assert allclose(np.eye(4), hxform(np.eye(4), np.eye(4), np.eye(4)))
 
 @pytest.mark.fast
 def test_closest_point_on_line():
@@ -451,22 +455,30 @@ def test_intersect_planes():
     # np.array([[0, 0, 0, 1], [1, 0, 0, 0]]))
     # assert sts == 1
 
-    isct, sts = intersect_planes(np.array([[0, 0, 0, 1], [1, 0, 0, 0]]).T, np.array([[0, 0, 0, 1], [0, 1, 0, 0]]).T)
+    isct, sts = intersect_planes(
+        np.array([[0, 0, 0, 1], [1, 0, 0, 0]]).T,
+        np.array([[0, 0, 0, 1], [0, 1, 0, 0]]).T)
     assert sts == 0
     assert isct[2, 0] == 0
     assert np.all(abs(isct[:3, 1]) == (0, 0, 1))
 
-    isct, sts = intersect_planes(np.array([[0, 0, 0, 1], [1, 0, 0, 0]]).T, np.array([[0, 0, 0, 1], [0, 0, 1, 0]]).T)
+    isct, sts = intersect_planes(
+        np.array([[0, 0, 0, 1], [1, 0, 0, 0]]).T,
+        np.array([[0, 0, 0, 1], [0, 0, 1, 0]]).T)
     assert sts == 0
     assert isct[1, 0] == 0
     assert np.all(abs(isct[:3, 1]) == (0, 1, 0))
 
-    isct, sts = intersect_planes(np.array([[0, 0, 0, 1], [0, 1, 0, 0]]).T, np.array([[0, 0, 0, 1], [0, 0, 1, 0]]).T)
+    isct, sts = intersect_planes(
+        np.array([[0, 0, 0, 1], [0, 1, 0, 0]]).T,
+        np.array([[0, 0, 0, 1], [0, 0, 1, 0]]).T)
     assert sts == 0
     assert isct[0, 0] == 0
     assert np.all(abs(isct[:3, 1]) == (1, 0, 0))
 
-    isct, sts = intersect_planes(np.array([[7, 0, 0, 1], [1, 0, 0, 0]]).T, np.array([[0, 9, 0, 1], [0, 1, 0, 0]]).T)
+    isct, sts = intersect_planes(
+        np.array([[7, 0, 0, 1], [1, 0, 0, 0]]).T,
+        np.array([[0, 9, 0, 1], [0, 1, 0, 0]]).T)
     assert sts == 0
     assert np.allclose(isct[:3, 0], [7, 9, 0])
     assert np.allclose(abs(isct[:3, 1]), [0, 0, 1])

@@ -13,7 +13,7 @@ import torch.utils.cpp_extension  # type: ignore
 from icecream import ic
 
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 
 _rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
 

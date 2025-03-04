@@ -3,7 +3,7 @@ from ipd.homog import *
 
 def compute_canonical_asucen(sym, neighbors=None):
     import torch as th  # type: ignore
-    from ipd import h
+    import ipd.homog.thgeom as h
     sym = ipd.sym.map_sym_abbreviation(sym).lower()
     frames = h.tocuda(ipd.sym.frames(sym))
     x = h.randunit(int(5e5), device='cuda')

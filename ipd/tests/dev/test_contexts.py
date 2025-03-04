@@ -5,6 +5,10 @@ import ipd
 def main():
     ipd.tests.maintest(namespace=globals())
 
+def test_nocontext():
+    with ipd.dev.nocontext() as foo:
+        assert foo is None
+
 def test_cast():
     # cast(cls, self)
     ...

@@ -9,7 +9,7 @@ else:
     th = lazyimport('torch')
 
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 
 pytest.skip(allow_module_level=True)
 

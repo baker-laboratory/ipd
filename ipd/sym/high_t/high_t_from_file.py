@@ -1,5 +1,5 @@
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 import re
 import numpy as np
 
@@ -16,7 +16,8 @@ def get_approx_stubs(ca):
     ca0centered = ca[0] - ca[0].mean(0)
     _, _, pc = th.pca_lowrank(ca0centered)
     stub = h.frame(*pc, cen=ca[0].mean(0))  # type: ignore
-    a_to_others = th.stack([th.eye(4)] + [h.rmsfit(ca[i], ca[0])[2] for i in range(1, len(ca))])  # type: ignore
+    a_to_others = th.stack([th.eye(4)] + [h.rmsfit(ca[i], ca[0])[2]
+                                          for i in range(1, len(ca))])  # type: ignore
     stubs = h.xform(a_to_others, stub)  # type: ignore
     return stubs
 

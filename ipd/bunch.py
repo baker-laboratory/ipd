@@ -40,7 +40,8 @@ class Bunch(dict, Generic[T]):
         self.__dict__["_special"]["autoreload"] = _autoreload
         if _autoreload:
             Path(_autoreload).touch()
-            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload, 'rb').read()).hexdigest()
+            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload,
+                                                                           'rb').read()).hexdigest()
         self.__dict__["_special"]["parent"] = _parent
         for k in self:
             if hasattr(super(), k):
@@ -203,6 +204,9 @@ class Bunch(dict, Generic[T]):
         return self.__dict__['_special']["strict_lookup"]
 
     def __getitem__(self, key: str) -> T:
+        if ' ' in key: key = key.split()
+        if not isinstance(key, str):
+            return [getattr(self, k) for k in key]
         return self.__getattr__(key)
 
     # try:

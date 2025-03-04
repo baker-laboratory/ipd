@@ -16,7 +16,7 @@ pytest.importorskip('ipd.fit.qcp_rms_cuda')
 import numpy as np
 from icecream import ic
 
-from ipd import h
+import ipd.homog.thgeom as h
 from ipd.fit.qcp_rms import _rms
 
 def main():

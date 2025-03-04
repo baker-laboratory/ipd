@@ -13,7 +13,7 @@ with contextlib.suppress(ImportError):
 import numpy as np
 
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 
 th = ipd.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
@@ -105,12 +105,13 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self.symid = self.opt.symid
         locprops = dict(
             opt=[
-                'nsub', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats', 'sym_enabled',
-                'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template', 'make_ligand_symmetric'
+                'nsub', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats',
+                'sym_enabled', 'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template',
+                'make_ligand_symmetric'
             ],
             idx=[
-                'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym', 'Nsym',
-                'Nunsym'
+                'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym',
+                'Nsym', 'Nunsym'
             ],
         )
         for location, props in locprops.items():
@@ -167,7 +168,11 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         elif adaptor.kind.shapekind == ShapeKind.SEQUENCE:
             result = adaptor.reconstruct([self(x, **kw) for x in adaptor.adapted])
         elif adaptor.kind.shapekind == ShapeKind.MAPPING:
-            result = adaptor.reconstruct(ipd.Bunch({k: self(x, key=k, **kw) for k, x in adaptor.adapted.items()}))
+            result = adaptor.reconstruct(
+                ipd.Bunch({
+                    k: self(x, key=k, **kw)
+                    for k, x in adaptor.adapted.items()
+                }))
         elif adaptor.kind.shapekind == ShapeKind.SCALAR:
             result = adaptor.orig
         elif th.is_tensor(adaptor.orig) and adaptor.orig.shape[-1] == 0:
@@ -345,7 +350,13 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             return adapted, adapted[idx[:, 0], idx[:, 1]].reshape(shape), self.Nasu
         raise ValueError(f'SymManager.to_contiguous: unknown thing {type(thing)}')
 
-    def fill_from_contiguous(self, thing, orig, contig, matchpair=False, sympair_protein_only=None, **kw) -> 'th.Tensor':
+    def fill_from_contiguous(self,
+                             thing,
+                             orig,
+                             contig,
+                             matchpair=False,
+                             sympair_protein_only=None,
+                             **kw) -> 'th.Tensor':
         ctg = self.idx.contiguous
         if isinstance(orig, np.ndarray): ctg = ctg.cpu().numpy()
         new = copy.deepcopy(orig)

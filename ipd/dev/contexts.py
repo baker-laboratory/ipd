@@ -1,5 +1,6 @@
 import atexit
 import io
+import numpy as np
 import os
 import sys
 import traceback
@@ -48,6 +49,21 @@ def capture_stdio():
             err.seek(0)
 
 @contextmanager
+def stdio():
+    with redirect(sys.__stdout__, sys.__stderr__) as (out, err):
+        try:
+            yield out, err
+        finally:
+            pass
+
+@contextmanager
+def nocontext():
+    try:
+        yield None
+    finally:
+        pass
+
+@contextmanager
 def cd(path):
     oldpath = os.getcwd()
     try:
@@ -82,3 +98,15 @@ def trace_prints():
     tp = TracePrints()
     with redirect(stdout=tp):
         yield tp
+
+@contextmanager
+def np_printopts(**kw):
+    npopt = np.get_printoptions()
+    try:
+        np.set_printoptions(**kw)
+        yield None
+    finally:
+        np.set_printoptions(**{k: npopt[k] for k in kw})
+
+def np_compact(precision=4, suppress=True, **kw):
+    return np_printopts(precision=precision, suppress=suppress, **kw)

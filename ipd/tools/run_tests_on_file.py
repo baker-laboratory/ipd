@@ -135,7 +135,7 @@ def dispatch(
     if not file_has_main(fname) and not bname.startswith("test_"):
         testfile = testfile_of(projects, path, bname, **kw)
         if testfile:
-            if not os.path.exists(testfile):
+            if not os.path.exists(testfile) and fname.endswith('.py'):
                 print('autogen test file', testfile)
                 os.system(f'{sys.executable} -mipd code make_testfile {fname} {testfile}')
                 os.system(f'subl {testfile}')
@@ -156,7 +156,8 @@ def dispatch(
 
 def main(projects, quiet=False, filter_build_log=False, **kw):
     t = perf_counter()
-    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest', '')
+    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest',
+                                                                                 '')
     if not quiet:
         print("call:", sys.argv)
         print("cwd:", os.getcwd())
@@ -167,7 +168,7 @@ def main(projects, quiet=False, filter_build_log=False, **kw):
     os.system(post)
     t = perf_counter() - t
     if filter_build_log:
-        p = Path('ide/sublime_build.log')
+        p = Path('sublime_build.log')
         assert p.exists()
 
     print(f"{f' run_tests_on_file.py done, time {t:7.3f} ':=^69}")

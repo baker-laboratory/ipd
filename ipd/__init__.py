@@ -8,6 +8,7 @@ from ipd.dev.funcs import kwcheck as kwcheck, kwcall as kwcall
 from ipd.dev.format import print_table as print_table
 from ipd.bunch import Bunch as Bunch, bunchify as bunchify
 from ipd.lazy_import import importornone as importornone, lazyimport as lazyimport
+from ipd.lazy_import import LazyImportError as LazyImportError
 from ipd.observer import hub as hub
 from ipd.dev.tolerances import Tolerances as Tolerances
 from ipd.dev.iterables import first as first
@@ -17,8 +18,8 @@ if TYPE_CHECKING:
     from ipd import crud
     from ipd import cuda
     from ipd import fit
-    from ipd import h
-    from ipd import homog
+    import ipd.homog.thgeom as h
+    import ipd.homog.thgeom as homog
     from ipd import motif
     from ipd import pdb
     from ipd import protocol
@@ -60,9 +61,9 @@ with contextlib.suppress(ImportError):
     from icecream import ic
     import builtins
 
+    setattr(builtins, 'panic', panic)
     ic.configureOutput(includeContext=True)
     setattr(builtins, 'ic', ic)
-    setattr(builtins, 'panic', panic)
 
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme

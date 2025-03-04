@@ -5,7 +5,7 @@ def main():
     ipd.tests.maintest(namespace=globals())
 
 def helper_test_filter_python_output(text, ref, preset):
-    result = ipd.dev.filter_python_output(text, ref, preset=preset)
+    result = ipd.dev.filter_python_output(text, ref, preset=preset, minlines=0)
     if result != ref:
         # print('????????????????? txt ???????????????????')
         # print(text)

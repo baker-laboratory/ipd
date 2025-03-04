@@ -24,6 +24,9 @@ def frames(
     ontop=None,
     sgonly=False,
     torch=False,
+    helix_radius=None,
+    helix_angle=None,
+    helix_shift=None,
     **kw,
 ):
     """Generate symmetrical coordinate frames axis aligns Cx or bbaxis or axis0
@@ -38,11 +41,14 @@ def frames(
     sym = sym.lower()
 
     okexe = (SystemExit, ) if sgonly else (KeyError, AttributeError)
-    with contextlib.suppress(okexe):  # type: ignore
+    with contextlib.suppress(okexe):
         return ipd.sym.xtal.sgframes(sym, ontop=ontop, **kw)
     try:
         if ipd.sym.is_known_xtal(sym):
             return xtal(sym).frames(ontop=ontop, **kw).copy()
+        elif sym.startswith('h'):
+            helix_nfold = 1 if sym == 'h' else int(sym[1:])
+            return helix_frames(helix_radius, helix_angle, helix_shift, helix_nfold)
         else:
             f = sym_frames[sym].copy()
     except KeyError as e:
@@ -178,6 +184,13 @@ def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize
 
     ipd.dev.checkpoint(kw)
     return f
+
+def helix_frames(helix_radius, helix_angle, helix_shift, helix_nfold):
+    unit = hrot([0, 0, 1], helix_angle, [0, 0, 0], hel=helix_shift)
+    xglobal = frames(f'c{helix_nfold}')
+    hframes = np.stack([np.eye(4), unit, hinv(unit)])
+    xasu = htrans(helix_radius)
+    return hxform(xglobal, hframes, xasu).reshape(-1, 4, 4)
 
 def make(sym, x, **kw):
     return ipd.homog.hxform(frames(sym, **kw), x)
@@ -324,7 +337,8 @@ icosahedral_axes = {
 }
 
 tetrahedral_axes_all = {
-    2: hnormalized([
+    2:
+    hnormalized([
         [1, 0, 0],
         [0, 1, 0],
         [0, 0, 1],
@@ -332,7 +346,8 @@ tetrahedral_axes_all = {
         # [0, _, 0],
         # [0, 0, _],
     ]),
-    3: hnormalized([
+    3:
+    hnormalized([
         [1, 1, 1],
         [1, _, _],
         [_, _, 1],
@@ -342,7 +357,8 @@ tetrahedral_axes_all = {
         # [1, 1, _],
         # [1, _, 1],
     ]),
-    "3b": hnormalized([
+    "3b":
+    hnormalized([
         [_, 1, 1],
         [1, _, 1],
         [1, 1, _],
@@ -755,6 +771,7 @@ _canon_asucen['i5'] = _canon_asucen['i5'] * 0.8 + _canon_asucen['i532'] * 0.2
 
 def canonical_asu_center(sym, cuda=False):
     sym = ipd.sym.map_sym_abbreviation(sym).lower()
+    if sym.startswith('h'): return [0, 0, 0]
     try:
         if cuda:
             import torch as th  # type: ignore
@@ -770,7 +787,7 @@ def canonical_asu_center(sym, cuda=False):
 
 def compute_canonical_asucen(sym, neighbors=None):
     import torch as th  # type: ignore
-    from ipd import h
+    import ipd.homog.thgeom as h
     sym = ipd.sym.map_sym_abbreviation(sym).lower()
     frames = ipd.sym.frames(sym)
     x = h.randunit(int(5e5))

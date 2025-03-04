@@ -1,10 +1,19 @@
 import sys
 
+import pytest
+
 import ipd
-from ipd.lazy_import import _LazyModule
+from ipd.lazy_import import _LazyModule, lazyimport
+
+testconfig = ipd.Bunch(nocapture=['test_broken_package'], )
 
 def main():
-    ipd.tests.maintest(namespace=globals())
+    ipd.tests.maintest(namespace=globals(), config=testconfig)
+
+def test_broken_package():
+    borked = lazyimport('ipd.data.tests.broken_py_file')
+    with pytest.raises(ipd.LazyImportError) as e:
+        borked.foo
 
 def test_importornone():
     re = ipd.importornone('re')
@@ -22,11 +31,11 @@ def test_lazyimport_re():
 
 def test_lazyimport_this():
     this = ipd.lazyimport('this')
-    assert not this.is_loaded()
+    assert not this._lazymodule_is_loaded()
     with ipd.dev.capture_stdio() as poem:
         assert this.c == 97
     assert 'The Zen of Python, by Tim Peters' == ipd.first(poem.readlines()).strip()
-    assert this.is_loaded()
+    assert this._lazymodule_is_loaded()
 
 def helper_test_re_ft_it(re, ft, it):
     assert 2 == len(re.findall('foo', 'foofoo'))

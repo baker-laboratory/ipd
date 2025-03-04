@@ -21,13 +21,14 @@ def call_with_args_from(
     strict=False,
     **kw,
 ) -> T:
-    params = inspect.signature(func).parameters
-    required_params = get_non_default_params(func)
+    params = func_params(func)
+    required_params = func_params(func, required_only=True)
     if timed: func = ipd.dev.timed(func)
     for p in params:
         if p not in argpool and p in required_params:
             raise ValueError(
-                f'function: {func.__name__}{inspect.signature(func)} requred arg {p} not argpool: {list(argpool.keys())}')
+                f'function: {func.__name__}{inspect.signature(func)} requred arg {p} not argpool: {list(argpool.keys())}'
+            )
     args = {p: argpool[p] for p in params if p in argpool}
     if dryrun: return None
     return func(**args)
@@ -207,11 +208,9 @@ def kwcheck(kw, func=None, checktypos=True):
     When used with checktypos=True, this function helps detect possible misspelled
     parameter names, improving developer experience by providing helpful error messages.
     """
-
     func = func or get_function_for_which_call_to_caller_is_argument()
     if not callable(func): raise TypeError('Couldn\'t get function for which kwcheck(kw) is an argument')
-    sig = inspect.signature(func)
-    params = list(sig.parameters.keys())
+    params = func_params(func)
     newkw = {k: v for k, v in kw.items() if k in params}
     if checktypos:
         unused = kw.keys() - newkw.keys()
@@ -267,7 +266,11 @@ def filter_namespace_funcs(namespace, prefix='test_', only=(), re_only=(), exclu
         for func in allfuncs:
             if re.match(func_re, func): del namespace[func]
 
-def get_non_default_params(func):
+def param_is_required(param):
+    return param.default is param.empty and param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)
+
+@functools.lru_cache
+def func_params(func, required_only=False):
     """
     Returns a list of names of the non-default parameters for a function.
 
@@ -284,14 +287,10 @@ def get_non_default_params(func):
         ['a', 'b']
     """
     signature = inspect.signature(func)
-    non_default_params = []
-
-    for name, param in signature.parameters.items():
-        # Check if parameter doesn't have a default value and is not a *args or **kwargs type
-        if param.default is param.empty and param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
-            non_default_params.append(name)
-
-    return non_default_params
+    params = inspect.signature(func).parameters
+    if required_only:
+        params = {k: param for k, param in params.items() if param_is_required(param)}
+    return params
 
 def has_pytest_mark(obj, mark):
     return mark in [m.name for m in getattr(obj, 'pytestmark', ())]

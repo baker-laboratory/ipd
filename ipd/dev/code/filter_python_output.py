@@ -6,8 +6,8 @@ re_block = re.compile(r'  File "([^"]+)", line (\d+), in (.*)')
 re_end = re.compile(r'(^[A-Z][A-Za-z0-9]+Error)(: .*)?')
 re_null = r'a^'  # never matches
 re_presets = dict(ipd_boilerplate=Bunch(
-    file=r'ipd/tests/maintest\.py|icecream/icecream.py|/pprint.py',
-    func=r'<module>|main|call_with_args_from|wrapper|print_table|make_table',
+    file=r'ipd/tests/maintest\.py|icecream/icecream.py|/pprint.py|lazy_import.py|<.*>',
+    func=r'<module>|main|call_with_args_from|wrapper|print_table|make_table|import_module',
 ))
 
 def filter_python_output(
@@ -16,6 +16,7 @@ def filter_python_output(
     re_file=re_null,
     re_func=re_null,
     preset=None,
+    minlines=30,
     **kw,
 ):
     # if entrypoint == 'codetool': return text
@@ -26,7 +27,11 @@ def filter_python_output(
     result = []
     file, lineno, func, block = None, None, None, None
     skipped = []
-    for line in text.splitlines():
+    lines = text.splitlines()
+    if len(lines) < minlines:
+        return text
+    for line in lines:
+        line = line.rstrip() + os.linesep
         if m := re_block.match(line):
             _finish_block(block, file, func, re_file, re_func, result, skipped)
             file, linene, func, block = *m.groups(), [line]
@@ -38,7 +43,7 @@ def filter_python_output(
             block.append(line)
         else:
             result.append(line)
-    return os.linesep.join(result) + os.linesep
+    return os.linesep.join(map(str.rstrip, result)) + os.linesep
 
 def _finish_block(block, file, func, re_file, re_func, result, skipped, keep=False):
     if block:

@@ -1,3 +1,4 @@
+"""this would all be better done with ChainMap"""
 import contextlib
 import os
 

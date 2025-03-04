@@ -557,10 +557,16 @@ def axis_angle_cen_hel(xforms, **kw):
     hel = dot(axis, xforms[..., :, 3])
     return axis, angle, cen, hel
 
+def flip_negative_rotation_axis(ax, an):
+    if an.ndim == 0:
+        if an < 0: ax, an = ax * -1, an * -1
+    else:
+        ax[an < 0] *= -1
+        an[an < 0] *= -1
+    return ax, an
+
 def axis_angle(xforms):
-    axis_ = axis(xforms)
-    angl = angle(xforms)
-    return axis_, angl
+    return flip_negative_rotation_axis(axis(xforms), angle(xforms))
 
 def axis(xforms, tol=1e-5):
     ddkw = get_dtype_dev(xforms)
@@ -758,15 +764,18 @@ def frame(u, v, w, cen=None, primary='x', **kw):
 def Qs2Rs(Qs, shape=(3, 3)):
     Rs = th.zeros(Qs.shape[:-1] + shape, dtype=Qs.dtype, device=Qs.device)
 
-    Rs[..., 0, 0] = (Qs[..., 0] * Qs[..., 0] + Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] - Qs[..., 3] * Qs[..., 3])
+    Rs[..., 0, 0] = (Qs[..., 0] * Qs[..., 0] + Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] -
+                     Qs[..., 3] * Qs[..., 3])
     Rs[..., 0, 1] = 2 * Qs[..., 1] * Qs[..., 2] - 2 * Qs[..., 0] * Qs[..., 3]
     Rs[..., 0, 2] = 2 * Qs[..., 1] * Qs[..., 3] + 2 * Qs[..., 0] * Qs[..., 2]
     Rs[..., 1, 0] = 2 * Qs[..., 1] * Qs[..., 2] + 2 * Qs[..., 0] * Qs[..., 3]
-    Rs[..., 1, 1] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] + Qs[..., 2] * Qs[..., 2] - Qs[..., 3] * Qs[..., 3])
+    Rs[..., 1, 1] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] + Qs[..., 2] * Qs[..., 2] -
+                     Qs[..., 3] * Qs[..., 3])
     Rs[..., 1, 2] = 2 * Qs[..., 2] * Qs[..., 3] - 2 * Qs[..., 0] * Qs[..., 1]
     Rs[..., 2, 0] = 2 * Qs[..., 1] * Qs[..., 3] - 2 * Qs[..., 0] * Qs[..., 2]
     Rs[..., 2, 1] = 2 * Qs[..., 2] * Qs[..., 3] + 2 * Qs[..., 0] * Qs[..., 1]
-    Rs[..., 2, 2] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] + Qs[..., 3] * Qs[..., 3])
+    Rs[..., 2, 2] = (Qs[..., 0] * Qs[..., 0] - Qs[..., 1] * Qs[..., 1] - Qs[..., 2] * Qs[..., 2] +
+                     Qs[..., 3] * Qs[..., 3])
 
     return Rs
 
@@ -901,10 +910,10 @@ def uniqlastdim(x, tol=None):
         x = x[different[0]]
     return th.stack(uniq)
 
-def symmetrically_unique_lines(*a, frames=th.eye(4)[None], **kw):
-    result = ipd.homog.hgeom.symmetrically_unique_lines(*(x.detach().numpy() for x in a),
-                                                        frames=frames.detach().numpy(),
-                                                        **kw)
+def unique_lines_sym(*a, frames=th.eye(4)[None], **kw):
+    result = ipd.homog.hgeom.unique_lines_sym(*(x.detach().numpy() for x in a),
+                                              frames=frames.detach().numpy(),
+                                              **kw)
     return tuple(map(th.as_tensor, result))
 
 def joinlastdim(u, v):

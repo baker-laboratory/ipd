@@ -118,7 +118,19 @@ def hxformvec(x, stuff, **kw):
     assert np.allclose(result[..., 3], 0)
     return result
 
-def hxform(x, stuff, homogout="auto", **kw):
+def xchain(*xforms, **kw):
+    x, *xforms, stuff = xforms
+    for x1 in xforms:
+        x = hxform(x, x1)
+    return hxform(x.astype(stuff.dtype), stuff, **kw)
+
+def hxform(*x, homogout="auto", **kw):
+    if len(x) > 2:
+        return xchain(*x, homogout=homogout, **kw)
+    elif len(x) < 2:
+        raise TypeError('hxform missing required positional arguments hxform(x, stuff, ...)')
+    else:
+        x, stuff = x
     if isinstance(stuff, list) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return [hxform(x, v) for v in stuff]
     if isinstance(stuff, dict) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
@@ -198,7 +210,17 @@ def hxform(x, stuff, homogout="auto", **kw):
 
     return result
 
-def _hxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", improper_ok=False, dtype=None):
+def _hxform_impl(
+    x,
+    stuff,
+    *,
+    outerprod="auto",
+    flat=False,
+    is_points="auto",
+    improper_ok=False,
+    uppertri=None,
+    dtype=None,
+):
     if is_points == "auto":
         is_points = not hvalid44(stuff, improper_ok=improper_ok)
         if is_points:
@@ -259,8 +281,11 @@ def _hxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", impro
         if flat:
             result = result.reshape(-1, 4)
 
-        # assert 0
-    # ic('result', result.shape)
+    if uppertri is not None:
+        assert result.ndim > 2
+        assert result.shape[0] == result.shape[1]
+        result = np.concatenate([x[i + uppertri:] for i, x in enumerate(result[:-uppertri])])
+
     return result
 
 def is_valid_quat_rot(quat):
@@ -470,6 +495,11 @@ def hunique(xforms):
 def axis_angle_of(xforms, debug=False):
     axis = axis_of(xforms, debug=debug)
     angl = angle_of(xforms, debug=debug)
+    if angl.ndim == 0:
+        if angl < 0: axis, angl = axis * -1, angl * -1
+    else:
+        axis[angl < 0] *= -1
+        angl[angl < 0] *= -1
     return axis, angl
 
 def axis_angle_hel_of(xforms):
@@ -1586,7 +1616,7 @@ def lines_all_concurrent(cen, axis, tol=1e-4):
     """
     return lines_concurrent_isect(cen, axis, tol=tol)[0]
 
-def symmetrically_unique_lines(
+def unique_lines_sym(
     axis,
     cen,
     ang=None,
@@ -1657,7 +1687,7 @@ def symmetrically_unique_lines(
         ax, cn, an, hl, extra = ax[~same], cn[~same], an[~same], hl[~same], [e[~same] for e in extra]
         # ic(ax.shape, an.shape, same.shape, ang.shape)
     else:
-        raise ValueError('too many steps of symmetrically_unique_lines')
+        raise ValueError('too many steps of unique_lines_sym')
     result = tuple(np.stack([tup[i] for tup in uniq]) for i in range(len(uniq[0])))
     return result
 
@@ -1691,7 +1721,13 @@ def sym_closest_lines_if_already_close(axis, cen, frames, target, lever=100):
     axis[hdot(axis, axis[0]) < -0.1] *= -1
     tgtaxis, tgtcen = _target_axis_cen(target)
     if tgtcen is None: dist = angle(xform(frames, axis[0]), tgtaxis)
-    else: dist = line_line_diff_pa(xform(frames, cen[0]), xform(frames, axis[0]), tgtcen, tgtaxis, lever, directed=True)
+    else:
+        dist = line_line_diff_pa(xform(frames, cen[0]),
+                                 xform(frames, axis[0]),
+                                 tgtcen,
+                                 tgtaxis,
+                                 lever,
+                                 directed=True)
     axis, cen = xform(frames[np.argmin(dist)], [axis, cen])
     return axis, cen
 
@@ -1757,6 +1793,7 @@ point_line_dist_pa = h_point_line_dist
 rand = hrand
 randsmall = hrandsmall
 xform = hxform
+xformx = hxformx
 xformvec = hxformvec
 xformpts = hxformpts
 rmsfit = hrmsfit

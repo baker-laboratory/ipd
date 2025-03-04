@@ -20,8 +20,8 @@ def detect(
     if ipd.homog.is_tensor(thing) and ipd.homog.is_xform_stack(thing):
         return syminfo_from_frames(thing, tol=tol, **kw)
     if 'biotite' in sys.modules:
-        atoms = thing
         from biotite.structure import AtomArray
+        atoms = thing
         if order is not None and len(atoms) % order == 0 and isinstance(atoms, AtomArray):
             atoms = ipd.atom.split(atoms, order)
         elif order is None and isinstance(atoms, AtomArray):
@@ -137,12 +137,17 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=N
     assert not ipd.atom.is_atoms(atomslist)
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
     tol = ipd.Tolerances(tol, **(symdetect_default_tolerances | kw))
-    frames, rms, match = ipd.atom.frames_by_seqaln_rmsfit(atomslist, **kw)
-    syminfo = syminfo_from_frames(frames, tol=tol, **kw)
-    syminfo.rms, syminfo.seqmatch = rms, match
-    _add_multichain_info(syminfo, atomslist, frames, tol)
-    _check_frames_with_asu_for_supersym(syminfo)
-    return syminfo
+    framesets = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, **kw)
+    results = []
+    for frames, match, rms in framesets:
+        ic(frames.shape, match, rms)
+        tol.reset()
+        syminfo = syminfo_from_frames(frames, tol=tol)
+        syminfo.rms, syminfo.seqmatch = rms, match
+        _add_multichain_info(syminfo, atomslist, frames, tol)
+        _check_frames_with_asu_for_supersym(syminfo)
+        results.append(syminfo)
+    return results if len(results) > 1 else results[0]
 
 def _add_multichain_info(sinfo: SymInfo, atomslist, frames, tol):
     if sinfo.is_multichain:
@@ -219,18 +224,16 @@ def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
     else:
         return SymInfo('Unknown', **sym_info_args)
 
-def symelems_from_frames(frames, tol=None, **kw):
+def symelems_from_frames(frames, allbyall=False, **kw):
     """
     compute a non-redundant set of simple symmetry elements from homog transforms
     """
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
-    tol = ipd.dev.Tolerances(tol, **kw)
-    rel = h.xform(h.inv(frames[0]), frames)
+    tol = kw['tol'] = ipd.dev.Tolerances(**kw)
+    rel = h.xformx(h.inv(frames[0]), frames)
+    if allbyall: rel = h.xformx(h.inv(frames), frames, outerprod=True, uppertri=1)
     axis, ang, cen, hel = h.axis_angle_cen_hel(rel[1:])
-    axis[ang < 0] *= -1
-    ang[ang < 0] *= -1
-    ipd.print_table(dict(axis=axis, ang=ang, cen=cen, hel=hel), nohomog=True)
-    axis, cen, ang, hel = h.symmetrically_unique_lines(axis, cen, ang, hel, frames=rel, tol=tol, **kw)
+    axis, cen, ang, hel = h.unique_lines_sym(axis, cen, ang, hel, frames=rel, **kw)
     ok = np.ones(len(axis), dtype=bool)
     result = list()
     for ax, cn, an, hl in zip(axis, cen, ang, hel):
@@ -294,20 +297,20 @@ def syminfo_to_str(sinfo, verbose=True):
     """returns text tables with the data in this SymInfo"""
     npopt = np.get_printoptions()
     np.set_printoptions(precision=6, suppress=True)
-    textmap = {'nfold': 'nf', '[': '', ']': '', '__REGEX__': False}
-    targ = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
+    textmap = {'nfold': 'nf', '__REGEX__': False}  # , '[': '', ']': '
+    kw = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
     if sinfo.symid == 'C1': return 'SymInfo(C1)'
     with ipd.dev.capture_stdio() as out:
         symcen = '\n'.join(f'{x:7.3f}' for x in sinfo.symcen.reshape(4)[:3])
         head = dict(symid=sinfo.symid, guess=sinfo.guess_symid, symcen=symcen, origin=sinfo.origin)
-        headtable = ipd.dev.make_table(dict(foo=head), key=False, strip=False, **targ)
-        setable = ipd.dev.make_table_dataset(sinfo.symelem, **targ)
+        headtable = ipd.dev.make_table(dict(foo=head), key=False, strip=False, **kw)
+        setable = ipd.dev.make_table_dataset(sinfo.symelem, **kw)
         asutable = ipd.dev.make_table(
             [[sinfo.t_number, sinfo.asurms, sinfo.asumatch, sinfo.asuframes.shape, sinfo.allframes.shape]],
             header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'])
         geomtable = ipd.dev.make_table([[sinfo.is_helical, sinfo.is_point, sinfo.axes_dists]],
                                        header=['is_helical', 'axes concurrent', 'axes dists'],
-                                       **targ)
+                                       **kw)
         checktable = ipd.dev.make_table(sinfo.tol_checks, key='Geom Tests')
         tables = [[headtable], [geomtable], [asutable], [setable], [checktable]]
         if sinfo.stub0 is not None:

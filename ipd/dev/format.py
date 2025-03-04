@@ -97,7 +97,7 @@ def make_table_dataset(dataset, title=None, **kw):
             table.add_row(*row)
     return table
 
-def to_renderable(thing, textmap=None, strip=True, nohomog=False):
+def to_renderable(thing, textmap=None, strip=True, nohomog=False, **kw):
     textmap = textmap or {}
     if isinstance(thing, float): return f'{thing:7.3f}'
     if isinstance(thing, bool): return str(thing)

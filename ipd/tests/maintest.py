@@ -1,92 +1,82 @@
 import tempfile
 
-import pydantic
-
 import ipd
 
-def maintest(
-        namespace,
-        fixtures=None,
-        setup=lambda: None,
-        funcsetup=lambda: None,
-        nofail=False,
-        config=ipd.Bunch(_strict=False),
-        verbose=False,
-        **kw,
-):
+class TestConfig(ipd.Bunch):
+
+    def __init__(self, *a, **kw):
+        super().__init__(self, *a, **kw)
+        self.nofail = self.get('nofail', False)
+        self.verbose = self.get('verbose', False)
+        self.nocapture = self.get('nocapture', [])
+        self.fixtures = self.get('fixtures', {})
+        self.setup = self.get('setup', lambda: None)
+        self.funcsetup = self.get('funcsetup', lambda: None)
+        self.context = self.get('context', ipd.dev.nocontext)
+
+class TestResult(ipd.Bunch):
+
+    def __init__(self, *a, **kw):
+        super().__init__(self, *a, **kw)
+        self.passed, self.failed, self.errored, self.xfailed = [], [], [], []
+
+def maintest(namespace, config=ipd.Bunch(), **kw):
     print(f'maintest {namespace["__file__"]}:', flush=True)
     ipd.dev.onexit(ipd.dev.global_timer.report)
+    config = TestConfig(**config, **kw)
     ipd.kwcall(ipd.dev.filter_namespace_funcs, config, namespace)
-    test_classes, test_funcs = [], []
+    test_suites, test_funcs = [], []
     for name, obj in namespace.items():
         if name.startswith('Test') and isinstance(obj, type) and not hasattr(obj, '__unittest_skip__'):
-            test_classes.append((name, obj))
+            test_suites.append((name, obj()))
         elif name.startswith('test_') and callable(obj) and ipd.dev.no_pytest_skip(obj):
             test_funcs.append((name, obj))
     ipd.dev.global_timer.checkpoint('maintest')
-    fixtures = fixtures or {}
-    result = ipd.Bunch(passed=[], failed=[], errored=[], xfailed=[])
+    result = TestResult()
     with tempfile.TemporaryDirectory() as tmpdir:
-        ipd.dev.call_with_args_from(fixtures, setup)
-        fixtures['tmpdir'] = tmpdir
+        ipd.dev.call_with_args_from(config.fixtures, config.setup)
+        config.fixtures['tmpdir'] = tmpdir
 
         for name, func in test_funcs:
-            _maintest_run_test_function(name, func, result, nofail, fixtures, funcsetup, kw)
+            _maintest_run_test_function(name, func, result, config, kw)
 
-        for class_name, test_class in test_classes:
-            print(f'{class_name:=^60}', flush=True)
-            test_instance = test_class()
-            setup_method = getattr(test_instance, 'setUp', lambda: None)
-            teardown_method = getattr(test_instance, 'tearDown', lambda: None)
-            test_methods = [
-                method for method in dir(test_instance)
-                if method.startswith('test_') and callable(getattr(test_instance, method))
-            ]
-            setup_method()
+        for clsname, suite in test_suites:
+            print(f'{clsname:=^60}', flush=True)
+            test_methods = {n: m for n, m in vars(suite).items() if n[:5] == 'test_' and callable(m)}
+            getattr(suite, 'setUp', lambda: None)()
             for name in test_methods:
-                full_name = f"{class_name}.{name}"
-                print(f'{full_name:-^50}', flush=True)
-                test_method = getattr(test_instance, name)
-                try:
-                    ipd.dev.call_with_args_from(fixtures, test_method, **kw)
-                    passed.append(full_name)
-                except AssertionError as error:
-                    failed.append(full_name)
-                    if nofail and error: print(error)
-                    elif error: raise error
-
-            teardown_method()
+                _maintest_run_test_function(name, func, result, config, kw)
+            getattr(suite, 'tearDown', lambda: None)
 
     if result.passed: print('PASSED   ', len(result.passed), 'tests')
     for label, tests in result.items():
-        if label == 'passed' and not verbose and len(result.passed) > 7: continue
+        if label == 'passed' and not config.verbose and len(result.passed) > 7: continue
         for test in tests:
             print(f'{label.upper():9} {test}', flush=True)
     return result
 
-def _maintest_run_test_function(name, func, result, nofail, fixtures, funcsetup, kw):
+def _maintest_run_test_function(name, func, result, config, kw):
     error, testout = None, None
-    with ipd.dev.capture_stdio() as testout:  # noqa
-        # if True:
+    context = ipd.dev.nocontext if name in config.nocapture else ipd.dev.capture_stdio
+    with context() as testout:  # noqa
         try:
-            ipd.dev.call_with_args_from(fixtures, funcsetup, **kw)
-            try:
-                ipd.dev.call_with_args_from(fixtures, func, **kw)
-                result.passed.append(name)
-            except (pydantic.ValidationError, TypeError, ValueError) as e:
-                result.errored.append(name)
-                error = e
+            ipd.dev.call_with_args_from(config.fixtures, config.funcsetup)
+            ipd.dev.call_with_args_from(config.fixtures, func)
+            result.passed.append(name)
         except AssertionError as e:
             if ipd.dev.has_pytest_mark(func, 'xfail'): result.xfailed.append(name)
             else: result.failed.append(name)
             error = e
+        except RuntimeError as e:
+            result.errored.append(name)
+            error = e
     if name in result.failed or name in result.errored:
-        print(f'{func.__name__:=^60}', flush=True)
+        print(f'{func.__name__:-^60}', flush=True)
         if testout: print(testout.read(), flush=True, end='')
-        if nofail and error: print(error)
+        if config.nofail and error: print(error)
         elif error: raise error
 
-def maincrudtest(crud, namespace, fixtures=None, funcsetup=lambda: None, **kw):
+def maincrudtest(crud, namespace, fixtures=None, funcsetup=lambda: None):
     fixtures = fixtures or {}
     with crud() as crud:
         fixtures |= crud

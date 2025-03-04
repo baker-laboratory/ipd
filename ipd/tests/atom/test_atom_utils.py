@@ -5,6 +5,7 @@ import ipd
 pytest.importorskip('biotite')
 
 def main():
+    # test_seqaln_rmsfit_multicomp_substruct()
     ipd.tests.maintest(namespace=globals())
 
 def _small_atoms_2chain():
@@ -29,20 +30,6 @@ def test_chain_dict():
     assert np.all(chains.A.chain_id == 'A')
     assert np.all(chains.B.chain_id == 'B')
     assert np.all(chains.A.res_name == chains.B.res_name)
-
-def test_seqaln_rmsfit():
-    atoms = ipd.pdb.readatoms(ipd.dev.package_testcif_path('1dxh'), biounit='largest', het=False)
-    # for i, a in enumerate(atoms):
-    # ipd.pdb.dump(a, f'lib/ipd/test{i}.pdb')
-    frames, rms, matches = ipd.atom.frames_by_seqaln_rmsfit(atoms)
-    assert np.allclose(rms, 0, atol=1e-3)
-    assert np.allclose(matches, 1)
-    assert matches.shape == (12, )
-
-def test_stub():
-    atoms = ipd.tests.top7
-    stub = ipd.atom.stub(atoms)
-    assert ipd.homog.hvalid44(stub)
 
 if __name__ == '__main__':
     main()

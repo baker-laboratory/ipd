@@ -41,6 +41,7 @@ dependencies = [
     'validate-pyproject[all]',
     'yapf',
     "torch>=2.6.0",
+    "pytest>=8.3.4",
 ]
 [project.optional-dependencies]
 ci = [
@@ -94,7 +95,7 @@ markers = [
 [tool.yapf]
 based_on_style = 'pep8'
 indent_width = 4
-column_limit = 123
+column_limit = 111
 blank_line_before_nested_class_or_def = true
 blank_lines_around_top_level_definition = 1
 arithmetic_precedence_indication = true

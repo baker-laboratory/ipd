@@ -28,6 +28,9 @@ def split(atoms, order=None, bychain=None):
             return list(chain_dict(atoms).values())
     raise TypeError(f'bad split args {type(atoms)=} {order=} {bychain=}')
 
+def split_chains(atoms):
+    return split(atoms, bychain=True)
+
 def chain_dict(atoms):
     """Group an AtomArray by chain_id and return a dictionary."""
     chain_ids = np.unique(atoms.chain_id)  # Get unique chain IDs
@@ -37,20 +40,6 @@ def chain_dict(atoms):
 def atoms_to_seq(atoms):
     import biotite.structure as struc
     return ipd.dev.addreduce(struc.to_sequence(atoms)[0])
-
-def frames_by_seqaln_rmsfit(atomslist, tol=0.7, **kw):
-    tol = ipd.Tolerances(tol)
-    frames, rmsds, matches = [np.eye(4)], [0], [1]
-    ca = [a[a.atom_name == 'CA'] for a in atomslist]
-    for i, ca_i_ in enumerate(ca[1:]):
-        _, match, matchfrac = seqalign(ca[0], ca_i_)
-        xyz1 = ca[0].coord[match[:, 0]]
-        xyz2 = ca_i_.coord[match[:, 1]]
-        rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
-        frames.append(xfit), rmsds.append(rms), matches.append(matchfrac)
-    frames, rmsds, matches = np.stack(frames), np.array(rmsds), np.array(matches)
-    ok = (rmsds < tol.rms_fit) & (matches > tol.seq_match)
-    return frames[ok], rmsds[ok], matches[ok]
 
 def seqalign(atoms1, atoms2):
     import biotite.sequence.align as align
@@ -62,8 +51,3 @@ def seqalign(atoms1, atoms2):
     match = aln.trace[(aln.trace[:, 0] >= 0) & (aln.trace[:, 1] >= 0)]
     matchfrac = 2 * len(match) / (len(s1) + len(s2))
     return aln, match, matchfrac
-
-def stub(atoms):
-    cen = bs.mass_center(atoms)
-    _, sigma, components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
-    return ipd.homog.hframe(*components.T, cen)
