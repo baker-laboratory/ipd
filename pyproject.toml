@@ -11,7 +11,7 @@ build-backend = "hatchling.build"
 [project]
 name = 'ipd'
 version = '0.1'
-requires-python = '>=3.9,<3.99' # for woodys old pipeline stuff
+requires-python = '>=3.10,<4' # for woodys old pipeline stuff
 dependencies = [
     'assertpy',
     'colorlog',
@@ -31,6 +31,8 @@ dependencies = [
     # 'pre-commit',
     'pandas',
     'pydantic',
+    'pytest-xdist',
+    'pytest-sugar',
     'rich',
     'requests',
     'RestrictedPython',
@@ -56,12 +58,10 @@ crud = [
 ]
 ml = [
     'torch',
+    'biotite',
 ]
 dev = [
     'debugpy',
-    'pytest',
-    'pytest-sugar',
-    'pytest-xdist',
     'pytest-cov',
     'pytest-benchmark',
     'pytest-dotenv',

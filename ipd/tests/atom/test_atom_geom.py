@@ -10,7 +10,7 @@ def main():
     ipd.tests.maintest(namespace=globals())
 
 def test_seqaln_rmsfit():
-    atoms = ipd.pdb.readatoms(ipd.dev.package_testcif_path('1dxh'), biounit='largest', het=False)
+    atoms = ipd.pdb.readatoms(ipd.dev.package_testcif_path('1dxh'), assembly='largest', het=False)
     # for i, a in enumerate(atoms):
     # ipd.pdb.dump(a, f'lib/ipd/test{i}.pdb')
     frames, rms, matches = ipd.atom.find_frames_by_seqaln_rmsfit(atoms)['frames rmsd seqmatch']

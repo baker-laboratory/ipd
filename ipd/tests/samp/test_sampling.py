@@ -4,10 +4,11 @@ import numpy as np
 import pytest
 from icecream import ic
 
+pytest.importorskip('torch')
+
 import ipd
 import ipd.homog.thgeom as h
 
-pytest.importorskip('torch')
 pytest.importorskip('ipd.samp.samp_cuda')
 
 def main():

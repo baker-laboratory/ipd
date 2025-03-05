@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Generic, TypeVar
 
 with contextlib.suppress(ImportError):
-    from icecream import ic
+    pass
 
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
@@ -43,9 +43,11 @@ class Bunch(dict, Generic[T]):
             self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload,
                                                                            'rb').read()).hexdigest()
         self.__dict__["_special"]["parent"] = _parent
-        for k in self:
+        for k in list(self.keys()):
             if hasattr(super(), k):
-                raise ValueError(f"{k} is a reseved name for Bunch")
+                self[f'{k}_'] = self[k]
+                del self[k]
+                print(f'WARNING {k} is a reserved name for dict, renaming to {k}_')
 
     def _autoreload_check(self):
         if not self.__dict__['_special']['autoreload']: return
@@ -76,7 +78,7 @@ class Bunch(dict, Generic[T]):
             parent, selfkey = self._special['parent']  # type: ignore
             return parent._notify_changed(f'{selfkey}.{k}', v)
         if self._special['autosave']:  # type: ignore
-            ic(self._special['autosave'])  # type: ignore
+            # ic(self._special['autosave'])  # type: ignore
             import yaml
             if k:
                 k = k.split('.')[0]

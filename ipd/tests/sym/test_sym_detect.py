@@ -109,7 +109,6 @@ def make_pdb_testfunc(pdbcode):
     @pytest.mark.fast
     def pdb_test_func():
         pytest.importorskip('biotite')
-        atoms = ipd.atom.load(ipd.dev.package_testcif_path(pdbcode), biounit='largest', het=False)
         tol = ipd.dev.Tolerances(**(ipd.sym.symdetect_default_tolerances | dict(
             default=1e-1,
             angle=9e-1,
@@ -120,30 +119,14 @@ def make_pdb_testfunc(pdbcode):
             rms_fit=3,
             nfold=0.2,
         )))
-        sinfo = ipd.sym.detect(atoms, tol=tol)
-        infersym = None
-        ic(sinfo.frames.shape)
-        if sinfo.symid[0] == 'C': infersym = f'C{sinfo.order}'
-        elif sinfo.symid[0] == 'D': infersym = f'C{sinfo.order/2}'
-        if not sinfo.is_multichain:
-            if sinfo.order % 2 == 1: infersym = f'C{sinfo.order}'
-            elif sinfo.order == 12: infersym = 'T'
-            elif sinfo.order == 24: infersym = 'O'
-            elif sinfo.order == 60: infersym = 'I'
-            elif len(sinfo.unique_nfold) == 2: infersym = f'D{sinfo.order}/2'
-            elif len(sinfo.unique_nfold) == 1: infersym = f'C{sinfo.order}'
-            else: assert 0
-        else:
-            if sinfo.pseudo_order == 60: infersym = 'I'
-            elif sinfo.pseudo_order == 24: infersym = 'O'
-            elif sinfo.pseudo_order == 12: infersym = 'T'
-        if infersym != sinfo.symid:
-            print(infersym)
-            print(sinfo)
-        assert infersym == sinfo.symid, f'{infersym=} != {sinfo.symid}'
-        infer_t = sinfo.pseudo_order // sinfo.order
-        err = f'T number mismatch {sinfo.t_number=}, {infer_t=} {sinfo.pseudo_order=} {sinfo.order=}'
-        assert sinfo.t_number == infer_t, err
+        symanno = ipd.pdb.sym_annotation(pdbcode)
+        for assembly_id, symid in zip(symanno.id, symanno.sym):
+            atoms = ipd.atom.load(ipd.dev.package_testcif_path(pdbcode), assembly=assembly_id, het=False)
+            sinfo = ipd.sym.detect(atoms, tol=tol)
+            assert symid == sinfo.symid, f'{symid=} != {sinfo.symid}'
+            infer_t = sinfo.pseudo_order // sinfo.order
+            err = f'T number mismatch {sinfo.t_number=}, {infer_t=} {sinfo.pseudo_order=} {sinfo.order=}'
+            assert sinfo.t_number == infer_t, err
 
     pdb_test_func.__name__ = pdb_test_func.__qualname__ = f'test_sym_detect_pdb_{pdbcode}'
     # pdb_test_func = ipd.dev.timed(pdb_test_func)

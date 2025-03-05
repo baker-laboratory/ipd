@@ -1,5 +1,7 @@
 import pytest
 
+pytest.importorskip('torch')
+
 from ipd.lazy_import import lazyimport
 
 from typing import TYPE_CHECKING

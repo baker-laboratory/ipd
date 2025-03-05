@@ -140,7 +140,7 @@ class Timer:
         precision="10.5f",
         printme=True,
         scale=1.0,
-        timecut=0,
+        timecut=0.001,
         file=None,
         pattern="",
     ):
@@ -157,7 +157,8 @@ class Timer:
         r = os.linesep.join(lines)
         if printme:
             print()
-            if file is None: print(r, flush=True)
+            if file is None:
+                print(r, flush=True)
             else:
                 with open(file, "w") as out:
                     out.write(r + os.linesep)
@@ -182,7 +183,13 @@ class Timer:
             for k, v in other.checkpoints.items():
                 self.checkpoints[k].extend(v)
 
-def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=None, clsname=None, funcname=None):
+def checkpoint(kw,
+               label=None,
+               funcbegin=False,
+               dont_mod_label=False,
+               filename=None,
+               clsname=None,
+               funcname=None):
     t = None
     if isinstance(kw, Timer):
         t = kw

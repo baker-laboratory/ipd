@@ -269,9 +269,9 @@ def test_bunch_strict():
     with pytest.raises(ValueError) as e:
         b.clear = 8  # type: ignore
     assert str(e.value) == "clear is a reseved name for Bunch"
-    with pytest.raises(ValueError) as e:
-        b = Bunch(clear=True)
-    assert str(e.value) == "clear is a reseved name for Bunch"
+    b = Bunch(clear=True)
+    assert 'clear_' in b
+    assert 'clear' not in b
 
 @pytest.mark.fast
 def test_bunch_default():
@@ -301,9 +301,11 @@ def test_bunch_default():
 
 @pytest.mark.fast
 def test_bunch_bugs():
-    with pytest.raises(ValueError) as e:
-        showme_opts = Bunch(headless=0, spheres=0.0, showme=0, clear=True, weight=2)
-    assert str(e.value) == "clear is a reseved name for Bunch"
+    # with pytest.raises(ValueError) as e:
+    showme_opts = Bunch(headless=0, spheres=0.0, showme=0, clear=True, weight=2)
+    assert 'clear_' in showme_opts
+    assert 'clear' not in showme_opts
+    # assert str(e.value) == "clear is a reseved name for Bunch"
 
 if __name__ == "__main__":
     main()

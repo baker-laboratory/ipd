@@ -1,7 +1,9 @@
 import functools
 import glob
 import os
+
 import requests
+
 import ipd
 
 def all_test_bcif(path=None):
@@ -20,15 +22,37 @@ def download_test_pdbs(pdbs, path=None, overwrite=False):
     return pdbs
 
 @functools.lru_cache
+def rcsb_get(path):
+    url = f'https://data.rcsb.org/rest/v1/core/{path}'
+    response = requests.get(url)
+    if response.status_code != 200: raise ValueError(f'cant fetch rcsb info: {url}')
+    return response.json()
+
+@ipd.dev.iterize_on_first_param(basetype=str, splitstr=True, asbunch=True)
 def info(pdb, assembly=None):
     pdb = pdb.upper()
     if assembly == 'all':
         return [info(pdb, assembly=i) for i in range(1, assembly_count(pdb) + 1)]
     elif assembly is not None:
-        dat = requests.get(f'https://data.rcsb.org/rest/v1/core/assembly/{pdb}/{assembly}').json()
+        dat = rcsb_get(f'assembly/{pdb}/{assembly}')
     else:
-        dat = requests.get(f'https://data.rcsb.org/rest/v1/core/entry/{pdb}').json()
+        dat = rcsb_get(f'entry/{pdb}')
     return ipd.bunchify(dat)
 
 def assembly_count(pdb):
     return info(pdb).rcsb_entry_info.assembly_count
+
+def sym_annotation(pdb):
+    infodict = orig = info(pdb, assembly='all')
+    if not isinstance(infodict, dict): infodict = {pdb: infodict}  # single value
+    vals = []
+    for pdb, infolist in infodict.items():
+        for iasm, asm in enumerate(infolist):
+            id, id_candidate = asm.pdbx_struct_assembly.id, asm.pdbx_struct_assembly.rcsb_candidate_assembly
+            assert id == asm.rcsb_assembly_info.assembly_id
+            for isym, ssym in enumerate(asm.rcsb_struct_symmetry):
+                vals.append((pdb, iasm, id, id_candidate, isym, ssym.symbol, ssym.type, ssym.stoichiometry,
+                             ssym.oligomeric_state))
+    names = 'pdb iasm id id2 isym sym type stoi oligo'
+    result = ipd.Bunch(zip(names.split(), zip(*vals)))
+    return result

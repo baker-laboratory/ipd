@@ -13,8 +13,8 @@ with contextlib.suppress(ImportError):
 import numpy as np
 
 import ipd
-import ipd.homog.thgeom as h
 
+h = ipd.lazyimport('ipd.homog.thgeom')
 th = ipd.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
 # from ipd.sym.sym_adapt import _sym_adapt, SymAdapt

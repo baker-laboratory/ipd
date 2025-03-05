@@ -22,11 +22,14 @@ class CITool(ipd.tools.IPDTool):
             'frame-flow': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/frame-flow.git',
             'fused_mpnn': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/fused_mpnn.git',
             'RF2-allatom': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/jue/RF2-allatom.git',
-            'rf_diffusion': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
+            'rf_diffusion':
+            f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
-    def update_library(self, libs: Annotated[Optional[list[str]], Argument()] = None, path: Path = Path('~/bare_repos')):
+    def update_library(self,
+                       libs: Annotated[Optional[list[str]], Argument()] = None,
+                       path: Path = Path('~/bare_repos')):
         # sourcery skip: default-mutable-arg
         path = path.expanduser()
         assert os.path.isdir(path)
@@ -184,7 +187,7 @@ class TestsTool(CITool):
             list of tuples (cmd, job, log)
         """
         # os.makedirs(os.path.dirname(log), exist_ok=True)
-        import submitit
+        submitit = ipd.importornone('submitit')
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
@@ -192,7 +195,7 @@ class TestsTool(CITool):
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
         jobs = []
-        executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
+        executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm and submitit else None
         kw: dict[str, Any] = dict(exe=exe,
                                   env=env,
                                   mark=mark,
@@ -212,7 +215,9 @@ class TestsTool(CITool):
                 jobs.append(run_pytest(sel=sel, parallel=1, log=log, mem=mem[0], **kw))  # type: ignore
             else:
                 nosel = ' and '.join([f'not {t}' for t in which.split()])
-                jobs.append(run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log', **kw))
+                jobs.append(
+                    run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log',
+                               **kw))
                 kw['exe'] = None  # run the nonparallel tests on head node... they are quick
                 kw['flags'] = kw['flags'].replace('junit.xml', 'junit2.xml')
                 jobs.append(run_pytest(sel=sel, parallel=1, mem=mem[0], log=f'{log}.nopar.log', **kw))

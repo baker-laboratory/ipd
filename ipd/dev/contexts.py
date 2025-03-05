@@ -8,11 +8,11 @@ from contextlib import contextmanager
 
 import ipd
 
-def onexit(func, msg=None):
+def onexit(func, msg=None, **metakw):
 
     def wrapper(*args, **kw):
         if msg is not None: print(msg)
-        return func(*args, **kw)
+        return func(*args, **(metakw | kw))
 
     atexit.register(wrapper)
     return wrapper

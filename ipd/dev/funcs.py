@@ -47,12 +47,13 @@ class InfixOperator:
     def __call__(self, *a, **kw):
         return self.func(*a, **kw)
 
-def iterizeable(arg, basetype=None):
+def is_iterizeable(arg, basetype=None, splitstr=False):
+    if isinstance(arg, str) and ' ' in arg: return True
     if basetype and isinstance(arg, basetype): return False
     if hasattr(arg, '__iter__'): return True
     return False
 
-def iterize_on_first_param(*metaargs, **metakw):
+def iterize_on_first_param(func0=None, *, basetype=None, splitstr=True, asdict=False, asbunch=False):
     """Decorator that vectorizes a function over its first parameter.
 
     This decorator enables a function to handle both single values and iterables as its
@@ -63,7 +64,7 @@ def iterize_on_first_param(*metaargs, **metakw):
         *metaargs: Optional positional arguments. If the first argument is callable,
             it is treated as the function to decorate (allowing for decorator use without
             parentheses).
-        **metakw: Keyword arguments passed to the iterizeable() function for controlling
+        **metakw: Keyword arguments passed to the is_iterizeable() function for controlling
             iteration behavior. Common parameters include:
             - basetype: Type or tuple of types that should not be iterated over even if
               they have __iter__ method (e.g., strings, Path objects).
@@ -106,16 +107,22 @@ def iterize_on_first_param(*metaargs, **metakw):
 
         @functools.wraps(func)
         def wrapper(arg0, *args, **kw):
-            if iterizeable(arg0, **metakw):
-                return [func(a0, *args, **kw) for a0 in arg0]
+            if is_iterizeable(arg0, basetype=basetype, splitstr=splitstr):
+                if splitstr and isinstance(arg0, str) and ' ' in arg0:
+                    arg0 = arg0.split()
+                if asbunch:
+                    return ipd.Bunch({a0: func(a0, *args, **kw) for a0 in arg0})
+                if asdict:
+                    return {a0: func(a0, *args, **kw) for a0 in arg0}
+                else:
+                    return [func(a0, *args, **kw) for a0 in arg0]
             return func(arg0, *args, **kw)
 
         return wrapper
 
-    if metaargs:  # hangle case with no call/args
-        assert callable(metaargs[0])
-        assert not metakw
-        return deco(metaargs[0])
+    if func0:  # handle case with no call/args
+        assert callable(func0)
+        return deco(func0)
     return deco
 
 iterize_on_first_param_path = iterize_on_first_param(basetype=(str, Path))

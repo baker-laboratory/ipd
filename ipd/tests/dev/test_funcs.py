@@ -23,9 +23,19 @@ def test_iterize():
 
     assert bar('foo') == 'foofoo'
     assert bar(['a', 'b']) == ['aa', 'bb']
+    ic(bar('a b'))
+    assert bar('a b') == ['aa', 'bb']
     assert bar(1.1) == 2.2
 
-@pytest.mark.fast
+    @ipd.dev.iterize_on_first_param(basetype=str, asdict=True)
+    def baz(a):
+        return 2 * a
+
+    assert baz('foo') == 'foofoo'
+    assert baz(['a', 'b']) == dict(a='aa', b='bb')
+    assert baz('a b') == dict(a='aa', b='bb')
+    assert baz(1.1) == 2.2
+
 def test_InfixOperator():
     th = pytest.importorskip('torch')
     x = ipd.dev.InfixOperator(lambda a, b: a * b)
@@ -327,7 +337,8 @@ class TestIterizeOnFirstParam(unittest.TestCase):
         # Path object should be treated as scalar with path decorator
         assert self.process_path(self.path_obj) == f"Processing {self.path_obj}"
         # List of strings should be processed element-wise
-        assert self.process_path(["file1.txt", "file2.txt"]) == ["Processing file1.txt", "Processing file2.txt"]
+        assert self.process_path(["file1.txt",
+                                  "file2.txt"]) == ["Processing file1.txt", "Processing file2.txt"]
         # List of Path objects should be processed element-wise
         expected = [f"Processing {self.path_list[0]}", f"Processing {self.path_list[1]}"]
         assert self.process_path(self.path_list) == expected

@@ -1,8 +1,8 @@
 import math
 import numpy as np
 import ipd
-import ipd.homog.thgeom as h
 
+h = ipd.lazyimport('ipd.homog.thgeom')
 th = ipd.lazyimport('torch')
 
 SYMA = 1.0

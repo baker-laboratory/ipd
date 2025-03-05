@@ -4,7 +4,7 @@ from icecream import ic
 
 import ipd
 import ipd.homog as hm
-import ipd.homog.thgeom as h
+import ipd.homog.hgeom as h
 from ipd.homog import *
 
 ic.configureOutput(includeContext=True, contextAbsPath=True)

@@ -31,19 +31,18 @@ def filter_python_output(
     if len(lines) < minlines:
         return text
     for line in lines:
-        line = line.rstrip() + os.linesep
         if m := re_block.match(line):
             _finish_block(block, file, func, re_file, re_func, result, skipped)
             file, linene, func, block = *m.groups(), [line]
         elif m := re_end.match(line):
             _finish_block(block, file, func, re_file, re_func, result, skipped, keep=True)
             file, lineno, func, block = None, None, None, None
-            result.append(line)
+            result.append(strip_extra_whitespace(line))
         elif block:
-            block.append(line)
+            block.append(strip_extra_whitespace(line))
         else:
-            result.append(line)
-    return os.linesep.join(map(str.rstrip, result)) + os.linesep
+            result.append(strip_extra_whitespace(line))
+    return os.linesep.join(result) + os.linesep
 
 def _finish_block(block, file, func, re_file, re_func, result, skipped, keep=False):
     if block:
@@ -57,3 +56,7 @@ def _finish_block(block, file, func, re_file, re_func, result, skipped, keep=Fal
                 result.append('  ' + str.join('=>', skipped) + ' =>')
                 skipped.clear()
             result.extend(block)
+
+def strip_extra_whitespace(line):
+    if not line[:60].strip(): return line.strip()
+    return line.rstrip()
