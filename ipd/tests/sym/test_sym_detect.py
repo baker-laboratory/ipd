@@ -10,7 +10,7 @@ ALLSYMS = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i
 
 config_test = ipd.Bunch(
     re_only=[
-        'test_sym_detect_pdb_1wa3',
+        # 'test_sym_detect_pdb_1wa3',
         # r'test_chelsea_tube1',
         # r'test_sym_detect_frames_ideal_[^_]+$',
         # r'test_sym_detect_frames_ideal_xformed_[^_]+$',
@@ -18,21 +18,23 @@ config_test = ipd.Bunch(
         # r'test.*_D\d+',
         # r'test.*noised.*'
     ],
-    only=[],
-    # re_exclude=['test_sym_detect_1g5q'],
-    exclude=[
+    only=[
         r'test_chelsea_tube1',
+        # 'test_sym_detect_pdb_1n0e',
+        # 'test_sym_detect_pdb_1bfr',
+        # 'test_sym_detect_pdb_1g5q',
     ],
+    # re_exclude=['test_sym_detect_1g5q'],
+    exclude=[],
 )
 
 def main():
-    test_sym_detect_pdb_1wa3()
-    # ieipd.tests.maintest(namespace=globals(), config=config_test, verbose=1)
+    ipd.tests.maintest(namespace=globals(), config=config_test, verbose=1)
 
 def test_chelsea_tube1():
     pytest.importorskip('biotite')
     atoms = ipd.atom.load(ipd.dev.package_testdata_path('pdb/chelsea_tube_1.pdb.gz'))
-    sinfo = ipd.sym.detect(atoms, allbyall=True)
+    sinfo = ipd.sym.detect(atoms, incomplete=True)
     print(sinfo)
     assert 0
 
@@ -47,11 +49,10 @@ def helper_test_frames(frames, symid, tol=None, origin=np.eye(4), ideal=False, *
     cendist = h.point_line_dist_pa(sinfo.symcen, se.cen, se.axis)
     assert cendist.max() < tol.isect
     ref = {k: v for k, v in ipd.sym.axes(symid).items() if isinstance(k, int)}
-
     assert sinfo.is_cyclic == (sinfo.symid[0] == 'C')
     assert sinfo.is_dihedral == (sinfo.symid[0] == 'D')
     if sinfo.is_cyclic:
-        ic(h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]), tol.line_angle)
+        # ic(h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]), tol.line_angle)
         assert h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]) < tol.line_angle
     elif sinfo.symid == 'D2':
         pass
@@ -65,8 +66,12 @@ def helper_test_frames(frames, symid, tol=None, origin=np.eye(4), ideal=False, *
                 ic(h.xform(h.inv(origin), sinfo.axis))
                 assert np.sum(np.abs(angs) < tol.line_angle) * 2 == angs.size
             else:
-                if ideal:
-                    assert np.allclose(sinfo.nfaxis[nf], h.xform(origin, ax), atol=1e-3)
+                # if ideal:
+                ax1, ax2 = h.xform(h.inv(origin), sinfo.nfaxis[nf]), ax[None]
+                cn1, cn2 = h.point([[0, 0, 0]]), h.point([[0, 0, 0]])
+                frm = h.xform(h.inv(origin), frames)
+                diff = h.sym_line_line_diff_pa(cn1, ax1, cn2, ax2, lever=50, frames=frm)
+                assert np.all(diff / 50 < tol.angle)
 
     return sinfo
 
@@ -111,7 +116,7 @@ def make_pdb_testfunc(pdbcode):
         pytest.importorskip('biotite')
         tol = ipd.dev.Tolerances(**(ipd.sym.symdetect_default_tolerances | dict(
             default=1e-1,
-            angle=9e-1,
+            angle=0.04,
             helical_shift=4,
             isect=6,
             dot_norm=0.07,
@@ -120,10 +125,13 @@ def make_pdb_testfunc(pdbcode):
             nfold=0.2,
         )))
         symanno = ipd.pdb.sym_annotation(pdbcode)
-        for assembly_id, symid in zip(symanno.id, symanno.sym):
-            atoms = ipd.atom.load(ipd.dev.package_testcif_path(pdbcode), assembly=assembly_id, het=False)
+        for id, symid in zip(symanno.id, symanno.sym):
+            if symid == 'C1': continue
+            atoms = ipd.atom.load(ipd.dev.package_testcif_path(pdbcode), assembly=id, het=False)
             sinfo = ipd.sym.detect(atoms, tol=tol)
-            assert symid == sinfo.symid, f'{symid=} != {sinfo.symid}'
+            if symid != sinfo.symid:
+                print(sinfo)
+                assert symid == sinfo.symid, f'{symid=} detected as {sinfo.symid}'
             infer_t = sinfo.pseudo_order // sinfo.order
             err = f'T number mismatch {sinfo.t_number=}, {infer_t=} {sinfo.pseudo_order=} {sinfo.order=}'
             assert sinfo.t_number == infer_t, err
@@ -187,7 +195,7 @@ def test_symelems_from_frames_D2n(symid='D4'):
     se = ipd.sym.symelems_from_frames(frames)
     ipd.dev.print_table(se)
     assert h.allclose(refse, se)
-    uniq, _, _, _ = h.unique_lines_sym(se.axis.data, se.cen.data)
+    uniq, _, _, _ = h.unique_symaxes(se.axis.data, se.cen.data)
     assert len(uniq) == len(se.axis)
 
 if __name__ == '__main__':

@@ -13,6 +13,7 @@ def make_table(thing, **kw):
     npopt = np.get_printoptions()
     np.set_printoptions(precision=4, suppress=True)
     try:
+        if ipd.homog.is_tensor(thing): return make_table_list(thing, **kw)
         if isinstance(thing, ipd.Bunch): return make_table_bunch(thing, **kw)
         if isinstance(thing, dict): return make_table_dict(thing, **kw)
         if isinstance(thing, (list, tuple)): return make_table_list(thing, **kw)
@@ -23,12 +24,12 @@ def make_table(thing, **kw):
         np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
 
 def print_table(thing, **kw):
-    if not thing: return '<empty table>'
+    if thing is None or not len(thing): return '<empty table>'
     table = make_table(thing, **kw)
     console.print(table)
 
 def make_table_list(lst, title=None, header=[], **kw):
-    t = Table(title=title)
+    t = Table(title=title, show_header=bool(header))
     for k in header:
         ipd.kwcall(t.add_column, kw, k)
     for v in lst:

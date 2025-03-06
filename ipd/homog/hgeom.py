@@ -1616,7 +1616,7 @@ def lines_all_concurrent(cen, axis, tol=1e-4):
     """
     return lines_concurrent_isect(cen, axis, tol=tol)[0]
 
-def unique_lines_sym(
+def unique_symaxes(
     axis,
     cen,
     ang=None,
@@ -1625,16 +1625,18 @@ def unique_lines_sym(
     frames=np.eye(4)[None],
     target=None,
     tol=1e-3,
-    lineuniq_method='closest',
+    lineuniq_method='symaverage',
     lever=100,
+    debug=False,
     **kw,
 ):
     """
     return unique set of lines, where lines in different frames are considered the same.
     also checks anything in extras
     """
-    assert axis.shape == cen.shape
+    assert axis.shape == cen.shape and axis.ndim == 2 and axis.shape[1] == 4
     tol = ipd.dev.Tolerances(tol, **kw)
+    assert tol.angle.threshold < .1
     assert axis.shape == cen.shape
     if ang is None: ang = np.ones(len(cen))
     if hel is None: hel = np.zeros(len(cen))
@@ -1661,33 +1663,34 @@ def unique_lines_sym(
         same &= (pdist < tol.isect)
         same = same.any(axis=1)
         # ic(same.shape, an.shape, (an[0]-an).shape)
-        if an is not None: same &= np.sqrt((an[0] - an)**2) < tol.angle
-
-        # spot the comment
-
-        if hl is not None: same &= np.sqrt((hl[0] - hl)**2) < tol.helical_shift
+        if an is not None: same &= np.abs(an[0] - an) < tol.angle
+        if hl is not None: same &= np.abs(hl[0] - hl) < tol.helical_shift
         # print('pdist', same.sum())
         for e in extra:
             same &= np.sqrt(np.sum((e[0] - e)**2, axis=1)) < tol.misc_lineuniq
             # print('extra', same.sum())
         # print('final', same.sum())
+        if debug:
+            pdistmin, adotmax = pdist.min(1), np.abs(adot).max(1)
+            ipd.print_table(ipd.dev.locals('pdistmin adotmax an hl', idx=same))
         assert np.any(same)
-        if lineuniq_method == 'closest':
+        if same.sum() == 1:
+            sel = lambda x: x[same][0]
+            pick = sel(ax), sel(cn), sel(an), sel(hl), *(sel(e) for e in extra)
+        elif lineuniq_method == 'closest':
             which = np.argmin(h_point_line_dist(target, cn[same], ax[same]))
             sel = lambda x: x[same][which]
             if hdot(sel(ax), target) < 0: ax[same] *= -1
             pick = sel(ax), sel(cn), sel(an), sel(hl), *(sel(e) for e in extra)
-        else:
+        elif lineuniq_method == 'symaverage':
             cax, ccn = sym_closest_lines_if_already_close(ax[same], cn[same], frames, target=target)
             sel = lambda x: x[same].mean()
             pick = cax.mean(0), ccn.mean(0), sel(an), sel(hl), *(sel(e) for e in extra)
         uniq.append(pick)
         if np.all(same): break
-        # ic(ax.shape, an.shape, same.shape, ang.shape)
         ax, cn, an, hl, extra = ax[~same], cn[~same], an[~same], hl[~same], [e[~same] for e in extra]
-        # ic(ax.shape, an.shape, same.shape, ang.shape)
     else:
-        raise ValueError('too many steps of unique_lines_sym')
+        raise ValueError('too many steps of unique_symaxes')
     result = tuple(np.stack([tup[i] for tup in uniq]) for i in range(len(uniq[0])))
     return result
 
@@ -1701,13 +1704,19 @@ def _target_axis_cen(target):
     raise ValueError('bad target, must be vec or (vec, point)')
 
 def line_line_diff_pa(p1, n1, p2, n2, lever, directed=False):
-    assert np.allclose(p1[..., 3], 1)
-    assert np.allclose(n1[..., 3], 0)
-    assert np.allclose(p2[..., 3], 1)
-    assert np.allclose(n2[..., 3], 0)
+    assert np.allclose(p1[..., 3], 1) and np.allclose(n1[..., 3], 0)
+    assert np.allclose(p2[..., 3], 1) and np.allclose(n2[..., 3], 0)
     dist = line_line_distance_pa(p1, n1, p2, n2)
     dist += (angle if directed else line_angle)(n1, n2) * lever
     return dist
+
+def sym_line_line_diff_pa(cn1, ax1, cn2, ax2, lever, frames):
+    assert cn1.shape == ax1.shape and cn2.shape == ax2.shape
+    assert cn1.ndim == cn2.ndim == 2
+    symcn1 = hxform(frames, cn1)[:, :, None]
+    symax1 = hxform(frames, ax1)[:, :, None]
+    diff = line_line_diff_pa(symcn1, symax1, cn2, ax2, lever)
+    return diff.min(0)
 
 def sym_closest_lines_if_already_close(axis, cen, frames, target, lever=100):
     if len(axis) > 1:
@@ -1720,15 +1729,16 @@ def sym_closest_lines_if_already_close(axis, cen, frames, target, lever=100):
     target = _target_axis_cen(target)
     axis[hdot(axis, axis[0]) < -0.1] *= -1
     tgtaxis, tgtcen = _target_axis_cen(target)
-    if tgtcen is None: dist = angle(xform(frames, axis[0]), tgtaxis)
+    if tgtcen is None: dist = angle(xformvec(frames, axis[0]), tgtaxis)
     else:
-        dist = line_line_diff_pa(xform(frames, cen[0]),
-                                 xform(frames, axis[0]),
+        dist = line_line_diff_pa(xformpts(frames, cen[0]),
+                                 xformvec(frames, axis[0]),
                                  tgtcen,
                                  tgtaxis,
                                  lever,
                                  directed=True)
-    axis, cen = xform(frames[np.argmin(dist)], [axis, cen])
+    axis = xformvec(frames[np.argmin(dist)], axis)
+    cen = xformpts(frames[np.argmin(dist)], cen)
     return axis, cen
 
 def uniqlastdim(x, tol=1e-4):
@@ -1805,3 +1815,4 @@ trans = htrans
 valid = hvalid
 valid_norm = hvalid_norm
 valid44 = hvalid44
+point = hpoint

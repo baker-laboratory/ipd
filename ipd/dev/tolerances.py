@@ -8,15 +8,15 @@ import ipd
 
 class Tolerances:
 
-    def __init__(self, parent=None, default=None, **kw):
-        if isinstance(parent, Tolerances):
-            self.kw = parent.kw | kw
-            self.checkers = parent.checkers
-            self._default_tol = parent._default_tol
+    def __init__(self, tol=None, default=None, **kw):
+        if isinstance(tol, Tolerances):
+            self.kw = tol.kw | kw
+            self.checkers = tol.checkers
+            self._default_tol = tol._default_tol
         else:
-            if parent is not None:
-                assert default is None, 'usage is Tolerances(parent, default, **kw) or Tolerances(default, **kw)'
-                default = parent
+            if tol is not None:
+                assert default is None, 'usage is Tolerances(tol, default, **kw) or Tolerances(default, **kw)'
+                default = tol
             self.kw = kw
             self.checkers = {}
             self._default_tol = default or 1e-4

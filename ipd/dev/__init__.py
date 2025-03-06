@@ -12,6 +12,7 @@ from ipd.dev.iterables import *
 from ipd.dev.format import *
 from ipd.dev.code import *
 from ipd.dev.funcs import *
+from ipd.dev.meta import *
 from ipd.dev.misc import *
 from ipd.observer import *
 from ipd.dev.safe_eval import *

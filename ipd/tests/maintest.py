@@ -73,7 +73,7 @@ def _maintest_run_test_function(name, func, result, config, kw):
             result.errored.append(name)
             error = e
     if name in result.failed or name in result.errored:
-        print(f'{" {func.__name__} ":-^80}', flush=True)
+        print(f'{f" {func.__name__} ":-^80}', flush=True)
         if testout: print(testout.read(), flush=True, end='')
         if config.nofail and error: print(error)
         elif error: raise error

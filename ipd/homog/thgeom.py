@@ -910,10 +910,10 @@ def uniqlastdim(x, tol=None):
         x = x[different[0]]
     return th.stack(uniq)
 
-def unique_lines_sym(*a, frames=th.eye(4)[None], **kw):
-    result = ipd.homog.hgeom.unique_lines_sym(*(x.detach().numpy() for x in a),
-                                              frames=frames.detach().numpy(),
-                                              **kw)
+def unique_symaxes(*a, frames=th.eye(4)[None], **kw):
+    result = ipd.homog.hgeom.unique_symaxes(*(x.detach().numpy() for x in a),
+                                            frames=frames.detach().numpy(),
+                                            **kw)
     return tuple(map(th.as_tensor, result))
 
 def joinlastdim(u, v):

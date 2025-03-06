@@ -12,7 +12,7 @@ def detect(
     tol: Union[ipd.Tolerances, float, None] = None,
     order: int = None,
     **kw,
-):
+) -> 'SymInfo':
     """
     detect symmetry from frames (N,4,4), Atomarray or Iterable[AtomArray]
     """
@@ -22,6 +22,7 @@ def detect(
     if 'biotite' in sys.modules:
         from biotite.structure import AtomArray
         atoms = thing
+        if not isinstance(atoms, AtomArray) and len(atoms) == 1: atoms = atoms[0]
         if order is not None and len(atoms) % order == 0 and isinstance(atoms, AtomArray):
             atoms = ipd.atom.split(atoms, order)
         elif order is None and isinstance(atoms, AtomArray):
@@ -94,9 +95,12 @@ class SymInfo:
         self.is_cyclic = len(nf) < 2 and not self.is_helical and not self.symid == 'D2'
         self.is_dihedral = len(nf) == 2 and 2 in nf and self.order // nf[1] == 2 or self.symid == 'D2'
         self.nfaxis = {int(nf): self.axis[self.nfold == nf] for nf in self.unique_nfold}
-        if self.order > 1:
+        if self.is_point:
             self.symcen = self.symcen.reshape(4)
             self.origin, self.toorigin = syminfo_get_origin(self)
+        else:
+            self.symcen = h.point([np.nan, np.nan, np.nan])
+            self.origin = self.toorigin = np.eye(4)
 
     def __getattr__(self, name):
         try:
@@ -115,7 +119,7 @@ symdetect_default_tolerances = dict(
     isect=1,
     dot_norm=0.04,
     misc_lineuniq=1,
-    nfold=0.2,
+    nfold=0.3,
     seqmatch=0.7,
     rms_fit=2,
 )
@@ -130,61 +134,32 @@ symdetect_ideal_tolerances = dict(
     seqmatch=0.99,
 )
 
-def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', tol=None, **kw) -> SymInfo:
+def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw) -> SymInfo:
     """
     get frames from list of AtomArrays via. sequence and rms alignment, then compute SymInfo
     """
     assert not ipd.atom.is_atoms(atomslist)
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
-    tol = ipd.Tolerances(tol, **(symdetect_default_tolerances | kw))
+    tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
     framesets = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, **kw)
     results = []
-    for frames, match, rms in framesets:
-        ic(frames.shape, match, rms)
+    for i, (frames, match, rms) in enumerate(framesets):
         tol.reset()
         syminfo = syminfo_from_frames(frames, tol=tol)
         syminfo.rms, syminfo.seqmatch = rms, match
         _add_multichain_info(syminfo, atomslist, frames, tol)
-        _check_frames_with_asu_for_supersym(syminfo)
         results.append(syminfo)
-    return results if len(results) > 1 else results[0]
+    return check_sym_combinations(results)
 
-def _add_multichain_info(sinfo: SymInfo, atomslist, frames, tol):
-    if sinfo.is_multichain:
-        asu = ipd.atom.split(atomslist[0])
-        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
-        sinfo.t_number = np.sum(sinfo.asumatch > tol.seqmatch)
-        sinfo.stub0 = ipd.atom.stub(asu[0])
-        sinfo.asustub = h.xform(sinfo.asuframes, sinfo.stub0)
-        sinfo.allstub = h.xform(frames, sinfo.asustub)
-        sinfo.allframes = h.xform(sinfo.allstub, h.inv(sinfo.stub0))
-    else:
-        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = np.eye(4)[None], np.zeros(1), np.ones(1)
-        sinfo.t_number = 1
-        sinfo.stub0 = ipd.atom.stub(atomslist[0])
-        sinfo.asustub = sinfo.stub0[None]
-        sinfo.allstub = h.xform(frames, sinfo.asustub)
-        sinfo.allframes = frames[:, None]
-    assert sinfo.allframes.shape == sinfo.allstub.shape
-    assert h.allclose(h.xform(sinfo.allframes, sinfo.stub0), sinfo.allstub)
-
-def _check_frames_with_asu_for_supersym(syminfo):
-    if not syminfo.is_multichain or syminfo.order > 30: return
-    tol = syminfo.tolerances.copy().reset()
-    jointframes = syminfo.allframes.reshape(-1, 4, 4)
-    sinfo = syminfo_from_frames(jointframes, tol=tol, lineuniq_method='mean')
-    print(sinfo)
-    assert 0
-
-def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
+def syminfo_from_frames(frames: np.ndarray, **kw) -> SymInfo:
     """
     infer sym elems and overall symmetry, return as SymInfo object
     """
-    tol = ipd.Tolerances(tol, **(symdetect_default_tolerances | kw))
+    tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
     assert ipd.homog.is_xform_stack(frames)
     if len(frames) == 1: return SymInfo('C1', frames, None, None)
-    se = symelems_from_frames(frames, tol=tol, **kw)
+    se = symelems_from_frames(frames, **kw)
     nfolds = set(se.nfold.data)
     is_point, symcen, axes_dists = h.lines_concurrent_isect(se.cen, se.axis, tol=tol.isect)
     is_helical = not np.all(np.abs(se.hel) < tol.helical_shift)
@@ -216,7 +191,7 @@ def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
             if abs(testang - magicang.I) < tol.cageang: return SymInfo('I', **sym_info_args)
             assert 0, f'unknown sym with nfold {nfolds} testang {testang}'
         elif len(nfolds) == 2 and 2 in nfolds:
-            # ipd.dev.print_table(se)
+            ipd.dev.print_table(se)
             not2_vs_2ang = h.angle(se.axis[se.nfold == 2], se.axis[se.nfold != 2])
             assert np.all(np.abs(not2_vs_2ang - np.pi / 2) < tol.line_angle)
             return SymInfo(f'D{max(nfolds)}', **sym_info_args)
@@ -224,25 +199,26 @@ def syminfo_from_frames(frames: np.ndarray, tol=None, **kw) -> SymInfo:
     else:
         return SymInfo('Unknown', **sym_info_args)
 
-def symelems_from_frames(frames, allbyall=False, **kw):
+def symelems_from_frames(frames, **kw):
     """
     compute a non-redundant set of simple symmetry elements from homog transforms
     """
+
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
-    tol = kw['tol'] = ipd.dev.Tolerances(**kw)
+    tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
     rel = h.xformx(h.inv(frames[0]), frames)
-    if allbyall: rel = h.xformx(h.inv(frames), frames, outerprod=True, uppertri=1)
+    # if allbyall: rel = h.xformx(h.inv(frames), frames, outerprod=True, uppertri=1)
     axis, ang, cen, hel = h.axis_angle_cen_hel(rel[1:])
-    axis, cen, ang, hel = h.unique_lines_sym(axis, cen, ang, hel, frames=rel, **kw)
+    axis, cen, ang, hel = h.unique_symaxes(axis, cen, ang, hel, frames=rel, debug=0, **kw)
     ok = np.ones(len(axis), dtype=bool)
     result = list()
     for ax, cn, an, hl in zip(axis, cen, ang, hel):
-        # ic(ax, float(an))
         for ax2, cn2, an2, hl2 in zip(axis, cen, ang, hel):
             cond = [
-                not np.abs(an - an2) < tol.angle and _isintgt1(an / an2, tol),  # is int mul of other
+                np.abs(an - an2) > tol.angle,
+                _isintgt1(an / an2, tol),  # is int mul of other
                 np.abs(hl2) < tol.helical_shift or _isintgt1(hl / hl2, tol),
-                npth.abs(1 - h.dot(ax, ax2)) < tol.axistol,
+                npth.abs(1 - np.abs(h.dot(ax, ax2))) < tol.axistol,
                 h.point_line_dist_pa(cn2, cn, ax) < tol.isect,  # same line as other
             ]
             if all(cond): break
@@ -255,12 +231,15 @@ def symelems_from_frames(frames, allbyall=False, **kw):
                           cen=(('index', 'xyzw'), cn.reshape(-1, 4)),
                           hel=('index', [hl]))
             result.append(xr.Dataset(fields))
+        print('', flush=True)
     result = xr.concat(result, 'index')
     result = result.set_coords('nfold')
+    # ipd.print_table(result)
     return result
 
-def _isintgt1(n, tol):
-    return n > 1.9 and min(n % 1.0, 1 - n%1) < tol.nfold
+def _isintgt1(nfold, tol):
+    if 6 < nfold < 999: return True
+    return nfold > 1.9 and min(nfold % 1.0, 1 - nfold%1) < tol.nfold
 
 def syminfo_get_origin(sinfo):
     """get the symmetry origin as a frame that aligns symaxes to canonical ant translates to symcen"""
@@ -288,7 +267,6 @@ def syminfo_get_origin(sinfo):
         assert 2 in nf and 3 in nf
         origax2, origax3 = ipd.sym.axes(sinfo.symid)[2], ipd.sym.axes(sinfo.symid)[3]
         ax2, ax3 = sinfo.nfaxis[2][0], sinfo.nfaxis[3][0]
-        ic(sinfo.axis)
         origin = h.align2(origax2, origax3, ax2, ax3) @ h.trans(sinfo.symcen)
         assert h.valid44(origin)
     return origin, h.inv(origin)
@@ -320,3 +298,36 @@ def syminfo_to_str(sinfo, verbose=True):
         ipd.dev.print_table(tables, header=['SymInfo'])
     np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
     return out.read()
+
+def _add_multichain_info(sinfo: SymInfo, atomslist, frames, tol):
+    if sinfo.is_multichain:
+        asu = ipd.atom.split(atomslist[0])
+        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
+        sinfo.t_number = np.sum(sinfo.asumatch > tol.seqmatch)
+        sinfo.stub0 = ipd.atom.stub(asu[0])
+        sinfo.asustub = h.xform(sinfo.asuframes, sinfo.stub0)
+        sinfo.allstub = h.xform(frames, sinfo.asustub)
+        sinfo.allframes = h.xform(sinfo.allstub, h.inv(sinfo.stub0))
+    else:
+        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = np.eye(4)[None], np.zeros(1), np.ones(1)
+        sinfo.t_number = 1
+        sinfo.stub0 = ipd.atom.stub(atomslist[0])
+        sinfo.asustub = sinfo.stub0[None]
+        sinfo.allstub = h.xform(frames, sinfo.asustub)
+        sinfo.allframes = frames[:, None]
+    assert sinfo.allframes.shape == sinfo.allstub.shape
+    assert h.allclose(h.xform(sinfo.allframes, sinfo.stub0), sinfo.allstub)
+
+def check_sym_combinations(syminfos):
+    if len(syminfos) == 1: return syminfos[0]
+    assert 0, 'sym combinations not yet supported'
+    tol = syminfos[0].tolerances.copy().reset()
+    frames, stubs = list(), list()
+    for sinfo in syminfos:
+        # ipd.print_table(sinfo.symelem)
+        frames.append(sinfo.frames)
+        stubs.append(h.xform(sinfo.frames, sinfo.stub0))
+        ic(sinfo.frames.shape)
+    frames = np.concatenate(frames)
+    frames = np.concatenate(stubs)
+    ipd.showme(stubs, xyzscale=10, weight=10, spheres=4)

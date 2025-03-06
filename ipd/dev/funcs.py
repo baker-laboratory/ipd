@@ -53,7 +53,7 @@ def is_iterizeable(arg, basetype=None, splitstr=False):
     if hasattr(arg, '__iter__'): return True
     return False
 
-def iterize_on_first_param(func0=None, *, basetype=None, splitstr=True, asdict=False, asbunch=False):
+def iterize_on_first_param(func0=None, *, basetype=str, splitstr=True, asdict=False, asbunch=False):
     """Decorator that vectorizes a function over its first parameter.
 
     This decorator enables a function to handle both single values and iterables as its

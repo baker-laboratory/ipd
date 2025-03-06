@@ -11,17 +11,20 @@ def stub(atoms):
 
 def find_frames_by_seqaln_rmsfit(atomslist, tol=0.7, result=None, idx=None, **kw):
     if isinstance(atomslist, bs.AtomArray): atomslist = ipd.atom.split_chains(atomslist)
-    if idx is None: idx = np.arange(len(atomslist))
     tol = kw['tol'] = ipd.Tolerances(tol)
     if result is None: result = FrameSearchResult([], [], [], [], atomslist, tol)
     ca = [a[a.atom_name == 'CA'] for a in atomslist]
+    ca = [ipd.atom.split_chains(casub, minlen=20) for casub in ca]
+    ca = ipd.dev.addreduce(ca)
+    if idx is None: idx = np.arange(len(ca))
     frames, rmsds, matches = [np.eye(4)], [0], [1]
-    for ca_i_ in ca[1:]:
+    for i, ca_i_ in enumerate(ca[1:]):
         _, match, matchfrac = ipd.atom.seqalign(ca[0], ca_i_)
         xyz1 = ca[0].coord[match[:, 0]]
         xyz2 = ca_i_.coord[match[:, 1]]
         rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
         frames.append(xfit), rmsds.append(rms), matches.append(matchfrac)
+    assert len(frames) == len(ca)
     frames, rmsds, matches = np.stack(frames), np.array(rmsds), np.array(matches)
     ok = (rmsds < tol.rms_fit) & (matches > tol.seq_match)
     result.add(list(idx), frames[ok], matches[ok], rmsds[ok])

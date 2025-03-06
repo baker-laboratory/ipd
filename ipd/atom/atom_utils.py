@@ -17,7 +17,7 @@ def is_atomarraystack(atoms):
 def is_atoms(atoms):
     return is_atomarray(atoms) or is_atomarraystack(atoms)
 
-def split(atoms, order=None, bychain=None):
+def split(atoms, order=None, bychain=None, minlen=0):
     if not order and bychain is None: bychain = True
     if ipd.atom.is_atomarray(atoms):
         if order and not bychain:
@@ -25,11 +25,18 @@ def split(atoms, order=None, bychain=None):
             nasu = len(atoms) // order
             return [atoms[i * nasu:(i+1) * nasu] for i in range(order)]
         if bychain and not order:
-            return list(chain_dict(atoms).values())
+            split = list(chain_dict(atoms).values())
+            while len(split[0]) < minlen and len(split) > 1:
+                split[0] += split.pop(1)
+            i = 1
+            while i < len(split):
+                if len(split[i]) < minlen: split[i - 1] += split.pop(i)
+                else: i += 1
+            return split
     raise TypeError(f'bad split args {type(atoms)=} {order=} {bychain=}')
 
-def split_chains(atoms):
-    return split(atoms, bychain=True)
+def split_chains(atoms, minlen=0):
+    return split(atoms, bychain=True, minlen=minlen)
 
 def chain_dict(atoms):
     """Group an AtomArray by chain_id and return a dictionary."""
