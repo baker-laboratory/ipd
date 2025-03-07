@@ -63,13 +63,30 @@ def test_mapwise_add():
     e = 4 - b.npwise
     assert np.all(d == -e)
 
-@pytest.mark.xfail
 def test_mapwise_contains():
     b = EwiseDict(zip('abcdefg', [[i] for i in range(7)]))
-    ic(b)
-    isin = 4 in b.valwise
-    ic(isin)
-    assert isin == [0, 0, 0, 0, 1, 0, 0]
+    with pytest.raises(ValueError):
+        contains = b.valwise.__contains__(4)
+    contains = b.valwise.contains(4)
+    assert contains == [0, 0, 0, 0, 1, 0, 0]
+
+def test_mapwise_contained_by():
+    b = EwiseDict(zip('abcdefg', range(7)))
+    contained = b.valwise.contained_by([1, 2, 3])
+    assert contained == [0, 1, 1, 1, 0, 0, 0]
+
+def test_mapwise_indexing():
+    dat = np.arange(7 * 4).reshape(7, 4)
+    b = EwiseDict(zip('abcdefg', dat))
+    indexed = b.npwise[1]
+    assert np.all(indexed == dat[:, 1])
+
+def test_mapwise_slicing():
+    dat = np.arange(7 * 4).reshape(7, 4)
+    b = EwiseDict(zip('abcdefg', dat))
+    indexed = b.npwise[1:3]
+    ic(indexed)
+    assert np.all(indexed == dat[:, 1:3])
 
 if __name__ == '__main__':
     main()
