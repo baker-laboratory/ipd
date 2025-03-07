@@ -6,6 +6,8 @@ import os
 import statistics
 import time
 
+import ipd
+
 log = logging.getLogger(__name__)
 
 _summary_types = dict(
@@ -49,8 +51,7 @@ class Timer:
         self.median = _TimerGetter(self, statistics.median)
         self._start = None
         self.checkpoints = collections.defaultdict(list)
-        if start:
-            self.start()
+        if start: self.start()
 
     def start(self):
         return self.__enter__()
@@ -98,7 +99,7 @@ class Timer:
         traceback=None,
     ):
         self.checkpoints["total"].append(time.perf_counter() - self._start)  # type: ignore
-        self._start = None
+        # self._start = None
         if self.verbose:
             log.debug(f"Timer {self.name} finished")
             self.report()
@@ -148,7 +149,7 @@ class Timer:
             namelen = max(len(n.rstrip("$")) for n in self.checkpoints) if self.checkpoints else 0
         lines = [f"Times(name={self.name}, order={order}, summary={summary}):"]
         times = self.report_dict(order=order, summary=summary, timecut=timecut)
-        if not times: times["total$$$$"] = time.perf_counter() - self._start  # type: ignore
+        if not times: times["total$$$$"] = time.perf_counter() - self._start
         for cpoint, t in times.items():
             if not cpoint.count(pattern): continue
             a = " " if cpoint.endswith("$$$$") else "*"
@@ -168,7 +169,7 @@ class Timer:
     def total(self):
         if "total" in self.checkpoints:
             return sum(self.checkpoints["total"])
-        return time.perf_counter() - self._start  # type: ignore
+        return time.perf_counter() - self._start
 
     def __str__(self):
         return self.report(printme=False)
@@ -191,12 +192,9 @@ def checkpoint(kw,
                clsname=None,
                funcname=None):
     t = None
-    if isinstance(kw, Timer):
-        t = kw
-    elif "timer" in kw:
-        t = kw["timer"]
-    else:
-        t = global_timer
+    if isinstance(kw, Timer): t = kw
+    elif "timer" in kw: t = kw["timer"]
+    else: t = ipd.dev.global_timer
     # autogen_label = False
     istack = 1 + int(funcbegin)
     func = funcname or inspect.stack()[istack][3]
@@ -239,8 +237,7 @@ def timed_func(func, *, label=None):
 
 def timed_class(cls, *, label=None):
     # label = label or rs
-    for k in cls.__dict__:
-        v = getattr(cls, k)
+    for k, v in vars(cls).items():
         if callable(v) and not inspect.isclass(v):  # skip inner classes
             setattr(cls, k, timed_func(v))
 
@@ -253,5 +250,3 @@ def timed(thing=None, *, label=None):
         return timed_class(thing, label=label)
     else:
         return timed_func(thing, label=label)
-
-global_timer = Timer()

@@ -15,6 +15,7 @@ class TestConfig(ipd.Bunch):
         self.setup = self.get('setup', lambda: None)
         self.funcsetup = self.get('funcsetup', lambda: None)
         self.context = self.get('context', ipd.dev.nocontext)
+        self.use_testclasses = self.get('use_test_classes', True)
 
 class TestResult(ipd.Bunch):
 
@@ -25,6 +26,9 @@ class TestResult(ipd.Bunch):
 def _test_func_ok(name, obj):
     return name.startswith('test_') and callable(obj) and ipd.dev.no_pytest_skip(obj)
 
+def _test_class_ok(name, obj):
+    return name.startswith('Test') and isinstance(obj, type) and not hasattr(obj, '__unittest_skip__')
+
 def maintest(namespace, config=ipd.Bunch(), **kw):
     print(f'maintest "{namespace["__file__"]}":', flush=True)
     ipd.dev.onexit(ipd.dev.global_timer.report, timecut=0.1)
@@ -33,7 +37,8 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
     timed = ipd.dev.timed if config.timed else lambda f: f
     test_suites, test_funcs = [], []
     for name, obj in namespace.items():
-        if name.startswith('Test') and isinstance(obj, type) and not hasattr(obj, '__unittest_skip__'):
+        if _test_class_ok(name, obj) and config.use_test_classes:
+            ic('test class', name)
             test_suites.append((name, timed(obj)()))
         elif _test_func_ok(name, obj):
             test_funcs.append((name, timed(obj)))
@@ -42,10 +47,8 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
     with tempfile.TemporaryDirectory() as tmpdir:
         ipd.dev.call_with_args_from(config.fixtures, config.setup)
         config.fixtures['tmpdir'] = tmpdir
-
         for name, func in test_funcs:
             _maintest_run_test_function(name, func, result, config, kw)
-
         for clsname, suite in test_suites:
             print(f'{f" suite: {clsname} ":=^80}', flush=True)
             test_methods = ipd.dev.filter_namespace_funcs(vars(namespace[clsname]))

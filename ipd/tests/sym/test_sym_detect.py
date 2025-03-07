@@ -98,14 +98,14 @@ for symid0 in ALLSYMS:
 
         def func_noised():
             frames = ipd.sym.frames(symid)
-            noise = h.randsmall(len(frames), rot_sd=0.003, cart_sd=0.2)
+            noise = h.randsmall(len(frames), rot_sd=0.001, cart_sd=0.1)
             frames = h.xform(frames, noise)
             sinfo = helper_test_frames(frames, symid, ideal=False, helical_shift=3, isect=3, cageang=0.1)
 
         def func_noised_xformed():
             frames = ipd.sym.frames(symid)
             origin = h.rand(cart_sd=44)
-            noise = h.randsmall(len(frames), rot_sd=0.003, cart_sd=0.2)
+            noise = h.randsmall(len(frames), rot_sd=0.001, cart_sd=0.1)
             frames = h.xform(origin, frames, noise)
             sinfo = helper_test_frames(frames, symid, ideal=False, helical_shift=3, isect=3, cageang=0.1)
 

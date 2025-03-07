@@ -107,7 +107,7 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
 def dispatch(
         projects,
         fname,
-        pytest_args='--disable-warnings -m "not nondeterministic"',
+        pytest_args='-x --disable-warnings -m "not nondeterministic"',
         file_mappings=dict(),
         overrides=dict(),
         strict=True,

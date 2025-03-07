@@ -1,7 +1,59 @@
-import statistics
 import time
 
 import pytest
+
+import ipd
+
+config_test = ipd.Bunch(
+    re_only=[
+        #
+    ],
+    re_exclude=[
+        #
+    ],
+)
+
+def main():
+    ipd.tests.maintest(
+        namespace=globals(),
+        config=config_test,
+        verbose=1,
+        check_xfail=False,
+        timed=False,
+    )
+
+def test_timed_func():
+
+    @ipd.dev.timed
+    def foo():
+        time.sleep(0.001)
+
+    foo()
+    assert 'test_timer.py:test_timed_func.<locals>.foo$$$$' in ipd.dev.global_timer.checkpoints
+
+def test_timed_class():
+
+    @ipd.dev.timed
+    class foo():
+
+        def bar(self):
+            time.sleep(0.001)
+
+    foo().bar()
+    ic(ipd.dev.global_timer.checkpoints)
+    assert 'test_timer.py:test_timed_class.<locals>.foo.bar$$$$' in ipd.dev.global_timer.checkpoints
+
+def test_context():
+    context = ipd.dev.Timer()
+    with context as t:
+        t.checkpoint('foo')
+        t.checkpoint('bar')
+        t.checkpoint('baz')
+    assert 'foo' in t.checkpoints
+    assert 'bar' in t.checkpoints
+    assert 'baz' in t.checkpoints
+
+import statistics
 
 import ipd
 from ipd.dev import Timer
@@ -92,7 +144,5 @@ def test_summary():
     with pytest.raises(ValueError):
         timer.report(summary=1)  # type: ignore
 
-if __name__ == "__main__":
-    test_auto()
-    test_timer()
-    test_summary()
+if __name__ == '__main__':
+    main()

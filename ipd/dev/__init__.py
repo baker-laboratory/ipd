@@ -31,3 +31,11 @@ cli = lazyimport('ipd.dev.cli')
 cuda = lazyimport('ipd.dev.cuda')
 qt = lazyimport('ipd.dev.qt')
 testing = lazyimport('ipd.dev.testing')
+
+_global_timer = None
+
+def __getattr__(name) -> Any:
+    if name == 'global_timer':
+        global _global_timer
+        return (_global_timer := _global_timer or Timer())
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")

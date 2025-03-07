@@ -1,6 +1,10 @@
+"""Element-wise operations for collections.
+
+This module provides a decorator and supporting classes to enable element-wise
+operations on custom collection classes. It allows applying methods or functions
+to each element in a collection and collecting the results.
 """
-decorator for allowing element wise operations on any class
-"""
+
 from collections.abc import Mapping
 import itertools
 import operator
@@ -9,19 +13,60 @@ import numpy as np
 
 import ipd
 
-def element_wise_operations(cls):
-    cls.mapwise = ElementWise(BunchAccumulator)
-    cls.valwise = ElementWise(ListAccumulator)
-    cls.npwise = ElementWise(NumpyAccumulator)
-    return cls
+def get_available_result_types():
+    return dict(
+        map=BunchAccumulator,
+        dict=DictAccumulator,
+        val=ListAccumulator,
+        np=NumpyAccumulator,
+    )
+
+def element_wise_operations(cls0=None, result_types='map val np'):
+    """Decorator that adds element-wise operation capabilities to a class.
+
+    Adds up to four attributes to the decorated class:
+    - dictwise: Returns results as a dict
+    - mapwise: Returns results as a mapping (ipd.Bunch)
+    - valwise: Returns results as a list
+    - npwise: Returns results as a numpy array
+
+    Args:
+        cls: The class to decorate
+        result_types: selects which attributes to add
+
+    Returns:
+        The decorated class
+    """
+    orig = result_types
+    if isinstance(result_types, str):
+        result_types = result_types.split() if ' ' in result_types else [result_types]
+    result_types = set(result_types)
+    available_result_types = get_available_result_types()
+    if not set(available_result_types) & result_types:
+        raise TypeError(f'result_types {orig} is invalid')
+
+    def decorate(cls):
+        for rtype in result_types:
+            setattr(cls, f'{rtype}wise', ElementWise(available_result_types[rtype]))
+        return cls
+
+    if cls0 is None:
+        return decorate
+    return decorate(cls0)
 
 class ElementWise:
-    """descriptor creating/returning a cached ElementWiseDispatcher"""
+    """Descriptor that creates and caches an ElementWiseDispatcher.
+
+    When accessed from an instance, returns a dispatcher that applies
+    operations element-wise and collects results using the specified
+    accumulator.
+    """
 
     def __init__(self, Accumulator):
         self.Accumulator = Accumulator
 
     def __get__(self, parent, _parenttype):
+        # if parent is None: return None
         if not hasattr(parent, '_ewise_dispatcher'):
             parent.__dict__['_ewise_dispatcher'] = dict()
         if self.Accumulator not in parent._ewise_dispatcher:
@@ -35,17 +80,52 @@ class ElementWise:
             parent[k] = v
 
 class ElementWiseDispatcher:
+    """Dispatcher that applies operations to each element in a collection.
+
+    Dynamically creates methods that apply an operation to each element
+    and collect the results using the specified accumulator.
+    """
 
     def __init__(self, parent, Accumulator):
+        """Initialize with a parent collection and an accumulator class.
+
+        Args:
+            parent: The collection to operate on
+            Accumulator: Class that implements the accumulator interface
+        """
         self._parent = parent
         self._Accumulator = Accumulator
         self._parent.__dict__['_ewise_method'] = dict()
 
     def __getattr__(self, method):
+        """Get or create a method that applies the operation element-wise.
+
+        Args:
+            method: Name of method to call on each element, or a callable
+
+        Returns:
+            Function that applies the operation and collects results
+        """
         cachekey = (method, self._Accumulator)
         if cachekey not in self._parent._ewise_method:
 
             def apply_method(*args, **kw):
+                """Apply method to each element with the given arguments.
+
+                If no positional args are provided, applies the method to each element.
+                If one arg is provided, applies it to each element.
+                If multiple args are provided, they must match the number of elements.
+
+                Args:
+                    *args: Arguments to pass to the method
+                    **kw: Keyword arguments to pass to the method
+
+                Returns:
+                    Accumulated results using the configured accumulator
+
+                Raises:
+                    ValueError: If the number of args doesn't match requirements
+                """
                 self.validate
                 accum = self._Accumulator()
                 if not args:
@@ -56,13 +136,16 @@ class ElementWiseDispatcher:
                     return accum.result()
                 elif len(args) == 1:
                     args = itertools.repeat(args[0])
-                elif len(args) != len(self._parent):
+                elif len(args) != len([n for n in self._parent if n[0] != '_']):
                     raise ValueError(
                         f'ElementWiseDispatcher arg must be len 1 or len(_parent) == {len(self._parent)}')
                 for arg, (name, member) in zip(args, self._parent.items()):
                     if name[0] == '_': continue
-                    if callable(method): accum.add(name, method(member, arg, **kw))
-                    else: accum.add(name, getattr(member, method)(arg, **kw))
+                    if callable(method):
+                        ic(member, arg)
+                        accum.add(name, method(member, arg, **kw))
+                    else:
+                        accum.add(name, getattr(member, method)(arg, **kw))
                 return accum.result()
 
             self._parent._ewise_method[cachekey] = apply_method
@@ -90,12 +173,16 @@ class ElementWiseDispatcher:
 
     def __rsub__(self, other):
         """generic wrapper is reversed"""
-        return -self.__getattr__(operator.sub)(other)
+        return generic_negate(self.__getattr__(operator.sub)(other))
 
     def __neg__(self):
         return self.__getattr__(operator.neg)()
 
-class BunchAccumulator:
+class DictAccumulator:
+    """Accumulator that collects results into an dict.
+
+    Results are stored with their original keys from the parent collection.
+    """
 
     def __init__(self):
         self.value = ipd.Bunch()
@@ -106,7 +193,20 @@ class BunchAccumulator:
     def result(self):
         return self.value
 
+class BunchAccumulator(DictAccumulator):
+    """Accumulator that collects results into an ipd.Bunch (dict-like object).
+
+    Results are stored with their original keys from the parent collection.
+    """
+
+    def __init__(self):
+        self.value = ipd.Bunch()
+
 class ListAccumulator:
+    """Accumulator that collects results into a list.
+
+    Results are stored in the order they are added.
+    """
 
     def __init__(self):
         self.value = []
@@ -117,13 +217,18 @@ class ListAccumulator:
     def result(self):
         return self.value
 
-class NumpyAccumulator():
+class NumpyAccumulator(ListAccumulator):
+    """Accumulator that collects results into a numpy array.
 
-    def __init__(self):
-        self.value = []
-
-    def add(self, name, value):
-        self.value.append(value)
+    Results are stored in the order they are added.
+    """
 
     def result(self):
         return np.array(self.value)
+
+def generic_negate(thing):
+    if isinstance(thing, np.ndarray): return -thing
+    if isinstance(thing, list): return [-x for x in thing]
+    for k, v in thing.items():
+        thing[k] = -v
+    return thing
