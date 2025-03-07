@@ -6,6 +6,9 @@ bs = ipd.lazyimport('biotite.structure')
 load = ipd.pdb.readatoms
 dump = ipd.pdb.dump
 
+def testdata(pdbcode, **kw):
+    return load(ipd.dev.package_testcif_path(pdbcode), **kw)
+
 def is_atomarray(atoms):
     from biotite.structure import AtomArray
     return isinstance(atoms, AtomArray)

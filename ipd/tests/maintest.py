@@ -8,6 +8,7 @@ class TestConfig(ipd.Bunch):
         super().__init__(self, *a, **kw)
         self.nofail = self.get('nofail', False)
         self.verbose = self.get('verbose', False)
+        self.checkxfail = self.get('checkxfail', False)
         self.timed = self.get('timed', True)
         self.nocapture = self.get('nocapture', [])
         self.fixtures = self.get('fixtures', {})
@@ -21,6 +22,9 @@ class TestResult(ipd.Bunch):
         super().__init__(self, *a, **kw)
         self.passed, self.failed, self.errored, self.xfailed = [], [], [], []
 
+def _test_func_ok(name, obj):
+    return name.startswith('test_') and callable(obj) and ipd.dev.no_pytest_skip(obj)
+
 def maintest(namespace, config=ipd.Bunch(), **kw):
     print(f'maintest "{namespace["__file__"]}":', flush=True)
     ipd.dev.onexit(ipd.dev.global_timer.report, timecut=0.1)
@@ -31,7 +35,7 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
     for name, obj in namespace.items():
         if name.startswith('Test') and isinstance(obj, type) and not hasattr(obj, '__unittest_skip__'):
             test_suites.append((name, timed(obj)()))
-        elif name.startswith('test_') and callable(obj) and ipd.dev.no_pytest_skip(obj):
+        elif _test_func_ok(name, obj):
             test_funcs.append((name, timed(obj)))
     ipd.dev.global_timer.checkpoint('maintest')
     result = TestResult()
@@ -44,7 +48,8 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
 
         for clsname, suite in test_suites:
             print(f'{f" suite: {clsname} ":=^80}', flush=True)
-            test_methods = {n: m for n, m in vars(suite).items() if n[:5] == 'test_' and callable(m)}
+            test_methods = ipd.dev.filter_namespace_funcs(vars(namespace[clsname]))
+            test_methods = {k: v for k, v in test_methods.items() if _test_func_ok(k, v)}
             getattr(suite, 'setUp', lambda: None)()
             for name in test_methods:
                 _maintest_run_test_function(name, func, result, config, kw)
@@ -57,7 +62,7 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
             print(f'{label.upper():9} {test}', flush=True)
     return result
 
-def _maintest_run_test_function(name, func, result, config, kw):
+def _maintest_run_test_function(name, func, result, config, kw, check_xfail=True):
     error, testout = None, None
     context = ipd.dev.nocontext if name in config.nocapture else ipd.dev.capture_stdio
     with context() as testout:  # noqa
@@ -72,7 +77,11 @@ def _maintest_run_test_function(name, func, result, config, kw):
         except Exception as e:  # noqa
             result.errored.append(name)
             error = e
-    if name in result.failed or name in result.errored:
+    if any([
+            name in result.failed,
+            name in result.errored,
+            config.checkxfail and name in result.xfailed,
+    ]):
         print(f'{f" {func.__name__} ":-^80}', flush=True)
         if testout: print(testout.read(), flush=True, end='')
         if config.nofail and error: print(error)

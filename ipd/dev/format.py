@@ -2,12 +2,16 @@ from collections.abc import Mapping, Iterable
 import re
 
 import numpy as np
+import rich
 from rich.table import Table
 from rich.console import Console
 
 import ipd
 
 console = Console()
+
+def print(*args, **kw):
+    rich.print(*args, **kw)
 
 def make_table(thing, **kw):
     npopt = np.get_printoptions()

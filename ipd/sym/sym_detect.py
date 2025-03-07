@@ -81,26 +81,7 @@ class SymInfo:
     allstub: np.ndarray = None
 
     def __attrs_post_init__(self):
-        if not self.guess_symid: self.guess_symid = self.symid
-        if self.tolerances:
-            self.tolerances = self.tolerances.copy()
-            self.tol_checks = self.tolerances.check_history()
-        self.allframes = self.frames
-        self.order = len(self.frames)
-        self.pseudo_order = len(self.frames) * len(self.asuframes)
-        self.is_multichain = len(self.asuframes) > 1
-        self.unique_nfold = nf = []
-        if self.order > 1:
-            self.unique_nfold = nf = list(sorted(np.unique(self.nfold)))
-        self.is_cyclic = len(nf) < 2 and not self.is_helical and not self.symid == 'D2'
-        self.is_dihedral = len(nf) == 2 and 2 in nf and self.order // nf[1] == 2 or self.symid == 'D2'
-        self.nfaxis = {int(nf): self.axis[self.nfold == nf] for nf in self.unique_nfold}
-        if self.is_point:
-            self.symcen = self.symcen.reshape(4)
-            self.origin, self.toorigin = syminfo_get_origin(self)
-        else:
-            self.symcen = h.point([np.nan, np.nan, np.nan])
-            self.origin = self.toorigin = np.eye(4)
+        _syminfo_post_init(self)
 
     def __getattr__(self, name):
         try:
@@ -114,14 +95,15 @@ class SymInfo:
 
 symdetect_default_tolerances = dict(
     default=1e-1,
-    angle=1e-2,
+    angle=3e-2,
     helical_shift=1,
-    isect=1,
+    isect=2,
     dot_norm=0.04,
     misc_lineuniq=1,
     nfold=0.3,
     seqmatch=0.7,
     rms_fit=2,
+    cageang=5e-2,
 )
 symdetect_ideal_tolerances = dict(
     default=1e-4,
@@ -132,6 +114,7 @@ symdetect_ideal_tolerances = dict(
     misc_lineuniq=1e-4,
     nfold=1e-4,
     seqmatch=0.99,
+    cageang=1e-4,
 )
 
 def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw) -> SymInfo:
@@ -141,13 +124,13 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw)
     assert not ipd.atom.is_atoms(atomslist)
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
-    framesets = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, **kw)
+    framesets = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, maxsub=60, **kw)
     results = []
     for i, (frames, match, rms) in enumerate(framesets):
         tol.reset()
         syminfo = syminfo_from_frames(frames, tol=tol)
         syminfo.rms, syminfo.seqmatch = rms, match
-        _add_multichain_info(syminfo, atomslist, frames, tol)
+        _syminfo_add_atoms_info(syminfo, atomslist, frames, tol)
         results.append(syminfo)
     return check_sym_combinations(results)
 
@@ -160,21 +143,19 @@ def syminfo_from_frames(frames: np.ndarray, **kw) -> SymInfo:
     assert ipd.homog.is_xform_stack(frames)
     if len(frames) == 1: return SymInfo('C1', frames, None, None)
     se = symelems_from_frames(frames, **kw)
-    nfolds = set(se.nfold.data)
+    nfolds = set(int(nf) for nf in se.nfold.data)
     is_point, symcen, axes_dists = h.lines_concurrent_isect(se.cen, se.axis, tol=tol.isect)
     is_helical = not np.all(np.abs(se.hel) < tol.helical_shift)
     sym_info_args = dict(is_point=is_point, symcen=symcen, is_helical=is_helical, symelem=se)
     sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tolerances=tol)
     if is_point: sym_info_args |= dict(is_1d=False, is_2d=False, is_3d=False)
+    ic(is_point, is_helical, nfolds)
+    ic(np.abs(se.ang.data - np.pi), tol.angle)
+    ipd.print_table(se)
     if len(nfolds) == 1 and not is_helical and is_point:
         if all(se.nfold == 0):
             return SymInfo('HELIX', **sym_info_args)
-        elif all([
-                is_point,
-                len(se.nfold) >= 3,
-                np.all(np.abs(se.ang - np.pi) < tol.angle),
-                np.all(np.abs(se.hel) < tol.helical_shift)
-        ]):
+        elif len(se.nfold) >= 3 and np.all(np.abs(se.ang - np.pi) < tol.angle):
             return SymInfo('D2', **sym_info_args)
         else:
             return SymInfo(f'C{int(se.nfold[0])}', **sym_info_args)
@@ -182,17 +163,18 @@ def syminfo_from_frames(frames: np.ndarray, **kw) -> SymInfo:
         raise NotImplementedError('')
     elif is_point and not is_helical:
         if 2 in nfolds and 3 in nfolds:
-            ax2, ax3 = (se.axis[se.nfold == i] for i in (2, 3))
-            testang = h.line_angle(ax2, ax3).min()
+            ax2, ax3 = (se.axis.data[se.nfold == i] for i in (2, 3))
+            testang = h.line_angle(ax2[None], ax3[:, None]).min()
             magicang = ipd.sym.magic_angle_DTOI
+            ic(testang, magicang)
             if abs(testang - magicang.D) < tol.cageang: return SymInfo('D3', **sym_info_args)
             if abs(testang - magicang.T) < tol.cageang: return SymInfo('T', **sym_info_args)
             if abs(testang - magicang.O) < tol.cageang: return SymInfo('O', **sym_info_args)
             if abs(testang - magicang.I) < tol.cageang: return SymInfo('I', **sym_info_args)
-            assert 0, f'unknown sym with nfold {nfolds} testang {testang}'
+            assert 0, f'unknown sym with nfold {nfolds} testang {testang} valid are: {magicang}'
         elif len(nfolds) == 2 and 2 in nfolds:
             ipd.dev.print_table(se)
-            not2_vs_2ang = h.angle(se.axis[se.nfold == 2], se.axis[se.nfold != 2])
+            not2_vs_2ang = h.line_angle(se.axis[se.nfold == 2], se.axis[se.nfold != 2])
             assert np.all(np.abs(not2_vs_2ang - np.pi / 2) < tol.line_angle)
             return SymInfo(f'D{max(nfolds)}', **sym_info_args)
         assert 0, 'unknown sym'
@@ -253,18 +235,8 @@ def syminfo_get_origin(sinfo):
         if sinfo.symid == 'D2': axx = sinfo.nfaxis[2][-1]
         origin = h.align2([0, 0, 1], [1, 0, 0], ax2, axx) @ h.trans(sinfo.symcen)
     else:
-        # se = sinfo.symelem.sel(index=sinfo.nfold < 4)  # for DTIO, only need 2fold and 3fold
-        # angbetweenaxes = h.line_angle(se.axis.data[None], se.axis.data[:, None])
-        # magic = list(ipd.sym.magic_angle_DTOI.values())
-        # ismagicangle = h.tensor_in(angbetweenaxes, magic, atol=sinfo.tolerances.angle)
-        # uniq = np.unique(ismagicangle)
-        # uniq = uniq[uniq != -1]
-        # magicang = uniq[0]
-        # ic(magicang)
-        # fitaxis = list(set([tuple(np.sort(x)) for x in np.where(ismagicangle >= 0)]))
-        # ic(fitaxis)
-        # bestpair = fitaxis[np.argmin(np.abs(magicang - angbetweenaxes[tuple(zip(*fitaxis))]))]
         assert 2 in nf and 3 in nf
+        assert sinfo.symid in 'T I O D3'.split()
         origax2, origax3 = ipd.sym.axes(sinfo.symid)[2], ipd.sym.axes(sinfo.symid)[3]
         ax2, ax3 = sinfo.nfaxis[2][0], sinfo.nfaxis[3][0]
         origin = h.align2(origax2, origax3, ax2, ax3) @ h.trans(sinfo.symcen)
@@ -299,8 +271,31 @@ def syminfo_to_str(sinfo, verbose=True):
     np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
     return out.read()
 
-def _add_multichain_info(sinfo: SymInfo, atomslist, frames, tol):
+def _syminfo_post_init(sinfo: SymInfo) -> None:
+    if not sinfo.guess_symid: sinfo.guess_symid = sinfo.symid
+    if sinfo.tolerances:
+        sinfo.tolerances = sinfo.tolerances.copy()
+        sinfo.tol_checks = sinfo.tolerances.check_history()
+    sinfo.allframes = sinfo.frames
+    sinfo.order = len(sinfo.frames)
+    sinfo.pseudo_order = len(sinfo.frames) * len(sinfo.asuframes)
+    sinfo.is_multichain = len(sinfo.asuframes) > 1
+    sinfo.unique_nfold = nf = []
+    if sinfo.order > 1:
+        sinfo.unique_nfold = nf = list(sorted(np.unique(sinfo.nfold)))
+    sinfo.is_cyclic = len(nf) < 2 and not sinfo.is_helical and not sinfo.symid == 'D2'
+    sinfo.is_dihedral = len(nf) == 2 and 2 in nf and sinfo.order // nf[1] == 2 or sinfo.symid == 'D2'
+    sinfo.nfaxis = {int(nf): sinfo.axis[sinfo.nfold == nf] for nf in sinfo.unique_nfold}
+    if sinfo.is_point:
+        sinfo.symcen = sinfo.symcen.reshape(4)
+        sinfo.origin, sinfo.toorigin = syminfo_get_origin(sinfo)
+    else:
+        sinfo.symcen = h.point([np.nan, np.nan, np.nan])
+        sinfo.origin = sinfo.toorigin = np.eye(4)
+
+def _syminfo_add_atoms_info(sinfo: SymInfo, atomslist, frames, tol) -> None:
     if sinfo.is_multichain:
+        assert 0, 'sould now be handled my find_frames_by_seqaln_rmsfit'
         asu = ipd.atom.split(atomslist[0])
         sinfo.asuframes, sinfo.asurms, sinfo.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
         sinfo.t_number = np.sum(sinfo.asumatch > tol.seqmatch)

@@ -2,7 +2,14 @@ import numpy as np
 
 import ipd
 from ipd import Bunch
+from ipd.homog import rel_xform_info
 import ipd.homog.thgeom as hm
+
+class SymOps(Bunch):
+    pass
+
+class SymFit(Bunch):
+    pass
 
 def symelems_from_frames(frames, center=True):
     ic(frames.shape)
@@ -215,51 +222,6 @@ class SymFitError(Exception):
 def _checkpoint(kw, label):
     if "timer" in kw:
         kw["timer"].checkpoint(label)
-
-class RelXformInfo(Bunch):
-    pass
-
-class SymOps(Bunch):
-    pass
-
-class SymFit(Bunch):
-    pass
-
-def rel_xform_info(frame1, frame2, **kw):
-    # rel = np.linalg.inv(frame1) @ frame2
-    rel = frame2 @ np.linalg.inv(frame1)
-    # rot = rel[:3, :3]
-    # axs, ang = hm.axis_angle_of(rel)
-    axs, ang, cen = hm.axis_ang_cen_of(rel)
-
-    framecen = (frame2[:, 3] + frame1[:, 3]) / 2
-    framecen = framecen - cen
-    framecen = hm.hproj(axs, framecen)
-    framecen = framecen + cen
-
-    inplane = hm.hprojperp(axs, cen - frame1[:, 3])
-    # inplane2 = hm.hprojperp(axs, cen - frame2[:, 3])
-    rad = np.sqrt(np.sum(inplane**2))
-    if np.isnan(rad):
-        print("isnan rad")
-        print("xrel")
-        print(rel)
-        print("det", np.linalg.det(rel))
-        print("axs ang", axs, ang)
-        print("cen", cen)
-        print("inplane", inplane)
-        assert 0
-    hel = np.sum(axs * rel[:, 3])
-    return RelXformInfo(
-        xrel=rel,
-        axs=axs,
-        ang=ang,
-        cen=cen,
-        rad=rad,
-        hel=hel,
-        framecen=framecen,
-        frames=np.array([frame1, frame2]),
-    )
 
 def xform_update_symop(symop, xform, srad):
     frame1 = xform @ symop.frames[0]

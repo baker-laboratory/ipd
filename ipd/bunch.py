@@ -4,7 +4,7 @@ import os
 import shutil
 from pathlib import Path
 from typing import Generic, TypeVar
-
+from ipd.dev.element_wise import element_wise_operations
 with contextlib.suppress(ImportError):
     pass
 
@@ -12,7 +12,13 @@ __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake
 
 T = TypeVar('T')
 
+@element_wise_operations
 class Bunch(dict, Generic[T]):
+    """
+    a dot-accessable dict subclass with defaultdict and chainmap functionallity
+
+    keys must be strings. Can autosync with a .yaml file on disk. supports parent-child relationships. has considerable runtime overhead compared to a normal dict, so dont use in place of one. can
+    """
 
     def __init__(
         self,
@@ -31,6 +37,7 @@ class Bunch(dict, Generic[T]):
             except TypeError:
                 super().__init__(vars(__arg_or_ns))
         self.update(kw)
+
         if _default == "__NODEFALT": _default = None
         self.__dict__['_special'] = {}
         self.__dict__["_special"]['strict_lookup'] = _strict is True or _strict == "__STRICT"
@@ -45,7 +52,7 @@ class Bunch(dict, Generic[T]):
         self.__dict__["_special"]["parent"] = _parent
         for k in list(self.keys()):
             if hasattr(super(), k):
-                self[f'{k}_'] = self[k]
+                self[f'{k}_'] = super().__getitem__(k)
                 del self[k]
                 print(f'WARNING {k} is a reserved name for dict, renaming to {k}_')
 
@@ -245,9 +252,11 @@ class Bunch(dict, Generic[T]):
         super().__setitem__(k, v)
 
     def __setattr__(self, k: str, v: T):
-        assert k != 'polls'
         if hasattr(super(), k):
             raise ValueError(f"{k} is a reseved name for Bunch")
+        if k.startswith('__'):
+            self.__dict__[k] = v
+            return
         try:
             # Throws exception if not in prototype chain
             object.__getattribute__(self, k)

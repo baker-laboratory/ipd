@@ -22,14 +22,20 @@ def qualname_of_file(sourcefile):
     if qual := gitpath(sourcefile): return qual
     return os.path.basename(sourcefile)
 
-def make_testfile(sourcefile, testifle):
+def make_testfile(sourcefile, testfile):
     import jinja2
-    assert not os.path.exists(testifle)
-    os.makedirs(os.path.dirname(testifle), exist_ok=True)
+    assert not os.path.exists(testfile)
+    os.makedirs(os.path.dirname(testfile), exist_ok=True)
     qualname = qualname_of_file(sourcefile)
     code = Path(sourcefile).read_text()
     prev_globals = set(globals().keys())
-    exec(code, globals(), globals())
+    print('----- code -----', flush=True)
+    print(code, flush=True)
+    print('----- end ------', flush=True)
+    try:
+        exec(code, globals(), globals())
+    except OSError as e:
+        ic(e)
     module = {k: v for k, v in globals().items() if k not in prev_globals}
     cnames = {n for n in re.findall(r'class (.+)[\[\(:]', code) if n[0] != '_'}
     mnames = {n for n in re.findall(r' def (.+)[\[\(]', code) if n[0] != '_'}
@@ -56,16 +62,30 @@ def make_testfile(sourcefile, testifle):
     testcode = template.render(funcs=funcs, classes=classes, methods=methods, sourcefile=sourcefile)
     testcode = testcode.replace('ipd.dev.code.gentest', qualname)
     testcode = testcode.replace(f'.{qualname}', '')
-    Path(testifle).write_text(testcode)
-    os.system(f'yapf -i {testifle}')
+    Path(testfile).write_text(testcode)
+    os.system(f'yapf -i {testfile}')
 
 testfile_template = """
 import pytest
 
 import ipd
 
+config_test = ipd.Bunch(
+    re_only=[
+        #
+    ],
+    re_exclude=[
+        #
+    ],
+)
+
 def main():
-    ipd.tests.maintest(namespace=globals())
+    ipd.tests.maintest(
+        namespace=globals(),
+        config=config_test,
+        verbose=1,
+        check_xfail=False,
+    )
 
 {% for name, (func, sig) in funcs.items() %}
 def test_{{name}}():

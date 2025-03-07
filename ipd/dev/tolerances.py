@@ -41,7 +41,7 @@ class Tolerances:
         history = ipd.Bunch()
         for k, c in self.checkers.items():
             frac = round(c.n_passes / c.n_checks, 3) if c.n_checks > 0 else None
-            history[k] = ipd.Bunch(frac=frac, tol=c.threshold, total=c.n_checks, passes=c.n_passes)
+            history[k] = ipd.Bunch(tol=c.threshold, frac=frac, total=c.n_checks, passes=c.n_passes)
         return history
 
     def copy(self):

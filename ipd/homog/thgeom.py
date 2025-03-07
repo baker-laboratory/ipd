@@ -428,7 +428,7 @@ def xform(xform, stuff=None, **kw):
     if stuff is None: return functools.partial(xform_impl, xform, **kw)
     return xform_impl(xform, stuff, **kw)
 
-X = ipd.dev.InfixOperator(xform)
+X = ipd.homog.InfixOperator(xform)
 
 def xform_impl(xform, stuff, homogout='auto', dtype=None, device=None, isvec=None, **kw):
     ddkw = get_dtype_dev([xform, stuff], dtype, device)

@@ -1,6 +1,6 @@
 import gzip
 from pathlib import Path
-from ipd.dev.funcs import iterize_on_first_param
+from ipd.dev.decorators import iterize_on_first_param
 
 openers = {'.gz': gzip.open, '': open}
 

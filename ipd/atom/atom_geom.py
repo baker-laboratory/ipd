@@ -9,13 +9,14 @@ def stub(atoms):
     _, sigma, components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
     return ipd.homog.hframe(*components.T, cen)
 
-def find_frames_by_seqaln_rmsfit(atomslist, tol=0.7, result=None, idx=None, **kw):
+def find_frames_by_seqaln_rmsfit(atomslist, tol=0.7, result=None, idx=None, maxsub=60, **kw):
     if isinstance(atomslist, bs.AtomArray): atomslist = ipd.atom.split_chains(atomslist)
     tol = kw['tol'] = ipd.Tolerances(tol)
     if result is None: result = FrameSearchResult([], [], [], [], atomslist, tol)
     ca = [a[a.atom_name == 'CA'] for a in atomslist]
-    ca = [ipd.atom.split_chains(casub, minlen=20) for casub in ca]
-    ca = ipd.dev.addreduce(ca)
+    if len(ca) < maxsub:
+        ca = [ipd.atom.split_chains(casub, minlen=20) for casub in ca]
+        ca = ipd.dev.addreduce(ca)
     if idx is None: idx = np.arange(len(ca))
     frames, rmsds, matches = [np.eye(4)], [0], [1]
     for i, ca_i_ in enumerate(ca[1:]):

@@ -6,25 +6,23 @@ from argparse import Namespace
 import pytest
 import yaml
 
+import ipd
 from ipd.bunch import *
 
+config_test = ipd.Bunch(
+    re_only=[
+        # 'test_ewise_equal'
+    ],
+    re_exclude=[],
+)
+
 def main():
-    from tempfile import mkdtemp
-
-    test_bunch_pickle(mkdtemp())
-    test_bunch_init()
-    test_bunch_sub()
-    test_bunch_items()
-    test_bunch_add()
-    test_bunch_visit()
-    test_bunch_strict()
-    test_bunch_default()
-    test_bunch_bugs()
-
-    test_autosave(mkdtemp())
-    test_autoreload(mkdtemp())
-
-    print('test_bunch PASS')
+    ipd.tests.maintest(
+        namespace=globals(),
+        config=config_test,
+        verbose=1,
+        check_xfail=False,
+    )
 
 def assert_saved_ok(b):
     with open(b._special['autosave']) as inp:
@@ -306,6 +304,11 @@ def test_bunch_bugs():
     assert 'clear_' in showme_opts
     assert 'clear' not in showme_opts
     # assert str(e.value) == "clear is a reseved name for Bunch"
+
+def test_bunch_dict_reserved():
+    b = Bunch(values='foo')
+    ic(b.items())
+    assert b.values_ == 'foo'
 
 if __name__ == "__main__":
     main()

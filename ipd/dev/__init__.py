@@ -11,7 +11,8 @@ from ipd.dev.objinfo import *
 from ipd.dev.iterables import *
 from ipd.dev.format import *
 from ipd.dev.code import *
-from ipd.dev.funcs import *
+from ipd.dev.decorators import *
+from ipd.dev.element_wise import *
 from ipd.dev.meta import *
 from ipd.dev.misc import *
 from ipd.observer import *

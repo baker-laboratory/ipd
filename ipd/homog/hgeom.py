@@ -118,6 +118,15 @@ def hxformvec(x, stuff, **kw):
     assert np.allclose(result[..., 3], 0)
     return result
 
+def invxform(x, stuff, **kw):
+    return hxform(hinv(x), stuff, **kw)
+
+def invxformpts(x, stuff, **kw):
+    return hxformpts(hinv(x), stuff, **kw)
+
+def invxformvec(x, stuff, **kw):
+    return hxformvec(hinv(x), stuff, **kw)
+
 def xchain(*xforms, **kw):
     x, *xforms, stuff = xforms
     for x1 in xforms:
@@ -307,17 +316,12 @@ def quat_to_upper_half(quat):
     quat[ineg] = -quat[ineg]
     return quat
 
-def rand_quat(shape=(), seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
+@ipd.dev.preserve_random_state
+def rand_quat(shape=()):
     if isinstance(shape, int):
         shape = (shape, )
     q = np.random.randn(*shape, 4)
     q /= np.linalg.norm(q, axis=-1)[..., np.newaxis]
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return quat_to_upper_half(q)
 
 def rot_to_quat(xform):
@@ -750,41 +754,27 @@ def is_valid_rays(r):
         return False
     return True
 
+@ipd.dev.preserve_random_state
 def hrandpoint(shape=(), mean=0, std=1, seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
     if isinstance(shape, int):
         shape = (shape, )
     p = hpoint(np.random.randn(*(shape + (3, ))) * std + mean)
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return p
 
+@ipd.dev.preserve_random_state
 def rand_vec(shape=(), seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
     if isinstance(shape, int):
         shape = (shape, )
     v = hvec(np.random.randn(*(shape + (3, ))))
     if isinstance(shape, int):
         shape = (shape, )
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return v
 
+@ipd.dev.preserve_random_state
 def rand_unit(shape=(), seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
     if isinstance(shape, int):
         shape = (shape, )
     v = hnormalized(np.random.randn(*(shape + (3, ))))
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return v
 
 def angle(u, v, outerprod=False):
@@ -803,10 +793,8 @@ def line_angle(u, v, outerprod=False):
 def line_angle_degrees(u, v, outerprod=False):
     return np.degrees(line_angle(u, v, outerprod))
 
+@ipd.dev.preserve_random_state
 def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None, dtype=np.float64):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
     if isinstance(shape, int):
         shape = (shape, )
     cen = np.asanyarray(cen)
@@ -820,14 +808,10 @@ def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None, dtype=np.float64):
     r[..., :3, 0] = cen
     r[..., 3, 0] = 1
     r[..., :3, 1] = norm
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return r
 
+@ipd.dev.preserve_random_state
 def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None, dtype=np.float64):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
     if isinstance(shape, int):
         shape = (shape, )
     if axis is None:
@@ -837,14 +821,10 @@ def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None, dtype=np.
     if cen is None:
         cen = rand_point(shape)  # type: ignore
     # q = rand_quat(shape)
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return hrot(axis, ang, cen)
 
+@ipd.dev.preserve_random_state
 def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, doto=None, dtype=np.float64):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
     if isinstance(shape, int):
         shape = (shape, )
     axis = rand_unit(shape)
@@ -856,52 +836,36 @@ def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, d
     x = hrot(axis, ang, centers, degrees=False).squeeze()
     trans = np.random.normal(0, cart_sd, x[..., :3, 3].shape)
     x[..., :3, 3] += trans
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return x.squeeze() if doto is None else hxform(x, doto)
 
 rand_xform_small = hrandsmall
 
+@ipd.dev.preserve_random_state
 def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None, dtype=np.float64):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
     if isinstance(shape, int):
         shape = (shape, )
     q = rand_quat(shape, )
     x = quat_to_xform(q)
     x[..., :3, 3] = np.random.randn(*shape, 3) * cart_sd + cart_cen
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return x
 
 rand_xform = hrand
 
+@ipd.dev.preserve_random_state
 def hrandrot(shape=(), seed=None, dtype=np.float64):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
     if isinstance(shape, int):
         shape = (shape, )
     quat = rand_quat(shape)
     rot = quat_to_rot(quat)
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return hconvert(rot)
 
+@ipd.dev.preserve_random_state
 def hrandrotsmall(shape=(), rot_sd=0.001, seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
     if isinstance(shape, int):
         shape = (shape, )
     axis = rand_unit(shape)
     ang = np.random.normal(0, rot_sd, shape) * np.pi
     r = rot(axis, ang, degrees=False).squeeze()  # type: ignore
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return hconvert(r.squeeze())
 
 def hrms(a, b):

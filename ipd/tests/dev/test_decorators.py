@@ -1,0 +1,207 @@
+from pathlib import Path
+from collections import namedtuple
+import unittest
+import pytest
+
+import ipd
+
+def main():
+    ipd.tests.maintest(namespace=globals())
+
+@pytest.mark.fast
+def test_iterize():
+
+    @ipd.dev.iterize_on_first_param
+    def foo(a):
+        return a * a
+
+    assert foo(4) == 4 * 4
+    assert foo([1, 2]) == [1, 4]
+
+    @ipd.dev.iterize_on_first_param(basetype=str)
+    def bar(a):
+        return 2 * a
+
+    assert bar('foo') == 'foofoo'
+    assert bar(['a', 'b']) == ['aa', 'bb']
+    ic(bar('a b'))
+    assert bar('a b') == ['aa', 'bb']
+    assert bar(1.1) == 2.2
+
+    @ipd.dev.iterize_on_first_param(basetype=str, asdict=True)
+    def baz(a):
+        return 2 * a
+
+    assert baz('foo') == 'foofoo'
+    assert baz(['a', 'b']) == dict(a='aa', b='bb')
+    assert baz('a b') == dict(a='aa', b='bb')
+    assert baz(1.1) == 2.2
+
+# Define a custom iterable type for testing
+class CustomIterable(namedtuple('CustomIterable', ['items'])):
+
+    def __iter__(self):
+        return iter(self.items)
+
+@pytest.mark.fast
+class TestIterizeOnFirstParam(unittest.TestCase):
+    """Test suite for the ipd.dev.iterize_on_first_param decorator."""
+
+    def setUp(self):
+        """Set up test functions with the decorator applied in different ways."""
+        # Basic decorator without arguments
+        @ipd.dev.iterize_on_first_param
+        def square(x):
+            return x * x
+
+        self.square = square
+
+        @ipd.dev.iterize_on_first_param
+        def multiply(x, y):
+            return x * y
+
+        self.multiply = multiply
+
+        # Decorator with basetype=str
+        @ipd.dev.iterize_on_first_param(basetype=str)
+        def get_length(x):
+            return len(x)
+
+        self.get_length = get_length
+
+        # Using the pre-configured path decorator
+        @ipd.dev.iterize_on_first_param_path
+        def process_path(path):
+            return f"Processing {path}"
+
+        self.process_path = process_path
+
+        # For metadata preservation test
+        def original_func(x):
+            """Test docstring."""
+            return x
+
+        self.original_func = original_func
+
+        # Test data
+        self.scalar = 5
+        self.list_data = [1, 2, 3]
+        self.tuple_data = (4, 5, 6)
+        self.empty_list = []
+        self.custom_iterable = CustomIterable([1, 2, 3])
+        self.nested_lists = [[1, 2], [3, 4]]
+        self.string = "hello"
+        self.string_list = ["hello", "world"]
+        self.path_obj = Path("sample.txt")
+        self.path_list = [Path("file1.txt"), Path("file2.txt")]
+
+    def tearDown(self):
+        """Clean up after each test."""
+        # No specific cleanup needed for these tests
+        pass
+
+    def test_scalar_input(self):
+        """Test with a scalar input value."""
+        assert self.square(self.scalar) == 25
+        assert self.multiply(3, 4) == 12
+
+    def test_list_input(self):
+        """Test with a list input for the first parameter."""
+        assert self.square(self.list_data) == [1, 4, 9]
+        assert self.multiply(self.list_data, 2) == [2, 4, 6]
+
+    def test_tuple_input(self):
+        """Test with a tuple input for the first parameter."""
+        assert self.square(self.tuple_data) == [16, 25, 36]
+        assert self.multiply(self.tuple_data, 3) == [12, 15, 18]
+
+    def test_empty_iterable(self):
+        """Test with an empty iterable."""
+        assert self.square(self.empty_list) == []
+        assert self.multiply(self.empty_list, 10) == []
+
+    def test_custom_iterable(self):
+        """Test with a custom iterable type."""
+        assert self.square(self.custom_iterable) == [1, 4, 9]
+        assert self.multiply(self.custom_iterable, 5) == [5, 10, 15]
+
+    def test_basetype_exclusion(self):
+        """Test that basetyped objects are treated as scalars."""
+        # String should be treated as scalar when basetype=str
+        assert self.get_length(self.string) == 5
+        assert self.get_length(self.string_list) == [5, 5]
+
+    def test_multiple_basetype_exclusion(self):
+        """Test with multiple basetype exclusions."""
+        # String should be treated as scalar with path decorator
+        assert self.process_path(self.string) == f"Processing {self.string}"
+        # Path object should be treated as scalar with path decorator
+        assert self.process_path(self.path_obj) == f"Processing {self.path_obj}"
+        # List of strings should be processed element-wise
+        assert self.process_path(["file1.txt",
+                                  "file2.txt"]) == ["Processing file1.txt", "Processing file2.txt"]
+        # List of Path objects should be processed element-wise
+        expected = [f"Processing {self.path_list[0]}", f"Processing {self.path_list[1]}"]
+        assert self.process_path(self.path_list) == expected
+
+    def test_nested_iterables(self):
+        """Test handling of nested iterables."""
+        # Define a custom function that handles lists for this test
+        @ipd.dev.iterize_on_first_param
+        def sum_list(x):
+            return sum(x) if isinstance(x, list) else x
+
+        assert sum_list(self.nested_lists) == [3, 7]
+
+    def test_decorator_preserves_metadata(self):
+        """Test that the decorator preserves function metadata."""
+        decorated = ipd.dev.iterize_on_first_param(self.original_func)
+
+        assert decorated.__name__ == "original_func"
+        assert decorated.__doc__ == "Test docstring."
+
+    def test_generator_input(self):
+        """Test with a generator expression as input."""
+        gen = (i for i in range(1, 4))
+        assert self.square(gen) == [1, 4, 9]
+
+    def test_set_input(self):
+        """Test with a set as input."""
+        # Note: Sets are unordered, so we need to check membership rather than exact equality
+        result = self.square({1, 2, 3})
+        assert set(result) == {1, 4, 9}
+        assert len(result) == 3
+
+@pytest.mark.fast
+class TestIterizeableFunction(unittest.TestCase):
+    """Test suite for the ipd.dev.is_iterizeable helper function."""
+
+    def setUp(self):
+        """Set up test data."""
+        self.list_data = [1, 2, 3]
+        self.string = "hello"
+        self.integer = 42
+        self.path_obj = Path("test.txt")
+
+    def test_basic_iterizeable(self):
+        """Test basic ipd.dev.is_iterizeable function without basetype."""
+        assert ipd.dev.is_iterizeable(self.list_data) is True
+        assert ipd.dev.is_iterizeable(self.string) is True  # String is iterable
+        assert ipd.dev.is_iterizeable(self.integer) is False
+
+    def test_iterizeable_with_basetype(self):
+        """Test ipd.dev.is_iterizeable function with basetype parameter."""
+        # String should not be considered iterable when basetype includes str
+        assert ipd.dev.is_iterizeable(self.string, basetype=str) is False
+        assert ipd.dev.is_iterizeable(self.list_data, basetype=str) is True
+
+        # Path should not be considered iterable when basetype includes Path
+        assert ipd.dev.is_iterizeable(self.path_obj, basetype=Path) is False
+
+        # Multiple basetypes
+        assert ipd.dev.is_iterizeable(self.string, basetype=(str, Path)) is False
+        assert ipd.dev.is_iterizeable(self.path_obj, basetype=(str, Path)) is False
+        assert ipd.dev.is_iterizeable(self.list_data, basetype=(str, Path)) is True
+
+if __name__ == '__main__':
+    main()

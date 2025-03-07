@@ -110,3 +110,12 @@ def np_printopts(**kw):
 
 def np_compact(precision=4, suppress=True, **kw):
     return np_printopts(precision=precision, suppress=suppress, **kw)
+
+@contextmanager
+def temporary_random_seed(seed=None):
+    randstate = np.random.get_state()
+    if seed is not None: np.random.seed(seed)
+    try:
+        yield None
+    finally:
+        if seed is not None: np.random.set_state(randstate)
