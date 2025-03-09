@@ -12,11 +12,14 @@ def main():
 def test_iterize():
 
     @ipd.dev.iterize_on_first_param
-    def foo(a):
+    def Foo(a):
         return a * a
 
-    assert foo(4) == 4 * 4
-    assert foo([1, 2]) == [1, 4]
+    assert Foo(4) == 4 * 4
+    assert Foo([1, 2]) == [1, 4]
+
+@pytest.mark.fast
+def test_iterize_basetype():
 
     @ipd.dev.iterize_on_first_param(basetype=str)
     def bar(a):
@@ -28,6 +31,9 @@ def test_iterize():
     assert bar('a b') == ['aa', 'bb']
     assert bar(1.1) == 2.2
 
+@pytest.mark.fast
+def test_iterize_asdict():
+
     @ipd.dev.iterize_on_first_param(basetype=str, asdict=True)
     def baz(a):
         return 2 * a
@@ -36,6 +42,58 @@ def test_iterize():
     assert baz(['a', 'b']) == dict(a='aa', b='bb')
     assert baz('a b') == dict(a='aa', b='bb')
     assert baz(1.1) == 2.2
+
+@pytest.mark.fast
+def test_iterize_asbunch():
+
+    @ipd.dev.iterize_on_first_param(basetype=str, asbunch=True)
+    def baz(a):
+        return 2 * a
+
+    assert baz('foo') == 'foofoo'
+    assert isinstance(baz(['a', 'b']), ipd.Bunch)
+    assert baz(['a', 'b']) == dict(a='aa', b='bb')
+    assert baz('a b') == dict(a='aa', b='bb')
+    assert baz(1.1) == 2.2
+    assert baz([1, 2]) == {1: 2, 2: 4}
+
+@pytest.mark.fast
+def test_iterize_allowmap():
+
+    @ipd.dev.iterize_on_first_param(basetype=str, asbunch=True)
+    def foo(a):
+        return 2 * a
+
+    with pytest.raises(TypeError):
+        foo(dict(a=1, b=2))
+
+    @ipd.dev.iterize_on_first_param(basetype=str, asbunch=True, allowmap=True)
+    def bar(a):
+        return 2 * a
+
+    assert bar(dict(a=1, b=2)) == dict(a=2, b=4)
+
+@pytest.mark.fast
+def test_iterize_basetype_string():
+
+    class mylist(list):
+        pass
+
+    @ipd.dev.iterize_on_first_param(basetype='str')
+    def foo(a):
+        return 2 * a
+
+    with pytest.raises(TypeError):
+        foo(dict(a=1, b=2))
+
+    @ipd.dev.iterize_on_first_param(basetype='mylist')
+    def bar(a):
+        return len(a)
+
+    assert bar([]) == []
+    assert bar([[], []]) == [0, 0]
+    assert bar(mylist([[], []])) == 2
+    # assert bar(e/[dict(a=1, b=2)]) == ['a', 'b']
 
 # Define a custom iterable type for testing
 class CustomIterable(namedtuple('CustomIterable', ['items'])):
@@ -186,7 +244,8 @@ class TestIterizeableFunction(unittest.TestCase):
     def test_basic_iterizeable(self):
         """Test basic ipd.dev.is_iterizeable function without basetype."""
         assert ipd.dev.is_iterizeable(self.list_data) is True
-        assert ipd.dev.is_iterizeable(self.string) is True  # String is iterable
+        assert ipd.dev.is_iterizeable(self.string) is False
+        assert ipd.dev.is_iterizeable(self.string, basetype=None) is True  # String is iterable
         assert ipd.dev.is_iterizeable(self.integer) is False
 
     def test_iterizeable_with_basetype(self):
@@ -202,6 +261,27 @@ class TestIterizeableFunction(unittest.TestCase):
         assert ipd.dev.is_iterizeable(self.string, basetype=(str, Path)) is False
         assert ipd.dev.is_iterizeable(self.path_obj, basetype=(str, Path)) is False
         assert ipd.dev.is_iterizeable(self.list_data, basetype=(str, Path)) is True
+
+def test_subscriptable_for_attributes__getitem__():
+
+    @ipd.dev.subscriptable_for_attributes
+    class Foo:
+        a, b, c = 6, 7, 8
+
+    assert Foo()['a'] == 6
+    assert Foo()['a b'] == (6, 7)
+
+def test_subscriptable_for_attributes_enumerate():
+
+    @ipd.dev.subscriptable_for_attributes
+    class Foo:
+
+        def __init__(self):
+            self.a, self.b, self.c = range(6), range(1, 7), range(10, 17)
+
+    foo = Foo()
+    for (i, a, b, c), e, f, g in zip(foo.enumerate('a b c'), range(6), range(1, 7), range(10, 17)):
+        assert a == e and b == f and c == g
 
 if __name__ == '__main__':
     main()

@@ -1,3 +1,5 @@
+from typing import Sequence, Any
+
 def nth(thing, n=0):
     iterator = iter(thing)
     try:
@@ -19,3 +21,9 @@ def head(thing, n=5, *, requireall=False, start=0):
     except StopIteration:
         if requireall: return None
     return result
+
+def order(seq: Sequence[Any]):
+    return [a[1] for a in sorted((s, i) for i, s in enumerate(seq))]
+
+def reorder(seq: Sequence[Any], idx: Sequence[int]):
+    return [seq[i] for i in idx]

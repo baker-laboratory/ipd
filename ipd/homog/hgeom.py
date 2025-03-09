@@ -4,16 +4,55 @@ import sys
 
 import numpy as np
 
+import ipd
 from ipd.homog.npth_common import *
 
 def as_tensor(array, **kw):
+    """
+    Convert input to a NumPy tensor.
+
+    Args:
+        array (array-like): Input data.
+        **kw: Additional keyword arguments for `np.asarray`.
+
+    Returns:
+        np.ndarray: Converted array.
+
+    Example:
+        >>> import numpy as np
+        >>> data = [[1, 2], [3, 4]]
+        >>> tensor = as_tensor(data)
+        >>> print(tensor)
+        [[1 2]
+         [3 4]]
+
+    """
     if hasattr(array, 'data'): array = array.data
     return np.asarray(array, **kw)
 
-def as_tensors(*arrays, **kw):
-    return tuple(as_tensor(inp, **kw) for inp in arrays)
+as_tensors = ipd.dev.iterize_on_first_param(basetype=np.ndarray)(as_tensor)
 
 def hconstruct(rot, trans=None):
+    """
+    Construct a homogeneous transformation matrix from rotation and translation.
+
+    Args:
+        rot (np.ndarray): Rotation matrix of shape (..., 3, 3).
+        trans (np.ndarray, optional): Translation vector of shape (..., 3). Defaults to None.
+
+    Returns:
+        np.ndarray: Homogeneous transformation matrix of shape (..., 4, 4).
+
+    Example:
+        >>> rot = np.eye(3)
+        >>> trans = np.array([1, 2, 3])
+        >>> hmat = hconstruct(rot, trans)
+        >>> print(hmat)
+        [[1. 0. 0. 1.]
+         [0. 1. 0. 2.]
+         [0. 0. 1. 3.]
+         [0. 0. 0. 1.]]
+    """
     x = np.zeros((rot.shape[:-2] + (4, 4)))
     x[..., :3, :3] = rot[..., :3, :3]
     if trans is not None:
@@ -22,21 +61,64 @@ def hconstruct(rot, trans=None):
     return x
 
 def isarray(x):
-    if isinstance(x, np.array):  # type: ignore
+    """
+    Check if input is a NumPy array or a PyTorch tensor.
+
+    Args:
+        x (any): Input object.
+
+    Returns:
+        bool: True if x is a NumPy array or PyTorch tensor, False otherwise.
+
+    Example:
+        >>> isarray(np.array([1, 2, 3]))
+        True
+    """
+    if isinstance(x, np.ndarray):
         return True
     if "torch" in sys.modules:
-        import torch  # type: ignore
+        import torch
         if isinstance(x, torch.Tensor):
             return True
     return False
 
 def to_xyz(x):
+    """
+    Convert input to a 3D coordinate vector.
+
+    Args:
+        x (float or sequence of floats): Input value(s).
+
+    Returns:
+        np.ndarray: 3D coordinate vector.
+
+    Example:
+        >>> to_xyz(1)
+        array([1., 1., 1.])
+    """
     if isinstance(x, (int, float)):
         x = [x] * 3
     x = np.array(x, dtype=np.float64)
     return x
 
 def hvalid(stuff, is_points=None, strict=False, **kw):
+    """
+    Validate a homogeneous transformation matrix or a set of coordinates.
+
+    Args:
+        stuff (np.ndarray): Input data.
+        is_points (bool, optional): Whether input represents points. Defaults to None.
+        strict (bool, optional): If True, enforce stricter validation. Defaults to False.
+        **kw: Additional arguments for validation.
+
+    Returns:
+        bool: True if valid, False otherwise.
+
+    Example:
+        >>> hmat = np.eye(4)
+        >>> hvalid(hmat)
+        True
+    """
     if stuff.shape[-2:] == (4, 4) and not is_points:
         return hvalid44(stuff, **kw)
     if stuff.shape[-2:] == (4, 2) and not is_points:
@@ -55,6 +137,22 @@ def hvalid_norm(x):
     return np.all(normok)
 
 def hvalid44(x, improper_ok=False, **kw):
+    """
+    Validate a 4x4 homogeneous transformation matrix.
+
+    Args:
+        x (np.ndarray): Input matrix.
+        improper_ok (bool, optional): Whether to allow improper rotations. Defaults to False.
+        **kw: Additional arguments for validation.
+
+    Returns:
+        bool: True if valid, False otherwise.
+
+    Example:
+        >>> hmat = np.eye(4)
+        >>> hvalid44(hmat)
+        True
+    """
     if x.shape[-2:] != (4, 4):
         return False
     det = np.linalg.det(x[..., :3, :3])
@@ -65,6 +163,26 @@ def hvalid44(x, improper_ok=False, **kw):
     return all([np.allclose(x[..., 3, 3], 1), np.allclose(x[..., 3, :3], 0), detok])
 
 def hscaled(scale, stuff, is_points=None):
+    """
+    Scale a homogeneous transformation matrix or a set of coordinates.
+
+    Args:
+        scale (float): Scale factor.
+        stuff (np.ndarray): Input matrix or coordinates.
+        is_points (bool, optional): Whether input represents points. Defaults to None.
+
+    Returns:
+        np.ndarray: Scaled matrix or coordinates.
+
+    Example:
+        >>> hmat = htrans([3,2,1])
+        >>> scaled = hscaled(2.0, hmat)
+        >>> print(scaled)
+        [[1. 0. 0. 6.]
+         [0. 1. 0. 4.]
+         [0. 0. 1. 2.]
+         [0. 0. 0. 1.]]
+    """
     stuff = stuff.copy()
     if hvalid44(stuff):
         stuff[..., :3, 3] *= scale
@@ -73,17 +191,56 @@ def hscaled(scale, stuff, is_points=None):
     return stuff
 
 def hdist(x, y):
-    assert x.shape[-2:] == 4, 4
-    assert y.shape[-2:] == 4, 4
+    """
+    Compute the Euclidean distance between two homogeneous transformation matrices.
+
+    Args:
+        x (np.ndarray): First matrix.
+        y (np.ndarray): Second matrix.
+
+    Returns:
+        float: Euclidean distance.
+
+    Example:
+        >>> x = np.eye(4)
+        >>> y = np.eye(4)
+        >>> hdist(x, y)
+        np.float64(0.0)
+    """
+    assert x.shape[-2:] == (4, 4)
+    assert y.shape[-2:] == (4, 4)
     shape1 = x.shape[:-2]
     shape2 = y.shape[:-2]
     a = x.reshape(shape1 + (1, ) * len(shape1) + (4, 4))
     b = y.reshape((1, ) * len(shape2) + shape2 + (4, 4))
-    ic(a.shape, b.shape)  # type: ignore
+    ic(a.shape, b.shape)
     dist = np.linalg.norm(a[..., :, 3] - b[..., :, 3], axis=-1)
     return dist
 
 def hdiff(x, y, lever=10.0):
+    """
+    Compute the average difference between two homogeneous transformation matrices.
+
+    This function calculates the difference between two transformation matrices,
+    considering both rotational and translational components.
+
+    Args:
+        x (np.ndarray): First transformation matrix of shape (..., 4, 4).
+        y (np.ndarray): Second transformation matrix of shape (..., 4, 4).
+        lever (float, optional): Scaling factor for rotational difference. Defaults to 10.0.
+
+    Returns:
+        float: Average difference between matrices.
+
+    Example:
+        >>> x = hrot([1, 0, 0], [1, 2])
+        >>> y = hrot([1, 0, 0], [1.1, 2.1])
+        >>> hdiff(x, y)
+        array([[0.66638892, 6.96916305],
+               [5.79954045, 0.66638892]])
+
+    """
+
     shape1 = x.shape[:-2]
     shape2 = y.shape[:-2]
     a = x.reshape(shape1 + (1, ) * len(shape1) + (4, 4))
@@ -98,6 +255,26 @@ def hdiff(x, y, lever=10.0):
     return diff
 
 def hxformx(x, stuff, **kw):
+    """
+    Apply a homogeneous transformation to a matrix.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Input matrix to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed matrix.
+
+    Example:
+        >>> x = hrot([1,0,0], 90)
+        >>> x2 = htrans([1,0,0])
+        >>> hxformx(x, x2)
+        array([[ 1.,  0.,  0.,  1.],
+               [ 0.,  0., -1.,  0.],
+               [ 0.,  1.,  0.,  0.],
+               [ 0.,  0.,  0.,  1.]])
+    """
     stuff = as_tensor(stuff)
     assert np.allclose(stuff[..., 3, :], [0, 0, 0, 1])
     result = hxform(x, stuff, is_points=False, **kw)
@@ -105,6 +282,25 @@ def hxformx(x, stuff, **kw):
     return result
 
 def hxformpts(x, stuff, **kw):
+    """
+    Apply a homogeneous transformation to points.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Points to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed points.
+
+    Example:
+        >>> x = np.eye(4)
+        >>> points = np.array([[1, 2, 3]])
+        >>> hpoints = hpoint(points)
+        >>> transformed = hxformpts(x, hpoints)
+        >>> print(transformed)
+        [[1. 2. 3. 1.]]
+    """
     stuff = hpoint(stuff)
     assert np.allclose(stuff[..., 3], 1)
     result = hxform(x, stuff, is_points=True, **kw)
@@ -112,6 +308,24 @@ def hxformpts(x, stuff, **kw):
     return result
 
 def hxformvec(x, stuff, **kw):
+    """
+    Apply a homogeneous transformation to vectors.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Vectors to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed vectors.
+
+    Example:
+        >>> x = hrot([0,1,0], 90)
+        >>> vec = np.array([1, 0, 0])
+        >>> transformed = hxformvec(x, vec)
+        >>> print(transformed)
+        [ 0.  0. -1.  0.]
+    """
     stuff = hvec(stuff)
     assert np.allclose(stuff[..., 3], 0)
     result = hxform(x, stuff, is_points=True, **kw)
@@ -119,23 +333,100 @@ def hxformvec(x, stuff, **kw):
     return result
 
 def invxform(x, stuff, **kw):
+    """
+    Apply the inverse of a homogeneous transformation.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Input matrix to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed matrix using the inverse of `x`.
+
+    Example:
+        >>> x = htrans([1,0,0])
+        >>> vec = np.array([[1, 2, 3, 0]])
+        >>> pt = np.array([[1, 2, 3, 1]])
+        >>> newpt = invxform(x, pt)
+        >>> newvec = invxform(x, vec)
+        >>> print(newpt, newvec)
+        [[0. 2. 3. 1.]] [[1. 2. 3. 0.]]
+    """
     return hxform(hinv(x), stuff, **kw)
 
 def invxformpts(x, stuff, **kw):
+    """
+    Apply the inverse of a homogeneous transformation to points.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Points to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed points using the inverse of `x`.
+
+    Example:
+        >>> x = htrans([1,0,0])
+        >>> points = np.array([[0,0,0]])
+        >>> hpoints = hpoint(points)
+        >>> transformed = invxformpts(x, hpoints)
+        >>> print(transformed)
+        [[-1.  0.  0.  1.]]
+    """
     return hxformpts(hinv(x), stuff, **kw)
 
 def invxformvec(x, stuff, **kw):
+    """
+    Apply the inverse of a homogeneous transformation to vectors.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Vectors to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed vectors using the inverse of `x`.
+
+    Example:
+        >>> x = hrot([1,1,0], 180)
+        >>> vec = np.array([1, 0, 0])
+        >>> transformed = invxformvec(x, vec)
+        >>> print(transformed)
+        [0. 1. 0. 0.]
+    """
     return hxformvec(hinv(x), stuff, **kw)
 
-def xchain(*xforms, **kw):
-    x, *xforms, stuff = xforms
-    for x1 in xforms:
+def product(*factors, **kw):
+    """
+    Compute the product of multiple homogeneous transformations.
+
+    Args:
+        *factors: Sequence of transformation matrices.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Resulting transformation matrix.
+
+    Example:
+        >>> x = np.eye(4)
+        >>> y = np.eye(4)
+        >>> product(x, y)
+        array([[1., 0., 0., 0.],
+               [0., 1., 0., 0.],
+               [0., 0., 1., 0.],
+               [0., 0., 0., 1.]])
+    """
+    if len(factors) == 1: return factors[0]
+    x, *xforms, stuff = factors
+    for x1 in factors:
         x = hxform(x, x1)
     return hxform(x.astype(stuff.dtype), stuff, **kw)
 
 def hxform(*x, homogout="auto", **kw):
     if len(x) > 2:
-        return xchain(*x, homogout=homogout, **kw)
+        return product(*x, homogout=homogout, **kw)
     elif len(x) < 2:
         raise TypeError('hxform missing required positional arguments hxform(x, stuff, ...)')
     else:
@@ -145,12 +436,12 @@ def hxform(*x, homogout="auto", **kw):
     if isinstance(stuff, dict) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return {k: hxform(x, v) for k, v in stuff.items()}
     if hasattr(stuff, "xformed"):
-        return stuff.xformed(x)  # type: ignore
+        return stuff.xformed(x)
     orig = None
     if hasattr(stuff, "coords"):
         isxarray = False
         if "xarray" in sys.modules:
-            import xarray  # type: ignore
+            import xarray
             # coords is perhaps poor choice of convention
             # xarray.DataArry has coords member already...
             print("WARNING Deprivation of .coords convention in favor of .xformed method")
@@ -160,7 +451,7 @@ def hxform(*x, homogout="auto", **kw):
                 orig = stuff.copy()
             else:
                 orig = copy.copy(stuff)
-            stuff = stuff.coords  # type: ignore
+            stuff = stuff.coords
             assert x.ndim in (2, 3)
 
     stuff, origstuff = np.asarray(stuff), stuff
@@ -187,8 +478,8 @@ def hxform(*x, homogout="auto", **kw):
         result = result[..., :3]
 
     if result.shape[-1] == 4 and not hvalid(result, **kw):
-        ic(x.shape)  # type: ignore
-        ic(stuff.shape)  # type: ignore
+        ic(x.shape)
+        ic(stuff.shape)
         # ic(result)
         for x in result:
             if not hvalid(x, **kw):
@@ -208,11 +499,11 @@ def hxform(*x, homogout="auto", **kw):
                     o = orig.copy()
                 else:
                     o = copy.copy(orig)
-                o.coords = x  # type: ignore
+                o.coords = x
                 r.append(o)
             result = r
         else:
-            orig.coords = result  # type: ignore
+            orig.coords = result
             result = orig
 
     assert result is not None
@@ -486,9 +777,41 @@ def is_homog_xform(xforms):
             and (np.allclose(xforms[..., 3, :], [0, 0, 0, 1])))
 
 def hinv(xforms):
+    """
+    Compute the inverse of a homogeneous transformation matrix.
+
+    Args:
+        xforms (np.ndarray): Transformation matrix of shape (..., 4, 4).
+
+    Returns:
+        np.ndarray: Inverse of the input transformation matrix.
+
+    Example:
+        >>> x = ipd.hnumpy.trans([1,2,3])
+        >>> inv = hinv(x)
+        >>> print(inv)
+        [[ 1.  0.  0. -1.]
+         [ 0.  1.  0. -2.]
+         [ 0.  0.  1. -3.]
+         [ 0.  0.  0.  1.]]
+    """
     return np.linalg.inv(xforms)
 
 def hunique(xforms):
+    """
+    Check if transformation matrices are unique.
+
+    Args:
+        xforms (np.ndarray): Array of transformation matrices.
+
+    Returns:
+        bool: True if matrices are unique, False otherwise.
+
+    Example:
+        >>> xforms = np.array([np.eye(4), np.eye(4)])
+        >>> hunique(xforms)
+        np.False_
+    """
     if len(xforms) == 0:
         return True
     diff = hdiff(xforms, xforms)
@@ -531,7 +854,7 @@ def angle_of_degrees(xforms, debug=False):
 def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
     """Angle will override nfold."""
     if angle is None:
-        angle = 2 * np.pi / nfold  # type: ignore
+        angle = 2 * np.pi / nfold
     angle = np.array(angle, dtype=dtype)
 
     axis = np.array(axis, dtype=dtype)
@@ -819,7 +1142,7 @@ def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None, dtype=np.
     if ang is None:
         ang = np.random.rand(*shape) * np.pi  # todo: make uniform!
     if cen is None:
-        cen = rand_point(shape)  # type: ignore
+        cen = rand_point(shape)
     # q = rand_quat(shape)
     return hrot(axis, ang, cen)
 
@@ -865,7 +1188,7 @@ def hrandrotsmall(shape=(), rot_sd=0.001, seed=None):
         shape = (shape, )
     axis = rand_unit(shape)
     ang = np.random.normal(0, rot_sd, shape) * np.pi
-    r = rot(axis, ang, degrees=False).squeeze()  # type: ignore
+    r = rot(axis, ang, degrees=False).squeeze()
     return hconvert(r.squeeze())
 
 def hrms(a, b):
@@ -972,8 +1295,8 @@ def closest_point_on_line(target, cen, norm):
     return hdot(cen2point, norm)[..., None] * norm + cen
 
 def intesect_line_plane(p0, n, l0, l):
-    l = hm.hnormalized(l)  # type: ignore
-    d = hm.hdot(p0 - l0, n) / hm.hdot(l, n)  # type: ignore
+    l = hm.hnormalized(l)
+    d = hm.hdot(p0 - l0, n) / hm.hdot(l, n)
     return l0 + l*d
 
 def intersect_planes(plane1, plane2):
@@ -1131,14 +1454,14 @@ def line_line_closest_points_pa(pt1, ax1, pt2, ax2, verbose=0):
     Q2 = pt2 - t2*ax2
 
     if verbose:
-        ic("C21", C21)  # type: ignore
-        ic("M", M)  # type: ignore
-        ic("m2", m2)  # type: ignore
-        ic("R", R)  # type: ignore
-        ic("t1", t1)  # type: ignore
-        ic("t2", t2)  # type: ignore
-        ic("Q1", Q1)  # type: ignore
-        ic("Q2", Q2)  # type: ignore
+        ic("C21", C21)
+        ic("M", M)
+        ic("m2", m2)
+        ic("R", R)
+        ic("t1", t1)
+        ic("t2", t2)
+        ic("Q1", Q1)
+        ic("Q2", Q2)
     return Q1, Q2
 
 hlinesisect = line_line_closest_points_pa
@@ -1320,7 +1643,7 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
         # vector delta between pt2 and pt1
         d = hprojperp(ax1, pt2 - pt1)
         Xalign = halign2(ax1, d, ta1, sl2)  # align d to Y axis
-        Xalign[..., :, 3] = -Xalign @ pt1  # type: ignore
+        Xalign[..., :, 3] = -Xalign @ pt1
         slide_dist = (Xalign @ pt2)[..., 1]
     else:
         try:
@@ -1330,13 +1653,13 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
             # assert np.allclose(Xalign @ ax2, ta2, atol=0.0001)
             # ic(Xalign)
         except AssertionError as e:
-            ic("halign2 error")  # type: ignore
-            ic("   ", ax1)  # type: ignore
-            ic("   ", ax2)  # type: ignore
-            ic("   ", ta1)  # type: ignore
-            ic("   ", ta2)  # type: ignore
+            ic("halign2 error")
+            ic("   ", ax1)
+            ic("   ", ax2)
+            ic("   ", ta1)
+            ic("   ", ta2)
             raise e
-        Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin  # type: ignore
+        Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin
         Xalign[..., 3, 3] = 1
         cen2_0 = Xalign @ pt2  # moving pt2 by Xalign
         D = np.stack([ta1[:3], sl2[:3], ta2[:3]]).T
@@ -1425,9 +1748,9 @@ def scale_translate_lines_isect_lines(pt1, ax1, pt2, ax2, tp1, ta1, tp2, ta2):
     xalign[3, 3] = 1
 
     if np.any(np.isnan(xalign)):
-        ic("=============================")  # type: ignore
-        ic(xalign)  # type: ignore
-        ic(delta1, delta2)  # type: ignore
+        ic("=============================")
+        ic(xalign)
+        ic(delta1, delta2)
     # rays = np.array([
     #    hm.hray(xalign @ pt1, xalign @ ax1),
     #    hm.hray(xalign @ pt2, xalign @ ax2),
@@ -1481,7 +1804,7 @@ def hexpand(
     raise NotImplementedError('expand_xforms_rand lives in willutil_cpp now')
     generators = np.asarray(generators).astype(np.float64)
     cen = np.asarray(cen).astype(np.float64)
-    x, _ = ipd.homog.hgeom.expand_xforms_rand(  # type: ignore
+    x, _ = ipd.homog.hgeom.expand_xforms_rand(
         generators,
         depth=depth,
         trials=ntrials,
@@ -1563,7 +1886,7 @@ def hconvert(rot=np.eye(3), trans=None, **kw):
     return h
 
 def lines_concurrent_isect(cen, axis, tol=1e-4):
-    cen, axis = as_tensors(cen, axis)
+    cen, axis = as_tensors([cen, axis])
     cen, axis = cen.reshape(-1, 4), axis.reshape(-1, 4)
     assert cen.shape == axis.shape
     if len(cen) == 1: return True, cen, np.array([0])
@@ -1636,7 +1959,7 @@ def unique_symaxes(
         # print('final', same.sum())
         if debug:
             pdistmin, adotmax = pdist.min(1), np.abs(adot).max(1)
-            ipd.print_table(ipd.dev.locals('pdistmin adotmax an hl', idx=same))
+            ipd.print_table(ipd.dev.picklocals('pdistmin adotmax an hl', idx=same))
         assert np.any(same)
         if same.sum() == 1:
             sel = lambda x: x[same][0]
@@ -1725,7 +2048,7 @@ def get_dtype_dev(example, dtype=None, **_):
                 example = e
                 break
     if dtype is None:
-        if isinstance(example, np.ndarray): dtype = example.dtype  # type: ignore
+        if isinstance(example, np.ndarray): dtype = example.dtype
         else: dtype = th.float32
     return dict(dtype=dtype)
 

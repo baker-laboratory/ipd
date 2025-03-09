@@ -7,6 +7,7 @@ from rich.table import Table
 from rich.console import Console
 
 import ipd
+from ipd.dev.decorators import iterize_on_first_param
 
 console = Console()
 
@@ -27,9 +28,10 @@ def make_table(thing, **kw):
     finally:
         np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
 
-def print_table(thing, **kw):
-    if thing is None or not len(thing): return '<empty table>'
-    table = make_table(thing, **kw)
+def print_table(table, **kw):
+    if not isinstance(table, Table):
+        if table is None or not len(table): return '<empty table>'
+        table = make_table(table, **kw)
     console.print(table)
 
 def make_table_list(lst, title=None, header=[], **kw):
@@ -48,11 +50,13 @@ def make_table_dict(mapping, **kw):
     assert isinstance(mapping, Mapping)
     vals = list(mapping.values())
     # assert all(type(v)==type(vals[0]) for v in vals)
-    if isinstance(vals[0], Mapping):
-        return make_table_dict_of_dict(mapping, **kw)
-    if isinstance(vals[0], Iterable) and not isinstance(vals[0], str):
-        return make_table_dict_of_iter(mapping, **kw)
-    return make_table_dict_of_any(mapping, **kw)
+    try:
+        if isinstance(vals[0], Mapping):
+            return make_table_dict_of_dict(mapping, **kw)
+        if isinstance(vals[0], Iterable) and not isinstance(vals[0], str):
+            return make_table_dict_of_iter(mapping, **kw)
+    except AssertionError:
+        return make_table_dict_of_any(mapping, **kw)
 
 def make_table_dict_of_dict(mapping, title=None, key='key', **kw):
     vals = list(mapping.values())
@@ -115,3 +119,9 @@ def to_renderable(thing, textmap=None, strip=True, nohomog=False, **kw):
         else: s = s.replace(pattern, str(replace))
     if strip: s = s.strip()
     return s
+
+@iterize_on_first_param(allowmap=True)
+def summary(obj):
+    if ipd.homog.is_tensor(obj): return ipd.homog.tensor_summary(obj)
+    if isinstance(obj, list): return str(obj)
+    return obj

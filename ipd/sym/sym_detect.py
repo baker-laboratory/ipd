@@ -124,9 +124,10 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw)
     assert not ipd.atom.is_atoms(atomslist)
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
-    framesets = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, maxsub=60, **kw)
+    components = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, maxsub=60, **kw)
+    components.remove_small_chains()
     results = []
-    for i, (frames, match, rms) in enumerate(framesets):
+    for i, frames, match, rms in components.enumerate('frames seqmatch rmsd'):
         tol.reset()
         syminfo = syminfo_from_frames(frames, tol=tol)
         syminfo.rms, syminfo.seqmatch = rms, match

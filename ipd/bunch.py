@@ -1,5 +1,6 @@
 import contextlib
 import hashlib
+import itertools
 import os
 import shutil
 from pathlib import Path
@@ -8,9 +9,23 @@ from ipd.dev.element_wise import element_wise_operations
 with contextlib.suppress(ImportError):
     pass
 
+import ipd
+
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
 T = TypeVar('T')
+
+def zip(*args, order='key'):
+    keys = set(itertools.chain(*(list(map(str, a.keys())) for a in args)))
+    if order == 'key': keys = sorted(keys)
+    if order == 'val': keys = sorted(keys, key=lambda k: args[0].get(k, ipd.dev.NA))
+    result = Bunch({k: tuple(a.get(k, ipd.dev.NA) for a in args) for k in keys})
+    return result
+
+def zipitems(*args, **kw):
+    zipped = zip(*args, **kw)
+    for k, v in zipped.items():
+        yield k, *v
 
 @element_wise_operations
 class Bunch(dict, Generic[T]):
@@ -118,53 +133,10 @@ class Bunch(dict, Generic[T]):
         else:
             return dflt
 
-    def __str__(self):
-        self._autoreload_check()
-        s = "Bunch(" + ", ".join([f"{k}={v}" for k, v in self.items()])
-        s += ")"
-        if len(s) > 120:
-            s = f"Bunch({os.linesep}"
-            if len(self) == 0:
-                return "Bunch()"
-            w = int(min(40, max(len(str(k)) for k in self)))
-            for k, v in self.items():
-                s += f'  {k:{f"{w}"}} = {v}{os.linesep}'
-            s += ")"
-        return s
-
     def __eq__(self, other):
         self._autoreload_check()
         if hasattr(other, '_autoreload_check'): other._autoreload_check()
         return super().__eq__(other)
-
-    def printme(self):
-        self._autoreload_check()
-
-        def short(thing):
-            s = str(thing)
-            if len(s) > 80:
-                import numpy as np
-
-                if isinstance(thing, np.ndarray):
-                    s = f"shape {thing.shape}"
-                else:
-                    s = str(s)[:67].replace("\n", "") + "..."
-            return s
-
-        s = "Bunch("
-        s += ", ".join([f"{k}={v}" for k, v in self.items()])
-
-        s += ")"
-        if len(s) > 120:
-            s = f"Bunch({os.linesep}"
-            if len(self) == 0:
-                return "Bunch()"
-            w = int(min(40, max(len(str(k)) for k in self)))
-            for k, v in self.items():
-                s += f'  {k:{f"{w}"}} = {short(v)}{os.linesep}'
-            s += ")"
-        print(s, flush=True)
-        return s
 
     def reduce(self, func, strict=True):
         "reduce all contained iterables using <func>"
@@ -371,10 +343,53 @@ class Bunch(dict, Generic[T]):
     def __setstate__(self, d):
         self.__dict__.update(d)
 
+    def __str__(self):
+        self._autoreload_check()
+        s = "Bunch(" + ", ".join([f"{k}={v}" for k, v in self.items()])
+        s += ")"
+        if len(s) > 120:
+            s = f"Bunch({os.linesep}"
+            if len(self) == 0:
+                return "Bunch()"
+            w = int(min(40, max(len(str(k)) for k in self)))
+            for k, v in self.items():
+                s += f'  {k: {f"{w}"}} = {ipd.dev.summary(v)}{os.linesep}\n'
+            s += ")"
+        return s
+
+    def printme(self):
+        self._autoreload_check()
+
+        def short(thing):
+            s = str(thing)
+            if len(s) > 80:
+                import numpy as np
+
+                if isinstance(thing, np.ndarray):
+                    s = f"shape {thing.shape}"
+                else:
+                    s = str(s)[:67].replace("\n", "") + "..."
+            return s
+
+        s = "Bunch("
+        s += ", ".join([f"{k}={v}" for k, v in self.items()])
+
+        s += ")"
+        if len(s) > 120:
+            s = f"Bunch({os.linesep}"
+            if len(self) == 0:
+                return "Bunch()"
+            w = int(min(40, max(len(str(k)) for k in self)))
+            for k, v in self.items():
+                s += f'  {k:{f"{w}"}} = {short(v)}{os.linesep}'
+            s += ")"
+        print(s, flush=True)
+        return s
+
     def __repr__(self):
         self._autoreload_check()
-        args = ", ".join(["%s=%r" % (key, self[key]) for key in self.keys()])
-        return f"{self.__class__.__name__}({args})"
+        args = ["%s=%r" % (k, v) for k, v in self.items()]
+        return f"{self.__class__.__name__}(\n  {str.join(',\n  ',args)})"
 
     def asdict(self):
         return unbunchify(self)

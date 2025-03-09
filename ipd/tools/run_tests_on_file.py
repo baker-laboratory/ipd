@@ -107,7 +107,7 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
 def dispatch(
         projects,
         fname,
-        pytest_args='-x --disable-warnings -m "not nondeterministic"',
+        pytest_args='-x --disable-warnings -m "not nondeterministic" --doctest-modules',
         file_mappings=dict(),
         overrides=dict(),
         strict=True,
@@ -117,6 +117,7 @@ def dispatch(
     "dispatch command for a given file. see above"
 
     fname = os.path.relpath(fname)
+    module_fname = '' if fname[:5] == 'test_' else fname
     path, bname = os.path.split(fname)
 
     if bname in overrides:
@@ -147,11 +148,11 @@ def dispatch(
         sys.exit()
 
     if pytest or (not file_has_main(fname) and bname.startswith("test_")):
-        cmd = f"{sys.executable} -mpytest {pytest_args} {fname}"
+        cmd = f"{sys.executable} -m pytest {pytest_args} {module_fname} {fname}"
     elif fname.endswith(".py") and bname != 'conftest.py':
         cmd = f"PYTHONPATH=. {sys.executable} " + fname
     else:
-        cmd = f"{sys.executable} -mpytest {pytest_args}"
+        cmd = f"{sys.executable} -mpytest {pytest_arg --doctest-moduless}"
     return cmd, _post[bname]
 
 def main(projects, quiet=False, filter_build_log=False, **kw):

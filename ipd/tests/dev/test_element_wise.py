@@ -1,17 +1,16 @@
-import pytest
-import unittest
-import operator
-import numpy as np
 from collections import OrderedDict
+import operator
+import unittest
+
+import attrs
+import pytest
+import numpy as np
 
 import ipd
 
 config_test = ipd.Bunch(
-    re_only=[
-        # 'test_ewise_equal'
-    ],
-    re_exclude=[],
-)
+    # re_only=['test_generic_get_items'],
+    re_exclude=[], )
 
 def main():
     ipd.tests.maintest(
@@ -22,11 +21,32 @@ def main():
         use_test_classes=True,
     )
 
+def test_generic_get_items():
+    foo = dict(a=1, b_=3)
+    assert ipd.dev.generic_get_items(foo) == [('a', 1)]
+
+    class Foo:
+        pass
+
+    foo = Foo()
+    foo.a, foo.b, foo._c = 1, 1, 1
+    assert ipd.dev.generic_get_items(foo) == [('a', 1), ('b', 1)]
+    assert ipd.dev.generic_get_items([0, 1, 2]) == [(0, 0), (1, 1), (2, 2)]
+    attrs.define
+
+    class Bar:
+        a: int = 1
+        _b: int = 2
+        c_: int = 3
+
+    bar = Bar()
+    assert ipd.dev.generic_get_items(bar) == [('a', 1)]
+
 @ipd.dev.element_wise_operations
 class EwiseDict(dict):
     pass
 
-def test_ewise_no_args():
+def test_element_wise_no_args():
 
     @ipd.dev.element_wise_operations
     class EwiseDictonly(dict):
@@ -37,7 +57,7 @@ def test_ewise_no_args():
     assert 'mapwise' in dir(EwiseDictonly)
     assert 'valwise' in dir(EwiseDictonly)
 
-def test_ewise_resulttypes():
+def test_element_wise_resulttypes():
     with pytest.raises(TypeError):
 
         @ipd.dev.element_wise_operations(result_types='foo')
@@ -58,7 +78,7 @@ def test_ewise_resulttypes():
     assert not hasattr(instance, 'mapwise')
     assert not hasattr(instance, 'valwise')
 
-def test_mapwise():
+def test_element_wise():
     b = EwiseDict(zip('abcdefg', ([] for i in range(7))))
     ic(b)
     assert all(b.valwise == [])
@@ -66,13 +86,13 @@ def test_mapwise():
     r = b.mapwise.append(1)
     assert all(b.valwise == [1])
 
-def test_ewise_accum():
+def test_element_wise_accum():
     b = EwiseDict(zip('abcdefg', (i for i in range(7))))
     assert isinstance(b.mapwise + 10, ipd.Bunch)
     assert isinstance(b.valwise + 10, list)
     assert isinstance(b.npwise + 10, np.ndarray)
 
-def test_mapwise_multi():
+def test_element_wise_multi():
     b = EwiseDict(zip('abcdefg', ([] for i in range(7))))
     assert b.mapwise == []
     with pytest.raises(ValueError):
@@ -81,7 +101,7 @@ def test_mapwise_multi():
     ic(b)
     assert list(b.values()) == [[i] for i in range(7)]
 
-def test_mapwise_equal():
+def test_element_wise_equal():
     b = EwiseDict(zip('abcdefg', ([] for i in range(7))))
     assert b.mapwise == []
     b.mapwise.append(*range(7))
@@ -89,7 +109,7 @@ def test_mapwise_equal():
     assert list(eq4.values()) == [0, 0, 0, 0, 1, 0, 0]
     assert not any((b.mapwise == 3).values())
 
-def test_mapwise_add():
+def test_element_wise_add():
     b = EwiseDict(zip('abcdefg', range(7)))
     assert (b.valwise == 4) == [0, 0, 0, 0, 1, 0, 0]
     assert not any(b.valwise == 'ss')
@@ -100,30 +120,78 @@ def test_mapwise_add():
     e = 4 - b.npwise
     assert np.all(d == -e)
 
-def test_mapwise_contains():
+def test_element_wise_contains():
     b = EwiseDict(zip('abcdefg', [[i] for i in range(7)]))
     with pytest.raises(ValueError):
         contains = b.valwise.__contains__(4)
     contains = b.valwise.contains(4)
     assert contains == [0, 0, 0, 0, 1, 0, 0]
 
-def test_mapwise_contained_by():
+def test_element_wise_contained_by():
     b = EwiseDict(zip('abcdefg', range(7)))
     contained = b.valwise.contained_by([1, 2, 3])
     assert contained == [0, 1, 1, 1, 0, 0, 0]
 
-def test_mapwise_indexing():
+def test_element_wise_indexing():
     dat = np.arange(7 * 4).reshape(7, 4)
     b = EwiseDict(zip('abcdefg', dat))
     indexed = b.npwise[1]
     assert np.all(indexed == dat[:, 1])
 
-def test_mapwise_slicing():
+def test_element_wise_slicing():
     dat = np.arange(7 * 4).reshape(7, 4)
     b = EwiseDict(zip('abcdefg', dat))
     indexed = b.npwise[1:3]
     ic(indexed)
     assert np.all(indexed == dat[:, 1:3])
+
+def test_element_wise_call_operator():
+    dat = np.arange(7 * 4).reshape(7, 4)
+    b = EwiseDict(zip('abcdefg', dat))
+    c = b.mapwise(lambda x: list(map(int, x)))
+    d = c.mapwise(np.array, dtype=float)
+    assert np.all(b.npwise == d)
+
+@ipd.dev.element_wise_operations
+@attrs.define(slots=False)
+class Foo:
+    a: list
+    b: list
+
+    def c(self):
+        pass
+
+def test_element_wise_attrs():
+    foo = Foo(a=[], b=[])
+    foo.mapwise.append(5, 7)
+    assert foo.a == [5], foo.b == [7]
+    with pytest.raises(ValueError):
+        foo.mapwise.append(1, 2, 3, 4)
+
+@ipd.dev.element_wise_operations
+@attrs.define
+class Bar:
+    a: list
+    b: list
+
+    def c(self):
+        pass
+
+@pytest.mark.skip
+def test_element_wise_slots():
+    foo = Bar(a=[], b=[])
+    foo.mapwise.append(5, 7)
+    assert foo.a == [5], foo.b == [7]
+    with pytest.raises(ValueError):
+        foo.mapwise.append(1, 2, 3, 4)
+
+def test_element_wise_kw_call():
+    dat = np.arange(7 * 4).reshape(7, 4)
+    x = Foo([], [])
+    x.mapwise.append(dict(b=2, a=1))
+    x.mapwise.append(**dict(b=2, a=1))
+    # x.mapwise.append(a=1, b=2)
+    assert x.a == [1, 1] and x.b == [2, 2]
 
 ############################ ai gen tests ######################
 
@@ -149,7 +217,7 @@ class TestElementWiseOperations(unittest.TestCase):
 
         self.metrics = Metrics({'accuracy': 0.95, 'precision': 0.87, 'recall': 0.92, 'f1': 0.89})
 
-    def test_mapwise_basic(self):
+    def test_element_wise_basic(self):
         """Test basic mapwise operations."""
         # Test addition with single value
         result = self.test_dict.mapwise.__add__(10)

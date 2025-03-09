@@ -18,7 +18,7 @@ def main():
 
 def test_locals():
     foo, bar, baz = 1, 2, 3
-    assert ipd.dev.locals('foo bar') == dict(foo=1, bar=2)
+    assert ipd.dev.picklocals('foo bar') == dict(foo=1, bar=2)
 
 def test_addreduce():
     assert ipd.dev.addreduce([[1], [2, 3], [4]]) == [1, 2, 3, 4]
@@ -26,14 +26,14 @@ def test_addreduce():
 @pytest.mark.xfail
 def test_get_function_for_which_call_to_caller_is_argument():
 
-    def bar(foo):
-        pass
+    def FIND_THIS_FUNCTION(*a, **kw):
+        ...
 
-    def foo():
-        ic(ipd.dev.get_function_for_which_call_to_caller_is_argument())
+    def CALLED_TO_PRODUCE_ARGUMENT():
+        uncle_func = ipd.dev.get_function_for_which_call_to_caller_is_argument()
+        assert uncle_func == FIND_THIS_FUNCTION
 
-    bar(foo())
-    assert 0
+    FIND_THIS_FUNCTION(1, 2, CALLED_TO_PRODUCE_ARGUMENT(), 3)
 
 @pytest.mark.fast
 def test_kwcheck():

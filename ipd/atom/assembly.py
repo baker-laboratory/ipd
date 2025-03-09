@@ -3,10 +3,19 @@ class to represent a potentially very large biological assembly efficiently. sto
 """
 
 import attrs
+import numpy as np
 import ipd
 
 bs = ipd.lazyimport('biotite.structure')
 
+def assembly(input: str, **kw) -> 'Assembly':
+    atomslist = ipd.atom.load(input, chainlist=True, assembly='largest')
+    assert isinstance(atomslist, list)
+    components = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist)
+    ic(components)
+    return Assembly(components.atoms, components.frames)
+
 @attrs.define
 class Assembly:
-    orig: 'bs.AtomArray'
+    atoms: list[ipd.atom.Body]
+    frames: list[np.ndarray]

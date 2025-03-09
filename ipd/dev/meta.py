@@ -1,9 +1,84 @@
+"""
+Utility functions for working with Python callables, frames, and arguments.
+
+This module provides a collection of utility functions to simplify common Python tasks related to:
+- Inspecting and manipulating function arguments.
+- Reducing iterables using operators.
+- Handling local variables in the call stack.
+- Filtering namespaces.
+- Working with pytest marks.
+
+Functions:
+----------
+- `picklocals` – Access local variables from the caller's caller frame.
+- `opreduce` – Reduce an iterable using a specified operator.
+- `kwcall` – Call a function with filtered keyword arguments.
+- `kwcheck` – Filter keyword arguments to match accepted function parameters.
+- `filter_namespace_funcs` – Filter functions in a namespace by patterns.
+- `param_is_required` – Check if a function parameter is required.
+- `func_params` – Retrieve parameters of a function.
+- `has_pytest_mark` – Check if an object has a specific pytest mark.
+- `no_pytest_skip` – Check if an object does not have the `skip` pytest mark.
+
+Examples:
+---------
+Example for `picklocals`:
+    >>> def example():
+    ...     x = [10, 20, 30]
+    ...     print(ipd.dev.picklocals('x'))  # [10, 20, 30]
+    ...     print(ipd.dev.picklocals('x', 1))  # 20
+    >>> example()
+    [10, 20, 30]
+    20
+
+Example for `opreduce`:
+    >>> from operator import add, mul
+    >>> opreduce(add, [1, 2, 3, 4])
+    10
+    >>> opreduce('mul', [1, 2, 3, 4])
+    24
+
+Example for `kwcall`:
+    >>> def example_function(x, y, z=3):
+    ...     return x + y + z
+    >>> args = {'x': 1, 'y': 2, 'extra_arg': 'ignored'}
+    >>> kwcall(example_function, args)
+    6
+    >>> kwcall(example_function, {'x': 1}, y=2, z=10)
+    13
+
+Example for `kwcheck`:
+    >>> def my_function(a, b, c=3):
+    ...     pass
+    >>> kwargs = {'a': 1, 'b': 2, 'd': 4}
+    >>> filtered_kwargs = kwcheck(kwargs, my_function)
+    >>> filtered_kwargs
+    {'a': 1, 'b': 2}
+
+Example for `filter_namespace_funcs`:
+    >>> def test_func1(): pass
+    >>> def test_func2(): pass
+    >>> def helper_func(): pass
+    >>> ns = dict(test_func1=test_func1,test_func2=test_func2, helper_func=helper_func)
+    >>> filtered_ns = filter_namespace_funcs(ns, prefix='test_', only=('test_func1',))
+    >>> print(filtered_ns.keys())
+    dict_keys(['helper_func', 'test_func1'])
+
+See Also:
+---------
+- `inspect` – Python’s standard library for introspecting live objects.
+- `functools` – Higher-order functions and operations on callable objects.
+- `operator` – Standard library for functional-style operators.
+- `pytest.mark` – Markers for controlling pytest test execution.
+
+"""
+
 import dis
 import re
 import functools
 import inspect
 import operator
-from typing import TypeVar, Callable
+from typing import TypeVar
 
 import ipd
 from ipd.dev.decorators import iterize_on_first_param
@@ -11,33 +86,67 @@ from ipd.dev.decorators import iterize_on_first_param
 T = TypeVar('T')
 
 @iterize_on_first_param(asdict=True)
-def locals(name, idx=None):
+def picklocals(name, idx=None):
+    """Accesses a local variable from the caller's caller frame.
+
+    This function retrieves the value of a local variable from the frame two levels up in the call stack.
+    If `idx` is provided, it will index into the value (if it's indexable).
+
+    Args:
+        name (str): The name of the local variable to retrieve.
+        idx (int, optional): If provided, returns `val[idx]` instead of `val`. Defaults to None.
+
+    Returns:
+        Any: The value of the local variable or the indexed value if `idx` is provided.
+
+    Example:
+        >>> def example():
+        ...     x = [10, 20, 30]
+        ...     print(ipd.dev.picklocals('x'))  # [10, 20, 30]
+        ...     print(ipd.dev.picklocals('x', 1))  # 20
+        >>> example()
+        [10, 20, 30]
+        20
+
+    """
     val = inspect.currentframe().f_back.f_back.f_locals[name]
-    if idx is None: return val
+    if idx is None:
+        return val
     return val[idx]
 
-def addreduce(iterable):
-    return functools.reduce(operator.add, iterable)
 
-def call_with_args_from(
-    argpool,
-    func: Callable[..., T],
-    timed: bool = False,
-    dryrun=False,
-    strict=False,
-    **kw,
-) -> T:
-    params = func_params(func)
-    required_params = func_params(func, required_only=True)
-    if timed: func = ipd.dev.timed(func)
-    for p in params:
-        if p not in argpool and p in required_params:
-            raise ValueError(
-                f'function: {func.__name__}{inspect.signature(func)} requred arg {p} not argpool: {list(argpool.keys())}'
-            )
-    args = {p: argpool[p] for p in params if p in argpool}
-    if dryrun: return None
-    return func(**args)
+def opreduce(op, iterable):
+    """Reduces an iterable using a specified operator or function.
+
+    This function applies a binary operator or callable across the elements of an iterable, reducing it to a single value.
+    If `op` is a string, it will look up the corresponding operator in the `operator` module.
+
+    Args:
+        op (str | callable): A callable or the name of an operator from the `operator` module (e.g., 'add', 'mul').
+        iterable (iterable): The iterable to reduce.
+
+    Returns:
+        Any: The reduced value.
+
+    Raises:
+        AttributeError: If `op` is a string but not a valid operator in the `operator` module.
+        TypeError: If `op` is not a valid callable or operator.
+
+    Example:
+        >>> from operator import add, mul
+        >>> print(opreduce(add, [1, 2, 3, 4]))  # 10
+        10
+        >>> print(opreduce('mul', [1, 2, 3, 4]))  # 24
+        24
+        >>> print(opreduce(lambda x, y: x * y, [1, 2, 3, 4]))  # 24
+        24
+    """
+    if isinstance(op, str):
+        op = getattr(operator, op)
+    return functools.reduce(op, iterable)
+
+for op in 'add mul matmul or_ and_'.split():
+    globals()[f'{op.strip('_')}reduce'] = functools.partial(opreduce, getattr(operator, op))
 
 def kwcall(func, kw, *a, **kwargs):
     """Call a function with filtered keyword arguments.
@@ -143,14 +252,15 @@ def get_function_for_which_call_to_caller_is_argument():
     """
     returns the function being called with an arg that is a call to enclosing function, if any
 
-    finds TARGET_FUNCTION, if any
-    def process_args(kw):
-        uncle_func = get_function_for_which_call_to_caller_is_argument()
-        assert uncle_func == TARGET_FUNCTION
-        ...
-        return kw
-
-    TARGET_FUNCTION(arg1, arg2, arg3=7, **process_args(kw))
+    >>> def FIND_THIS_FUNCTION(*a, **kw): ...
+    >>> def CALLED_TO_PRODUCE_ARGUMENT(**kw):
+    ...     uncle_func = get_function_for_which_call_to_caller_is_argument()
+    ...     print('detected caller:', uncle_func.__name__)
+    ...     assert uncle_func == FIND_THIS_FUNCTION
+    ...     ...
+    ...     return kw
+    >>> FIND_THIS_FUNCTION(1, 2, CALLED_TO_PRODUCE_ARGUMENT(), 3)
+    detected caller: FIND_THIS_FUNCTION
     """
     frame = inspect.currentframe().f_back.f_back  # grandparent
     frame_info = inspect.getframeinfo(frame)
@@ -164,7 +274,35 @@ def get_function_for_which_call_to_caller_is_argument():
                 func = frame.f_globals.get(potential_func_name) or frame.f_locals.get(potential_func_name)
                 if func: return func
 
+
 def filter_namespace_funcs(namespace, prefix='test_', only=(), re_only=(), exclude=(), re_exclude=()):
+    """Filters functions in a namespace based on specified inclusion and exclusion rules.
+
+    This function filters out functions from the given `namespace` based on:
+    - A `prefix` that functions must start with.
+    - Explicit names (`only`) or regex patterns (`re_only`) to include.
+    - Explicit names (`exclude`) or regex patterns (`re_exclude`) to exclude.
+
+    Args:
+        namespace (dict): The namespace (usually `globals()` or `locals()`) to filter.
+        prefix (str, optional): Only keep functions that start with this prefix. Defaults to `'test_'`.
+        only (tuple, optional): Names of functions to explicitly keep. Defaults to ().
+        re_only (tuple, optional): Regex patterns to match function names to keep. Defaults to ().
+        exclude (tuple, optional): Names of functions to explicitly remove. Defaults to ().
+        re_exclude (tuple, optional): Regex patterns to match function names to remove. Defaults to ().
+
+    Returns:
+        dict: The filtered namespace with functions matching the specified criteria.
+
+    Example:
+        def test_func1(): pass
+        def test_func2(): pass
+        def helper_func(): pass
+
+        ns = globals()
+        filtered_ns = filter_namespace_funcs(ns, only=('test_func1',))
+        print(filtered_ns)  # {'test_func1': <function test_func1 at ...>}
+    """
     if only or re_only:
         allfuncs = [k for k, v in namespace.items() if callable(v)]
         allfuncs = list(filter(lambda s: s.startswith(prefix), allfuncs))
@@ -178,42 +316,112 @@ def filter_namespace_funcs(namespace, prefix='test_', only=(), re_only=(), exclu
                 if re.match(func_re, func):
                     namespace[func] = namespace_copy[func]
     for func in exclude:
-        if func in namespace: del namespace[func]
+        if func in namespace:
+            del namespace[func]
     allfuncs = [k for k, v in namespace.items() if callable(v)]
     allfuncs = list(filter(lambda s: s.startswith(prefix), allfuncs))
     for func_re in re_exclude:
         for func in allfuncs:
-            if re.match(func_re, func): del namespace[func]
+            if re.match(func_re, func):
+                del namespace[func]
     return namespace
 
+
 def param_is_required(param):
+    """Checks if a function parameter is required.
+
+    A parameter is considered required if:
+    - It has no default value.
+    - It is not a `*args` or `**kwargs` type parameter.
+
+    Args:
+        param (inspect.Parameter): The parameter to check.
+
+    Returns:
+        bool: True if the parameter is required, False otherwise.
+
+    Example:
+        def my_func(x, y=2, *args, **kwargs): pass
+        params = inspect.signature(my_func).parameters
+        for name, param in params.items():
+            print(name, param_is_required(param))
+        # Output:
+        # x True
+        # y False
+        # args False
+        # kwargs False
+    """
     return param.default is param.empty and param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)
+
 
 @functools.lru_cache
 def func_params(func, required_only=False):
-    """
-    Returns a list of names of the non-default parameters for a function.
+    """Gets the parameters of a function.
+
+    Uses `inspect.signature` to retrieve function parameters.
+    Can optionally return only required parameters.
 
     Args:
-        func: The function to inspect
+        func (callable): The function to inspect.
+        required_only (bool, optional): If True, returns only required parameters. Defaults to False.
 
     Returns:
-        list: Names of parameters that don't have default values
+        dict: A dictionary mapping parameter names to `inspect.Parameter` objects.
 
-    Examples:
-        >>> def example(a, b, c=3, d=4):
-        ...     pass
-        >>> get_non_default_params(example)
-        ['a', 'b']
+    Example:
+        def my_func(a, b, c=1): pass
+        print(func_params(my_func))
+        # Output: {'a': <Parameter "a">, 'b': <Parameter "b">, 'c': <Parameter "c=1">}
+
+        print(func_params(my_func, required_only=True))
+        # Output: {'a': <Parameter "a">, 'b': <Parameter "b">}
     """
     signature = inspect.signature(func)
-    params = inspect.signature(func).parameters
+    params = signature.parameters
     if required_only:
         params = {k: param for k, param in params.items() if param_is_required(param)}
     return params
 
+
 def has_pytest_mark(obj, mark):
+    """Checks if an object has a specific pytest mark.
+
+    Args:
+        obj (Any): The object to check.
+        mark (str): The name of the pytest mark to check for.
+
+    Returns:
+        bool: True if the object has the specified mark, False otherwise.
+
+    Example:
+        import pytest
+
+        @pytest.mark.custom
+        def test_example():
+            pass
+
+        print(has_pytest_mark(test_example, 'custom'))  # True
+        print(has_pytest_mark(test_example, 'skip'))    # False
+    """
     return mark in [m.name for m in getattr(obj, 'pytestmark', ())]
 
+
 def no_pytest_skip(obj):
+    """Checks if an object does not have the `skip` pytest mark.
+
+    Args:
+        obj (Any): The object to check.
+
+    Returns:
+        bool: True if the object does not have the `skip` mark, False otherwise.
+
+    Example:
+        import pytest
+
+        @pytest.mark.skip
+        def test_example():
+            pass
+
+        print(no_pytest_skip(test_example))  # False
+    """
     return not has_pytest_mark(obj, 'skip')

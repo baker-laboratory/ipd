@@ -442,7 +442,7 @@ def xform_impl(xform, stuff, homogout='auto', dtype=None, device=None, isvec=Non
         result = result[..., :3]
     return result
 
-def xchain(*xforms, **kw):
+def product(*xforms, **kw):
     x, *xforms, stuff = xforms
     for x1 in xforms:
         x = xform(x, x1)

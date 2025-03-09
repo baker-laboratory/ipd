@@ -20,3 +20,11 @@ def is_tensor(thing):
 
 def is_xform_stack(thing):
     return is_tensor(thing) and thing.ndim == 3 and thing.shape[-2:] == (4, 4)
+
+def numel(tensor):
+    if 'torch' in sys.modules and th.is_tensor(tensor): return tensor.numel
+    return tensor.size
+
+def tensor_summary(tensor):
+    if numel(tensor) < 12: return str(tensor)
+    return f'{tensor.__class__.__name__}{list(tensor.shape)}'

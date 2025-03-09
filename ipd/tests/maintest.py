@@ -15,7 +15,8 @@ class TestConfig(ipd.Bunch):
         self.setup = self.get('setup', lambda: None)
         self.funcsetup = self.get('funcsetup', lambda: None)
         self.context = self.get('context', ipd.dev.nocontext)
-        self.use_testclasses = self.get('use_test_classes', True)
+        self.use_test_classes = self.get('use_test_classes', True)
+        self.dryrun = self.get('dryrun', False)
 
 class TestResult(ipd.Bunch):
 
@@ -38,17 +39,18 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
     test_suites, test_funcs = [], []
     for name, obj in namespace.items():
         if _test_class_ok(name, obj) and config.use_test_classes:
-            ic('test class', name)
             test_suites.append((name, timed(obj)()))
         elif _test_func_ok(name, obj):
             test_funcs.append((name, timed(obj)))
     ipd.dev.global_timer.checkpoint('maintest')
     result = TestResult()
     with tempfile.TemporaryDirectory() as tmpdir:
-        ipd.dev.call_with_args_from(config.fixtures, config.setup)
+        ipd.kwcall(config.setup, config.fixtures)
         config.fixtures['tmpdir'] = tmpdir
+
         for name, func in test_funcs:
             _maintest_run_test_function(name, func, result, config, kw)
+
         for clsname, suite in test_suites:
             print(f'{f" suite: {clsname} ":=^80}', flush=True)
             test_methods = ipd.dev.filter_namespace_funcs(vars(namespace[clsname]))
@@ -70,9 +72,10 @@ def _maintest_run_test_function(name, func, result, config, kw, check_xfail=True
     context = ipd.dev.nocontext if name in config.nocapture else ipd.dev.capture_stdio
     with context() as testout:  # noqa
         try:
-            ipd.dev.call_with_args_from(config.fixtures, config.funcsetup)
-            ipd.dev.call_with_args_from(config.fixtures, func)
-            result.passed.append(name)
+            ipd.kwcall(config.funcsetup, config.fixtures)
+            if not config.dryrun:
+                ipd.kwcall(func, config.fixtures)
+                result.passed.append(name)
         except AssertionError as e:
             if ipd.dev.has_pytest_mark(func, 'xfail'): result.xfailed.append(name)
             else: result.failed.append(name)
@@ -97,6 +100,6 @@ def maincrudtest(crud, namespace, fixtures=None, funcsetup=lambda: None):
 
         def newfuncsetup(backend):
             backend._clear_all_data_for_testing_only()
-            ipd.dev.call_with_args_from(fixtures, funcsetup)
+            ipd.kwcall(funcsetup, fixtures)
 
         return maintest(namespace, fixtures, funcsetup=newfuncsetup, **kw)

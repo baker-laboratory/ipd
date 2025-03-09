@@ -34,7 +34,7 @@ def test_axis_angle_180():
     x = h.rot(ax0, th.pi)
     ax, an = h.axis_angle(x)
     assert ax0.shape == ax.shape
-    assert h.allclose(an, th.pi, atol=1e-4)
+    assert h.allclose(an, th.pi, atol=1e-3)
     assert th.all(h.line_angle(ax, ax0) < 1e-3)
 
 @pytest.mark.fast

@@ -17,14 +17,13 @@ if TYPE_CHECKING:
     from ipd import atom
     from ipd import crud
     from ipd import cuda
-    from ipd import fit
+    # from ipd import fit
     import ipd.homog.thgeom as h
-    import ipd.homog.thgeom as homog
+    # import ipd.homog.thgeom as homog
     from ipd import motif
     from ipd import pdb
     from ipd import protocol
     from ipd import qt
-    from ipd import rcsb
     from ipd import samp
     from ipd import sel
     from ipd import sym
@@ -36,14 +35,15 @@ else:
     atom = lazyimport('ipd.atom')
     crud = lazyimport('ipd.crud')
     cuda = lazyimport('ipd.dev.cuda')
-    fit = lazyimport('ipd.fit')
+    # fit = lazyimport('ipd.fit')
     h = lazyimport('ipd.homog.thgeom')
     homog = lazyimport('ipd.homog')
+    hnumpy = lazyimport('ipd.homog.hgeom')
+    htorch = lazyimport('ipd.homog.thgeom')
     motif = lazyimport('ipd.motif')
     pdb = lazyimport('ipd.pdb')
     protocol = lazyimport('ipd.protocol')
     qt = lazyimport('ipd.dev.qt')
-    rcsb = lazyimport('ipd.rcsb')
     samp = lazyimport('ipd.samp')
     sel = lazyimport('ipd.sel')
     sym = lazyimport('ipd.sym')

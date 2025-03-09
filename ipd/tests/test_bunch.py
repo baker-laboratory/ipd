@@ -307,8 +307,19 @@ def test_bunch_bugs():
 
 def test_bunch_dict_reserved():
     b = Bunch(values='foo')
-    ic(b.items())
     assert b.values_ == 'foo'
+
+def test_bunch_zip():
+    zipped = ipd.bunch.zip(dict(a=1, b=2), dict(a='a', b='b'))
+    assert zipped == Bunch(a=(1, 'a'), b=(2, 'b'))
+
+def test_bunch_zip_missing():
+    zipped = ipd.bunch.zip(dict(a=1, b=2), dict(a='a', b='b', c='c'))
+    assert zipped == Bunch(c=(ipd.dev.NA, 'c'), a=(1, 'a'), b=(2, 'b'))
+
+def test_bunch_zip_order():
+    zipped = ipd.bunch.zip(dict(a=2, b=1), dict(a='a', b='b', c='c'), order='val')
+    assert tuple(zipped.keys()) == ('c', 'b', 'a')
 
 if __name__ == "__main__":
     main()

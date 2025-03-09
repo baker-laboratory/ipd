@@ -2,7 +2,7 @@ import math
 import numpy as np
 import ipd
 
-h = ipd.lazyimport('ipd.homog.thgeom')
+h = ipd.htorch
 th = ipd.lazyimport('torch')
 
 SYMA = 1.0
@@ -84,11 +84,11 @@ def cyclic_vee_frames(symid, opt):
     # roty = h.rot([0, 1, 0], np.radians(90 - opt.cyclic_vee_angle / 2))
     # trans = h.trans([opt.cyclic_vee_separation / 2, 0, 0])
     # flipz = h.rot([0, 0, 1], [0, th.pi])
-    # frames = h.xchain(flipz, trans, roty, rotz, frames).reshape(-1, 4, 4)
+    # frames = h.product(flipz, trans, roty, rotz, frames).reshape(-1, 4, 4)
     roty = h.rot([0, 1, 0], np.radians(180 + opt.cyclic_vee_angle), [opt.cyclic_vee_separation / 2, 0, 0])
     trans = h.trans([opt.cyclic_vee_separation, 0, 0])
     frames1 = h.xform(rotz, frames)
-    frames2 = h.xchain(roty, trans, rotz180, rotz, frames)
+    frames2 = h.product(roty, trans, rotz180, rotz, frames)
     frames = th.cat([frames1, frames2])
     frames = h.xform(h.inv(frames[0]), frames)
     return frames.to(th.float32)

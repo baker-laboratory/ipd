@@ -31,5 +31,12 @@ def test_chain_dict():
     assert np.all(chains.B.chain_id == 'B')
     assert np.all(chains.A.res_name == chains.B.res_name)
 
+def test_chain_range():
+    atoms, atoms1, atoms2 = _small_atoms_2chain()
+    chains = ipd.atom.chain_ranges(atoms)
+    assert chains == {'A': [(0, 8)], 'B': [(8, 17)]}
+    chains = ipd.atom.chain_ranges([atoms1, atoms2])
+    assert chains == [{'A': [(0, 9)]}, {'B': [(0, 9)]}]
+
 if __name__ == '__main__':
     main()

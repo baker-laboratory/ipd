@@ -20,8 +20,12 @@ def is_atomarraystack(atoms):
 def is_atoms(atoms):
     return is_atomarray(atoms) or is_atomarraystack(atoms)
 
-def split(atoms, order=None, bychain=None, minlen=0):
-    if not order and bychain is None: bychain = True
+def split(atoms, order=None, bychain=None, nasu=None, minlen=0):
+    if nasu is not None:
+        assert not order and len(atoms) % nasu == 0
+        order = len(atoms) // nasu
+    if not order and bychain is None:
+        bychain = True
     if ipd.atom.is_atomarray(atoms):
         if order and not bychain:
             assert len(atoms) % order == 0, f'bad order for leno{len(atoms)} {order}'
@@ -48,8 +52,11 @@ def chain_dict(atoms):
     return ipd.Bunch(chain_groups)
 
 def atoms_to_seq(atoms):
-    import biotite.structure as struc
-    return ipd.dev.addreduce(struc.to_sequence(atoms)[0])
+    return ipd.dev.addreduce(bs.to_sequence(atoms)[0])  # oddly slow
+
+def atoms_to_seqstr(atoms):
+    idx = bs.get_residue_starts(atoms)
+    return ''.join(bs.info.one_letter_code(x) for x in atoms.res_name[idx])
 
 def seqalign(atoms1, atoms2):
     import biotite.sequence.align as align
@@ -61,3 +68,35 @@ def seqalign(atoms1, atoms2):
     match = aln.trace[(aln.trace[:, 0] >= 0) & (aln.trace[:, 1] >= 0)]
     matchfrac = 2 * len(match) / (len(s1) + len(s2))
     return aln, match, matchfrac
+
+@ipd.dev.iterize_on_first_param(basetype='AtomArray')
+def chain_ranges(atoms):
+    assert is_atomarray(atoms)
+    result = {}
+    starts = list(sorted(bs.get_chain_starts(atoms)))
+    starts.append(len(atoms) + 1)
+    for i, start in enumerate(starts[:-1]):
+        c = atoms.chain_id[start]
+        stop = starts[i + 1]
+        result.setdefault(str(c), []).append((int(start), int(stop)))
+    return result
+
+def select(
+    atoms,
+    chainlist=False,
+    caonly=False,
+    chaindict=False,
+    het=True,
+    chains=None,
+    **kw,
+) -> 'Atoms':
+    if isinstance(atoms, bs.AtomArrayStack):
+        assert len(atoms) == 1
+        atoms = atoms[0]
+    if caonly: atoms = atoms[atoms.atom_name == 'CA']
+    if not het: atoms = atoms[~atoms.hetero]
+    if chains is not None:
+        atoms = atoms[np.isin(atoms.chain_id, chains)]
+    if chaindict: atoms = ipd.atom.chain_dict(atoms)
+    if chainlist: atoms = ipd.atom.split(atoms)
+    return atoms

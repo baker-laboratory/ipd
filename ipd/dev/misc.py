@@ -1,9 +1,25 @@
-import sys
 import contextlib
 import datetime
+import functools
 import uuid
+import sys
 
 import ipd
+
+@functools.total_ordering
+class Missing:
+    __slots__ = ()
+
+    def __repr__(self):
+        return 'NA'
+
+    def __eq__(self, other):
+        return False
+
+    def __lt__(self, other):
+        return True
+
+NA = Missing()
 
 def classname_or_str(T):
     return T if isinstance(T, str) else T.__name__

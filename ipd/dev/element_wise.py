@@ -97,6 +97,12 @@ class ElementWiseDispatcher:
         self._Accumulator = Accumulator
         self._parent.__dict__['_ewise_method'] = dict()
 
+    # create wrappers for binary operators and their 'r' right versions
+    for name, op in vars(operator).items():
+        if not (name.startswith('__')) and not name.startswith('i'):
+            locals()[f'__{name}__'] = lambda self, other, op=op: self.__getattr__(op)(other)
+            locals()[f'__r{name}__'] = lambda self, other, op=op: self.__getattr__(op)(other)
+
     def __getattr__(self, method):
         """Get or create a method that applies the operation element-wise.
 
@@ -126,37 +132,42 @@ class ElementWiseDispatcher:
                 Raises:
                     ValueError: If the number of args doesn't match requirements
                 """
-                self.validate
                 accum = self._Accumulator()
+                items = generic_get_items(self._parent)
                 if not args:
-                    for name, member in self._parent.items():
-                        if name[0] == '_': continue
-                        if callable(method): accum.add(name, method(member, **kw))
-                        else: accum.add(name, getattr(member, method)(**kw))
-                    return accum.result()
-                elif len(args) == 1:
-                    args = itertools.repeat(args[0])
-                elif len(args) != len([n for n in self._parent if n[0] != '_']):
-                    raise ValueError(
-                        f'ElementWiseDispatcher arg must be len 1 or len(_parent) == {len(self._parent)}')
-                for arg, (name, member) in zip(args, self._parent.items()):
-                    if name[0] == '_': continue
-                    if callable(method):
-                        ic(member, arg)
-                        accum.add(name, method(member, arg, **kw))
+                    try:
+                        for name, member in items:
+                            if callable(method): accum.add(name, method(member, **kw))
+                            else: accum.add(name, getattr(member, method)(**kw))
+                        return accum.result()
+                    except TypeError:
+                        # kw forwarding to method failed, use kw ar elementwise args
+                        args = [kw]
+                        kw = {}
+                if len(args) == 1:
+                    arg = args[0]
+                    itemkeys = set(item[0] for item in items)
+                    if isinstance(arg, dict):
+                        assert arg.keys() == itemkeys, f'{itemkeys} != {arg.keys()}'
+                        # elemwise args passed as single dict
+                        args = [arg[k] for k, _ in items]
                     else:
-                        accum.add(name, getattr(member, method)(arg, **kw))
+                        args = itertools.repeat(arg)
+                elif len(args) != len(items):
+                    raise ValueError(f'ElementWiseDispatcher arg must be len 1 or len(items) == {len(items)}')
+                for arg, (name, member) in zip(args, items):
+                    if callable(method): accum.add(name, method(member, arg, **kw))
+                    else: accum.add(name, getattr(member, method)(arg, **kw))
                 return accum.result()
 
             self._parent._ewise_method[cachekey] = apply_method
 
         return self._parent._ewise_method[cachekey]
 
-    # create wrappers for binary operators and their 'r' right versions
-    for name, op in vars(operator).items():
-        if not (name.startswith('__')) and not name.startswith('i'):
-            locals()[f'__{name}__'] = lambda self, other, op=op: self.__getattr__(op)(other)
-            locals()[f'__r{name}__'] = lambda self, other, op=op: self.__getattr__(op)(other)
+    def __call__(self, func, *a, **kw):
+        """call a function on each element of self._parent, forwarding any arguments"""
+        assert callable(func)
+        return self.__getattr__(func)(*a, **kw)
 
     def contains(self, other):
         contains_check = getattr(other, 'contains', operator.contains)
@@ -232,3 +243,21 @@ def generic_negate(thing):
     for k, v in thing.items():
         thing[k] = -v
     return thing
+
+_reserved_element_names = set('mapwise npwise valwise dictwise'.split())
+
+def valid_element_name(name):
+    return not name[0] == '_' and not name[-1] == '_'
+
+def valid_element_name_thorough(name):
+    return not name[0] == '_' and not name[-1] == '_' and name not in _reserved_element_names
+
+def generic_get_items(obj):
+    if hasattr(obj, 'items'):
+        return [(k, v) for k, v in obj.items() if valid_element_name(k)]
+    elif isinstance(obj, list):
+        return list(enumerate(obj))
+    else:
+        return [(k, getattr(obj, k)) for k in dir(obj)
+                if valid_element_name_thorough(k) and not callable(getattr(obj, k))]
+    raise TypeError(f'dont know how to get elements from {obj}')

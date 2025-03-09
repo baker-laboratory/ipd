@@ -22,14 +22,14 @@ if False and TYPE_CHECKING:
     from ipd.sym import high_t
     from ipd.sym import helix
     from ipd.sym import sym_adapt
-    from ipd.sym import sym_tensor
+    # from ipd.sym import sym_tensor
 else:
     from ipd.dev import lazyimport
     xtal = lazyimport('ipd.sym.xtal')
     high_t = lazyimport('ipd.sym.high_t')
     helix = lazyimport('ipd.sym.helix')
     sym_adapt = lazyimport('ipd.sym.sym_adapt')
-    sym_tensor = lazyimport('ipd.sym.sym_tensor')
+    # sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
 def set_global_symmetry(sym: 'SymmetryManager'):
     global _global_symmetry

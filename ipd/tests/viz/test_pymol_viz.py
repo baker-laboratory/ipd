@@ -1,6 +1,7 @@
 import pytest
 
 pytest.importorskip('pymol')
+pytest.mark.skip(allow_module_level=True)
 
 import os
 

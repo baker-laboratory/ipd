@@ -6,4 +6,4 @@ from ipd.pdb.pdbread import *
 from ipd.pdb.readstruct import *
 from ipd.pdb.pdbfetch import *
 
-viz_pdb = lazyimport("ipd.viz.viz_pdb")
+viz_pdb = lazyimport("ipd.pdb.viz_pdb")

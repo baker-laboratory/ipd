@@ -1,34 +1,34 @@
+from collections.abc import Mapping, Iterable
+import functools
 import itertools
 import io
-from collections.abc import Mapping, Iterable
+import os
 
 import numpy as np
 
 import ipd
 from ipd.lazy_import import lazyimport
 
+h = ipd.hnumpy
+
 bs = lazyimport('biotite.structure')
 bpdb = lazyimport('biotite.structure.io.pdb')
 bpdbx = lazyimport('biotite.structure.io.pdbx')
 
 @ipd.dev.iterize_on_first_param_path
-def readatoms(fname, **kw):
+@functools.lru_cache
+def readatoms(fname, **kw) -> 'Atoms':
     if not ipd.importornone('biotite'):
         raise ImportError('ipd.pdb.readatoms requires biotite')
+    if not os.path.exists(fname):
+        fname = ipd.dev.package_testcif_path(fname)
     with ipd.dev.openfiles(fname, **kw) as file:
         fname = ipd.dev.decompressed_fname(fname)
-        if fname.endswith('.pdb'): reader = readatoms_pdb
-        elif fname.endswith(('.cif', '.bcif')): reader = readatoms_cif
-        struc = reader(fname, file, **kw)
-        if isinstance(struc, bs.AtomArray):
-            struc.__ipd_readatoms_file__ = fname
-        elif isinstance(struc, Mapping):
-            for v in struc.values():
-                v.__ipd_readatoms_file__ = fname
-        elif isinstance(struc, Iterable):
-            for v in struc:
-                v.__ipd_readatoms_file__ = fname
-        return struc
+        if fname.endswith('.pdb'): reader = _readatoms_pdb
+        elif fname.endswith(('.cif', '.bcif')): reader = _readatoms_cif
+        atoms = reader(fname, file, **kw)
+        add_sourcefile_tag(atoms, fname)
+        return atoms
 
 def dump(thing, fname):
     if isinstance(thing, (bs.AtomArray, bs.AtomArrayStack)):
@@ -42,57 +42,28 @@ def dumpatoms(atoms, fname):
     pdb.set_structure(atoms)
     pdb.write(fname)
 
-def readatoms_cif(fname, file, assembly=None, **kw):
-    if assembly:
-        (cif, origatoms), nasu = cifread(fname, file, **kw), None
-        nasu = len(origatoms)
-        if assembly == 'largest':
-            assemblies = bpdbx.list_assemblies(cif)
-            atoms = []
-            for aid in assemblies.keys():
-                assembly = bpdbx.get_assembly(cif, aid, model=1)
-                if len(assembly) > len(atoms): atoms = assembly
-            # pdb = bpdb.PDBFile()
-            # pdb.set_structure(cif)
-            # assemblies = bpdb.list_assemblies(pdb)
-            # ic(cif.block['pdbx_struct_assembly_gen']['asym_id_list'].as_array(str))
-            # ic(cif_asym_id(cif))
-            # # ic(cif.block['pdbx_struct_assembly_gen']['oper_expression'].as_array(str))
-            # # cif.block["pdbx_struct_oper_list"]
-            # xforms = cif_xforms(cif)
-            # ic(xforms)
-            # # assert 0
-            # assembly = max(xforms, key=lambda k: len(xforms[k]))
-        else:
-            atoms = bpdbx.get_assembly(cif, assembly, model=1)
-        atoms = post_read(atoms, **kw)
-        if nasu: atoms = ipd.atom.split(atoms, order=len(atoms) // nasu)
-    else:
-        cif, atoms = cifread(fname, file, **kw)
-    return atoms
-
-def readatoms_pdb(fname, file, **kw):
-    pdb, atoms = pdbread(fname, file, **kw)
-    return atoms
-
-def pdbread(fname, file=None, **kw):
+def pdbread(fname, file=None, **kw) -> 'tuple[Pdb, Atoms]':
     if ipd.dev.isbinfile(file):
         file = io.StringIO(file.read().decode())
     pdb = bpdb.PDBFile.read(file or fname)
     atoms = bpdb.get_structure(pdb)
-    return pdb, post_read(atoms, **kw)
+    return pdb, ipd.atom.select(atoms, **kw)
 
-def cifread(fname, file=None, **kw):
+def biotite_cif_file(fname, file=None) -> 'Cif':
     isbin = fname.endswith('.bcif')
     if ipd.dev.isbinfile(file) and not isbin:
         file = io.StringIO(file.read().decode())
     reader = bpdbx.BinaryCIFFile if isbin else bpdbx.CIFFile
-    cif = reader.read(file or fname)
+    return reader.read(file or fname)
+
+def cifread(fname, file=None, postproc=True, **kw) -> 'tuple[Cif, Atoms]':
     # pdb = bpdb.PDBFile()
     # pdb.set_structure(cif)
+    cif = biotite_cif_file(fname, file)
     atoms = bpdbx.get_structure(cif)
     # atoms._spacegroup = pdb.get_space_group()
-    return cif, post_read(atoms, **kw)
+    if postproc: atoms = ipd.atom.select(atoms, **kw)
+    return cif, atoms
 
 def cifdump(fname, atoms):
     if not fname.endswith('.bcif'): fname += '.bcif'
@@ -103,39 +74,74 @@ def cifdump(fname, atoms):
     bcif_file = bpdbx.BinaryCIFFile.from_pdbx_file(pdbx_file)
     bcif_file.write(fname)
 
-def post_read(atoms, chainlist=False, caonly=False, chaindict=False, het=True, **kw):
-    if isinstance(atoms, bs.AtomArrayStack):
-        assert len(atoms) == 1
-        atoms = atoms[0]
-    if caonly: atoms = atoms[atoms.atom_name == 'CA']
-    if not het: atoms = atoms[~atoms.hetero]
-    if chaindict: atoms = ipd.atom.chain_dict(atoms)
-    if chainlist: atoms = ipd.atom.split(atoms)
+def _readatoms_cif(fname, file, assembly=None, **kw) -> 'Atoms':
+    if assembly is not None:
+        return _readatoms_cif_assembly(fname, file, assembly, **kw)
+    cif, atoms = cifread(fname, file, **kw)
     return atoms
 
-def cif_asym_id(cif):
-    chains = cif.block['pdbx_struct_assembly_gen']['asym_id_list'].as_array(str)
-    # chains = [c.split(',') for c in chains]
-    return list(chains)
+def _readatoms_cif_assembly(fname, file, assembly, caonly=False, het=True, **kw) -> 'tuple[Cif, Atoms]':
+    cif, asu = cifread(fname, file, caonly=caonly, het=het)
+    asminfo = cif_assembly_info(cif)
+    if assembly == 'largest':
+        _nchain, assembly = max(zip(asminfo.assemblies.order, asminfo.assemblies.id))
+    atoms = bpdbx.get_assembly(cif, assembly, model=1)
+    atoms = ipd.atom.select(atoms, caonly=caonly, het=het)
+    xforms = _validate_cif_assembly(cif, asminfo, assembly, asu, atoms)
+    atoms = ipd.atom.split(atoms, order=len(xforms))
+    return atoms
 
-def cif_xforms(cif):
+def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms):
+    i = asminfo.assemblies.id.index(assembly)
+    asmid, opers, asymids, order = asminfo.assemblies.valwise[i]
+    xforms = np.array([h.product(*[asminfo.xforms[op] for op in opstep]) for opstep in opers])
+    asu = ipd.atom.select(asu, chains=np.unique(atoms.chain_id))
+    # ic(asmid, opers, asymids, order)
+    # ic(len(asu), len(atoms), asu.coord.shape, atoms.coord[:len(asu):].shape)
+    # ic(len(atoms), len(asu), len(atoms) / len(asu))
+    assert len(atoms) % len(asu) == 0
+    assert len(atoms) // len(asu) == len(xforms)
+    # chainlen = ipd.atom.chainlen(atoms)
+    chainsasu, chains = map(ipd.atom.chain_ranges, (asu, atoms))
+    # ic(chainsasu)
+    # ic(chains)
+
+    for ix, x in enumerate(xforms):
+        for c, crngasu, crng in ipd.bunch.zipitems(chainsasu, chains):
+            num_asu_ranges = len(crngasu)
+            assert len(xforms) == len(crng) / num_asu_ranges
+            for iasurange in range(num_asu_ranges):
+                (lb1, ub1), (lb2, ub2) = crngasu[iasurange], crng[ix*num_asu_ranges + iasurange]
+                orig = h.xform(xforms[ix], asu.coord[lb1:ub1])
+                new = atoms.coord[lb2:ub2]
+                # ipd.showme(orig, new)
+                assert np.allclose(orig, new, atol=1e-3)
+    # assert np.allclose(asu.coord, atoms.coord[:len(asu)], atol=1e-3)
+    # ic(ipd.bunch.zip(asymchainstart, asymchainlen, chainstart, chainlen, order='val'))
+    return xforms
+
+def _readatoms_pdb(fname, file, **kw) -> 'Atoms':
+    pdb, atoms = pdbread(fname, file, **kw)
+    return atoms
+
+def _cif_xforms(cif):
     """
     Get transformation operation in terms of rotation matrix and
     translation for each operation ID in ``pdbx_struct_oper_list``.
     """
     struct_oper = cif.block["pdbx_struct_oper_list"]
-    transformation_dict = {}
+    xforms = {}
     for index, id in enumerate(struct_oper["id"].as_array(str)):
-        rotation_matrix = np.array(
-            [[struct_oper[f"matrix[{i}][{j}]"].as_array(float)[index] for j in (1, 2, 3)] for i in (1, 2, 3)])
-        translation_vector = np.array([struct_oper[f"vector[{i}]"].as_array(float)[index] for i in (1, 2, 3)])
-        transformation_dict[id] = ipd.homog.hconstruct(rotation_matrix, translation_vector)
-    return transformation_dict
+        rot = np.array([[struct_oper[f"matrix[{i}][{j}]"].as_array(float)[index] for j in (1, 2, 3)]
+                        for i in (1, 2, 3)])
+        trans = np.array([struct_oper[f"vector[{i}]"].as_array(float)[index] for i in (1, 2, 3)])
+        xforms[str(id)] = ipd.homog.hconstruct(rot, trans)
+    return xforms
 
-def cif_opers(cif):
-    return [cif_parse_oper(o) for o in cif.block['pdbx_struct_assembly_gen']["oper_expression"].as_array(str)]
+def _cif_opers(cif):
+    return [_cif_parse_oper(o) for o in cif.block['pdbx_struct_assembly_gen']["oper_expression"].as_array(str)]
 
-def cif_parse_oper(expression):
+def _cif_parse_oper(expression):
     """
     Get successive operation steps (IDs) for the given ``oper_expression``.
     Form the cartesian product, if necessary.
@@ -164,3 +170,42 @@ def cif_parse_oper(expression):
 
     # Cartesian product of operations
     return list(itertools.product(*operations))
+
+def cif_assembly_info(cif):
+    block = cif.block
+    try:
+        asmbl = block["pdbx_struct_assembly"]
+        asmblgen = block["pdbx_struct_assembly_gen"]
+    except KeyError:
+        raise ValueError("File has no 'pdbx_struct_assembly_gen' category")
+    # try:
+    # struct_oper_category = block["pdbx_struct_oper_list"]
+    # except KeyError:
+    # raise ValueError("File has no 'pdbx_struct_oper_list' category")
+    # opers = _cif_opers(cif)
+    ids = asmblgen['assembly_id'].as_array(str)
+    assert len(set(ids)) == len(ids)
+    assembly_ids = asmblgen["assembly_id"].as_array(str)
+    xforms = _cif_xforms(cif)
+    assemblies = ipd.Bunch(id=[], oper=[], asymids=[], order=[])
+    for id, op_expr, asym_id_expr, order in zip(
+            asmblgen["assembly_id"].as_array(str),
+            asmblgen["oper_expression"].as_array(str),
+            asmblgen["asym_id_list"].as_array(str),
+            asmbl['oligomeric_count'].as_array(str),
+    ):
+        _cif_parse_oper(op_expr)
+        asymids = asym_id_expr.split(',')
+        op_expr = _cif_parse_oper(op_expr)
+        # ic([f'{k}{v.shape}' for k,v in xforms.items()])
+        for op in ipd.dev.addreduce(op_expr):
+            assert op in xforms
+        assemblies.mapwise.append(id=str(id), oper=op_expr, asymids=asymids, order=int(order))
+    # assemblies.id = np.array(assemblies.id)
+    return ipd.Bunch(assemblies=assemblies, xforms=xforms)
+
+def add_sourcefile_tag(struc, fname):
+    if isinstance(struc, bs.AtomArray): struc.__ipd_source_file__ = fname
+    elif isinstance(struc, Mapping): map(add_sourcefile_tag, struc.values())
+    elif isinstance(struc, Iterable): map(add_sourcefile_tag, struc)
+    else: raise TypeError(f'cant add file tag to {type(struc)}')
