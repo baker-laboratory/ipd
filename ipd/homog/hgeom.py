@@ -2070,10 +2070,15 @@ def tensor_in(x, targets, atol=1e-3):
 def allclose(a, b, atol=1e-3, **kw):
     if isinstance(a, (np.ndarray, list, int, float)):
         return ipd.kwcall(np.allclose, kw, a, b, atol=atol)
-    xr = ipd.importornone('xarray')
-    if xr and isinstance(a, xr.DataArray):
+    if isinstance(a, dict) and isinstance(b, dict):
+        with ipd.dev.capture_asserts() as result:
+            assert a.keys() == b.keys()
+            for k in a:
+                assert allclose(a[k], b[k])
+        return not result
+    if (xr := sys.modules.get('xarray')) and isinstance(a, xr.DataArray):
         return ipd.kwcall(np.allclose, kw, a, b, atol=atol)
-    if xr and isinstance(a, xr.Dataset):
+    if (xr := sys.modules.get('xarray')) and isinstance(a, xr.Dataset):
         if list(a.keys()) != list(b.keys()): return False
         if list(a.coords) != list(b.coords): return False
         for k in list(a.keys()) + list(a.coords):

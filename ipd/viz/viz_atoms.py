@@ -3,10 +3,10 @@ import tempfile
 
 import ipd
 
-@ipd.viz.pymol_viz.lazy_register
+@ipd.viz.pymol_viz.lazy_register('AtomArray')
 def regester_atomarray():
 
-    bs = ipd.importornone('biotite.structure')
+    import biotite.structure as bs
 
     @ipd.viz.pymol_viz.pymol_load.register(bs.AtomArray)
     def pymol_viz_atoms(

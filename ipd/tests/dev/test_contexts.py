@@ -39,5 +39,14 @@ def test_trace_prints():
     assert 'test_trace_prints' in log
     assert 'test_contexts.py' in log
 
+def test_capture_asserts():
+    with ipd.dev.capture_asserts() as errors:
+        assert 1, 'true'
+        assert 0, 'foo'
+        assert 0, 'bar'
+    assert errors
+    assert len(errors) == 1
+    # assert errors[0] == AssertionError('foo')
+
 if __name__ == '__main__':
     main()

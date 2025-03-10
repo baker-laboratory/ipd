@@ -283,5 +283,22 @@ def test_subscriptable_for_attributes_enumerate():
     for (i, a, b, c), e, f, g in zip(foo.enumerate('a b c'), range(6), range(1, 7), range(10, 17)):
         assert a == e and b == f and c == g
 
+def test_subscriptable_for_attributes_groupby():
+
+    @ipd.dev.subscriptable_for_attributes
+    class Foo:
+
+        def __init__(self):
+            self.a, self.b, self.c, self.group = range(6), range(1, 7), range(10, 17), 'aaabbb'
+
+    foo = Foo()
+    for g, a, b, c in foo.groupby('group', 'a b c'):
+        ic(g, a, b, c)
+    v = list(foo.groupby('group', 'a c'))
+    assert v == [('a', (0, 1, 2), (10, 11, 12)), ('b', (3, 4, 5), (13, 14, 15))]
+    v = list(foo.groupby('group'))
+    assert v == [('a', ipd.Bunch(a=(0, 1, 2), b=(1, 2, 3), c=(10, 11, 12))),
+                 ('b', ipd.Bunch(a=(3, 4, 5), b=(4, 5, 6), c=(13, 14, 15)))]
+
 if __name__ == '__main__':
     main()

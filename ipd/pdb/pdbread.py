@@ -82,7 +82,7 @@ def read_pdb_atoms(fname_or_buf, **kw):
 
 ##@timed
 def parse_pdb_atoms(atomstr, **kw):
-    import pandas as pd
+    if not (pd := ipd.importornone('pandas')): return None
 
     assert atomstr
 
@@ -129,7 +129,7 @@ def parse_pdb_atoms(atomstr, **kw):
 
 ##@timed
 def concatenate_models(df):
-    import pandas as pd
+    if not (pd := ipd.importornone('pandas')): return None
 
     assert isinstance(df, dict)
     df = {k: v for k, v in df.items() if len(v)}
@@ -138,7 +138,18 @@ def concatenate_models(df):
     df = pd.concat(df.values())
     return df
 
-def format_atom(atomi=0, atomn="ATOM", idx=" ", resn="ALA", chain="A", resi=0, insert=" ", x=0, y=0, z=0, occ=1, b=0):
+def format_atom(atomi=0,
+                atomn="ATOM",
+                idx=" ",
+                resn="ALA",
+                chain="A",
+                resi=0,
+                insert=" ",
+                x=0,
+                y=0,
+                z=0,
+                occ=1,
+                b=0):
     return _atom_record_format.format(**locals())  # type: ignore
 
 ##@timed

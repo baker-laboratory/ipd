@@ -33,11 +33,15 @@ _showme_state = ipd.dev.Bunch(
     _nsymops=0,
 )
 
-_lazy_enrollees = []
+_lazy_enrollees = {}
 
-def lazy_register(enrollee):
-    global _lazy_enrollees
-    _lazy_enrollees.append(enrollee)
+def lazy_register(typename):
+
+    def deco(registeration_func):
+        global _lazy_enrollees
+        _lazy_enrollees[typename] = registeration_func
+
+    return deco
 
 @singledispatch
 def pymol_load(
@@ -782,8 +786,8 @@ def showme(*args, name=None, how="pymol", **kw):
     if len(args) == 2 and isinstance(args[1], str):
         name = args[1]
         args = [args[0]]
-    for enroll in _lazy_enrollees:
-        enroll()
+    for arg in args:
+        _lazy_enrollees.get(arg.__class__.__name__, lambda: None)()
     if name is None:
         frame = inspect.currentframe()
         frame = inspect.getouterframes(frame)[2]

@@ -12,6 +12,7 @@ import operator
 import numpy as np
 
 import ipd
+from ipd.dev.decorators import generic_get_items
 
 def get_available_result_types():
     return dict(
@@ -243,21 +244,3 @@ def generic_negate(thing):
     for k, v in thing.items():
         thing[k] = -v
     return thing
-
-_reserved_element_names = set('mapwise npwise valwise dictwise'.split())
-
-def valid_element_name(name):
-    return not name[0] == '_' and not name[-1] == '_'
-
-def valid_element_name_thorough(name):
-    return not name[0] == '_' and not name[-1] == '_' and name not in _reserved_element_names
-
-def generic_get_items(obj):
-    if hasattr(obj, 'items'):
-        return [(k, v) for k, v in obj.items() if valid_element_name(k)]
-    elif isinstance(obj, list):
-        return list(enumerate(obj))
-    else:
-        return [(k, getattr(obj, k)) for k in dir(obj)
-                if valid_element_name_thorough(k) and not callable(getattr(obj, k))]
-    raise TypeError(f'dont know how to get elements from {obj}')

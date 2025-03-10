@@ -13,8 +13,9 @@ allow-direct-references = true
 [project]
 name = 'ipd'
 version = '0.1'
-requires-python = '>=3.10,<4' # for woodys old pipeline stuff
+requires-python = '>3.9,<4' # for woodys old pipeline stuff
 dependencies = [
+    'attrs',
     'assertpy',
     'colorlog',
     'compact-json',
@@ -26,68 +27,78 @@ dependencies = [
     'jinja2',
     'lark',
     # 'more_itertools',
-    'numba',
+    # 'numba',
     'numpy',
-    'xarray',
+    # 'xarray',
     'opt_einsum',
     # 'pre-commit',
-    'pandas',
+    # 'pandas',
     'pydantic',
-    'pytest-xdist',
-    'pytest-sugar',
     'rich',
     'requests',
     'RestrictedPython',
     'ruff',
-    'seaborn',
+    # 'seaborn',
     'tqdm',
     'typer',
     'validate-pyproject[all]',
     'yapf',
-    "torch>=2.6.0",
-    "pytest>=8.3.4",
+    # "torch>=2.6.0",
     "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp",
 ]
 [project.optional-dependencies]
-ci = [
-    'submitit',
-]
 crud = [
     'fastapi[standard]',
-    'psycopg2',
+    # 'psycopg2',
     'sqlmodel',
     'uvicorn[standard]',
     'pdot',
 ]
-ml = [
-    'torch',
-    'biotite',
-]
+ci = ['submitit']
+ml = ['torch']
+biotite = ['biotite']
 dev = [
     'debugpy',
+    'nox',
+    "pytest",
+    'pytest-xdist',
+    'pytest-sugar',
     'pytest-cov',
     'pytest-benchmark',
     'pytest-dotenv',
     'pyright[nodejs]',
 ]
-test = [
-    'pytest',
-    'pytest-sugar',
-    'pytest-xdist',
-    'pytest-cov',
-    'pytest-benchmark',
-    'pytest-dotenv',
+all = [
+    'fastapi[standard]',
+    'psycopg2',
+    'sqlmodel',
+    'uvicorn[standard]',
+    'pdot',
+    'debugpy',
+    'scipy',
+    'pandas',
+    'torch',
+    'submitit',
 ]
-
 [project.scripts]
 ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
 minversion = '6.0'
-addopts = '-m "not ci" --disable-warnings'
+addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure'
 
 testpaths = [
     'ipd/tests',
+    'ipd/atom',
+    'ipd/homog',
+    'ipd/sym',
+    'ipd/bunch.py',
+    'ipd/crud',
+    'ipd/dev',
+    'ipd/observer',
+    'ipd/pdb',
+    'ipd/protocol',
+    'ipd/tool',
 ]
 markers = [
     'slow: marks tests as slow to run',

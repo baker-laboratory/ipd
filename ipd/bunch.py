@@ -1,11 +1,12 @@
 import contextlib
 import hashlib
-import itertools
 import os
 import shutil
 from pathlib import Path
 from typing import Generic, TypeVar
 from ipd.dev.element_wise import element_wise_operations
+from ipd.dev.decorators import subscriptable_for_attributes
+
 with contextlib.suppress(ImportError):
     pass
 
@@ -15,18 +16,7 @@ __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake
 
 T = TypeVar('T')
 
-def zip(*args, order='key'):
-    keys = set(itertools.chain(*(list(map(str, a.keys())) for a in args)))
-    if order == 'key': keys = sorted(keys)
-    if order == 'val': keys = sorted(keys, key=lambda k: args[0].get(k, ipd.dev.NA))
-    result = Bunch({k: tuple(a.get(k, ipd.dev.NA) for a in args) for k in keys})
-    return result
-
-def zipitems(*args, **kw):
-    zipped = zip(*args, **kw)
-    for k, v in zipped.items():
-        yield k, *v
-
+@subscriptable_for_attributes
 @element_wise_operations
 class Bunch(dict, Generic[T]):
     """
@@ -389,7 +379,8 @@ class Bunch(dict, Generic[T]):
     def __repr__(self):
         self._autoreload_check()
         args = ["%s=%r" % (k, v) for k, v in self.items()]
-        return f"{self.__class__.__name__}(\n  {str.join(',\n  ',args)})"
+        args = str.join(',\n  ', args)
+        return rf"{self.__class__.__name__}(\n  {args})"
 
     def asdict(self):
         return unbunchify(self)

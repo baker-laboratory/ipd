@@ -1,7 +1,7 @@
 # import os
 import sys
 
-from ipd.dev import CliBase  # type: ignore
+from ipd.dev.cli import CliBase
 
 def main():
     tool = PkgTool()

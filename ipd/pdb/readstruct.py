@@ -107,7 +107,7 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms):
     # ic(chains)
 
     for ix, x in enumerate(xforms):
-        for c, crngasu, crng in ipd.bunch.zipitems(chainsasu, chains):
+        for c, crngasu, crng in ipd.dev.zipitems(chainsasu, chains):
             num_asu_ranges = len(crngasu)
             assert len(xforms) == len(crng) / num_asu_ranges
             for iasurange in range(num_asu_ranges):

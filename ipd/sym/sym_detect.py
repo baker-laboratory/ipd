@@ -3,7 +3,6 @@ import sys
 from typing import Union
 import attrs
 import numpy as np
-import xarray as xr
 import ipd
 import ipd.homog.hgeom as h
 
@@ -31,6 +30,8 @@ def detect(
             return syminfo_from_atomslist(atoms, tol=tol, **kw)
     raise ValueError(f'cant detect symmetry on object {type(atoms)} order {order}')
 
+@ipd.dev.subscriptable_for_attributes
+# @ipd.dev.element_wise_operations
 @attrs.define
 class SymInfo:
     """
@@ -39,7 +40,7 @@ class SymInfo:
     symid: str
     frames: np.ndarray
     symcen: np.ndarray
-    symelem: xr.Dataset
+    symelem: ipd.Bunch
 
     guess_symid: str = None
     order: int = None
@@ -85,7 +86,7 @@ class SymInfo:
 
     def __getattr__(self, name):
         try:
-            return self.symelem[name].data
+            return self.symelem[name]
         except KeyError:
             pass
         raise AttributeError(f'SymInfo has no attribute {name}')
@@ -144,14 +145,14 @@ def syminfo_from_frames(frames: np.ndarray, **kw) -> SymInfo:
     assert ipd.homog.is_xform_stack(frames)
     if len(frames) == 1: return SymInfo('C1', frames, None, None)
     se = symelems_from_frames(frames, **kw)
-    nfolds = set(int(nf) for nf in se.nfold.data)
+    nfolds = set(int(nf) for nf in se.nfold)
     is_point, symcen, axes_dists = h.lines_concurrent_isect(se.cen, se.axis, tol=tol.isect)
     is_helical = not np.all(np.abs(se.hel) < tol.helical_shift)
     sym_info_args = dict(is_point=is_point, symcen=symcen, is_helical=is_helical, symelem=se)
     sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tolerances=tol)
     if is_point: sym_info_args |= dict(is_1d=False, is_2d=False, is_3d=False)
     ic(is_point, is_helical, nfolds)
-    ic(np.abs(se.ang.data - np.pi), tol.angle)
+    ic(np.abs(se.ang - np.pi), tol.angle)
     ipd.print_table(se)
     if len(nfolds) == 1 and not is_helical and is_point:
         if all(se.nfold == 0):
@@ -164,7 +165,7 @@ def syminfo_from_frames(frames: np.ndarray, **kw) -> SymInfo:
         raise NotImplementedError('')
     elif is_point and not is_helical:
         if 2 in nfolds and 3 in nfolds:
-            ax2, ax3 = (se.axis.data[se.nfold == i] for i in (2, 3))
+            ax2, ax3 = (se.axis[se.nfold == i] for i in (2, 3))
             testang = h.line_angle(ax2[None], ax3[:, None]).min()
             magicang = ipd.sym.magic_angle_DTOI
             ic(testang, magicang)
@@ -194,7 +195,7 @@ def symelems_from_frames(frames, **kw):
     axis, ang, cen, hel = h.axis_angle_cen_hel(rel[1:])
     axis, cen, ang, hel = h.unique_symaxes(axis, cen, ang, hel, frames=rel, debug=0, **kw)
     ok = np.ones(len(axis), dtype=bool)
-    result = list()
+    result = ipd.Bunch(nfold=[], axis=[], ang=[], cen=[], hel=[])
     for ax, cn, an, hl in zip(axis, cen, ang, hel):
         for ax2, cn2, an2, hl2 in zip(axis, cen, ang, hel):
             cond = [
@@ -208,16 +209,10 @@ def symelems_from_frames(frames, **kw):
         else:  # if loop was not broken, is not a duplicate symelem
             ax, cn, nf = h.xform(frames[0], ax), h.xform(frames[0], cn), 2 * np.pi / an
             nf = h.toint(nf) if _isintgt1(nf, tol) else npth.zeros(an.shape, dtype=int)
-            fields = dict(nfold=('index', [nf]),
-                          axis=(['index', 'xyzw'], ax.reshape(-1, 4)),
-                          ang=('index', [an]),
-                          cen=(('index', 'xyzw'), cn.reshape(-1, 4)),
-                          hel=('index', [hl]))
-            result.append(xr.Dataset(fields))
+            result.valwise.append(nfold=nf, axis=ax, ang=an, cen=cn, hel=hl)
         print('', flush=True)
-    result = xr.concat(result, 'index')
-    result = result.set_coords('nfold')
-    # ipd.print_table(result)
+    result = result.mapwise(np.array)
+    assert result.nfold.ndim == 1 and result.axis.ndim == 2
     return result
 
 def _isintgt1(nfold, tol):

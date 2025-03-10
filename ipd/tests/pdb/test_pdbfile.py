@@ -1,3 +1,6 @@
+import pytest
+
+pd = pytest.importorskip('pandas')
 import tempfile
 
 import numpy as np

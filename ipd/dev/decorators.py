@@ -5,6 +5,51 @@ from typing import Mapping
 
 import ipd
 
+FieldSpec = 'str | list[str] | tuple[str] | Calllable[[Self], str]'
+EnumerIter = 'Iterator[int, *Any]'
+EnumerListIter = 'Iterator[int, *list[Any]]'
+
+def generic_get_keys(obj, exclude: FieldSpec = ()):
+    if hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
+        return [k for k in obj.keys() if valid_element_name(k, exclude)]
+    elif hasattr(obj, 'items'):
+        return [k for k, v in obj.items() if valid_element_name(k, exclude)]
+    elif isinstance(obj, list):
+        return list(range(len(obj)))
+    else:
+        return [
+            k for k in dir(obj) if valid_element_name_thorough(k, exclude) and not callable(getattr(obj, k))
+        ]
+    raise TypeError(f'dont know how to get elements from {obj}')
+
+def generic_get_items(obj):
+    if hasattr(obj, 'items'):
+        return [(k, v) for k, v in obj.items() if valid_element_name(k)]
+    elif hasattr(obj, 'keys') and callable(obj, keys):
+        return [(k, getattr(obj, k)) for k in obj.keys() if valid_element_name(k)]
+    elif isinstance(obj, list):
+        return list(enumerate(obj))
+    else:
+        return [(k, getattr(obj, k)) for k in dir(obj)
+                if valid_element_name_thorough(k) and not callable(getattr(obj, k))]
+    raise TypeError(f'dont know how to get elements from {obj}')
+
+def valid_element_name(name, exclude=()):
+    return not name[0] == '_' and not name[-1] == '_' and name not in exclude
+
+def valid_element_name_thorough(name, exclude=()):
+    return valid_element_name(name, exclude) and name not in _reserved_element_names
+
+_reserved_element_names = set('mapwise npwise valwise dictwise'.split())
+
+def get_fields(obj, fields: FieldSpec, exclude: FieldSpec = ()) -> 'tuple[Iterable, bool]':
+    """return list of string fields and bool isplural"""
+    if callable(fields): fields = fields(obj)
+    if fields is None: return generic_get_keys(obj, exclude=exclude), True
+    if ' ' in fields: return fields.split(), True
+    if isinstance(fields, str): return [fields], False
+    return fields, True
+
 def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: bool = False):
     """Checks if an object can be treated as an iterable.
 
@@ -213,37 +258,35 @@ def preserve_random_state(func0=None, seed0=None):
         return deco(func0)
     return deco
 
-def enchanced_getitem(self, key: 'list[str] | str'):
+def generic_getitem_for_attributes(self, field: FieldSpec) -> 'Any':
     """Enhanced `__getitem__` method to support attribute access with multiple keys.
 
-    If the key is a string containing spaces, it will be split into a list of keys.
-    If the key is a list of strings, it will return the corresponding attributes as a tuple.
+    If the field is a string containing spaces, it will be split into a list of keys.
+    If the field is a list of strings, it will return the corresponding attributes as a tuple.
 
     Args:
-        key (list[str] | str): A single attribute name or a list of attribute names.
+        field (list[str] | str): A single attribute name or a list of attribute names.
 
     Returns:
-        Any: The attribute value(s) corresponding to the key(s).
+        Any: The attribute value(s) corresponding to the field(s).
 
     Example:
         obj = MyClass()
-        value = obj['x']  # Single key
+        value = obj['x']  # Single field
         values = obj['x y z']  # Multiple keys as a string
         values = obj[['x', 'y', 'z']]  # Multiple keys as a list
     """
-    if ' ' in key:
-        key = key.split()
-    if not isinstance(key, str):
-        return tuple(getattr(self, k) for k in key)
-    return getattr(self, key)
+    field, plural = get_fields(self, field)
+    if plural: return tuple(getattr(self, k) for k in field)
+    return getattr(self, field[0])
 
-def enchanced_enumerate(self, key: 'list[str] | str'):
+def generic_enumerate(self, fields: FieldSpec) -> EnumerIter:
     """Enhanced `enumerate` method to iterate over multiple attributes at once.
 
-    This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the key is a string containing spaces, it will be split into a list of keys. If the key is a list of strings, it will return the corresponding attributes as a tuple.
+    This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the fields is a string containing spaces, it will be split into a list of keys. If the fields is a list of strings, it will return the corresponding attributes as a tuple.
 
     Args:
-        key (list[str] | str): A single attribute name or a list of attribute names.
+        fields (list[str] | str): A single attribute name or a list of attribute names.
 
     Yields:
         tuple[int, ...]: A tuple containing the index and the attribute values.
@@ -253,14 +296,35 @@ def enchanced_enumerate(self, key: 'list[str] | str'):
         for i, x, y in obj.enumerate(['x', 'y']):
             print(i, x, y)
     """
-    for i, vals in enumerate(zip(*enchanced_getitem(self, key))):
+    for i, vals in enumerate(zip(*generic_getitem_for_attributes(self, fields))):
         yield i, *vals
+
+def generic_groupby(self, groupby: FieldSpec, fields: FieldSpec = None, convert=None) -> EnumerListIter:
+    exclude = None
+    splat = isinstance(fields, str)
+    if callable(groupby):
+        groupby = groupby(self)
+    else:
+        groupby, plural = get_fields(self, groupby)
+        exclude = groupby
+        if not plural: groupby = groupby[0]
+        groupby = generic_getitem_for_attributes(self, groupby)
+    fields, _ = get_fields(self, fields, exclude=exclude)
+    vals = generic_getitem_for_attributes(self, fields)
+    groups = dict()
+    for k, v in zip(groupby, zip(*vals)):
+        groups.setdefault(k, []).append(v)
+    for group, vals in groups.items():
+        vals = zip(*vals)
+        if convert: vals = map(convert, vals)
+        if splat: yield group, *vals
+        else: yield group, ipd.Bunch(zip(fields, vals))
 
 def subscriptable_for_attributes(cls: type):
     """Class decorator to enable subscriptable attribute access and enumeration.
 
     This decorator adds support for `__getitem__` and `enumerate` methods to a class
-    using `enchanced_getitem` and `enchanced_enumerate`.
+    using `generic_getitem_for_attributes` and `generic_enumerate`.
 
     Args:
         cls (type): The class to modify.
@@ -284,10 +348,11 @@ def subscriptable_for_attributes(cls: type):
     Raises:
         TypeError: If the class already defines `__getitem__` or `enumerate`.
     """
-    if hasattr(cls, '__getitem__'):
-        raise TypeError(f'class {cls.__name__} already has __getitem__')
+    # if hasattr(cls, '__getitem__'):
+    # raise TypeError(f'class {cls.__name__} already has __getitem__')
     if hasattr(cls, 'enumerate'):
         raise TypeError(f'class {cls.__name__} already has enumerate')
-    cls.__getitem__ = enchanced_getitem
-    cls.enumerate = enchanced_enumerate
+    cls.__getitem__ = generic_getitem_for_attributes
+    cls.enumerate = generic_enumerate
+    cls.groupby = generic_groupby
     return cls

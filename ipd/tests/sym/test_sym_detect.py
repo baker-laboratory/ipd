@@ -31,19 +31,13 @@ config_test = ipd.Bunch(
 )
 
 def main():
+    test_symelems_from_frames_D2n()
     ipd.tests.maintest(
         namespace=globals(),
         config=config_test,
         verbose=1,
         check_xfail=False,
     )
-
-@pytest.mark.xfail
-def test_chelsea_tube1():
-    pytest.importorskip('biotite')
-    atoms = ipd.atom.load(ipd.dev.package_testdata_path('pdb/chelsea_tube_1.pdb.gz'))
-    sinfo = ipd.sym.detect(atoms, incomplete=True)
-    print(sinfo)
 
 def helper_test_frames(frames, symid, tol=None, origin=None, ideal=False, **kw):
     if ideal: tol = ipd.Tolerances(tol, **(ipd.sym.symdetect_ideal_tolerances | kw))
@@ -196,21 +190,31 @@ def test_symelems_from_frames_oct():
                     dtype=np.float64)
     frames = h.xform(pert, frames0)
     symelem = ipd.sym.symelems_from_frames(frames)
-    for nf, se in symelem.groupby('nfold'):
-        assert len(se.nfold) == 1
-        refaxis = ref.axis[ref.nfold == nf].data
+    for nf, se in symelem.groupby('nfold', convert=np.array):
+        assert len(se.ang) == 1
+        assert se.axis.shape == (1, 4)
+
+        refaxis = ref.axis[ref.nfold == nf]
         assert h.allclose(se.axis, h.xform(pert, refaxis)) or h.allclose(-se.axis, h.xform(pert, refaxis))
-        assert h.allclose(se.cen, h.xform(pert, ref.cen[ref.nfold == nf].data))
+        assert h.allclose(se.cen, h.xform(pert, ref.cen[ref.nfold == nf]))
 
 @pytest.mark.fast
 def test_symelems_from_frames_D2n(symid='D4'):
     frames = ipd.sym.frames(symid)
     refse = ipd.sym.symelems_from_frames(frames)
     se = ipd.sym.symelems_from_frames(frames)
-    ipd.dev.print_table(se)
+    # ipd.dev.print_table(refse)
+    # ipd.dev.print_table(se)
     assert h.allclose(refse, se)
-    uniq, _, _, _ = h.unique_symaxes(se.axis.data, se.cen.data)
+    uniq, _, _, _ = h.unique_symaxes(se.axis, se.cen)
     assert len(uniq) == len(se.axis)
+
+@pytest.mark.xfail
+def test_chelsea_tube1():
+    pytest.importorskip('biotite')
+    atoms = ipd.atom.load(ipd.dev.package_testdata_path('pdb/chelsea_tube_1.pdb.gz'))
+    sinfo = ipd.sym.detect(atoms, incomplete=True)
+    print(sinfo)
 
 if __name__ == '__main__':
     main()

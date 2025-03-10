@@ -24,13 +24,13 @@ if TYPE_CHECKING:
     from ipd import pdb
     from ipd import protocol
     from ipd import qt
-    from ipd import samp
+    # from ipd import samp
     from ipd import sel
     from ipd import sym
     from ipd import tests
     from ipd import tools
     from ipd import viz
-    from ipd import voxel
+    # from ipd import voxel
 else:
     atom = lazyimport('ipd.atom')
     crud = lazyimport('ipd.crud')
@@ -44,13 +44,13 @@ else:
     pdb = lazyimport('ipd.pdb')
     protocol = lazyimport('ipd.protocol')
     qt = lazyimport('ipd.dev.qt')
-    samp = lazyimport('ipd.samp')
+    # samp = lazyimport('ipd.samp')
     sel = lazyimport('ipd.sel')
     sym = lazyimport('ipd.sym')
     tests = lazyimport('ipd.tests')
     tools = lazyimport('ipd.tools')
     viz = lazyimport('ipd.viz')
-    voxel = lazyimport('ipd.voxel')
+    # voxel = lazyimport('ipd.voxel')
 
 proj_dir = os.path.realpath(os.path.dirname(__file__))
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())

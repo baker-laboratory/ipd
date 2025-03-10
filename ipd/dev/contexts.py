@@ -119,3 +119,13 @@ def temporary_random_seed(seed=None):
         yield None
     finally:
         if seed is not None: np.random.set_state(randstate)
+
+@contextmanager
+def capture_asserts():
+    errors = []
+    try:
+        yield errors
+    except AssertionError as e:
+        errors.append(e)
+    finally:
+        pass

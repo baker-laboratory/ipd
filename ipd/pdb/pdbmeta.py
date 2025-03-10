@@ -167,6 +167,8 @@ class PDBMetadata:
             clust100="https://cdn.rcsb.org/resources/sequence/clusters/bc-100.out",
         )
         self.metadata = ipd.dev.Bunch()
+        self.__file__ = __file__
+        self.__name__ = __name__
         # self.metadata = ipd.dev.Bunch(_strict=True)
 
     def get_full_seq(self):

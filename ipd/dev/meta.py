@@ -72,7 +72,7 @@ See Also:
 - `pytest.mark` – Markers for controlling pytest test execution.
 
 """
-
+import sys
 import dis
 import re
 import functools
@@ -109,11 +109,13 @@ def picklocals(name, idx=None):
         20
 
     """
-    val = inspect.currentframe().f_back.f_back.f_locals[name]
+    if sys.version_info.minor < 12:
+        val = inspect.currentframe().f_back.f_back.f_back.f_locals[name]
+    else:
+        val = inspect.currentframe().f_back.f_back.f_locals[name]
     if idx is None:
         return val
     return val[idx]
-
 
 def opreduce(op, iterable):
     """Reduces an iterable using a specified operator or function.
@@ -146,7 +148,8 @@ def opreduce(op, iterable):
     return functools.reduce(op, iterable)
 
 for op in 'add mul matmul or_ and_'.split():
-    globals()[f'{op.strip('_')}reduce'] = functools.partial(opreduce, getattr(operator, op))
+    opname = op.strip('_')
+    globals()[f'{opname}reduce'] = functools.partial(opreduce, getattr(operator, op))
 
 def kwcall(func, kw, *a, **kwargs):
     """Call a function with filtered keyword arguments.
@@ -274,7 +277,6 @@ def get_function_for_which_call_to_caller_is_argument():
                 func = frame.f_globals.get(potential_func_name) or frame.f_locals.get(potential_func_name)
                 if func: return func
 
-
 def filter_namespace_funcs(namespace, prefix='test_', only=(), re_only=(), exclude=(), re_exclude=()):
     """Filters functions in a namespace based on specified inclusion and exclusion rules.
 
@@ -326,7 +328,6 @@ def filter_namespace_funcs(namespace, prefix='test_', only=(), re_only=(), exclu
                 del namespace[func]
     return namespace
 
-
 def param_is_required(param):
     """Checks if a function parameter is required.
 
@@ -352,7 +353,6 @@ def param_is_required(param):
         # kwargs False
     """
     return param.default is param.empty and param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)
-
 
 @functools.lru_cache
 def func_params(func, required_only=False):
@@ -382,7 +382,6 @@ def func_params(func, required_only=False):
         params = {k: param for k, param in params.items() if param_is_required(param)}
     return params
 
-
 def has_pytest_mark(obj, mark):
     """Checks if an object has a specific pytest mark.
 
@@ -404,7 +403,6 @@ def has_pytest_mark(obj, mark):
         print(has_pytest_mark(test_example, 'skip'))    # False
     """
     return mark in [m.name for m in getattr(obj, 'pytestmark', ())]
-
 
 def no_pytest_skip(obj):
     """Checks if an object does not have the `skip` pytest mark.

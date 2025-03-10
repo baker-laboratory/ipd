@@ -1,4 +1,5 @@
 from typing import Sequence, Any
+import ipd
 
 def nth(thing, n=0):
     iterator = iter(thing)
@@ -27,3 +28,17 @@ def order(seq: Sequence[Any]):
 
 def reorder(seq: Sequence[Any], idx: Sequence[int]):
     return [seq[i] for i in idx]
+
+def zipmaps(*args, order='key', intersection=False):
+    if not args: raise ValueError('zipmaps requires at lest one argument')
+    if intersection: keys = ipd.dev.andreduce(set(map(str, a.keys())) for a in args)
+    else: keys = ipd.dev.orreduce(set(map(str, a.keys())) for a in args)
+    if order == 'key': keys = sorted(keys)
+    if order == 'val': keys = sorted(keys, key=lambda k: args[0].get(k, ipd.dev.NA))
+    result = type(args[0])({k: tuple(a.get(k, ipd.dev.NA) for a in args) for k in keys})
+    return result
+
+def zipitems(*args, **kw):
+    zipped = zipmaps(*args, **kw)
+    for k, v in zipped.items():
+        yield k, *v

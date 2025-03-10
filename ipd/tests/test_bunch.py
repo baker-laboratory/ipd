@@ -310,15 +310,18 @@ def test_bunch_dict_reserved():
     assert b.values_ == 'foo'
 
 def test_bunch_zip():
-    zipped = ipd.bunch.zip(dict(a=1, b=2), dict(a='a', b='b'))
+    zipped = ipd.dev.zipmaps(Bunch(a=1, b=2), Bunch(a='a', b='b'))
+    assert isinstance(zipped, Bunch)
     assert zipped == Bunch(a=(1, 'a'), b=(2, 'b'))
 
 def test_bunch_zip_missing():
-    zipped = ipd.bunch.zip(dict(a=1, b=2), dict(a='a', b='b', c='c'))
+    zipped = ipd.dev.zipmaps(Bunch(a=1, b=2), Bunch(a='a', b='b', c='c'))
+    assert isinstance(zipped, Bunch)
     assert zipped == Bunch(c=(ipd.dev.NA, 'c'), a=(1, 'a'), b=(2, 'b'))
 
 def test_bunch_zip_order():
-    zipped = ipd.bunch.zip(dict(a=2, b=1), dict(a='a', b='b', c='c'), order='val')
+    zipped = ipd.dev.zipmaps(Bunch(a=2, b=1), Bunch(a='a', b='b', c='c'), order='val')
+    assert isinstance(zipped, Bunch)
     assert tuple(zipped.keys()) == ('c', 'b', 'a')
 
 if __name__ == "__main__":
