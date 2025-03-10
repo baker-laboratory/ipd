@@ -6,14 +6,14 @@ import nox
     [
         (python, extra)
         for python in '3.9 3.10 3.11 3.12 3.13'.split()
+        # for python in ['3.9']
         # for extra in [''] + 'ml biotite crud all'.split()
-        for extra in ['', 'all']
+        for extra in ['all', '']
+        if not (python=='3.9' and extra=='all')
     ],
 )
 def test_matrix(session, extra):
     'Run pytest tests with arguments.'
-    session.install('pytest')
-    session.install('pytest-xdist')
-    # session.install('pytest-sugar')
+    session.install(f'.[dev]')
     session.install(f'.[{extra}]')
-    session.run('pytest', '-n8')
+    session.run('pytest', '-x')

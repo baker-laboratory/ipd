@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import Any, Annotated, Optional
 from typer import Argument
 
-import git
-
 import ipd
+
+git = ipd.lazyimport('git')
 
 class CITool(ipd.tools.IPDTool):
 

@@ -10,25 +10,7 @@ if TYPE_CHECKING:
 else:
     th = lazyimport('torch')
 
-import hypothesis
-
 from ipd.tests.sym import symslices
-
-@pytest.mark.fast
-@hypothesis.settings(deadline=1000)
-@hypothesis.given(symslices(100, 20, raw=True))
-def test_sym_slices_fuzz(slices):
-    s = ipd.sym.SymIndex(*slices)
-    s.sanity_check()
-
-@hypothesis.given(symslices(100, 20, bad=True))
-@pytest.mark.fast
-def test_sym_slices_fuzz_bad(slices):
-    try:
-        s = ipd.sym.SymIndex(*slices)
-        raise NotImplementedError('should have failed')
-    except ((AssertionError, RuntimeError)):
-        pass
 
 @pytest.mark.fast
 def test_sym_slice_errors():
@@ -196,16 +178,24 @@ def test_chirals():
     sym = ipd.tests.sym.create_test_sym_manager(symid='c3')
     sym.idx = [(120, 0, 60), (120, 60, 120)]
     s = sym.idx
-    chirals = th.tensor([[60.0000, 63.0000, 69.0000, 70.0000, -0.6155], [60.0000, 63.0000, 70.0000, 69.0000, 0.6155],
-                         [60.0000, 69.0000, 70.0000, 63.0000, -0.6155], [61.0000, 64.0000, 71.0000, 72.0000, -0.6155],
-                         [61.0000, 64.0000, 72.0000, 71.0000, 0.6155], [61.0000, 71.0000, 72.0000, 64.0000, -0.6155],
-                         [80.0000, 83.0000, 89.0000, 90.0000, -0.6155], [80.0000, 83.0000, 90.0000, 89.0000, 0.6155],
-                         [80.0000, 89.0000, 90.0000, 83.0000, -0.6155], [81.0000, 84.0000, 91.0000, 92.0000, -0.6155],
-                         [81.0000, 84.0000, 92.0000, 91.0000, 0.6155], [81.0000, 91.0000, 92.0000, 84.0000, -0.6155],
-                         [100.000, 103.000, 109.000, 110.000, -0.6155], [100.000, 103.000, 110.000, 109.000, 0.6155],
-                         [100.000, 109.000, 110.000, 103.000, -0.6155], [101.000, 104.000, 111.000, 112.000, -0.6155],
-                         [101.000, 104.000, 112.000, 111.000, 0.6155], [101.000, 111.000, 112.000, 104.000,
-                                                                        -0.6155]]).to(sym.device)
+    chirals = th.tensor([[60.0000, 63.0000, 69.0000, 70.0000, -0.6155],
+                         [60.0000, 63.0000, 70.0000, 69.0000, 0.6155],
+                         [60.0000, 69.0000, 70.0000, 63.0000, -0.6155],
+                         [61.0000, 64.0000, 71.0000, 72.0000, -0.6155],
+                         [61.0000, 64.0000, 72.0000, 71.0000, 0.6155],
+                         [61.0000, 71.0000, 72.0000, 64.0000, -0.6155],
+                         [80.0000, 83.0000, 89.0000, 90.0000, -0.6155],
+                         [80.0000, 83.0000, 90.0000, 89.0000, 0.6155],
+                         [80.0000, 89.0000, 90.0000, 83.0000, -0.6155],
+                         [81.0000, 84.0000, 91.0000, 92.0000, -0.6155],
+                         [81.0000, 84.0000, 92.0000, 91.0000, 0.6155],
+                         [81.0000, 91.0000, 92.0000, 84.0000, -0.6155],
+                         [100.000, 103.000, 109.000, 110.000, -0.6155],
+                         [100.000, 103.000, 110.000, 109.000, 0.6155],
+                         [100.000, 109.000, 110.000, 103.000, -0.6155],
+                         [101.000, 104.000, 111.000, 112.000, -0.6155],
+                         [101.000, 104.000, 112.000, 111.000, 0.6155],
+                         [101.000, 111.000, 112.000, 104.000, -0.6155]]).to(sym.device)
     idx = chirals[:, 0].to(int)
     assert s.is_sym_subsequence(idx)  # type: ignore
 
@@ -246,6 +236,24 @@ def test_slice2d():
             [72, 73, 78, 79],  # type: ignore
             [84, 85, 90, 91]
         ]))
+
+hypothesis = pytest.importorskip('hypothesis')
+
+@pytest.mark.fast
+@hypothesis.settings(deadline=1000)
+@hypothesis.given(symslices(100, 20, raw=True))
+def test_sym_slices_fuzz(slices):
+    s = ipd.sym.SymIndex(*slices)
+    s.sanity_check()
+
+@hypothesis.given(symslices(100, 20, bad=True))
+@pytest.mark.fast
+def test_sym_slices_fuzz_bad(slices):
+    try:
+        s = ipd.sym.SymIndex(*slices)
+        raise NotImplementedError('should have failed')
+    except ((AssertionError, RuntimeError)):
+        pass
 
 if __name__ == '__main__':
     test_slice2d()

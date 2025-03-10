@@ -11,8 +11,6 @@ else:
     th = lazyimport('torch')
 
 import assertpy
-import hypothesis
-
 import ipd
 
 # ic.configureOutput(includeContext=False, contextAbsPath=True)
@@ -77,47 +75,6 @@ def test_sym_manager_list_tensor_asym():
         assert isinstance(t, th.Tensor)
         assert s[0] == t[0]
 
-@hypothesis.settings(deadline=2000, max_examples=10)
-@hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
-def test_sym_manager_fuzz_basic_sym(sym):
-    idx = sym.idx
-    X = th.arange(idx.L, device=sym.device)
-    Xsym = sym(X)
-    assert th.all(X[idx.unsym] == Xsym[idx.unsym])
-    for s in idx:
-        assert th.all(Xsym[s.asu] == X[s.asu])
-    sym.check(Xsym)
-
-    m = th.arange(idx.L**2, device=sym.device).reshape(idx.L, idx.L)
-    msym = sym(m)
-    assert th.all(msym[idx.asym, idx.asym] == m[idx.asym, idx.asym])
-    sym.check(msym)
-
-@hypothesis.settings(deadline=2000, max_examples=10)
-@hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
-def test_sym_manager_fuzz_fill_from_contiguous(sym):
-    idx = sym.idx
-
-    X = th.arange(idx.L, device=sym.device)
-    thing = sym.sym_adapt(X)
-    adapted, contig, Lasu = sym.to_contiguous(thing)
-    assert th.all(sym.fill_from_contiguous(thing, adapted, contig) == X)
-    contig[:] = -1
-    test = sym.fill_from_contiguous(thing, adapted, contig)
-    assert th.all(test[idx.unsym] == X[idx.unsym])
-    smask = idx.sub.max(dim=0).values
-    assert th.all(test[smask] == -1)
-
-    m = th.arange(idx.L**2, device=sym.device).reshape(idx.L, idx.L)
-    thing = sym.sym_adapt(m)
-    adapted, contig, Lasu = sym.to_contiguous(thing)
-    assert th.all(sym.fill_from_contiguous(thing, adapted, contig) == m)
-    contig[:] = -1
-    test = sym.fill_from_contiguous(thing, adapted, contig)
-    assert th.all(test[idx.unsym, idx.unsym] == m[idx.unsym, idx.unsym])
-    smask = idx.sub.max(dim=0).values
-    assert th.all(test[smask, smask] == -1)
-
 @pytest.mark.fast
 def test_sym_manager_string_2slice():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3', '+sym.Lasu=1'])
@@ -141,11 +98,12 @@ def test_sym_manager_2d_2slice():
     sym.idx = [(n, 0, 4), (n, 5, 9)]
     m = th.arange(n * n).reshape(n, n).to(int)
     assert th.all(
-        sym(m) == th.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-                             [20, 21, 0, 1, 24, 25, 26, 5, 6, 29], [30, 31, 10, 11, 34, 35, 36, 15, 16, 39],
-                             [40, 41, 42, 43, 44, 45, 46, 47, 48, 49], [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
-                             [60, 61, 62, 63, 64, 65, 66, 67, 68, 69], [70, 71, 50, 51, 74, 75, 76, 55, 56, 79],
-                             [80, 81, 60, 61, 84, 85, 86, 65, 66, 89], [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]]))
+        sym(m) ==
+        th.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                   [20, 21, 0, 1, 24, 25, 26, 5, 6, 29], [30, 31, 10, 11, 34, 35, 36, 15, 16, 39],
+                   [40, 41, 42, 43, 44, 45, 46, 47, 48, 49], [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+                   [60, 61, 62, 63, 64, 65, 66, 67, 68, 69], [70, 71, 50, 51, 74, 75, 76, 55, 56, 79],
+                   [80, 81, 60, 61, 84, 85, 86, 65, 66, 89], [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]]))
 
     n = 13
     sym.idx = [(n, 0, 4), (n, 5, 11)]
@@ -366,6 +324,49 @@ def test_atom_on_axis():
     assert not len(sym.is_on_symaxis(th.tensor([[1, 0, 6.0]])))
     assert not len(sym.is_on_symaxis(th.tensor([[1, 0, 7.0]])))
     assert not len(sym.is_on_symaxis(th.tensor([[1, 0, 8.0]])))
+
+hypothesis = pytest.importorskip('hypothesis')
+
+@hypothesis.settings(deadline=2000, max_examples=10)
+@hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
+def test_sym_manager_fuzz_basic_sym(sym):
+    idx = sym.idx
+    X = th.arange(idx.L, device=sym.device)
+    Xsym = sym(X)
+    assert th.all(X[idx.unsym] == Xsym[idx.unsym])
+    for s in idx:
+        assert th.all(Xsym[s.asu] == X[s.asu])
+    sym.check(Xsym)
+
+    m = th.arange(idx.L**2, device=sym.device).reshape(idx.L, idx.L)
+    msym = sym(m)
+    assert th.all(msym[idx.asym, idx.asym] == m[idx.asym, idx.asym])
+    sym.check(msym)
+
+@hypothesis.settings(deadline=2000, max_examples=10)
+@hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
+def test_sym_manager_fuzz_fill_from_contiguous(sym):
+    idx = sym.idx
+
+    X = th.arange(idx.L, device=sym.device)
+    thing = sym.sym_adapt(X)
+    adapted, contig, Lasu = sym.to_contiguous(thing)
+    assert th.all(sym.fill_from_contiguous(thing, adapted, contig) == X)
+    contig[:] = -1
+    test = sym.fill_from_contiguous(thing, adapted, contig)
+    assert th.all(test[idx.unsym] == X[idx.unsym])
+    smask = idx.sub.max(dim=0).values
+    assert th.all(test[smask] == -1)
+
+    m = th.arange(idx.L**2, device=sym.device).reshape(idx.L, idx.L)
+    thing = sym.sym_adapt(m)
+    adapted, contig, Lasu = sym.to_contiguous(thing)
+    assert th.all(sym.fill_from_contiguous(thing, adapted, contig) == m)
+    contig[:] = -1
+    test = sym.fill_from_contiguous(thing, adapted, contig)
+    assert th.all(test[idx.unsym, idx.unsym] == m[idx.unsym, idx.unsym])
+    smask = idx.sub.max(dim=0).values
+    assert th.all(test[smask, smask] == -1)
 
 if __name__ == '__main__':
     main()

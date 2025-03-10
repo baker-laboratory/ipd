@@ -1,6 +1,8 @@
 import pytest
 
 pytest.importorskip('biotite')
+pytest.importorskip('willutil_cpp')
+
 import ipd
 import ipd.homog.hgeom as h
 

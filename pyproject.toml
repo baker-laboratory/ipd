@@ -19,32 +19,21 @@ dependencies = [
     'assertpy',
     'colorlog',
     'compact-json',
-    # 'eliot-tree',
-    'gitpython',
     'hydra-core',
-    'hypothesis[numpy]',
     'icecream',
-    'jinja2',
     'lark',
-    # 'more_itertools',
     # 'numba',
     'numpy',
-    # 'xarray',
     'opt_einsum',
-    # 'pre-commit',
     # 'pandas',
     'pydantic',
     'rich',
     'requests',
     'RestrictedPython',
-    'ruff',
     # 'seaborn',
     'tqdm',
     'typer',
-    'validate-pyproject[all]',
-    'yapf',
     # "torch>=2.6.0",
-    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp",
 ]
 [project.optional-dependencies]
 crud = [
@@ -54,31 +43,45 @@ crud = [
     'uvicorn[standard]',
     'pdot',
 ]
-ci = ['submitit']
-ml = ['torch']
-biotite = ['biotite']
+tools = [
+    'submitit',
+    'gitpython',
+    'jinja2',
+    ]
+ml = ['torch', 'pandas', 'biotite']
+willutil = ["willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp"]
 dev = [
     'debugpy',
-    'nox',
+    'hypothesis[numpy]',
     "pytest",
+    'gitpython',
+    'jinja2',
+    'nox',
     'pytest-xdist',
     'pytest-sugar',
     'pytest-cov',
     'pytest-benchmark',
     'pytest-dotenv',
     'pyright[nodejs]',
+    'ruff',
+    'validate-pyproject[all]',
+    'yapf',
 ]
 all = [
-    'fastapi[standard]',
-    'psycopg2',
-    'sqlmodel',
-    'uvicorn[standard]',
-    'pdot',
+    "biotite",
     'debugpy',
-    'scipy',
+    'fastapi[standard]',
+    'gitpython',
+    'jinja2',
     'pandas',
-    'torch',
+    'pdot',
+    'psycopg2',
+    'scipy',
+    'sqlmodel',
     'submitit',
+    'torch',
+    'uvicorn[standard]',
+    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp",
 ]
 [project.scripts]
 ipd = 'ipd.__main__:main'

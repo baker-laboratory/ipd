@@ -1,8 +1,10 @@
 import os
 import pathlib
+import pytest
+
+pytest.importorskip('jinja2')
 
 from assertpy import assert_that as at
-import pytest
 
 import ipd
 

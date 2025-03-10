@@ -4,10 +4,11 @@ import os
 from typing_extensions import Annotated
 from typing import Optional
 
-import git
-import typer
-
 import ipd
+
+git = ipd.lazyimport('git')
+typer = ipd.lazyimport('typer')
+
 from ipd.dev.cli.clibase import CliBase
 
 class IPDTool(CliBase):
