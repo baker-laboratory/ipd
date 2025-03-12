@@ -50,7 +50,7 @@ class Tolerances:
     def __repr__(self):
         with ipd.dev.capture_stdio() as out:
             if hist := self.check_history():
-                ipd.dev.print_table(hist, key='Tolerances', justify='right')
+                ipd.dev.print_table(hist, key='Tolerances')
         return out.read()
 
 @attrs.define

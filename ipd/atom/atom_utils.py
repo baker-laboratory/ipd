@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import ipd
 
@@ -6,8 +7,11 @@ bs = ipd.lazyimport('biotite.structure')
 load = ipd.pdb.readatoms
 dump = ipd.pdb.dump
 
-def testdata(pdbcode, **kw):
-    return load(ipd.dev.package_testcif_path(pdbcode), **kw)
+def testdata(pdbcode, path='', **kw):
+    if path: fname = os.path.join(path, f'{pdbcode}.bcif.gz')
+    else: fname = ipd.dev.package_testcif_path(pdbcode)
+    assert len(pdbcode) == 4, f'bad pdbcode {pdbcode}'
+    return load(fname, path=path, **kw)
 
 def is_atomarray(atoms):
     from biotite.structure import AtomArray
@@ -20,7 +24,7 @@ def is_atomarraystack(atoms):
 def is_atoms(atoms):
     return is_atomarray(atoms) or is_atomarraystack(atoms)
 
-def split(atoms, order=None, bychain=None, nasu=None, minlen=0):
+def split(atoms, order=None, bychain=None, nasu=None, min_chain_atoms=0):
     if nasu is not None:
         assert not order and len(atoms) % nasu == 0
         order = len(atoms) // nasu
@@ -33,17 +37,24 @@ def split(atoms, order=None, bychain=None, nasu=None, minlen=0):
             return [atoms[i * nasu:(i+1) * nasu] for i in range(order)]
         if bychain and not order:
             split = list(chain_dict(atoms).values())
-            while len(split[0]) < minlen and len(split) > 1:
-                split[0] += split.pop(1)
+            while len(split[0]) < min_chain_atoms and len(split) > 1:
+                merge_chains(split[0], split.pop(1))
             i = 1
             while i < len(split):
-                if len(split[i]) < minlen: split[i - 1] += split.pop(i)
-                else: i += 1
+                if len(split[i]) < min_chain_atoms:
+                    merge_chains(split[i - 1], split.pop(i))
+                else:
+                    i += 1
             return split
     raise TypeError(f'bad split args {type(atoms)=} {order=} {bychain=}')
 
-def split_chains(atoms, minlen=0):
-    return split(atoms, bychain=True, minlen=minlen)
+def merge_chains(atoms1, atoms2):
+    assert len(np.unique(atoms1.chain_id)) == 1
+    if len(atoms1): atoms2.chain_id[:] = atoms1.chain_id[0]
+    atoms1 += atoms2
+
+def split_chains(atoms, **kw):
+    return split(atoms, bychain=True, **kw)
 
 def chain_dict(atoms):
     """Group an AtomArray by chain_id and return a dictionary."""
@@ -52,7 +63,11 @@ def chain_dict(atoms):
     return ipd.Bunch(chain_groups)
 
 def atoms_to_seq(atoms):
-    return ipd.dev.addreduce(bs.to_sequence(atoms)[0])  # oddly slow
+    try:
+        biotite_esq = bs.to_sequence(atoms)  # oddly slow
+    except IndexError:
+        return None
+    return ipd.dev.addreduce(biotite_esq[0])
 
 def atoms_to_seqstr(atoms):
     idx = bs.get_residue_starts(atoms)
@@ -62,8 +77,19 @@ def seqalign(atoms1, atoms2):
     import biotite.sequence.align as align
     seq1 = atoms_to_seq(atoms1)
     seq2 = atoms_to_seq(atoms2)
+    if not seq1 or not seq2: return None, np.zeros((0, 2)), 0
     matrix = align.SubstitutionMatrix.std_protein_matrix()
-    aln = align.align_optimal(seq1, seq2, matrix)[0]
+    # matrix = align.SubstitutionMatrix(matrix.get_alphabet1(), matrix.get_alphabet2(), 'IDENTITY')
+    aln = align.align_optimal(
+        seq1,
+        seq2,
+        matrix,
+        gap_penalty=-1000,
+        terminal_penalty=True,
+        local=False,
+        max_number=1,
+    )
+    assert len(aln) == 1 and (aln := aln[0])
     s1, s2 = aln.sequences
     match = aln.trace[(aln.trace[:, 0] >= 0) & (aln.trace[:, 1] >= 0)]
     matchfrac = 2 * len(match) / (len(s1) + len(s2))
@@ -100,3 +126,12 @@ def select(
     if chaindict: atoms = ipd.atom.chain_dict(atoms)
     if chainlist: atoms = ipd.atom.split(atoms)
     return atoms
+
+def pick_representative_chains(atomslist):
+    chains = []
+    for atoms in atomslist:
+        crange = chain_ranges(atoms)
+        assert len(crange) == 1
+        crange = list(crange.values())[0][0]
+        chains.append(atoms[crange[0]:crange[1]])
+    return chains

@@ -31,37 +31,14 @@ import ipd
 
 bs = ipd.lazyimport('biotite.structure')
 
-def stub(atoms):
-    """
-    Compute the frame based on the mass center and SVD decomposition of CA atoms.
-
-    This function computes the transformation frame of an atomic structure
-    by aligning its CA atom coordinates to the center of mass using Singular
-    Value Decomposition (SVD).
-
-    Args:
-        atoms (bs.AtomArray):
-            Atomic structure object containing coordinate and atom name data.
-
-    Returns:
-        np.ndarray:
-            4x4 homogeneous transformation matrix.
-
-    Example:
-        >>> import ipd
-        >>> atoms = ipd.atom.testdata('1qys')
-        >>> frame = stub(atoms)
-        >>> print(frame)
-        [[ 0.91638034  0.33895946 -0.21296376  4.20984915]
-         [ 0.06904252  0.39019742  0.91813894  5.34146775]
-         [ 0.39430978 -0.85606802  0.33416662 11.52761865]
-         [ 0.          0.          0.          1.        ]]
-    """
-    cen = bs.mass_center(atoms)
-    _, sigma, components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
-    return ipd.homog.hframe(*components.T, cen)
-
-def find_frames_by_seqaln_rmsfit(atomslist, tol=0.7, result=None, idx=None, maxsub=60, **kw):
+def find_frames_by_seqaln_rmsfit(
+    atomslist,
+    tol=0.7,
+    finalresult=None,
+    idx=None,
+    maxsub=60,
+    **kw,
+):
     """
     Find frames by sequence alignment and RMS fitting.
 
@@ -74,8 +51,8 @@ def find_frames_by_seqaln_rmsfit(atomslist, tol=0.7, result=None, idx=None, maxs
             List of atomic structures to align.
         tol (float, optional):
             Tolerance for RMSD and sequence match. Defaults to 0.7.
-        result (FrameSearchResult, optional):
-            Existing result object to append to. Defaults to None.
+        finalresult (FrameSearchResult, optional):
+            Existing finalresult object to append to. Defaults to None.
         idx (list[int], optional):
             Indices of atoms to align. Defaults to None.
         maxsub (int, optional):
@@ -87,30 +64,40 @@ def find_frames_by_seqaln_rmsfit(atomslist, tol=0.7, result=None, idx=None, maxs
         FrameSearchResult:
             Result object containing aligned frames and statistics.
     """
-    if isinstance(atomslist, bs.AtomArray):
-        atomslist = ipd.atom.split_chains(atomslist)
-    tol = kw['tol'] = ipd.Tolerances(tol)
-    if result is None: result = FrameSearchResult(source_=atomslist, tolerances_=tol)
-    if len(atomslist) < maxsub:
-        atomslist = [ipd.atom.split_chains(casub, minlen=20) for casub in atomslist]
-        atomslist = ipd.dev.addreduce(atomslist)
+    tol = ipd.Tolerances(tol)
+    if not finalresult:
+        if isinstance(atomslist, bs.AtomArray):
+            atomslist = ipd.kwcall(kw, ipd.atom.split_chains, atomslist)
+        if len(atomslist) < maxsub:
+            atomslist = [ipd.kwcall(kw, ipd.atom.split_chains, sub) for sub in atomslist]
+            atomslist = ipd.dev.addreduce(atomslist)
+        atomslist = [a for a in atomslist if len(a)]
+        idx = np.arange(len(atomslist))
+        finalresult = FrameSearchResult(source_=atomslist, tolerances_=tol)
+        # atomslist = ipd.atom.pick_representative_chains(atomslist)
+        # atomslist = [atoms[np.isin(atoms.atom_name,['CA', 'P'])] for atoms in atomslist]
+    results = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0])
+
+    # for i, atoms_i in enumerate(atomslist):
+    # no good, fails on various inputsi
+    # a, x, m1, m2 = bs.superimpose_homologs(atomslist[0], atoms_i)
+
     ca = [a[a.atom_name == 'CA'] for a in atomslist]
-    if idx is None: idx = np.arange(len(ca))
-    val = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0])
-    for i, ca_i_ in enumerate(ca[1:], start=1):
-        _, match, matchfrac = ipd.atom.seqalign(ca[0], ca_i_)
-        xyz1 = ca[0].coord[match[:, 0]]
-        xyz2 = ca_i_.coord[match[:, 1]]
-        rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
-        val.mapwise.append(xfit, rms, matchfrac, i)
-    assert len(val.frames) == len(ca)
-    assert len(ca) == len(atomslist)
-    val = val.mapwise(np.array)
-    ok = (val.rmsd < tol.rms_fit) & (val.seqmatch > tol.seq_match)
-    result.add(atoms=atomslist[0], **val.mapwise[ok])
-    if all(ok): return result
-    unfound = [a for i, a in enumerate(ca) if not ok[i]]
-    return find_frames_by_seqaln_rmsfit(unfound, result=result, idx=idx[ok], **kw)
+    aligned_on_protein = accumulate_seqalign_rmsfit(ca, results.mapwise.append)
+    if not aligned_on_protein:
+        phos = [a[a.atom_name == 'P'] for a in atomslist]
+        aligned_on_nucleic = accumulate_seqalign_rmsfit(phos, results.mapwise.append)
+    assert np.all(results.npwise(len) == len(atomslist))
+    finalresult.add_intermediate_result(results)
+    results = results.mapwise(np.array)
+
+    ok = (results.rmsd < tol.rms_fit) & (results.seqmatch > tol.seqmatch)
+    # ic(results.rmsd,results.seqmatch)
+    finalresult.add(atoms=atomslist[0], **results.mapwise[ok])
+    if all(ok): return finalresult
+    unfound = [a for i, a in enumerate(atomslist) if not ok[i]]
+    # ic(len(atomslist), len(unfound), idx, ok, kw.keys())
+    return find_frames_by_seqaln_rmsfit(unfound, finalresult=finalresult, idx=idx[~ok], tol=tol, **kw)
 
 listfield = attrs.field(factory=list)
 
@@ -146,7 +133,8 @@ class FrameSearchResult:
     seqmatch: list[float] = listfield
     rmsd: list[float] = listfield
     idx: list[list[int]] = listfield
-    source_: list['bs.AtomArray'] = None
+    source_: list['bs.AtomArray'] = listfield
+    intermediates_: list[dict] = listfield
     tolerances_: ipd.Tolerances = None
 
     def add(self, **atom_frame_match_rms_idx):
@@ -159,6 +147,20 @@ class FrameSearchResult:
         """
         self.mapwise.append(atom_frame_match_rms_idx)
         self.idx = [np.array(i, dtype=int) for i in self.idx]
+        order = list(reversed(ipd.dev.order(map(len, self.atoms))))
+        if len(order) > 1:
+            reorder = ipd.dev.reorderer(order)
+            reorder(self.atoms, self.frames, self.seqmatch, self.rmsd, self.idx, self.source_)
+
+    def add_intermediate_result(self, intermediate_result):
+        """
+        Add intermediate results to the final result.
+
+        Args:
+            intermediate_result (FrameSearchResult):
+                Intermediate result object to append to the final result.
+        """
+        self.intermediates_.append(intermediate_result)
 
     def __repr__(self):
         """
@@ -194,3 +196,81 @@ class FrameSearchResult:
             del self.rmsd[i]
             del self.idx[i]
             del self.source_[i]
+
+def stub(atoms):
+    """
+    Compute the frame based on the mass center and SVD decomposition of CA atoms.
+
+    This function computes the transformation frame of an atomic structure
+    by aligning its CA atom coordinates to the center of mass using Singular
+    Value Decomposition (SVD).
+
+    Args:
+        atoms (bs.AtomArray):
+            Atomic structure object containing coordinate and atom name data.
+
+    Returns:
+        np.ndarray:
+            4x4 homogeneous transformation matrix.
+
+    Example:
+        >>> import ipd
+        >>> atoms = ipd.atom.testdata('1qys')
+        >>> frame = stub(atoms)
+        >>> print(frame)
+        [[ 0.91638034  0.33895946 -0.21296376  4.20984915]
+         [ 0.06904252  0.39019742  0.91813894  5.34146775]
+         [ 0.39430978 -0.85606802  0.33416662 11.52761865]
+         [ 0.          0.          0.          1.        ]]
+    """
+    cen = bs.mass_center(atoms)
+    _, sigma, components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
+    return ipd.homog.hframe(*components.T, cen)
+
+@ipd.dev.iterize_on_first_param(basetype='AtomArray', asnumpy=True)
+def atoms_is_protein(atoms, strict_protein_or_nucleic=False):
+    """
+    Check if an atomic structure is a protein.
+
+    This function checks if an atomic structure is a protein by comparing the
+    fraction of CA atoms to the total number of atoms.
+
+    Args:
+        atoms (bs.AtomArray):
+            Atomic structure object containing atom name data.
+
+    Returns:
+        bool:
+            True if the structure is a protein, False otherwise.
+
+    Example:
+        >>> import ipd
+        >>> atoms = ipd.atom.testdata('1qys')
+        >>> print(is_protein(atoms))
+        True
+    """
+    if not len(atoms): return np.nan
+    if strict_protein_or_nucleic: raise NotImplementedError()
+    frac = np.sum(atoms.atom_name == 'CA') / len(atoms)
+    return frac > 0.9
+
+def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
+    if len(bb) < 2 or len(bb[0]) < min_align_points:
+        return False
+    is_protein = atoms_is_protein(bb)
+    for i, bb_i_ in enumerate(bb[1:], start=1):
+        if is_protein[0] != is_protein[i]:  # dont match protein with nucleic
+            match, matchfrac = None, 0
+        elif is_protein[0]:
+            _, match, matchfrac = ipd.atom.seqalign(bb[0], bb_i_)
+        else:
+            assert len(bb[0]) == len(bb_i_)
+            match, matchfrac = np.ones((len(bb[0]), 2), dtype=bool), 1
+        if match is None or len(match) < min_align_points:
+            accumulator(np.nan / np.zeros((4, 4)), 9e9, 0, i)
+        else:
+            xyz1 = bb[0].coord[match[:, 0]]
+            xyz2 = bb_i_.coord[match[:, 1]]
+            rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
+            accumulator(xfit, rms, matchfrac, i)
+    return True

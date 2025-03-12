@@ -300,5 +300,43 @@ def test_subscriptable_for_attributes_groupby():
     assert v == [('a', ipd.Bunch(a=(0, 1, 2), b=(1, 2, 3), c=(10, 11, 12))),
                  ('b', ipd.Bunch(a=(3, 4, 5), b=(4, 5, 6), c=(13, 14, 15)))]
 
+def test_subscriptable_for_attributes_fzf():
+
+    @ipd.dev.subscriptable_for_attributes
+    class Foo:
+
+        def __init__(self):
+            self.london, self.france, self.underpants = 'london', 'france', 'underpants'
+            self._ignored = 'ignored'
+            self.redundand1, self.redundand2 = 'fo'
+
+    foo = Foo()
+    assert foo.fzf('lon') == 'london'
+    assert foo.fzf('fr') == 'france'
+    assert foo.fzf('underpants') == 'underpants'
+    assert foo.fzf('undpant loon frnc') == ('underpants', 'london', 'france')
+    with pytest.raises(AttributeError):
+        foo.fzf('notthere')
+    with pytest.raises(AttributeError):
+        foo.fzf('lndon')  # first two must match
+    with pytest.raises(AttributeError):
+        foo.fzf('')
+    with pytest.raises(AttributeError):
+        foo.fzf('_ignor')
+    with pytest.raises(AttributeError):
+        foo.fzf('redun')
+    assert foo.fzf('red1') == 'f'
+
+def test_getitem_picklable():
+
+    @ipd.dev.subscriptable_for_attributes
+    class Foo:
+
+        def __init__(self):
+            self.a, self.b, self.c = range(6), range(1, 7), range(10, 17)
+
+    foo = Foo()
+    assert foo.pick('a b').keys() == {'a', 'b'}
+
 if __name__ == '__main__':
     main()

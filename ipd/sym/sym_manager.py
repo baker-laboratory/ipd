@@ -1,15 +1,13 @@
 from abc import ABC, abstractmethod
+import attrs
 import collections
 import contextlib
 import copy
-from dataclasses import dataclass
 import itertools
 import random
 from typing_extensions import TypeVar
 
-with contextlib.suppress(ImportError):
-    from icecream import ic
-
+from icecream import ic
 import numpy as np
 
 import ipd
@@ -26,7 +24,7 @@ XYZPair = collections.namedtuple('XYZPair', 'xyz pair')
 class XYZPairUnsupportedError(Exception):
     pass
 
-@dataclass
+@attrs.define(slots=False)
 class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     """The SymmetryManager class encapsulates symmetry related functionality
     and parameters.
@@ -62,6 +60,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     symid: str
     nsub: int
     kind: str = 'base'
+    _frames: ipd.FramesN44 = None
     SymIndexType: type[SymIndex] = SymIndex
 
     def __init__(self, conf, opt, symid=None, device=None, **kw) -> None:
@@ -474,6 +473,9 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
     @idx.setter
     def idx(self, idx: SymIndex):
         """Set the idx of the symmetry manager."""
+        self.set_idx(idx)
+
+    def set_idx(self, idx):
         if isinstance(idx, self.SymIndexType):
             self._idx = idx
         elif self.nsub:
@@ -578,23 +580,23 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
         self.x2global = h.inv(self.x2local)
         self.frames = h.xform(self.x2local, h.xform(self.frames, self.x2global))
         self.allframes = h.xform(self.x2local, h.xform(self.allframes, self.x2global))
-        self.xasuinit = h.rot([0, 0, 1], self.opt.asurotzdeg / 180 * th.pi).cuda() @ self.xasuinit
-        self.xasuinit = h.trans(self.opt.asucen).cuda() @ self.xasuinit
+        self.xasuinit = h.rot([0, 0, 1], self.opt.asurotzdeg / 180 * th.pi).to(self.device) @ self.xasuinit
+        self.xasuinit = h.trans(self.opt.asucen).to(self.device) @ self.xasuinit
         assert th.allclose(th.eye(4, device=self.device), self.x2local @ self.x2global, atol=1e-3)
 
     def apply_initial_offset(self, x, resym=True):
+        if self.opt.radius != 0: raise ValueError('sym.radius parameter is opsolete')
+        # xnew[self.idx.asu] += self.asucenvec.to(dev).to(xnew.dtype) * self.opt.radius
         ipd.debug300('symoffset_begin', x, sym=self)
         xnew, dev = x.clone(), x.device
         assert th.allclose(th.eye(4, device=dev), self.x2local @ self.x2global, atol=1e-3)
         xnew = h.xform(self.x2global, xnew)
         ipd.debug300('symoffset_toglobal', xnew, sym=self)
-        if self.opt.radius != 0: xnew[self.idx.asu] += self.asucenvec.to(dev).to(xnew.dtype) * self.opt.radius
-        ipd.debug300('symoffset_radius', xnew, sym=self)
         xnew = h.xform(self.xasuinit, xnew)
         ipd.debug300('symoffset_asuinit', xnew, sym=self)
         xnew = h.xform(self.x2local, xnew)
         ipd.debug300('symoffset_tolocal', xnew, sym=self)
-        if resym: xnew = self(xnew, fixed=True)
+        xnew = self(xnew, fixed=True) if resym else xnew
         ipd.debug300('symoffset_end', xnew, sym=self)
         return xnew.to(dev)
 
@@ -616,9 +618,13 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
             xyz[m] += tgtcom - xyzcom
         return xyz
 
+class NullSymIndex(SymIndex):
+    pass
+
 class C1SymmetryManager(SymmetryManager):
     """Basically a null symmetry manager, does not modify anything."""
     kind = 'C1'
+    SymIndexType: type[SymIndex] = NullSymIndex
 
     def init(self, opt=None, symid=None, idx=None, device=None, **kw):
         super().init(**kw)

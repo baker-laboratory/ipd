@@ -16,4 +16,4 @@ def test_matrix(session, extra):
     'Run pytest tests with arguments.'
     session.install(f'.[dev]')
     session.install(f'.[{extra}]')
-    session.run('pytest', '-x')
+    session.run('pytest', '-n8')

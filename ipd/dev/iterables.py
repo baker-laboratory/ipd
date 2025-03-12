@@ -23,11 +23,24 @@ def head(thing, n=5, *, requireall=False, start=0):
         if requireall: return None
     return result
 
-def order(seq: Sequence[Any]):
-    return [a[1] for a in sorted((s, i) for i, s in enumerate(seq))]
+def order(seq: Sequence[Any], key=None):
+    return [a[1] for a in sorted(((s, i) for i, s in enumerate(seq)), key=key)]
 
-def reorder(seq: Sequence[Any], idx: Sequence[int]):
-    return [seq[i] for i in idx]
+def reorder(seq: Sequence[Any], order: Sequence[int]):
+    return [seq[i] for i in order]
+
+def reorder_inplace(seq: list[Any], order: Sequence[int]):
+    result = reorder(seq, order)
+    for i, v in enumerate(result):
+        seq[i] = v
+
+def reorderer(order: Sequence[int]):
+
+    def reorder_func(*seqs: list[Any]):
+        for seq in seqs:
+            reorder_inplace(seq, order)
+
+    return reorder_func
 
 def zipmaps(*args, order='key', intersection=False):
     if not args: raise ValueError('zipmaps requires at lest one argument')

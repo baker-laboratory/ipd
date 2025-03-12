@@ -42,9 +42,9 @@ Example for `kwcall`:
     >>> def example_function(x, y, z=3):
     ...     return x + y + z
     >>> args = {'x': 1, 'y': 2, 'extra_arg': 'ignored'}
-    >>> kwcall(example_function, args)
+    >>> kwcall(args, example_function)
     6
-    >>> kwcall(example_function, {'x': 1}, y=2, z=10)
+    >>> kwcall({'x': 1}, example_function, y=2, z=10)
     13
 
 Example for `kwcheck`:
@@ -72,18 +72,30 @@ See Also:
 - `pytest.mark` – Markers for controlling pytest test execution.
 
 """
-import sys
 import dis
 import re
 import functools
 import inspect
 import operator
-from typing import TypeVar
+import toolz
+import sys
+from typing import TypeVar, Callable
 
 import ipd
 from ipd.dev.decorators import iterize_on_first_param
 
 T = TypeVar('T')
+R = TypeVar('R')
+try:
+    from typing import ParamSpec
+    P = ParamSpec('P')
+except ImportError:
+    P = TypeVar('P')
+
+def instanceof(obj_or_types, types=None):
+    """wrapper so isinstane can be called with kwargs"""
+    if types: return isinstance(obj, types)
+    return lambda obj: isinstance(obj, obj_or_types)
 
 @iterize_on_first_param(asdict=True)
 def picklocals(name, idx=None):
@@ -151,7 +163,7 @@ for op in 'add mul matmul or_ and_'.split():
     opname = op.strip('_')
     globals()[f'{opname}reduce'] = functools.partial(opreduce, getattr(operator, op))
 
-def kwcall(func, kw, *a, **kwargs):
+def kwcall(kw: dict, func: Callable[P, R], *a: P.args, **kwargs: P.kwargs) -> R:
     """Call a function with filtered keyword arguments.
 
     This function merges provided keyword arguments, filters them to match only those
@@ -172,9 +184,9 @@ def kwcall(func, kw, *a, **kwargs):
         ...     return x + y + z
         ...
         >>> args = {'x': 1, 'y': 2, 'extra_arg': 'ignored'}
-        >>> kwcall(example_function, args)
+        >>> kwcall(args, example_function)
         6
-        >>> kwcall(example_function, {'x': 1}, y=2, z=10)
+        >>> kwcall({'x': 1}, example_function, y=2, z=10)
         13
 
     Note:
@@ -185,11 +197,11 @@ def kwcall(func, kw, *a, **kwargs):
     See Also:
         kwcheck: The underlying function used to filter keyword arguments.
     """
-    kw = kw | kwargs
-    kw = kwcheck(kw, func)
-    return func(*a, **kw)
+    return func(*a, **kwcheck(kw | kwargs, func))
 
-def kwcheck(kw, func=None, checktypos=True):
+kwcurry = toolz.curry(kwcall)
+
+def kwcheck(kw: T, func=None, checktypos=True) -> T:
     """
     Filter keyword arguments to match only those accepted by the target function.
 
@@ -247,7 +259,7 @@ def kwcheck(kw, func=None, checktypos=True):
         unused = kw.keys() - newkw.keys()
         unset = params - newkw.keys()
         for arg in unused:
-            if typo := ipd.dev.find_close_strings(arg, unset):
+            if typo := ipd.dev.find_close_argnames(arg, unset, cutoff=0.8):
                 raise TypeError(f'{func.__name__} got unexpected arg {arg}, did you mean {typo}')
     return newkw
 
@@ -423,3 +435,30 @@ def no_pytest_skip(obj):
         print(no_pytest_skip(test_example))  # False
     """
     return not has_pytest_mark(obj, 'skip')
+
+def list_classes(data):
+    seenit = set()
+
+    def visitor(x):
+        seenit.add(x.__class__)
+
+    visit(data, visitor)
+    return seenit
+
+def change_class(data, clsmap) -> None:
+
+    def visitor(x):
+        if x.__class__ in clsmap:
+            x.__class__ = clsmap[x.__class__]
+
+    visit(data, visitor)
+
+def visit(data, func) -> None:
+    if isinstance(data, dict):
+        visit(list(data.keys()), func)
+        visit(list(data.values()), func)
+    elif isinstance(data, list):
+        for x in data:
+            visit(x, func)
+    else:
+        func(data)

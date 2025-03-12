@@ -1,11 +1,13 @@
 import contextlib
 import functools
 from pathlib import Path
-from typing import Mapping
+from typing import Mapping, Callable, Any
+
+import numpy as np
 
 import ipd
 
-FieldSpec = 'str | list[str] | tuple[str] | Calllable[[Self], str]'
+FieldSpec = 'str | list[str] | tuple[str] | Calllable[[*Any], str]'
 EnumerIter = 'Iterator[int, *Any]'
 EnumerListIter = 'Iterator[int, *list[Any]]'
 
@@ -85,13 +87,16 @@ def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: b
     if hasattr(arg, '__iter__'): return True
     return False
 
-def iterize_on_first_param(func0=None,
-                           *,
-                           basetype=str,
-                           splitstr=True,
-                           asdict=False,
-                           asbunch=False,
-                           allowmap=False):
+def iterize_on_first_param(
+    func0=None,
+    *,
+    basetype=str,
+    splitstr=True,
+    asdict=False,
+    asbunch=False,
+    asnumpy=False,
+    allowmap=False,
+) -> Callable:
     """
     Decorator that vectorizes a function over its first parameter.
 
@@ -190,7 +195,7 @@ def iterize_on_first_param(func0=None,
           of the mapping and return a new mapping.
     """
 
-    def deco(func):
+    def deco(func) -> Callable:
 
         @functools.wraps(func)
         def wrapper(arg0, *args, **kw):
@@ -207,6 +212,8 @@ def iterize_on_first_param(func0=None,
                         resutn = type(arg0)(result)
                 if asbunch and result and isinstance(ipd.first(result.keys()), str):
                     result = ipd.Bunch(result)
+                if asnumpy:
+                    result = np.array(result)
                 return result
             return func(arg0, *args, **kw)
 
@@ -258,8 +265,12 @@ def preserve_random_state(func0=None, seed0=None):
         return deco(func0)
     return deco
 
-def generic_getitem_for_attributes(self, field: FieldSpec) -> 'Any':
-    """Enhanced `__getitem__` method to support attribute access with multiple keys.
+def make_getitem_for_attributes(get=getattr, provide='value') -> 'Any':
+    if provide not in ('value', 'item'):
+        raise ValueError(f"provide must be 'value' or 'item', not {provide}")
+
+    def getitem_for_attributes(self, field: FieldSpec, get=get) -> 'Any':
+        """Enhanced `__getitem__` method to support attribute access with multiple keys.
 
     If the field is a string containing spaces, it will be split into a list of keys.
     If the field is a list of strings, it will return the corresponding attributes as a tuple.
@@ -276,11 +287,17 @@ def generic_getitem_for_attributes(self, field: FieldSpec) -> 'Any':
         values = obj['x y z']  # Multiple keys as a string
         values = obj[['x', 'y', 'z']]  # Multiple keys as a list
     """
-    field, plural = get_fields(self, field)
-    if plural: return tuple(getattr(self, k) for k in field)
-    return getattr(self, field[0])
+        field, plural = get_fields(self, field)
+        if provide == 'value':
+            if plural: return tuple(get(self, k) for k in field)
+            else: return get(self, field[0])
+        if provide == 'item':
+            if plural: return ipd.Bunch((k, get(self, k)) for k in field)
+            return (field[0], get(self, field[0]))
 
-def generic_enumerate(self, fields: FieldSpec) -> EnumerIter:
+    return getitem_for_attributes
+
+def generic_enumerate(self, fields: FieldSpec, order=lambda x: x) -> EnumerIter:
     """Enhanced `enumerate` method to iterate over multiple attributes at once.
 
     This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the fields is a string containing spaces, it will be split into a list of keys. If the fields is a list of strings, it will return the corresponding attributes as a tuple.
@@ -296,7 +313,9 @@ def generic_enumerate(self, fields: FieldSpec) -> EnumerIter:
         for i, x, y in obj.enumerate(['x', 'y']):
             print(i, x, y)
     """
-    for i, vals in enumerate(zip(*generic_getitem_for_attributes(self, fields))):
+    fields = list(zip(*self[fields]))
+    idx = range(len(fields[0]))
+    for i, vals in zip(order(idx), order(fields)):
         yield i, *vals
 
 def generic_groupby(self, groupby: FieldSpec, fields: FieldSpec = None, convert=None) -> EnumerListIter:
@@ -308,9 +327,9 @@ def generic_groupby(self, groupby: FieldSpec, fields: FieldSpec = None, convert=
         groupby, plural = get_fields(self, groupby)
         exclude = groupby
         if not plural: groupby = groupby[0]
-        groupby = generic_getitem_for_attributes(self, groupby)
+        groupby = self[groupby]
     fields, _ = get_fields(self, fields, exclude=exclude)
-    vals = generic_getitem_for_attributes(self, fields)
+    vals = self[fields]
     groups = dict()
     for k, v in zip(groupby, zip(*vals)):
         groups.setdefault(k, []).append(v)
@@ -319,6 +338,47 @@ def generic_groupby(self, groupby: FieldSpec, fields: FieldSpec = None, convert=
         if convert: vals = map(convert, vals)
         if splat: yield group, *vals
         else: yield group, ipd.Bunch(zip(fields, vals))
+
+def is_fuzzy_match(sub, string):
+    """
+    Checks if 'sub' is a subsequence of 'string'.
+
+    Args:
+      sub: The potential subsequence string.
+      string: The main string.
+
+    Returns:
+      True if 'sub' is a subsequence of 'string', False otherwise.
+    """
+    if sub[:2] != string[:2]: return False
+    i, j = 0, 0
+    while i < len(sub) and j < len(string):
+        if sub[i] == string[j]: i += 1
+        j += 1
+    return i == len(sub)
+
+def getattr_fzf(obj, field):
+    """Get attribute values using fuzzy matching.
+
+    This function uses fuzzy matching to find attribute names that are similar to the given field.
+    If multiple matches are found, the values of the first match are returned.
+
+    Args:
+        obj: The object to search for attributes.
+        field: The field to search for.
+
+    Returns:
+        Any: The attribute value corresponding to the field.
+
+    Example:
+        obj = MyClass()
+        value = obj.fzf('x')  # Finds 'x' or similar
+    """
+    fields = generic_get_keys(obj, exclude=())
+    candidates = [f for f in fields if is_fuzzy_match(field, f)]
+    if not candidates: raise AttributeError(f'no attribute found for {field}')
+    if len(candidates) == 1: return getattr(obj, candidates[0])
+    raise AttributeError(f'multiple attributes found for {field}: {candidates}')
 
 def subscriptable_for_attributes(cls: type):
     """Class decorator to enable subscriptable attribute access and enumeration.
@@ -348,11 +408,12 @@ def subscriptable_for_attributes(cls: type):
     Raises:
         TypeError: If the class already defines `__getitem__` or `enumerate`.
     """
-    # if hasattr(cls, '__getitem__'):
-    # raise TypeError(f'class {cls.__name__} already has __getitem__')
-    if hasattr(cls, 'enumerate'):
-        raise TypeError(f'class {cls.__name__} already has enumerate')
-    cls.__getitem__ = generic_getitem_for_attributes
+    for member in 'enumerate fzf groupby'.split():
+        if hasattr(cls, member):
+            raise TypeError(f'class {cls.__name__} already has {member}')
+    cls.__getitem__ = make_getitem_for_attributes(get=getattr)
+    cls.fzf = make_getitem_for_attributes(get=getattr_fzf)
     cls.enumerate = generic_enumerate
     cls.groupby = generic_groupby
+    cls.pick = make_getitem_for_attributes(provide='item')
     return cls

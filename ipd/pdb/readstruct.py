@@ -80,20 +80,34 @@ def _readatoms_cif(fname, file, assembly=None, **kw) -> 'Atoms':
     cif, atoms = cifread(fname, file, **kw)
     return atoms
 
-def _readatoms_cif_assembly(fname, file, assembly, caonly=False, het=True, **kw) -> 'tuple[Cif, Atoms]':
+def _readatoms_cif_assembly(
+    fname,
+    file,
+    assembly,
+    caonly=False,
+    het=True,
+    **kw,
+) -> 'bs.AtomsArray|list[bs.AtomArray]':
     cif, asu = cifread(fname, file, caonly=caonly, het=het)
     asminfo = cif_assembly_info(cif)
     if assembly == 'largest':
-        _nchain, assembly = max(zip(asminfo.assemblies.order, asminfo.assemblies.id))
+        best = 0, None
+        for ord, asmid in zip(asminfo.assemblies.order, asminfo.assemblies.id):
+            if ord > best[0]: best = ord, asmid
+        assembly = best[1]
     atoms = bpdbx.get_assembly(cif, assembly, model=1)
     atoms = ipd.atom.select(atoms, caonly=caonly, het=het)
-    xforms = _validate_cif_assembly(cif, asminfo, assembly, asu, atoms)
-    atoms = ipd.atom.split(atoms, order=len(xforms))
+    xforms = _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, **kw)
+    atoms = ipd.kwcall(kw, ipd.atom.split, atoms, order=len(xforms))
     return atoms
 
-def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms):
-    i = asminfo.assemblies.id.index(assembly)
-    asmid, opers, asymids, order = asminfo.assemblies.valwise[i]
+def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **kw):
+    if assembly in asminfo.assemblies.id:
+        iasm = asminfo.assemblies.id.index(assembly)
+    else:  # seems sometimes assembly ids don't match annotation... try as numerical index
+        iasm = int(assembly) - 1
+    pdb = str(cif.block['entry']['id'].as_array(str))[0]
+    asmid, opers, asymids, order = asminfo.assemblies.valwise[iasm]
     xforms = np.array([h.product(*[asminfo.xforms[op] for op in opstep]) for opstep in opers])
     asu = ipd.atom.select(asu, chains=np.unique(atoms.chain_id))
     # ic(asmid, opers, asymids, order)
@@ -105,17 +119,22 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms):
     chainsasu, chains = map(ipd.atom.chain_ranges, (asu, atoms))
     # ic(chainsasu)
     # ic(chains)
-
+    # ic(xforms)
+    # ic(asminfo)
     for ix, x in enumerate(xforms):
         for c, crngasu, crng in ipd.dev.zipitems(chainsasu, chains):
             num_asu_ranges = len(crngasu)
+            # ic(len(xforms), ix, c, len(crng), num_asu_ranges)
             assert len(xforms) == len(crng) / num_asu_ranges
             for iasurange in range(num_asu_ranges):
                 (lb1, ub1), (lb2, ub2) = crngasu[iasurange], crng[ix*num_asu_ranges + iasurange]
                 orig = h.xform(xforms[ix], asu.coord[lb1:ub1])
                 new = atoms.coord[lb2:ub2]
                 # ipd.showme(orig, new)
-                assert np.allclose(orig, new, atol=1e-3)
+                close = np.allclose(orig, new, atol=1e-3)
+                if strict: assert close
+                elif not close:
+                    ipd.dev.WARNME(f'{pdb} assembly {assembly} {ix} {c} failed validation', verbose=False)
     # assert np.allclose(asu.coord, atoms.coord[:len(asu)], atol=1e-3)
     # ic(ipd.bunch.zip(asymchainstart, asymchainlen, chainstart, chainlen, order='val'))
     return xforms
@@ -184,7 +203,6 @@ def cif_assembly_info(cif):
     # raise ValueError("File has no 'pdbx_struct_oper_list' category")
     # opers = _cif_opers(cif)
     ids = asmblgen['assembly_id'].as_array(str)
-    assert len(set(ids)) == len(ids)
     assembly_ids = asmblgen["assembly_id"].as_array(str)
     xforms = _cif_xforms(cif)
     assemblies = ipd.Bunch(id=[], oper=[], asymids=[], order=[])

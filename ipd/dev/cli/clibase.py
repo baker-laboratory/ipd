@@ -1,7 +1,7 @@
 import typer
 
 import ipd
-from ipd.dev.types import KW
+from ipd.typehints import KW
 from typing import Optional
 
 DEBUG = False
@@ -50,7 +50,8 @@ class CliBase:
             cls.__ancestors__ |= cls.__parent__.__ancestors__  # type: ignore
             for ancestor in cls.__ancestors__:
                 ancestor.__descendants__.add(cls)
-            cls.__parent__.__app__.add_typer(cls.__app__, name=cls.__name__.replace('Tool', '').lower())  # type: ignore
+            cls.__parent__.__app__.add_typer(cls.__app__,
+                                             name=cls.__name__.replace('Tool', '').lower())  # type: ignore
 
     def __init_subclass__(cls, **kw: KW):
         if DEBUG: print('__init_subclass__', cls)

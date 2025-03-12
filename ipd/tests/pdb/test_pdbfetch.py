@@ -4,15 +4,15 @@ def main():
     ipd.tests.maintest(namespace=globals())
 
 def test_pdb_info():
-    info = ipd.pdb.info('2tbv')
+    info = ipd.pdb.rcsbinfo('2tbv')
     assert info.entry.id == '2TBV'
     assert info.rcsb_entry_info.assembly_count == 1
-    info2 = ipd.pdb.info('1qys 2tbv')
+    info2 = ipd.pdb.rcsbinfo('1qys 2tbv')
     assert info2['2tbv'] == info
     assert info2['1qys'].entry.id == '1QYS'
 
 def test_pdb_info_assembly():
-    info = ipd.pdb.info('2tbv', assembly=1)
+    info = ipd.pdb.rcsbinfo('2tbv', assembly=1)
     assert info.rcsb_struct_symmetry[0].symbol == 'I'
     assert info.pdbx_struct_assembly_gen[0].asym_id_list == ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
     assert info.pdbx_struct_assembly_gen[0].oper_expression == '(1-60)'
@@ -21,13 +21,13 @@ def test_pdb_info_assembly():
     assert info.pdbx_struct_oper_list[0].matrix11 == 1
 
 def test_pdb_info_all_assemblies():
-    assert len(ipd.pdb.info('2tbv', assembly='all')) == 1
+    assert len(ipd.pdb.rcsbinfo('2tbv', assembly='all')) == 1
 
 def test_pdb_info_speed():
     with ipd.dev.Timer() as t:
         for i in range(100):
             # dat = requests.get(f'https://data.rcsb.org/rest/v1/core/entry/2TBV').json()
-            ipd.pdb.info('2tbv')
+            ipd.pdb.rcsbinfo('2tbv')
     assert t.elapsed() < 10
 
 def test_pdb_sym_annotation():

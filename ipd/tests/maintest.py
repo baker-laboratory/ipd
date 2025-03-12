@@ -34,30 +34,31 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
     print(f'maintest "{namespace["__file__"]}":', flush=True)
     ipd.dev.onexit(ipd.dev.global_timer.report, timecut=0.1)
     config = TestConfig(**config, **kw)
-    ipd.kwcall(ipd.dev.filter_namespace_funcs, config, namespace)
+    ipd.kwcall(config, ipd.dev.filter_namespace_funcs, namespace)
     timed = ipd.dev.timed if config.timed else lambda f: f
     test_suites, test_funcs = [], []
     for name, obj in namespace.items():
         if _test_class_ok(name, obj) and config.use_test_classes:
-            test_suites.append((name, timed(obj)()))
+            test_suites.append((name, timed(obj)))
         elif _test_func_ok(name, obj):
             test_funcs.append((name, timed(obj)))
     ipd.dev.global_timer.checkpoint('maintest')
     result = TestResult()
     with tempfile.TemporaryDirectory() as tmpdir:
-        ipd.kwcall(config.setup, config.fixtures)
+        ipd.kwcall(config.fixtures, config.setup)
         config.fixtures['tmpdir'] = tmpdir
 
         for name, func in test_funcs:
             _maintest_run_test_function(name, func, result, config, kw)
 
-        for clsname, suite in test_suites:
-            print(f'{f" suite: {clsname} ":=^80}', flush=True)
+        for clsname, Suite in test_suites:
+            suite = Suite()
+            print(f'{f" Suite: {clsname} ":=^80}', flush=True)
             test_methods = ipd.dev.filter_namespace_funcs(vars(namespace[clsname]))
             test_methods = {k: v for k, v in test_methods.items() if _test_func_ok(k, v)}
             getattr(suite, 'setUp', lambda: None)()
             for name in test_methods:
-                _maintest_run_test_function(name, func, result, config, kw)
+                _maintest_run_test_function(f'{clsname}.{name}', getattr(suite, name), result, config, kw)
             getattr(suite, 'tearDown', lambda: None)
 
     if result.passed: print('PASSED   ', len(result.passed), 'tests')
@@ -72,9 +73,9 @@ def _maintest_run_test_function(name, func, result, config, kw, check_xfail=True
     context = ipd.dev.nocontext if name in config.nocapture else ipd.dev.capture_stdio
     with context() as testout:  # noqa
         try:
-            ipd.kwcall(config.funcsetup, config.fixtures)
+            ipd.kwcall(config.fixtures, config.funcsetup)
             if not config.dryrun:
-                ipd.kwcall(func, config.fixtures)
+                ipd.kwcall(config.fixtures, func)
                 result.passed.append(name)
         except AssertionError as e:
             if ipd.dev.has_pytest_mark(func, 'xfail'): result.xfailed.append(name)
@@ -100,6 +101,6 @@ def maincrudtest(crud, namespace, fixtures=None, funcsetup=lambda: None):
 
         def newfuncsetup(backend):
             backend._clear_all_data_for_testing_only()
-            ipd.kwcall(funcsetup, fixtures)
+            ipd.kwcall(fixtures, funcsetup)
 
         return maintest(namespace, fixtures, funcsetup=newfuncsetup, **kw)

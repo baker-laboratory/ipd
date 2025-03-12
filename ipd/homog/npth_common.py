@@ -25,6 +25,6 @@ def numel(tensor):
     if 'torch' in sys.modules and th.is_tensor(tensor): return tensor.numel
     return tensor.size
 
-def tensor_summary(tensor):
-    if numel(tensor) < 12: return str(tensor)
+def tensor_summary(tensor, maxnumel=24):
+    if numel(tensor) <= maxnumel: return str(tensor)
     return f'{tensor.__class__.__name__}{list(tensor.shape)}'

@@ -13,7 +13,31 @@ def detect(
     **kw,
 ) -> 'SymInfo':
     """
-    detect symmetry from frames (N,4,4), Atomarray or Iterable[AtomArray]
+    Detect symmetry from frames (N, 4, 4), AtomArray, or an Iterable of AtomArray.
+
+    Args:
+        thing (Union[np.ndarray, torch.Tensor, AtomArray, Iterable[AtomArray]]):
+            Input data representing the coordinate frames or atomic chains.
+        tol (Union[ipd.Tolerances, float, None], optional):
+            Tolerance for detecting symmetry. If None, defaults are used.
+        order (int, optional):
+            Expected order of symmetry. If None, order is inferred.
+        **kw:
+            Additional keyword arguments for tolerance settings.
+
+    Returns:
+        SymInfo: Object containing detected symmetry information.
+
+    Raises:
+        ValueError: If symmetry cannot be detected from the input data.
+
+    Examples:
+        >>> import numpy as np
+        >>> from ipd.sym.sym_detect import detect
+        >>> frames = np.eye(4)[None]  # Identity transformation
+        >>> sym_info = detect(frames)
+        >>> sym_info.symid
+        'C1'
     """
     tol = ipd.Tolerances(tol, **(symdetect_default_tolerances) | kw)
     if ipd.homog.is_tensor(thing) and ipd.homog.is_xform_stack(thing):
@@ -35,7 +59,34 @@ def detect(
 @attrs.define
 class SymInfo:
     """
-    Groups togethes various infomation about a symmetry, returned from ipd.sym.detect
+    Contains information about detected symmetry, returned from `detect`.
+
+    Attributes:
+        symid (str): Symmetry identifier.
+        frames (np.ndarray): Transformation frames.
+        symcen (np.ndarray): Symmetry center coordinates.
+        symelem (ipd.Bunch): Symmetry elements.
+        guess_symid (str, optional): Guessed symmetry identifier.
+        order (int, optional): Order of symmetry.
+        t_number (int): Number of symmetry transformations.
+        pseudo_order (int, optional): Pseudo-order of symmetry.
+        has_translation (bool, optional): Whether the symmetry is helical.
+        is_multichain (bool, optional): Whether symmetry spans multiple chains.
+        is_point (bool, optional): Whether symmetry is point symmetry.
+        is_1d (bool, optional): Whether symmetry is 1D.
+        is_2d (bool, optional): Whether symmetry is 2D.
+        is_3d (bool, optional): Whether symmetry is 3D.
+        is_cyclic (bool, optional): Whether symmetry is cyclic.
+        is_dihedral (bool, optional): Whether symmetry is dihedral.
+        provenance (ipd.Bunch): Provenance information.
+
+    Examples:
+        >>> from ipd.sym.sym_detect import SymInfo
+        >>> import numpy as np
+        >>> frames = np.eye(4)[None]
+        >>> sym_info = SymInfo('C1', frames, None, None)
+        >>> sym_info.symid
+        'C1'
     """
     symid: str
     frames: np.ndarray
@@ -46,14 +97,12 @@ class SymInfo:
     order: int = None
     t_number: int = 1
     pseudo_order: int = None
-    is_helical: bool = None
+    has_translation: bool = None
     is_multichain: bool = None
     is_point: bool = None
     is_1d: bool = None
     is_2d: bool = None
     is_3d: bool = None
-    is_cyclic: bool = None
-    is_dihedral: bool = None
     provenance: ipd.Bunch = attrs.field(factory=ipd.Bunch)
 
     unique_nfold: list = None
@@ -81,6 +130,10 @@ class SymInfo:
     asustub: np.ndarray = None
     allstub: np.ndarray = None
 
+    is_cyclic = property(lambda self: self.symid[0] == 'C')
+    is_dihedral = property(lambda self: self.symid[0] == 'D')
+    is_cage = property(lambda self: self.symid[0] in 'TIO')
+
     def __attrs_post_init__(self):
         _syminfo_post_init(self)
 
@@ -102,7 +155,8 @@ symdetect_default_tolerances = dict(
     dot_norm=0.04,
     misc_lineuniq=1,
     nfold=0.3,
-    seqmatch=0.7,
+    seqmatch=0.3,
+    matchsize=50,
     rms_fit=2,
     cageang=5e-2,
 )
@@ -120,13 +174,34 @@ symdetect_ideal_tolerances = dict(
 
 def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw) -> SymInfo:
     """
-    get frames from list of AtomArrays via. sequence and rms alignment, then compute SymInfo
+    Generate symmetry information from a list of AtomArrays.
+
+    Args:
+        atomslist (list[biotite.structure.AtomArray]):
+            List of AtomArray objects representing atomic chains.
+        **kw:
+            Additional keyword arguments for tolerance settings.
+
+    Returns:
+        SymInfo: Detected symmetry information.
+
+    Examples:
+        >>> from biotite.structure import AtomArray
+        >>> from ipd.sym.sym_detect import syminfo_from_atomslist
+        >>> atoms = [AtomArray()] * 2
+        >>> sym_info = syminfo_from_atomslist(atoms)
     """
     assert not ipd.atom.is_atoms(atomslist)
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
     components = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, maxsub=60, **kw)
-    components.remove_small_chains()
+    # ic(len(components.atoms))
+    # ipd.showme(components.atoms[0])
+    # ipd.showme(components.atoms[1])
+    # ipd.print_table(components.pick('seqmatch rmsd'))
+    # for dat in components.intermediates_:
+    # print(np.stack([dat.seqmatch, dat.rmsd]).T)
+    # assert 0
     results = []
     for i, frames, match, rms in components.enumerate('frames seqmatch rmsd'):
         tol.reset()
@@ -134,11 +209,28 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw)
         syminfo.rms, syminfo.seqmatch = rms, match
         _syminfo_add_atoms_info(syminfo, atomslist, frames, tol)
         results.append(syminfo)
-    return check_sym_combinations(results)
+    return ipd.kwcall(kw, check_sym_combinations, results)
 
 def syminfo_from_frames(frames: np.ndarray, **kw) -> SymInfo:
     """
-    infer sym elems and overall symmetry, return as SymInfo object
+    Infer symmetry elements and overall symmetry from transformation frames.
+
+    Args:
+        frames (np.ndarray):
+            Transformation frames with shape (N, 4, 4).
+        **kw:
+            Additional keyword arguments for tolerance settings.
+
+    Returns:
+        SymInfo: Detected symmetry information.
+
+    Examples:
+        >>> import numpy as np
+        >>> from ipd.sym.sym_detect import syminfo_from_frames
+        >>> frames = np.eye(4)[None]
+        >>> sym_info = syminfo_from_frames(frames)
+        >>> sym_info.symid
+        'C1'
     """
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
@@ -147,47 +239,71 @@ def syminfo_from_frames(frames: np.ndarray, **kw) -> SymInfo:
     se = symelems_from_frames(frames, **kw)
     nfolds = set(int(nf) for nf in se.nfold)
     is_point, symcen, axes_dists = h.lines_concurrent_isect(se.cen, se.axis, tol=tol.isect)
-    is_helical = not np.all(np.abs(se.hel) < tol.helical_shift)
-    sym_info_args = dict(is_point=is_point, symcen=symcen, is_helical=is_helical, symelem=se)
+    has_translation = not np.all(np.abs(se.hel) < tol.helical_shift)
+    sym_info_args = dict(is_point=is_point, symcen=symcen, has_translation=has_translation, symelem=se)
     sym_info_args |= dict(frames=frames, axes_dists=axes_dists, tolerances=tol)
     if is_point: sym_info_args |= dict(is_1d=False, is_2d=False, is_3d=False)
-    ic(is_point, is_helical, nfolds)
-    ic(np.abs(se.ang - np.pi), tol.angle)
-    ipd.print_table(se)
-    if len(nfolds) == 1 and not is_helical and is_point:
-        if all(se.nfold == 0):
-            return SymInfo('HELIX', **sym_info_args)
-        elif len(se.nfold) >= 3 and np.all(np.abs(se.ang - np.pi) < tol.angle):
+    if len(nfolds) == 1 and not has_translation and is_point:
+        if len(se.nfold) >= 3 and np.all(np.abs(se.ang - np.pi) < tol.angle):
             return SymInfo('D2', **sym_info_args)
         else:
             return SymInfo(f'C{int(se.nfold[0])}', **sym_info_args)
-    elif len(se) == 1:
-        raise NotImplementedError('')
-    elif is_point and not is_helical:
+    elif is_point and not has_translation:
         if 2 in nfolds and 3 in nfolds:
             ax2, ax3 = (se.axis[se.nfold == i] for i in (2, 3))
             testang = h.line_angle(ax2[None], ax3[:, None]).min()
             magicang = ipd.sym.magic_angle_DTOI
-            ic(testang, magicang)
             if abs(testang - magicang.D) < tol.cageang: return SymInfo('D3', **sym_info_args)
             if abs(testang - magicang.T) < tol.cageang: return SymInfo('T', **sym_info_args)
             if abs(testang - magicang.O) < tol.cageang: return SymInfo('O', **sym_info_args)
             if abs(testang - magicang.I) < tol.cageang: return SymInfo('I', **sym_info_args)
-            assert 0, f'unknown sym with nfold {nfolds} testang {testang} valid are: {magicang}'
-        elif len(nfolds) == 2 and 2 in nfolds:
-            ipd.dev.print_table(se)
-            not2_vs_2ang = h.line_angle(se.axis[se.nfold == 2], se.axis[se.nfold != 2])
-            assert np.all(np.abs(not2_vs_2ang - np.pi / 2) < tol.line_angle)
-            return SymInfo(f'D{max(nfolds)}', **sym_info_args)
-        assert 0, 'unknown sym'
-    else:
-        return SymInfo('Unknown', **sym_info_args)
+            return SymInfo(f'Unknown sym with nfold {nfolds} testang {testang} valid are: {magicang}',
+                           **sym_info_args)
+        # other dihedrals D3+
+        elif len(nfolds) == 2 and 2 in nfolds and len(frames) % 2 == 0:
+            not2_vs_2ang = h.line_angle(se.axis[se.nfold == 2], se.axis[se.nfold != 2], outerprod=True)
+            # ipd.dev.print_table(se, nohomog=True)
+            if not np.all(np.abs(not2_vs_2ang - np.pi / 2) < tol.line_angle):
+                return SymInfo(f'Unknown sym with nfold {nfolds}')
+            othernf = max(nfolds)
+            if 0 not in nfolds or _nfold_is_plasuible(len(frames) // 2, se.ang[se.nfold == 0], tol):
+                if not _nfold_is_plasuible(othernf, se.axis[se.nfold == othernf], tol):
+                    se.nfold[se.nfold == 0] = othernf
+                return SymInfo(f'D{othernf}', **sym_info_args)
+            # return SymInfo(f'Unknown dihedral-like sym, probably incomplete')
+    elif not is_point and all(nf in (1, 2, 3, 4, 6) for nf in nfolds):
+        return SymInfo('X', **sym_info_args)
+    elif has_translation:
+        return SymInfo('H', **sym_info_args)
+    return SymInfo(f'Unknown Mysterious Sym nfolds {nfolds}', **sym_info_args)
+
+def _nfold_is_plasuible(nfold, ang, tol):
+    for i in range(1, nfold):
+        target = 2 * np.pi / i
+        if np.all(np.abs(ang - target) < tol.angle): return True
+    return False
 
 def symelems_from_frames(frames, **kw):
     """
-    compute a non-redundant set of simple symmetry elements from homog transforms
-    """
+    Compute a non-redundant set of symmetry elements from transformation frames.
 
+    Args:
+        frames (np.ndarray):
+            Transformation frames with shape (N, 4, 4).
+        **kw:
+            Additional keyword arguments for tolerance settings.
+
+    Returns:
+        ipd.Bunch: Detected symmetry elements.
+
+    Examples:
+        >>> import numpy as np
+        >>> from ipd.sym.sym_detect import symelems_from_frames
+        >>> frames = np.eye(4)[None]
+        >>> elements = symelems_from_frames(frames)
+        >>> elements.nfold
+        array([1])
+    """
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
     rel = h.xformx(h.inv(frames[0]), frames)
@@ -210,7 +326,6 @@ def symelems_from_frames(frames, **kw):
             ax, cn, nf = h.xform(frames[0], ax), h.xform(frames[0], cn), 2 * np.pi / an
             nf = h.toint(nf) if _isintgt1(nf, tol) else npth.zeros(an.shape, dtype=int)
             result.valwise.append(nfold=nf, axis=ax, ang=an, cen=cn, hel=hl)
-        print('', flush=True)
     result = result.mapwise(np.array)
     assert result.nfold.ndim == 1 and result.axis.ndim == 2
     return result
@@ -223,39 +338,44 @@ def syminfo_get_origin(sinfo):
     """get the symmetry origin as a frame that aligns symaxes to canonical ant translates to symcen"""
     nf = sinfo.unique_nfold
     if not sinfo.is_point:
-        return syminfo_get_origin_nonpoint(sel)
+        return syminfo_get_origin_nonpoint(sinfo)
     elif sinfo.is_cyclic:
         origin = h.align([0, 0, 1], sinfo.axis[0]) @ h.trans(sinfo.symcen)
     elif sinfo.is_dihedral:
         ax2, axx = sinfo.nfaxis[2][0], sinfo.nfaxis[nf[1 % len(nf)]][0]
         if sinfo.symid == 'D2': axx = sinfo.nfaxis[2][-1]
         origin = h.align2([0, 0, 1], [1, 0, 0], ax2, axx) @ h.trans(sinfo.symcen)
-    else:
+    elif sinfo.is_cage:
         assert 2 in nf and 3 in nf
         assert sinfo.symid in 'T I O D3'.split()
         origax2, origax3 = ipd.sym.axes(sinfo.symid)[2], ipd.sym.axes(sinfo.symid)[3]
         ax2, ax3 = sinfo.nfaxis[2][0], sinfo.nfaxis[3][0]
         origin = h.align2(origax2, origax3, ax2, ax3) @ h.trans(sinfo.symcen)
-        assert h.valid44(origin)
+    else:
+        origin = h.align([0, 0, 1], sinfo.axis[0]) @ h.trans(sinfo.symcen)
+
+    assert h.valid44(origin)
     return origin, h.inv(origin)
+
+def syminfo_get_origin_nonpoint(sinfo):
+    return np.nan * np.eye(4)
 
 def syminfo_to_str(sinfo, verbose=True):
     """returns text tables with the data in this SymInfo"""
-    npopt = np.get_printoptions()
-    np.set_printoptions(precision=6, suppress=True)
-    textmap = {'nfold': 'nf', '__REGEX__': False}  # , '[': '', ']': '
-    kw = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
+    textmap = {'nfold': 'C', '__REGEX__': False}  # , '[': '', ']': '
+    # kw = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
+    kw = dict(textmap=textmap)
     if sinfo.symid == 'C1': return 'SymInfo(C1)'
     with ipd.dev.capture_stdio() as out:
         symcen = '\n'.join(f'{x:7.3f}' for x in sinfo.symcen.reshape(4)[:3])
         head = dict(symid=sinfo.symid, guess=sinfo.guess_symid, symcen=symcen, origin=sinfo.origin)
         headtable = ipd.dev.make_table(dict(foo=head), key=False, strip=False, **kw)
-        setable = ipd.dev.make_table_dataset(sinfo.symelem, **kw)
+        setable = ipd.dev.make_table(sinfo.symelem, nohomog=True, **kw)
         asutable = ipd.dev.make_table(
             [[sinfo.t_number, sinfo.asurms, sinfo.asumatch, sinfo.asuframes.shape, sinfo.allframes.shape]],
             header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'])
-        geomtable = ipd.dev.make_table([[sinfo.is_helical, sinfo.is_point, sinfo.axes_dists]],
-                                       header=['is_helical', 'axes concurrent', 'axes dists'],
+        geomtable = ipd.dev.make_table([[sinfo.has_translation, sinfo.is_point, sinfo.axes_dists]],
+                                       header=['has_translation', 'axes concurrent', 'axes dists'],
                                        **kw)
         checktable = ipd.dev.make_table(sinfo.tol_checks, key='Geom Tests')
         tables = [[headtable], [geomtable], [asutable], [setable], [checktable]]
@@ -264,7 +384,6 @@ def syminfo_to_str(sinfo, verbose=True):
                                           header=['worst seq match', 'worst rms'])
             tables.append([rmstable])
         ipd.dev.print_table(tables, header=['SymInfo'])
-    np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
     return out.read()
 
 def _syminfo_post_init(sinfo: SymInfo) -> None:
@@ -279,8 +398,8 @@ def _syminfo_post_init(sinfo: SymInfo) -> None:
     sinfo.unique_nfold = nf = []
     if sinfo.order > 1:
         sinfo.unique_nfold = nf = list(sorted(np.unique(sinfo.nfold)))
-    sinfo.is_cyclic = len(nf) < 2 and not sinfo.is_helical and not sinfo.symid == 'D2'
-    sinfo.is_dihedral = len(nf) == 2 and 2 in nf and sinfo.order // nf[1] == 2 or sinfo.symid == 'D2'
+    # sinfo.is_cyclic = len(nf) < 2 and not sinfo.has_translation and not sinfo.symid == 'D2'
+    # sinfo.is_dihedral = len(nf) == 2 and 2 in nf and sinfo.order // nf[1] == 2 or sinfo.symid == 'D2'
     sinfo.nfaxis = {int(nf): sinfo.axis[sinfo.nfold == nf] for nf in sinfo.unique_nfold}
     if sinfo.is_point:
         sinfo.symcen = sinfo.symcen.reshape(4)
@@ -304,21 +423,31 @@ def _syminfo_add_atoms_info(sinfo: SymInfo, atomslist, frames, tol) -> None:
         sinfo.t_number = 1
         sinfo.stub0 = ipd.atom.stub(atomslist[0])
         sinfo.asustub = sinfo.stub0[None]
-        sinfo.allstub = h.xform(frames, sinfo.asustub)
         sinfo.allframes = frames[:, None]
+        sinfo.allstub = h.xform(frames, sinfo.asustub).reshape(sinfo.allframes.shape)
     assert sinfo.allframes.shape == sinfo.allstub.shape
     assert h.allclose(h.xform(sinfo.allframes, sinfo.stub0), sinfo.allstub)
 
-def check_sym_combinations(syminfos):
+def check_sym_combinations(syminfos, incomplete=False):
     if len(syminfos) == 1: return syminfos[0]
-    assert 0, 'sym combinations not yet supported'
     tol = syminfos[0].tolerances.copy().reset()
+
+    symids = [si.symid for si in syminfos]
+    if len(set(symids)) == 1:
+        return syminfos[0]
+    if not incomplete:
+        return syminfos
+
+    ic(symids)
+
     frames, stubs = list(), list()
     for sinfo in syminfos:
         # ipd.print_table(sinfo.symelem)
         frames.append(sinfo.frames)
         stubs.append(h.xform(sinfo.frames, sinfo.stub0))
         ic(sinfo.frames.shape)
+
     frames = np.concatenate(frames)
     frames = np.concatenate(stubs)
-    ipd.showme(stubs, xyzscale=10, weight=10, spheres=4)
+    # ipd.showme(stubs, xyzscale=10, weight=10, spheres=4)
+    assert 0

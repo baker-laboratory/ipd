@@ -1234,7 +1234,7 @@ def hrmsfit(mobile, target):
 
     mobile = mobile + mobile_cen
     target = target + target_cen
-    mobile_fit_to_target = hxform(xform_mobile_to_target, mobile)
+    mobile_fit_to_target = hxformpts(xform_mobile_to_target, mobile)
     rms = hrms(target, mobile_fit_to_target)
 
     return Result_hrmsfit(rms, mobile_fit_to_target, xform_mobile_to_target)
@@ -2069,7 +2069,7 @@ def tensor_in(x, targets, atol=1e-3):
 
 def allclose(a, b, atol=1e-3, **kw):
     if isinstance(a, (np.ndarray, list, int, float)):
-        return ipd.kwcall(np.allclose, kw, a, b, atol=atol)
+        return ipd.kwcall(kw, np.allclose, a, b, atol=atol)
     if isinstance(a, dict) and isinstance(b, dict):
         with ipd.dev.capture_asserts() as result:
             assert a.keys() == b.keys()
@@ -2077,13 +2077,16 @@ def allclose(a, b, atol=1e-3, **kw):
                 assert allclose(a[k], b[k])
         return not result
     if (xr := sys.modules.get('xarray')) and isinstance(a, xr.DataArray):
-        return ipd.kwcall(np.allclose, kw, a, b, atol=atol)
+        return ipd.kwcall(kw, np.allclose, a, b, atol=atol)
     if (xr := sys.modules.get('xarray')) and isinstance(a, xr.Dataset):
         if list(a.keys()) != list(b.keys()): return False
         if list(a.coords) != list(b.coords): return False
         for k in list(a.keys()) + list(a.coords):
-            return ipd.kwcall(np.allclose, kw, a[k], b[k], atol=atol)
+            return ipd.kwcall(kw, np.allclose, a[k], b[k], atol=atol)
     raise TypeError(f'bad types for allclose {type(a)} {type(b)}')
+
+def xinfo(xforms):
+    return ipd.Bunch(zip('axis angle cen, hel'.split(), axis_angle_cen_hel_of(np.asarray(xforms))))
 
 # compatibility with thgeom (torch version of these)
 inv = hinv

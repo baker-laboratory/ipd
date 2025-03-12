@@ -22,37 +22,39 @@ def download_test_pdbs(pdbs, path=None, overwrite=False):
     return pdbs
 
 @functools.lru_cache
-def rcsb_get(path):
+def rcsb_get(path, retries=3):
     url = f'https://data.rcsb.org/rest/v1/core/{path}'
-    response = requests.get(url)
-    if response.status_code != 200: raise ValueError(f'cant fetch rcsb info: {url}')
-    return response.json()
+    for _ in range(retries):
+        response = requests.get(url)
+        if response.status_code == 200: return response.json()
+    raise ValueError(f'cant fetch rcsb info: {url}, tried {retries} times')
 
 @ipd.dev.iterize_on_first_param(basetype=str, splitstr=True, asbunch=True)
-def info(pdb, assembly=None):
+def rcsbinfo(pdb, assembly=None):
     pdb = pdb.upper()
     if assembly == 'all':
-        return [info(pdb, assembly=i) for i in range(1, assembly_count(pdb) + 1)]
+        return [rcsbinfo(pdb, assembly=i) for i in range(1, assembly_count(pdb) + 1)]
     elif assembly is not None:
-        dat = rcsb_get(f'assembly/{pdb}/{assembly}')
+        data = rcsb_get(f'assembly/{pdb}/{assembly}')
     else:
-        dat = rcsb_get(f'entry/{pdb}')
-    return ipd.bunchify(dat)
+        data = rcsb_get(f'entry/{pdb}')
+    return ipd.bunchify(data)
 
 def assembly_count(pdb):
-    return info(pdb).rcsb_entry_info.assembly_count
+    return rcsbinfo(pdb).rcsb_entry_info.assembly_count
 
 def sym_annotation(pdb):
-    infodict = orig = info(pdb, assembly='all')
+    infodict = rcsbinfo(pdb, assembly='all')
     if not isinstance(infodict, dict): infodict = {pdb: infodict}  # single value
     vals = []
     for pdb, infolist in infodict.items():
         for iasm, asm in enumerate(infolist):
-            id, id_candidate = asm.pdbx_struct_assembly.id, asm.pdbx_struct_assembly.rcsb_candidate_assembly
+            id, candasm = asm.pdbx_struct_assembly.id, asm.pdbx_struct_assembly.rcsb_candidate_assembly
             assert id == asm.rcsb_assembly_info.assembly_id
-            for isym, ssym in enumerate(asm.rcsb_struct_symmetry):
-                vals.append((pdb, iasm, id, id_candidate, isym, ssym.symbol, ssym.type, ssym.stoichiometry,
-                             ssym.oligomeric_state))
+            if 'rcsb_struct_symmetry' not in asm: continue
+            for isym, ssym in enumerate(map(ipd.Bunch, asm.rcsb_struct_symmetry)):
+                val = (pdb, iasm, id, candasm, isym, *ssym.fzf('symbol type stoichio olig_st'))
+                vals.append(val)
     names = 'pdb iasm id id2 isym sym type stoi oligo'
     result = ipd.Bunch(zip(names.split(), zip(*vals)))
     return result

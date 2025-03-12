@@ -1,10 +1,10 @@
 import contextlib
 import os
-from typing import TYPE_CHECKING, Any
+import typing
 
-from ipd import dev as dev
+from ipd.typehints import *  #noqa
 from ipd.dev.error import panic as panic
-from ipd.dev.meta import kwcheck as kwcheck, kwcall as kwcall
+from ipd.dev.meta import kwcheck as kwcheck, kwcall as kwcall, kwcurry as kwcurry
 from ipd.dev.format import print_table as print_table, print as print
 from ipd.bunch import Bunch as Bunch, bunchify as bunchify
 from ipd.lazy_import import importornone as importornone, lazyimport as lazyimport
@@ -13,7 +13,9 @@ from ipd.observer import hub as hub
 from ipd.dev.tolerances import Tolerances as Tolerances
 from ipd.dev.iterables import first as first
 
-if TYPE_CHECKING:
+from ipd import dev as dev, typehints as typehints
+
+if typing.TYPE_CHECKING:
     from ipd import atom
     from ipd import crud
     from ipd import cuda
@@ -69,7 +71,7 @@ def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
 
-def __getattr__(name) -> Any:
+def __getattr__(name) -> typing.Any:
     if name == 'symmetrize':
         symgr = sym.get_global_symmetry()
         assert sym is not None

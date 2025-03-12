@@ -23,6 +23,7 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
     anything with shape that starts with L
     """
     kind = 'ipd'
+    SymIndexType: type[ipd.sym.SymIndex] = ipd.sym.SymIndex
 
     def init(self, *a, idx=None, **kw):
         """Create an IpdSymmetryManager."""
@@ -35,7 +36,8 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
         if self.symid == 'I' and self.opt.max_nsub == 4:  # type: ignore
             self.asucen = th.as_tensor(ipd.sym.canonical_asu_center('icos4')[:3], device=self.device)
         else:
-            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center(self.symid)[:3], device=self.device)  # type: ignore
+            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center(self.symid)[:3],
+                                       device=self.device)  # type: ignore
         self.asucenvec = ipd.h.normalized(self.asucen)  # type: ignore
         if 'nsub' in self.opt and self.opt.nsub:
             # assert int(self.metasymm[1][0]) == self.opt.nsub

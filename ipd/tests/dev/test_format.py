@@ -1,3 +1,5 @@
+import pytest
+import numpy as np
 import ipd
 
 def main():
@@ -15,6 +17,15 @@ bunch = ipd.Bunch(
 
 def test_make_table_dict_of_dict():
     ipd.dev.print_table(bunch)
+
+def test_summary_numpy():
+    assert ipd.dev.summary(np.arange(3)) == "[0 1 2]"
+    assert ipd.dev.summary(np.arange(300)) == "ndarray[300]"
+
+def test_summary_atomarray():
+    pytest.importorskip('biotite')
+    atoms = ipd.atom.testdata('1qys')
+    assert ipd.dev.summary(atoms) == "AtomArray(692)"
 
 # def test_print_table_bunch():
 # ipd.dev.print_table_bunch(bunch)

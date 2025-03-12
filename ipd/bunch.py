@@ -3,7 +3,7 @@ import hashlib
 import os
 import shutil
 from pathlib import Path
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Mapping, Iterable
 from ipd.dev.element_wise import element_wise_operations
 from ipd.dev.decorators import subscriptable_for_attributes
 
@@ -15,6 +15,20 @@ import ipd
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
 T = TypeVar('T')
+
+def search(haystack, needle, path='', seenit=None):
+    seenit = seenit or set()
+    found = {}
+    if id(haystack) in seenit: return found
+    seenit.add(id(haystack))
+    items = enumerate(haystack)
+    if isinstance(haystack, Mapping):
+        found |= {f'{path}{k}': v for k, v in haystack.items() if needle in k}
+        items = haystack.items()
+    for k, v in items:
+        if isinstance(v, (Mapping, Iterable)):
+            found |= search(v, needle, f"{path}{k}.", seenit)
+    return found
 
 @subscriptable_for_attributes
 @element_wise_operations
@@ -59,7 +73,9 @@ class Bunch(dict, Generic[T]):
             if hasattr(super(), k):
                 self[f'{k}_'] = super().__getitem__(k)
                 del self[k]
-                print(f'WARNING {k} is a reserved name for dict, renaming to {k}_')
+                # print(f'WARNING {k} is a reserved name for dict, renaming to {k}_')
+
+    search = search
 
     def _autoreload_check(self):
         if not self.__dict__['_special']['autoreload']: return
@@ -343,7 +359,7 @@ class Bunch(dict, Generic[T]):
                 return "Bunch()"
             w = int(min(40, max(len(str(k)) for k in self)))
             for k, v in self.items():
-                s += f'  {k: {f"{w}"}} = {ipd.dev.summary(v)}{os.linesep}\n'
+                s += f'  {k:{f"{w}"}} = {ipd.dev.summary(v)}{os.linesep}\n'
             s += ")"
         return s
 
@@ -361,10 +377,7 @@ class Bunch(dict, Generic[T]):
                     s = str(s)[:67].replace("\n", "") + "..."
             return s
 
-        s = "Bunch("
-        s += ", ".join([f"{k}={v}" for k, v in self.items()])
-
-        s += ")"
+        s = "Bunch(" + ", ".join([f"{k}={v}" for k, v in self.items()]) + ")"
         if len(s) > 120:
             s = f"Bunch({os.linesep}"
             if len(self) == 0:
@@ -378,9 +391,10 @@ class Bunch(dict, Generic[T]):
 
     def __repr__(self):
         self._autoreload_check()
-        args = ["%s=%r" % (k, v) for k, v in self.items()]
-        args = str.join(',\n  ', args)
-        return rf"{self.__class__.__name__}(\n  {args})"
+        # args = ["%s=%r" % (k, v) for k, v in self.items()]
+        # args = str.join(',\n  ', args)
+        # return rf"{self.__class__.__name__}(\n  {args})"
+        return str(self)
 
     def asdict(self):
         return unbunchify(self)

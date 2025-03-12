@@ -324,5 +324,38 @@ def test_bunch_zip_order():
     assert isinstance(zipped, Bunch)
     assert tuple(zipped.keys()) == ('c', 'b', 'a')
 
+def test_search_basic_match():
+    data = Bunch({'name': 'Alice', 'age': 30, 'location': 'New York'})
+    result = data.search('name')
+    assert result == {'name': 'Alice'}
+
+def test_search_nested_match():
+    data = {'person': {'name': 'Bob', 'details': {'age': 25, 'location_name': 'Los Angeles'}}}
+    result = ipd.bunch.search(data, 'name')
+    ic(result)
+    assert result == {'person.name': 'Bob', 'person.details.location_name': 'Los Angeles'}
+
+def test_search_nested_match_recursive():
+    data = {'person': {'name': 'Bob', 'details': {'age': 25, 'location_name': 'Los Angeles'}}}
+    data['self'] = data
+    result = ipd.bunch.search(data, 'name')
+    ic(result)
+    assert result == {'person.name': 'Bob', 'person.details.location_name': 'Los Angeles'}
+
+def test_search_no_match():
+    data = Bunch({'name': 'Charlie', 'age': 40})
+    result = ipd.bunch.search(data, 'location')
+    assert result == {}
+
+def test_search_partial_key_match():
+    data = {'username': 'admin', 'user_id': 1234, 'details': {'profile_name': 'Admin'}}
+    result = ipd.bunch.search(data, 'name')
+    assert result == {'username': 'admin', 'details.profile_name': 'Admin'}
+
+def test_search_empty_dict():
+    data = Bunch()
+    result = ipd.bunch.search(data, 'key')
+    assert result == {}
+
 if __name__ == "__main__":
     main()

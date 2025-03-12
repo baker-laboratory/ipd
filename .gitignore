@@ -179,3 +179,4 @@ junit*.xml
 
 uv.lock
 
+/*.sh

@@ -1,5 +1,6 @@
 import builtins
 import functools
+import traceback
 
 _WARNINGS_ISSUED = set()
 
@@ -22,16 +23,14 @@ def change_exception(**kw: dict[str, Exception]):
 
     return deco
 
-def WARNME(message, once=True, tag=None):
+def WARNME(message, once=True, tag=None, verbose=True):
     tag = tag or message
     if once and tag not in _WARNINGS_ISSUED:
-        import traceback
-
-        print("-" * 80, flush=True)
+        if verbose: print("-" * 80, flush=True)
         print(message, flush=True)
-        traceback.print_stack()
+        if verbose: traceback.print_stack()
         _WARNINGS_ISSUED.add(message)
-        print("-" * 80)
+        if verbose: print("-" * 80, flush=True)
         return True
     return False
 

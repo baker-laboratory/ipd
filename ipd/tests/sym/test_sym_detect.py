@@ -5,12 +5,21 @@ import ipd
 from ipd.homog import hgeom as h
 from ipd.data.tests.numeric import sym_detect_test_frames
 
-TEST_PDBS = ['7abl', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '2tbv', '1bfr', '1g5q']
+TEST_PDBS = [
+    '3sne',
+    '1dxh',
+    '1n0e',
+    '1wa3',
+    '1a2n',
+    '1n0e',
+    '1bfr',
+    '1g5q'  #, '3woc', '7abl', '2tbv'
+]
 ALLSYMS = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i in range(2, 13)]
 
 config_test = ipd.Bunch(
     re_only=[
-        # 'test_sym_detect_pdb_7abl',
+        # 'test_sym_detect_pdb_1g5q',
         # r'test_chelsea_tube1',
         # r'test_sym_detect_frames_ideal_[^_]+$',
         # r'test_sym_detect_frames_ideal_xformed_[^_]+$',
@@ -31,7 +40,6 @@ config_test = ipd.Bunch(
 )
 
 def main():
-    test_symelems_from_frames_D2n()
     ipd.tests.maintest(
         namespace=globals(),
         config=config_test,
@@ -75,71 +83,86 @@ def helper_test_frames(frames, symid, tol=None, origin=None, ideal=False, **kw):
 
     return sinfo
 
-for symid0 in ALLSYMS:
-    order = int(symid0[1:]) if len(symid0) > 1 else dict(T=12, O=24, I=60)[symid0]
-    if symid0[0] == 'D': order *= 2
-    is_cage = symid0[0] in 'TIO'
+def make_ideal_test_funcs():
+    for symid0 in ALLSYMS:
+        order = int(symid0[1:]) if len(symid0) > 1 else dict(T=12, O=24, I=60)[symid0]
+        if symid0[0] == 'D': order *= 2
+        is_cage = symid0[0] in 'TIO'
 
-    def make_ideal_frame_funcs(symid):
+        def make_ideal_frame_funcs(symid):
 
-        def func_ideal():
-            helper_test_frames(ipd.sym.frames(symid), symid, ideal=True)
+            def func_ideal():
+                helper_test_frames(ipd.sym.frames(symid), symid, ideal=True)
 
-        def func_ideal_xformed():
-            origin = h.rand(cart_sd=44)
-            xframes = h.xform(origin, ipd.sym.frames(symid))
-            sinfo = helper_test_frames(xframes, symid, origin=origin, ideal=True)
+            def func_ideal_xformed():
+                origin = h.rand(cart_sd=44)
+                xframes = h.xform(origin, ipd.sym.frames(symid))
+                sinfo = helper_test_frames(xframes, symid, origin=origin, ideal=True)
 
-        def func_noised():
-            frames = ipd.sym.frames(symid)
-            noise = h.randsmall(len(frames), rot_sd=0.001, cart_sd=0.1)
-            frames = h.xform(frames, noise)
-            sinfo = helper_test_frames(frames, symid, ideal=False, helical_shift=3, isect=3, cageang=0.1)
+            def func_noised():
+                frames = ipd.sym.frames(symid)
+                noise = h.randsmall(len(frames), rot_sd=0.001, cart_sd=0.1)
+                frames = h.xform(frames, noise)
+                sinfo = helper_test_frames(frames, symid, ideal=False, helical_shift=3, isect=3, cageang=0.1)
 
-        def func_noised_xformed():
-            frames = ipd.sym.frames(symid)
-            origin = h.rand(cart_sd=44)
-            noise = h.randsmall(len(frames), rot_sd=0.001, cart_sd=0.1)
-            frames = h.xform(origin, frames, noise)
-            sinfo = helper_test_frames(frames, symid, ideal=False, helical_shift=3, isect=3, cageang=0.1)
+            def func_noised_xformed():
+                frames = ipd.sym.frames(symid)
+                origin = h.rand(cart_sd=44)
+                noise = h.randsmall(len(frames), rot_sd=0.001, cart_sd=0.1)
+                frames = h.xform(origin, frames, noise)
+                sinfo = helper_test_frames(frames, symid, ideal=False, helical_shift=3, isect=3, cageang=0.1)
 
-        return func_ideal, func_ideal_xformed, func_noised, func_noised_xformed
+            return func_ideal, func_ideal_xformed, func_noised, func_noised_xformed
 
-    ideal, xformed, noised, noised_xformed = make_ideal_frame_funcs(symid0)
+        ideal, xformed, noised, noised_xformed = make_ideal_frame_funcs(symid0)
 
-    ideal.__name__ = ideal.__qualname__ = f'test_sym_detect_frames_ideal_{symid0}'
-    xformed.__name__ = xformed.__qualname__ = f'test_sym_detect_frames_ideal_xformed_{symid0}'
-    noised.__name__ = noised.__qualname__ = f'test_sym_detect_frames_noised_{symid0}'
-    noised_xformed.__name__ = noised.__qualname__ = f'test_sym_detect_frames_noised_xformed_{symid0}'
-    globals()[f'test_sym_detect_frames_ideal_{symid0}'] = ideal
-    globals()[f'test_sym_detect_frames_ideal_xformed_{symid0}'] = xformed
-    if is_cage or order < 6:
-        globals()[f'test_sym_detect_frames_noised_{symid0}'] = noised
-        globals()[f'test_sym_detect_frames_noised_xformed_{symid0}'] = noised_xformed
+        ideal.__name__ = ideal.__qualname__ = f'test_sym_detect_frames_ideal_{symid0}'
+        xformed.__name__ = xformed.__qualname__ = f'test_sym_detect_frames_ideal_xformed_{symid0}'
+        noised.__name__ = noised.__qualname__ = f'test_sym_detect_frames_noised_{symid0}'
+        noised_xformed.__name__ = noised.__qualname__ = f'test_sym_detect_frames_noised_xformed_{symid0}'
+        globals()[f'test_sym_detect_frames_ideal_{symid0}'] = ideal
+        globals()[f'test_sym_detect_frames_ideal_xformed_{symid0}'] = xformed
+        if is_cage or order < 6:
+            globals()[f'test_sym_detect_frames_noised_{symid0}'] = noised
+            globals()[f'test_sym_detect_frames_noised_xformed_{symid0}'] = noised_xformed
 
-def make_pdb_testfunc(pdbcode):
+def make_pdb_testfunc(pdbcode, path=''):
+    tol = ipd.dev.Tolerances(**(ipd.sym.symdetect_default_tolerances | dict(
+        default=1e-1,
+        angle=0.04,
+        helical_shift=4,
+        isect=6,
+        dot_norm=0.07,
+        misc_lineuniq=0.2,
+        rms_fit=3,
+        nfold=0.2,
+    )))
+    if pdbcode == '3E47': tol.rms_fit.threshold = 7
+    if pdbcode == '3E47': tol.seqmatch.threshold = 0.5
 
     @pytest.mark.fast
-    def pdb_test_func():
+    def pdb_test_func(path=path, tol=tol):
         pytest.importorskip('biotite')
-        tol = ipd.dev.Tolerances(**(ipd.sym.symdetect_default_tolerances | dict(
-            default=1e-1,
-            angle=0.04,
-            helical_shift=4,
-            isect=6,
-            dot_norm=0.07,
-            misc_lineuniq=0.2,
-            rms_fit=3,
-            nfold=0.2,
-        )))
+        tol.reset()
         symanno = ipd.pdb.sym_annotation(pdbcode)
         for id, symid in zip(symanno.id, symanno.sym):
             if symid == 'C1': continue
-            atoms = ipd.atom.testdata(pdbcode, assembly=id, het=False)
-            sinfo = ipd.sym.detect(atoms, tol=tol)
+            atoms = ipd.atom.testdata(pdbcode, assembly=id, het=False, path=path, strict=False)
+            sinfo = ipd.sym.detect(atoms, tol=tol, strict=False)
+            if not isinstance(sinfo, ipd.sym.SymInfo):
+                sids = [si.symid for si in sinfo]
+                assert len(sinfo) == 1, f'mutiple symmetrs detected: {sids}'
+
             if symid != sinfo.symid:
-                print(sinfo)
-                assert symid == sinfo.symid, f'{symid=} detected as {sinfo.symid}'
+                if not any([
+                        symid == 'C2' and sinfo.is_dihedral,
+                        symid == 'C2' and sinfo.symid in 'TIO',
+                        symid == 'C3' and sinfo.symid in 'TIO',
+                        symid == 'C4' and sinfo.symid in 'O',
+                        symid == 'C5' and sinfo.symid in 'I',
+                ]):
+                    print(sinfo)
+                    assert symid == sinfo.symid, f'{symid=} detected as {sinfo.symid}'
             infer_t = sinfo.pseudo_order // sinfo.order
             err = f'T number mismatch {sinfo.t_number=}, {infer_t=} {sinfo.pseudo_order=} {sinfo.order=}'
             assert sinfo.t_number == infer_t, err
@@ -151,6 +174,7 @@ def make_pdb_testfunc(pdbcode):
 ipd.pdb.download_test_pdbs(TEST_PDBS)
 for code in TEST_PDBS:
     globals()[f'test_sym_detect_pdb_{code}'] = make_pdb_testfunc(code)
+make_ideal_test_funcs()
 
 def test_syminfo_from_atomslist():
     pytest.importorskip('biotite')

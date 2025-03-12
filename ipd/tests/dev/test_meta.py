@@ -50,10 +50,10 @@ def test_kwcheck():
     with pytest.raises(TypeError):
         bar(**kw)
 
-    assert foo(**ipd.kwcheck(kw, foo)) == ipd.kwcall(foo, kw)
-    assert bar(**ipd.kwcheck(kw, bar)) == ipd.kwcall(bar, kw)
+    assert foo(**ipd.kwcheck(kw, foo)) == ipd.kwcall(kw, foo)
+    assert bar(**ipd.kwcheck(kw, bar)) == ipd.kwcall(kw, bar)
 
-    assert ipd.kwcall(bar, kw, banana='bananums') == ('bananums', 'cherry')
+    assert ipd.kwcall(kw, bar, banana='bananums') == ('bananums', 'cherry')
 
 def target_func(a, b, c=3):
     pass

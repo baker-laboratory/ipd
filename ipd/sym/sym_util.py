@@ -12,7 +12,7 @@ def get_sym_frames(symid, opt, cenvec):
     elif symid.lower().startswith('cyclic_vee_'): allframes = cyclic_vee_frames(symid, opt)
     else: allframes = ipd.sym.frames(symid, **opt)
     allframes = th.as_tensor(allframes, dtype=th.float32)
-    ic(allframes.shape)
+    # ic(allframes.shape)
     frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
     return allframes, frames
 

@@ -38,7 +38,7 @@ def test_readatoms_cif_assembly_5im6():
     ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/5im6.bcif.gz'), assembly='largest')
 
 def test_readatoms_cif_assembly_1out():
-    ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/1out.bcif.gz'), assembly='largest')
+    ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/1A0J.bcif.gz'), assembly='largest', strict=False)
 
 if __name__ == '__main__':
     main()

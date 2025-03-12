@@ -97,6 +97,10 @@ class Body:
         except AttributeError:
             raise AttributeError(f'Body (nor AtomArray) has no attribute: {name}')
 
+    def summary(self):
+        nhet = np.sum(self.atoms.hetero)
+        return f'Body(atom: {len(self.atoms)} res: {len(self._resbvh)} net: {nhet})'
+
     def __repr__(self):
         fields = {key: getattr(self, key) for key in self.__slots__ if key[0] != '_'}
         fields['atoms'] = self.atoms.shape

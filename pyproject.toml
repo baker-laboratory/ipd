@@ -34,6 +34,7 @@ dependencies = [
     'tqdm',
     'typer',
     # "torch>=2.6.0",
+    "toolz>=1.0.0",
 ]
 [project.optional-dependencies]
 crud = [
@@ -120,28 +121,28 @@ arithmetic_precedence_indication = true
 [tool.pyright]
 include = ['ipd']
 exclude = [
-    'ipd/crud/*',
-    'ipd/fit/*',
-    'ipd/homog/*',
-    'ipd/pdb/*',
-    'ipd/voxel/*',
-    'ipd/samp/*',
-    'ipd/sym/old/*',
-    'ipd/sym/xtal/*',
-    'ipd/tests/*',
-    'ipd/viz/*',
-    '*_viz.py',
+    # 'ipd/crud/*',
+    # 'ipd/fit/*',
+    # 'ipd/homog/*',
+    # 'ipd/pdb/*',
+    # 'ipd/voxel/*',
+    # 'ipd/samp/*',
+    # 'ipd/sym/old/*',
+    # 'ipd/sym/xtal/*',
+    # 'ipd/tests/*',
+    # 'ipd/viz/*',
+    # '*_viz.py',
     '**/*.log',
     '**/__pycache__',
 ]
-threads = 4
+threads = 6
 defineConstant = { DEBUG = true }
 typeCheckingMode = 'standard'
 reportMissingImports = true
 reportMissingTypeStubs = false
 pythonPlatform = 'Linux'
-requires-python = '>=3.11'
-pythonVersion = '3.12'
+# requires-python = '>=3.11'
+# pythonVersion = '3.12'
 
 [tool.ruff]
 lint.ignore = [
