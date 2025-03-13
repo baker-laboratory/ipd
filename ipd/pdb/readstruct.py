@@ -56,12 +56,12 @@ def biotite_cif_file(fname, file=None) -> 'Cif':
     reader = bpdbx.BinaryCIFFile if isbin else bpdbx.CIFFile
     return reader.read(file or fname)
 
-def cifread(fname, file=None, postproc=True, **kw) -> 'tuple[Cif, Atoms]':
-    # pdb = bpdb.PDBFile()
-    # pdb.set_structure(cif)
+def cifread(fname, file=None, model=0, postproc=True, **kw) -> 'tuple[Cif, Atoms]':
     cif = biotite_cif_file(fname, file)
     atoms = bpdbx.get_structure(cif)
-    # atoms._spacegroup = pdb.get_space_group()
+    if isinstance(atoms, bs.AtomArrayStack): atoms = atoms[model]
+    pdbcode = os.path.basename(fname).split('.')[0]
+    ipd.dev.set_metadata([cif, atoms], pdbcode=pdbcode, fname=fname)
     if postproc: atoms = ipd.atom.select(atoms, **kw)
     return cif, atoms
 
@@ -101,12 +101,11 @@ def _readatoms_cif_assembly(
     atoms = ipd.kwcall(kw, ipd.atom.split, atoms, order=len(xforms))
     return atoms
 
-def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **kw):
+def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=False, **kw):
     if assembly in asminfo.assemblies.id:
         iasm = asminfo.assemblies.id.index(assembly)
     else:  # seems sometimes assembly ids don't match annotation... try as numerical index
         iasm = int(assembly) - 1
-    pdb = str(cif.block['entry']['id'].as_array(str))[0]
     asmid, opers, asymids, order = asminfo.assemblies.valwise[iasm]
     xforms = np.array([h.product(*[asminfo.xforms[op] for op in opstep]) for opstep in opers])
     asu = ipd.atom.select(asu, chains=np.unique(atoms.chain_id))
@@ -134,7 +133,9 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **kw
                 close = np.allclose(orig, new, atol=1e-3)
                 if strict: assert close
                 elif not close:
-                    ipd.dev.WARNME(f'{pdb} assembly {assembly} {ix} {c} failed validation', verbose=False)
+                    pdbcode = ipd.dev.get_metadata(cif).get('pdbcode')
+                    ipd.dev.WARNME(f'{pdbcode} biounit {assembly} {ix} {c} failed coordinate symmetry check',
+                                   verbose=False)
     # assert np.allclose(asu.coord, atoms.coord[:len(asu)], atol=1e-3)
     # ic(ipd.bunch.zip(asymchainstart, asymchainlen, chainstart, chainlen, order='val'))
     return xforms

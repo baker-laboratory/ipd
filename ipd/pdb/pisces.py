@@ -1,9 +1,8 @@
 import os
 
-import deferred_import  # type: ignore
-
-pd = deferred_import.deferred_import("pandas")
 import ipd
+
+pd = ipd.lazyimport("pandas")
 
 def get_pisces_set(maxresl, max_seq_ident, **kw):
     f = get_pisces_file(max_seq_ident=max_seq_ident, maxresl=maxresl, **kw)

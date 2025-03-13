@@ -188,13 +188,13 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw)
     Examples:
         >>> from biotite.structure import AtomArray
         >>> from ipd.sym.sym_detect import syminfo_from_atomslist
-        >>> atoms = [AtomArray()] * 2
+        >>> atoms = ipd.atom.get('1a2n', chainlist=True)
         >>> sym_info = syminfo_from_atomslist(atoms)
     """
     assert not ipd.atom.is_atoms(atomslist)
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
-    components = ipd.atom.find_frames_by_seqaln_rmsfit(atomslist, maxsub=60, **kw)
+    components = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, maxsub=60, **kw)
     # ic(len(components.atoms))
     # ipd.showme(components.atoms[0])
     # ipd.showme(components.atoms[1])
@@ -299,10 +299,10 @@ def symelems_from_frames(frames, **kw):
     Examples:
         >>> import numpy as np
         >>> from ipd.sym.sym_detect import symelems_from_frames
-        >>> frames = np.eye(4)[None]
+        >>> frames = ipd.sym.frames('c2')
         >>> elements = symelems_from_frames(frames)
-        >>> elements.nfold
-        array([1])
+        >>> elements
+        Bunch(nfold=[2], axis=[[0. 0. 1. 0.]], ang=[3.14159265], cen=[[0. 0. 0. 1.]], hel=[0.])
     """
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
@@ -410,7 +410,7 @@ def _syminfo_post_init(sinfo: SymInfo) -> None:
 
 def _syminfo_add_atoms_info(sinfo: SymInfo, atomslist, frames, tol) -> None:
     if sinfo.is_multichain:
-        assert 0, 'sould now be handled my find_frames_by_seqaln_rmsfit'
+        assert 0, 'sould now be handled my find_components_by_seqaln_rmsfit'
         asu = ipd.atom.split(atomslist[0])
         sinfo.asuframes, sinfo.asurms, sinfo.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
         sinfo.t_number = np.sum(sinfo.asumatch > tol.seqmatch)

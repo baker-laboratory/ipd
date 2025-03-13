@@ -1,5 +1,8 @@
 import pytest
+import numpy as np
 import ipd
+
+h = ipd.hnumpy
 
 bs = pytest.importorskip('biotite.structure')
 
@@ -29,7 +32,24 @@ def main():
     )
 
 # def test_assembly_simple():
-# asm = ipd.atom.assembly('1qys')
+# assembly = ipd.atom.assembly('1qys')
+
+def helper_test_asu_selector(assembly):
+    for i, j in assembly.symbodyids():
+        asusel = ipd.atom.AsuSelector(bodyid=i, frameid=j)
+        asu = asusel(assembly)
+        assert asu._resbvh is assembly.bodies[i]._resbvh
+        assert h.allclose(asu.pos, assembly.frames[i][j])
+
+def helper_test_neighborhood_selector(assembly):
+    for ibod, ifrm in assembly.symbodyids():
+        asusel = ipd.atom.AsuSelector(bodyid=ibod, frameid=ifrm)
+        hoodsel = ipd.atom.NeighborhoodSelector(min_contacts=10, contact_dist=7)
+        hood = hoodsel(asusel, assembly)
+        assert hood.bodies[0].atoms is assembly.bodies[ibod].atoms
+        assert h.allclose(hood.bodies[0].pos, assembly.frames[ibod][ifrm])
+        assert h.allclose(hood.frames[0][0], np.eye(4))
+        assert h.allclose(assembly.body(ibod, ifrm))
 
 def make_assembly_pdb_tests():
     for pdb in TEST_PDBS:
@@ -37,19 +57,13 @@ def make_assembly_pdb_tests():
         class TestAssembly():
 
             def __init__(self):
-                self.asm = ipd.atom.assembly(pdb, min_chain_atoms=50)
-                self.asm = ipd.atom.assembly(pdb, min_chain_atoms=0)
+                self.assembly = ipd.atom.create_assembly(pdb, min_chain_atoms=50)
 
-            def test_construction(self):
-                print(self.asm)
+            def test_asu_selector(self):
+                helper_test_asu_selector(self.assembly)
 
-                assert 0
-
-            def test_random_chain(self):
-                assert 0
-
-            def test_neighborhood(self):
-                assert 0
+            def test_neighborhood_selector(self):
+                helper_test_neighborhood_selector(self.assembly)
 
         globals()[f'TestAssembly_{pdb.upper()}_'] = TestAssembly
 

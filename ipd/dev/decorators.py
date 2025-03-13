@@ -7,11 +7,9 @@ import numpy as np
 
 import ipd
 
-FieldSpec = 'str | list[str] | tuple[str] | Calllable[[*Any], str]'
-EnumerIter = 'Iterator[int, *Any]'
-EnumerListIter = 'Iterator[int, *list[Any]]'
+T, P, R, F, C = ipd.basic_typevars('TPRFC')
 
-def generic_get_keys(obj, exclude: FieldSpec = ()):
+def generic_get_keys(obj, exclude: ipd.FieldSpec = ()):
     if hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
         return [k for k in obj.keys() if valid_element_name(k, exclude)]
     elif hasattr(obj, 'items'):
@@ -44,7 +42,7 @@ def valid_element_name_thorough(name, exclude=()):
 
 _reserved_element_names = set('mapwise npwise valwise dictwise'.split())
 
-def get_fields(obj, fields: FieldSpec, exclude: FieldSpec = ()) -> 'tuple[Iterable, bool]':
+def get_fields(obj, fields: ipd.FieldSpec, exclude: ipd.FieldSpec = ()) -> 'tuple[Iterable, bool]':
     """return list of string fields and bool isplural"""
     if callable(fields): fields = fields(obj)
     if fields is None: return generic_get_keys(obj, exclude=exclude), True
@@ -52,7 +50,7 @@ def get_fields(obj, fields: FieldSpec, exclude: FieldSpec = ()) -> 'tuple[Iterab
     if isinstance(fields, str): return [fields], False
     return fields, True
 
-def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: bool = False):
+def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: bool = False) -> bool:
     """Checks if an object can be treated as an iterable.
 
     This function determines if `arg` can be iterated over. It considers edge cases such as:
@@ -78,7 +76,8 @@ def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: b
         is_iterizeable({'a': 1}, allowmap=True)  # True
     """
     if isinstance(basetype, str):
-        if arg.__class__.__name__ == basetype: basetype = type(arg)
+        if basetype == 'notlist': return isinstance(arg, list)
+        elif arg.__class__.__name__ == basetype: basetype = type(arg)
         elif arg.__class__.__qualname__ == basetype: basetype = type(arg)
         else: basetype = None
     if isinstance(arg, str) and ' ' in arg: return True
@@ -88,7 +87,7 @@ def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: b
     return False
 
 def iterize_on_first_param(
-    func0=None,
+    func0: F = None,
     *,
     basetype=str,
     splitstr=True,
@@ -96,7 +95,7 @@ def iterize_on_first_param(
     asbunch=False,
     asnumpy=False,
     allowmap=False,
-) -> Callable:
+) -> F:
     """
     Decorator that vectorizes a function over its first parameter.
 
@@ -198,7 +197,7 @@ def iterize_on_first_param(
     def deco(func) -> Callable:
 
         @functools.wraps(func)
-        def wrapper(arg0, *args, **kw):
+        def wrapper(arg0: F, *args, **kw):
             if is_iterizeable(arg0, basetype=basetype, splitstr=splitstr, allowmap=allowmap):
                 if splitstr and isinstance(arg0, str) and ' ' in arg0:
                     arg0 = arg0.split()
@@ -269,7 +268,7 @@ def make_getitem_for_attributes(get=getattr, provide='value') -> 'Any':
     if provide not in ('value', 'item'):
         raise ValueError(f"provide must be 'value' or 'item', not {provide}")
 
-    def getitem_for_attributes(self, field: FieldSpec, get=get) -> 'Any':
+    def getitem_for_attributes(self, field: ipd.FieldSpec, get=get) -> 'Any':
         """Enhanced `__getitem__` method to support attribute access with multiple keys.
 
     If the field is a string containing spaces, it will be split into a list of keys.
@@ -297,7 +296,7 @@ def make_getitem_for_attributes(get=getattr, provide='value') -> 'Any':
 
     return getitem_for_attributes
 
-def generic_enumerate(self, fields: FieldSpec, order=lambda x: x) -> EnumerIter:
+def generic_enumerate(self, fields: ipd.FieldSpec, order=lambda x: x) -> ipd.EnumerIter:
     """Enhanced `enumerate` method to iterate over multiple attributes at once.
 
     This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the fields is a string containing spaces, it will be split into a list of keys. If the fields is a list of strings, it will return the corresponding attributes as a tuple.
@@ -318,7 +317,12 @@ def generic_enumerate(self, fields: FieldSpec, order=lambda x: x) -> EnumerIter:
     for i, vals in zip(order(idx), order(fields)):
         yield i, *vals
 
-def generic_groupby(self, groupby: FieldSpec, fields: FieldSpec = None, convert=None) -> EnumerListIter:
+def generic_groupby(
+    self,
+    groupby: ipd.FieldSpec,
+    fields: ipd.FieldSpec = None,
+    convert=None,
+) -> ipd.EnumerListIter:
     exclude = None
     splat = isinstance(fields, str)
     if callable(groupby):
@@ -380,7 +384,7 @@ def getattr_fzf(obj, field):
     if len(candidates) == 1: return getattr(obj, candidates[0])
     raise AttributeError(f'multiple attributes found for {field}: {candidates}')
 
-def subscriptable_for_attributes(cls: type):
+def subscriptable_for_attributes(cls: C) -> C:
     """Class decorator to enable subscriptable attribute access and enumeration.
 
     This decorator adds support for `__getitem__` and `enumerate` methods to a class

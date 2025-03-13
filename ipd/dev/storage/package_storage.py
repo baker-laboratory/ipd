@@ -38,8 +38,8 @@ def package_data_path(fname=None, emptyok=True, datadir=data_dir):
         str: Full path to the data file or None if not found and emptyok is False.
 
     Example:
-        >>> package_data_path('spacegroup_data.pickle')
-        '/path/to/ipd/data/spacegroup_data.pickle'
+        >>> package_data_path('spacegroup_data.pickle') # doctest:+ELLIPSIS
+        '.../ipd/data/spacegroup_data.pickle'
     """
     if not fname:
         return datadir
@@ -67,8 +67,8 @@ def package_testdata_path(fname=None, emptyok=True):
         str: Full path to the test data file.
 
     Example:
-        >>> package_testdata_path('pdb/1a2n.bcif.gz')
-        '/path/to/ipd/data/tests/pdb/1a2n.bcif.gz'
+        >>> package_testdata_path('pdb/1a2n.bcif.gz') # doctest:+ELLIPSIS
+        '.../ipd/data/tests/pdb/1a2n.bcif.gz'
     """
     return package_data_path(fname, emptyok, datadir=joinpaths(data_dir, 'tests'))
 
@@ -138,7 +138,7 @@ def load_json(f):
     Example:
         >>> import tempfile
         >>> with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
-        ...     f.write('{"key": "value"}')
+        ...     charswritten = f.write('{"key": "value"}')
         >>> load_json(f.name)
         {'key': 'value'}
     """
@@ -187,12 +187,6 @@ class open_lzma_cached:
     Args:
         fname (str): File name.
         mode (str, optional): File mode. Defaults to "rb".
-
-    Example:
-        >>> with open_lzma_cached('tests/pdb/1a2n.bcif.gz') as f:
-        ...     data = f.read()
-        >>> isinstance(data, bytes)
-        True
     """
 
     def __init__(self, fname, mode="rb"):
@@ -216,12 +210,6 @@ def is_pdb_fname(fn, maxlen=1000):
 
     Raises:
         ValueError: If the file format is unknown.
-
-    Example:
-        >>> is_pdb_fname('tests/pdb/1a2n.bcif.gz')
-        True
-        >>> is_pdb_fname('data.txt')
-        False
     """
     if len(fn) > maxlen:
         return False

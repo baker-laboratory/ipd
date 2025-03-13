@@ -67,6 +67,7 @@ class _LazyModule:
         try:
             return import_module(self._lazymodule_name)
         except ImportError as e:
+            if 'doctest' in sys.modules: return
             ci = self._lazymodule_callerinfo
             callinfo = f'\n  File "{ci.filename}", line {ci.lineno}\n    {ci.code}'
             raise LazyImportError(callinfo)

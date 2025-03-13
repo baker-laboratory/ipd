@@ -11,9 +11,10 @@ def main():
     ipd.tests.maintest(namespace=globals(), config=testconfig)
 
 def test_broken_package():
-    borked = lazyimport('ipd.data.tests.broken_py_file')
-    with pytest.raises(ipd.LazyImportError) as e:
-        borked.foo
+    if 'doctest' not in sys.modules:
+        borked = lazyimport('ipd.data.tests.broken_py_file')
+        with pytest.raises(ipd.LazyImportError) as e:
+            borked.foo
 
 def test_importornone():
     re = ipd.importornone('re')

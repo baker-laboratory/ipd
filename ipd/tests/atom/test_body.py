@@ -1,7 +1,7 @@
 import pytest
 
-pytest.importorskip('biotite')
-pytest.importorskip('willutil_cpp')
+bs = pytest.importorskip('biotite.structure')
+wu = pytest.importorskip('willutil_cpp')
 
 import ipd
 import ipd.homog.hgeom as h
@@ -20,10 +20,17 @@ def main():
         # dryrun=True,
     )
 
-atoms = ipd.atom.testdata('1qys')
+atoms = ipd.atom.get('1qys')
 
 def test_body_simple():
     body = ipd.atom.Body(atoms)
+
+def _celllist_nclash(body, other, radius=3) -> bool:
+    cell_list = bs.CellList(body.atoms, radius + 1)
+    nclash = 0
+    for pos in other[:]:
+        nclash += len(cell_list.get_atoms(pos, radius=radius))
+    return nclash
 
 def test_body_chash_v_celllist():
     body = ipd.atom.Body(atoms)
@@ -31,9 +38,9 @@ def test_body_chash_v_celllist():
     results = ipd.Bunch(cell=[], bvh=[])
     with ipd.dev.Timer() as t:
         for i in range(20):
-            body2 = body.xformed(h.trans(i))
+            body2 = body.movedby(h.trans(i))
             t.checkpoint('setup')
-            ncell = body._celllist_nclash(body2, radius)
+            ncell = _celllist_nclash(body, body2, radius)
             t.checkpoint('cell')
             nbvh = body.nclash(body2, radius)
             t.checkpoint('bvh')
@@ -47,7 +54,7 @@ def test_body_chash_v_celllist():
 
 def test_body_contacts():
     body = ipd.atom.Body(atoms)
-    body2 = body.xformed(h.trans(25))
+    body2 = body.movedby(h.trans(25))
     contacts, ranges = body.contacts(body2, radius=4)
     assert len(ranges) == 1
     for i, j in contacts:

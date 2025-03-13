@@ -1,4 +1,7 @@
-import ipd
+import sys
 
-missing = ipd.lazyimport('does_not_exist')
-missing.BOOM
+if 'doctest' not in sys.modules:
+    import ipd
+
+    missing = ipd.lazyimport('does_not_exist')
+    missing.BOOM

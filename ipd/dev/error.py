@@ -27,7 +27,7 @@ def WARNME(message, once=True, tag=None, verbose=True):
     tag = tag or message
     if once and tag not in _WARNINGS_ISSUED:
         if verbose: print("-" * 80, flush=True)
-        print(message, flush=True)
+        print(f'WARNING {message}', flush=True)
         if verbose: traceback.print_stack()
         _WARNINGS_ISSUED.add(message)
         if verbose: print("-" * 80, flush=True)

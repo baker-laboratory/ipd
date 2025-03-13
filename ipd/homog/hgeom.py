@@ -301,11 +301,11 @@ def hxformpts(x, stuff, **kw):
         >>> print(transformed)
         [[1. 2. 3. 1.]]
     """
-    stuff = hpoint(stuff)
+    stuff, hdim = hpoint(stuff), stuff.shape[-1]
     assert np.allclose(stuff[..., 3], 1)
     result = hxform(x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 1)
-    return result
+    return result[..., :hdim]
 
 def hxformvec(x, stuff, **kw):
     """
@@ -324,13 +324,13 @@ def hxformvec(x, stuff, **kw):
         >>> vec = np.array([1, 0, 0])
         >>> transformed = hxformvec(x, vec)
         >>> print(transformed)
-        [ 0.  0. -1.  0.]
+        [ 0.  0. -1.]
     """
-    stuff = hvec(stuff)
+    stuff, hdim = hvec(stuff), stuff.shape[-1]
     assert np.allclose(stuff[..., 3], 0)
     result = hxform(x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 0)
-    return result
+    return result[..., :hdim]
 
 def invxform(x, stuff, **kw):
     """
@@ -394,7 +394,7 @@ def invxformvec(x, stuff, **kw):
         >>> vec = np.array([1, 0, 0])
         >>> transformed = invxformvec(x, vec)
         >>> print(transformed)
-        [0. 1. 0. 0.]
+        [0. 1. 0.]
     """
     return hxformvec(hinv(x), stuff, **kw)
 

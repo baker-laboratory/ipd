@@ -3,13 +3,13 @@ Module for frame searching and alignment of atomic structures.
 
 This module provides tools to calculate frames from atomic coordinates and
 perform sequence alignment and RMS fitting on atomic structures. It includes
-a `FrameSearchResult` class to store and manipulate search results.
+a `Components` class to store and manipulate search results.
 
 Examples:
-    >>> atoms = ipd.atom.testdata('1dxh', assembly='largest', het=False, chainlist=True)
-    >>> frameset = ipd.atom.find_frames_by_seqaln_rmsfit(atoms)
+    >>> atoms = ipd.atom.get('1dxh', assembly='largest', het=False, chainlist=True)
+    >>> frameset = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
     >>> print(frameset)
-    FrameSearchResult:
+    Components:
       atoms: [2669]
       frames: [(12, 4, 4)]
       seqmatch: [array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])]
@@ -31,7 +31,7 @@ import ipd
 
 bs = ipd.lazyimport('biotite.structure')
 
-def find_frames_by_seqaln_rmsfit(
+def find_components_by_seqaln_rmsfit(
     atomslist,
     tol=0.7,
     finalresult=None,
@@ -51,7 +51,7 @@ def find_frames_by_seqaln_rmsfit(
             List of atomic structures to align.
         tol (float, optional):
             Tolerance for RMSD and sequence match. Defaults to 0.7.
-        finalresult (FrameSearchResult, optional):
+        finalresult (Components, optional):
             Existing finalresult object to append to. Defaults to None.
         idx (list[int], optional):
             Indices of atoms to align. Defaults to None.
@@ -61,7 +61,7 @@ def find_frames_by_seqaln_rmsfit(
             Additional keyword arguments for alignment.
 
     Returns:
-        FrameSearchResult:
+        Components:
             Result object containing aligned frames and statistics.
     """
     tol = ipd.Tolerances(tol)
@@ -73,7 +73,7 @@ def find_frames_by_seqaln_rmsfit(
             atomslist = ipd.dev.addreduce(atomslist)
         atomslist = [a for a in atomslist if len(a)]
         idx = np.arange(len(atomslist))
-        finalresult = FrameSearchResult(source_=atomslist, tolerances_=tol)
+        finalresult = Components(source_=atomslist, tolerances_=tol)
         # atomslist = ipd.atom.pick_representative_chains(atomslist)
         # atomslist = [atoms[np.isin(atoms.atom_name,['CA', 'P'])] for atoms in atomslist]
     results = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0])
@@ -97,14 +97,14 @@ def find_frames_by_seqaln_rmsfit(
     if all(ok): return finalresult
     unfound = [a for i, a in enumerate(atomslist) if not ok[i]]
     # ic(len(atomslist), len(unfound), idx, ok, kw.keys())
-    return find_frames_by_seqaln_rmsfit(unfound, finalresult=finalresult, idx=idx[~ok], tol=tol, **kw)
+    return find_components_by_seqaln_rmsfit(unfound, finalresult=finalresult, idx=idx[~ok], tol=tol, **kw)
 
 listfield = attrs.field(factory=list)
 
 @ipd.dev.subscriptable_for_attributes
 @ipd.dev.element_wise_operations
 @attrs.define(slots=False)
-class FrameSearchResult:
+class Components:
     """
     Result container for frame searching and alignment.
 
@@ -157,7 +157,7 @@ class FrameSearchResult:
         Add intermediate results to the final result.
 
         Args:
-            intermediate_result (FrameSearchResult):
+            intermediate_result (Components):
                 Intermediate result object to append to the final result.
         """
         self.intermediates_.append(intermediate_result)
@@ -168,7 +168,7 @@ class FrameSearchResult:
         """
         with ipd.dev.capture_stdio() as printed:
             with ipd.dev.np_compact(4):
-                print('FrameSearchResult:')
+                print('Components:')
                 print('  atoms:', [len(atom) for atom in self.atoms])
                 print('  frames:', [f.shape for f in self.frames])
                 print('  seqmatch:', self.seqmatch)
@@ -215,7 +215,7 @@ def stub(atoms):
 
     Example:
         >>> import ipd
-        >>> atoms = ipd.atom.testdata('1qys')
+        >>> atoms = ipd.atom.get('1qys')
         >>> frame = stub(atoms)
         >>> print(frame)
         [[ 0.91638034  0.33895946 -0.21296376  4.20984915]
@@ -224,48 +224,20 @@ def stub(atoms):
          [ 0.          0.          0.          1.        ]]
     """
     cen = bs.mass_center(atoms)
-    _, sigma, components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
-    return ipd.homog.hframe(*components.T, cen)
-
-@ipd.dev.iterize_on_first_param(basetype='AtomArray', asnumpy=True)
-def atoms_is_protein(atoms, strict_protein_or_nucleic=False):
-    """
-    Check if an atomic structure is a protein.
-
-    This function checks if an atomic structure is a protein by comparing the
-    fraction of CA atoms to the total number of atoms.
-
-    Args:
-        atoms (bs.AtomArray):
-            Atomic structure object containing atom name data.
-
-    Returns:
-        bool:
-            True if the structure is a protein, False otherwise.
-
-    Example:
-        >>> import ipd
-        >>> atoms = ipd.atom.testdata('1qys')
-        >>> print(is_protein(atoms))
-        True
-    """
-    if not len(atoms): return np.nan
-    if strict_protein_or_nucleic: raise NotImplementedError()
-    frac = np.sum(atoms.atom_name == 'CA') / len(atoms)
-    return frac > 0.9
+    _, sigma, Components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
+    return ipd.homog.hframe(*Components.T, cen)
 
 def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
     if len(bb) < 2 or len(bb[0]) < min_align_points:
         return False
-    is_protein = atoms_is_protein(bb)
+    is_protein = ipd.atom.is_protein(bb)
     for i, bb_i_ in enumerate(bb[1:], start=1):
-        if is_protein[0] != is_protein[i]:  # dont match protein with nucleic
-            match, matchfrac = None, 0
-        elif is_protein[0]:
+        if is_protein[0] == is_protein[i]:  # dont match protein with nucleic
             _, match, matchfrac = ipd.atom.seqalign(bb[0], bb_i_)
-        else:
-            assert len(bb[0]) == len(bb_i_)
+        elif len(bb_i_) == len(bb[0]):
             match, matchfrac = np.ones((len(bb[0]), 2), dtype=bool), 1
+        else:
+            match = None
         if match is None or len(match) < min_align_points:
             accumulator(np.nan / np.zeros((4, 4)), 9e9, 0, i)
         else:

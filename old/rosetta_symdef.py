@@ -3,10 +3,9 @@ import glob
 import re
 
 import numpy as np
-from deferred_import import deferred_import  # type: ignore
 import ipd
 
-pyrosetta = deferred_import("pyrosetta")
+pyrosetta = ipd.lazyimport("pyrosetta")
 
 def get_rosetta_symfile_path(name):
     name = name.upper().replace("M_", "m_")

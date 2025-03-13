@@ -12,27 +12,24 @@ def main():
     ipd.tests.maintest(namespace=globals())
 
 def test_seqaln_rmsfit_1dxh():
-    atoms = ipd.atom.testdata('1dxh', assembly='largest', het=False, chainlist=True)
-    ic(len(atoms), len(atoms[0]))
-    ic(set(atoms[0].chain_id))
+    atoms = ipd.atom.get('1dxh', assembly='largest', het=False, chainlist=True)
     # for i, a in enumerate(atoms):
     # ipd.pdb.dump(a, f'lib/ipd/test{i}.pdb')
-    findframes = ipd.atom.find_frames_by_seqaln_rmsfit(atoms)
+    findframes = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
     atoms, frames, rms, matches = findframes['atoms frames rmsd seqmatch']
-    ic(frames[0].shape, rms, matches)
     assert np.allclose(rms, 0, atol=1e-3)
     assert np.allclose(matches, 1)
     assert len(frames) == len(rms) == len(matches) == 1
     assert matches[0].shape == (12, )
 
 def test_seqaln_rmsfit_1g5q():
-    atoms = ipd.atom.testdata('1g5q', assembly='largest', het=False, chainlist=True)
+    atoms = ipd.atom.get('1g5q', assembly='largest', het=False, chainlist=True)
     # ic(len(atoms), len(atoms[0]))
     # ic(ipd.atom.chain_ranges(atoms))
 
     # for i, a in enumerate(atoms):
     # ipd.pdb.dump(a, f'lib/ipd/test{i}.pdb')
-    found = ipd.atom.find_frames_by_seqaln_rmsfit(atoms)
+    found = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
     found.remove_small_chains()
     # print(found)
     atoms, frames, rms, matches = found['atoms frames rmsd seqmatch']
@@ -44,7 +41,7 @@ def test_seqaln_rmsfit_1g5q():
 
 def test_seqaln_rmsfit_multicomp_substruct():
     atoms = ipd.atom.load(ipd.dev.package_testdata_path('pdb/chelsea_tube_1.pdb.gz'))
-    found = ipd.atom.find_frames_by_seqaln_rmsfit(atoms)
+    found = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
     assert len(found.frames[0]) == 6
     assert len(found.frames[1]) == 3
     assert np.allclose(1, found.seqmatch[0])

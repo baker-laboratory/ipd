@@ -13,6 +13,7 @@ from ipd.dev.code import *
 from ipd.dev.decorators import *
 from ipd.dev.element_wise import *
 from ipd.dev.meta import *
+from ipd.dev.metadata import *
 from ipd.dev.misc import *
 from ipd.observer import *
 from ipd.dev.safe_eval import *

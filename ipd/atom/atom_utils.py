@@ -7,7 +7,7 @@ bs = ipd.lazyimport('biotite.structure')
 load = ipd.pdb.readatoms
 dump = ipd.pdb.dump
 
-def testdata(pdbcode, path='', **kw):
+def get(pdbcode, path='', **kw):
     if path: fname = os.path.join(path, f'{pdbcode}.bcif.gz')
     else: fname = ipd.dev.package_testcif_path(pdbcode)
     assert len(pdbcode) == 4, f'bad pdbcode {pdbcode}'
@@ -62,12 +62,14 @@ def chain_dict(atoms):
     chain_groups = {chain: atoms[atoms.chain_id == chain] for chain in chain_ids}
     return ipd.Bunch(chain_groups)
 
-def atoms_to_seq(atoms):
+@ipd.dev.iterize_on_first_param(basetype='AtomArray')
+def to_seq(atoms, concat=True) -> 'biotite.sequence.Sequence':
     try:
-        biotite_esq = bs.to_sequence(atoms)  # oddly slow
+        biotite_seq = bs.to_sequence(atoms)  # oddly slow
     except IndexError:
         return None
-    return ipd.dev.addreduce(biotite_esq[0])
+    if concat: return ipd.dev.addreduce(biotite_seq[0])
+    return biotite_seq[0]
 
 def atoms_to_seqstr(atoms):
     idx = bs.get_residue_starts(atoms)
@@ -75,10 +77,12 @@ def atoms_to_seqstr(atoms):
 
 def seqalign(atoms1, atoms2):
     import biotite.sequence.align as align
-    seq1 = atoms_to_seq(atoms1)
-    seq2 = atoms_to_seq(atoms2)
+    isprot1, isprot2 = is_protein([atoms1, atoms2])
+    assert isprot1 == isprot2
+    seq1, seq2 = to_seq([atoms1, atoms2])
     if not seq1 or not seq2: return None, np.zeros((0, 2)), 0
-    matrix = align.SubstitutionMatrix.std_protein_matrix()
+    if isprot1: matrix = align.SubstitutionMatrix.std_protein_matrix()
+    else: matrix = align.SubstitutionMatrix.std_nucleic_matrix()
     # matrix = align.SubstitutionMatrix(matrix.get_alphabet1(), matrix.get_alphabet2(), 'IDENTITY')
     aln = align.align_optimal(
         seq1,
@@ -119,12 +123,14 @@ def select(
     if isinstance(atoms, bs.AtomArrayStack):
         assert len(atoms) == 1
         atoms = atoms[0]
+    meta = ipd.dev.get_metadata(atoms)
     if caonly: atoms = atoms[atoms.atom_name == 'CA']
     if not het: atoms = atoms[~atoms.hetero]
     if chains is not None:
         atoms = atoms[np.isin(atoms.chain_id, chains)]
     if chaindict: atoms = ipd.atom.chain_dict(atoms)
     if chainlist: atoms = ipd.atom.split(atoms)
+    ipd.dev.set_metadata(atoms, meta)
     return atoms
 
 def pick_representative_chains(atomslist):
@@ -135,3 +141,30 @@ def pick_representative_chains(atomslist):
         crange = list(crange.values())[0][0]
         chains.append(atoms[crange[0]:crange[1]])
     return chains
+
+@ipd.dev.iterize_on_first_param(basetype='AtomArray', asnumpy=True)
+def is_protein(atoms, strict_protein_or_nucleic=False) -> bool:
+    """
+    Check if an atomic structure is a protein.
+
+    This function checks if an atomic structure is a protein by comparing the
+    fraction of CA atoms to the total number of atoms.
+
+    Args:
+        atoms (bs.AtomArray):
+            Atomic structure object containing atom name data.
+
+    Returns:
+        bool:
+            True if the structure is a protein, False otherwise.
+
+    Example:
+        >>> import ipd
+        >>> atoms = ipd.atom.get('1qys')
+        >>> print(is_protein(atoms))
+        True
+    """
+    if not len(atoms): return np.nan
+    if strict_protein_or_nucleic: raise NotImplementedError()
+    frac = np.sum(atoms.atom_name == 'CA') / bs.get_residue_count(atoms)
+    return frac > 0.9

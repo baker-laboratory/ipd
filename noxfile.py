@@ -17,3 +17,9 @@ def test_matrix(session, extra):
     session.install(f'.[dev]')
     session.install(f'.[{extra}]')
     session.run('pytest', '-n8')
+
+@nox.session(venv_backend='uv')
+def doctest(session):
+    session.install(f'.[dev]')
+    session.install(f'.[all]')
+    session.run('pytest', '-n8', '--doctest-modules')

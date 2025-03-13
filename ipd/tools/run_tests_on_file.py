@@ -154,7 +154,7 @@ def dispatch(
     elif fname.endswith('.py') and bname != 'conftest.py':
         cmd = f'{pypath} {sys.executable} ' + fname
     else:
-        cmd = f'{pypath} {sys.executable} -mpytest {pytest_args} --doctest-modules'
+        cmd = f'{pypath} {sys.executable} -mpytest {pytest_args} --doctest-modules -x'
     return cmd, _post[bname]
 
 def main(projects, quiet=False, filter_build_log=False, **kw):

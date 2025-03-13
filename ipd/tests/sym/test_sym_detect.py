@@ -147,7 +147,7 @@ def make_pdb_testfunc(pdbcode, path=''):
         symanno = ipd.pdb.sym_annotation(pdbcode)
         for id, symid in zip(symanno.id, symanno.sym):
             if symid == 'C1': continue
-            atoms = ipd.atom.testdata(pdbcode, assembly=id, het=False, path=path, strict=False)
+            atoms = ipd.atom.get(pdbcode, assembly=id, het=False, path=path, strict=False)
             sinfo = ipd.sym.detect(atoms, tol=tol, strict=False)
             if not isinstance(sinfo, ipd.sym.SymInfo):
                 sids = [si.symid for si in sinfo]

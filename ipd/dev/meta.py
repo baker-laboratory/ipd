@@ -79,22 +79,16 @@ import inspect
 import operator
 import toolz
 import sys
-from typing import TypeVar, Callable
+from typing import Callable
 
 import ipd
 from ipd.dev.decorators import iterize_on_first_param
 
-T = TypeVar('T')
-R = TypeVar('R')
-try:
-    from typing import ParamSpec
-    P = ParamSpec('P')
-except ImportError:
-    P = TypeVar('P')
+T, P, R = ipd.basic_typevars('TPR')
 
 def instanceof(obj_or_types, types=None):
     """wrapper so isinstane can be called with kwargs"""
-    if types: return isinstance(obj, types)
+    if types: return isinstance(obj_or_types, types)
     return lambda obj: isinstance(obj, obj_or_types)
 
 @iterize_on_first_param(asdict=True)
@@ -122,9 +116,9 @@ def picklocals(name, idx=None):
 
     """
     if sys.version_info.minor < 12:
-        val = inspect.currentframe().f_back.f_back.f_back.f_locals[name]
+        val = inspect.currentframe().f_back.f_back.f_back.f_locals[name]  # type: ignore
     else:
-        val = inspect.currentframe().f_back.f_back.f_locals[name]
+        val = inspect.currentframe().f_back.f_back.f_locals[name]  # type: ignore
     if idx is None:
         return val
     return val[idx]
@@ -163,7 +157,7 @@ for op in 'add mul matmul or_ and_'.split():
     opname = op.strip('_')
     globals()[f'{opname}reduce'] = functools.partial(opreduce, getattr(operator, op))
 
-def kwcall(kw: dict, func: Callable[P, R], *a: P.args, **kwargs: P.kwargs) -> R:
+def kwcall(kw: dict, func: Callable[P, R], *a: P.args, **kwargs: P.kwargs) -> R:  # type: ignore
     """Call a function with filtered keyword arguments.
 
     This function merges provided keyword arguments, filters them to match only those
@@ -201,7 +195,7 @@ def kwcall(kw: dict, func: Callable[P, R], *a: P.args, **kwargs: P.kwargs) -> R:
 
 kwcurry = toolz.curry(kwcall)
 
-def kwcheck(kw: T, func=None, checktypos=True) -> T:
+def kwcheck(kw: ipd.KW, func=None, checktypos=True) -> ipd.KW:
     """
     Filter keyword arguments to match only those accepted by the target function.
 

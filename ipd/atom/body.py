@@ -35,12 +35,8 @@ class Body:
         self._resbvh = wu.SphereBVH_double(self.rescen)
         self.seq = ipd.atom.atoms_to_seqstr(self.atoms)
 
-    def _celllist_nclash(self, other, radius=3) -> bool:
-        cell_list = bs.CellList(self.atoms, radius + 1)
-        nclash = 0
-        for pos in other[:]:
-            nclash += len(cell_list.get_atoms(pos, radius=radius))
-        return nclash
+    def __eq__(self, other):
+        return self.atoms is other.atoms and np.allclose(self.pos, other.pos)
 
     def bvh_binary_operation(
         self,
@@ -81,15 +77,20 @@ class Body:
 
     @property
     def coord(self):
-        return self.atoms.coord
+        return h.xform(self.pos, self.atoms.coord)
 
-    def xformed(self, xform):
+    def movedby(self, xform):
         new = copy.copy(self)
         new.pos = h.xform(xform, self.pos)
         return new
 
-    def __getitem__(self, slice):
-        return h.xform(self.pos, self.coord[slice])
+    def movedto(self, xform):
+        new = copy.copy(self)
+        new.pos = xform
+        return new
+
+    def __getitem__(self, *slices):
+        return h.xformpts(self.pos, self.atoms.coord[*slices])
 
     def __getattr__(self, name):
         try:
