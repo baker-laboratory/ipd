@@ -195,7 +195,7 @@ def test_th_rot_56789():
     hel = th.randn(*shape)
 
     rot = h.rot3(axis0, ang0, shape=(4, 4))
-    rot2 = ipd.homog.rot(axis0.detach(), ang0.detach(), shape=(4, 4))
+    rot2 = ipd.homog.rot3(axis0.detach(), ang0.detach(), shape=(4, 4))
     assert np.allclose(rot.detach(), rot2, atol=1e-3)
 
     rot = h.rot(axis0, ang0, cen0, hel=None)
@@ -220,7 +220,7 @@ def test_th_rot_single():
     cen0 = th.tensor(cen0, requires_grad=True)
 
     rot = h.rot3(axis0, ang0, shape=(4, 4))
-    rot2 = ipd.homog.rot(axis0.detach(), ang0.detach(), shape=(4, 4))
+    rot2 = ipd.homog.rot3(axis0.detach(), ang0.detach(), shape=(4, 4))
     assert np.allclose(rot.detach(), rot2, atol=1e-3)
 
     rot = h.rot(axis0, ang0, cen0, hel=None)

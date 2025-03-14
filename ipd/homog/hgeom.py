@@ -195,27 +195,20 @@ def hdist(x, y):
     Compute the Euclidean distance between two homogeneous transformation matrices.
 
     Args:
-        x (np.ndarray): First matrix.
-        y (np.ndarray): Second matrix.
+        x (np.ndarray): First object.
+        y (np.ndarray): Second object.
 
     Returns:
         float: Euclidean distance.
 
     Example:
-        >>> x = np.eye(4)
-        >>> y = np.eye(4)
+        >>> x = hpoint([1,1,3])
+        >>> y = hpoint([2,1,3])
         >>> hdist(x, y)
-        np.float64(0.0)
+        np.float64(1.0)
+
     """
-    assert x.shape[-2:] == (4, 4)
-    assert y.shape[-2:] == (4, 4)
-    shape1 = x.shape[:-2]
-    shape2 = y.shape[:-2]
-    a = x.reshape(shape1 + (1, ) * len(shape1) + (4, 4))
-    b = y.reshape((1, ) * len(shape2) + shape2 + (4, 4))
-    ic(a.shape, b.shape)
-    dist = np.linalg.norm(a[..., :, 3] - b[..., :, 3], axis=-1)
-    return dist
+    return hnorm(x - y)
 
 def hdiff(x, y, lever=10.0):
     """
@@ -269,7 +262,7 @@ def hxformx(x, stuff, **kw):
     Example:
         >>> x = hrot([1,0,0], 90)
         >>> x2 = htrans([1,0,0])
-        >>> hxformx(x, x2)
+        >>> hxformx(x, x2).round(4)
         array([[ 1.,  0.,  0.,  1.],
                [ 0.,  0., -1.,  0.],
                [ 0.,  1.,  0.,  0.],
@@ -322,9 +315,8 @@ def hxformvec(x, stuff, **kw):
     Example:
         >>> x = hrot([0,1,0], 90)
         >>> vec = np.array([1, 0, 0])
-        >>> transformed = hxformvec(x, vec)
-        >>> print(transformed)
-        [ 0.  0. -1.]
+        >>> hxformvec(x, vec).round(4)
+        array([ 0.,  0., -1.])
     """
     stuff, hdim = hvec(stuff), stuff.shape[-1]
     assert np.allclose(stuff[..., 3], 0)
@@ -392,9 +384,8 @@ def invxformvec(x, stuff, **kw):
     Example:
         >>> x = hrot([1,1,0], 180)
         >>> vec = np.array([1, 0, 0])
-        >>> transformed = invxformvec(x, vec)
-        >>> print(transformed)
-        [0. 1. 0.]
+        >>> invxformvec(x, vec).round(4)
+        array([0., 1., 0.])
     """
     return hxformvec(hinv(x), stuff, **kw)
 
@@ -851,7 +842,7 @@ def angle_of_degrees(xforms, debug=False):
     angl = np.arccos(np.clip(cos, -1, 1))
     return np.degrees(angl)
 
-def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
+def rot3(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
     """Angle will override nfold."""
     if angle is None:
         angle = 2 * np.pi / nfold
@@ -901,7 +892,7 @@ def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
         axis = axis
         center = np.array([0, 0, 0], dtype=dtype) if center is None else np.asarray(center, dtype=dtype)
 
-    r = rot(axis, angle, dtype=dtype, shape=(4, 4), **kw)
+    r = rot3(axis, angle, dtype=dtype, shape=(4, 4), **kw)
     if center.ndim > 1 and axis.ndim == 1:
         rshape, cshape = r.shape, center.shape
         r = np.tile(r, cshape[:-1] + (1, ) * len(rshape))
@@ -1188,7 +1179,7 @@ def hrandrotsmall(shape=(), rot_sd=0.001, seed=None):
         shape = (shape, )
     axis = rand_unit(shape)
     ang = np.random.normal(0, rot_sd, shape) * np.pi
-    r = rot(axis, ang, degrees=False).squeeze()
+    r = rot3(axis, ang, degrees=False).squeeze()
     return hconvert(r.squeeze())
 
 def hrms(a, b):
@@ -2089,25 +2080,12 @@ def xinfo(xforms):
     return ipd.Bunch(zip('axis angle cen, hel'.split(), axis_angle_cen_hel_of(np.asarray(xforms))))
 
 # compatibility with thgeom (torch version of these)
-inv = hinv
 axis_angle = axis_angle_of
 axis_angle_cen_hel = axis_angle_cen_hel_of
-normalized = hnormalized
-dot = hdot
 point_line_dist_pa = h_point_line_dist
-rand = hrand
-randsmall = hrandsmall
-xform = hxform
-xformx = hxformx
-xformvec = hxformvec
-xformpts = hxformpts
-rmsfit = hrmsfit
-dist = hdist
-norm = hnorm
-align2 = halign2
-align = halign
-trans = htrans
-valid = hvalid
-valid_norm = hvalid_norm
-valid44 = hvalid44
-point = hpoint
+
+# aliasing all that start with h
+for k, v in list(globals().items()):
+    if k.startswith('h') and callable(v):
+        assert k[1:] not in globals()
+        globals()[k[1:]] = v

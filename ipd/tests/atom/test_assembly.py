@@ -1,3 +1,4 @@
+import unittest
 import pytest
 import numpy as np
 import ipd
@@ -31,39 +32,79 @@ def main():
         dryrun=False,
     )
 
-# def test_assembly_simple():
-# assembly = ipd.atom.assembly('1qys')
+def test_assembly_simple():
+    assembly = ipd.atom.create_assembly('1qys')
+
+def helper_test_assembly_iterate(assembly):
+    for ibod, ifrm in assembly.symbodyids():
+        body = assembly.body(ibod, ifrm)
+        assert body.meta.bodyid == ibod
+        assert body.meta.frameid == ifrm
+
+    for ibod, ifrm, body, frame in assembly.enumerate_symbodies():
+        assert body.meta.bodyid == ibod
+        assert body.meta.frameid == ifrm
 
 def helper_test_asu_selector(assembly):
-    for i, j in assembly.symbodyids():
-        asusel = ipd.atom.AsuSelector(bodyid=i, frameid=j)
+    for ibody, iframe, borig, forig in assembly.enumerate_symbodies(order='random', n=10):
+        asusel = ipd.atom.AsuSelector(bodyid=ibody, frameid=iframe)
         asu = asusel(assembly)
-        assert asu._resbvh is assembly.bodies[i]._resbvh
-        assert h.allclose(asu.pos, assembly.frames[i][j])
+        assert asu.isclose(borig)
 
-def helper_test_neighborhood_selector(assembly):
-    for ibod, ifrm in assembly.symbodyids():
-        asusel = ipd.atom.AsuSelector(bodyid=ibod, frameid=ifrm)
+def helper_test_neighborhood_asu(assembly):
+    for ibody, iframe, borig, forig in assembly.enumerate_symbodies(order='random', n=10):
+        asusel = ipd.atom.AsuSelector(bodyid=ibody, frameid=iframe)
         hoodsel = ipd.atom.NeighborhoodSelector(min_contacts=10, contact_dist=7)
         hood = hoodsel(asusel, assembly)
-        assert hood.bodies[0].atoms is assembly.bodies[ibod].atoms
-        assert h.allclose(hood.bodies[0].pos, assembly.frames[ibod][ifrm])
-        assert h.allclose(hood.frames[0][0], np.eye(4))
-        assert h.allclose(assembly.body(ibod, ifrm))
+        newasu = hood.body(0)
+        for ibody2, newasu in enumerate(hood.bodies):
+            origid = assembly._idmap[newasu]
+            origfid = newasu.get_metadata().frameid
+            origbody = assembly.body(origid, origfid)
+            assert origid == newasu.get_metadata().bodyid
+            assert origbody.atoms is newasu.atoms
+            assert h.allclose(hood.frames[ibody][0], np.eye(4))
+            assert newasu.isclose(origbody)
+
+def helper_test_neighborhood_neighbors(assembly):
+    for ibasu, ifasu, basu, fasu in assembly.enumerate_symbodies():
+        # for ibasu, ifasu, basu, fasu in assembly.enumerate_symbodies(order='random', n=10):
+        ic(ibasu, ifasu, basu.pos)
+        asusel = ipd.atom.AsuSelector(bodyid=ibasu, frameid=ifasu)
+        hoodsel = ipd.atom.NeighborhoodSelector(min_contacts=10, contact_dist=7)
+        hood = hoodsel(asusel, assembly)
+        assert hood.bodies[0].isclose(basu)
+        for ibnew, ifnew, bnew, fnew in hood.enumerate_symbodies():
+            borig = assembly.body
+
+            ibmap = assembly._idmap[bnew]
+            ifmap = 0
+            # oldframe = assembly._framemap[bnew][orig_iframe_for_new]
+            origbody = assembly.body(ibmap, ifmap)
+            newbody = hood.body(ibnew, ifnew)
+            ic(origbody.pos, newbody.pos)
+            # assert newbody.isclose(origbody)
+        # assert 0
 
 def make_assembly_pdb_tests():
     for pdb in TEST_PDBS:
 
-        class TestAssembly():
+        class TestAssembly(unittest.TestCase):
 
-            def __init__(self):
+            def setUp(self):
                 self.assembly = ipd.atom.create_assembly(pdb, min_chain_atoms=50)
+
+            def test_assembly_iterate(self):
+                helper_test_assembly_iterate(self.assembly)
 
             def test_asu_selector(self):
                 helper_test_asu_selector(self.assembly)
 
-            def test_neighborhood_selector(self):
-                helper_test_neighborhood_selector(self.assembly)
+            def test_neighborhood_asu(self):
+                helper_test_neighborhood_asu(self.assembly)
+
+            def test_neighborhood_neighbors(self):
+                helper_test_neighborhood_neighbors(self.assembly)
 
         globals()[f'TestAssembly_{pdb.upper()}_'] = TestAssembly
 

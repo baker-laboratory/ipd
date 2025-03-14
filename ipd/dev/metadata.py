@@ -1,3 +1,4 @@
+import copy
 import ipd
 from ipd.dev.decorators import iterize_on_first_param
 
@@ -11,21 +12,10 @@ def get_metadata(obj):
 
     Returns:
         ipd.Bunch: The metadata stored in the object, or an empty `ipd.Bunch` if no metadata exists.
-
-    Examples:
-        >>> class Example:
-        ...     pass
-        >>> obj = Example()
-        >>> set_metadata(obj, {'key': 'value'})
-        >>> get_metadata(obj).key
-        'value'
-        >>> obj2 = Example()
-        >>> get_metadata(obj2)  # No metadata, returns empty Bunch
-        Bunch()
     """
     return vars(obj).get('__ipd_metadata__', ipd.Bunch())
 
-def set_metadata(obj, data=None, **kw):
+def set_metadata(obj, data: 'dict|None' = None, **kw):
     """
     Set metadata on an object.
 
@@ -40,40 +30,18 @@ def set_metadata(obj, data=None, **kw):
 
     Returns:
         Any: The modified object or list of objects.
-
-    Examples:
-        >>> class Example:
-        ...     pass
-        >>> obj = Example()
-        >>> set_metadata(obj, {'key': 'value'})
-        >>> get_metadata(obj).key
-        'value'
-
-        >>> obj_list = [Example(), Example()]
-        >>> set_metadata(obj_list, {'shared_key': 'shared_value'})
-        >>> get_metadata(obj_list[0]).shared_key
-        'shared_value'
-
-        >>> obj_list = [Example(), Example()]
-        >>> set_metadata(obj_list, [{'key1': 'value1'}, {'key2': 'value2'}])
-        >>> get_metadata(obj_list[0]).key1
-        'value1'
-        >>> get_metadata(obj_list[1]).key2
-        'value2'
     """
-    if isinstance(obj, list) and isinstance(data, list):
-        for a, d in zip(obj, data):
-            set_metadata(a, d)
-    elif isinstance(obj, list):
-        for a in obj:
-            set_metadata(a, data)
-    else:
-        if data: data.update(kw)
-        data = data or kw
-        assert not isinstance(data, list)
-        if not hasattr(obj, '__ipd_metadata__'):
-            setattr(obj, '__ipd_metadata__', ipd.Bunch())
-        obj.__ipd_metadata__.update(data)
+    if isinstance(obj, list):
+        if isinstance(data, list):
+            assert len(obj) == len(data)
+            [set_metadata(o, d) for o, d in zip(obj, data)]
+        else:
+            [set_metadata(o, data) for o in obj]
+        return
+    data = data | kw if data else kw
+    meta = obj.__dict__.setdefault('__ipd_metadata__', ipd.Bunch())
+    meta.update(data)
+    return obj
 
 def sync_metadata(*objs):
     """
@@ -83,23 +51,11 @@ def sync_metadata(*objs):
 
     Args:
         *objs (Any): A variable number of objects to synchronize metadata between.
-
-    Examples:
-        >>> class Example:
-        ...     pass
-        >>> obj1 = Example()
-        >>> obj2 = Example()
-        >>> set_metadata(obj1, {'key1': 'value1'})
-        >>> set_metadata(obj2, {'key2': 'value2'})
-        >>> sync_metadata(obj1, obj2)
-        >>> get_metadata(obj1).key2
-        'value2'
-        >>> get_metadata(obj2).key1
-        'value1'
     """
     data = ipd.dev.orreduce(get_metadata(obj) for obj in objs)
     for obj in objs:
         set_metadata(obj, data)
+    return objs
 
 def holds_metadata(cls):
     """
@@ -113,35 +69,35 @@ def holds_metadata(cls):
 
     Returns:
         type: The modified class with metadata support.
-
-    Examples:
-        >>> @holds_metadata
-        ... class Example:
-        ...     def __init__(self, value):
-        ...         self.value = value
-        >>> obj = Example(value=42, key='test_key')
-        >>> get_metadata(obj).key
-        'test_key'
-        >>> obj2 = Example(value=99)
-        >>> set_metadata(obj2, {'key2': 'value2'})
-        >>> sync_metadata(obj, obj2)
-        >>> get_metadata(obj).key2
-        'value2'
-        >>> get_metadata(obj2).key
-        'test_key'
     """
 
     def newinit(self, *a, **kw):
         initkw = ipd.kwcheck(kw, cls.__init_after_ipd_metadata__)
-        metadata = {k: v for k, v in kw.items() if k not in initkw}
+        metadata = {k: v for k, v in kw.items() if k not in initkw and k[0] == '_'}
+        extra = {k for k in kw if k not in initkw and k not in metadata}
+        if extra: raise TypeError(f"__init__() got an unexpected keyword argument(s): {', '.join(extra)}")
+        metadata = {k[1:]: v for k, v in metadata.items()}
+
         self.set_metadata(metadata)
         cls.__init_after_ipd_metadata__(self, *a, **initkw)
 
+    def newcopy(self):
+        if self.__copy_after_ipd_metadata__:
+            new = self.__copy_after_ipd_metadata__()
+        else:
+            new = ipd.dev.shallow_copy(self)
+        new.__ipd_metadata__ = copy.copy(self.__ipd_metadata__)
+        return new
+
     cls.__init_after_ipd_metadata__ = cls.__init__
     cls.__init__ = newinit
+    cls.__copy_after_ipd_metadata__ = getattr(cls, '__copy__', None)
+    cls.__copy__ = newcopy
 
+    assert not any(hasattr(cls, name) for name in 'set_metadata get_metadata sync_metadata meta'.split())
     cls.set_metadata = set_metadata
     cls.get_metadata = get_metadata
     cls.sync_metadata = sync_metadata
+    cls.meta = property(lambda self: get_metadata(self))
 
     return cls

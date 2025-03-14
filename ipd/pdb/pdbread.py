@@ -6,7 +6,6 @@ import os
 import time
 
 import numpy as np
-import tqdm
 
 import ipd
 from ipd.pdb.pdbfile import PDBFile
@@ -202,7 +201,7 @@ def load_pdbs(
 ):
     files = find_pdb_files(files_or_pattern, **kw)
     pdbs = dict()
-    for fname in tqdm.tqdm(files) if pbar else files:
+    for fname in files:
         t = time.perf_counter()
         try:
             pdbs[fname] = load_pdb(fname, cache)

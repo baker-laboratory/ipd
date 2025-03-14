@@ -65,6 +65,7 @@ def _items(mapping, exclude=(), **kw):
     return [(k, v) for k, v in mapping.items() if k[0] != '_' and k[-1] != '_' and k not in exclude]
 
 def make_table_dict_of_dict(mapping, title=None, key='key', **kw):
+    assert all(isinstance(m, Mapping) for m in mapping.values())
     vals = list(mapping.values())
     assert all(_keys(v, **kw) == _keys(vals[0], **kw) for v in vals)
     t = ipd.kwcall(kw, Table, title=title)

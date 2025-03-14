@@ -55,9 +55,9 @@ def test_body_chash_v_celllist():
 def test_body_contacts():
     body = ipd.atom.Body(atoms)
     body2 = body.movedby(h.trans(25))
-    contacts, ranges = body.contacts(body2, radius=4)
-    assert len(ranges) == 1
-    for i, j in contacts:
+    contact = body.contacts(body2, radius=4)
+    assert len(contact.breaks) == 1
+    for i, j in contact.pairs:
         assert 4 > h.norm(body[i] - body2[j])
 
 if __name__ == '__main__':

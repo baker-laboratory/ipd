@@ -14,12 +14,12 @@ class PkgTool(CliBase):
     def cwd_package(self):
         return '/home/sheffler/ipd'
 
-class Config(PkgTool):
+class ConfigTool(PkgTool):
 
     def cmd_check(self):
         print('check_import')
 
-class Tests(PkgTool):
+class TestsTool(PkgTool):
 
     def cmd_check(self):
         print('check_import')
@@ -27,7 +27,7 @@ class Tests(PkgTool):
     def cmd_run(self):
         print('run_tests')
 
-class Imports(PkgTool):
+class ImportsTool(PkgTool):
 
     def cmd_check(self):
         print('check_import')

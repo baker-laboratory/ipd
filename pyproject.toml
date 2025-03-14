@@ -31,9 +31,7 @@ dependencies = [
     'requests',
     'RestrictedPython',
     # 'seaborn',
-    'tqdm',
     'typer',
-    # "torch>=2.6.0",
     "toolz>=1.0.0",
 ]
 [project.optional-dependencies]
@@ -49,8 +47,24 @@ tools = [
     'gitpython',
     'jinja2',
     ]
-ml = ['torch', 'pandas', 'biotite']
-willutil = ["willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp"]
+ml = [
+    'torch',
+    'pandas',
+    'biotite',
+    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp"
+]
+# docs = [
+#     'sphinx',
+#     'sphinx-pydata-theme',
+#     'matplotlib',
+#     'pybtex',
+#     'sphinx_gallery',
+#     'apidoc',
+#     'bibliography',
+#     'preamble',
+#     'scraper',
+#     'switcher',
+# ]
 dev = [
     'debugpy',
     'hypothesis[numpy]',

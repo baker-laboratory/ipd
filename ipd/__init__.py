@@ -2,6 +2,8 @@ import contextlib
 import os
 import typing
 
+from ipd.version import __version__ as __version__
+
 from ipd.typehints import *  #noqa
 from ipd.dev.error import panic as panic
 from ipd.dev.meta import kwcheck as kwcheck, kwcall as kwcall, kwcurry as kwcurry
