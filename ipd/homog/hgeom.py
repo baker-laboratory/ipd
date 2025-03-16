@@ -1203,6 +1203,7 @@ def unhomog(stuff):
 
 Result_hrmsfit = collections.namedtuple("Result_hrmsfit", "rms fitcoords xfit")
 
+@ipd.dev.timed
 def hrmsfit(mobile, target):
     """Use kabsch method to get rmsd fit."""
     mobile = hpoint(mobile)

@@ -2,6 +2,7 @@ import random
 import tempfile
 
 import ipd
+from ipd.viz.pymol_viz import lazy_register
 
 def show_atoms_pymol(atoms, name='atoms'):
     tag = str(random.random())[2:]
@@ -16,7 +17,7 @@ def show_atoms_pymol(atoms, name='atoms'):
         from pymol import cmd
         cmd.load(f'{td}/{tag}.pdb', name)
 
-@ipd.viz.pymol_viz.lazy_register('AtomArray')
+@lazy_register('AtomArray')
 def regester_atomarray():
 
     import biotite.structure as bs

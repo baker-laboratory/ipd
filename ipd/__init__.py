@@ -23,23 +23,20 @@ from ipd.dev.iterables import first as first
 from ipd import dev as dev, typehints as typehints
 
 if typing.TYPE_CHECKING:
-    from ipd import atom
     from ipd import crud
-    from ipd import cuda
     # from ipd import fit
-    import ipd.homog.thgeom as h
-    # import ipd.homog.thgeom as homog
-    from ipd import motif
+    import ipd.homog.thgeom as htorch
+    import ipd.homog.hgeom as hnumpy
     from ipd import pdb
     from ipd import protocol
-    from ipd import qt
     # from ipd import samp
     from ipd import sel
     from ipd import sym
-    from ipd import tests
-    from ipd import tools
-    from ipd import viz
+    from ipd import motif
+    from ipd import atom
     # from ipd import voxel
+    from ipd import tools
+    from ipd import tests
 else:
     atom = lazyimport('ipd.atom')
     crud = lazyimport('ipd.crud')
@@ -58,8 +55,8 @@ else:
     sym = lazyimport('ipd.sym')
     tests = lazyimport('ipd.tests')
     tools = lazyimport('ipd.tools')
-    viz = lazyimport('ipd.viz')
     # voxel = lazyimport('ipd.voxel')
+viz = lazyimport('ipd.viz')
 
 proj_dir = os.path.realpath(os.path.dirname(__file__))
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
@@ -78,7 +75,7 @@ def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
 
-def __getattr__(name) -> typing.Any:
+def __getattr__(name) -> Any:
     if name == 'symmetrize':
         symgr = sym.get_global_symmetry()
         assert sym is not None

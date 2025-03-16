@@ -12,8 +12,11 @@ class FakeModule(ModuleType):
 fake_module = FakeModule('__THIS_IS_NOT_A_REAL_MODULE__')
 assert not fake_module
 
-def lazyimport(*names: str, package: typing.Sequence[str] = (),
-               **kw) -> typing.Union[list[ModuleType], ModuleType]:
+def lazyimport(
+        *names: str,
+        package: typing.Sequence[str] = (),
+        **kw,
+) -> typing.Union[list[ModuleType], ModuleType]:
     """Lazy import of a module. The module will be imported when it is first accessed.
 
     Args:
@@ -32,7 +35,8 @@ def lazyimport(*names: str, package: typing.Sequence[str] = (),
     if package: assert len(package) == len(names) and not isinstance(package, str)
     else: package = ('', ) * len(names)
     modules = [lazyimport_one(name, package=pkg, **kw) for name, pkg in zip(names, package)]
-    if len(modules) == 1: return modules[0]
+    if len(modules) == 1:
+        return modules[0]
     return modules
 
 def lazyimport_one(name: str,

@@ -8,10 +8,11 @@ from typing import Any, Annotated, Optional
 from typer import Argument
 
 import ipd
+from ipd.tools.ipdtool import IPDTool
 
 git = ipd.lazyimport('git')
 
-class CITool(ipd.tools.IPDTool):
+class CITool(IPDTool):
 
     def __init__(self, secretfile: str = '~/.secrets'):
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()

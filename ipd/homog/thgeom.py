@@ -910,7 +910,8 @@ def uniqlastdim(x, tol=None):
         x = x[different[0]]
     return th.stack(uniq)
 
-def unique_symaxes(*a, frames=th.eye(4)[None], **kw):
+def unique_symaxes(*a, frames=None, **kw):
+    if frames is None: frames = th.eye(4)[None]
     result = ipd.homog.hgeom.unique_symaxes(*(x.detach().numpy() for x in a),
                                             frames=frames.detach().numpy(),
                                             **kw)

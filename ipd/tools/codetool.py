@@ -1,8 +1,9 @@
 from typing import Annotated
 import typer
 import ipd
+from ipd.tools.ipdtool import IPDTool
 
-class CodeTool(ipd.tools.IPDTool):
+class CodeTool(IPDTool):
 
     def make_testfile(self, sourcefile, testfile):
         ipd.dev.make_testfile(sourcefile, testfile)

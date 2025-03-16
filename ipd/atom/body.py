@@ -68,7 +68,7 @@ class Body:
     hydro: bool = False
     hetero: bool = False
     water: bool = False
-    seq: str = ''
+    # seq: str = ''
     nres = property(lambda self: len(self.seq))
     natom = property(lambda self: len(self.atoms))
     positioned_atoms = property(lambda self: h.xform(self.pos, self.atoms))
@@ -82,7 +82,7 @@ class Body:
         self.rescen = bs.apply_residue_wise(self.atoms, self.atoms.coord, np.mean, axis=0)
         self._atombvh = wu.SphereBVH_double(self.atoms.coord)
         self._resbvh = wu.SphereBVH_double(self.rescen)
-        self.seq = ipd.atom.atoms_to_seqstr(self.atoms)
+        # self.seq = ipd.atom.atoms_to_seqstr(self.atoms)
         assert h.valid44(self.pos)
 
     def __eq__(self, other):
@@ -106,9 +106,7 @@ class Body:
 
     def slide_into_contact(self, other, direction=(1, 0, 0), radius=3.0):
         if direction == 'random': direction = h.rand_unit()[:3]
-        ic(direction)
         delta = _bvh_binary_operation(wu.bvh_slide, self, other, rad=radius, dirn=direction)
-        # return self.movedby((delta) * np.array(direction))
         return self.movedby((delta - np.sign(delta) * radius) * np.array(direction))
 
     @property

@@ -8,16 +8,13 @@ import numpy as np
 
 import ipd
 from ipd.lazy_import import lazyimport
+from ipd import hnumpy as h
 
-h = ipd.hnumpy
-
-bs = lazyimport('biotite.structure')
-bpdb = lazyimport('biotite.structure.io.pdb')
-bpdbx = lazyimport('biotite.structure.io.pdbx')
+bs, bpdb, bpdbx = lazyimport('biotite.structure biotite.structure.io.pdb biotite.structure.io.pdbx')
 
 @ipd.dev.iterize_on_first_param_path
 @functools.lru_cache
-def readatoms(fname, **kw) -> 'Atoms':
+def readatoms(fname, **kw) -> 'bs.AtomArray':
     fname = str(fname)
     if not ipd.importornone('biotite'):
         raise ImportError('ipd.pdb.readatoms requires biotite')
@@ -27,6 +24,7 @@ def readatoms(fname, **kw) -> 'Atoms':
         fname = ipd.dev.decompressed_fname(fname)
         if fname.endswith('.pdb'): reader = _readatoms_pdb
         elif fname.endswith(('.cif', '.bcif')): reader = _readatoms_cif
+        else: raise ValueError(f'bad filename {fname}')
         atoms = reader(fname, file, **kw)
         add_sourcefile_tag(atoms, fname)
         return atoms
@@ -50,7 +48,7 @@ def dumpatoms(atoms, fname):
         raise ValueError(f'bad dump filename {fname}')
     pdb.write(fname)
 
-def pdbread(fname, file=None, **kw) -> 'tuple[Pdb, Atoms]':
+def pdbread(fname, file=None, **kw) -> 'tuple[bpdb.PDBFile, bs.AtomArray]':
     if ipd.dev.isbinfile(file):
         file = io.StringIO(file.read().decode())
     pdb = bpdb.PDBFile.read(file or fname)
@@ -82,12 +80,14 @@ def cifdump(fname, atoms):
     bcif_file = bpdbx.BinaryCIFFile.from_pdbx_file(pdbx_file)
     bcif_file.write(fname)
 
+@ipd.dev.timed
 def _readatoms_cif(fname, file, assembly=None, **kw) -> 'Atoms':
     if assembly is not None:
         return _readatoms_cif_assembly(fname, file, assembly, **kw)
     cif, atoms = cifread(fname, file, **kw)
     return atoms
 
+@ipd.dev.timed
 def _readatoms_cif_assembly(
     fname,
     file,
@@ -109,6 +109,7 @@ def _readatoms_cif_assembly(
     atoms = ipd.kwcall(kw, ipd.atom.split, atoms, order=len(xforms))
     return atoms
 
+@ipd.dev.timed
 def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=False, **kw):
     if assembly in asminfo.assemblies.id:
         iasm = asminfo.assemblies.id.index(assembly)
@@ -134,16 +135,18 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=False, **k
             # ic(len(xforms), ix, c, len(crng), num_asu_ranges)
             assert len(xforms) == len(crng) / num_asu_ranges
             for iasurange in range(num_asu_ranges):
-                (lb1, ub1), (lb2, ub2) = crngasu[iasurange], crng[ix*num_asu_ranges + iasurange]
-                orig = h.xform(xforms[ix], asu.coord[lb1:ub1])
-                new = atoms.coord[lb2:ub2]
-                # ipd.showme(orig, new)
-                close = np.allclose(orig, new, atol=1e-3)
-                if strict: assert close
-                elif not close:
-                    pdbcode = ipd.dev.get_metadata(cif).get('pdbcode')
-                    ipd.dev.WARNME(f'{pdbcode} biounit {assembly} {ix} {c} failed coordinate symmetry check',
-                                   verbose=False)
+                if strict:
+                    (lb1, ub1), (lb2, ub2) = crngasu[iasurange], crng[ix*num_asu_ranges + iasurange]
+                    orig = h.xform(xforms[ix], asu.coord[lb1:ub1])
+                    new = atoms.coord[lb2:ub2]
+                    # ipd.showme(orig, new)
+                    close = np.allclose(orig, new, atol=1e-3)
+                    if not close:
+                        pdbcode = ipd.dev.get_metadata(cif).get('pdbcode')
+                        ipd.dev.WARNME(
+                            f'{pdbcode} biounit {assembly} {ix} {c} failed coordinate symmetry check',
+                            verbose=False)
+                        assert close
     # assert np.allclose(asu.coord, atoms.coord[:len(asu)], atol=1e-3)
     # ic(ipd.bunch.zip(asymchainstart, asymchainlen, chainstart, chainlen, order='val'))
     return xforms

@@ -10,6 +10,7 @@ import numpy as np
 import toolz
 
 import ipd
+from ipd.atom.body import Body
 
 h = ipd.hnumpy
 bs = ipd.lazyimport('biotite.structure')
@@ -18,11 +19,11 @@ bs = ipd.lazyimport('biotite.structure')
 @ipd.dev.subscriptable_for_attributes
 @dataclass
 class Assembly:
-    bodies: list[ipd.atom.Body]
+    bodies: list[Body]
     frames: list[np.ndarray]
-    _framemap: dict[ipd.atom.Body, np.ndarray] = field(default_factory=dict)
-    _bodymap: dict[ipd.atom.Body, ipd.atom.Body] = field(default_factory=dict)
-    _idmap: dict[ipd.atom.Body, int] = field(default_factory=dict)
+    _framemap: dict[Body, np.ndarray] = field(default_factory=dict)
+    _bodymap: dict[Body, Body] = field(default_factory=dict)
+    _idmap: dict[Body, int] = field(default_factory=dict)
 
     def __post_init__(self):
         self.bodies = list(self.bodies)
@@ -39,10 +40,10 @@ class Assembly:
         new.set_metadata(assembly=self, bodyid=bodyid, frameid=frameid)
         return new
 
-    def symbodies(self) -> list[ipd.atom.Body]:
+    def symbodies(self) -> list[Body]:
         return [self.body(i, j) for i, j in self.symbodyids()]
 
-    def enumerate_symbodies(self, **kw) -> Iterator[tuple[int, int, ipd.atom.Body, np.ndarray]]:
+    def enumerate_symbodies(self, **kw) -> Iterator[tuple[int, int, Body, np.ndarray]]:
         ids = self.symbodyids(**kw)
         for i, j in ids:
             yield i, j, self.body(i, j), self.frames[i][j]
@@ -74,7 +75,7 @@ def assembly_from_file(
 
 def to_bodies(atoms_or_bodies: 'bs.AtomArray', **kw):
     if all(map(ipd.atom.is_atomarray, atoms_or_bodies)):
-        bodies = map(ipd.kwcurry(kw, ipd.atom.Body), atoms_or_bodies)
+        bodies = map(ipd.kwcurry(kw, Body), atoms_or_bodies)
     return list(bodies)
 
 @dataclass
@@ -82,7 +83,7 @@ class AsuSelector:
     bodyid: int = 9999
     frameid: int = 9999
 
-    def __call__(self, assembly: Assembly) -> ipd.atom.Body:
+    def __call__(self, assembly: Assembly) -> Body:
         return assembly.body(self.bodyid, self.frameid)
 
 def new_frame(asu, body, newasuframe, oldasuframe, oldsymframe):

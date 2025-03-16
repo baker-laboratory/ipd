@@ -1,6 +1,8 @@
 import traceback
 
 import ipd
+from ipd.tools.ipdtool import IPDTool
+from ipd.tools.tool_util import RunGroupArg
 
 custom_tol = dict(default=1e-1,
                   angle=0.04,
@@ -12,7 +14,7 @@ custom_tol = dict(default=1e-1,
                   nfold=0.2)
 tol = ipd.dev.Tolerances(**(ipd.sym.symdetect_default_tolerances | custom_tol))
 
-class SymTool(ipd.tools.IPDTool):
+class SymTool(IPDTool):
     pass
 
 class BuildTool(SymTool):
@@ -23,12 +25,12 @@ class BuildTool(SymTool):
 
 class TestTool(SymTool):
 
-    def detect(self, fnames: list[str], rungroup: ipd.tools.RunGroupArg):
+    def detect(self, fnames: list[str], rungroup: RunGroupArg):
         for i, path in ipd.tools.enumerate_inputs(fnames, '*.bcif.gz', rungroup):
             pdbcode = path.stem.split('.')[0]
             _sym_check_file(pdbcode, path, tol)
 
-    def assembly(self, fnames: list[str], rungroup: ipd.tools.RunGroupArg):
+    def assembly(self, fnames: list[str], rungroup: RunGroupArg):
         for i, path in ipd.tools.enumerate_inputs(fnames, '*.bcif.gz', rungroup):
             pdbcode = path.stem.split('.')[0]
             atoms = ipd.atom.assembly(path, assembly='largest', het=False)

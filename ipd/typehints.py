@@ -1,7 +1,9 @@
 import abc
-from typing import (Any, Callable, Iterator, TypeVar, Union)
+from typing import (Any, Callable, Iterator, TypeVar, Union, TYPE_CHECKING)
 from typing_extensions import ParamSpec  # type: ignore noqa
 import numpy as np
+
+inchecker = TYPE_CHECKING
 
 KW = dict[str, Any]
 """Type alias for keyword arguments represented as a dictionary with string keys and any type of value."""

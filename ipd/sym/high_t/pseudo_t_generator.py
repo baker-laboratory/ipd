@@ -1,26 +1,27 @@
 import numpy as np
 
+import ipd
 from ipd.homog import *
 
-import torch
+th = ipd.lazyimport('torch')
 
 def get_pseudo_highT(opt):
     pseudo_gen = PseudoSymmGenerator(h=opt.H_K[0], k=opt.H_K[1], spherical_frac=opt.spherical_frac)
-    xforms = torch.tensor(pseudo_gen.HTs)
+    xforms = th.tensor(pseudo_gen.HTs)
     Rs = [X[:3, :3] for X in xforms]
-    Ts = torch.stack([X[:3, 3] for X in xforms])
+    Ts = th.stack([X[:3, 3] for X in xforms])
     Ts *= opt.radius
     Ts = [T - Ts[0] for T in Ts]
     xforms = []
     # convert the first rotation back to the identity operation
-    R_inv = torch.linalg.inv(Rs[0])
+    R_inv = th.linalg.inv(Rs[0])
     for i, R in enumerate(Rs):
         R = R @ R_inv
-        X = torch.eye(4)
+        X = th.eye(4)
         X[:3, :3] = R
         X[:3, 3] = Ts[i]
         xforms.append(X)
-    return torch.stack(xforms)
+    return th.stack(xforms)
 
 class PseudoSymmGenerator:
     # from Frank DiMaio
@@ -73,12 +74,12 @@ class PseudoSymmGenerator:
             icoBase.append(np.array([ctheta * np.cos(phi), ctheta * np.sin(phi), stheta]))
             phi += 2.0 * np.pi / 5.0
         icoBase.append(np.array([0.0, 0.0, 1.0]))
-        TRIS = ([[0, 2, 1], [0, 3, 2], [0, 4, 3], [0, 5, 4], [0, 1, 5], [1, 2, 7], [2, 3, 8], [3, 4, 9], [4, 5, 10],
-                 [5, 1, 6], [1, 7, 6], [2, 8, 7], [3, 9, 8], [4, 10, 9], [5, 6, 10], [6, 7, 11], [7, 8, 11], [8, 9, 11],
-                 [9, 10, 11], [10, 6, 11]])
-        EDGES = ([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 5], [1, 6], [1, 7], [2, 3], [2, 7], [2, 8], [3, 4],
-                  [3, 8], [3, 9], [4, 5], [4, 9], [4, 10], [5, 6], [5, 10], [6, 7], [6, 10], [6, 11], [7, 8], [7, 11],
-                  [8, 9], [8, 11], [9, 10], [9, 11], [10, 11]])
+        TRIS = ([[0, 2, 1], [0, 3, 2], [0, 4, 3], [0, 5, 4], [0, 1, 5], [1, 2, 7], [2, 3, 8], [3, 4, 9],
+                 [4, 5, 10], [5, 1, 6], [1, 7, 6], [2, 8, 7], [3, 9, 8], [4, 10, 9], [5, 6, 10], [6, 7, 11],
+                 [7, 8, 11], [8, 9, 11], [9, 10, 11], [10, 6, 11]])
+        EDGES = ([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 5], [1, 6], [1, 7], [2, 3], [2, 7],
+                  [2, 8], [3, 4], [3, 8], [3, 9], [4, 5], [4, 9], [4, 10], [5, 6], [5, 10], [6, 7], [6, 10],
+                  [6, 11], [7, 8], [7, 11], [8, 9], [8, 11], [9, 10], [9, 11], [10, 11]])
 
         for ii, fi in enumerate(TRIS):
             a, b, c = icoBase[fi[0]], icoBase[fi[1]], icoBase[fi[2]]
@@ -144,7 +145,8 @@ class PseudoSymmGenerator:
             for ek, el in edges_ASU:
                 dkl = ico_samples[el] - ico_samples[ek]
                 dk = ico_samples[ek]
-                ddkl = np.linalg.norm(s_ij_rot - dkl[None], axis=-1) + np.linalg.norm(s_i_rot - dk[None], axis=-1)
+                ddkl = np.linalg.norm(s_ij_rot - dkl[None], axis=-1) + np.linalg.norm(s_i_rot - dk[None],
+                                                                                      axis=-1)
                 if (np.min(ddkl) < 1e-4):
                     toAdd = False
                     break
@@ -177,25 +179,25 @@ class PseudoSymmGenerator:
         return np.stack(transforms)
 
     def _get_cost(self, ori0, HTs):
-        oris = torch.einsum('bij,j->bi', HTs, ori0)[:, :3]
-        MAG = torch.linalg.norm(oris, dim=-1).max()
+        oris = th.einsum('bij,j->bi', HTs, ori0)[:, :3]
+        MAG = th.linalg.norm(oris, dim=-1).max()
         oris = oris / MAG
-        allDs = torch.linalg.norm(oris[:, None] - oris[None, :], dim=-1)
-        ii, jj = torch.triu_indices(*allDs.shape, 1)
-        return -torch.min(allDs[ii, jj]), MAG
+        allDs = th.linalg.norm(oris[:, None] - oris[None, :], dim=-1)
+        ii, jj = th.triu_indices(*allDs.shape, 1)
+        return -th.min(allDs[ii, jj]), MAG
 
     def get_origin(self, HTs, ico_samples, edges):
-        HTs = torch.tensor(HTs).float()
+        HTs = th.tensor(HTs).float()
 
-        ori0 = torch.tensor([0.0, 0.1, 0.1, 1], requires_grad=True)
-        optimizer = torch.optim.Adam([ori0], lr=0.01)
+        ori0 = th.tensor([0.0, 0.1, 0.1, 1], requires_grad=True)
+        optimizer = th.optim.Adam([ori0], lr=0.01)
         for i in range(20):
             optimizer.zero_grad()
             loss, MAG = self._get_cost(ori0, HTs)
             loss.backward()
             optimizer.step()
 
-        oris = torch.einsum('bij,j->bi', HTs, ori0)[:, :3]
-        MAG = torch.linalg.norm(oris, dim=-1).max()
+        oris = th.einsum('bij,j->bi', HTs, ori0)[:, :3]
+        MAG = th.linalg.norm(oris, dim=-1).max()
         oris = oris / MAG
         return oris.detach().numpy()

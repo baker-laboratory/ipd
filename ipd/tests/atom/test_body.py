@@ -17,8 +17,8 @@ BODY_TEST_PDBS = ['1qys']
 SYMBODY_TEST_PDBS = ['3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr', '1g5q']
 
 def main():
-    # debug_body_load_speed()
-    # return
+    debug_body_load_speed()
+    return
     ipd.tests.maintest(
         namespace=globals(),
         config=config_test,
@@ -35,6 +35,7 @@ def _celllist_nclash(cell_list, other, radius: float = 3) -> int:
 
 def debug_body_load_speed():
     body = ipd.atom.symbody_from_file('2tbv', assembly='largest', components='largest_assembly')
+    ipd.dev.global_timer.report()
 
 def helper_test_body_chash_v_celllist(body):
     results = ipd.Bunch(cell=[], bvh=[])
@@ -126,6 +127,7 @@ ipd.tests.make_parametrized_tests(
     SYMBODY_TEST_PDBS,
     ipd.atom.symbody_from_file,
     components='largest_assembly',
+    strict=True,
 )
 
 if __name__ == '__main__':

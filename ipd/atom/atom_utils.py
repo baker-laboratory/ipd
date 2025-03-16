@@ -4,8 +4,7 @@ import ipd
 
 bs = ipd.lazyimport('biotite.structure')
 
-load = ipd.pdb.readatoms
-dump = ipd.pdb.dump
+from ipd.pdb.readstruct import readatoms as load, dump as dump
 
 def get(pdbcode, path='', **kw):
     if path: fname = os.path.join(path, f'{pdbcode}.bcif.gz')
@@ -62,24 +61,52 @@ def chain_dict(atoms):
     chain_groups = {chain: atoms[atoms.chain_id == chain] for chain in chain_ids}
     return ipd.Bunch(chain_groups)
 
+@ipd.dev.timed
 @ipd.dev.iterize_on_first_param(basetype='AtomArray')
-def to_seq(atoms, concat=True) -> 'biotite.sequence.Sequence':
-    try:
-        biotite_seq = bs.to_sequence(atoms, allow_hetero=True)  # oddly slow
-    except (IndexError, bs.BadStructureError):
-        return None
-    if concat: return ipd.dev.addreduce(biotite_seq[0])
-    return biotite_seq[0]
+def to_seq(atoms, pick_longest=False) -> 'biotite.sequence.Sequence':
+    import biotite.sequence
+    # atoms = atoms[~atoms.hetero & np.isin(atoms.atom_name, np.array(['CA', 'P'], dtype='>U5'))]
+    assert np.all(np.isin(atoms.atom_name, np.array(['CA', 'P'], dtype='>U5')))
+    seqs, isprot = [], []
+    for catoms in split_chains(atoms):
+        seq, _isprot = atoms_to_seqstr(catoms)
+        isprot.append(_isprot)
+        if isprot: seqs.append(biotite.sequence.ProteinSequence(seq))
+        else: seqs.append(biotite.sequence.NucleotideSequence(seq))
+    lens = np.array(list(map(len, seqs)))
+    starts, stops = np.cumsum([0] + lens), np.cumsum(lens + [0])
+    if pick_longest:
+        i = np.argmax(lens)
+        return seqs[i], starts[i], stops[i], isprot[i]
+    return seqs, starts, stops, isprot
+    # try:
+    #     biotite_seq = bs.to_sequence(atoms, allow_hetero=True)  # oddly slow
+    #     if concat: return ipd.dev.addreduce(biotite_seq[0])
+    #     return biotite_seq[0]
+    # except (IndexError, bs.BadStructureError):
+    #     return None
 
+@ipd.dev.timed
 def atoms_to_seqstr(atoms):
-    idx = bs.get_residue_starts(atoms)
-    return ''.join(bs.info.one_letter_code(x) for x in atoms.res_name[idx])
+    # atoms = atoms[~atoms.hetero & np.isin(atoms.atom_name, np.array(['CA', 'P'], dtype='>U5'))]
+    if len(atoms) == 0: return None
+    # protein = np.isin(atoms.res_name, np_amino_acid)
+    # nucleic = np.isin(atoms.res_name, np_nucleotide)
+    # ic(atoms[~protein])
+    # assert all(nucleic) or all(protein)
+    # ic(atoms.atom_name[0], atoms.atom_name[0]=='CA')
+    if atoms.atom_name[0] == 'CA':
+        return ''.join(amino_acid_321[x] for x in atoms.res_name), True
+    return ''.join(nucleotide_321[x] for x in atoms.res_name), False
 
+@ipd.dev.timed
 def seqalign(atoms1, atoms2):
+    assert all(np.isin(atoms1.atom_name, np.array(['CA', 'P'], dtype='>U5')))
+    assert all(np.isin(atoms2.atom_name, np.array(['CA', 'P'], dtype='>U5')))
     import biotite.sequence.align as align
-    isprot1, isprot2 = is_protein([atoms1, atoms2])
+    seq1, start1, stop1, isprot1 = to_seq(atoms1, pick_longest=True)
+    seq2, start2, stop2, isprot2 = to_seq(atoms2, pick_longest=True)
     assert isprot1 == isprot2
-    seq1, seq2 = to_seq([atoms1, atoms2])
     if not seq1 or not seq2: return None, np.zeros((0, 2)), 0
     if isprot1: matrix = align.SubstitutionMatrix.std_protein_matrix()
     else: matrix = align.SubstitutionMatrix.std_nucleic_matrix()
@@ -184,3 +211,42 @@ def join(atomslist, one_letter_chain=True):
     assert len(np.unique(atoms.chain_id)) == len(atomslist) * len(np.unique(atomslist[0].chain_id))
     assert isinstance(atoms, bs.AtomArray)
     return atoms
+
+amino_acid_321 = {
+    'ALA': 'A',
+    'ARG': 'R',
+    'ASN': 'N',
+    'ASP': 'D',
+    'CYS': 'C',
+    'GLU': 'E',
+    'GLN': 'Q',
+    'GLY': 'G',
+    'HIS': 'H',
+    'ILE': 'I',
+    'LEU': 'L',
+    'LYS': 'K',
+    'MET': 'M',
+    'PHE': 'F',
+    'PRO': 'P',
+    'SER': 'S',
+    'THR': 'T',
+    'TRP': 'W',
+    'TYR': 'Y',
+    'VAL': 'V',
+    'SEC': 'U',
+    'PYL': 'O'  # Selenocysteine and Pyrrolysine (rare)
+}
+nucleotide_321 = {
+    # RNA nucleotides
+    'ADE': 'A',
+    'CYT': 'C',
+    'GUA': 'G',
+    'URA': 'U',
+    # DNA nucleotides
+    'DA': 'A',
+    'DC': 'C',
+    'DG': 'G',
+    'DT': 'T'
+}
+np_amino_acid = np.array(list(amino_acid_321.keys()), dtype='>U5')
+np_nucleotide = np.array(list(nucleotide_321.keys()), dtype='>U5')

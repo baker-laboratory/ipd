@@ -4,6 +4,10 @@ import pytest
 import ipd
 
 def main():
+    ipd.tests.maintest(globals())
+    return
+
+    ipd.tests.maintest(globals())
     test_helix_scaling()
     assert 0
 
@@ -19,9 +23,9 @@ def main():
 
 def test_helix_upper_neighbors():
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0)
-    ipd.showme(h)
-    ipd.showme(h, closest=9)
-    ipd.showme(h, closest=5, closest_upper_only=True)
+    # ipd.showme(h)
+    # ipd.showme(h, closest=9)
+    # ipd.showme(h, closest=5, closest_upper_only=True)
 
 def test_helix_params():
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0.001)

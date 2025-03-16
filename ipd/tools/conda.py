@@ -3,6 +3,7 @@ import os
 import yaml
 
 import ipd
+from ipd.tools.ipdtool import IPDTool
 
 def isinstalled(installed, pkg):
     pkg = pkg.strip('"')
@@ -14,7 +15,7 @@ def isinstalled(installed, pkg):
             pkg = pkg.split(op)[0]
     return pkg in installed
 
-class MambaTool(ipd.tools.IPDTool):
+class MambaTool(IPDTool):
 
     def install_yaml(self,
                      envfile,

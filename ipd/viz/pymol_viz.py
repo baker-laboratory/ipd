@@ -804,7 +804,7 @@ def showme(*args, name=None, how="pymol", **kw):
         for arg, name in zip(args, names):
             result = showme_pymol(arg, name=name, **kw)
     else:
-        raise NotImplementedError('showme how="%s" not implemented' % how)
+        return NotImplementedError('showme how="%s" not implemented' % how)
 
     return result  # type: ignore
 

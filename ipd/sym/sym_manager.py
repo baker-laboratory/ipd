@@ -11,6 +11,7 @@ from icecream import ic
 import numpy as np
 
 import ipd
+from ipd.sym.sym_factory import MetaSymManager
 
 h = ipd.lazyimport('ipd.homog.thgeom')
 th = ipd.lazyimport('torch')
@@ -25,7 +26,7 @@ class XYZPairUnsupportedError(Exception):
     pass
 
 @attrs.define(slots=False)
-class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):
+class SymmetryManager(ABC, metaclass=MetaSymManager):
     """The SymmetryManager class encapsulates symmetry related functionality
     and parameters.
 

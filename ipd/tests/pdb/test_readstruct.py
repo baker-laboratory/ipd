@@ -31,16 +31,19 @@ def test_readatoms_pdb():
     helper_test_readatoms('8u51.pdb.gz')
 
 def test_readatoms_cif_assembly_1hv4():
-    ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/1hv4.bcif.gz'), assembly='largest')
+    ipd.pdb.readatoms('1hv4', assembly='largest')
 
 def test_readatoms_cif_assembly_1ql2():
-    ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/1ql2.bcif.gz'), assembly='largest')
+    ipd.pdb.readatoms('1ql2', assembly='largest')
 
 def test_readatoms_cif_assembly_5im6():
-    ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/5im6.bcif.gz'), assembly='largest')
+    ipd.pdb.readatoms('5im6', assembly='largest')
 
 def test_readatoms_cif_assembly_1out():
-    ipd.pdb.readatoms(ipd.dev.package_testdata_path('pdb/1A0J.bcif.gz'), assembly='largest', strict=False)
+    ipd.pdb.readatoms('1out', assembly='largest', strict=False)
+
+def test_readatoms_cif_assembly_2tbv():
+    ipd.pdb.readatoms('2tbv', assembly='largest', strict=True)
 
 if __name__ == '__main__':
     main()

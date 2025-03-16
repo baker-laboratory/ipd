@@ -1,5 +1,8 @@
 import ipd
 from ipd.lazy_import import lazyimport
+from ipd.sym.sym_manager import SymmetryManager
+from ipd.sym.sym_index import SymIndex
+from ipd.sym.sym_factory import set_default_sym_manager
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -7,7 +10,7 @@ if TYPE_CHECKING:
 else:
     th = lazyimport('torch')
 
-class IpdSymmetryManager(ipd.sym.SymmetryManager):
+class IpdSymmetryManager(SymmetryManager):
     """Implements default ipd symmetry operations.
 
     This class is the default symmetry manager for ipd. It implements
@@ -23,7 +26,7 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
     anything with shape that starts with L
     """
     kind = 'ipd'
-    SymIndexType: type[ipd.sym.SymIndex] = ipd.sym.SymIndex
+    SymIndexType: type[SymIndex] = SymIndex
 
     def init(self, *a, idx=None, **kw):
         """Create an IpdSymmetryManager."""
@@ -65,4 +68,4 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
 
         return xyz
 
-ipd.sym.set_default_sym_manager('ipd')
+set_default_sym_manager('ipd')

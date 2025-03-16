@@ -31,6 +31,7 @@ import ipd
 
 bs = ipd.lazyimport('biotite.structure')
 
+@ipd.dev.timed
 def find_components_by_seqaln_rmsfit(
     atomslist,
     tol=0.7,
@@ -82,7 +83,7 @@ def find_components_by_seqaln_rmsfit(
     # no good, fails on various inputsi
     # a, x, m1, m2 = bs.superimpose_homologs(atomslist[0], atoms_i)
 
-    ca = [a[a.atom_name == 'CA'] for a in atomslist]
+    ca = [a[(a.atom_name == 'CA') & ~a.hetero] for a in atomslist]
     aligned_on_protein = accumulate_seqalign_rmsfit(ca, results.mapwise.append)
     if not aligned_on_protein:
         phos = [a[a.atom_name == 'P'] for a in atomslist]
@@ -233,6 +234,7 @@ def stub(atoms):
     _, sigma, Components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
     return ipd.homog.hframe(*Components.T, cen)
 
+@ipd.dev.timed
 def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
     if len(bb) < 2 or len(bb[0]) < min_align_points:
         return False
@@ -249,7 +251,9 @@ def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
         else:
             xyz1 = bb[0].coord[match[:, 0]]
             xyz2 = bb_i_.coord[match[:, 1]]
+            ipd.dev.global_timer.checkpoint()
             rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
+            ipd.dev.global_timer.checkpoint('hrmsfit')
             accumulator(xfit, rms, matchfrac, i)
     return True
 
