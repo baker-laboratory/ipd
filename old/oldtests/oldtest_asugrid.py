@@ -25,7 +25,6 @@ def main():
 
     test_asugrid_L632()
 
-@pytest.mark.fast
 def test_asugrid_case1():
     # yapf: disable
     kw = {}
@@ -54,7 +53,6 @@ def test_asugrid_case1():
     ic(dist)  # type: ignore
     assert 0
 
-@pytest.mark.fast
 def test_asugrid_I213_offposition():
     sym = "I 21 3"
     x = ipd.sym.xtal.xtal(sym)
@@ -81,7 +79,6 @@ def test_asugrid_I213_offposition():
     # ic(newpos[0])
     # ipd.sym.asugrid.vispoints(newpos, newcell, frames, allframes)
 
-@pytest.mark.fast
 def test_asugrid_I213_offposition2():
     sym = "I 21 3"
     x = ipd.sym.xtal.xtal(sym)
@@ -110,7 +107,6 @@ def test_asugrid_I213_offposition2():
     ic(newpos[0], newcell[0])  # type: ignore
     ipd.sym.asugrid.vispoints(newpos, newcell, frames, allframes)
 
-@pytest.mark.fast
 def test_asugrid_I213():
     sym = "I 21 3"
     x = ipd.sym.xtal.xtal(sym)
@@ -159,7 +155,6 @@ def test_asugrid_I213():
     vispoints(newpos, newcell, frames, allframes)
     assert np.allclose(ref, newpos, atol=0.01)
 
-@pytest.mark.fast
 def test_asugrid_P213():
     sym = "P 21 3"
     x = ipd.sym.xtal.xtal(sym)
@@ -213,7 +208,6 @@ def test_asugrid_P213():
     assert np.allclose(ref, newpos)
     return
 
-@pytest.mark.fast
 def test_asugrid_I4132():
     sym = "I4132_322"
     x = ipd.sym.xtal.xtal(sym)
@@ -249,7 +243,6 @@ def test_asugrid_I4132():
     ])
     assert np.allclose(newpos, ref)
 
-@pytest.mark.fast
 def test_asugrid_L632():
     sym = "L632"
     x = ipd.sym.xtal.xtal(sym)
@@ -313,7 +306,6 @@ def test_asugrid_L632():
     ])
     assert np.allclose(newpos, ref)
 
-@pytest.mark.fast
 def test_asugrid_P432_422():
     sym = "P 4 3 2 422"
     x = ipd.sym.xtal.xtal(sym)
@@ -350,7 +342,6 @@ def test_asugrid_P432_422():
         ]),
     )
 
-@pytest.mark.fast
 def test_asugrid_P432_432():
     sym = "P 4 3 2 432"
     x = ipd.sym.xtal.xtal(sym)
@@ -393,7 +384,6 @@ def test_asugrid_P432_432():
         ]),
     )
 
-@pytest.mark.fast
 def test_asugrid_P432_432D2():
     sym = "P 4 3 2 432D2"
     x = ipd.sym.xtal.xtal(sym)

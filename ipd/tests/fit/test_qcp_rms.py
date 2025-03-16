@@ -41,7 +41,6 @@ def main():
     test_rms_perf()
     print('test_qcp PASS', flush=True)
 
-@pytest.mark.fast
 def test_qcp_kernel_numba():
     N1, N2, Natm = 19, 31, 17
     pts1 = th.randn((N1, Natm, 3), dtype=th.float32, device='cuda')
@@ -59,7 +58,6 @@ def test_qcp_kernel_numba():
     assert th.allclose(xfit1[..., :3, :3].cpu(), xfit2[..., :3, :3], atol=1e-2)
     # assert 0
 
-@pytest.mark.fast
 def test_rms_perf():
     for dev in 'cuda cpu'.split():
         pts1 = th.randn((100, 50, 3), dtype=th.float32, device=dev)
@@ -74,7 +72,6 @@ def test_rms_perf():
         t = timeit(lambda: ipd.fit.rmsd(pts1, pts2, getfit=True), number=count)
         print(f'{dev:4} getfit {t/count*1000:7.3f}ms')
 
-@pytest.mark.fast
 def test_rms():
     for dev in 'cuda cpu'.split():
         pts1 = th.randn((13, 11, 3), dtype=th.float32, device=dev)
@@ -115,15 +112,12 @@ def helper_test_qcp_raw_cuda(getfit):
         # ic(x1.shape, x2.shape)
         assert th.allclose(x1.cpu(), x2, atol=1e-3)  # type: ignore
 
-@pytest.mark.fast
 def test_qcp_raw_cuda():
     helper_test_qcp_raw_cuda(False)
 
-@pytest.mark.fast
 def test_qcp_raw_cuda_xform():
     helper_test_qcp_raw_cuda(True)
 
-@pytest.mark.fast
 def test_qcp_vec():
     pts1 = h.randpoint((13, 10), dtype=th.float32)[:, :, :3].contiguous()
     pts2 = h.randpoint((7, 10), dtype=th.float32)[:, :, :3].contiguous()
@@ -133,7 +127,6 @@ def test_qcp_vec():
     assert th.allclose(rms1, rms2)
 
 @pytest.mark.skip
-@pytest.mark.fast
 def test_qcp_align_vec(npts=(1000, 10)):
     pts1 = h.randpoint(npts)[:, :, :3].contiguous().to(th.float64)
     pts2 = h.randpoint(npts[1])[:, :3].contiguous().to(th.float64)
@@ -155,7 +148,6 @@ def test_qcp_align_vec(npts=(1000, 10)):
     assert np.allclose(T, T3, atol=1e-4)
 
 @pytest.mark.skip
-@pytest.mark.fast
 def test_qcp_regions_simple_1seg():
     N = 100
     pts1 = h.randpoint(N + 10, th.float32)[:, :3].contiguous()
@@ -173,8 +165,7 @@ def test_qcp_regions_simple_1seg():
         assert np.allclose(rms[i], rmsref, atol=1e-4)
 
 # @pytest.mark.skip
-# @pytest.mark.fast
-# def test_qcp_regions_simple_2seg():
+# # def test_qcp_regions_simple_2seg():
 #     N = 40
 #     pts1 = h.randpoint(N, th.float32)[:, :3].contiguous()
 #     pts2 = h.randpoint(N, th.float32)[:, :3].contiguous()
@@ -197,7 +188,6 @@ def _random_offsets(n, l, sizes):
     return np.stack([np.random.randint(0, l - s + 1, n) for s in sizes], axis=-1)
 
 @pytest.mark.skip
-@pytest.mark.fast
 def test_qcp_regions_simple_Nseg():
     N = 40
     pts1 = h.randpoint(N, dtype=th.float32)[:, :3].contiguous()
@@ -263,13 +253,11 @@ def helper_test_qcp_regions(noffset=1, junct=0, npts1=100, npts2=50):
     assert np.allclose(rms, rmsref)
 
 @pytest.mark.skip
-@pytest.mark.fast
 def test_qcp_regions():
     for _ in range(1000):
         helper_test_qcp_regions(noffset=10, junct=0)
 
 @pytest.mark.skip
-@pytest.mark.fast
 def test_qcp_regions_junct_simple():
     pts1 = h.randpoint(9).astype(np.float32)[:, :3].contiguous()
     pts2 = h.randpoint(9).astype(np.float32)[:, :3].contiguous()
@@ -286,12 +274,10 @@ def test_qcp_regions_junct_simple():
     assert np.allclose(rms, rmsref)
 
 @pytest.mark.skip
-@pytest.mark.fast
 def test_qcp_regions_junct():
     for j, _ in itertools.product(range(2, 10), range(10)):
         helper_test_qcp_regions(noffset=10, junct=j)
 
-@pytest.mark.fast
 def test_qcp_align(niter=20, npts=50):
     for i in range(niter):
         pts1 = h.randpoint(npts, dtype=th.float64)[:, :3].contiguous()
@@ -307,7 +293,6 @@ def test_qcp_align(niter=20, npts=50):
         assert np.allclose(x[:3, :3], R, atol=1e-2)
         assert np.allclose(x[:3, 3], T, atol=1e-2)
 
-@pytest.mark.fast
 def test_qcp(niter=100, npts=50):
     for i in range(niter):
         pts1 = h.randpoint(npts, dtype=th.float64)[:, :3].contiguous()

@@ -35,7 +35,6 @@ def test_get_function_for_which_call_to_caller_is_argument():
 
     FIND_THIS_FUNCTION(1, 2, CALLED_TO_PRODUCE_ARGUMENT(), 3)
 
-@pytest.mark.fast
 def test_kwcheck():
     kw = dict(apple='apple', banana='banana', cherry='cherry')
 

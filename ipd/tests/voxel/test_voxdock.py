@@ -26,7 +26,6 @@ def make_test_points(npts, bound, ngen=None):
     xyz = xyz[bound > xyz[:, 2]]
     return xyz[:npts]
 
-@pytest.mark.fast
 def test_voxdock_ab(timer=ipd.dev.Timer()):
     # th.manual_seed(0)
     # xform = ipd.h.rand(100, cart_sd=20, dtype=th.float32, device='cuda')
@@ -37,7 +36,10 @@ def test_voxdock_ab(timer=ipd.dev.Timer()):
     repulsive_only[3:97] = False
     # rb = ipd.voxel.VoxRB(xyz[:128], resl=1, func=ipd.dev.cuda.ContactFunc())
 
-    rb = ipd.voxel.VoxRB(xyz, resl=1, func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10), repulsive_only=repulsive_only)
+    rb = ipd.voxel.VoxRB(xyz,
+                         resl=1,
+                         func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
+                         repulsive_only=repulsive_only)
     # trans_score = rb.score(rb, th.eye(4), ipd.h.trans(x=th.arange(40, 50, 0.1))).min()
     # ic(trans_score)
     timer.checkpoint('vox')
@@ -87,7 +89,6 @@ def test_voxdock_ab(timer=ipd.dev.Timer()):
         rb._vizpos = xform[i]
         ipd.showme(rb, col=col, sphere=2)
 
-@pytest.mark.fast
 def test_voxdock_c3():
     xyz = make_test_points(100, 20)
     xyz -= xyz.mean(0)
@@ -157,7 +158,6 @@ def scoreme(rb, xform, xsym, ncopy, maxcart, Ntop):
     if Ntop: inbounds = inbounds.max(1).values
     return sum(ncopy[i] * rb.score(rb, xsym[i] @ xform, xform) for i in range(len(xsym)) if inbounds[i])
 
-@pytest.mark.fast
 def test_voxdock_cage_T():
     sym = 'T'
     xyz = make_test_points(100, 20, 200)
@@ -174,7 +174,6 @@ def test_voxdock_cage_T():
     ic(sc.min())  # type: ignore
     assert sc.min() < -100  # type: ignore
 
-@pytest.mark.fast
 def test_voxdock_cage_O():
     sym = 'O'
     xyz = make_test_points(100, 20, 200)
@@ -191,7 +190,6 @@ def test_voxdock_cage_O():
     ic(sc.min())  # type: ignore
     assert sc.min() < -150  # type: ignore
 
-@pytest.mark.fast
 def test_voxdock_cage_I():
     sym = 'I'
     xyz = make_test_points(100, 20, 200)

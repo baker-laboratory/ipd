@@ -49,9 +49,10 @@ class Timer:
         self.min = _TimerGetter(self, min)
         self.max = _TimerGetter(self, max)
         self.median = _TimerGetter(self, statistics.median)
-        self._start = None
+        self._start = 0
         self.checkpoints = collections.defaultdict(list)
         if start: self.start()
+        self._in_interjection = None
 
     def start(self):
         return self.__enter__()
@@ -76,12 +77,23 @@ class Timer:
         verbose=False,
         keeppriorname=False,
         autolabel=False,
+        interject=False,
     ):
+        if name is None or interject: name = '__interject__'
+        elif not keeppriorname: self.lastname = str(name)
         name = str(name)
-        if name is None: name = self.lastname
-        elif not keeppriorname: self.lastname = name
         if autolabel: name = name + "$$$$"
         t = time.perf_counter()
+
+        if name == '__interject__':
+            self._in_interjection = '__waiting__'
+        elif self._in_interjection == '__waiting__':
+            self._in_interjection = name
+        elif self._in_interjection and name != self._in_interjection:
+            interjection_credit = sum(self.checkpoints.pop('__interject__'))
+            self.checkpoints[name].append(interjection_credit)
+            self._in_interjection = None
+
         self.checkpoints[name].append(t - self.last)
         self.last = t
         if self.verbose or verbose:
@@ -118,7 +130,7 @@ class Timer:
         self,
         order="longest",
         summary="sum",
-        timecut=0,
+        timecut: float = 0,
     ):
         if not callable(summary):
             if summary not in _summary_types:
@@ -147,6 +159,7 @@ class Timer:
     ):
         if namelen is None:
             namelen = max(len(n.rstrip("$")) for n in self.checkpoints) if self.checkpoints else 0
+        if len(self.checkpoints) <= 10: timecut = 0
         lines = [f"Times(name={self.name}, order={order}, summary={summary}):"]
         times = self.report_dict(order=order, summary=summary, timecut=timecut)
         if not times: times["total$$$$"] = time.perf_counter() - self._start
@@ -184,17 +197,19 @@ class Timer:
             for k, v in other.checkpoints.items():
                 self.checkpoints[k].extend(v)
 
-def checkpoint(kw,
+def checkpoint(kw={},
                label=None,
                funcbegin=False,
                dont_mod_label=False,
                filename=None,
                clsname=None,
-               funcname=None):
+               funcname=None,
+               interject=False):
     t = None
     if isinstance(kw, Timer): t = kw
     elif "timer" in kw: t = kw["timer"]
     else: t = ipd.dev.global_timer
+    if interject: return t.checkpoint(interject=True)
     # autogen_label = False
     istack = 1 + int(funcbegin)
     func = funcname or inspect.stack()[istack][3]
@@ -243,9 +258,10 @@ def timed_class(cls, *, label=None):
 
     return cls
 
-def timed(thing=None, *, label=None):
+def timed(thing=None, *, label=None, name=None):
     if thing is None:
         return functools.partial(timed, label=label)
+    if name: thing.__qualname__ = name
     if inspect.isclass(thing):
         return timed_class(thing, label=label)
     else:

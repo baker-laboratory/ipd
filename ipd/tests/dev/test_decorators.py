@@ -8,7 +8,6 @@ import ipd
 def main():
     ipd.tests.maintest(namespace=globals())
 
-@pytest.mark.fast
 def test_iterize():
 
     @ipd.dev.iterize_on_first_param
@@ -18,7 +17,6 @@ def test_iterize():
     assert Foo(4) == 4 * 4
     assert Foo([1, 2]) == [1, 4]
 
-@pytest.mark.fast
 def test_iterize_basetype():
 
     @ipd.dev.iterize_on_first_param(basetype=str)
@@ -31,7 +29,6 @@ def test_iterize_basetype():
     assert bar('a b') == ['aa', 'bb']
     assert bar(1.1) == 2.2
 
-@pytest.mark.fast
 def test_iterize_asdict():
 
     @ipd.dev.iterize_on_first_param(basetype=str, asdict=True)
@@ -43,7 +40,6 @@ def test_iterize_asdict():
     assert baz('a b') == dict(a='aa', b='bb')
     assert baz(1.1) == 2.2
 
-@pytest.mark.fast
 def test_iterize_asbunch():
 
     @ipd.dev.iterize_on_first_param(basetype=str, asbunch=True)
@@ -57,7 +53,6 @@ def test_iterize_asbunch():
     assert baz(1.1) == 2.2
     assert baz([1, 2]) == {1: 2, 2: 4}
 
-@pytest.mark.fast
 def test_iterize_allowmap():
 
     @ipd.dev.iterize_on_first_param(basetype=str, asbunch=True)
@@ -73,7 +68,6 @@ def test_iterize_allowmap():
 
     assert bar(dict(a=1, b=2)) == dict(a=2, b=4)
 
-@pytest.mark.fast
 def test_iterize_basetype_string():
 
     class mylist(list):
@@ -101,7 +95,6 @@ class CustomIterable(namedtuple('CustomIterable', ['items'])):
     def __iter__(self):
         return iter(self.items)
 
-@pytest.mark.fast
 class TestIterizeOnFirstParam(unittest.TestCase):
     """Test suite for the ipd.dev.iterize_on_first_param decorator."""
 
@@ -230,7 +223,6 @@ class TestIterizeOnFirstParam(unittest.TestCase):
         assert set(result) == {1, 4, 9}
         assert len(result) == 3
 
-@pytest.mark.fast
 class TestIterizeableFunction(unittest.TestCase):
     """Test suite for the ipd.dev.is_iterizeable helper function."""
 

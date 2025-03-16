@@ -1,7 +1,6 @@
 import itertools
 
 import numpy as np
-import pytest
 
 import ipd
 from ipd.sym.xtal.spacegroup_symelems import _compute_symelems
@@ -80,7 +79,6 @@ def WIP_P23_perm():
 
     assert 0
 
-@pytest.mark.fast
 def test_icos_perm():
     frames = ipd.sym.frames("icos")
     perms = ipd.sym.permutations("icos")

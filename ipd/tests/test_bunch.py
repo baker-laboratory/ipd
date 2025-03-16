@@ -29,7 +29,6 @@ def assert_saved_ok(b):
         b2 = make_autosave_hierarchy(yaml.load(inp, yaml.Loader))
     assert b == b2
 
-@pytest.mark.fast
 def test_autosave(tmpdir):  # sourcery skip: merge-list-append, merge-set-add
     fname = f'{tmpdir}/test.yaml'
     b = Bunch(a=1, b=[1, 2], c=[[[[0]]]], d={1, 3, 8}, e=([1], [2]))
@@ -87,7 +86,6 @@ def helper_test_autoreload(b, b2, tmpdir):
     assert b == b2
     assert set(os.listdir(tmpdir)) == {'test2.yaml', 'test.yaml'}
 
-@pytest.mark.fast
 def test_autoreload(tmpdir):
     fname = f'{tmpdir}/test.yaml'
     fname2 = f'{tmpdir}/test2.yaml'
@@ -144,7 +142,6 @@ def test_autoreload(tmpdir):
     helper_test_autoreload(b, b2, tmpdir)
     helper_test_autoreload(b, b2, tmpdir)
 
-@pytest.mark.fast
 def test_bunch_pickle(tmpdir):
     x = Bunch(dict(a=2, b="bee"))
     x.c = "see"
@@ -159,7 +156,6 @@ def test_bunch_pickle(tmpdir):
     assert y.b == "bee"
     assert y.c == "see"
 
-@pytest.mark.fast
 def test_bunch_init():
     b = Bunch(dict(a=2, b="bee"), _strict=False)  # type: ignore
     b2 = Bunch(b, _strict=False)  # type: ignore
@@ -189,7 +185,6 @@ def test_bunch_init():
     b.missing = 8
     assert b.missing == 8
 
-@pytest.mark.fast
 def test_bunch_sub():
     b = Bunch(dict(a=2, b="bee"), _strict=False)  # type: ignore
     assert b.b == "bee"
@@ -219,7 +214,6 @@ def test_bunch_sub():
     assert "a" not in b4
     assert "b" in b4
 
-@pytest.mark.fast
 def test_bunch_items():
     b = Bunch(dict(item="item"))
     b.attr = "attr"
@@ -228,14 +222,12 @@ def test_bunch_items():
     assert list(b.keys()) == ["item", "attr"]
     assert list(b.values()) == ["item", "attr"]
 
-@pytest.mark.fast
 def test_bunch_add():
     b1 = Bunch(dict(a=2, b="bee", mergedint=4, mergedstr="b1"))
     b2 = Bunch(dict(a=2, c="see", mergedint=3, mergedstr="b2"))
     b1_plus_b2 = Bunch(a=4, b="bee", mergedint=7, mergedstr="b1b2", c="see")
     assert (b1 + b2) == b1_plus_b2
 
-@pytest.mark.fast
 def test_bunch_visit():
     count = 0
 
@@ -252,7 +244,6 @@ def test_bunch_visit():
     assert b == Bunch(a="a", bnch=Bunch(foo="bar"))
     assert count == 4
 
-@pytest.mark.fast
 def test_bunch_strict():
     b = Bunch(one=1, two=2, _strict=True)  # type: ignore
     assert len(b) == 2
@@ -271,7 +262,6 @@ def test_bunch_strict():
     assert 'clear_' in b
     assert 'clear' not in b
 
-@pytest.mark.fast
 def test_bunch_default():
     b = Bunch(foo="foo", _default=list, _strict=False)  # type: ignore
     assert b.foo == "foo"
@@ -297,7 +287,6 @@ def test_bunch_default():
     with pytest.raises(AttributeError):
         b.bar
 
-@pytest.mark.fast
 def test_bunch_bugs():
     # with pytest.raises(ValueError) as e:
     showme_opts = Bunch(headless=0, spheres=0.0, showme=0, clear=True, weight=2)

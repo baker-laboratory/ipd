@@ -1,7 +1,7 @@
 import contextlib
 import functools
 from pathlib import Path
-from typing import Mapping, Callable, Any
+from typing import Mapping, Callable, Any, Iterable
 
 import numpy as np
 
@@ -25,7 +25,7 @@ def generic_get_keys(obj, exclude: ipd.FieldSpec = ()):
 def generic_get_items(obj):
     if hasattr(obj, 'items'):
         return [(k, v) for k, v in obj.items() if valid_element_name(k)]
-    elif hasattr(obj, 'keys') and callable(obj, keys):
+    elif hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
         return [(k, getattr(obj, k)) for k in obj.keys() if valid_element_name(k)]
     elif isinstance(obj, list):
         return list(enumerate(obj))
@@ -42,7 +42,7 @@ def valid_element_name_thorough(name, exclude=()):
 
 _reserved_element_names = set('mapwise npwise valwise dictwise'.split())
 
-def get_fields(obj, fields: ipd.FieldSpec, exclude: ipd.FieldSpec = ()) -> 'tuple[Iterable, bool]':
+def get_fields(obj, fields: ipd.FieldSpec, exclude: ipd.FieldSpec = ()) -> tuple[Iterable, bool]:
     """return list of string fields and bool isplural"""
     if callable(fields): fields = fields(obj)
     if fields is None: return generic_get_keys(obj, exclude=exclude), True
@@ -87,9 +87,9 @@ def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: b
     return False
 
 def iterize_on_first_param(
-    func0: F = None,
+    func0: 'F|None' = None,
     *,
-    basetype=str,
+    basetype: 'str|type' = str,
     splitstr=True,
     asdict=False,
     asbunch=False,

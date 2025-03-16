@@ -210,6 +210,9 @@ def hdist(x, y):
     """
     return hnorm(x - y)
 
+def hdist2(x, y):
+    return hnorm2(x - y)
+
 def hdiff(x, y, lever=10.0):
     """
     Compute the average difference between two homogeneous transformation matrices.
@@ -247,7 +250,7 @@ def hdiff(x, y, lever=10.0):
 
     return diff
 
-def hxformx(x, stuff, **kw):
+def hxformx(*x, **kw):
     """
     Apply a homogeneous transformation to a matrix.
 
@@ -268,13 +271,14 @@ def hxformx(x, stuff, **kw):
                [ 0.,  1.,  0.,  0.],
                [ 0.,  0.,  0.,  1.]])
     """
+    *x, stuff = x
     stuff = as_tensor(stuff)
     assert np.allclose(stuff[..., 3, :], [0, 0, 0, 1])
-    result = hxform(x, stuff, is_points=False, **kw)
+    result = hxform(*x, stuff, is_points=False, **kw)
     assert np.allclose(stuff[..., 3, :], [0, 0, 0, 1])
     return result
 
-def hxformpts(x, stuff, **kw):
+def hxformpts(*x, **kw):
     """
     Apply a homogeneous transformation to points.
 
@@ -294,13 +298,14 @@ def hxformpts(x, stuff, **kw):
         >>> print(transformed)
         [[1. 2. 3. 1.]]
     """
+    *x, stuff = x
     stuff, hdim = hpoint(stuff), stuff.shape[-1]
     assert np.allclose(stuff[..., 3], 1)
-    result = hxform(x, stuff, is_points=True, **kw)
+    result = hxform(*x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 1)
     return result[..., :hdim]
 
-def hxformvec(x, stuff, **kw):
+def hxformvec(*x, **kw):
     """
     Apply a homogeneous transformation to vectors.
 
@@ -318,9 +323,10 @@ def hxformvec(x, stuff, **kw):
         >>> hxformvec(x, vec).round(4)
         array([ 0.,  0., -1.])
     """
+    *x, stuff = x
     stuff, hdim = hvec(stuff), stuff.shape[-1]
     assert np.allclose(stuff[..., 3], 0)
-    result = hxform(x, stuff, is_points=True, **kw)
+    result = hxform(*x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 0)
     return result[..., :hdim]
 
@@ -409,19 +415,19 @@ def product(*factors, **kw):
                [0., 0., 1., 0.],
                [0., 0., 0., 1.]])
     """
+    if len(factors) == 0: return np.eye(4)
     if len(factors) == 1: return factors[0]
     x, *xforms, stuff = factors
-    for x1 in factors:
+    for x1 in xforms:
         x = hxform(x, x1)
     return hxform(x.astype(stuff.dtype), stuff, **kw)
 
 def hxform(*x, homogout="auto", **kw):
-    if len(x) > 2:
-        return product(*x, homogout=homogout, **kw)
-    elif len(x) < 2:
-        raise TypeError('hxform missing required positional arguments hxform(x, stuff, ...)')
+    if len(x) > 1:
+        *x, stuff = x
+        x = product(*x, **kw | {'is_points': False})
     else:
-        x, stuff = x
+        raise TypeError('hxform missing required positional arguments hxform(x, stuff, ...)')
     if isinstance(stuff, list) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return [hxform(x, v) for v in stuff]
     if isinstance(stuff, dict) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
@@ -429,7 +435,10 @@ def hxform(*x, homogout="auto", **kw):
     if hasattr(stuff, "xformed"):
         return stuff.xformed(x)
     orig = None
-    if hasattr(stuff, "coords"):
+    coords = None
+    if hasattr(stuff, "coords"): coords = 'coords'
+    if hasattr(stuff, "coord"): coords = 'coord'
+    if coords:
         isxarray = False
         if "xarray" in sys.modules:
             import xarray
@@ -438,11 +447,9 @@ def hxform(*x, homogout="auto", **kw):
             print("WARNING Deprivation of .coords convention in favor of .xformed method")
             isxarray = isinstance(stuff, xarray.DataArray)
         if not isxarray:
-            if hasattr(stuff, "copy"):
-                orig = stuff.copy()
-            else:
-                orig = copy.copy(stuff)
-            stuff = stuff.coords
+            if hasattr(stuff, "copy"): orig = stuff.copy()
+            else: orig = copy.copy(stuff)
+            stuff = getattr(stuff, coords)
             assert x.ndim in (2, 3)
 
     stuff, origstuff = np.asarray(stuff), stuff
@@ -490,11 +497,11 @@ def hxform(*x, homogout="auto", **kw):
                     o = orig.copy()
                 else:
                     o = copy.copy(orig)
-                o.coords = x
+                setattr(o, coords, x)
                 r.append(o)
             result = r
         else:
-            orig.coords = result
+            setattr(orig, coords, result)
             result = orig
 
     assert result is not None
@@ -2079,13 +2086,74 @@ def allclose(a, b, atol=1e-3, **kw):
 def xinfo(xforms):
     return ipd.Bunch(zip('axis angle cen, hel'.split(), axis_angle_cen_hel_of(np.asarray(xforms))))
 
+def radius_of_gyration(points, com=None):
+    points = hpoint(points)
+    com = hcom(points) if com is None else hpoint(com)
+    delta2 = hdist2(points, com)
+    rg = np.sqrt(np.mean(delta2))
+    return rg
+
 # compatibility with thgeom (torch version of these)
 axis_angle = axis_angle_of
 axis_angle_cen_hel = axis_angle_cen_hel_of
 point_line_dist_pa = h_point_line_dist
 
 # aliasing all that start with h
-for k, v in list(globals().items()):
-    if k.startswith('h') and callable(v):
-        assert k[1:] not in globals()
-        globals()[k[1:]] = v
+construct = hconstruct
+valid = hvalid
+valid_norm = hvalid_norm
+valid44 = hvalid44
+scaled = hscaled
+dist = hdist
+diff = hdiff
+xformx = hxformx
+xformpts = hxformpts
+xformvec = hxformvec
+xform = hxform
+inv = hinv
+unique = hunique
+rot = hrot
+point = hpoint
+pointorvec = hpointorvec
+vec = hvec
+centered = hcentered
+centered3 = hcentered3
+ray = hray
+frame = hframe
+trans = htrans
+dot = hdot
+cross = hcross
+norm = hnorm
+norm2 = hnorm2
+normalized = hnormalized
+randpoint = hrandpoint
+randray = hrandray
+randsmall = hrandsmall
+rand = hrand
+randrot = hrandrot
+randrotsmall = hrandrotsmall
+rms = hrms
+parallel = hparallel
+rmsfit = hrmsfit
+proj = hproj
+cart = hcart
+cart3 = hcart3
+ori3 = hori3
+ori = hori
+projperp = hprojperp
+pointlineclose = hpointlineclose
+point_line_dist = h_point_line_dist
+linesisect = hlinesisect
+align = halign
+align2 = halign2
+coherence = hcoherence
+mean = hmean
+expand = hexpand
+pow = hpow
+pow_int = hpow_int
+pow_float = hpow_float
+com_flat = hcom_flat
+com = hcom
+rog_flat = hrog_flat
+rog = hrog
+convert = hconvert

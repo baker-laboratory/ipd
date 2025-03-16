@@ -24,7 +24,6 @@ def main():
     # test_ipdtool_ci_update()
     test_setup_submodules()
 
-@pytest.mark.fast
 def test_ipdtool_basic():
     result = run('')
     assert "Usage" in result.stdout

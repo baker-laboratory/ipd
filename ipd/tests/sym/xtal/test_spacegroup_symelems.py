@@ -150,7 +150,6 @@ def main():
 # yapf: disable
 
 
-@pytest.mark.fast
 def test_symelems_P622(debug=False, **kw):
     val = dict(
        C2=[
@@ -181,7 +180,6 @@ def test_symelems_P312(debug=False, **kw):
 
 
 
-@pytest.mark.fast
 def test_compound_elems_R32(debug=False, **kw):
     sym = 'R32'
     val = dict(
@@ -192,7 +190,6 @@ def test_compound_elems_R32(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P222(debug=False, **kw):
     sym = 'P222'
     val = dict(
@@ -209,55 +206,46 @@ def test_compound_elems_P222(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P3121(debug=False, **kw):
     sym = 'P3121'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P212121(debug=False, **kw):
     sym = 'P212121'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P31(debug=False, **kw):
     sym = 'P31'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P32(debug=False, **kw):
     sym = 'P32'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P213(debug=False, **kw):
     sym = 'P213'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P3221(debug=False, **kw):
     sym = 'P3221'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P41(debug=False, **kw):
     sym = 'P41'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P41212(debug=False, **kw):
     sym = 'P41212'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P4232(debug=False, **kw):
     sym = 'P4232'
     val = dict(
@@ -276,14 +264,12 @@ def test_compound_elems_P4232(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P43(debug=False, **kw):
     sym = 'P43'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
 
-@pytest.mark.fast
 def test_compound_elems_P4332(debug=False, **kw):
     sym = 'P4332'
     val = dict(
@@ -294,74 +280,62 @@ def test_compound_elems_P4332(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P6(debug=False, **kw):
     sym = 'P6'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P61(debug=False, **kw):
     sym = 'P61'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P6122(debug=False, **kw):
     sym = 'P6122'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P62(debug=False, **kw):
     sym = 'P62'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P63(debug=False, **kw):
     sym = 'P63'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P64(debug=False, **kw):
     sym = 'P64'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P65(debug=False, **kw):
     sym = 'P65'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P6522(debug=False, **kw):
     sym = 'P6522'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_I213(debug=False, **kw):
     sym = 'I213'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
 
-@pytest.mark.fast
 def test_compound_elems_I4(debug=False, **kw):
     sym = 'I4'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_I41(debug=False, **kw):
     sym = 'I41'
     val = dict()
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P432(debug=False, **kw):
     sym = 'P432'
     val = dict(
@@ -376,7 +350,6 @@ def test_compound_elems_P432(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_I432(debug=False, **kw):
     sym = 'I432'
     val = dict(
@@ -395,7 +368,6 @@ def test_compound_elems_I432(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_F432(debug=False, **kw):
     sym = 'F432'
     val = dict(
@@ -412,7 +384,6 @@ def test_compound_elems_F432(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_F4132(debug=False, **kw):
     sym = 'F4132'
     val = dict(
@@ -427,7 +398,6 @@ def test_compound_elems_F4132(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P23(debug=False, **kw):
     sym = 'P23'
     val = dict(
@@ -442,7 +412,6 @@ def test_compound_elems_P23(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_I23(debug=False, **kw):
     sym = 'I23'
     val = dict(
@@ -455,7 +424,6 @@ def test_compound_elems_I23(debug=False, **kw):
     )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_F23(debug=False, **kw):
     sym = 'F23'
     val = dict(T=[
@@ -466,7 +434,6 @@ def test_compound_elems_F23(debug=False, **kw):
     ], )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_P4132(debug=False, **kw):
     sym = 'P4132'
     val = dict(D3=[
@@ -475,7 +442,6 @@ def test_compound_elems_P4132(debug=False, **kw):
     ], )
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
-@pytest.mark.fast
 def test_compound_elems_I4132(debug=False, **kw):
     sym = 'I4132'
     val = dict(
@@ -592,7 +558,6 @@ def helper_test_symelem(sym, eref=None, debug=False, compound=False, **kw):
 
     assert not debug
 
-@pytest.mark.fast
 def test_symelems_F4132(debug=False, **kw):
     val = dict(
        C2=[
@@ -617,7 +582,6 @@ def test_symelems_F4132(debug=False, **kw):
     )
     helper_test_symelem('F4132', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_F432(debug=False, **kw):
     val = dict(
        C2=[
@@ -646,7 +610,6 @@ def test_symelems_F432(debug=False, **kw):
     )
     helper_test_symelem('F432', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_F23(debug=False, **kw):
     val = dict(
        C2=[
@@ -669,7 +632,6 @@ def test_symelems_F23(debug=False, **kw):
     )
     helper_test_symelem('F23', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_I432(debug=False, **kw):
     val = dict(
        C2=[
@@ -700,7 +662,6 @@ def test_symelems_I432(debug=False, **kw):
     )
     helper_test_symelem('I432', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_R32(debug=False, **kw):
     val = dict(
        C2=[
@@ -723,7 +684,6 @@ def test_symelems_R32(debug=False, **kw):
     )
     helper_test_symelem('R32', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P1211(debug=False, **kw):
     val = dict(
        C21=[
@@ -738,7 +698,6 @@ def test_symelems_P1211(debug=False, **kw):
     )
     helper_test_symelem('P1211', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P2221(debug=False, **kw):
     val = dict(
        C2=[
@@ -756,7 +715,6 @@ def test_symelems_P2221(debug=False, **kw):
     )
     helper_test_symelem('P2221', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P21212(debug=False, **kw):
     val = dict(
        C2=[
@@ -772,12 +730,10 @@ def test_symelems_P21212(debug=False, **kw):
     )
     helper_test_symelem('P21212', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P1(debug=False, **kw):
     val = dict()
     helper_test_symelem('P1', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_C121(debug=False, **kw):
     val = dict(
        C2=[
@@ -791,7 +747,6 @@ def test_symelems_C121(debug=False, **kw):
     )
     helper_test_symelem('C121', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P3(debug=False, **kw):
     val = dict(C3=[
        SymElem(3, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], label='C3'),
@@ -800,7 +755,6 @@ def test_symelems_P3(debug=False, **kw):
     ], )
     helper_test_symelem('P3', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P222(debug=False, **kw):
     val = dict(C2=[
        SymElem(2, axis=[0, 0, 1], cen=[0.0, 0.0, 0.0], label='C2'),
@@ -818,7 +772,6 @@ def test_symelems_P222(debug=False, **kw):
     ], )
     helper_test_symelem('P222', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P23(debug=False, **kw):
     val = dict(
        C2=[
@@ -839,7 +792,6 @@ def test_symelems_P23(debug=False, **kw):
     )
     helper_test_symelem('P23', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_I213(debug=False, **kw):
     val = dict(
        C2=[
@@ -861,7 +813,6 @@ def test_symelems_I213(debug=False, **kw):
     )
     helper_test_symelem('I213', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_I23(debug=False, **kw):
     val = dict(
        C2=[
@@ -883,7 +834,6 @@ def test_symelems_I23(debug=False, **kw):
     )
     helper_test_symelem('I23', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_I4(debug=False, **kw):
     val = dict(
        C2=[
@@ -901,7 +851,6 @@ def test_symelems_I4(debug=False, **kw):
     )
     helper_test_symelem('I4', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_I41(debug=False, **kw):
     val = dict(
        C2=[
@@ -916,7 +865,6 @@ def test_symelems_I41(debug=False, **kw):
     )
     helper_test_symelem('I41', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_I4132(debug=False, **kw):
     val = dict(
        C2=[
@@ -946,7 +894,6 @@ def test_symelems_I4132(debug=False, **kw):
     )
     helper_test_symelem('I4132', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_R3(debug=False, **kw):
     val = dict(
        C3=[
@@ -961,7 +908,6 @@ def test_symelems_R3(debug=False, **kw):
     )
     helper_test_symelem('R3', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P3121(debug=False, **kw):
     val = dict(
        C2=[
@@ -979,7 +925,6 @@ def test_symelems_P3121(debug=False, **kw):
     )
     helper_test_symelem('P3121', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P212121(debug=False, **kw):
     val = dict(C21=[
        SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore
@@ -991,7 +936,6 @@ def test_symelems_P212121(debug=False, **kw):
     ], )
     helper_test_symelem('P212121', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P31(debug=False, **kw):
     val = dict(
        C31=[
@@ -1005,7 +949,6 @@ def test_symelems_P31(debug=False, **kw):
     )
     helper_test_symelem('P31', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P32(debug=False, **kw):
     val = dict(
        C32=[
@@ -1019,7 +962,6 @@ def test_symelems_P32(debug=False, **kw):
     )
     helper_test_symelem('P32', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P213(debug=False, **kw):
     val = dict(
        C3=[
@@ -1038,7 +980,6 @@ def test_symelems_P213(debug=False, **kw):
     )
     helper_test_symelem('P213', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P3221(debug=False, **kw):
     val = dict(
        C2=[
@@ -1056,7 +997,6 @@ def test_symelems_P3221(debug=False, **kw):
     )
     helper_test_symelem('P3221', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P41(debug=False, **kw):
     val = dict(
        C21=[
@@ -1072,7 +1012,6 @@ def test_symelems_P41(debug=False, **kw):
     )
     helper_test_symelem('P41', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P41212(debug=False, **kw):
     val = dict(
        C2=[
@@ -1087,7 +1026,6 @@ def test_symelems_P41212(debug=False, **kw):
     )
     helper_test_symelem('P41212', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P4132(debug=False, **kw):
     val = dict(
        C2=[
@@ -1112,7 +1050,6 @@ def test_symelems_P4132(debug=False, **kw):
     )
     helper_test_symelem('P4132', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P4232(debug=False, **kw):
     val = dict(
        C2=[
@@ -1142,7 +1079,6 @@ def test_symelems_P4232(debug=False, **kw):
     )
     helper_test_symelem('P4232', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P43(debug=False, **kw):
     val = dict(
        C21=[
@@ -1158,7 +1094,6 @@ def test_symelems_P43(debug=False, **kw):
     )
     helper_test_symelem('P43', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P432(debug=False, **kw):
     val = dict(
        C2=[
@@ -1186,7 +1121,6 @@ def test_symelems_P432(debug=False, **kw):
     )
     helper_test_symelem('P432', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P43212(debug=False, **kw):
     val = dict(
        C2=[
@@ -1204,7 +1138,6 @@ def test_symelems_P43212(debug=False, **kw):
     )
     helper_test_symelem('P43212', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P4332(debug=False, **kw):
     val = dict(
        C2=[
@@ -1229,7 +1162,6 @@ def test_symelems_P4332(debug=False, **kw):
     )
     helper_test_symelem('P4332', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P6(debug=False, **kw):
     val = dict(
        C2=[
@@ -1247,7 +1179,6 @@ def test_symelems_P6(debug=False, **kw):
     )
     helper_test_symelem('P6', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P61(debug=False, **kw):
     val = dict(
        C21=[
@@ -1265,7 +1196,6 @@ def test_symelems_P61(debug=False, **kw):
     )
     helper_test_symelem('P61', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P6122(debug=False, **kw):
     val = dict(
        C2=[
@@ -1284,7 +1214,6 @@ def test_symelems_P6122(debug=False, **kw):
     )
     helper_test_symelem('P6122', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P62(debug=False, **kw):
     val = dict(
        C2=[
@@ -1300,7 +1229,6 @@ def test_symelems_P62(debug=False, **kw):
     )
     helper_test_symelem('P62', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P63(debug=False, **kw):
     val = dict(
        C3=[
@@ -1316,7 +1244,6 @@ def test_symelems_P63(debug=False, **kw):
     )
     helper_test_symelem('P63', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P64(debug=False, **kw):
     val = dict(
        C2=[
@@ -1332,7 +1259,6 @@ def test_symelems_P64(debug=False, **kw):
     )
     helper_test_symelem('P64', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P65(debug=False, **kw):
     val = dict(
        C21=[
@@ -1350,7 +1276,6 @@ def test_symelems_P65(debug=False, **kw):
     )
     helper_test_symelem('P65', val, debug, **kw)
 
-@pytest.mark.fast
 def test_symelems_P6522(debug=False, **kw):
     val = dict(
        C2=[
@@ -1369,7 +1294,6 @@ def test_symelems_P6522(debug=False, **kw):
     )
     helper_test_symelem('P6522', val, debug, **kw)
 
-@pytest.mark.fast
 def test_remove_redundant_screws():
     sym = 'P212121'
     f4cel = ipd.sym.xtal.sgframes(sym, cells=6, cellgeom='nonsingular')

@@ -18,7 +18,6 @@ class ObserverTest(ipd.observer.Observer):  # type: ignore
     def idx(self, i):
         self.idx_called = i
 
-@pytest.mark.fast
 def test_observer():
     agent = ipd.hub[ObserverTest]
     assert not agent.foobar_called

@@ -1,11 +1,11 @@
+import random
+
 import numpy as np
 import pytest
 from icecream import ic
 
 import ipd
-import ipd.homog as hm
-import ipd.homog.hgeom as h
-from ipd.homog import *
+from ipd import hnumpy as h
 
 ic.configureOutput(includeContext=True, contextAbsPath=True)
 
@@ -21,119 +21,126 @@ def main():
     return
     ic("test_homog.py DONE")
 
-@pytest.mark.fast
-def test_hxform_chain():
-    assert allclose(np.eye(4), hxform(np.eye(4), np.eye(4), np.eye(4)))
+def test_xchain():
+    u, v, w = [h.rand(random.randint(1, 4)) for _ in range(3)]
+    assert h.allclose(h.xform(u, v), h.xform(u, v))
+    assert h.allclose(h.xform(u, v, w), h.xform(h.xform(u, v), w))
 
-@pytest.mark.fast
+def test_xchain_pts():
+    u, v, w = [h.rand(random.randint(1, 4)) for _ in range(3)]
+    p = h.randpoint(7)
+    assert h.allclose(h.xform(u, p), h.xform(u, p))
+    assert h.allclose(h.xform(u, v, p), h.xform(h.xform(u, v), p))
+    q = h.randpoint(4)
+    assert h.allclose(h.xformpts(u, q), h.xformpts(u, q))
+    test = h.xformpts(h.xform(u, v), q)
+    assert h.allclose(h.xformpts(u, v, q), test)
+
+def test_hxform_chain():
+    assert h.allclose(np.eye(4), h.xform(np.eye(4), np.eye(4), np.eye(4)))
+
 def test_closest_point_on_line():
-    assert allclose([0, 0, 0, 1], closest_point_on_line([1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]))
-    assert allclose([0, 0, 1, 1], closest_point_on_line([1, 0, 1, 0], [0, 0, 0, 1], [0, 0, 1, 0]))
-    n = rand_unit(100)
-    p = hrandpoint(100)
-    t = hrandpoint(100)
-    c = closest_point_on_line(t, p, n)
-    assert allclose(np.pi / 2, angle(t - c, p - c))
+    assert h.allclose([0, 0, 0, 1], h.closest_point_on_line([1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]))
+    assert h.allclose([0, 0, 1, 1], h.closest_point_on_line([1, 0, 1, 0], [0, 0, 0, 1], [0, 0, 1, 0]))
+    n = h.rand_unit(100)
+    p = h.randpoint(100)
+    t = h.randpoint(100)
+    c = h.closest_point_on_line(t, p, n)
+    assert h.allclose(np.pi / 2, h.angle(t - c, p - c))
     d = np.sum((t - c)**2, axis=1)
     d1 = np.sum((t - c + n/1000)**2, axis=1)
     d2 = np.sum((t - c - n/1000)**2, axis=1)
     assert np.all(d < d1)
     assert np.all(d < d2)
 
-@pytest.mark.fast
 def test_uniqlastdim():
     test = [
         [1., 0, 0, 0],
         [1.00001, 0, 0, 0],
         [1.00002, 0, 0, 0],
     ]
-    assert allclose(uniqlastdim(test), [[1, 0, 0, 0]])
+    assert h.allclose(h.uniqlastdim(test), [[1, 0, 0, 0]])
     test.append([2, 0, 0, 0])
-    assert allclose(uniqlastdim(test), [[1, 0, 0, 0], [2, 0, 0, 0]])
+    assert h.allclose(h.uniqlastdim(test), [[1, 0, 0, 0], [2, 0, 0, 0]])
 
-@pytest.mark.fast
 def test_hcentered():
-    coords = hrandpoint((8, 7))
+    coords = h.randpoint((8, 7))
     coords[..., :3] += [10, 20, 30]
-    cencoord = hcentered(coords)
+    cencoord = h.centered(coords)
     assert cencoord.shape == coords.shape
-    assert np.allclose(hcom(cencoord), [0, 0, 0, 1])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
+    assert np.allclose(h.com(cencoord), [0, 0, 0, 1])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + h.com(coords)[..., None, :3])
 
-    coords = hrandpoint((8, 7, 2, 1))[..., :3]
+    coords = h.randpoint((8, 7, 2, 1))[..., :3]
     coords[..., :3] += [30, 20, 10]
-    cencoord = hcentered(coords)
+    cencoord = h.centered(coords)
     assert cencoord.shape[:-1] == coords.shape[:-1]
-    assert np.allclose(hcom(cencoord), [0, 0, 0, 1])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
+    assert np.allclose(h.com(cencoord), [0, 0, 0, 1])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + h.com(coords)[..., None, :3])
 
-    coords = hrandpoint((1, 8, 3, 7))
+    coords = h.randpoint((1, 8, 3, 7))
     coords[..., :3] += 20
-    cencoord = hcentered3(coords)
+    cencoord = h.centered3(coords)
     assert cencoord.shape[:-1] == coords.shape[:-1]
-    assert np.allclose(hcom(cencoord)[..., :3], [0, 0, 0])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
+    assert np.allclose(h.com(cencoord)[..., :3], [0, 0, 0])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + h.com(coords)[..., None, :3])
 
-    coords = hrandpoint(7)[..., :3]
+    coords = h.randpoint(7)[..., :3]
     coords[..., :3] += 30
-    cencoord = hcentered3(coords)
+    cencoord = h.centered3(coords)
     assert cencoord.shape == coords.shape
-    assert np.allclose(hcom(cencoord)[..., :3], [0, 0, 0])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords)[..., None, :3])
+    assert np.allclose(h.com(cencoord)[..., :3], [0, 0, 0])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + h.com(coords)[..., None, :3])
 
-    coords = hrandpoint((8, 7))
+    coords = h.randpoint((8, 7))
     coords[..., :3] += [10, 20, 30]
-    cencoord = hcentered(coords, singlecom=True)
+    cencoord = h.centered(coords, singlecom=True)
     assert cencoord.shape == coords.shape
-    assert np.allclose(hcom(cencoord, flat=True), [0, 0, 0, 1])
-    assert np.allclose(coords[..., :3], cencoord[..., :3] + ipd.homog.hcom(coords, flat=True)[..., None, :3])
+    assert np.allclose(h.com(cencoord, flat=True), [0, 0, 0, 1])
+    assert np.allclose(coords[..., :3], cencoord[..., :3] + h.com(coords, flat=True)[..., None, :3])
 
-@pytest.mark.fast
 def test_halign():
-    for i in range(10):
-        a, b = rand_unit(2)
-        x = ipd.homog.halign(a, b)
-        b2 = ipd.homog.hxform(x, a)
+    for _ in range(10):
+        a, b = h.rand_unit(2)
+        x = h.halign(a, b)
+        b2 = h.xform(x, a)
         assert np.allclose(b, b2)
-        ang = ipd.homog.angle(a, b)
-        ang2 = ipd.homog.angle_of(x)
+        ang = h.angle(a, b)
+        ang2 = h.angle_of(x)
         # ic(ang, ang2)
         assert np.allclose(ang, ang2)
 
-@pytest.mark.fast
 def test_hdiff():
     I = np.eye(4)
-    assert hdiff(I, I) == 0
+    assert h.diff(I, I) == 0
 
-    x = hrandsmall(cart_sd=0.00001, rot_sd=0.00001)
-    assert hdiff(x, x) == 0
-    assert hdiff(x, I) != 0
+    x = h.randsmall(cart_sd=0.00001, rot_sd=0.00001)
+    assert h.diff(x, x) == 0
+    assert h.diff(x, I) != 0
 
-    assert hdiff(hconvert(x[:3, :3]), I) != 0
-    assert hdiff(hconvert(trans=x[:3, 3]), I) != 0
+    assert h.diff(h.convert(x[:3, :3]), I) != 0
+    assert h.diff(h.convert(trans=x[:3, 3]), I) != 0
 
-@pytest.mark.fast
 def test_hxform_ray():
-    p = hrandpoint().squeeze()
-    v = rand_vec()
-    r = hray(p, v)
+    p = h.randpoint().squeeze()
+    v = h.rand_vec()
+    r = h.ray(p, v)
     assert r.shape == (4, 2)
-    x = hrand()
+    x = h.rand()
     m = x @ r
     assert m.shape == (4, 2)
-    assert np.allclose(m[..., 0], hxform(x, r[..., 0]))
-    assert np.allclose(m[..., 1], hxform(x, r[..., 1]))
-    assert np.allclose(m, hxform(x, r))
-    assert ipd.homog.hvalid(m)
+    assert np.allclose(m[..., 0], h.xform(x, r[..., 0]))
+    assert np.allclose(m[..., 1], h.xform(x, r[..., 1]))
+    assert np.allclose(m, h.xform(x, r))
+    assert h.hvalid(m)
 
-    x = hrand(3)
+    x = h.rand(3)
     m = x @ r
     assert m.shape == (3, 4, 2)
-    assert np.allclose(m[..., 0], hxform(x, r[..., 0]))
-    assert np.allclose(m[..., 1], hxform(x, r[..., 1]))
-    assert ipd.homog.hvalid(m)
+    assert np.allclose(m[..., 0], h.xform(x, r[..., 0]))
+    assert np.allclose(m[..., 1], h.xform(x, r[..., 1]))
+    assert h.hvalid(m)
 
-@pytest.mark.fast
 def test_hxform_stuff_coords():
 
     class Dummy:
@@ -141,14 +148,13 @@ def test_hxform_stuff_coords():
         def __init__(self, p):
             self.coords = p
 
-    x = hrand()
-    p = hpoint([1, 2, 3])
+    x = h.rand()
+    p = h.point([1, 2, 3])
     smrt = Dummy(p)  # I am so smart, S, M, R T...
-    q = hxform(x, smrt)
-    r = hxform(x, p)
+    q = h.xform(x, smrt)
+    r = h.xform(x, p)
     assert np.allclose(smrt.coords, p)
 
-@pytest.mark.fast
 def test_hxform_stuff_xformed():
 
     class Dummy:
@@ -157,16 +163,15 @@ def test_hxform_stuff_xformed():
             self.pos = pos
 
         def xformed(self, x):
-            return Dummy(ipd.homog.hxform(x, self.pos))
+            return Dummy(h.xform(x, self.pos))
 
-    x = hrand()
-    p = hpoint([1, 2, 3])
+    x = h.rand()
+    p = h.point([1, 2, 3])
     smrt = Dummy(p)
-    q = hxform(x, smrt)
-    r = hxform(x, p)
+    q = h.xform(x, smrt)
+    r = h.xform(x, p)
     assert np.allclose(smrt.pos, p)
 
-@pytest.mark.fast
 def test_hxform_list():
 
     class Dummy:
@@ -174,155 +179,143 @@ def test_hxform_list():
         def __init__(self, p):
             self.coords = p
 
-    x = hrand()
-    p = hpoint([1, 2, 3])
+    x = h.rand()
+    p = h.point([1, 2, 3])
     stuff = Dummy(p)
-    q = hxform(x, stuff)
-    r = hxform(x, p)
+    q = h.xform(x, stuff)
+    r = h.xform(x, p)
     assert np.allclose(stuff.coords, p)
 
-@pytest.mark.fast
 def test_hxform():
-    x = hrand()
-    y = hxform(x, [1, 2, 3], homogout=True)  # type: ignore
-    assert np.allclose(y, x @ hpoint([1, 2, 3]))
-    y = hxform(x, [1, 2, 3])
-    assert np.allclose(y, (x @ hpoint([1, 2, 3]))[:3])
+    x = h.rand()
+    y = h.xform(x, [1, 2, 3], homogout=True)  # type: ignore
+    assert np.allclose(y, x @ h.point([1, 2, 3]))
+    y = h.xform(x, [1, 2, 3])
+    assert np.allclose(y, (x @ h.point([1, 2, 3]))[:3])
 
-@pytest.mark.fast
 def test_hxform_outer():
-    x = hrand()
-    hxform(x, [1, 2, 3])
+    x = h.rand()
+    h.xform(x, [1, 2, 3])
 
-@pytest.mark.fast
 def test_hpow():
     with pytest.raises(ValueError):
-        hpow_int(np.eye(4), 0.5)
+        h.pow_int(np.eye(4), 0.5)
 
-    x = hrot([0, 0, 1], [1, 2, 3])
-    xinv = hrot([0, 0, 1], [-1, -2, -3])
+    x = h.rot([0, 0, 1], [1, 2, 3])
+    xinv = h.rot([0, 0, 1], [-1, -2, -3])
 
-    xpow = hpow(x, 0)
+    xpow = h.pow(x, 0)
     assert np.allclose(xpow, np.eye(4))
-    xpow = hpow(x, 2)
+    xpow = h.pow(x, 2)
     assert np.allclose(xpow, x @ x)
-    xpow = hpow(x, 5)
+    xpow = h.pow(x, 5)
     assert np.allclose(xpow, x @ x @ x @ x @ x)
-    xpow = hpow(x, -2)
+    xpow = h.pow(x, -2)
     assert np.allclose(xpow, xinv @ xinv)
 
 @pytest.mark.fast  # @pytest.mark.xfail
 def test_hpow_float():
-    x = hrot([0, 0, 1], [1, 2, 3])
-    hpow(x, 0.3)
+    x = h.rot([0, 0, 1], [1, 2, 3])
+    h.pow(x, 0.3)
     ic("test with int powers, maybe other cases")
 
-@pytest.mark.fast
 def test_hmean():
     ang = np.random.normal(100)
     xforms = np.array([
-        hrot([1, 0, 0], ang),
-        hrot([1, 0, 0], -ang),
-        hrot([1, 0, 0], 0),
+        h.rot([1, 0, 0], ang),
+        h.rot([1, 0, 0], -ang),
+        h.rot([1, 0, 0], 0),
     ])
-    xmean = hmean(xforms)
+    xmean = h.mean(xforms)
     assert np.allclose(xmean, np.eye(4))
     # assert 0
 
-@pytest.mark.fast
 def test_homo_rotation_single():
-    axis0 = hnormalized(np.random.randn(3))
+    axis0 = h.normalized(np.random.randn(3))
     ang0 = np.pi / 4.0
-    r = hrot(list(axis0), float(ang0))
-    a = fast_axis_of(r)
-    n = hnorm(a)
+    r = h.rot(list(axis0), float(ang0))
+    a = h.fast_axis_of(r)
+    n = h.norm(a)
     assert np.all(abs(a/n - axis0) < 0.001)
     assert np.all(abs(np.arcsin(n / 2) - ang0) < 0.001)
 
-@pytest.mark.fast
 def test_homo_rotation_center():
-    assert np.allclose([0, 2, 0, 1], hrot([1, 0, 0], 180, [0, 1, 0]) @ (0, 0, 0, 1), atol=1e-5)
-    assert np.allclose([0, 1, -1, 1], hrot([1, 0, 0], 90, [0, 1, 0]) @ (0, 0, 0, 1), atol=1e-5)
-    assert np.allclose([-1, 1, 2, 1], hrot([1, 1, 0], 180, [0, 1, 1]) @ (0, 0, 0, 1), atol=1e-5)
+    assert np.allclose([0, 2, 0, 1], h.rot([1, 0, 0], 180, [0, 1, 0]) @ (0, 0, 0, 1), atol=1e-5)
+    assert np.allclose([0, 1, -1, 1], h.rot([1, 0, 0], 90, [0, 1, 0]) @ (0, 0, 0, 1), atol=1e-5)
+    assert np.allclose([-1, 1, 2, 1], h.rot([1, 1, 0], 180, [0, 1, 1]) @ (0, 0, 0, 1), atol=1e-5)
 
-@pytest.mark.fast
 def test_homo_rotation_array():
     shape = (1, 2, 1, 3, 4, 1, 1)
-    axis0 = hnormalized(np.random.randn(*(shape + (3, ))))
+    axis0 = h.normalized(np.random.randn(*(shape + (3, ))))
     ang0 = np.random.rand(*shape) * (0.99 * np.pi / 2 + 0.005 * np.pi / 2)
-    r = hrot(axis0, ang0)
-    a = fast_axis_of(r)
-    n = hnorm(a)[..., np.newaxis]
+    r = h.rot(axis0, ang0)
+    a = h.fast_axis_of(r)
+    n = h.norm(a)[..., np.newaxis]
     assert np.all(abs(a/n - axis0) < 0.001)
     assert np.all(abs(np.arcsin(n[..., 0] / 2) - ang0) < 0.001)
 
-@pytest.mark.fast
 def test_homo_rotation_angle():
     ang = np.random.rand(1000) * np.pi
-    a = rand_unit()
-    u = hprojperp(a, rand_vec())
-    x = hrot(a, ang)
-    ang2 = angle(u, x @ u)
+    a = h.rand_unit()
+    u = h.projperp(a, h.rand_vec())
+    x = h.rot(a, ang)
+    ang2 = h.angle(u, x @ u)
     assert np.allclose(ang, ang2, atol=1e-5)
 
-@pytest.mark.fast
 def test_htrans():
-    assert htrans([1, 3, 7]).shape == (4, 4)
-    assert np.allclose(htrans([1, 3, 7])[:3, 3], (1, 3, 7))
+    assert h.trans([1, 3, 7]).shape == (4, 4)
+    assert np.allclose(h.trans([1, 3, 7])[:3, 3], (1, 3, 7))
 
     with pytest.raises(ValueError):
-        htrans([4, 3, 2, 1, 1])
+        h.trans([4, 3, 2, 1, 1])
 
     s = (2, )
     t = np.random.randn(*s, 3)
-    ht = htrans(t)
+    ht = h.trans(t)
     assert ht.shape == s + (4, 4)
     assert np.allclose(ht[..., :3, 3], t)
 
-@pytest.mark.fast
 def test_hcross():
-    assert np.allclose(hcross([1, 0, 0], [0, 1, 0]), [0, 0, 1, 0])
-    assert np.allclose(hcross([1, 0, 0, 0], [0, 1, 0, 0]), [0, 0, 1, 0])
+    assert np.allclose(h.cross([1, 0, 0], [0, 1, 0]), [0, 0, 1, 0])
+    assert np.allclose(h.cross([1, 0, 0, 0], [0, 1, 0, 0]), [0, 0, 1, 0])
     a, b = np.random.randn(3, 4, 5, 3), np.random.randn(3, 4, 5, 3)
-    c = hcross(a, b)
-    assert np.allclose(hdot(a, c), 0)
-    assert np.allclose(hdot(b, c), 0)
+    c = h.cross(a, b)
+    assert np.allclose(h.dot(a, c), 0)
+    assert np.allclose(h.dot(b, c), 0)
 
-@pytest.mark.fast
 def test_axis_angle_of():
-    ax, an = axis_angle_of(hrot([10, 10, 0], np.pi), debug=True)
+    ax, an = h.axis_angle_of(h.rot([10, 10, 0], np.pi), debug=True)
     assert 1e-5 > np.abs(ax[0] - ax[1])
     assert 1e-5 > np.abs(ax[2])
     # ic(np.linalg.norm(ax, axis=-1))
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
-    ax, an = axis_angle_of(hrot([0, 1, 0], np.pi), debug=True)
+    ax, an = h.axis_angle_of(h.rot([0, 1, 0], np.pi), debug=True)
     assert 1e-5 > np.abs(ax[0])
     assert 1e-5 > np.abs(ax[1]) - 1
     assert 1e-5 > np.abs(ax[2])
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
-    ax, an = axis_angle_of(hrot([0, 1, 0], np.pi * 0.25), debug=True)
+    ax, an = h.axis_angle_of(h.rot([0, 1, 0], np.pi * 0.25), debug=True)
     # ic(ax, an)
     assert np.allclose(ax, [0, 1, 0, 0], atol=1e-5)
     assert 1e-5 > np.abs(an - np.pi * 0.25)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
-    ax, an = axis_angle_of(hrot([0, 1, 0], np.pi * 0.75), debug=True)
+    ax, an = h.axis_angle_of(h.rot([0, 1, 0], np.pi * 0.75), debug=True)
     # ic(ax, an)
     assert np.allclose(ax, [0, 1, 0, 0], atol=1e-5)
     assert 1e-5 > np.abs(an - np.pi * 0.75)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
-    ax, an = axis_angle_of(hrot([1, 0, 0], np.pi / 2), debug=True)
+    ax, an = h.axis_angle_of(h.rot([1, 0, 0], np.pi / 2), debug=True)
     # ic(np.pi / an)
     assert 1e-5 > np.abs(an - np.pi / 2)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
-@pytest.mark.fast
 def test_axis_angle_of_rand():
     shape = (4, 5, 6, 7, 8)
     # shape = (3, )
-    axis = hnormalized(np.random.randn(*shape, 3))
+    axis = h.normalized(np.random.randn(*shape, 3))
     angl = np.random.random(shape) * np.pi / 2
     # seed with one identity and one 180
     angl[0, 0, 0, 0, 0] = np.pi
@@ -332,8 +325,8 @@ def test_axis_angle_of_rand():
     angl[0, 0, 1, 0, 0] = 0
     axis[0, 0, 1, 0, 0] = [1, 0, 0, 0]
     # axis[1] = [1,0,0,0]
-    rot = hrot(axis, angl, dtype="f8")
-    ax, an = axis_angle_of(rot, debug=True)
+    rot = h.rot(axis, angl, dtype="f8")
+    ax, an = h.axis_angle_of(rot, debug=True)
     dot = np.sum(axis * ax, axis=-1)
     ax[dot < 0] = -ax[dot < 0]
 
@@ -362,12 +355,11 @@ def test_axis_angle_of_rand():
     assert np.allclose(angl, an)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
-@pytest.mark.fast
 def test_axis_angle_of_rand_180(nsamp=100):
-    axis = hnormalized(np.random.randn(nsamp, 3))
+    axis = h.normalized(np.random.randn(nsamp, 3))
     angl = np.pi
-    rot = hrot(axis, angl, dtype="f8")
-    ax, an = axis_angle_of(rot, debug=True)
+    rot = h.rot(axis, angl, dtype="f8")
+    ax, an = h.axis_angle_of(rot, debug=True)
     # ic('rot', rot)
     # ic('ax,an', ax)
     # ic('ax,an', axis)
@@ -377,171 +369,162 @@ def test_axis_angle_of_rand_180(nsamp=100):
     assert np.allclose(angl, an, atol=1e-4, rtol=1e-4)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
-@pytest.mark.fast
 def test_axis_angle_of_3x3_rand():
     shape = (4, 5, 6, 7, 8)
-    axis = normalized_3x3(np.random.randn(*shape, 3))
+    axis = h.normalized_3x3(np.random.randn(*shape, 3))
     assert axis.shape == (*shape, 3)
     angl = np.random.random(shape) * np.pi / 2
-    rot = hrot(axis, angl, dtype="f8")[..., :3, :3]
+    rot = h.rot(axis, angl, dtype="f8")[..., :3, :3]
     assert rot.shape[-1] == 3
     assert rot.shape[-2] == 3
-    ax, an = axis_angle_of(rot)
+    ax, an = h.axis_angle_of(rot)
     assert np.allclose(axis, ax, atol=1e-3, rtol=1e-3)  # very loose to allow very rare cases
     assert np.allclose(angl, an, atol=1e-4, rtol=1e-4)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
-@pytest.mark.fast
 def test_is_valid_rays():
-    assert not is_valid_rays([[0, 1], [0, 0], [0, 0], [0, 0]])
-    assert not is_valid_rays([[0, 0], [0, 0], [0, 0], [1, 0]])
-    assert not is_valid_rays([[0, 0], [0, 3], [0, 0], [1, 0]])
-    assert is_valid_rays([[0, 0], [0, 1], [0, 0], [1, 0]])
+    assert not h.is_valid_rays([[0, 1], [0, 0], [0, 0], [0, 0]])
+    assert not h.is_valid_rays([[0, 0], [0, 0], [0, 0], [1, 0]])
+    assert not h.is_valid_rays([[0, 0], [0, 3], [0, 0], [1, 0]])
+    assert h.is_valid_rays([[0, 0], [0, 1], [0, 0], [1, 0]])
 
-@pytest.mark.fast
 def test_hrandray():
-    r = hrandray()
+    r = h.randray()
     assert np.all(r[..., 3, :] == (1, 0))
     assert r.shape == (4, 2)
-    assert np.allclose(hnorm(r[..., :3, 1]), 1)
+    assert np.allclose(h.norm(r[..., :3, 1]), 1)
 
-    r = hrandray(shape=(5, 6, 7))
+    r = h.randray(shape=(5, 6, 7))
     assert np.all(r[..., 3, :] == (1, 0))
     assert r.shape == (5, 6, 7, 4, 2)
-    assert np.allclose(hnorm(r[..., :3, 1]), 1)
+    assert np.allclose(h.norm(r[..., :3, 1]), 1)
 
-@pytest.mark.fast
 def test_proj_prep():
-    assert np.allclose([2, 3, 0, 1], hprojperp([0, 0, 1], [2, 3, 99]))
-    assert np.allclose([2, 3, 0, 1], hprojperp([0, 0, 2], [2, 3, 99]))
+    assert np.allclose([2, 3, 0, 1], h.projperp([0, 0, 1], [2, 3, 99]))
+    assert np.allclose([2, 3, 0, 1], h.projperp([0, 0, 2], [2, 3, 99]))
     a, b = np.random.randn(2, 5, 6, 7, 3)
-    pp = hprojperp(a, b)
-    assert np.allclose(hdot(a, pp), 0, atol=1e-5)
+    pp = h.projperp(a, b)
+    assert np.allclose(h.dot(a, pp), 0, atol=1e-5)
 
-@pytest.mark.fast
 def test_point_in_plane():
-    plane = hrandray((5, 6, 7))
-    assert np.all(point_in_plane(plane, plane[..., :3, 0]))
-    pt = hprojperp(plane[..., :3, 1], np.random.randn(3))
-    assert np.all(point_in_plane(plane, plane[..., 0] + pt))
+    plane = h.randray((5, 6, 7))
+    assert np.all(h.point_in_plane(plane, plane[..., :3, 0]))
+    pt = h.projperp(plane[..., :3, 1], np.random.randn(3))
+    assert np.all(h.point_in_plane(plane, plane[..., 0] + pt))
 
-@pytest.mark.fast
 def test_ray_in_plane():
-    plane = hrandray((5, 6, 7))
+    plane = h.randray((5, 6, 7))
     assert plane.shape == (5, 6, 7, 4, 2)
-    dirn = hprojperp(plane[..., :3, 1], np.random.randn(5, 6, 7, 3))
+    dirn = h.projperp(plane[..., :3, 1], np.random.randn(5, 6, 7, 3))
     assert dirn.shape == (5, 6, 7, 4)
-    ray = hray(plane[..., 0] + hcross(plane[..., 1], dirn) * 7, dirn)
-    assert np.all(ray_in_plane(plane, ray))
+    ray = h.ray(plane[..., 0] + h.cross(plane[..., 1], dirn) * 7, dirn)
+    assert np.all(h.ray_in_plane(plane, ray))
 
-@pytest.mark.fast
 def test_intersect_planes():
     with pytest.raises(ValueError):
-        intersect_planes(np.array([[0, 0, 0, 2], [0, 0, 0, 0]]).T, np.array([[0, 0, 0, 1], [0, 0, 0, 0]]).T)
+        h.intersect_planes(np.array([[0, 0, 0, 2], [0, 0, 0, 0]]).T, np.array([[0, 0, 0, 1], [0, 0, 0, 0]]).T)
     with pytest.raises(ValueError):
-        intersect_planes(np.array([[0, 0, 0, 1], [0, 0, 0, 0]]).T, np.array([[0, 0, 0, 1], [0, 0, 0, 1]]).T)
+        h.intersect_planes(np.array([[0, 0, 0, 1], [0, 0, 0, 0]]).T, np.array([[0, 0, 0, 1], [0, 0, 0, 1]]).T)
     with pytest.raises(ValueError):
-        intersect_planes(np.array([[0, 0, 1, 8], [0, 0, 0, 0]]).T, np.array([[0, 0, 1, 9], [0, 0, 0, 1]]).T)
+        h.intersect_planes(np.array([[0, 0, 1, 8], [0, 0, 0, 0]]).T, np.array([[0, 0, 1, 9], [0, 0, 0, 1]]).T)
     with pytest.raises(ValueError):
-        intersect_planes(np.array(9 * [[[0, 0], [0, 0], [0, 0], [1, 0]]]),
-                         np.array(2 * [[[0, 0], [0, 0], [0, 0], [1, 0]]]))
+        h.intersect_planes(np.array(9 * [[[0, 0], [0, 0], [0, 0], [1, 0]]]),
+                           np.array(2 * [[[0, 0], [0, 0], [0, 0], [1, 0]]]))
 
-    # isct, sts = intersect_planes(np.array(9 * [[[0, 0, 0, 1], [1, 0, 0, 0]]]),
+    # isct, sts = h.intersect_planes(np.array(9 * [[[0, 0, 0, 1], [1, 0, 0, 0]]]),
     # np.array(9 * [[[0, 0, 0, 1], [1, 0, 0, 0]]]))
     # assert isct.shape[:-2] == sts.shape == (9,)
     # assert np.all(sts == 2)
 
-    # isct, sts = intersect_planes(np.array([[1, 0, 0, 1], [1, 0, 0, 0]]),
+    # isct, sts = h.intersect_planes(np.array([[1, 0, 0, 1], [1, 0, 0, 0]]),
     # np.array([[0, 0, 0, 1], [1, 0, 0, 0]]))
     # assert sts == 1
 
-    isct, sts = intersect_planes(
+    isct, sts = h.intersect_planes(
         np.array([[0, 0, 0, 1], [1, 0, 0, 0]]).T,
         np.array([[0, 0, 0, 1], [0, 1, 0, 0]]).T)
     assert sts == 0
     assert isct[2, 0] == 0
     assert np.all(abs(isct[:3, 1]) == (0, 0, 1))
 
-    isct, sts = intersect_planes(
+    isct, sts = h.intersect_planes(
         np.array([[0, 0, 0, 1], [1, 0, 0, 0]]).T,
         np.array([[0, 0, 0, 1], [0, 0, 1, 0]]).T)
     assert sts == 0
     assert isct[1, 0] == 0
     assert np.all(abs(isct[:3, 1]) == (0, 1, 0))
 
-    isct, sts = intersect_planes(
+    isct, sts = h.intersect_planes(
         np.array([[0, 0, 0, 1], [0, 1, 0, 0]]).T,
         np.array([[0, 0, 0, 1], [0, 0, 1, 0]]).T)
     assert sts == 0
     assert isct[0, 0] == 0
     assert np.all(abs(isct[:3, 1]) == (1, 0, 0))
 
-    isct, sts = intersect_planes(
+    isct, sts = h.intersect_planes(
         np.array([[7, 0, 0, 1], [1, 0, 0, 0]]).T,
         np.array([[0, 9, 0, 1], [0, 1, 0, 0]]).T)
     assert sts == 0
     assert np.allclose(isct[:3, 0], [7, 9, 0])
     assert np.allclose(abs(isct[:3, 1]), [0, 0, 1])
 
-    isct, sts = intersect_planes(
-        np.array([[0, 0, 0, 1], hnormalized([1, 1, 0, 0])]).T,
-        np.array([[0, 0, 0, 1], hnormalized([0, 1, 1, 0])]).T,
+    isct, sts = h.intersect_planes(
+        np.array([[0, 0, 0, 1], h.normalized([1, 1, 0, 0])]).T,
+        np.array([[0, 0, 0, 1], h.normalized([0, 1, 1, 0])]).T,
     )
     assert sts == 0
-    assert np.allclose(abs(isct[:, 1]), hnormalized([1, 1, 1]))
+    assert np.allclose(abs(isct[:, 1]), h.normalized([1, 1, 1]))
 
-    p1 = hray([2, 0, 0, 1], [1, 0, 0, 0])
-    p2 = hray([0, 0, 0, 1], [0, 0, 1, 0])
-    isct, sts = intersect_planes(p1, p2)
+    p1 = h.ray([2, 0, 0, 1], [1, 0, 0, 0])
+    p2 = h.ray([0, 0, 0, 1], [0, 0, 1, 0])
+    isct, sts = h.intersect_planes(p1, p2)
     assert sts == 0
-    assert np.all(ray_in_plane(p1, isct))
-    assert np.all(ray_in_plane(p2, isct))
+    assert np.all(h.ray_in_plane(p1, isct))
+    assert np.all(h.ray_in_plane(p2, isct))
 
     p1 = np.array([[0.39263901, 0.57934885, -0.7693232, 1.0], [-0.80966465, -0.18557869, 0.55677976, 0.0]]).T
     p2 = np.array([[0.14790894, -1.333329, 0.45396509, 1.0], [-0.92436319, -0.0221499, 0.38087016, 0.0]]).T
-    isct, sts = intersect_planes(p1, p2)
+    isct, sts = h.intersect_planes(p1, p2)
     assert sts == 0
-    assert np.all(ray_in_plane(p1, isct))
-    assert np.all(ray_in_plane(p2, isct))
+    assert np.all(h.ray_in_plane(p1, isct))
+    assert np.all(h.ray_in_plane(p2, isct))
 
-@pytest.mark.fast
 def test_intersect_planes_rand():
     # origin case
-    plane1, plane2 = hrandray(shape=(2, 1))
+    plane1, plane2 = h.randray(shape=(2, 1))
     plane1[..., :3, 0] = 0
     plane2[..., :3, 0] = 0
-    isect, status = intersect_planes(plane1, plane2)
+    isect, status = h.intersect_planes(plane1, plane2)
     assert np.all(status == 0)
-    assert np.all(ray_in_plane(plane1, isect))
-    assert np.all(ray_in_plane(plane2, isect))
+    assert np.all(h.ray_in_plane(plane1, isect))
+    assert np.all(h.ray_in_plane(plane2, isect))
 
     # orthogonal case
-    plane1, plane2 = hrandray(shape=(2, 1))
-    plane1[..., :, 1] = hnormalized([0, 0, 1])
-    plane2[..., :, 1] = hnormalized([0, 1, 0])
-    isect, status = intersect_planes(plane1, plane2)
+    plane1, plane2 = h.randray(shape=(2, 1))
+    plane1[..., :, 1] = h.normalized([0, 0, 1])
+    plane2[..., :, 1] = h.normalized([0, 1, 0])
+    isect, status = h.intersect_planes(plane1, plane2)
     assert np.all(status == 0)
-    assert np.all(ray_in_plane(plane1, isect))
-    assert np.all(ray_in_plane(plane2, isect))
+    assert np.all(h.ray_in_plane(plane1, isect))
+    assert np.all(h.ray_in_plane(plane2, isect))
 
     # general case
-    plane1, plane2 = hrandray(shape=(2, 5, 6, 7, 8, 9))
-    isect, status = intersect_planes(plane1, plane2)
+    plane1, plane2 = h.randray(shape=(2, 5, 6, 7, 8, 9))
+    isect, status = h.intersect_planes(plane1, plane2)
     assert np.all(status == 0)
-    assert np.all(ray_in_plane(plane1, isect))
-    assert np.all(ray_in_plane(plane2, isect))
+    assert np.all(h.ray_in_plane(plane1, isect))
+    assert np.all(h.ray_in_plane(plane2, isect))
 
-@pytest.mark.fast
 def test_axis_ang_cen_of_rand():
     shape = (5, 6, 7, 8, 9)
-    axis0 = hnormalized(np.random.randn(*shape, 3))
+    axis0 = h.normalized(np.random.randn(*shape, 3))
     ang0 = np.random.random(shape) * (np.pi - 0.1) + 0.1
     cen0 = np.random.randn(*shape, 3) * 100.0
 
     helical_trans = np.random.randn(*shape)[..., None] * axis0
-    rot = hrot(axis0, ang0, cen0, dtype="f8")
+    rot = h.rot(axis0, ang0, cen0, dtype="f8")
     rot[..., :, 3] += helical_trans
-    axis, ang, cen = axis_ang_cen_of(rot)
+    axis, ang, cen = h.axis_ang_cen_of(rot)
 
     assert np.allclose(axis0, axis, rtol=1e-5)
     assert np.allclose(ang0, ang, rtol=1e-5)
@@ -550,20 +533,19 @@ def test_axis_ang_cen_of_rand():
     assert np.allclose(cen + helical_trans, cenhat, rtol=1e-4, atol=1e-4)
     assert np.allclose(np.linalg.norm(axis, axis=-1), 1.0)
 
-@pytest.mark.fast
 @pytest.mark.skip(reason="numerically unstable")
 def test_axis_ang_cen_of_rand_eig():
     # shape = (5, 6, 7, 8, 9)
     shape = (1, )
-    axis0 = hnormalized(np.random.randn(*shape, 3))
+    axis0 = h.normalized(np.random.randn(*shape, 3))
     ang0 = np.random.random(shape) * (np.pi - 0.1) + 0.1
     cen0 = np.random.randn(*shape, 3) * 100.0
 
     helical_trans = np.random.randn(*shape)[..., None] * axis0
-    rot_pure = hrot(axis0, ang0, cen0, dtype="f8")
+    rot_pure = h.rot(axis0, ang0, cen0, dtype="f8")
     rot = rot_pure.copy()
     rot[..., :, 3] += helical_trans
-    axis, ang, cen = axis_ang_cen_of_eig(rot)
+    axis, ang, cen = h.axis_ang_cen_of_eig(rot)
     # ic(cen)
     # ic(cen0)
 
@@ -577,89 +559,83 @@ def test_axis_ang_cen_of_rand_eig():
     assert np.allclose(cen - helical_trans, cenhat, rtol=1e-4, atol=1e-4)
     assert np.allclose(np.linalg.norm(axis, axis=-1), 1.0)
 
-@pytest.mark.fast
 def test_axis_ang_cen_of_rand_180():
     shape = (5, 6, 7)
-    axis0 = hnormalized(np.random.randn(*shape, 3))
+    axis0 = h.normalized(np.random.randn(*shape, 3))
     ang0 = np.pi
     cen0 = np.random.randn(*shape, 3) * 100.0
 
     helical_trans = np.random.randn(*shape)[..., None] * axis0
-    rot = hrot(axis0, ang0, cen0, dtype="f8")
+    rot = h.rot(axis0, ang0, cen0, dtype="f8")
     rot[..., :, 3] += helical_trans
-    axis, ang, cen = axis_ang_cen_of(rot)
+    axis, ang, cen = h.axis_ang_cen_of(rot)
 
-    assert np.allclose(np.abs(hdot(axis0, axis)), 1, rtol=1e-5)
+    assert np.allclose(np.abs(h.dot(axis0, axis)), 1, rtol=1e-5)
     assert np.allclose(ang0, ang, rtol=1e-5)
     #  check rotation doesn't move cen
     cenhat = (rot @ cen[..., None]).squeeze()
     assert np.allclose(cen + helical_trans, cenhat, rtol=1e-4, atol=1e-4)
     assert np.allclose(np.linalg.norm(axis, axis=-1), 1.0)
 
-@pytest.mark.fast
 def test_axis_angle_vs_axis_angle_cen_performance(N=1000):
     t = ipd.dev.Timer().start()
-    xforms = hrand(N)
+    xforms = h.rand(N)
     t.checkpoint("setup")
-    axis, ang = axis_angle_of(xforms)
+    axis, ang = h.axis_angle_of(xforms)
     t.checkpoint("axis_angle_of")
-    axis2, ang2, cen = axis_ang_cen_of(xforms)
-    t.checkpoint("axis_ang_cen_of")
+    axis2, ang2, _cen = h.axis_ang_cen_of(xforms)
+    t.checkpoint("h.axis_ang_cen_of")
     # ic(t.report(scale=1_000_000 / N))
 
     assert np.allclose(axis, axis2)
     assert np.allclose(ang, ang2)
     # assert 0
 
-@pytest.mark.fast
 def test_hinv_rand():
     shape = (5, 6, 7, 8, 9)
-    axis0 = hnormalized(np.random.randn(*shape, 3))
+    axis0 = h.normalized(np.random.randn(*shape, 3))
     ang0 = np.random.random(shape) * (np.pi - 0.1) + 0.1
     cen0 = np.random.randn(*shape, 3) * 100.0
     helical_trans = np.random.randn(*shape)[..., None] * axis0
-    rot = hrot(axis0, ang0, cen0, dtype="f8")
+    rot = h.rot(axis0, ang0, cen0, dtype="f8")
     rot[..., :, 3] += helical_trans
-    assert np.allclose(np.eye(4), hinv(rot) @ rot)
+    assert np.allclose(np.eye(4), h.hinv(rot) @ rot)
 
-@pytest.mark.fast
 def test_hframe():
     sh = (5, 6, 7, 8, 9)
-    u = hrandpoint(sh)
-    v = hrandpoint(sh)
-    w = hrandpoint(sh)
-    s = hframe(u, v, w)
-    assert is_homog_xform(s)
+    u = h.randpoint(sh)
+    v = h.randpoint(sh)
+    w = h.randpoint(sh)
+    s = h.frame(u, v, w)
+    assert h.is_homog_xform(s)
 
-    assert is_homog_xform(hframe([1, 2, 3], [5, 6, 4], [9, 7, 8]))
+    assert h.is_homog_xform(h.frame([1, 2, 3], [5, 6, 4], [9, 7, 8]))
 
-@pytest.mark.fast
 def test_line_line_dist():
-    lld = line_line_distance
-    assert lld(hray([0, 0, 0], [1, 0, 0]), hray([0, 0, 0], [1, 0, 0])) == 0
-    assert lld(hray([0, 0, 0], [1, 0, 0]), hray([1, 0, 0], [1, 0, 0])) == 0
-    assert lld(hray([0, 0, 0], [1, 0, 0]), hray([0, 1, 0], [1, 0, 0])) == 1
-    assert lld(hray([0, 0, 0], [1, 0, 0]), hray([0, 1, 0], [0, 0, 1])) == 1
+    lld = h.line_line_distance
+    assert lld(h.ray([0, 0, 0], [1, 0, 0]), h.ray([0, 0, 0], [1, 0, 0])) == 0
+    assert lld(h.ray([0, 0, 0], [1, 0, 0]), h.ray([1, 0, 0], [1, 0, 0])) == 0
+    assert lld(h.ray([0, 0, 0], [1, 0, 0]), h.ray([0, 1, 0], [1, 0, 0])) == 1
+    assert lld(h.ray([0, 0, 0], [1, 0, 0]), h.ray([0, 1, 0], [0, 0, 1])) == 1
 
-@pytest.mark.fast
 def test_line_line_closest_points():
-    lld = line_line_distance
-    llcp = line_line_closest_points
-    p, q = llcp(hray([0, 0, 0], [1, 0, 0]), hray([0, 0, 0], [0, 1, 0]))
+    lld = h.line_line_distance
+    llcp = h.line_line_closest_points
+    p, q = llcp(h.ray([0, 0, 0], [1, 0, 0]), h.ray([0, 0, 0], [0, 1, 0]))
     assert np.all(p == [0, 0, 0, 1]) and np.all(q == [0, 0, 0, 1])
-    p, q = llcp(hray([0, 1, 0], [1, 0, 0]), hray([1, 0, 0], [0, 1, 0]))
+    p, q = llcp(h.ray([0, 1, 0], [1, 0, 0]), h.ray([1, 0, 0], [0, 1, 0]))
     assert np.all(p == [1, 1, 0, 1]) and np.all(q == [1, 1, 0, 1])
-    p, q = llcp(hray([1, 1, 0], [1, 0, 0]), hray([1, 1, 0], [0, 1, 0]))
+    p, q = llcp(h.ray([1, 1, 0], [1, 0, 0]), h.ray([1, 1, 0], [0, 1, 0]))
     assert np.all(p == [1, 1, 0, 1]) and np.all(q == [1, 1, 0, 1])
-    p, q = llcp(hray([1, 2, 3], [1, 0, 0]), hray([4, 5, 6], [0, 1, 0]))
+    p, q = llcp(h.ray([1, 2, 3], [1, 0, 0]), h.ray([4, 5, 6], [0, 1, 0]))
     assert np.all(p == [4, 2, 3, 1]) and np.all(q == [4, 2, 6, 1])
-    p, q = llcp(hray([1, 2, 3], [-13, 0, 0]), hray([4, 5, 6], [0, -7, 0]))
+    p, q = llcp(h.ray([1, 2, 3], [-13, 0, 0]), h.ray([4, 5, 6], [0, -7, 0]))
     assert np.all(p == [4, 2, 3, 1]) and np.all(q == [4, 2, 6, 1])
-    p, q = llcp(hray([1, 2, 3], [1, 0, 0]), hray([4, 5, 6], [0, 1, 0]))
+    p, q = llcp(h.ray([1, 2, 3], [1, 0, 0]), h.ray([4, 5, 6], [0, 1, 0]))
     assert np.all(p == [4, 2, 3, 1]) and np.all(q == [4, 2, 6, 1])
 
-    r1, r2 = hray([1, 2, 3], [1, 0, 0]), hray([4, 5, 6], [0, 1, 0])
-    x = hrand((5, 6, 7))
+    r1, r2 = h.ray([1, 2, 3], [1, 0, 0]), h.ray([4, 5, 6], [0, 1, 0])
+    x = h.rand((5, 6, 7))
     xinv = np.linalg.inv(x)
     p, q = llcp(x @ r1, x @ r2)
     assert np.allclose((xinv @ p[..., None]).squeeze(-1), [4, 2, 3, 1])
@@ -667,11 +643,11 @@ def test_line_line_closest_points():
 
     shape = (23, 17, 31)
     ntot = np.prod(shape)
-    r1 = hrandray(cen=np.random.randn(*shape, 3))
-    r2 = hrandray(cen=np.random.randn(*shape, 3))
+    r1 = h.randray(cen=np.random.randn(*shape, 3))
+    r2 = h.randray(cen=np.random.randn(*shape, 3))
     p, q = llcp(r1, r2)
     assert p.shape[:-1] == shape and q.shape[:-1] == shape
-    lldist0 = hnorm(p - q)
+    lldist0 = h.norm(p - q)
     lldist1 = lld(r1, r2)
     # ic(lldist0 - lldist1)
     # TODO figure out how to compare better
@@ -685,51 +661,47 @@ def test_line_line_closest_points():
         fracfail = np.sum(fail) / ntot
         # ic(fracfail, fail.shape, ntot)
         if fracfail > allowedfailfrac:
-            ic("line_line_closest_points fail; distcut", distcut, "allowedfailfrac", allowedfailfrac)
+            ic("h.line_line_closest_points fail; distcut", distcut, "allowedfailfrac", allowedfailfrac)
             ic("failpoints", delta[delta > distcut])
             assert allowedfailfrac <= allowedfailfrac
 
     # assert np.allclose(lldist0, lldist1, atol=1e-1, rtol=1e-1)  # loose, but rarely fails otherwise
 
-@pytest.mark.fast
 def test_dihedral():
-    assert 0.00001 > abs(np.pi / 2 - dihedral([1, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]))
-    assert 0.00001 > abs(-np.pi / 2 - dihedral([1, 0, 0], [0, 0, 0], [0, 1, 0], [0, 0, 1]))
+    assert 0.00001 > abs(np.pi / 2 - h.dihedral([1, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]))
+    assert 0.00001 > abs(-np.pi / 2 - h.dihedral([1, 0, 0], [0, 0, 0], [0, 1, 0], [0, 0, 1]))
     a, b, c = (
-        hpoint([1, 0, 0]),
-        hpoint([0, 1, 0]),
-        hpoint([0, 0, 1]),
+        h.point([1, 0, 0]),
+        h.point([0, 1, 0]),
+        h.point([0, 0, 1]),
     )
-    n = hpoint([0, 0, 0])
-    x = hrand(10)
-    assert np.allclose(dihedral(a, b, c, n), dihedral(x @ a, x @ b, x @ c, x @ n))
+    n = h.point([0, 0, 0])
+    x = h.rand(10)
+    assert np.allclose(h.dihedral(a, b, c, n), h.dihedral(x @ a, x @ b, x @ c, x @ n))
     for ang in np.arange(-np.pi + 0.001, np.pi, 0.1):
-        x = hrot([0, 1, 0], ang)
-        d = dihedral([1, 0, 0], [0, 0, 0], [0, 1, 0], x @ [1, 0, 0, 0])
+        x = h.rot([0, 1, 0], ang)
+        d = h.dihedral([1, 0, 0], [0, 0, 0], [0, 1, 0], x @ [1, 0, 0, 0])
         assert abs(ang - d) < 0.000001
 
-@pytest.mark.fast
 def test_angle():
-    assert 0.0001 > abs(angle([1, 0, 0], [0, 1, 0]) - np.pi / 2)
-    assert 0.0001 > abs(angle([1, 1, 0], [0, 1, 0]) - np.pi / 4)
+    assert 0.0001 > abs(h.angle([1, 0, 0], [0, 1, 0]) - np.pi / 2)
+    assert 0.0001 > abs(h.angle([1, 1, 0], [0, 1, 0]) - np.pi / 4)
 
-@pytest.mark.fast
 def test_align_around_axis():
-    axis = rand_unit(1000)
-    u = rand_vec()
+    axis = h.rand_unit(1000)
+    u = h.rand_vec()
     ang = np.random.rand(1000) * np.pi
-    x = hrot(axis, ang)
+    x = h.rot(axis, ang)
     v = x @ u
-    uprime = align_around_axis(axis, u, v) @ u
-    assert np.allclose(angle(v, uprime), 0, atol=1e-5)
+    uprime = h.align_around_axis(axis, u, v) @ u
+    assert np.allclose(h.angle(v, uprime), 0, atol=1e-5)
 
-@pytest.mark.fast
 def test_halign2_minangle():
     tgt1 = [-0.816497, -0.000000, -0.577350, 0]
     tgt2 = [0.000000, 0.000000, 1.000000, 0]
     orig1 = [0.000000, 0.000000, 1.000000, 0]
     orig2 = [-0.723746, 0.377967, -0.577350, 0]
-    x = halign2(orig1, orig2, tgt1, tgt2)
+    x = h.halign2(orig1, orig2, tgt1, tgt2)
     assert np.allclose(tgt1, x @ orig1, atol=1e-5)
     assert np.allclose(tgt2, x @ orig2, atol=1e-5)
 
@@ -737,11 +709,10 @@ def test_halign2_minangle():
     ax2 = np.array([0.0, 0.0, -1.0, 0.0])
     tax1 = np.array([0.57735027, 0.57735027, 0.57735027, 0.0])
     tax2 = np.array([0.70710678, 0.70710678, 0.0, 0.0])
-    x = halign2(ax1, ax2, tax1, tax2)
+    x = h.halign2(ax1, ax2, tax1, tax2)
     assert np.allclose(x @ ax1, tax1, atol=1e-2)
     assert np.allclose(x @ ax2, tax2, atol=1e-2)
 
-@pytest.mark.fast
 def test_halign2_una_case():
     ax1 = np.array([0.0, 0.0, -1.0, 0.0])
     ax2 = np.array([0.83822463, -0.43167392, 0.33322229, 0.0])
@@ -749,7 +720,7 @@ def test_halign2_una_case():
     tax2 = np.array([0.57735027, -0.57735027, 0.57735027, 0.0])
     # ic(angle_degrees(ax1, ax2))
     # ic(angle_degrees(tax1, tax2))
-    x = halign2(ax1, ax2, tax1, tax2)
+    x = h.halign2(ax1, ax2, tax1, tax2)
     # ic(tax1)
     # ic(x@ax1)
     # ic(tax2)
@@ -757,23 +728,22 @@ def test_halign2_una_case():
     assert np.allclose(x @ ax1, tax1, atol=1e-2)
     assert np.allclose(x @ ax2, tax2, atol=1e-2)
 
-@pytest.mark.fast
 def test_calc_dihedral_angle():
-    dang = calc_dihedral_angle(
+    dang = h.calc_dihedral_angle(
         [1.0, 0.0, 0.0],
         [0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, 0.0, 1.0],
     )
     assert np.allclose(dang, -np.pi / 2)
-    dang = calc_dihedral_angle(
+    dang = h.calc_dihedral_angle(
         [1.0, 0.0, 0.0],
         [0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [1.0, 0.0, 1.0],
     )
     assert np.allclose(dang, -np.pi / 4)
-    dang = calc_dihedral_angle(
+    dang = h.calc_dihedral_angle(
         [1.0, 0.0, 0.0, 1.0],
         [0.0, 0.0, 0.0, 1.0],
         [0.0, 1.0, 0.0, 1.0],
@@ -781,32 +751,29 @@ def test_calc_dihedral_angle():
     )
     assert np.allclose(dang, -np.pi / 4)
 
-@pytest.mark.fast
 def test_align_lines_dof_dihedral_rand_single():
-    fix, mov, dof = rand_unit(3)
+    fix, mov, dof = h.rand_unit(3)
 
-    if angle(fix, dof) > np.pi / 2:
-        dof = -dof
-    if angle(dof, mov) > np.pi / 2:
-        mov = -mov
-    target_angle = angle(mov, fix)
-    dof_angle = angle(mov, dof)
-    fix_to_dof_angle = angle(fix, dof)
+    if h.angle(fix, dof) > np.pi / 2: dof = -dof
+    if h.angle(dof, mov) > np.pi / 2: mov = -mov
+    target_angle = h.angle(mov, fix)
+    dof_angle = h.angle(mov, dof)
+    fix_to_dof_angle = h.angle(fix, dof)
 
     if target_angle + dof_angle < fix_to_dof_angle:
         return
 
-    axis = hcross(fix, dof)
-    mov_in_plane = (hrot(axis, -dof_angle) @ dof[..., None]).reshape(1, 4)
+    axis = h.cross(fix, dof)
+    mov_in_plane = (h.rot(axis, -dof_angle) @ dof[..., None]).reshape(1, 4)
     # could rotate so mov is in plane as close to fix as possible
-    # if hdot(mov_in_plane, fix) < 0:
-    #    mov_in_plane = (hrot(axis, np.py + dof_angle) @ dof[..., None]).reshape(1, 4)
+    # if h.dot(mov_in_plane, fix) < 0:
+    #    mov_in_plane = (h.rot(axis, np.py + dof_angle) @ dof[..., None]).reshape(1, 4)
 
-    test = calc_dihedral_angle(fix, [0.0, 0.0, 0.0, 0.0], dof, mov_in_plane)
+    test = h.calc_dihedral_angle(fix, [0.0, 0.0, 0.0, 0.0], dof, mov_in_plane)
     assert np.allclose(test, 0) or np.allclose(test, np.pi)
-    dang = calc_dihedral_angle(fix, [0.0, 0.0, 0.0, 0.0], dof, mov)
+    dang = h.calc_dihedral_angle(fix, [0.0, 0.0, 0.0, 0.0], dof, mov)
 
-    ahat = rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
+    ahat = h.rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
     # ic(ahat, dang, abs(dang) + abs(ahat))
 
     # ic('result', 'ta', np.degrees(target_angle), 'da', np.degrees(dof_angle), 'fda',
@@ -819,24 +786,23 @@ def test_align_lines_dof_dihedral_rand_single():
         ic("ERROR", abs(dang), abs(ahat), np.pi - abs(ahat))
     assert close1 or close2
 
-@pytest.mark.fast
 def test_align_lines_dof_dihedral_rand_3D():
-    num_sol_found, num_total, num_no_sol, max_sol = [0] * 4
-    for i in range(100):
+    num_sol_found, num_total, _num_no_sol, max_sol = [0] * 4
+    for _ in range(100):
         target_angle = np.random.uniform(0, np.pi)
-        fix, mov, dof = rand_unit(3)
+        fix, mov, dof = h.rand_unit(3)
 
-        if hdot(dof, fix) < 0:
+        if h.dot(dof, fix) < 0:
             dof = -dof
-        if angle(dof, mov) > np.pi / 2:
+        if h.angle(dof, mov) > np.pi / 2:
             mov = -mov
 
-        if line_angle(fix, dof) > line_angle(mov, dof) + target_angle:
+        if h.line_angle(fix, dof) > h.line_angle(mov, dof) + target_angle:
             continue
-        if target_angle > line_angle(mov, dof) + line_angle(fix, dof):
+        if target_angle > h.line_angle(mov, dof) + h.line_angle(fix, dof):
             continue
 
-        solutions = xform_around_dof_for_vector_target_angle(fix, mov, dof, target_angle)
+        solutions = h.xform_around_dof_for_vector_target_angle(fix, mov, dof, target_angle)
         if solutions is None:
             continue
 
@@ -845,54 +811,51 @@ def test_align_lines_dof_dihedral_rand_3D():
         num_total += 1
 
         for sol in solutions:
-            assert np.allclose(target_angle, angle(fix, sol @ mov), atol=1e-5)
+            assert np.allclose(target_angle, h.angle(fix, sol @ mov), atol=1e-5)
 
     # ic(num_total, num_sol_found, num_no_sol, np.degrees(max_sol))
     assert (num_sol_found) / num_total > 0.6
 
-@pytest.mark.fast
 def test_align_lines_dof_dihedral_rand(n=100):
-    for i in range(n):
+    for _ in range(n):
         # ic(i)
         test_align_lines_dof_dihedral_rand_single()
 
-@pytest.mark.fast
 def test_align_lines_dof_dihedral_basic():
     target_angle = np.radians(30)
     dof_angle = np.radians(30)
     fix_to_dof_angle = np.radians(60)
-    ahat = rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
+    ahat = h.rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
     assert np.allclose(ahat, 0)
 
     target_angle = np.radians(30)
     dof_angle = np.radians(30)
     fix_to_dof_angle = np.radians(30)
-    ahat = rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
+    ahat = h.rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
     assert np.allclose(ahat, 1.088176213364169)
 
     target_angle = np.radians(45)
     dof_angle = np.radians(30)
     fix_to_dof_angle = np.radians(60)
-    ahat = rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
+    ahat = h.rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
     assert np.allclose(ahat, 0.8853828498391183)
 
-@pytest.mark.fast
 def test_place_lines_to_isect_F432():
-    ta1 = hnormalized([0.0, 1.0, 0.0, 0.0])
+    ta1 = h.normalized([0.0, 1.0, 0.0, 0.0])
     tp1 = np.array([0.0, 0.0, 0.0, 1])
-    ta2 = hnormalized([0.0, -0.5, 0.5, 0.0])
+    ta2 = h.normalized([0.0, -0.5, 0.5, 0.0])
     tp2 = np.array([-1, 1, 1, 1.0])
-    sl2 = hnormalized(tp2 - tp1)
+    sl2 = h.normalized(tp2 - tp1)
 
-    for i in range(100):
-        Xptrb = hrand(cart_sd=0)
+    for _ in range(100):
+        Xptrb = h.rand(cart_sd=0)
         ax1 = Xptrb @ np.array([0.0, 1.0, 0.0, 0.0])
         pt1 = Xptrb @ np.array([0.0, 0.0, 0.0, 1.0])
         ax2 = Xptrb @ np.array([0.0, -0.5, 0.5, 0.0])
-        pt2 = Xptrb @ hnormalized(np.array([-1.0, 1.0, 1.0, 1.0]))
+        pt2 = Xptrb @ h.normalized(np.array([-1.0, 1.0, 1.0, 1.0]))
 
-        Xalign, delta = align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2)
-        xp1, xa1 = Xalign @ pt1, Xalign @ ax1
+        Xalign, _delta = h.align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2)
+        _xp1, xa1 = Xalign @ pt1, Xalign @ ax1
         xp2, xa2 = Xalign @ pt2, Xalign @ ax2
         assert np.allclose(Xalign[3, 3], 1.0)
 
@@ -901,13 +864,12 @@ def test_place_lines_to_isect_F432():
         # ic('pt1', xp1)
         # ic('pt2', xp2)
 
-        assert np.allclose(line_angle(xa1, xa2), line_angle(ta1, ta2))
-        assert np.allclose(line_angle(xa1, ta1), 0.0, atol=0.001)
-        assert np.allclose(line_angle(xa2, ta2), 0.0, atol=0.001)
-        isect_error = line_line_distance_pa(xp2, xa2, [0, 0, 0, 1], sl2)
+        assert np.allclose(h.line_angle(xa1, xa2), h.line_angle(ta1, ta2))
+        assert np.allclose(h.line_angle(xa1, ta1), 0.0, atol=0.001)
+        assert np.allclose(h.line_angle(xa2, ta2), 0.0, atol=0.001)
+        isect_error = h.line_line_distance_pa(xp2, xa2, [0, 0, 0, 1], sl2)
         assert np.allclose(isect_error, 0, atol=0.001)
 
-@pytest.mark.fast
 def test_place_lines_to_isect_onecase():
     tp1 = np.array([+0, +0, +0, 1])
     ta1 = np.array([+1, +1, +1, 0])
@@ -917,17 +879,16 @@ def test_place_lines_to_isect_onecase():
     ax1 = np.array([+1, +1, +1, 0])
     pt2 = np.array([+1, +2, +1, 1])
     ax2 = np.array([+1, +1, -1, 0])
-    ta1 = hnormalized(ta1)
-    ta2 = hnormalized(ta2)
-    sl2 = hnormalized(sl2)
-    ax1 = hnormalized(ax1)
-    ax2 = hnormalized(ax2)
+    ta1 = h.normalized(ta1)
+    ta2 = h.normalized(ta2)
+    sl2 = h.normalized(sl2)
+    ax1 = h.normalized(ax1)
+    ax2 = h.normalized(ax2)
 
-    Xalign, delta = align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2)
-    isect_error = line_line_distance_pa(Xalign @ pt2, Xalign @ ax2, [0, 0, 0, 1], sl2)
+    Xalign, _delta = h.align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2)
+    isect_error = h.line_line_distance_pa(Xalign @ pt2, Xalign @ ax2, [0, 0, 0, 1], sl2)
     assert np.allclose(isect_error, 0, atol=0.001)
 
-@pytest.mark.fast
 def test_place_lines_to_isect_F432_null():
     ta1 = np.array([0.0, 1.0, 0.0, 0.0])
     tp1 = np.array([0.0, 0.0, 0.0, 1.0])
@@ -940,15 +901,15 @@ def test_place_lines_to_isect_F432_null():
     ax2 = np.array([0.0, -0.5, 0.5, 0.0])
     pt2 = np.array([-0.57735, 0.57735, 0.57735, 1.0])
 
-    Xalign, delta = align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2)
+    Xalign, _delta = h.align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2)
     assert np.allclose(Xalign[3, 3], 1.0)
 
-    xp1, xa1 = Xalign @ pt1, Xalign @ ax1
+    _xp1, xa1 = Xalign @ pt1, Xalign @ ax1
     xp2, xa2 = Xalign @ pt2, Xalign @ ax2
-    assert np.allclose(line_angle(xa1, xa2), line_angle(ta1, ta2))
-    assert np.allclose(line_angle(xa1, ta1), 0.0)
-    assert np.allclose(line_angle(xa2, ta2), 0.0, atol=0.001)
-    isect_error = line_line_distance_pa(xp2, xa2, [0, 0, 0, 1], sl2)
+    assert np.allclose(h.line_angle(xa1, xa2), h.line_angle(ta1, ta2))
+    assert np.allclose(h.line_angle(xa1, ta1), 0.0)
+    assert np.allclose(h.line_angle(xa2, ta2), 0.0, atol=0.001)
+    isect_error = h.line_line_distance_pa(xp2, xa2, [0, 0, 0, 1], sl2)
     assert np.allclose(isect_error, 0, atol=0.001)
 
 def _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i):
@@ -960,21 +921,21 @@ def _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i):
 
     # ok_pt1 = np.allclose(xalign @ pt1, scale * tp1, atol=1e-3)
     # if not ok_pt1:
-    #    offset1 = hm.hnormalized(xalign @ pt1 - scale * tp1)
+    #    offset1 = h.normalized(xalign @ pt1 - scale * tp1)
     #    offset1[3] = 0
     #    ok_pt1 = (np.allclose(offset1, ta1, atol=1e-3) or np.allclose(offset1, -ta1, atol=1e-3))
     # ok_pt2 = np.allclose(xalign @ pt2, scale * tp2, atol=1e-3)
     # if not ok_pt2:
-    #    offset2 = hm.hnormalized(xalign @ pt2 - scale * tp2)
+    #    offset2 = h.normalized(xalign @ pt2 - scale * tp2)
     #    offset2[3] = 0
     #    ok_pt2 = (np.allclose(offset2, ta2, atol=1e-3) or np.allclose(offset2, -ta2, atol=1e-3))
     dis1 = np.linalg.norm((xalign@pt1 - scale*tp1))
     if dis1 > 0.009:
-        dis1 = np.sin(angle(xalign@pt1 - scale*tp1, ta1)) * dis1
+        dis1 = np.sin(h.angle(xalign@pt1 - scale*tp1, ta1)) * dis1
 
     dis2 = np.linalg.norm((xalign@pt2 - scale*tp2))
     if dis2 > 0.009:
-        dis2 = np.sin(angle(xalign@pt2 - scale*tp2, ta2)) * dis2
+        dis2 = np.sin(h.angle(xalign@pt2 - scale*tp2, ta2)) * dis2
     ok_pt1 = abs(dis1) < 0.01  # this is *really* loose to allow very rare cases
     ok_pt2 = abs(dis2) < 0.01  # in 99999/100000 cases, much tighter
 
@@ -983,8 +944,8 @@ def _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i):
         # ic('norm', np.linalg.norm((xalign @ pt1 - scale * tp1)),
         # np.linalg.norm((xalign @ pt2 - scale * tp2)))
         # ic('dis', dis1, dis2)
-        # ic('sin', np.sin(angle(xalign @ pt1 - scale * tp1, ta1)),
-        # np.sin(angle(xalign @ pt2 - scale * tp2, ta2)))
+        # ic('sin', np.sin(h.angle(xalign @ pt1 - scale * tp1, ta1)),
+        # np.sin(h.angle(xalign @ pt2 - scale * tp2, ta2)))
         # ic()
 
         # ic(ta1, np.linalg.norm(ta1))
@@ -1009,17 +970,16 @@ def _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i):
         # ic(repr(samp))
 
         if 0:
-            rays = np.array([
-                hm.hray(xalign @ pt1, xalign @ ax1),
-                hm.hray(xalign @ pt2, xalign @ ax2),
-                hm.hray(scale * tp1, scale * ta1),
-                hm.hray(scale * tp2, scale * ta2),
+            _rays = np.array([
+                h.ray(xalign @ pt1, xalign @ ax1),
+                h.ray(xalign @ pt2, xalign @ ax2),
+                h.ray(scale * tp1, scale * ta1),
+                h.ray(scale * tp2, scale * ta2),
             ])
             colors = [(1, 0, 0), (0, 0, 1), (0.8, 0.5, 0.5), (0.5, 0.5, 0.8)]
             # rp.viz.showme(rays, colors=colors, block=False)
         assert ok_ax1 and ok_ax2 and ok_pt1 and ok_pt2
 
-@pytest.mark.fast
 def test_scale_translate_lines_isect_lines_p4132():
     samps = list()
     for i in range(30):
@@ -1033,16 +993,16 @@ def test_scale_translate_lines_isect_lines_p4132():
         tp2 = np.array([-0.125, -0.125, -0.125, 1], dtype="d")
         ta2 = np.array([0, -1, -1, 0], dtype="d")
 
-        ax1 = hnormalized(ax1)
-        ax2 = hnormalized(ax2)
-        ta1 = hnormalized(ta1)
-        ta2 = hnormalized(ta2)
-        tmp = hm.rand_vec() * 30
+        ax1 = h.normalized(ax1)
+        ax2 = h.normalized(ax2)
+        ta1 = h.normalized(ta1)
+        ta2 = h.normalized(ta2)
+        tmp = h.rand_vec() * 30
         pt1 += tmp
         pt2 += tmp
-        pt1 += ax1 * hm.rand_vec() * 30
-        pt2 += ax2 * hm.rand_vec() * 30
-        xtest = hm.hrand()
+        pt1 += ax1 * h.rand_vec() * 30
+        pt2 += ax2 * h.rand_vec() * 30
+        xtest = h.rand()
         pt1 = xtest @ pt1
         ax1 = xtest @ ax1
         pt2 = xtest @ pt2
@@ -1058,10 +1018,9 @@ def test_scale_translate_lines_isect_lines_p4132():
     #              [-0.125, -0.125, -0.125, 1.]), array([0., -0.70710678, -0.70710678, 0.]))]
 
     for i, samp in enumerate(samps):
-        xalign, scale = scale_translate_lines_isect_lines(*samp)
+        xalign, scale = h.scale_translate_lines_isect_lines(*samp)
         _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i)
 
-@pytest.mark.fast
 def test_scale_translate_lines_isect_lines_nonorthog():
     nsamp = 30
     samps = list()
@@ -1076,16 +1035,16 @@ def test_scale_translate_lines_isect_lines_nonorthog():
         tp2 = np.array([-0.125, -0.125, -0.125, 1], dtype="d")
         ta2 = np.array([0, 1, 1, 0], dtype="d")
 
-        ax1 = hnormalized(ax1)
-        ax2 = hnormalized(ax2)
-        ta1 = hnormalized(ta1)
-        ta2 = hnormalized(ta2)
-        tmp = hm.rand_vec() * 30
+        ax1 = h.normalized(ax1)
+        ax2 = h.normalized(ax2)
+        ta1 = h.normalized(ta1)
+        ta2 = h.normalized(ta2)
+        tmp = h.rand_vec() * 30
         pt1 += tmp
         pt2 += tmp
-        pt1 += ax1 * hm.rand_vec() * 30
-        pt2 += ax2 * hm.rand_vec() * 30
-        xtest = hm.hrand()
+        pt1 += ax1 * h.rand_vec() * 30
+        pt2 += ax2 * h.rand_vec() * 30
+        xtest = h.rand()
         pt1 = xtest @ pt1
         ax1 = xtest @ ax1
         pt2 = xtest @ pt2
@@ -1102,7 +1061,7 @@ def test_scale_translate_lines_isect_lines_nonorthog():
 
     ok = 0
     for i, samp in enumerate(samps):
-        xalign, scale = scale_translate_lines_isect_lines(*samp)
+        xalign, scale = h.scale_translate_lines_isect_lines(*samp)
         if xalign is not None:
             ok += 1
             _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i)
@@ -1112,15 +1071,14 @@ def test_scale_translate_lines_isect_lines_nonorthog():
     # ic(ok, nsamp)
     assert ok > nsamp * 0.5
 
-@pytest.mark.fast
 def test_scale_translate_lines_isect_lines_arbitrary():
     samps = list()
     for i in range(30):
-        tp1 = hrandpoint()
-        ta1 = hm.rand_unit()
-        tp2 = hrandpoint()
-        ta2 = hm.rand_unit()
-        rx = hm.hrand()
+        tp1 = h.randpoint()
+        ta1 = h.rand_unit()
+        tp2 = h.randpoint()
+        ta2 = h.rand_unit()
+        rx = h.rand()
         pt1 = rx @ tp1
         ax1 = rx @ ta1
         pt2 = rx @ tp2
@@ -1132,7 +1090,7 @@ def test_scale_translate_lines_isect_lines_arbitrary():
             tp1[:3] += np.random.normal() * ta1[:3]
             tp2[:3] += np.random.normal() * ta2[:3]
 
-        # ??? hprojperp(_ta2, _tp2 - _pt2) always 0
+        # ??? h.projperp(_ta2, _tp2 - _pt2) always 0
 
         samps.append((pt1, ax1, pt2, ax2, tp1, ta1, tp2, ta2))
 
@@ -1145,10 +1103,9 @@ def test_scale_translate_lines_isect_lines_arbitrary():
     #              [-0.125, -0.125, -0.125, 1.]), array([0., 0.70710678, 0.70710678, 0.]))]
 
     for i, samp in enumerate(samps):
-        xalign, scale = scale_translate_lines_isect_lines(*samp)
+        xalign, scale = h.scale_translate_lines_isect_lines(*samp)
         _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i)
 
-@pytest.mark.fast
 def test_scale_translate_lines_isect_lines_cases():
     from numpy import array, float32
 
@@ -1226,17 +1183,16 @@ def test_scale_translate_lines_isect_lines_cases():
     ]
     for i, samp in enumerate(samps):
         # ic('SAMP', i)
-        xalign, scale = scale_translate_lines_isect_lines(*samp)
+        xalign, scale = h.scale_translate_lines_isect_lines(*samp)
         _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i)
 
-@pytest.mark.fast
 def test_xform_around_dof_for_vector_target_angle():
     fix = np.array([0, 0, 1, 0])
     mov = np.array([-0.48615677, 0.14842946, -0.86117379, 0.0])
     dof = np.array([-1.16191467, 0.35474642, -2.05820535, 0.0])
     target_angle = 0.6154797086703874
     # should not throw
-    solutions = xform_around_dof_for_vector_target_angle(fix, mov, dof, target_angle)
+    solutions = h.xform_around_dof_for_vector_target_angle(fix, mov, dof, target_angle)
     assert solutions == []
 
 # def marisa():
@@ -1260,17 +1216,15 @@ def test_xform_around_dof_for_vector_target_angle():
 #
 #    ic(new_pts.T)
 
-@pytest.mark.fast
 def test_axis_angle_180_rand():
     pass
 
-@pytest.mark.fast
 def test_axis_angle_180_bug():
-    #    v = rand_unit()
-    #    x = np.stack([hrot(v, 180), hrot(v, 180)] * 3)
+    #    v = h.rand_unit()
+    #    x = np.stack([h.rot(v, 180), h.rot(v, 180)] * 3)
     #    ic('v', v)
     #    ic()
-    #    ev = np.linalg.eig(x[..., :3, :3])
+    #    ev = np.linalgh..eig(x[..., :3, :3])
     #    val, vec = np.real(ev[0]), np.real(ev[1])
     #    ic(val)
     #    cond = np.abs(val - 1) < 1e-6
@@ -1282,8 +1236,8 @@ def test_axis_angle_180_bug():
     #
     #    ic(vec[a, :, b])
     #
-    #    ic(axis_of(np.array([
-    #        hrot(v, 180),
+    #    ic(h.axis_of(np.array([
+    #        h.rot(v, 180),
     #        np.eye(4),
     #    ]), debug=True))
 
@@ -1371,63 +1325,63 @@ def test_axis_angle_180_bug():
     assert np.allclose(np.linalg.det(x10n), 1)
     assert np.allclose(np.linalg.det(x01n), 1)
 
-    assert np.allclose(hm.hrot([ 1,  0,  0],   0), x000)
-    assert np.allclose(hm.hrot([ 1,  0,  0], 180), x100)
-    assert np.allclose(hm.hrot([ 0,  1,  0], 180), x010)
-    assert np.allclose(hm.hrot([ 0,  0,  1], 180), x001)
-    assert np.allclose(hm.hrot([ 1,  1,  0], 180), x110)
-    assert np.allclose(hm.hrot([ 1,  0,  1], 180), x101)
-    assert np.allclose(hm.hrot([ 0,  1,  1], 180), x011)
-    assert np.allclose(hm.hrot([ 1, -1,  0], 180), x1n0)
-    assert np.allclose(hm.hrot([ 1,  0, -1], 180), x10n)
-    assert np.allclose(hm.hrot([ 0,  1, -1], 180), x01n)
-    assert np.allclose(hm.hrot([-1,  1,  0], 180), x1n0)
-    assert np.allclose(hm.hrot([-1,  0,  1], 180), x10n)
-    assert np.allclose(hm.hrot([ 0, -1,  1], 180), x01n)
+    assert np.allclose(h.rot([ 1,  0,  0],   0), x000)
+    assert np.allclose(h.rot([ 1,  0,  0], 180), x100)
+    assert np.allclose(h.rot([ 0,  1,  0], 180), x010)
+    assert np.allclose(h.rot([ 0,  0,  1], 180), x001)
+    assert np.allclose(h.rot([ 1,  1,  0], 180), x110)
+    assert np.allclose(h.rot([ 1,  0,  1], 180), x101)
+    assert np.allclose(h.rot([ 0,  1,  1], 180), x011)
+    assert np.allclose(h.rot([ 1, -1,  0], 180), x1n0)
+    assert np.allclose(h.rot([ 1,  0, -1], 180), x10n)
+    assert np.allclose(h.rot([ 0,  1, -1], 180), x01n)
+    assert np.allclose(h.rot([-1,  1,  0], 180), x1n0)
+    assert np.allclose(h.rot([-1,  0,  1], 180), x10n)
+    assert np.allclose(h.rot([ 0, -1,  1], 180), x01n)
 
-    assert np.allclose([ 1,  0,  0, 0], hm.axis_of(x000))
-    assert np.allclose([ 1,  0,  0, 0], hm.axis_of(x100))
-    assert np.allclose([ 0,  1,  0, 0], hm.axis_of(x010))
-    assert np.allclose([ 0,  0,  1, 0], hm.axis_of(x001))
-    assert np.allclose([ r,  r,  0, 0], hm.axis_of(x110))
-    assert np.allclose([ r,  0,  r, 0], hm.axis_of(x101))
-    assert np.allclose([ 0,  r,  r, 0], hm.axis_of(x011))
-    assert np.allclose([ r, -r,  0, 0], hm.axis_of(x1n0))
-    assert np.allclose([ r,  0, -r, 0], hm.axis_of(x10n))
-    assert np.allclose([ 0, -r,  r, 0], hm.axis_of(x01n))
+    assert np.allclose([ 1,  0,  0, 0], h.axis_of(x000))
+    assert np.allclose([ 1,  0,  0, 0], h.axis_of(x100))
+    assert np.allclose([ 0,  1,  0, 0], h.axis_of(x010))
+    assert np.allclose([ 0,  0,  1, 0], h.axis_of(x001))
+    assert np.allclose([ r,  r,  0, 0], h.axis_of(x110))
+    assert np.allclose([ r,  0,  r, 0], h.axis_of(x101))
+    assert np.allclose([ 0,  r,  r, 0], h.axis_of(x011))
+    assert np.allclose([ r, -r,  0, 0], h.axis_of(x1n0))
+    assert np.allclose([ r,  0, -r, 0], h.axis_of(x10n))
+    assert np.allclose([ 0, -r,  r, 0], h.axis_of(x01n))
 
-    assert np.allclose([ 1,  0,  0, 0], hm.axis_of(hm.htrans([1,2,3]) @ x000))
-    assert np.allclose([ 1,  0,  0, 0], hm.axis_of(hm.htrans([1,2,3]) @ x100))
-    assert np.allclose([ 0,  1,  0, 0], hm.axis_of(hm.htrans([1,2,3]) @ x010))
-    assert np.allclose([ 0,  0,  1, 0], hm.axis_of(hm.htrans([1,2,3]) @ x001))
-    assert np.allclose([ r,  r,  0, 0], hm.axis_of(hm.htrans([1,2,3]) @ x110))
-    assert np.allclose([ r,  0,  r, 0], hm.axis_of(hm.htrans([1,2,3]) @ x101))
-    assert np.allclose([ 0,  r,  r, 0], hm.axis_of(hm.htrans([1,2,3]) @ x011))
-    assert np.allclose([ r, -r,  0, 0], hm.axis_of(hm.htrans([1,2,3]) @ x1n0))
-    assert np.allclose([ r,  0, -r, 0], hm.axis_of(hm.htrans([1,2,3]) @ x10n))
-    assert np.allclose([ 0, -r,  r, 0], hm.axis_of(hm.htrans([1,2,3]) @ x01n))
+    assert np.allclose([ 1,  0,  0, 0], h.axis_of(h.trans([1,2,3]) @ x000))
+    assert np.allclose([ 1,  0,  0, 0], h.axis_of(h.trans([1,2,3]) @ x100))
+    assert np.allclose([ 0,  1,  0, 0], h.axis_of(h.trans([1,2,3]) @ x010))
+    assert np.allclose([ 0,  0,  1, 0], h.axis_of(h.trans([1,2,3]) @ x001))
+    assert np.allclose([ r,  r,  0, 0], h.axis_of(h.trans([1,2,3]) @ x110))
+    assert np.allclose([ r,  0,  r, 0], h.axis_of(h.trans([1,2,3]) @ x101))
+    assert np.allclose([ 0,  r,  r, 0], h.axis_of(h.trans([1,2,3]) @ x011))
+    assert np.allclose([ r, -r,  0, 0], h.axis_of(h.trans([1,2,3]) @ x1n0))
+    assert np.allclose([ r,  0, -r, 0], h.axis_of(h.trans([1,2,3]) @ x10n))
+    assert np.allclose([ 0, -r,  r, 0], h.axis_of(h.trans([1,2,3]) @ x01n))
 
-    assert np.allclose(0, hm.angle_of(x000))
-    assert np.allclose(np.pi, hm.angle_of(x100))
-    assert np.allclose(np.pi, hm.angle_of(x010))
-    assert np.allclose(np.pi, hm.angle_of(x001))
-    assert np.allclose(np.pi, hm.angle_of(x110))
-    assert np.allclose(np.pi, hm.angle_of(x101))
-    assert np.allclose(np.pi, hm.angle_of(x011))
-    assert np.allclose(np.pi, hm.angle_of(x1n0))
-    assert np.allclose(np.pi, hm.angle_of(x10n))
-    assert np.allclose(np.pi, hm.angle_of(x01n))
+    assert np.allclose(0, h.angle_of(x000))
+    assert np.allclose(np.pi, h.angle_of(x100))
+    assert np.allclose(np.pi, h.angle_of(x010))
+    assert np.allclose(np.pi, h.angle_of(x001))
+    assert np.allclose(np.pi, h.angle_of(x110))
+    assert np.allclose(np.pi, h.angle_of(x101))
+    assert np.allclose(np.pi, h.angle_of(x011))
+    assert np.allclose(np.pi, h.angle_of(x1n0))
+    assert np.allclose(np.pi, h.angle_of(x10n))
+    assert np.allclose(np.pi, h.angle_of(x01n))
 
     xtest = np.array([[ 1.00000000e+00,  1.18776717e-16,  2.37565125e-17,  0.00000000e+00],
                      [-1.90327026e-18, -1.00000000e+00, -1.28807379e-16,  0.00000000e+00],
                      [-3.48949361e-17, -3.34659469e-17, -1.00000000e+00,  0.00000000e+00],
                      [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
     assert np.allclose(xtest,x100)
-    assert np.allclose(angle_of(xtest),angle_of(x100))
-    assert np.allclose(axis_of(xtest),axis_of(x100))
+    assert np.allclose(h.angle_of(xtest),h.angle_of(x100))
+    assert np.allclose(h.axis_of(xtest),h.axis_of(x100))
 
 
-    xform = hrand(cart_sd=0)
+    xform = h.rand(cart_sd=0)
     xinv = np.linalg.inv(xform)
     x000 = xform @ x000
     x100 = xform @ x100
@@ -1441,26 +1395,26 @@ def test_axis_angle_180_bug():
     x01n = xform @ x01n
 
 
-    # ic(hrot([1,2,3,0],2))
+    # ic(h.rot([1,2,3,0],2))
     # ic()
-    # ic(hrot([1,2,3,0],2)@xform)
+    # ic(h.rot([1,2,3,0],2)@xform)
     # ic()
-    # ic(hrot(xform@[1,2,3,0],2))
+    # ic(h.rot(xform@[1,2,3,0],2))
     # ic()
-    # ic(xform@hrot([1,2,3,0],2))
+    # ic(xform@h.rot([1,2,3,0],2))
     # ic()
-    # ic(hrot([1,2,3,0]@xform,2))
+    # ic(h.rot([1,2,3,0]@xform,2))
     # ic()
 
-    assert np.allclose(        hrot(       [1,2,3,0],2) @ xform,
-                      xform @ hrot(xinv @ [1,2,3,0],2)        )
-    assert np.allclose(        hrot(        [1,2,3,0],2) @ xinv,
-                       xinv @ hrot(xform @ [1,2,3,0],2)       , atol=1e-6)
-    assert np.allclose(        hrot(        [1,2,3,0],2)        ,
-                       xinv @ hrot(xform @ [1,2,3,0],2)@xform  )
+    assert np.allclose(        h.rot(       [1,2,3,0],2) @ xform,
+                      xform @ h.rot(xinv @ [1,2,3,0],2)        )
+    assert np.allclose(        h.rot(        [1,2,3,0],2) @ xinv,
+                       xinv @ h.rot(xform @ [1,2,3,0],2)       , atol=1e-6)
+    assert np.allclose(        h.rot(        [1,2,3,0],2)        ,
+                       xinv @ h.rot(xform @ [1,2,3,0],2)@xform  )
 
-    assert np.allclose(        hrot(        [1,0,0,0],180)        ,
-                       xinv @ hrot(xform @ [1,0,0,0],180)@xform  )
+    assert np.allclose(        h.rot(        [1,0,0,0],180)        ,
+                       xinv @ h.rot(xform @ [1,0,0,0],180)@xform  )
 
     # assert 0
 
@@ -1475,25 +1429,24 @@ def test_axis_angle_180_bug():
     assert np.allclose(np.linalg.det(x10n), 1)
     assert np.allclose(np.linalg.det(x01n), 1)
 
-    assert np.allclose(xform @ hm.hrot([ 1,  0,  0, 0], 180), x100)
-    assert np.allclose(xform @ hm.hrot([ 0,  1,  0, 0], 180), x010)
-    assert np.allclose(xform @ hm.hrot([ 0,  0,  1, 0], 180), x001)
-    assert np.allclose(xform @ hm.hrot([ 1,  1,  0, 0], 180), x110)
-    assert np.allclose(xform @ hm.hrot([ 1,  0,  1, 0], 180), x101)
-    assert np.allclose(xform @ hm.hrot([ 0,  1,  1, 0], 180), x011)
-    assert np.allclose(xform @ hm.hrot([ 1, -1,  0, 0], 180), x1n0)
-    assert np.allclose(xform @ hm.hrot([ 1,  0, -1, 0], 180), x10n)
-    assert np.allclose(xform @ hm.hrot([ 0,  1, -1, 0], 180), x01n)
-    assert np.allclose(xform @ hm.hrot([-1,  1,  0, 0], 180), x1n0)
-    assert np.allclose(xform @ hm.hrot([-1,  0,  1, 0], 180), x10n)
-    assert np.allclose(xform @ hm.hrot([ 0, -1,  1, 0], 180), x01n)
+    assert np.allclose(xform @ h.rot([ 1,  0,  0, 0], 180), x100)
+    assert np.allclose(xform @ h.rot([ 0,  1,  0, 0], 180), x010)
+    assert np.allclose(xform @ h.rot([ 0,  0,  1, 0], 180), x001)
+    assert np.allclose(xform @ h.rot([ 1,  1,  0, 0], 180), x110)
+    assert np.allclose(xform @ h.rot([ 1,  0,  1, 0], 180), x101)
+    assert np.allclose(xform @ h.rot([ 0,  1,  1, 0], 180), x011)
+    assert np.allclose(xform @ h.rot([ 1, -1,  0, 0], 180), x1n0)
+    assert np.allclose(xform @ h.rot([ 1,  0, -1, 0], 180), x10n)
+    assert np.allclose(xform @ h.rot([ 0,  1, -1, 0], 180), x01n)
+    assert np.allclose(xform @ h.rot([-1,  1,  0, 0], 180), x1n0)
+    assert np.allclose(xform @ h.rot([-1,  0,  1, 0], 180), x10n)
+    assert np.allclose(xform @ h.rot([ 0, -1,  1, 0], 180), x01n)
 
-    assert np.allclose(xform @ hrot(        [1,2,3,0],2) @ xinv ,
-                              hrot(xform @ [1,2,3,0],2)   )
+    assert np.allclose(xform @ h.rot(        [1,2,3,0],2) @ xinv ,
+                              h.rot(xform @ [1,2,3,0],2)   )
 
     # yapf: enable
 
-@pytest.mark.fast
 def test_symfit_180_bug():
     frame1, frame2 = np.array([
         [
@@ -1513,54 +1466,52 @@ def test_symfit_180_bug():
     rel = frame2 @ np.linalg.inv(frame1)
     assert np.allclose(rel @ frame1, frame2)
 
-    axs, ang, cen = axis_ang_cen_of(rel)
+    axs, ang, _cen = h.axis_ang_cen_of(rel)
     # ic('axs', axs)
     # ic('ang', ang)
     # ic('cen', cen)
 
 def torque_delta_sanitycheck():
     nsamp, scale = 1000, 0.0001
-    u = hm.rand_unit(nsamp)
-    v = hm.rand_unit(nsamp)
+    u = h.rand_unit(nsamp)
+    v = h.rand_unit(nsamp)
     a, b = np.random.normal(size=2, scale=scale)
     # check commutation
-    ax, ang = hm.axis_angle_of(hm.hrot(u, a) @ hm.hrot(v, b))
-    ax2, ang2 = hm.axis_angle_of(hm.hrot(v, b) @ hm.hrot(u, a))
+    ax, ang = h.axis_angle_of(h.rot(u, a) @ h.rot(v, b))
+    ax2, ang2 = h.axis_angle_of(h.rot(v, b) @ h.rot(u, a))
     assert np.allclose(ax, ax2, atol=5e-4)
     assert np.allclose(ang * scale, ang2 * scale, atol=1e-5)
 
     uv = a*u + b*v
     anghat = np.linalg.norm(uv, axis=-1)
     axhat = uv / anghat[:, None]
-    ax, ang = hm.axis_angle_of(hm.hrot(u, a) @ hm.hrot(v, b))
+    ax, ang = h.axis_angle_of(h.rot(u, a) @ h.rot(v, b))
     assert np.allclose(ax, axhat, atol=5e-4)
 
     uv = a*u + b*v
     anghat = np.linalg.norm(uv, axis=-1)
     axhat = uv / anghat[:, None]
-    ax, ang = hm.axis_angle_of(hm.hrot(u, a) @ hm.hrot(v, b))
+    ax, ang = h.axis_angle_of(h.rot(u, a) @ h.rot(v, b))
     assert np.allclose(ax, axhat, atol=5e-4)
 
-@pytest.mark.fast
 def test_hrot():
-    r = rand_vec()
-    assert np.allclose(hrot(r, 120), hrot(r, nfold=3))
+    r = h.rand_vec()
+    assert np.allclose(h.rot(r, 120), h.rot(r, nfold=3))
 
-@pytest.mark.fast
 def test_hrmsfit(trials=10):
     torch = pytest.importorskip("torch")
     for _ in range(trials):
-        p = hrandpoint(10, std=10)
-        p03 = unhomog(p)
-        q = hrandpoint(10, std=10)
+        p = h.randpoint(10, std=10)
+        p03 = h.unhomog(p)
+        q = h.randpoint(10, std=10)
         # ic(p)
-        rms0 = hrms(p03, q)
-        rms, qhat, xpqhat = hrmsfit(p03, q)
+        rms0 = h.rms(p03, q)
+        rms, qhat, xpqhat = h.rmsfit(p03, q)
         assert rms0 > rms
         # ic(float(rms0), float(rms))
-        assert np.allclose(hrms(qhat, q), rms)
-        for i in range(10):
-            rms2 = hrms(q, hxform(rand_xform_small(1, 0.01, 0.001), qhat))
+        assert np.allclose(h.rms(qhat, q), rms)
+        for _ in range(10):
+            rms2 = h.rms(q, h.xform(h.rand_xform_small(1, 0.01, 0.001), qhat))
             # print(float(rms), float(rms2))
             assert rms2 > rms
         rms2, qhat2, xpqhat2 = h.rmsfit(torch.tensor(p), torch.tensor(q))

@@ -4,13 +4,16 @@ from importlib import import_module
 from types import ModuleType
 import typing
 
-def lazyimport(*names: typing.Union[str, list[str], tuple[str]],
-               package: str = None,
-               pip: bool = False,
-               mamba: bool = False,
-               channels: str = '',
-               warn: bool = True,
-               importornone=False) -> ModuleType:
+class FakeModule(ModuleType):
+
+    def __bool__(self):
+        return False
+
+fake_module = FakeModule('__THIS_IS_NOT_A_REAL_MODULE__')
+assert not fake_module
+
+def lazyimport(*names: str, package: typing.Sequence[str] = (),
+               **kw) -> typing.Union[list[ModuleType], ModuleType]:
     """Lazy import of a module. The module will be imported when it is first accessed.
 
     Args:
@@ -22,21 +25,30 @@ def lazyimport(*names: typing.Union[str, list[str], tuple[str]],
         warn (bool): If True, print a warning if the module cannot be imported.
 
     """
+    assert len(names)
     if len(names) == 0: raise ValueError('package name is required')
     elif len(names) == 1 and not isinstance(names[0], str): names = names[0]
-    elif len(names) == 1 and ' ' in names[0]: names = names[0].split()
-    if len(names) > 1:
-        if package: assert len(package) == len(names) and not isinstance(package, str)
-        else: package = (None, ) * len(names)
-        kw = dict(pip=pip, mamba=mamba, channels=channels, warn=warn, importornone=importornone)
-        return [lazyimport(name, package=pkg, **kw) for name, pkg in zip(names, package)]
+    elif len(names) == 1 and ' ' in names[0]: names = tuple(names[0].split())
+    if package: assert len(package) == len(names) and not isinstance(package, str)
+    else: package = ('', ) * len(names)
+    modules = [lazyimport_one(name, package=pkg, **kw) for name, pkg in zip(names, package)]
+    if len(modules) == 1: return modules[0]
+    return modules
+
+def lazyimport_one(name: str,
+                   package: str = '',
+                   pip: bool = False,
+                   mamba: bool = False,
+                   channels: str = '',
+                   warn: bool = True,
+                   importornone=False) -> ModuleType:
     if typing.TYPE_CHECKING or importornone:
         try:
-            return import_module(names[0])
+            return import_module(name)
         except ImportError:
-            return None
+            return fake_module
     else:
-        return _LazyModule(names[0], package, pip, mamba, channels, warn)
+        return _LazyModule(name, package, pip, mamba, channels, warn)
 
 def importornone(*names):
     return lazyimport(*names, importornone=True)
@@ -44,7 +56,7 @@ def importornone(*names):
 class LazyImportError(ImportError):
     pass
 
-class _LazyModule:
+class _LazyModule(ModuleType):
     """A class to represent a lazily imported module."""
 
     # __slots__ = ('_lazymodule_name', '_lazymodule_package', '_lazymodule_pip', '_lazymodule_mamba', '_lazymodule_channels', '_lazymodule_callerinfo', '_lazymodule_warn')
@@ -67,7 +79,7 @@ class _LazyModule:
         try:
             return import_module(self._lazymodule_name)
         except ImportError as e:
-            if 'doctest' in sys.modules: return
+            if 'doctest' in sys.modules: return fake_module
             ci = self._lazymodule_callerinfo
             callinfo = f'\n  File "{ci.filename}", line {ci.lineno}\n    {ci.code}'
             raise LazyImportError(callinfo)

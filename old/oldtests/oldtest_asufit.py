@@ -25,7 +25,6 @@ def _gen_canonical_asu_cens():
             ipd.showme(ipd.homog.hxform(ipd.sym.frames(sym), cen), kind="point", name=f'{sym}_{nnbr}')
     assert 0
 
-@pytest.mark.fast
 def test_canonical_asu_center():
     ic(ipd.sym.canonical_asu_center('C3'))  # type: ignore
     assert np.allclose(ipd.sym.canonical_asu_center('C3'), [1, 0, 0, 1])

@@ -176,3 +176,8 @@ def find_close_argnames(word, string_list, n=3, cutoff=0.6):
     candidates = get_close_matches(word, string_list, n=n, cutoff=cutoff)
     candidates = filter(lambda s: abs(len(s) - len(word)) < len(word) // 5, candidates)
     return list(candidates)
+
+ascii_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz0123456789"
+ascii_chars += ''.join([chr(i) for i in range(33, 65)])
+ascii_chars += ''.join([chr(i) for i in range(91, 97)])
+ascii_chars += ''.join([chr(i) for i in range(123, 127)])

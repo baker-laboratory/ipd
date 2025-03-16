@@ -37,12 +37,12 @@ def symslices_from_colors_should_fail(nsub, colors, Lasu, isasym):
                 return True
     return False
 
-@pytest.mark.fast
 # @hypothesis.settings(verbosity=hypothesis.Verbosity.verbose, max_examples=100, derandomize=True)
 @hypothesis.settings(deadline=1000, max_examples=10)
 @hypothesis.given(
     nsub=st.integers(1, 2),
-    colors=st.lists(st.integers(0, 5), min_size=30, max_size=40).filter(lambda x: len(set(x)) == 6).map(sorted),
+    colors=st.lists(st.integers(0, 5), min_size=30,
+                    max_size=40).filter(lambda x: len(set(x)) == 6).map(sorted),
     isasym=st.booleans(),
     unsymfrac=st.lists(st.one_of(st.none(), st.floats(0, 0.9)), min_size=3, max_size=3),
 )
@@ -66,14 +66,12 @@ def test_symslices_from_colors_fuzz(nsub, colors, isasym, unsymfrac, **kw):
     except AssertionError:
         hypothesis.assume(False)
 
-@pytest.mark.fast
 def test_make_sequential_colors():
     c = ipd.sym.make_sequential_colors([7, 7, 1, 1, 2, 2])
     assert th.all(c == th.tensor([0, 0, 1, 1, 2, 2]))
     c = ipd.sym.make_sequential_colors([2, 3, 3, 3, 4, 4, 761, 761, 2, 0, 0, 0, 0, 34, 4, 4, 4, 6, 6, 761])
     assert th.all(c == th.tensor([0, 1, 1, 1, 2, 2, 3, 3, 4, 5, 5, 5, 5, 6, 7, 7, 7, 8, 8, 9]))
 
-@pytest.mark.fast
 def test_symslices_from_colors_one():
     nsub = 4
     idx = ipd.sym.symslices_from_colors(

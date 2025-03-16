@@ -65,8 +65,8 @@ def chain_dict(atoms):
 @ipd.dev.iterize_on_first_param(basetype='AtomArray')
 def to_seq(atoms, concat=True) -> 'biotite.sequence.Sequence':
     try:
-        biotite_seq = bs.to_sequence(atoms)  # oddly slow
-    except IndexError:
+        biotite_seq = bs.to_sequence(atoms, allow_hetero=True)  # oddly slow
+    except (IndexError, bs.BadStructureError):
         return None
     if concat: return ipd.dev.addreduce(biotite_seq[0])
     return biotite_seq[0]
@@ -115,6 +115,7 @@ def select(
     atoms,
     chainlist=False,
     caonly=False,
+    bbonly=False,
     chaindict=False,
     het=True,
     chains=None,
@@ -125,6 +126,7 @@ def select(
         atoms = atoms[0]
     meta = ipd.dev.get_metadata(atoms)
     if caonly: atoms = atoms[atoms.atom_name == 'CA']
+    elif bbonly: atoms = atoms[atoms.atom_nameisin(('CA', 'N', 'C', 'O'))]
     if not het: atoms = atoms[~atoms.hetero]
     if chains is not None:
         atoms = atoms[np.isin(atoms.chain_id, chains)]
@@ -168,3 +170,17 @@ def is_protein(atoms, strict_protein_or_nucleic=False) -> bool:
     if strict_protein_or_nucleic: raise NotImplementedError()
     frac = np.sum(atoms.atom_name == 'CA') / bs.get_residue_count(atoms)
     return frac > 0.9
+
+def join(atomslist, one_letter_chain=True):
+    formt = f'0{len(str(len(atomslist)))}'
+    for i, atoms in enumerate(atomslist):
+        atoms.chain_id = f'S{i:{formt}}' + atoms.chain_id
+    if one_letter_chain:
+        unique_ids = ipd.dev.UniqueIDs()
+        for i, atoms in enumerate(atomslist):
+            atoms.chain_id = unique_ids(atoms.chain_id)
+    atoms = ipd.dev.addreduce(atomslist)
+
+    assert len(np.unique(atoms.chain_id)) == len(atomslist) * len(np.unique(atomslist[0].chain_id))
+    assert isinstance(atoms, bs.AtomArray)
+    return atoms

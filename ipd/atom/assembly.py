@@ -39,6 +39,9 @@ class Assembly:
         new.set_metadata(assembly=self, bodyid=bodyid, frameid=frameid)
         return new
 
+    def symbodies(self) -> list[ipd.atom.Body]:
+        return [self.body(i, j) for i, j in self.symbodyids()]
+
     def enumerate_symbodies(self, **kw) -> Iterator[tuple[int, int, ipd.atom.Body, np.ndarray]]:
         ids = self.symbodyids(**kw)
         for i, j in ids:
@@ -54,17 +57,17 @@ class Assembly:
             ipd.print_table(vars(self))
         return out.read()
 
-def create_assembly(
-    input: 'str|CifFile',
+def assembly_from_file(
+    fname: 'str|CifFile',
     assembly='largest',
     min_chain_atoms=0,
     **kw,
 ) -> Assembly:
-    input = str(input)
-    atomslist = ipd.pdb.readatoms(input, chainlist=True, assembly=assembly, **kw)
+    fname = str(fname)
+    atomslist = ipd.pdb.readatoms(fname, chainlist=True, assembly=assembly, **kw)
     assert isinstance(atomslist, list)
     components = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, **kw)
-    process_components(components, **kw)
+    ipd.atom.process_components(components, **kw)
     bodies = to_bodies(components.atoms, **kw)
     # print([b.summary() for b in bodies])
     return Assembly(bodies, components.frames, _atomslist=atomslist)
@@ -73,20 +76,6 @@ def to_bodies(atoms_or_bodies: 'bs.AtomArray', **kw):
     if all(map(ipd.atom.is_atomarray, atoms_or_bodies)):
         bodies = map(ipd.kwcurry(kw, ipd.atom.Body), atoms_or_bodies)
     return list(bodies)
-
-def process_components(
-    components: ipd.atom.Components,
-    pickchain: str = 'largest',
-    merge_chains: bool = True,
-    min_chain_atoms: int = 0,
-    **kw,
-):
-    for i, atoms, frames in components.enumerate('atoms frames', order=reversed):
-        if len(atoms) < min_chain_atoms and i > 0:
-            if components.frames[i - 1].shape == frames.shape:
-                components.atoms[i - 1] += atoms
-                components.atoms.pop(i)
-                components.frames.pop(i)
 
 @dataclass
 class AsuSelector:

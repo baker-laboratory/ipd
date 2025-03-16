@@ -14,7 +14,6 @@ def main():
     # ipd.tests.maintest(globals())
     ipd.tests.maintest(globals(), nocapture=['test_th_axis_angle'])
 
-@pytest.mark.fast
 def test_uniqlastdim():
     test = [
         [1., 0, 0, 0, 7],
@@ -25,7 +24,6 @@ def test_uniqlastdim():
     test.append([2, 0, 0, 0, 13])
     assert h.allclose(h.uniqlastdim(test), [[1, 0, 0, 0, 7], [2, 0, 0, 0, 13]])
 
-@pytest.mark.fast
 def test_axis_angle_180():
     ax, an = h.axis_angle(th.eye(4))
     assert h.allclose([1, 0, 0, 0], ax)
@@ -37,7 +35,6 @@ def test_axis_angle_180():
     assert h.allclose(an, th.pi, atol=1e-3)
     assert th.all(h.line_angle(ax, ax0) < 1e-3)
 
-@pytest.mark.fast
 def test_rand_dtype_device():
     th = th = pytest.importorskip("torch")
     if not th.cuda.is_available():
@@ -46,7 +43,6 @@ def test_rand_dtype_device():
     assert test.dtype == th.float32
     assert test.device.type == 'cuda'
 
-@pytest.mark.fast
 def test_randsmall_dtype_device():
     th = th = pytest.importorskip("torch")
     if not th.cuda.is_available():
@@ -55,7 +51,6 @@ def test_randsmall_dtype_device():
     assert test.dtype == th.float32
     assert test.device.type == 'cuda'
 
-@pytest.mark.fast
 def test_th_vec():
     th = th = pytest.importorskip("torch")
     v = h.randvec(10)
@@ -71,7 +66,6 @@ def test_th_vec():
     assert th.allclose(p[..., :3], v4[..., :3])
     assert th.allclose(v4[..., 3], th.tensor(0.0))
 
-@pytest.mark.fast
 def test_th_rog():
     th = pytest.importorskip("torch")
     points = h.randpoint(10)
@@ -82,7 +76,6 @@ def test_th_rog():
     rg = h.rog(points)
     assert np.allclose(rg, rgx)
 
-@pytest.mark.fast
 def test_axisangcenhel_roundtrip():
     th = pytest.importorskip("torch")
 
@@ -168,7 +161,6 @@ def test_axisangcenhel_roundtrip():
 
     # assert 0
 
-@pytest.mark.fast
 def test_th_axis_angle_cen_hel_vec():
     xforms = ipd.homog.hrand(100)
     xgeom = ipd.homog.axis_angle_cen_hel_of(xforms)
@@ -179,7 +171,6 @@ def test_th_axis_angle_cen_hel_vec():
         assert np.allclose(c, c2)
         assert np.allclose(h, h2)
 
-@pytest.mark.fast
 def test_th_rot_56789():
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -207,7 +198,6 @@ def test_th_rot_56789():
     assert axis0.grad is not None
     assert axis0.grad.shape == (5, 6, 7, 8, 9, 4)
 
-@pytest.mark.fast
 def test_th_rot_single():
     th = pytest.importorskip("torch")
 
@@ -231,7 +221,6 @@ def test_th_rot_single():
     s.backward()
     assert axis0.grad is not None
 
-@pytest.mark.fast
 def test_th_axis_angle_cen_rand():
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -275,7 +264,6 @@ def test_th_axis_angle_cen_rand():
     assert np.allclose(cen2.detach(), cen)
     assert np.allclose(hel2.detach(), hel0)
 
-@pytest.mark.fast
 def test_th_intersect_planes():
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -358,7 +346,6 @@ def test_th_intersect_planes():
     assert th.all(h.ray_in_plane(p1, n1, isct, norm))
     assert th.all(h.ray_in_plane(p2, n2, isct, norm))
 
-@pytest.mark.fast
 def test_th_axis_angle_cen_hel():
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -380,7 +367,6 @@ def test_th_axis_angle_cen_hel():
     hg = h0.detach().numpy() * np.sqrt(3) / 3
     assert np.allclose(axis0.grad, [hg, hg, hg, 0])
 
-@pytest.mark.fast
 def test_torch_grad():
     th = pytest.importorskip("torch")
     x = th.tensor([2, 3, 4], dtype=th.float, requires_grad=True)
@@ -388,7 +374,6 @@ def test_torch_grad():
     s.backward()
     assert np.allclose(x.grad.detach().numpy(), [1.0, 1.0, 1.0])
 
-@pytest.mark.fast
 def test_torch_quat():
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -402,7 +387,6 @@ def test_torch_quat():
         assert q0.is_leaf
         assert h.allclose(q0.grad, [0, v, v, 0])
 
-@pytest.mark.fast
 def test_torch_rmsfit(trials=10):
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -471,7 +455,6 @@ def test_torch_rmsfit_grad():
 
             assert rms < 1e-3  # type: ignore
 
-@pytest.mark.fast
 def test_th_axis_angle():  # noqa
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -503,7 +486,6 @@ def test_th_axis_angle():  # noqa
     assert np.allclose(ang0.grad, 1)
     assert np.allclose(axis0.grad, [0, 0, 0, 0], atol=1e-3)
 
-@pytest.mark.fast
 def test_th_axis_angle_hel():
     th = pytest.importorskip("torch")
     th.autograd.set_detect_anomaly(True)
@@ -522,7 +504,6 @@ def test_th_axis_angle_hel():
     hg = h0.detach().numpy() * np.sqrt(3) / 3
     assert np.allclose(axis0.grad, [hg, hg, hg, 0])
 
-@pytest.mark.fast
 def test_th_misc():
     th = pytest.importorskip("torch")
 
@@ -536,7 +517,6 @@ def test_th_misc():
 
 #################################################
 
-@pytest.mark.fast
 def test_thxform_invalid44_bug():
     a_to_others = th.tensor([
         [
@@ -570,8 +550,7 @@ def test_thxform_invalid44_bug():
 if __name__ == "__main__":
     main()
 
-# @pytest.mark.fast
-# def test_th_axis_angle_cen_rand():
+# # def test_th_axis_angle_cen_rand():
 #    shape = (5, 6, 7, 8, 9)
 #    axis0 = ipd.homog.hnormalized(np.random.randn(*shape, 3))
 #    ang0 = np.random.random(shape) * (np.pi - 0.1) + 0.1
@@ -600,8 +579,7 @@ if __name__ == "__main__":
 #    assert np.allclose(cen + hel, cenhat, rtol=1e-4, atol=1e-4)
 #    assert np.allclose(np.linalg.norm(axis, axis=-1), 1.0)
 
-# @pytest.mark.fast
-# def test_th_intersect_planes():
+# # def test_th_intersect_planes():
 # noqa
 #    p1 = th.tensor([0., 0, 0, 1], requires_grad=True)
 #    n1 = th.tensor([1., 0, 0, 0], requires_grad=True)
@@ -678,8 +656,7 @@ if __name__ == "__main__":
 #    assert th.all(h.ray_in_plane(p1, n1, isct, norm))
 #    assert th.all(h.ray_in_plane(p2, n2, isct, norm))
 
-# @pytest.mark.fast
-# def test_th_axis_angle_cen_hel():
+# # def test_th_axis_angle_cen_hel():
 #    th = pytest.importorskip('th')
 #    th.autograd.set_detect_anomaly(True)
 
@@ -701,15 +678,13 @@ if __name__ == "__main__":
 
 #    assert 0
 
-# @pytest.mark.fast
-# def test_torch_grad():
+# # def test_torch_grad():
 #    x = th.tensor([2, 3, 4], dtype=th.float, requires_grad=True)
 #    s = th.sum(x)
 #    s.backward()
 #    assert np.allclose(x.grad.detach().numpy(), [1., 1., 1.])
 
-# @pytest.mark.fast
-# def test_torch_quat():
+# # def test_torch_quat():
 #    th = pytest.importorskip('th')
 #    th.autograd.set_detect_anomaly(True)
 
@@ -722,8 +697,7 @@ if __name__ == "__main__":
 #       assert q0.is_leaf
 #       assert np.allclose(q0.grad.detach(), [0, v, v, v])
 
-# @pytest.mark.fast
-# def test_torch_rmsfit():
+# # def test_torch_rmsfit():
 #    th = pytest.importorskip('th')
 #    th.autograd.set_detect_anomaly(True)
 

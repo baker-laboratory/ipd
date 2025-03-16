@@ -1,14 +1,10 @@
-import pytest
-
 from ipd.homog import *
 
-@pytest.mark.fast
 def test_rand_quat():
     rq = rand_quat((1, 2, 3, 5))
     assert rq.shape == (1, 2, 3, 5, 4)
     assert np.allclose(np.linalg.norm(rq, axis=-1), 1)
 
-@pytest.mark.fast
 def test_quat_mult():
     # from pyquaternion
     assert list(quat_multiply([1, 0, 0, 0], [1, 0, 0, 0])) == [1, 0, 0, 0]
@@ -28,7 +24,6 @@ def test_quat_mult():
     assert list(quat_multiply([0, 0, 0, 1], [0, 0, 1, 0])) == [0, -1, 0, 0]
     assert list(quat_multiply([0, 0, 0, 1], [0, 0, 0, 1])) == [-1, 0, 0, 0]
 
-@pytest.mark.fast
 def test_rot_quat_conversion_rand():
     x = rand_xform((5, 6, 7), cart_sd=0)
     assert np.all(is_homog_xform(x))
@@ -47,7 +42,6 @@ def test_rot_quat_conversion_rand():
     assert p.shape == q.shape
     assert np.allclose(p, q)
 
-@pytest.mark.fast
 def test_rot_quat_conversion_cases():
     R22 = np.sqrt(2) / 2
     cases = np.array([

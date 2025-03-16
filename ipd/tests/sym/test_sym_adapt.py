@@ -27,7 +27,6 @@ def main():
     test_sym_adapt_tensor_3d()
     test_apply_symmetry_dispatch()
 
-@pytest.mark.fast
 def test_dim_rearrange_basic():
     for shape, keydim in [
         [(1, 1, 1, 2, 3, 4, 5), 2],
@@ -45,7 +44,6 @@ def test_dim_rearrange_basic():
         if len(undo) == 1: assert t.data_ptr() == t3.data_ptr()
         assert th.all(t == t3)
 
-@pytest.mark.fast
 def test_dim_rearrange_xyz():
     for shape, keydim in [
         [(1, 9, 3), 9],
@@ -60,7 +58,6 @@ def test_dim_rearrange_xyz():
         assert t.data_ptr() == t3.data_ptr()
         assert th.all(t == t3)
 
-@pytest.mark.fast
 def test_dim_rearrange_errors():
     for shape, keydim in [
         [(1, 1, 1, 2, 3, 4, 5), 9],
@@ -70,7 +67,6 @@ def test_dim_rearrange_errors():
         with pytest.raises(ValueError):
             t2, undo = ipd.sym.sym_adapt.tensor_keydims_to_front(t, keydim)
 
-@pytest.mark.fast
 def test_sym_adapt_tensor_1d():
     sym = ipd.sym.create_sym_manager(symid='c1', L=7)
     S = partial(_sym_adapt, sym=sym, isasym=None)
@@ -97,7 +93,6 @@ def test_sym_adapt_tensor_1d():
     assert result.shape == (1, 1, 10, 3, 2, 1)
     assert torch.all(result[0, 0, 6:].cpu() == x.orig[0, 0, 3:])
 
-@pytest.mark.fast
 def test_sym_adapt_tensor_2d():
     sym = ipd.sym.create_sym_manager(symid='c2')
     sym.idx = ipd.sym.SymIndex(sym.nsub, [(10, 0, 6)])
@@ -109,7 +104,6 @@ def test_sym_adapt_tensor_2d():
     assert torch.all(result[0, 0, :3, :3].cpu() == x.orig[0, 0, :3, :3])
     assert torch.all(result[0, 0, 6:, 6:].cpu() == x.orig[0, 0, 3:, 3:])
 
-@pytest.mark.fast
 def test_sym_adapt_tensor_2d_ambig():
     sym = ipd.sym.create_sym_manager(symid='c2')
     sym.idx = [(20, 0, 10)]
@@ -118,7 +112,6 @@ def test_sym_adapt_tensor_2d_ambig():
     x = sym.sym_adapt(th.randn(20, 20, 10))
     assert x.adapted.shape == (20, 20, 10)
 
-@pytest.mark.fast
 def test_sym_adapt_tensor_3d():
     sym = ipd.sym.create_sym_manager(symid='c2')
     sym.idx = [(10, 0, 6)]
@@ -167,7 +160,6 @@ def _dispatch_symfunc_on_type_shape(*a, **kw):
                 assert not kw[t]
             return 'Banana'
 
-@pytest.mark.fast
 def test_apply_symmetry_dispatch():
     D = _dispatch_symfunc_on_type_shape
     xyz = torch.arange(10 * 4 * 3 * 3).reshape(1, -1, 3, 3).to(torch.float32)
@@ -202,7 +194,6 @@ def test_apply_symmetry_dispatch():
 
     assert D(Foo()) == '_Foo'
 
-@pytest.mark.fast
 def test_sym_numpy():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=c2'])
     a = np.array(['foo', 'bar', '', '', '', '', '', '', ''], dtype='<U3')

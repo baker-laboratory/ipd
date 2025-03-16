@@ -8,13 +8,11 @@ def main():
     test_rosetta_symdata()
     test_rosetta_symdata_mod()
 
-@pytest.mark.fast
 def test_rosetta_symdef():
     pytest.importorskip("pyrosetta")
     s = ipd.sym.get_rosetta_symfile_contents("p4m_d4_c2")
     assert s.count("xyz") == 163
 
-@pytest.mark.fast
 def test_rosetta_symdata():
     pytest.importorskip("pyrosetta")
     d = ipd.sym.get_rosetta_symdata("p4m_d4_c2")
@@ -28,7 +26,6 @@ def test_rosetta_symdata():
         origs.add(o)
     assert len(origs) == 21
 
-@pytest.mark.fast
 def test_rosetta_symdata_mod():
     pytest.importorskip("pyrosetta")
     scale = 137.34028439

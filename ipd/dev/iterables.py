@@ -1,5 +1,7 @@
 from typing import Sequence, Any
+import numpy as np
 import ipd
+from ipd.dev.strings import ascii_chars
 
 def nth(thing, n=0):
     iterator = iter(thing)
@@ -55,3 +57,22 @@ def zipitems(*args, **kw):
     zipped = zipmaps(*args, **kw)
     for k, v in zipped.items():
         yield k, *v
+
+@ipd.dc.dataclass
+class UniqueIDs:
+    alphabet: Sequence = ascii_chars
+    idmap: dict = ipd.dc.field(default_factory=dict)
+    offset: int = 0
+
+    def __call__(self, ids: np.ndarray, reset=False):
+        if reset:
+            self.offset += len(self.idmap)
+            self.idmap.clear()
+        uniq = set(np.unique(ids))
+        for cid in uniq - set(self.idmap):
+            self.idmap[str(cid)] = self.alphabet[len(self.idmap) - self.offset]
+        newids = ipd.copy(ids)
+        for u in uniq:
+            newids[ids == u] = self.idmap[u]
+        # ic(self.idmap)
+        return newids

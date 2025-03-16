@@ -18,6 +18,7 @@ bpdbx = lazyimport('biotite.structure.io.pdbx')
 @ipd.dev.iterize_on_first_param_path
 @functools.lru_cache
 def readatoms(fname, **kw) -> 'Atoms':
+    fname = str(fname)
     if not ipd.importornone('biotite'):
         raise ImportError('ipd.pdb.readatoms requires biotite')
     if not os.path.exists(fname):
@@ -36,10 +37,17 @@ def dump(thing, fname):
     assert 0, f'dont know how to dump {type(thing)}'
 
 def dumpatoms(atoms, fname):
-    from biotite.structure.io.pdb import PDBFile
-    assert fname.endswith('pdb')
-    pdb = PDBFile()
-    pdb.set_structure(atoms)
+    if fname.endswith('pdb'):
+        pdb = bpdb.PDBFile()
+        pdb.set_structure(atoms)
+    elif fname.endswith('.cif'):
+        pdb = bpdbx.CIFFile()
+        bpdbx.set_structure(pdb, atoms)
+    elif fname.endswith('.bcif'):
+        pdb = bpdbx.BinaryCIFFile()
+        bpdbx.set_structure(pdb, atoms)
+    else:
+        raise ValueError(f'bad dump filename {fname}')
     pdb.write(fname)
 
 def pdbread(fname, file=None, **kw) -> 'tuple[Pdb, Atoms]':

@@ -129,3 +129,13 @@ def capture_asserts():
         errors.append(e)
     finally:
         pass
+
+@contextmanager
+def catchall():
+    errors = []
+    try:
+        yield errors
+    except Exception as e:
+        errors.append(e)
+    finally:
+        pass

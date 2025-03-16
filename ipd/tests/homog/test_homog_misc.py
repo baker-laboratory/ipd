@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 from icecream import ic
 
 import ipd as ipd
@@ -10,19 +9,16 @@ def main():
     # test_hxformpts_bug()
     # test_homog_misc1()
 
-@pytest.mark.fast
 def test_hnormalized():
     a = ipd.homog.hnormalized([1, 1, 1])
     assert a[3] == 0
 
-@pytest.mark.fast
 def test_halign_bug():
     a = ipd.homog.hnormalized([1, 1, 1])
     b = ipd.homog.hnormalized([0, 0, 1])
     c = ipd.homog.halign(a, b, doto=a)
     assert np.allclose(c, b)
 
-@pytest.mark.fast
 def test_hxformpts_bug():
     pts6 = np.array([
         [39.50315091, 24.89703772, 28.00395481, 1.0],
@@ -70,7 +66,6 @@ def test_hxformpts_bug():
     assert result.shape == (4, 4, 4)
     ic(result.shape)
 
-@pytest.mark.fast
 def test_homog_misc1():
     # coords = np.array([[
     # [0, 0, 0],

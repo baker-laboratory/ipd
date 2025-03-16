@@ -99,7 +99,6 @@ def aaaa(timer=None):
 def bbbb(**kw):
     time.sleep(0.2)
 
-@pytest.mark.fast
 def test_auto():
     t = Timer()
     aaaa(t)
@@ -143,6 +142,28 @@ def test_summary():
 
     with pytest.raises(ValueError):
         timer.report(summary=1)  # type: ignore
+
+def test_timer_interjection():
+    with Timer() as timer:
+        timer.checkpoint("foo")
+        timer.checkpoint()
+        timer.checkpoint("bar")
+        timer.checkpoint("bar")
+        timer.checkpoint("foo")
+    assert set(timer.checkpoints) == {'foo', 'bar', 'total'}
+    assert len(timer.checkpoints['foo']) == 3
+    assert len(timer.checkpoints['bar']) == 2
+
+def test_timer_interjection_keyword():
+    with Timer() as timer:
+        timer.checkpoint("foo")
+        timer.checkpoint(interject=True)
+        timer.checkpoint("bar")
+        timer.checkpoint("bar")
+        timer.checkpoint("foo")
+    assert set(timer.checkpoints) == {'foo', 'bar', 'total'}
+    assert len(timer.checkpoints['foo']) == 3
+    assert len(timer.checkpoints['bar']) == 2
 
 if __name__ == '__main__':
     main()

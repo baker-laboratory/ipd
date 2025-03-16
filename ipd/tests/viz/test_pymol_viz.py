@@ -17,7 +17,6 @@ def main():
     test_line_strips(headless=False)
     test_pymol_viz_example(headless=False)
 
-@pytest.mark.fast
 def test_line_strips(headless=True):
     # pytest.importorskip('pymol')
     coord = np.ones((100, 4))

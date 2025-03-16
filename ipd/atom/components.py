@@ -197,6 +197,12 @@ class Components:
             del self.idx[i]
             del self.source_[i]
 
+    def __len__(self):
+        return len(self.atoms)
+
+    def __getitem__(self, key: object) -> object:
+        'just to make type checker happy'
+
 def stub(atoms):
     """
     Compute the frame based on the mass center and SVD decomposition of CA atoms.
@@ -246,3 +252,17 @@ def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
             rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
             accumulator(xfit, rms, matchfrac, i)
     return True
+
+def process_components(
+    components: Components,
+    pickchain: str = 'largest',
+    merge_chains: bool = True,
+    min_chain_atoms: int = 0,
+    **kw,
+):
+    for i, atoms, frames in components.enumerate('atoms frames', order=reversed):
+        if len(atoms) < min_chain_atoms and i > 0:
+            if components.frames[i - 1].shape == frames.shape:
+                components.atoms[i - 1] += atoms
+                components.atoms.pop(i)
+                components.frames.pop(i)

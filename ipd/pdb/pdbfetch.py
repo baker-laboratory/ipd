@@ -2,7 +2,7 @@ import functools
 import glob
 import os
 
-import requests
+import httpx
 
 import ipd
 
@@ -25,7 +25,7 @@ def download_test_pdbs(pdbs, path=None, overwrite=False):
 def rcsb_get(path, retries=3):
     url = f'https://data.rcsb.org/rest/v1/core/{path}'
     for _ in range(retries):
-        response = requests.get(url)
+        response = httpx.get(url)
         if response.status_code == 200: return response.json()
     raise ValueError(f'cant fetch rcsb info: {url}, tried {retries} times')
 

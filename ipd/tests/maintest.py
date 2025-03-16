@@ -1,3 +1,4 @@
+import pytest
 import tempfile
 
 import ipd
@@ -77,6 +78,8 @@ def _maintest_run_test_function(name, func, result, config, kw, check_xfail=True
             if not config.dryrun:
                 ipd.kwcall(config.fixtures, func)
                 result.passed.append(name)
+        except pytest.skip.Exception:
+            pass
         except AssertionError as e:
             if ipd.dev.has_pytest_mark(func, 'xfail'): result.xfailed.append(name)
             else: result.failed.append(name)
@@ -104,3 +107,13 @@ def maincrudtest(crud, namespace, fixtures=None, funcsetup=lambda: None):
             ipd.kwcall(fixtures, funcsetup)
 
         return maintest(namespace, fixtures, funcsetup=newfuncsetup, **kw)
+
+def make_parametrized_tests(namespace, prefix, args, convert, **kw):
+    for arg in args:
+        for k, func in list(namespace.items()):
+            if k.startswith(prefix):
+                name = k[prefix.find('test_'):]
+                c = ipd.dev.timed(lambda arg=arg: ipd.kwcall(kw, convert, arg), name=f'{name}_setup')
+                testfunc = lambda func=func, arg=arg, c=c: ipd.kwcall(kw, func, c(arg))
+                testfunc.__name__ = testfunc.__qualname__ = f'{name}_{arg}'
+                namespace[f'{name}_{arg.upper()}'] = testfunc

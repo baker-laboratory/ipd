@@ -20,6 +20,7 @@ dependencies = [
     'colorlog',
     'compact-json',
     'hydra-core',
+    'httpx',
     'icecream',
     'lark',
     # 'numba',
@@ -28,7 +29,6 @@ dependencies = [
     # 'pandas',
     'pydantic',
     'rich',
-    'requests',
     'RestrictedPython',
     # 'seaborn',
     'typer',
@@ -133,6 +133,10 @@ blank_lines_around_top_level_definition = 1
 arithmetic_precedence_indication = true
 
 [tool.pyright]
+pythonVersion = "3.12"
+pythonPlatform = "Linux"
+venvPath = "/home/sheffler/sw/MambaForge/envs"
+venv = "rfdsym312"
 include = ['ipd']
 exclude = [
     # 'ipd/crud/*',
@@ -149,14 +153,16 @@ exclude = [
     '**/*.log',
     '**/__pycache__',
 ]
-threads = 6
+threads = 12
 defineConstant = { DEBUG = true }
+# typeCheckingMode = 'basic'
 typeCheckingMode = 'standard'
-reportMissingImports = true
+reportMissingImports = false
 reportMissingTypeStubs = false
-pythonPlatform = 'Linux'
-# requires-python = '>=3.11'
-# pythonVersion = '3.12'
+
+executionEnvironments = [
+  { root = 'ipd' }
+]
 
 [tool.ruff]
 lint.ignore = [

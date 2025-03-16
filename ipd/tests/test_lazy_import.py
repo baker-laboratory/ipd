@@ -20,9 +20,9 @@ def test_importornone():
     re = ipd.importornone('re')
     assert re is sys.modules['re']
     missing = ipd.importornone('noufuomemioixecmeiorutnaufoinairesvoraisevmraoui')
-    assert missing is None
+    assert not missing
     missing = ipd.importornone('noufuomem ioixecmeiorutnaufoina iresvoraisevmraoui')
-    assert missing == [None, None, None]
+    assert not any(missing)
 
 def test_lazyimport_re():
     re = ipd.lazyimport('re')

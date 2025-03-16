@@ -126,7 +126,6 @@ def manual_test():
     ipd.showme(slid)
     # slid.dump_pdb(f'/home/sheffler/DEBUG_slid_ipd.pdb')
 
-@pytest.mark.fast
 def test_asuslide_L632_2(showme=False):
     sym = "L6_32"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -175,7 +174,6 @@ def test_asuslide_L632_2(showme=False):
     # assert np.allclose(slid.cellsize, 95)
     # assert np.allclose(slid.asym.com(), [25.1628825, -1.05965433, 0, 1])
 
-@pytest.mark.fast
 def test_asuslide_L632_ignoreimmobile(showme=False):
     sym = "L6_32"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -314,7 +312,6 @@ def asuslide_case3():
     )
     # ipd.showme(slid)
 
-@pytest.mark.fast
 def test_asuslide_helix_case1(showme=False):
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
@@ -342,7 +339,6 @@ def test_asuslide_helix_case1(showme=False):
     # assert np.allclose(rb2.cellsize, rb3.cellsize)
     assert np.allclose(rb2.cellsize, [113.7143553, 113.7143553, 44.31469973])
 
-@pytest.mark.fast
 def test_asuslide_helix_nfold1(showme=False):
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
@@ -373,7 +369,6 @@ def test_asuslide_helix_nfold1(showme=False):
     assert np.allclose(rb2.cellsize, rb3.cellsize)
     assert np.allclose(rb2.cellsize, [109.21284284, 109.21284284, 43.59816075])
 
-@pytest.mark.fast
 def test_asuslide_helix_nfold1_2():
     showmeopts = ipd.dev.Bunch(vizsphereradius=6)
 
@@ -408,7 +403,6 @@ def test_asuslide_helix_nfold1_2():
     assert np.allclose(rb1.cellsize, [115.86479857, 115.86479857, 70.0])
     assert np.allclose(rb2.cellsize, [55.93962805, 55.93962805, 38.53925788])
 
-@pytest.mark.fast
 def test_asuslide_helix_nfold3():
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
@@ -432,7 +426,6 @@ def test_asuslide_helix_nfold3():
     assert np.allclose(rb1.cellsize, [47.74648293, 47.74648293, 50.0])
     assert np.allclose(rb2.cellsize, [44.70186644, 44.70186644, 146.78939426])
 
-@pytest.mark.fast
 def test_asuslide_helix_nfold5():
     showmeopts = ipd.dev.Bunch(vizsphereradius=4)
 
@@ -459,7 +452,6 @@ def test_asuslide_helix_nfold5():
     assert np.allclose(rb2.cellsize, [153.14643468, 153.14643468, 49.28047224])
     assert np.allclose(rb3.cellsize, rb2.cellsize)
 
-@pytest.mark.fast
 def test_asuslide_L442():
     sym = "L4_42"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -509,7 +501,6 @@ def test_asuslide_L442():
     assert np.allclose(slid.cellsize, 99.16625977)
     assert np.allclose(slid.asym.com(), [2.86722158e01, -1.14700730e00, 4.03010958e-16, 1.00000000e00])
 
-@pytest.mark.fast
 def test_asuslide_I4132_clashframes():
     sym = "I4132_322"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -697,7 +688,6 @@ def asuslide_case1():
     # assert np.allclose(slid.cellsize, 262.2992230399999)
     # assert np.allclose(ipd.hcart3(slid.asym.globalposition), [67.3001427, 48.96971455, 60.86220864])
 
-@pytest.mark.fast
 def test_asuslide_I213():
     sym = "I213"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -761,7 +751,6 @@ def test_asuslide_I213():
     # contactdis=16, contactfrac=0.2, vizsphereradius=2, cellsize=csize, extraframesradius=1.5 * csize,
     # towardaxis=True, alongaxis=False, vizfresh=False, centerasu=False)
 
-@pytest.mark.fast
 def test_asuslide_L632():
     sym = "L6_32"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -805,7 +794,6 @@ def test_asuslide_L632():
     assert np.allclose(slid.cellsize, 97.5)
     assert np.allclose(slid.asym.com(), [2.89453125e01, -1.21875000e00, 3.27446403e-16, 1.00000000e00])
 
-@pytest.mark.fast
 def test_asuslide_I4132():
     sym = "I4132_322"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -881,7 +869,6 @@ def test_asuslide_I4132():
     assert np.allclose(slid.asym.com(), [0.26694229, 19.87146628, 36.37601256, 1.0])
     # assert 0
 
-@pytest.mark.fast
 def test_asuslide_p213():
     sym = "P 21 3"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -973,7 +960,6 @@ def test_asuslide_p213():
     assert np.allclose(slid.cellsize, 161.5703125)
     assert np.allclose(slid.asym.com(), [81.45648685, 41.24336469, 62.20570401, 1.0])
 
-@pytest.mark.fast
 def test_asuslide_oct():
     sym = "oct"
     ax2 = ipd.sym.axes(sym)[2]
@@ -1075,7 +1061,6 @@ def test_asuslide_oct():
     assert np.allclose(slid.asym.com(), [67.39961966, 67.39961966, 25.00882048, 1.0])
     # slid.dump_pdb('test2.pdb')
 
-@pytest.mark.fast
 def test_asuslide_P432_44(showme=False):
     sym = "P_4_3_2"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -1157,7 +1142,6 @@ def test_asuslide_P432_44(showme=False):
     assert np.allclose(slid.cellsize, 145.5535)
     assert np.allclose(slid.asym.com(), [18.74043474, 37.48086949, 56.22130423, 1.0])
 
-@pytest.mark.fast
 def test_asuslide_P432_43(showme=False):
     sym = "P_4_3_2_43"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -1206,7 +1190,6 @@ def test_asuslide_P432_43(showme=False):
     assert np.allclose(slid.cellsize, 147.10025)
     assert np.allclose(slid.asym.com(), [18.69073977, 37.38147955, 56.07221932, 1.0])
 
-@pytest.mark.fast
 def test_asuslide_F432():
     sym = "F_4_3_2"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -1257,7 +1240,6 @@ def test_asuslide_F432():
 
     # ipd.showme(slid2)
 
-@pytest.mark.fast
 def test_asuslide_I432():
     sym = "I_4_3_2"
     xtal = ipd.sym.xtal.Xtal(sym)
@@ -1312,7 +1294,6 @@ def test_asuslide_I432():
 
     # ipd.showme(slid2)
 
-@pytest.mark.fast
 def test_asuslide_from_origin():
     from ipd.tests.testdata.misc.asuslide_misc import test_asuslide_case2_coords  # type: ignore
 
@@ -1354,7 +1335,6 @@ def test_asuslide_from_origin():
     )
     ic(slid.asym.com(), slid.cellsize)  # type: ignore
 
-@pytest.mark.fast
 def test_asuslide_case2():
     from ipd.tests.testdata.misc.asuslide_misc import test_asuslide_case2_coords  # type: ignore
     sym = "L632"

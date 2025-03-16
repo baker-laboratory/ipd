@@ -7,16 +7,7 @@ h = ipd.hnumpy
 
 bs = pytest.importorskip('biotite.structure')
 
-TEST_PDBS = [
-    '3sne',
-    '1dxh',
-    '1n0e',
-    '1wa3',
-    '1a2n',
-    '1n0e',
-    '1bfr',
-    '1g5q'  #, '3woc', '7abl', '2tbv'
-]
+TEST_PDBS = ['3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr', '1g5q']
 
 config_test = ipd.Bunch(
     re_only=[],
@@ -33,7 +24,7 @@ def main():
     )
 
 def test_assembly_simple():
-    assembly = ipd.atom.create_assembly('1qys')
+    assembly = ipd.atom.assembly_from_file('1qys')
 
 def helper_test_assembly_iterate(assembly):
     for ibod, ifrm in assembly.symbodyids():
@@ -45,13 +36,13 @@ def helper_test_assembly_iterate(assembly):
         assert body.meta.bodyid == ibod
         assert body.meta.frameid == ifrm
 
-def helper_test_asu_selector(assembly):
+def helper_test_assembly_asu_selector(assembly):
     for ibody, iframe, borig, forig in assembly.enumerate_symbodies(order='random', n=10):
         asusel = ipd.atom.AsuSelector(bodyid=ibody, frameid=iframe)
         asu = asusel(assembly)
         assert asu.isclose(borig)
 
-def helper_test_neighborhood_asu(assembly):
+def helper_test_assembly_neighborhood_asu(assembly):
     for ibody, iframe, borig, forig in assembly.enumerate_symbodies(order='random', n=10):
         asusel = ipd.atom.AsuSelector(bodyid=ibody, frameid=iframe)
         hoodsel = ipd.atom.NeighborhoodSelector(min_contacts=10, contact_dist=7)
@@ -66,7 +57,7 @@ def helper_test_neighborhood_asu(assembly):
             assert h.allclose(hood.frames[ibody][0], np.eye(4))
             assert newasu.isclose(origbody)
 
-def helper_test_neighborhood_neighbors(assembly):
+def helper_test_assembly_neighborhood_neighbors(assembly):
     for ibasu, ifasu, basu, fasu in assembly.enumerate_symbodies():
         # for ibasu, ifasu, basu, fasu in assembly.enumerate_symbodies(order='random', n=10):
         ic(ibasu, ifasu, basu.pos)
@@ -92,19 +83,11 @@ def make_assembly_pdb_tests():
         class TestAssembly(unittest.TestCase):
 
             def setUp(self):
-                self.assembly = ipd.atom.create_assembly(pdb, min_chain_atoms=50)
+                self.assembly = ipd.atom.assembly_from_file(pdb, min_chain_atoms=50)
 
-            def test_assembly_iterate(self):
-                helper_test_assembly_iterate(self.assembly)
-
-            def test_asu_selector(self):
-                helper_test_asu_selector(self.assembly)
-
-            def test_neighborhood_asu(self):
-                helper_test_neighborhood_asu(self.assembly)
-
-            def test_neighborhood_neighbors(self):
-                helper_test_neighborhood_neighbors(self.assembly)
+            for k, func in globals().items():
+                if k.startswith('helper_test_assembly_'):
+                    locals()[k[7:]] = lambda self, func=func: func(self.assembly)
 
         globals()[f'TestAssembly_{pdb.upper()}_'] = TestAssembly
 

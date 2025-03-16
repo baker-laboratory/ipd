@@ -2,8 +2,13 @@ import contextlib
 import os
 import typing
 
-from ipd.version import __version__ as __version__
+import dataclasses as dc  # noqa
+import functools as ft  # noqa
+import itertools as it  # noqa
+import numpy as np  # noqa
+from copy import copy as copy, deepcopy as deepcopy
 
+from ipd.version import __version__ as __version__
 from ipd.typehints import *  #noqa
 from ipd.dev.error import panic as panic
 from ipd.dev.meta import kwcheck as kwcheck, kwcall as kwcall, kwcurry as kwcurry

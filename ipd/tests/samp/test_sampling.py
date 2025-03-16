@@ -23,26 +23,22 @@ def main():
     test_randxform_perf()
     test_quat_angle()
 
-@pytest.mark.fast
 def test_randxform_cen():
     cen = h.randpoint(2, device='cuda')
     x = ipd.samp.randxform(len(cen), cartmax=0, cen=cen)
     assert th.allclose(cen, h.xform(x, cen), atol=1e-3)  # type: ignore
     # assert 0
 
-@pytest.mark.fast
 def test_welzl_sphere():
     for npts in [1, 2, 3, 4, 5, 40, 100, 1000, 10_000]:
         xyz = th.randn((npts, 3))  # type: ignore
         cen, rad = ipd.samp.bounding_sphere(xyz)
         assert h.norm(xyz - cen).max() < rad + 0.001
 
-@pytest.mark.fast
 def test_randxform_big():
     ipd.samp.randxform(2**23)
     # x = ipd.samp.randxform(2**23 + 1) # fails?!? still!?!?
 
-@pytest.mark.fast
 def test_randxform_angle():
     # maxang = 0.1
     qunif = h.normQ(th.randn((10_000_000, 4), device='cuda'))  # type: ignore
@@ -77,7 +73,6 @@ not unif
   0.050   1.000  11.560
   """
 
-@pytest.mark.fast
 def test_randxform_large_angle():
     maxang = 1
 
@@ -146,7 +141,6 @@ def test_randxform_large_angle():
     print(avg)
     print(std)
 
-@pytest.mark.fast
 def test_randxform_small_angle():
     N = 100_000
     # from collections import defaultdict
@@ -186,7 +180,6 @@ def test_randxform_small_angle():
     # assert th.allclose(quant2[1:], quant3[1:], atol=1e-2)
     # assert 0
 
-@pytest.mark.fast
 def test_quat_angle():
     maxang = 0.1
     q = th.randn((10, 4), device='cuda')  # type: ignore
@@ -198,7 +191,6 @@ def test_quat_angle():
     ang = th.atan2(q[:, 1:].norm(dim=-1), q[:, 0])  # type: ignore
     print(th.quantile(ang, th.arange(0, 1.001, 0.2, device='cuda')))  # type: ignore
 
-@pytest.mark.fast
 def test_randxform_perf():
 
     N = 1_000_000

@@ -2,7 +2,6 @@ import os
 import tempfile
 from pathlib import Path
 
-import pytest
 from assertpy import assert_that as at
 
 import ipd
@@ -13,7 +12,6 @@ def main():
         test_state_manager(td)
     print('test_state DONE', flush=True)
 
-@pytest.mark.fast
 def test_state_manager(tmpdir):  # sourcery skip: extract-duplicate-method
     state_defaults = dict(
         reviewed=set(),

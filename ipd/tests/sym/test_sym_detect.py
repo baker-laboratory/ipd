@@ -140,7 +140,6 @@ def make_pdb_testfunc(pdbcode, path=''):
     if pdbcode == '3E47': tol.rms_fit.threshold = 7
     if pdbcode == '3E47': tol.seqmatch.threshold = 0.5
 
-    @pytest.mark.fast
     def pdb_test_func(path=path, tol=tol):
         pytest.importorskip('biotite')
         tol.reset()
@@ -203,7 +202,6 @@ def test_syminfo_from_frames_examples():
                              nfold=0.2)
         helper_test_frames(frames, symid, tol=tol)
 
-@pytest.mark.fast
 def test_symelems_from_frames_oct():
     frames0 = ipd.sym.frames('oct')
     ref = ipd.sym.symelems_from_frames(frames0)
@@ -222,7 +220,6 @@ def test_symelems_from_frames_oct():
         assert h.allclose(se.axis, h.xform(pert, refaxis)) or h.allclose(-se.axis, h.xform(pert, refaxis))
         assert h.allclose(se.cen, h.xform(pert, ref.cen[ref.nfold == nf]))
 
-@pytest.mark.fast
 def test_symelems_from_frames_D2n(symid='D4'):
     frames = ipd.sym.frames(symid)
     refse = ipd.sym.symelems_from_frames(frames)

@@ -1,15 +1,16 @@
 import abc
-from typing import *  # type: ignore noqa
+from typing import (Any, Callable, Iterator, TypeVar, Union)
+from typing_extensions import ParamSpec  # type: ignore noqa
 import numpy as np
 
 KW = dict[str, Any]
 """Type alias for keyword arguments represented as a dictionary with string keys and any type of value."""
 
-FieldSpec = 'str | list[str] | tuple[str] | Calllable[[*Any], str]'
-EnumerIter = 'Iterator[int, *Any]'
-EnumerListIter = 'Iterator[int, *list[Any]]'
+FieldSpec = Union[str, list[str], tuple[str], Callable[..., str], tuple]
+EnumerIter = Iterator[int]
+EnumerListIter = Iterator[list[Any]]
 
-def basic_typevars(which):
+def basic_typevars(which) -> list[Union[TypeVar, ParamSpec]]:
     """
     Generate a set of common type variables used for generic typing.
 
@@ -34,14 +35,13 @@ def basic_typevars(which):
     """
     typevars = dict(T=TypeVar('T'), R=TypeVar('R'), C=type[TypeVar('C')])
     try:
-        from typing import ParamSpec
         typevars['P'] = ParamSpec('P')  # type: ignore
     except ImportError:
         typevars['P'] = TypeVar('P')  # type: ignore
         typevars['P'].args = list[Any]  # type: ignore
         typevars['P'].kwargs = KW  # type: ignore
     typevars['F'] = Callable[typevars['P'], typevars['R']]  # type: ignore
-    return (typevars[k] for k in which)
+    return [typevars[k] for k in which]  # type: ignore
 
 class Frames44Meta(abc.ABCMeta):
 
@@ -57,4 +57,10 @@ class FramesN44Meta(abc.ABCMeta):
         return isinstance(obj, np.ndarray) and len(obj.shape) == 3 and obj.shape[-2:] == (4, 4)
 
 class FramesN44(np.ndarray, metaclass=FramesN44Meta):
+    pass
+
+class NDArray_MN2_int32(np.ndarray):
+    pass
+
+class NDArray_N2_int32(np.ndarray):
     pass

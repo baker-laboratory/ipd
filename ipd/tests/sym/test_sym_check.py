@@ -12,19 +12,16 @@ else:
 
 from ipd.sym.sym_adapt import SymAdaptTensor
 
-@pytest.mark.fast
 def test_symcheck_mapping():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'])
     sym.idx = [2]
     sym.assert_symmetry_correct(dict(a=[1, 1]))
 
-@pytest.mark.fast
 def test_symcheck_sequence():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'])
     sym.idx = [2]
     sym.assert_symmetry_correct([[1, 1], [7, 7], [13, 13]])
 
-@pytest.mark.fast
 def test_symcheck():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'])
     sym.idx = [2]

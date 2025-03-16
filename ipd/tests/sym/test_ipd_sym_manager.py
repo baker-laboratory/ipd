@@ -17,7 +17,6 @@ import ipd.homog.thgeom as h
 
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
-@pytest.mark.fast
 def test_sym_manager_fuzz_xyz_sym(sym):
     sym.opt.asu_to_best_frame = False
     idx = sym.idx
@@ -35,7 +34,6 @@ def test_sym_manager_fuzz_xyz_sym(sym):
         rms, _, xfit = h.rmsfit(Xsym[sym.idx.asym], X[sym.idx.asym])
         assert rms < 1e-3
 
-@pytest.mark.fast
 def test_sym_manager():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=C2',
@@ -51,7 +49,6 @@ def test_sym_manager():
     xyz2 = sym(xyz)
     assert ipd.sym.check_sym_asu(sym, xyz, xyz2)
 
-@pytest.mark.fast
 def test_sym_fit():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=C2',
@@ -64,7 +61,6 @@ def test_sym_fit():
     symxyz = sym(xyz, showme=0)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz)
 
-@pytest.mark.fast
 def test_sym_asu_align_icos_nounsym():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=I',
@@ -80,7 +76,6 @@ def test_sym_asu_align_icos_nounsym():
     # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
-@pytest.mark.fast
 def test_sym_asu_align_icos_unsym():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=I',
@@ -98,7 +93,6 @@ def test_sym_asu_align_icos_unsym():
     # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
-@pytest.mark.fast
 def test_sym_fit_icos_unsym():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=I',
@@ -115,7 +109,6 @@ def test_sym_fit_icos_unsym():
     # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
-@pytest.mark.fast
 def test_sym_fit_icos_unsym_multislice():
     sym = ipd.tests.sym.create_test_sym_manager([
         'sym.symid=I',
