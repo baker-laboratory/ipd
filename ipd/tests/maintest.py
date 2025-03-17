@@ -37,7 +37,8 @@ def _test_class_ok(name, obj):
     return name.startswith('Test') and isinstance(obj, type) and not hasattr(obj, '__unittest_skip__')
 
 def maintest(namespace, config=ipd.Bunch(), **kw):
-    if not ipd.ismap(namespace): orig, namespace = namespace, vars(namespace)
+    orig = namespace
+    if not ipd.ismap(namespace): namespace = vars(namespace)
     if '__file__' in namespace:
         print(f'maintest "{namespace["__file__"]}":', flush=True)
     else:
@@ -89,7 +90,8 @@ def _maintest_run_maybe_parametrized_func(name, func, result, config, kw):
 
 def _maintest_run_test_function(name, func, result, config, kw, check_xfail=True):
     error, testout = None, None
-    context = ipd.dev.nocontext if name in config.nocapture else ipd.dev.capture_stdio
+    nocapture = config.nocapture is True or name in config.nocapture
+    context = ipd.dev.nocontext if nocapture else ipd.dev.capture_stdio
     with context() as testout:  # noqa
         try:
             ipd.kwcall(config.fixtures, config.funcsetup)

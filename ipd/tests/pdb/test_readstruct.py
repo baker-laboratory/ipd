@@ -18,7 +18,7 @@ def helper_test_readatoms_types(atomslist):
 
 def helper_test_readatoms_assembly_xforms(atomslist):
     asmx, pdbcode = ipd.get_metadata(atomslist[0])['assembly_xforms pdbcode']
-    ic(pdbcode, asmx)
+    ipd.ic(pdbcode, asmx)
     # assert 0
 
 ipd.tests.make_parametrized_tests(
@@ -37,7 +37,7 @@ def helper_read_8u51(fname):
     assert 277 == sum(atom.atom_name == 'CA')
     chatom = ipd.pdb.readatoms(fname, caonly=True, chaindict=True)
     chainlens = {k: len(v) for k, v in chatom.items()}
-    ic(chainlens)
+    ipd.ic(chainlens)
     assert chainlens == {'A': 267, 'B': 10}
     assert all(chatom.A.atom_name == 'CA')
 

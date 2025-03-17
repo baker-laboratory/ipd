@@ -1,3 +1,4 @@
+import os
 from typing import Annotated
 import typer
 import ipd
@@ -7,6 +8,9 @@ class CodeTool(IPDTool):
 
     def make_testfile(self, sourcefile, testfile):
         ipd.dev.make_testfile(sourcefile, testfile)
+
+    def clean_pycache(self, path: ipd.Path = ipd.Path('.')):
+        os.system(fr'find {path} -name *.pyc -delete')
 
     def yapf(
         self,
@@ -58,16 +62,6 @@ class CodeTool(IPDTool):
         raise typer.Exit(code=result.exitcode)
 
     def filter_python_output(self, path: Annotated[str, typer.Argument()]):
-        # possible way to hangle kwargs
-        # def main(item: list[str] = typer.Option(None, "--item", "-i", help="Key-value pairs (key=value)", allow_multiple=True)):
-        # kwargs = {}
-        # if item:
-        # for i in item:
-        # try:
-        # key, value = i.split("=", 1)
-        # kwargs[key] = value
-        # except ValueError:
-        # print(f"Invalid format for item: {i}. Expected key=value")
         with open(path) as inp:
             text = inp.read()
         with open(f'{path}.orig', 'w') as out:
@@ -82,3 +76,13 @@ class CodeTool(IPDTool):
         with open(path, 'w') as out:
             out.write(new)
             out.write('\nTHIS FILE WAS FILTERED THRU `ipd code filter_python_output {path}`\n')
+
+    def unique_errors(self, files: list[str]):
+        text = ipd.dev.addreduce(ipd.Path(f).read_text() for f in files)
+        try:
+            result = ipd.dev.analyze_python_errors_log(text)
+            print(result)
+        except RuntimeError as e:
+            print('ERROR WHEN RUNNING `ipd code alalyze_python_errors_log <fname>`')
+            print(e)
+            raise typer.Exit()

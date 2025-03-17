@@ -1,6 +1,6 @@
-import time
-
 import pytest
+import time
+from ipd.dev import Timer
 
 import ipd
 
@@ -56,7 +56,6 @@ def test_context():
 import statistics
 
 import ipd
-from ipd.dev import Timer
 
 def allclose(a, b, atol):
     if isinstance(a, float):

@@ -1,6 +1,9 @@
+from collections import defaultdict
 import os
 import re
 from ipd.bunch import Bunch
+
+import ipd
 
 re_block = re.compile(r'  File "([^"]+)", line (\d+), in (.*)')
 re_end = re.compile(r'(^[A-Za-z0-9.]+Error)(: .*)?')
@@ -105,3 +108,72 @@ AttributeError: _ARRAY_API not found
 
 Traceback""", '')
     return text
+
+'''Traceback (most recent call last):
+  File "example.py", line 10, in <module>
+    1/0
+ZeroDivisionError: division by zero
+foof
+ISNR'''
+
+def analyze_python_errors_log(text):
+    # traceback_pattern = re.compile(r'Traceback \(most recent call last\):.*?\n[A-Za-z]+?Error:.*?$', re.DOTALL)
+    traceback_pattern = re.compile(r'Traceback \(most recent call last\):.*?(?=\nTraceback |\Z)', re.DOTALL)
+    file_line_pattern = re.compile(r'\n\s*File "(.*?\.py)", line (\d+), in ')
+    error_pattern = re.compile(r'\n\s*[A-Za-z_0-9]+Error: .*')
+    """Analyze Python error logs and create a report of unique stack traces.
+
+    Args:
+        text (str): The log file content as a string.
+
+    Returns:
+        str: A report of unique stack traces.
+
+    Example:
+        >>> log = '''Traceback (most recent call last):
+        ...   File "example.py", line 10, in <module>
+        ...     1/0
+        ... ZeroDivisionError: division by zero'''
+        >>> result = analyze_python_errors_log(log)
+        >>> 'Unique Stack Traces Report (1 unique traces):' in result
+        True
+    """
+    trace_map = defaultdict(list)
+    tracebacks = traceback_pattern.findall(text)
+    for trace in tracebacks:
+        filematch = file_line_pattern.search(trace)
+        errmatch = error_pattern.search(trace)
+        assert filematch and errmatch, f'Error pattern not found in {trace}'
+        location = ':'.join(filematch.groups())
+        error = errmatch.group(0).strip()
+        key = (location, error)
+        if key not in trace_map:
+            trace_map[key] = trace
+    return create_errors_log_report(trace_map)
+
+def create_errors_log_report(trace_map):
+    """Generate a report from a map of unique stack traces.
+
+    Args:
+        trace_map (dict): A dictionary where keys are unique error signatures
+            and values are corresponding stack traces.
+
+    Returns:
+        str: A formatted report of the unique stack traces.
+
+    Example:
+        >>> trace_map = {('1/0', 'division by zero'): '''Traceback (most recent call last):
+        ...   File "example.py", line 10, in <module>
+        ...     1/0
+        ... ZeroDivisionError: division by zero'''}
+        >>> report = create_errors_log_report(trace_map)
+        >>> 'Unique Stack Traces Report (1 unique traces):' in report
+        True
+    """
+    with ipd.capture_stdio() as printed:
+        print(f"Unique Stack Traces Report ({len(trace_map)} unique traces):")
+        print("="*80 + "\n")
+        for (_, trace) in trace_map.items():
+            print(trace)
+            print("-"*80 + "\n")
+    return printed.read()

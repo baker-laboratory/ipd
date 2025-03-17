@@ -12,12 +12,34 @@ from copy import copy as copy, deepcopy as deepcopy
 # from ipd._prelude import lazyimport, importornone, LazyImportError, cherry_pick_import, cherry_pick_imports
 from ipd._prelude import *
 
+_global_chrono = None
+
+def __getattr__(attr):
+    if attr == 'global_chrono':
+        global _global_chrono
+        _global_chrono = _global_chrono or Chrono()
+        return _global_chrono
+    if attr == 'symmetrize':
+        symgr = sym.get_global_symmetry()
+        assert sym is not None
+        return symgr
+    if attr == 'motif_applier':
+        mmgr = motif.get_global_motif_manager()
+        assert mmgr is not None
+        return mmgr
+    if attr.startswith('debug'):
+        return getattr(hub, attr)
+    raise AttributeError(f"module '{__name__}' has no attribute '{attr}'")
+
 optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
 capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
-ic, icq = cherry_pick_imports('ipd.dev.debug', 'ic icq')
+# ic from icecream, icm is 'mute' and icv is 'verbose', both hacked to bypass stdio redirection
+ic, icm, icv = cherry_pick_imports('ipd.dev.debug', 'ic icm icv')
+
 from ipd.dev.error import panic as panic
 from ipd.dev.meta import kwcheck as kwcheck, kwcall as kwcall, kwcurry as kwcurry
 from ipd.dev.metadata import get_metadata as get_metadata, set_metadata as set_metadata
+from ipd.dev.functional import map as map, visit as visit
 from ipd.dev.format import print_table as print_table, print as print
 from ipd.bunch import Bunch as Bunch, bunchify as bunchify
 from ipd.observer import hub as hub
@@ -75,19 +97,6 @@ with contextlib.suppress(ImportError):
 def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
-
-def __getattr__(name) -> Any:
-    if name == 'symmetrize':
-        symgr = sym.get_global_symmetry()
-        assert sym is not None
-        return symgr
-    elif name == 'motif_applier':
-        mmgr = motif.get_global_motif_manager()
-        assert mmgr is not None
-        return mmgr
-    elif name.startswith('debug'):
-        return getattr(hub, name)
-    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 from ipd.project_config import install_ipd_pre_commit_hook
 

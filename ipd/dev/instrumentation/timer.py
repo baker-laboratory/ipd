@@ -110,7 +110,7 @@ class Timer:
         value=None,
         traceback=None,
     ):
-        self.checkpoints["total"].append(time.perf_counter() - self._start)  # type: ignore
+        self.checkpoints["total"].append(time.perf_counter() - self._start)
         # self._start = None
         if self.verbose:
             log.debug(f"Timer {self.name} finished")
@@ -219,7 +219,7 @@ def checkpoint(kw={},
     if not dont_mod_label:
         fulllabel = f"{fn}:{clsname}{func}"
     if label:
-        fulllabel += f":{label}"  # type: ignore
+        fulllabel += f":{label}"
     t.checkpoint(fulllabel, autolabel=label is None)
 
 def timed_func(func, *, label=None):
@@ -232,20 +232,22 @@ def timed_func(func, *, label=None):
     if inspect.iscoroutinefunction(func):
 
         @functools.wraps(func)
-        async def wrapper(*a, **kw):  # type: ignore
+        async def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
-            checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
+            # should interject instead? refactor to use stack?
+            checkpoint(kw, funcbegin=True, **kwarg)
             val = await func(*a, **kw)
-            checkpoint(kw, **kwarg)  # type: ignore
+            checkpoint(kw, **kwarg)
             return val
     else:
 
         @functools.wraps(func)
         def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
-            checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
+            # should interject instead? refactor to use stack?
+            checkpoint(kw, funcbegin=True, **kwarg)
             val = func(*a, **kw)
-            checkpoint(kw, **kwarg)  # type: ignore
+            checkpoint(kw, **kwarg)
             return val
 
     return wrapper
@@ -266,3 +268,26 @@ def timed(thing=None, *, label=None, name=None):
         return timed_class(thing, label=label)
     else:
         return timed_func(thing, label=label)
+
+'''
+<instructions>
+Please help me craft the following prompt. Do no create code at this time, but instead help me imporve this prompt and general plan of action for my timer. I will submit this prompt for a coding task to several ai assistants, so I would like to make sure it is well crafted, clear, and actually includes everything I am looking for. In particular analyze the feasivility of a stack based checkpoint system integrated with decorator usage for accurately keeping track of complex nested call pattens. would it be feasible to use a stack rather than the hacky interjection logic (which I think is effectively a stack with a max depth of one)
+</instructions>
+
+<summary>
+I have attached below module and test code for a versitile timer utility module which can be used as a class and function decorator, as a context manager, as a module level checkpoint function for a timer stored in kw or a global timer. It also includes basic usage as a Timer class instance.  It has the ability to inject additional checkpoints while still including the runtime before the injection in the next checkpoint.  It also has different report types (sum, mean, median, min, max) as well as autolabeling with the autolabel parameter, and automatically labels checkpoints based on class/function name when used as a decorator. I am looking for a very high quality, professional level of code here. I have no problem with using third party libraries, but they must be well maintained and have a good license.  I am not interested in using libraries that are not well known or widely used.  If you suggest a third party library, please include a link to the project page and a brief description of its features.
+</summary>
+
+<code improvements>
+Please suggest or make improvements, especially for more accurate results when timing nested function calls, perhaps generalizing the "injection" mechanism with a checkpoint stack (NOT a stack of timers)following function calls when used as a decorator, making sure the times spend in each function are allotted to correctly labeled checkpoints for those functions. please make suggestions for general useability and accuracy improvements. I would also like the optionI have no problem with "magical" code here, and I prefer short and highly expressive, functional code without comments. if you feel the need to comment, consider adding to the relevant docstring instead. only include comments for particularly obtuse or magical code, or where it may be uncler *why* the code is doing something nonobvious.
+</code improvements>
+
+<documentation>
+please write docstrings for the module, classes and functions for this versitile and magical timer utility module.  include comprehensive usage examples including as a class and function decorator, as a context manager, usage of the module level checkpoint function for a timer stored in kw, and basic usage as a Timer class instance. include information about and an example of checkpoint interjection, where additional checkpoints can be injected while still including the runtime before the injection in the next checkpoint. have information and examples of different report types (sum, mean, median, min, max) as well as autolabeling with the autolabel parameter, as well as automatically labeling checkpoints based on class/function name when used as a decorator.
+</documentation>
+
+<tests>
+please also produce a comprehensive test suite, paying special attention to any new checkpoint stack you may add (as an improvement to interjection), focusing on correctness when used as a decorator on multiple functions that may call each other in a complex pattern, sharing a single global timer and making sure all time spent in each function is accounted for correctly using a checkpoint stack when decorating functions and class members. please also consider the examples in docstrings will be tested with doctest, but keep the doctest/docstring examples simpler that the main test suite. please make sure decorating generator functions is tested.
+</tests>
+
+'''

@@ -1,3 +1,34 @@
+"""
+===============================
+Context Managers Utility Module
+===============================
+
+This module provides a collection of useful and versatile **context managers**
+for handling various runtime behaviors. These include:
+
+- **Redirection of stdout/stderr**
+- **Dynamic class casting**
+- **Automatic file handling**
+- **Temporary working directory changes**
+- **Capturing asserts and exceptions**
+- **Random seed state preservation**
+- **Debugging tools (tracing prints, capturing stdio)**
+- **Suppressing optional imports**
+
+### **💡 Why Use These Context Managers?**
+Context managers allow you to **manage resources safely and concisely**,
+ensuring proper cleanup regardless of errors. This module provides **custom utilities**
+not found in Python's standard library.
+
+---
+
+## **📌 Usage Examples**
+### **Redirect stdout and stderr**
+```python
+with redirect(stdout=open("output.log", "w")):
+    print("This will be written to output.log")
+"""
+
 import atexit
 import io
 import numpy as np
@@ -50,6 +81,7 @@ def capture_stdio():
 
 @contextlib.contextmanager
 def stdio():
+    """useful as temporary escape hatch with io capuring contexts"""
     with redirect(sys.__stdout__, sys.__stderr__) as (out, err):
         try:
             yield out, err

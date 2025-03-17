@@ -1,5 +1,6 @@
 import pytest
 import ipd
+from ipd.dev import analyze_python_errors_log, create_errors_log_report
 
 def main():
     # test_filter_python_output_error()
@@ -23,18 +24,10 @@ def helper_test_filter_python_output(text, ref, preset):
             assert len(result.splitlines()) == len(result.splitlines())
             # assert 0, 'filter mismatch'
 
-@pytest.mark.skip
+@pytest.mark.xfail
 def test_filter_python_output_whitespace():
-    result = ipd.dev.filter_python_output("""
-
-
-
-
-
-
-""", preset='ipd_boilerplate')
-    ic(result)
-    assert result == ''
+    result = ipd.dev.filter_python_output("    \n" * 7, preset='ipd_boilerplate')
+    assert result.count('\n') == 1
 
 def test_filter_python_output_mid():
     helper_test_filter_python_output(midtext, midfiltered, preset='ipd_boilerplate')
@@ -44,6 +37,79 @@ def test_filter_python_output_small():
 
 def test_filter_python_output_error():
     helper_test_filter_python_output(errortext, errorfiltered, preset='ipd_boilerplate')
+
+def test_analyze_python_errors_log():
+    log = '''Traceback (most recent call last):
+  File "example.py", line 10, in <module>
+    1/0
+ZeroDivisionError: division by zero'''
+    result = analyze_python_errors_log(log)
+    print(result)
+    assert 'Unique Stack Traces Report (1 unique traces):' in result
+    assert 'ZeroDivisionError: division by zero' in result
+
+def test_create_errors_log_report():
+    trace_map = {
+        ('1/0', 'division by zero'):
+        '''Traceback (most recent call last):
+  File "example.py", line 10, in <module>
+    1/0
+ZeroDivisionError: division by zero'''
+    }
+
+    report = create_errors_log_report(trace_map)
+    assert 'Unique Stack Traces Report (1 unique traces):' in report
+    assert 'ZeroDivisionError: division by zero' in report
+
+def test_multiple_unique_traces():
+    log = '''Traceback (most recent call last):
+  File "example.py", line 10, in <module>
+    1/0
+ZeroDivisionError: division by zero
+
+Traceback (most recent call last):
+  File "example.py", line 20, in <module>
+    x = int("abc")
+ValueError: invalid literal for int()'''
+
+    result = analyze_python_errors_log(log)
+    assert 'Unique Stack Traces Report (2 unique traces):' in result
+    assert 'ZeroDivisionError: division by zero' in result
+    assert 'ValueError: invalid literal for int()' in result
+
+def test_similar_traces_are_grouped():
+    log = '''Traceback (most recent call last):
+  File "example.py", line 13, in <module>
+    1/0
+ZeroDivisionError: division by zero
+
+Traceback (most recent call last):
+  File "example.py", line 13, in <module>
+    1/0
+ZeroDivisionError: division by zero'''
+
+    result = analyze_python_errors_log(log)
+    assert 'Unique Stack Traces Report (1 unique traces):' in result
+    assert 'ZeroDivisionError: division by zero' in result
+    assert result.count('ZeroDivisionError') == 1
+
+def test_different_lines_are_not_grouped():
+    log = '''Traceback (most recent call last):
+  File "example.py", line 10, in <module>
+    1/0
+ZeroDivisionError: division by zero
+
+Traceback (most recent call last):
+  File "example.py", line 15, in <module>
+    1/0
+ZeroDivisionError: division by zero'''
+
+    result = analyze_python_errors_log(log)
+    assert 'Unique Stack Traces Report (2 unique traces):' in result
+    assert 'ZeroDivisionError: division by zero' in result
+    assert result.count('ZeroDivisionError') == 2
+
+######################### test data #######################
 
 errortext = """maintest /home/sheffler/rfd/lib/ipd/ipd/tests/dev/code/test_filter_python_output.py:
 Traceback (most recent call last):

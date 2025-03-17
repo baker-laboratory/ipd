@@ -1,4 +1,7 @@
+import os
 import traceback
+
+import numpy as np
 
 import ipd
 from ipd.tools.ipdtool import IPDTool
@@ -26,22 +29,37 @@ class BuildTool(SymTool):
 class TestTool(SymTool):
 
     def detect(self, fnames: list[str], rungroup: RunGroupArg):
-        for i, path in ipd.tools.enumerate_inputs(fnames, '*.bcif.gz', rungroup):
-            pdbcode = path.stem.split('.')[0]
-            _sym_check_file(pdbcode, path, tol)
+        for i, fname in ipd.tools.enumerate_inputs(fnames, '*.bcif.gz', rungroup):
+            pdbcode = fname.stem.split('.')[0]
+            _sym_check_file(pdbcode, fname, tol)
 
     def assembly(self, fnames: list[str], rungroup: RunGroupArg):
-        for i, path in ipd.tools.enumerate_inputs(fnames, '*.bcif.gz', rungroup):
-            pdbcode = path.stem.split('.')[0]
-            atoms = ipd.atom.assembly(path, assembly='largest', het=False)
+        for i, fname in ipd.tools.enumerate_inputs(fnames, '*.bcif.gz', rungroup):
+            pdbcode = fname.stem.split('.')[0]
+            atoms = ipd.body.assembly(fname, assembly='largest', het=False)
 
-def _sym_check_file(pdbcode, path, tol):
+    def readstruct(self, fnames: list[str], rungroup: RunGroupArg):
+        for i, fname in ipd.tools.enumerate_inputs(fnames, '*.bcif.gz', rungroup):
+            pdbcode = fname.stem.split('.')[0]
+            size = os.path.getsize(fname) / 1024
+            try:
+                atoms = ipd.pdb.readatoms(fname, assembly='largest', strict=True)
+                print(
+                    'readstruct OK', pdbcode,
+                    [(int(np.sum(a.atom_name == 'CA')), int(np.sum(a.atom_name == 'P')), int(np.sum(a.hetero)))
+                     for a in atoms])
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                print(f'readstruct FAIL {pdbcode} {size:9.3f}K {e}', flush=True)
+
+def _sym_check_file(pdbcode, fname, tol):
     symanno = ipd.pdb.sym_annotation(pdbcode)
     for id, symid in zip(symanno.id, symanno.sym):
         if symid == 'C1': continue
         print(f'symdetect {pdbcode} {id:2} {symid:4}', flush=True, end=' ')
         try:
-            atoms = ipd.atom.get(pdbcode, assembly=id, het=False, path=path.parent)
+            atoms = ipd.atom.get(pdbcode, assembly=id, het=False, fname=fname.parent)
             sinfo = ipd.sym.detect(atoms, tol=tol)
             if isinstance(sinfo, list):
                 print([si.symid for si in sinfo], end=' ')

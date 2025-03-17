@@ -12,11 +12,11 @@ class FakeModule(ModuleType):
 fake_module = FakeModule('__THIS_IS_NOT_A_REAL_MODULE__')
 assert not fake_module
 
-def lazyimport(
+def lazyimports(
         *names: str,
         package: typing.Sequence[str] = (),
         **kw,
-) -> typing.Union[list[ModuleType], ModuleType]:
+) -> list[ModuleType]:
     """Lazy import of a module. The module will be imported when it is first accessed.
 
     Args:
@@ -30,22 +30,18 @@ def lazyimport(
     """
     assert len(names)
     if len(names) == 0: raise ValueError('package name is required')
-    elif len(names) == 1 and not isinstance(names[0], str): names = names[0]
-    elif len(names) == 1 and ' ' in names[0]: names = tuple(names[0].split())
     if package: assert len(package) == len(names) and not isinstance(package, str)
     else: package = ('', ) * len(names)
-    modules = [lazyimport_one(name, package=pkg, **kw) for name, pkg in zip(names, package)]
-    if len(modules) == 1:
-        return modules[0]
+    modules = [lazyimport(name, package=pkg, **kw) for name, pkg in zip(names, package)]
     return modules
 
-def lazyimport_one(name: str,
-                   package: str = '',
-                   pip: bool = False,
-                   mamba: bool = False,
-                   channels: str = '',
-                   warn: bool = True,
-                   importornone=False) -> ModuleType:
+def lazyimport(name: str,
+               package: str = '',
+               pip: bool = False,
+               mamba: bool = False,
+               channels: str = '',
+               warn: bool = True,
+               importornone=False) -> ModuleType:
     if typing.TYPE_CHECKING or importornone:
         try:
             return import_module(name)
@@ -54,8 +50,11 @@ def lazyimport_one(name: str,
     else:
         return _LazyModule(name, package, pip, mamba, channels, warn)
 
-def importornone(*names):
-    return lazyimport(*names, importornone=True)
+def importornone(name) -> ModuleType:
+    return lazyimport(name, importornone=True)
+
+def importsornone(*names) -> list[ModuleType]:
+    return lazyimports(*names, importornone=True)
 
 class LazyImportError(ImportError):
     pass
@@ -82,7 +81,7 @@ class _LazyModule(ModuleType):
         """Import the module _lazymodule_import_now."""
         try:
             return import_module(self._lazymodule_name)
-        except ImportError as e:
+        except ImportError:
             if 'doctest' in sys.modules: return fake_module
             ci = self._lazymodule_callerinfo
             callinfo = f'\n  File "{ci.filename}", line {ci.lineno}\n    {ci.code}'

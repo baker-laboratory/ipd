@@ -93,35 +93,33 @@ class Bunch(dict, Generic[T]):
         special = self._special
         super().clear()
         for k, v in new.items():
-            self[k] = make_autosave_hierarchy(  # type: ignore
-                v,  # type: ignore
-                _parent=(self, None),
-                _default=self._special['default'],  # type: ignore
-                _strict=self._special['strict_lookup'])  # type: ignore
+            self[k] = make_autosave_hierarchy(v,
+                                              _parent=(self, None),
+                                              _default=self._special['default'],
+                                              _strict=self._special['strict_lookup'])
         self.__dict__['_special']['autosave'] = orig
         assert self._special == special
 
     def _notify_changed(self, k=None, v=None):  # sourcery skip: extract-method
-        if self._special['parent']:  # type: ignore
-            parent, selfkey = self._special['parent']  # type: ignore
+        if self._special['parent']:
+            parent, selfkey = self._special['parent']
             return parent._notify_changed(f'{selfkey}.{k}', v)
-        if self._special['autosave']:  # type: ignore
-            # ic(self._special['autosave'])  # type: ignore
+        if self._special['autosave']:
+            # ic(self._special['autosave'])
             import yaml
             if k:
                 k = k.split('.')[0]
                 if isinstance(v, (list, set, tuple, Bunch)):
-                    self[k] = make_autosave_hierarchy(  # type: ignore
-                        self[k],  # type: ignore
-                        _parent=(self, None),
-                        _default=self._special['default'],  # type: ignore
-                        _strict=self._special['strict_lookup'])  # type: ignore
-            os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)  # type: ignore
-            with open(self._special['autosave'] + '.tmp', 'w') as out:  # type: ignore
+                    self[k] = make_autosave_hierarchy(self[k],
+                                                      _parent=(self, None),
+                                                      _default=self._special['default'],
+                                                      _strict=self._special['strict_lookup'])
+            os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)
+            with open(self._special['autosave'] + '.tmp', 'w') as out:
                 yaml.dump(unmake_autosave_hierarchy(self), out)
-            shutil.move(self._special['autosave'] + '.tmp', self._special['autosave'])  # type: ignore
-            with open(self._special['autoreload'], 'rb') as inp:  # type: ignore
-                self._special['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()  # type: ignore
+            shutil.move(self._special['autosave'] + '.tmp', self._special['autosave'])
+            with open(self._special['autoreload'], 'rb') as inp:
+                self._special['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()
                 # print('SAVE TO ', self.__dict__['_special']['autosave'])
 
     def default(self, key):
@@ -169,13 +167,13 @@ class Bunch(dict, Generic[T]):
             if k not in self:
                 if strict and not_empty:
                     raise ValueError(f"{k} not in this Bunch")
-                self[k] = []  # type: ignore
+                self[k] = []
             if not isinstance(self[k], list):
-                self[k] = [self[k]]  # type: ignore
+                self[k] = [self[k]]
             o = other[k]
             if not isinstance(o, list):
                 o = [o]
-                self[k].extend(o)  # type: ignore
+                self[k].extend(o)
         return self
 
     def __contains__(self, k):
@@ -206,8 +204,11 @@ class Bunch(dict, Generic[T]):
         if k == "_special":
             raise ValueError("_special is a reseved name for Bunch")
         if k == "__deepcopy__":
-            return None  # type: ignore
+            return None
         if self.__dict__['_special']["strict_lookup"] and k not in self:
+            if self.__dict__['_special']['default']:
+                self[k] = new = self.default(k)
+                return new
             raise AttributeError(f"Bunch is missing value for key {k}")
         try:
             # Throws exception if not in prototype chain
@@ -218,8 +219,8 @@ class Bunch(dict, Generic[T]):
             except KeyError as e:
                 if self.__dict__['_special']["strict_lookup"]:
                     raise e
-                if self._special['storedefault']:  # type: ignore
-                    self[k] = self.default(k)  # type: ignore
+                if self._special['storedefault']:
+                    self[k] = self.default(k)
                     return self[k]
                 return self[k]
 
@@ -270,7 +271,7 @@ class Bunch(dict, Generic[T]):
         super().__delitem__(k)
         self._notify_changed(k)
 
-    def copy(self):  # type: ignore
+    def copy(self):
         self._autoreload_check()
         return Bunch.from_dict(super().copy())
 
@@ -288,10 +289,10 @@ class Bunch(dict, Generic[T]):
             else:
                 kw = vars(__BUNCH_SUB_ITEMS)
         newbunch = self.copy()
-        newbunch._special = self.__dict__['_special']  # type: ignore
+        newbunch._special = self.__dict__['_special']
         for k, v in kw.items():
             if v is None and k in newbunch:
-                del newbunch[k]  # type: ignore
+                del newbunch[k]
             elif not _onlynone or k not in self or self[k] is None:
                 if k not in exclude:
                     newbunch.__setattr__(k, v)
@@ -450,24 +451,23 @@ def make_autosave_hierarchy(x, _parent=None, seenit=None, _strict=True, _autosav
     kw = dict(seenit=seenit, _parent=_parent, _default=_default, _strict=_strict)
     assert _parent is None or isinstance(_parent[0], Bunch)
     if isinstance(x, dict):
-        x = Bunch(
-            **x,
-            _parent=_parent,
-            _autosave=_autosave,
-            _autoreload=_autosave,
-            _default=_default,  # type: ignore
-            _strict=_strict)  # type: ignore
+        x = Bunch(**x,
+                  _parent=_parent,
+                  _autosave=_autosave,
+                  _autoreload=_autosave,
+                  _default=_default,
+                  _strict=_strict)
         for k, v in x.items():
             kw['_parent'] = (x, k)
-            x[k] = make_autosave_hierarchy(v, **kw)  # type: ignore
+            x[k] = make_autosave_hierarchy(v, **kw)
     elif isinstance(x, list):
-        val = (make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        val = (make_autosave_hierarchy(v, **kw) for v in x)
         x = BunchChildList(val, _parent=_parent)
     elif isinstance(x, set):
-        val = (make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        val = (make_autosave_hierarchy(v, **kw) for v in x)
         x = BunchChildSet(val, _parent=_parent)
     elif isinstance(x, (tuple, )):
-        x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)
     seenit.add(id(x))
     return x
 
@@ -478,13 +478,13 @@ def unmake_autosave_hierarchy(x, seenit=None, depth=0, verbose=False, _autosave=
     if isinstance(x, dict):
         x = dict(**x)
         for k, v in x.items():
-            x[k] = unmake_autosave_hierarchy(v, **kw)  # type: ignore
+            x[k] = unmake_autosave_hierarchy(v, **kw)
     elif isinstance(x, list):
-        x = [unmake_autosave_hierarchy(v, **kw) for v in x]  # type: ignore
+        x = [unmake_autosave_hierarchy(v, **kw) for v in x]
     elif isinstance(x, set):
-        x = {unmake_autosave_hierarchy(v, **kw) for v in x}  # type: ignore
+        x = {unmake_autosave_hierarchy(v, **kw) for v in x}
     elif isinstance(x, (tuple, )):
-        x = type(x)(unmake_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        x = type(x)(unmake_autosave_hierarchy(v, **kw) for v in x)
     seenit.add(id(x))
     return x
 

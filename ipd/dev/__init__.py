@@ -8,6 +8,8 @@ from ipd.dev.instrumentation import timed as profile  # noqa
 # runtime utils
 from ipd.dev.debug import *
 from ipd.dev.objinfo import *
+
+from ipd.dev.functional import *
 from ipd.dev.iterables import *
 from ipd.dev.format import *
 from ipd.dev.code import *

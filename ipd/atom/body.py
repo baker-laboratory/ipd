@@ -4,13 +4,17 @@ represents coordinates as biotite AtomArray along with a bounding volume hierarc
 import copy
 from dataclasses import dataclass, field
 import numpy as np
+import typing
 
 import ipd
 import ipd.homog.hgeom as h
 
+if typing.TYPE_CHECKING:
+    from biotite.structure import AtomArray
+    import willutil_cpp as wu
+
 wu = ipd.importornone('willutil_cpp')
 bs = ipd.lazyimport('biotite.structure')
-bpdbx = ipd.lazyimport('biotite.structure.io.pdbx')
 
 @ipd.ft.lru_cache
 def body_from_file(
@@ -40,7 +44,7 @@ def symbody_from_file(
     asmx = ipd.dev.get_metadata(atomslist[0]).assembly_xforms
 
     if use_cif_xforms and 'assembly_xforms' in ipd.dev.get_metadata(atomslist[0]):
-        ic(asmx._chainasu)
+        ipd.ic(asmx._chainasu)
         assert 0
     else:
         comp = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, **kw)
@@ -73,7 +77,7 @@ def symbody_from_file(
 @ipd.dev.holds_metadata
 @dataclass
 class Body:
-    atoms: 'biotite.structure.AtomArray'
+    atoms: 'AtomArray'
     pos: np.ndarray = field(default_factory=lambda: np.eye(4))
     rescen: np.ndarray = None
     _atombvh: 'wu.SphereBVH_double' = None

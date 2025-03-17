@@ -21,7 +21,7 @@ def test_importornone():
     assert re is sys.modules['re']
     missing = ipd.importornone('noufuomemioixecmeiorutnaufoinairesvoraisevmraoui')
     assert not missing
-    missing = ipd.importornone('noufuomem ioixecmeiorutnaufoina iresvoraisevmraoui')
+    missing = ipd.importsornone('noufuomem ioixecmeiorutnaufoina iresvoraisevmraoui')
     assert not any(missing)
 
 def test_lazyimport_re():
@@ -43,14 +43,8 @@ def helper_test_re_ft_it(re, ft, it):
     assert ft.partial(lambda x, y: x + y, 1)(2) == 3
     assert list(it.chain([0], [1], [2])) == [0, 1, 2]
 
-def test_multi_lazyimport_list():
-    helper_test_re_ft_it(*ipd.lazyimport(['re', 'functools', 'itertools']))
-
 def test_multi_lazyimport_args():
-    helper_test_re_ft_it(*ipd.lazyimport('re', 'functools', 'itertools'))
-
-def test_multi_lazyimport_strsplit():
-    helper_test_re_ft_it(*ipd.lazyimport('re functools itertools'))
+    helper_test_re_ft_it(*ipd.lazyimports('re', 'functools', 'itertools'))
 
 if __name__ == '__main__':
     main()

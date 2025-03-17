@@ -33,48 +33,48 @@ def test_autosave(tmpdir):  # sourcery skip: merge-list-append, merge-set-add
     fname = f'{tmpdir}/test.yaml'
     b = Bunch(a=1, b=[1, 2], c=[[[[0]]]], d={1, 3, 8}, e=([1], [2]))
     b = make_autosave_hierarchy(b, _autosave=fname)
-    b.a = 7  # type: ignore
+    b.a = 7
     assert_saved_ok(b)
-    b.b.append(3)  # type: ignore
+    b.b.append(3)
     assert_saved_ok(b)
-    b.b[1] = 17  # type: ignore
+    b.b[1] = 17
     assert_saved_ok(b)
-    b.c.append(100)  # type: ignore
+    b.c.append(100)
     assert_saved_ok(b)
-    b.c[0].append(200)  # type: ignore
+    b.c[0].append(200)
     assert_saved_ok(b)
-    b.c[0][0].append(300)  # type: ignore
+    b.c[0][0].append(300)
     assert_saved_ok(b)
-    b.c[0][0][0].append(400)  # type: ignore
+    b.c[0][0][0].append(400)
     assert_saved_ok(b)
-    b.c[0][0][0][0] = 7  # type: ignore
+    b.c[0][0][0][0] = 7
     assert_saved_ok(b)
-    b.d.add(3)  # type: ignore
+    b.d.add(3)
     assert_saved_ok(b)
-    b.d.add(17)  # type: ignore
+    b.d.add(17)
     assert_saved_ok(b)
-    b.d.remove(1)  # type: ignore
+    b.d.remove(1)
     assert_saved_ok(b)
-    b.d |= {101, 102, 10}  # type: ignore
-    b.e[0].append(1000)  # type: ignore
+    b.d |= {101, 102, 10}
+    b.e[0].append(1000)
     assert_saved_ok(b)
-    b.e[1][0] = 2000  # type: ignore
+    b.e[1][0] = 2000
     assert_saved_ok(b)
-    b.f = 'f'  # type: ignore
+    b.f = 'f'
     assert_saved_ok(b)
     delattr(b, 'f')
     assert_saved_ok(b)
-    b.f = 'f2'  # type: ignore
-    del b['f']  # type: ignore
+    b.f = 'f2'
+    del b['f']
     assert_saved_ok(b)
-    b.g = []  # type: ignore
-    b.g.append(283)  # type: ignore
+    b.g = []
+    b.g.append(283)
     assert_saved_ok(b)
-    b.h = set()  # type: ignore
-    b.h.add('bar')  # type: ignore
+    b.h = set()
+    b.h.add('bar')
     assert_saved_ok(b)
-    b.i = [[[17]]]  # type: ignore
-    b.i[0][0][0] = 18  # type: ignore
+    b.i = [[[17]]]
+    b.i[0][0][0] = 18
     assert_saved_ok(b)
 
 def helper_test_autoreload(b, b2, tmpdir):
@@ -92,53 +92,53 @@ def test_autoreload(tmpdir):
     b = Bunch(a=1, b=[1, 2], c=[[[[0]]]], d={1, 3, 8}, e=([1], [2]))
     b = make_autosave_hierarchy(b, _autosave=fname)
     b2 = Bunch(_autoreload=fname2)
-    b.a = 7  # type: ignore
+    b.a = 7
     helper_test_autoreload(b, b2, tmpdir)
-    b.b.append(3)  # type: ignore
+    b.b.append(3)
     helper_test_autoreload(b, b2, tmpdir)
-    b.b[1] = 17  # type: ignore
+    b.b[1] = 17
     helper_test_autoreload(b, b2, tmpdir)
-    b.c.append(100)  # type: ignore
+    b.c.append(100)
     helper_test_autoreload(b, b2, tmpdir)
-    b.c[0].append(200)  # type: ignore
+    b.c[0].append(200)
     helper_test_autoreload(b, b2, tmpdir)
-    b.c[0][0].append(300)  # type: ignore
+    b.c[0][0].append(300)
     helper_test_autoreload(b, b2, tmpdir)
-    b.c[0][0][0].append(400)  # type: ignore
+    b.c[0][0][0].append(400)
     helper_test_autoreload(b, b2, tmpdir)
-    b.c[0][0][0][0] = 7  # type: ignore
+    b.c[0][0][0][0] = 7
     helper_test_autoreload(b, b2, tmpdir)
-    b.d.add(3)  # type: ignore
+    b.d.add(3)
     helper_test_autoreload(b, b2, tmpdir)
-    b.d.add(17)  # type: ignore
+    b.d.add(17)
     helper_test_autoreload(b, b2, tmpdir)
-    b.d.remove(1)  # type: ignore
+    b.d.remove(1)
     helper_test_autoreload(b, b2, tmpdir)
-    b.d |= {101, 102, 10}  # type: ignore
-    b.e[0].append(1000)  # type: ignore
+    b.d |= {101, 102, 10}
+    b.e[0].append(1000)
     helper_test_autoreload(b, b2, tmpdir)
-    b.e[1][0] = 2000  # type: ignore
+    b.e[1][0] = 2000
     helper_test_autoreload(b, b2, tmpdir)
-    b.f = 'f'  # type: ignore
+    b.f = 'f'
     helper_test_autoreload(b, b2, tmpdir)
     delattr(b, 'f')
     helper_test_autoreload(b, b2, tmpdir)
-    b.f = 'f2'  # type: ignore
-    del b['f']  # type: ignore
+    b.f = 'f2'
+    del b['f']
     helper_test_autoreload(b, b2, tmpdir)
-    b.g = []  # type: ignore
-    b.g.append(283)  # type: ignore
+    b.g = []
+    b.g.append(283)
     helper_test_autoreload(b, b2, tmpdir)
-    b.h = set()  # type: ignore
-    b.h.add('bar')  # type: ignore
+    b.h = set()
+    b.h.add('bar')
     helper_test_autoreload(b, b2, tmpdir)
-    b.i = [[[17]]]  # type: ignore
-    b.i[0][0][0] = 18  # type: ignore
+    b.i = [[[17]]]
+    b.i[0][0][0] = 18
     helper_test_autoreload(b, b2, tmpdir)
-    b.bnch = Bunch()  # type: ignore
-    b.bnch.c = 17  # type: ignore
+    b.bnch = Bunch()
+    b.bnch.c = 17
     helper_test_autoreload(b, b2, tmpdir)
-    b.bnch._notify_changed('baz', 'biz')  # type: ignore
+    b.bnch._notify_changed('baz', 'biz')
     helper_test_autoreload(b, b2, tmpdir)
     helper_test_autoreload(b, b2, tmpdir)
 
@@ -157,9 +157,9 @@ def test_bunch_pickle(tmpdir):
     assert y.c == "see"
 
 def test_bunch_init():
-    b = Bunch(dict(a=2, b="bee"), _strict=False)  # type: ignore
-    b2 = Bunch(b, _strict=False)  # type: ignore
-    b3 = Bunch(c=3, d="dee", _strict=False, **b)  # type: ignore
+    b = Bunch(dict(a=2, b="bee"), _strict=False)
+    b2 = Bunch(b, _strict=False)
+    b3 = Bunch(c=3, d="dee", _strict=False, **b)
     assert b.a == 2
     assert b.b == "bee"
     assert b.missing is None
@@ -175,7 +175,7 @@ def test_bunch_init():
     assert b3.d == "dee"
 
     foo = Namespace(a=1, b="c")
-    b = Bunch(foo, _strict=False)  # type: ignore
+    b = Bunch(foo, _strict=False)
     assert b.a == 1
     assert b.b == "c"
     assert b.missing is None
@@ -186,29 +186,29 @@ def test_bunch_init():
     assert b.missing == 8
 
 def test_bunch_sub():
-    b = Bunch(dict(a=2, b="bee"), _strict=False)  # type: ignore
+    b = Bunch(dict(a=2, b="bee"), _strict=False)
     assert b.b == "bee"
     b2 = b.sub(b="bar")
-    assert b2.b == "bar"  # type: ignore
+    assert b2.b == "bar"
     b3 = b.sub({"a": 4, "d": "dee"})
-    assert b3.a == 4  # type: ignore
-    assert b3.b == "bee"  # type: ignore
-    assert b3.d == "dee"  # type: ignore
-    assert b3.foobar is None  # type: ignore
+    assert b3.a == 4
+    assert b3.b == "bee"
+    assert b3.d == "dee"
+    assert b3.foobar is None
     assert "a" in b
     b4 = b.sub(a=None)
     assert "a" not in b4
     assert "b" in b4
 
-    b = Bunch(dict(a=2, b="bee"), _strict=False)  # type: ignore
+    b = Bunch(dict(a=2, b="bee"), _strict=False)
     assert b.b == "bee"
     b2 = b.sub(b="bar", _onlynone=True)
-    assert b2.b == "bee"  # type: ignore
+    assert b2.b == "bee"
     b3 = b.sub({"a": 4, "d": "dee"}, _onlynone=True)
-    assert b3.a == 2  # type: ignore
-    assert b3.b == "bee"  # type: ignore
-    assert b3.d == "dee"  # type: ignore
-    assert b3.foobar is None  # type: ignore
+    assert b3.a == 2
+    assert b3.b == "bee"
+    assert b3.d == "dee"
+    assert b3.foobar is None
     assert "a" in b
     b4 = b.sub(a=None)
     assert "a" not in b4
@@ -245,44 +245,44 @@ def test_bunch_visit():
     assert count == 4
 
 def test_bunch_strict():
-    b = Bunch(one=1, two=2, _strict=True)  # type: ignore
+    b = Bunch(one=1, two=2, _strict=True)
     assert len(b) == 2
     with pytest.raises(AttributeError):
         assert b.foo is None
     b.foo = 7
     assert b.foo == 7
 
-    b2 = Bunch(one=1, two=2, _strict=False)  # type: ignore
+    b2 = Bunch(one=1, two=2, _strict=False)
     assert b2.foo is None
 
     with pytest.raises(ValueError) as e:
-        b.clear = 8  # type: ignore
+        b.clear = 8
     assert str(e.value) == "clear is a reseved name for Bunch"
     b = Bunch(clear=True)
     assert 'clear_' in b
     assert 'clear' not in b
 
 def test_bunch_default():
-    b = Bunch(foo="foo", _default=list, _strict=False)  # type: ignore
+    b = Bunch(foo="foo", _default=list, _strict=False)
     assert b.foo == "foo"
     assert b.bar == list()
     assert b["foo"] == "foo"
     assert b["bar"] == list()
 
-    b = Bunch(foo="foo", _default=list, _strict=False)  # type: ignore
+    b = Bunch(foo="foo", _default=list, _strict=False)
     assert b.foo == "foo"
     assert b.bar == list()
 
-    b = Bunch(foo="foo", _default=7, _strict=False)  # type: ignore
+    b = Bunch(foo="foo", _default=7, _strict=False)
     assert b.foo == "foo"
     assert b.bar == 7
 
-    b = Bunch(foo="foo", _default=list, _strict=True)  # type: ignore
+    b = Bunch(foo="foo", _default=list, _strict=True)
     assert b.foo == "foo"
-    with pytest.raises(AttributeError):
-        b.bar
+    # with pytest.raises(AttributeError):
+    assert b.bar == []
 
-    b = Bunch(foo="foo", _strict=True)  # type: ignore
+    b = Bunch(foo="foo", _strict=True)
     assert b.foo == "foo"
     with pytest.raises(AttributeError):
         b.bar

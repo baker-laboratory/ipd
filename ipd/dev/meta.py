@@ -80,12 +80,11 @@ import inspect
 import operator
 import toolz
 import sys
-from typing import Callable
 
 import ipd
 from ipd.dev.decorators import iterize_on_first_param
 
-T, P, R = ipd.basic_typevars('TPR')
+T, P, R, F = ipd.basic_typevars('TPRF')
 
 def instanceof(obj_or_types, types=None):
     """wrapper so isinstane can be called with kwargs"""
@@ -158,7 +157,7 @@ for op in 'add mul matmul or_ and_'.split():
     opname = op.strip('_')
     globals()[f'{opname}reduce'] = functools.partial(opreduce, getattr(operator, op))
 
-def kwcall(kw: ipd.KW, func: Callable[P, R], *a: P.args, **kwargs: P.kwargs) -> R:  # type: ignore
+def kwcall(kw: ipd.KW, func: F, *a: P.args, **kwargs: P.kwargs) -> R:
     """Call a function with filtered keyword arguments.
 
     This function merges provided keyword arguments, filters them to match only those

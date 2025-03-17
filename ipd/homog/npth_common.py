@@ -2,7 +2,7 @@ import sys
 
 import ipd
 
-th, xr, np = ipd.lazyimport('torch xarray numpy')
+th, xr, np = ipd.lazyimports('torch', 'xarray', 'numpy')
 
 def splitlastdim(x, i):
     return x[..., :i], x[..., i:]
