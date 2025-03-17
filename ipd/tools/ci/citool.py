@@ -20,6 +20,8 @@ class CITool(IPDTool):
         self.repos: dict[str, str] = {
             'cifutils': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/cifutils.git',
             'datahub': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/datahub.git',
+            'github-cifutils': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/cifutils.git',
+            'github-datahub': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/datahub.git',
             'frame-flow': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/frame-flow.git',
             'fused_mpnn': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/fused_mpnn.git',
             'RF2-allatom': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/jue/RF2-allatom.git',
@@ -51,6 +53,8 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos', recursive: bo
         for sub in repo.submodules:
             if os.path.exists(sub.path): shutil.rmtree(sub.path)
             subrepo = f'{repolib}/{os.path.basename(sub.url)}'
+            if subrepo in 'cifutils datahub'.split() and 'github.com' in sub.url:
+                subrepo = f'github-{subrepo}'
             print('setup submodule', sub.path, subrepo, sub.hexsha)
             subrepo = git.Repo.clone_from(subrepo, sub.path)
             subrepo.git.checkout(sub.hexsha)
