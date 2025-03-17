@@ -3,7 +3,7 @@ import sys
 import pytest
 
 import ipd
-from ipd.lazy_import import _LazyModule, lazyimport
+from ipd._prelude.lazy_import import _LazyModule, lazyimport
 
 testconfig = ipd.Bunch(nocapture=['test_broken_package'], )
 

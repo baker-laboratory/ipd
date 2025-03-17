@@ -23,7 +23,7 @@ def is_atomarraystack(atoms):
 def is_atoms(atoms):
     return is_atomarray(atoms) or is_atomarraystack(atoms)
 
-def split(atoms, order=None, bychain=None, nasu=None, min_chain_atoms=0):
+def split(atoms, order=None, bychain=None, nasu=None, min_chain_atoms=0, **kw) -> list['bs.AtomArray']:
     if nasu is not None:
         assert not order and len(atoms) % nasu == 0
         order = len(atoms) // nasu
@@ -115,9 +115,9 @@ def seqalign(atoms1, atoms2):
         seq1,
         seq2,
         matrix,
-        gap_penalty=-1000,
+        gap_penalty=-100,
         terminal_penalty=True,
-        local=False,
+        local=True,
         max_number=1,
     )
     assert len(aln) == 1 and (aln := aln[0])
@@ -127,16 +127,30 @@ def seqalign(atoms1, atoms2):
     return aln, match, matchfrac
 
 @ipd.dev.iterize_on_first_param(basetype='AtomArray')
-def chain_ranges(atoms):
+def chain_ranges(atoms) -> dict[str, list[tuple[int, int]]]:
     assert is_atomarray(atoms)
+    breaks = list(map(int, sorted(bs.get_chain_starts(atoms))))
+    breaks.append(len(atoms))
+    return chain_ranges_from_breaks(atoms, breaks)
+
+def chain_ranges_from_breaks(atoms, breaks) -> dict[str, list[tuple[int, int]]]:
     result = {}
-    starts = list(sorted(bs.get_chain_starts(atoms)))
-    starts.append(len(atoms) + 1)
-    for i, start in enumerate(starts[:-1]):
+    for i, start in enumerate(breaks[:-1]):
         c = atoms.chain_id[start]
-        stop = starts[i + 1]
-        result.setdefault(str(c), []).append((int(start), int(stop)))
+        stop = breaks[i + 1]
+        assert stop <= len(atoms)
+        result.setdefault(str(c), []).append((start, stop))
     return result
+
+@ipd.dev.iterize_on_first_param(basetype='AtomArray')
+def chain_id_ranges(atoms) -> dict[str, list[tuple[int, int]]]:
+    assert is_atomarray(atoms)
+    breaks, breaks0 = [0], list(map(int, sorted(bs.get_chain_starts(atoms))))
+    for i, b in enumerate(breaks[1:], start=1):
+        if atoms.chain_id[b] != atoms.chain_id[breaks[i - 1]]:
+            breaks.append(b)
+    breaks.append(len(atoms))
+    return chain_ranges_from_breaks(atoms, breaks)
 
 def select(
     atoms,

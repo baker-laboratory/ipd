@@ -31,6 +31,7 @@ def set_metadata(obj, data: 'dict|None' = None, **kw):
     Returns:
         Any: The modified object or list of objects.
     """
+    data = data | kw if data else kw
     if isinstance(obj, list):
         if isinstance(data, list):
             assert len(obj) == len(data)
@@ -38,7 +39,6 @@ def set_metadata(obj, data: 'dict|None' = None, **kw):
         else:
             [set_metadata(o, data) for o in obj]
         return
-    data = data | kw if data else kw
     meta = obj.__dict__.setdefault('__ipd_metadata__', ipd.Bunch())
     meta.update(data)
     return obj

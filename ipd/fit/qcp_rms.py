@@ -3,7 +3,7 @@
 The CUDA implementation is very fast, can compute > 100 million RMSDs
 per second on a single GPU.
 """
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -139,11 +139,14 @@ def numba_device_calc_rms_rot(rot, iprod, E0, npts, calcrot=False):
     # print("numba", SxzpSzx, SyzpSzy, SxypSyx, SyzmSzy, SxzmSzx, SxymSyx, SxxpSyy, SxxmSyy)
 
     C0 = (Sxy2Sxz2Syx2Szx2*Sxy2Sxz2Syx2Szx2 + (Sxx2Syy2Szz2Syz2Szy2+SyzSzymSyySzz2) *
-          (Sxx2Syy2Szz2Syz2Szy2-SyzSzymSyySzz2) + (-(SxzpSzx) * (SyzmSzy) + (SxymSyx) *
-                                                   (SxxmSyy-Szz)) * (-(SxzmSzx) * (SyzpSzy) + (SxymSyx) * (SxxmSyy+Szz)) +
-          (-(SxzpSzx) * (SyzpSzy) - (SxypSyx) * (SxxpSyy-Szz)) * (-(SxzmSzx) * (SyzmSzy) - (SxypSyx) * (SxxpSyy+Szz)) +
-          (+(SxypSyx) * (SyzpSzy) + (SxzpSzx) * (SxxmSyy+Szz)) * (-(SxymSyx) * (SyzmSzy) + (SxzpSzx) * (SxxpSyy+Szz)) +
-          (+(SxypSyx) * (SyzmSzy) + (SxzmSzx) * (SxxmSyy-Szz)) * (-(SxymSyx) * (SyzpSzy) + (SxzmSzx) * (SxxpSyy-Szz)))
+          (Sxx2Syy2Szz2Syz2Szy2-SyzSzymSyySzz2) + (-(SxzpSzx) * (SyzmSzy) + (SxymSyx) * (SxxmSyy-Szz)) *
+          (-(SxzmSzx) * (SyzpSzy) + (SxymSyx) *
+           (SxxmSyy+Szz)) + (-(SxzpSzx) * (SyzpSzy) - (SxypSyx) *
+                             (SxxpSyy-Szz)) * (-(SxzmSzx) * (SyzmSzy) - (SxypSyx) * (SxxpSyy+Szz)) +
+          (+(SxypSyx) * (SyzpSzy) + (SxzpSzx) * (SxxmSyy+Szz)) * (-(SxymSyx) * (SyzmSzy) + (SxzpSzx) *
+                                                                  (SxxpSyy+Szz)) +
+          (+(SxypSyx) * (SyzmSzy) + (SxzmSzx) * (SxxmSyy-Szz)) * (-(SxymSyx) * (SyzpSzy) + (SxzmSzx) *
+                                                                  (SxxpSyy-Szz)))
     # print(C0, C1, C2, E0)
     # Newton-Raphson
     mxEigenV = E0

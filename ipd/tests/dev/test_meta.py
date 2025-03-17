@@ -158,9 +158,7 @@ def test_kwcheck_with_varargs_and_varkw():
     """Test with functions that use *args and **kwargs."""
     kwargs = {'a': 1, 'b': 2, 'c': 4, 'd': 5, 'e': 6}
     result = ipd.kwcheck(kwargs, flexible_func)
-
-    # Should keep 'a', 'b', 'c' (named params) but filter out 'd', 'e'
-    assert result == {'a': 1, 'b': 2, 'c': 4}
+    assert result == kwargs
 
 def test_kwcheck_empty_kwargs():
     """Test with empty kwargs dictionary."""
@@ -179,6 +177,13 @@ def test_kwcheck_kwargs_with_none_values():
     kwargs = {'a': None, 'b': None, 'd': None}
     result = ipd.kwcheck(kwargs, target_func)
     assert result == {'a': None, 'b': None}
+
+def test_kwcheck_with_kwargs_func():
+    """Test with None values in kwargs."""
+    func = lambda a, b, c=3, **kw: ...
+    kwargs = {'a': None, 'b': None, 'd': None}
+    result = ipd.kwcheck(kwargs, func)
+    assert result == kwargs
 
 class TestFilterMapping(unittest.TestCase):
 

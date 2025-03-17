@@ -1,5 +1,5 @@
 import ipd
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 from ipd.sym.sym_manager import SymmetryManager
 from ipd.sym.sym_index import SymIndex
 from ipd.sym.sym_factory import set_default_sym_manager

@@ -1,6 +1,6 @@
 import abc
 
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

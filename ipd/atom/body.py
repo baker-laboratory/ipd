@@ -8,12 +8,13 @@ import numpy as np
 import ipd
 import ipd.homog.hgeom as h
 
-wu = ipd.lazyimport('willutil_cpp')
+wu = ipd.importornone('willutil_cpp')
 bs = ipd.lazyimport('biotite.structure')
+bpdbx = ipd.lazyimport('biotite.structure.io.pdbx')
 
 @ipd.ft.lru_cache
 def body_from_file(
-    fname: 'str|CifFile',
+    fname: str,
     assembly='largest',
     min_chain_atoms=0,
     **kw,
@@ -27,16 +28,28 @@ def body_from_file(
 
 @ipd.ft.lru_cache
 def symbody_from_file(
-    fname: 'str|CifFile',
+    fname: str,
     assembly='largest',
     components='onlyone',
     min_chain_atoms=0,
+    use_cif_xforms=False,
     **kw,
 ) -> 'SymBody':
     atomslist = ipd.pdb.readatoms(fname, chainlist=True, assembly=assembly, **kw)
     assert isinstance(atomslist, list)
-    comp = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, **kw)
-    ipd.atom.process_components(comp, **kw)
+    asmx = ipd.dev.get_metadata(atomslist[0]).assembly_xforms
+
+    if use_cif_xforms and 'assembly_xforms' in ipd.dev.get_metadata(atomslist[0]):
+        ic(asmx._chainasu)
+        assert 0
+    else:
+        comp = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, **kw)
+        ipd.atom.process_components(comp, **kw)
+        # ic(comp.frames[0][3], comp.frames[1][3])
+        # ipd.showme(h.xform(comp.frames[0],h.trans([1,3,10])) , xyzscale=4, weight=4,name='baz')
+        # ipd.showme(h.xform(comp.frames[1][0::2],h.trans([1,3,10])) , xyzscale=4, weight=4,name='bar')
+        # ipd.showme(h.xform(comp.frames[1][1::2],h.trans([1,3,10])) , xyzscale=4, weight=4,name='foo')
+
     if components in ('merge', 'merge_unsafe'):
         assert len(set(map(len, comp.frames))) == 1
         if components == 'merge':
@@ -55,7 +68,7 @@ def symbody_from_file(
         which = np.argmax([9e9 * len(s) + len(a) for a, s in zip(*comp['atoms frames'])])
     else:
         raise ValueError(f'unknown component handling method "{components}"')
-    return SymBody(Body(comp.atoms[which]), comp.frames[which], _atomslist=atomslist)
+    return SymBody(Body(comp.atoms[which]), comp.frames[which], _atomslist=atomslist, _assembly_xforms=asmx)
 
 @ipd.dev.holds_metadata
 @dataclass
@@ -92,19 +105,22 @@ class Body:
         return self.atoms is other.atoms and np.allclose(self.pos, other.pos)
 
     def hasclash(self, other=None, radius: float = 2, **kw) -> bool:
-        return _bvh_binary_operation(wu.bvh_isect, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(wu.bvh_isect, self, other, radius=radius, **kw)
+        return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
-        return _bvh_binary_operation(wu.bvh_count_pairs, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(wu.bvh_count_pairs, self, other, radius=radius, **kw)
+        return ipd.cast(int, result)
 
     def contacts(self, other=None, radius: float = 4, **kw) -> ipd.Bunch:
-        p, b = _bvh_binary_operation(wu.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(wu.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
+        p, b = ipd.cast(tuple[np.ndarray, np.ndarray], result)
         uniq0, uniq1 = np.unique(p[:, 0]), np.unique(p[:, 1])
         fields = 'pairs breaks pair0 pair1 uniq0 uniq1 nuniq0 nuniq'.split()
         vals = [p, b, p[:, 0], p[:, 1], uniq0, uniq1, len(uniq0), len(uniq1)]
         return ipd.Bunch(zip(fields, vals))
 
-    def slide_into_contact(self, other, direction=(1, 0, 0), radius=3.0):
+    def slide_into_contact(self, other, direction=(1, 0, 0), radius=3.0) -> 'Body':
         if direction == 'random': direction = h.rand_unit()[:3]
         delta = _bvh_binary_operation(wu.bvh_slide, self, other, rad=radius, dirn=direction)
         return self.movedby((delta - np.sign(delta) * radius) * np.array(direction))
@@ -192,16 +208,19 @@ class SymBody:
 
     def hasclash(self, other: 'Body|SymBody|None' = None, radius: float = 2, **kw) -> bool:
         kw |= self._get_pos_otherpos(other)
-        return _bvh_binary_operation(wu.bvh_isect_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(wu.bvh_isect_vec, self, other, radius=radius, **kw)
+        return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
         kw |= self._get_pos_otherpos(other)
-        return _bvh_binary_operation(wu.bvh_count_pairs_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(wu.bvh_count_pairs_vec, self, other, radius=radius, **kw)
+        return ipd.cast(int, result)
 
-    def contacts(self, other=None, radius: float = 4, **kw) -> ipd.Bunch:
+    def contacts(self, other=None, radius: float = 4, **kw) -> 'SymBodyContacts':
         kw |= self._get_pos_otherpos(other)
-        p, r = _bvh_binary_operation(wu.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
-        return SymBodyContacts(self, other, p, r)
+        result = _bvh_binary_operation(wu.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
+        p, r = ipd.cast(tuple[np.ndarray, np.ndarray], result)
+        return SymBodyContacts(self, other or self, p, r)
 
     @property
     def coord(self):
@@ -251,7 +270,7 @@ class SymBody:
         return printed.read()
 
     def __eq__(self, other):
-        return self.boty == other.asu
+        return self.asu == other.asu
 
     def __hash__(self):
         """NOTE: this hash ignores asu frames/position!!"""
@@ -270,7 +289,7 @@ def _bvh_binary_operation(
     otherpos=None,
     residue_wise=False,
     **kw,
-):
+) -> 'bool|int|float|np.ndarray|tuple[np.ndarray, np.ndarray]':
     """abailable:
             bvh_collect_pairs bvh_collect_pairs_range_vec bvh_collect_pairs_vec
             bvh_count_pairs bvh_count_pairs_vec
@@ -284,6 +303,7 @@ def _bvh_binary_operation(
     otherbvh = otherbvh or other._resbvh if residue_wise else other._atombvh
     pos = this.pos if pos is None else pos
     otherpos = other.pos if otherpos is None else otherpos
+    npos, nother = 1, 1
     if op.__name__.endswith('_vec'):
         pos, otherpos = pos.reshape(-1, 4, 4), otherpos.reshape(-1, 4, 4)
         npos, nother = len(pos), len(otherpos)
@@ -308,6 +328,7 @@ class SymBodyContacts:
     ranges: ipd.NDArray_MN2_int32
 
     def __post_init__(self):
+        self.symbody2 = self.symbody2 or self.symbody1
         assert len(self.symbody1) == self.ranges.shape[0]
         assert len(self.symbody2) == self.ranges.shape[1]
 

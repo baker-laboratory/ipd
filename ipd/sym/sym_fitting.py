@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import torch as th
 else:
-    from ipd.lazy_import import lazyimport
+    from ipd import lazyimport
     th = lazyimport('torch')
 
 import ipd

@@ -1,7 +1,7 @@
 import typer
 
 import ipd
-from ipd.typehints import KW
+from ipd import KW
 from typing import Optional
 
 DEBUG = False

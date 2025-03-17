@@ -6,21 +6,26 @@ import dataclasses as dc  # noqa
 import functools as ft  # noqa
 import itertools as it  # noqa
 import numpy as np  # noqa
+from pathlib import Path as Path
 from copy import copy as copy, deepcopy as deepcopy
 
-from ipd.version import __version__ as __version__
-from ipd.typehints import *  #noqa
+# from ipd._prelude import lazyimport, importornone, LazyImportError, cherry_pick_import, cherry_pick_imports
+from ipd._prelude import *
+
+optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
+capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
+ic, icq = cherry_pick_imports('ipd.dev.debug', 'ic icq')
 from ipd.dev.error import panic as panic
 from ipd.dev.meta import kwcheck as kwcheck, kwcall as kwcall, kwcurry as kwcurry
+from ipd.dev.metadata import get_metadata as get_metadata, set_metadata as set_metadata
 from ipd.dev.format import print_table as print_table, print as print
 from ipd.bunch import Bunch as Bunch, bunchify as bunchify
-from ipd.lazy_import import importornone as importornone, lazyimport as lazyimport
-from ipd.lazy_import import LazyImportError as LazyImportError
 from ipd.observer import hub as hub
 from ipd.dev.tolerances import Tolerances as Tolerances
 from ipd.dev.iterables import first as first
+from ipd.dev.contexts import stdio as stdio
 
-from ipd import dev as dev, typehints as typehints
+from ipd import dev as dev
 
 if typing.TYPE_CHECKING:
     from ipd import crud
@@ -64,11 +69,7 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 projdir = os.path.realpath(os.path.dirname(__file__))
 
 with contextlib.suppress(ImportError):
-    from icecream import ic
     import builtins
-
-    setattr(builtins, 'panic', panic)
-    ic.configureOutput(includeContext=True)
     setattr(builtins, 'ic', ic)
 
 def showme(*a, **kw):

@@ -24,22 +24,20 @@ def main():
 
 def test_basic_typevars():
     # Test T and R type variables
-    typevars = list(basic_typevars(['T', 'R']))
+    typevars = list(basic_typevars('TR'))
     assert len(typevars) == 2
     assert type(typevars[0]).__name__ == 'TypeVar'
     assert type(typevars[1]).__name__ == 'TypeVar'
 
     # Test class type variable
-    typevars = list(basic_typevars(['C']))
-    assert len(typevars) == 1
+    typevars = basic_typevars('C')
     C = TypeVar('C')
     C = type[C]
-    assert str(typevars[0]) == str(C)
+    assert str(typevars) == str(C)
 
     # Test callable type variable
-    typevars = list(basic_typevars(['F']))
-    assert len(typevars) == 1
-    assert callable(typevars[0])
+    typevars = basic_typevars('F')
+    assert callable(typevars)
 
 def test_frames44_instancecheck():
     # Valid 4x4 matrix

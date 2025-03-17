@@ -1,9 +1,18 @@
 import abc
-from typing import (Any, Callable, Iterator, TypeVar, Union, TYPE_CHECKING)
+from typing import (
+    Any,
+    Callable,
+    Iterator,
+    TypeVar,
+    Union,
+    Iterable,
+    Mapping,
+    MutableMapping,
+    Sequence,
+    MutableSequence,
+)
 from typing_extensions import ParamSpec  # type: ignore noqa
 import numpy as np
-
-inchecker = TYPE_CHECKING
 
 KW = dict[str, Any]
 """Type alias for keyword arguments represented as a dictionary with string keys and any type of value."""
@@ -12,7 +21,7 @@ FieldSpec = Union[str, list[str], tuple[str], Callable[..., str], tuple]
 EnumerIter = Iterator[int]
 EnumerListIter = Iterator[list[Any]]
 
-def basic_typevars(which) -> list[Union[TypeVar, ParamSpec]]:
+def basic_typevars(which) -> Union[TypeVar, list[Union[TypeVar, ParamSpec]]]:
     """
     Generate a set of common type variables used for generic typing.
 
@@ -43,7 +52,10 @@ def basic_typevars(which) -> list[Union[TypeVar, ParamSpec]]:
         typevars['P'].args = list[Any]  # type: ignore
         typevars['P'].kwargs = KW  # type: ignore
     typevars['F'] = Callable[typevars['P'], typevars['R']]  # type: ignore
-    return [typevars[k] for k in which]  # type: ignore
+    result = [typevars[k] for k in which]  # type: ignore
+    if len(which) == 1:
+        return result[0]
+    return result
 
 class Frames44Meta(abc.ABCMeta):
 
@@ -66,3 +78,30 @@ class NDArray_MN2_int32(np.ndarray):
 
 class NDArray_N2_int32(np.ndarray):
     pass
+
+def isstr(s: Any) -> bool:
+    return isinstance(s, str)
+
+def isint(s: Any) -> bool:
+    return isinstance(s, int)
+
+def islist(s: Any) -> bool:
+    return isinstance(s, list)
+
+def isdict(s: Any) -> bool:
+    return isinstance(s, dict)
+
+def isseq(s: Any) -> bool:
+    return isinstance(s, Sequence)
+
+def ismap(s: Any) -> bool:
+    return isinstance(s, Mapping)
+
+def isseqmut(s: Any) -> bool:
+    return isinstance(s, MutableSequence)
+
+def ismapmut(s: Any) -> bool:
+    return isinstance(s, MutableMapping)
+
+def isiter(s: Any) -> bool:
+    return isinstance(s, Iterable)

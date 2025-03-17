@@ -170,7 +170,11 @@ class ElementWiseDispatcher:
     def __call__(self, func, *a, **kw):
         """call a function on each element of self._parent, forwarding any arguments"""
         assert callable(func)
-        return self.__getattr__(func)(*a, **kw)
+        result = self.__getattr__(func)(*a, **kw)
+        for k, v in self._parent.items():
+            if k[0] == '_' or k[-1] == '_':
+                setattr(result, k, v)
+        return result
 
     def contains(self, other):
         contains_check = getattr(other, 'contains', operator.contains)

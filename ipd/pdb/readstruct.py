@@ -1,4 +1,3 @@
-from collections.abc import Mapping, Iterable
 import functools
 import itertools
 import io
@@ -7,7 +6,7 @@ import os
 import numpy as np
 
 import ipd
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 from ipd import hnumpy as h
 
 bs, bpdb, bpdbx = lazyimport('biotite.structure biotite.structure.io.pdb biotite.structure.io.pdbx')
@@ -26,7 +25,7 @@ def readatoms(fname, **kw) -> 'bs.AtomArray':
         elif fname.endswith(('.cif', '.bcif')): reader = _readatoms_cif
         else: raise ValueError(f'bad filename {fname}')
         atoms = reader(fname, file, **kw)
-        add_sourcefile_tag(atoms, fname)
+        ipd.dev.set_metadata(atoms, fname=fname, pdbcode=ipd.Path(fname).stem)
         return atoms
 
 def dump(thing, fname):
@@ -62,7 +61,7 @@ def biotite_cif_file(fname, file=None) -> 'Cif':
     reader = bpdbx.BinaryCIFFile if isbin else bpdbx.CIFFile
     return reader.read(file or fname)
 
-def cifread(fname, file=None, model=0, postproc=True, **kw) -> 'tuple[Cif, Atoms]':
+def cifread(fname, file=None, model=0, postproc=True, **kw) -> 'tuple[bpdbx.CifFile, bs.AtomArray]':
     cif = biotite_cif_file(fname, file)
     atoms = bpdbx.get_structure(cif)
     if isinstance(atoms, bs.AtomArrayStack): atoms = atoms[model]
@@ -81,7 +80,7 @@ def cifdump(fname, atoms):
     bcif_file.write(fname)
 
 @ipd.dev.timed
-def _readatoms_cif(fname, file, assembly=None, **kw) -> 'Atoms':
+def _readatoms_cif(fname, file, assembly=None, **kw) -> 'bs.AtomArray':
     if assembly is not None:
         return _readatoms_cif_assembly(fname, file, assembly, **kw)
     cif, atoms = cifread(fname, file, **kw)
@@ -105,12 +104,13 @@ def _readatoms_cif_assembly(
         assembly = best[1]
     atoms = bpdbx.get_assembly(cif, assembly, model=1)
     atoms = ipd.atom.select(atoms, caonly=caonly, het=het)
-    xforms = _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, **kw)
-    atoms = ipd.kwcall(kw, ipd.atom.split, atoms, order=len(xforms))
+    asmx = _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, **kw)
+    atoms = ipd.kwcall(kw, ipd.atom.split, atoms, order=len(asmx._xforms))
+    ipd.dev.set_metadata(atoms, assembly_xforms=asmx)
     return atoms
 
 @ipd.dev.timed
-def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=False, **kw):
+def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **kw):
     if assembly in asminfo.assemblies.id:
         iasm = asminfo.assemblies.id.index(assembly)
     else:  # seems sometimes assembly ids don't match annotation... try as numerical index
@@ -124,21 +124,43 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=False, **k
     assert len(atoms) % len(asu) == 0
     assert len(atoms) // len(asu) == len(xforms)
     # chainlen = ipd.atom.chainlen(atoms)
-    chainsasu, chains = map(ipd.atom.chain_ranges, (asu, atoms))
+    chainsasu, chains = map(ipd.atom.chain_id_ranges, (asu, atoms))
+    if len(chains) == 1:
+        breaks = ipd.first(chains.values())
+        breaks[0] = ipd.first(chainsasu.values())[0]
+        assert len(breaks) == 1
+        for i in range(len(xforms) - 1):
+            breaks.append((breaks[-1][0] + len(asu), breaks[-1][1] + len(asu)))
+    for c, crng in chainsasu.items():
+        for lb, ub in crng:
+            assert 0 < ub <= len(asu)
+    for c, crng in chains.items():
+        for lb, ub in crng:
+            assert 0 < ub <= len(atoms)
+        # ic(breaks[-1], len(atoms) + 1)
+        # assert 0
+        # assert breaks[-1][1] == len(atoms) + 1
     # ic(chainsasu)
     # ic(chains)
     # ic(xforms)
     # ic(asminfo)
+    asmx = ipd.Bunch(_xforms=xforms, ix=[], asurange=[], symrange=[])
     for ix, x in enumerate(xforms):
         for c, crngasu, crng in ipd.dev.zipitems(chainsasu, chains):
             num_asu_ranges = len(crngasu)
             # ic(len(xforms), ix, c, len(crng), num_asu_ranges)
             assert len(xforms) == len(crng) / num_asu_ranges
             for iasurange in range(num_asu_ranges):
+                (lb1, ub1), (lb2, ub2) = crngasu[iasurange], crng[ix*num_asu_ranges + iasurange]
+                # ic(ix, c, iasurange)
+                assert ub1 - lb1 == ub2 - lb2
+                asmx.ix.append(ix)
+                asmx.asurange.append((lb1, ub1))
+                asmx.symrange.append((lb2, ub2))
                 if strict:
-                    (lb1, ub1), (lb2, ub2) = crngasu[iasurange], crng[ix*num_asu_ranges + iasurange]
                     orig = h.xform(xforms[ix], asu.coord[lb1:ub1])
                     new = atoms.coord[lb2:ub2]
+                    # ic(orig.shape, new.shape)
                     # ipd.showme(orig, new)
                     close = np.allclose(orig, new, atol=1e-3)
                     if not close:
@@ -147,11 +169,13 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=False, **k
                             f'{pdbcode} biounit {assembly} {ix} {c} failed coordinate symmetry check',
                             verbose=False)
                         assert close
+    asmx = asmx.mapwise(np.array)
+    asmx._chainasu, asmx._chains = chainsasu, chains
     # assert np.allclose(asu.coord, atoms.coord[:len(asu)], atol=1e-3)
     # ic(ipd.bunch.zip(asymchainstart, asymchainlen, chainstart, chainlen, order='val'))
-    return xforms
+    return asmx
 
-def _readatoms_pdb(fname, file, **kw) -> 'Atoms':
+def _readatoms_pdb(fname, file, **kw) -> 'bs.Atoms':
     pdb, atoms = pdbread(fname, file, **kw)
     return atoms
 
@@ -233,9 +257,3 @@ def cif_assembly_info(cif):
         assemblies.mapwise.append(id=str(id), oper=op_expr, asymids=asymids, order=int(order))
     # assemblies.id = np.array(assemblies.id)
     return ipd.Bunch(assemblies=assemblies, xforms=xforms)
-
-def add_sourcefile_tag(struc, fname):
-    if isinstance(struc, bs.AtomArray): struc.__ipd_source_file__ = fname
-    elif isinstance(struc, Mapping): map(add_sourcefile_tag, struc.values())
-    elif isinstance(struc, Iterable): map(add_sourcefile_tag, struc)
-    else: raise TypeError(f'cant add file tag to {type(struc)}')

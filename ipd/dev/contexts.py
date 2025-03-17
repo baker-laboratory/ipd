@@ -4,7 +4,7 @@ import numpy as np
 import os
 import sys
 import traceback
-from contextlib import contextmanager
+import contextlib
 
 import ipd
 
@@ -17,7 +17,7 @@ def onexit(func, msg=None, **metakw):
     atexit.register(wrapper)
     return wrapper
 
-@contextmanager
+@contextlib.contextmanager
 def cast(cls, self):
     try:
         orig, self.__class__ = self.__class__, cls
@@ -25,7 +25,7 @@ def cast(cls, self):
     finally:
         self.__class__ = orig  # type: ignore
 
-@contextmanager
+@contextlib.contextmanager
 def redirect(stdout=sys.stdout, stderr=sys.stderr):
     _out, _err = sys.stdout, sys.stderr
     try:
@@ -39,7 +39,7 @@ def redirect(stdout=sys.stdout, stderr=sys.stderr):
         sys.stdout.flush(), sys.stderr.flush()  # type: ignore
         sys.stdout, sys.stderr = _out, _err
 
-@contextmanager
+@contextlib.contextmanager
 def capture_stdio():
     with redirect(None, 'stdout') as (out, err):
         try:
@@ -48,7 +48,7 @@ def capture_stdio():
             out.seek(0)
             err.seek(0)
 
-@contextmanager
+@contextlib.contextmanager
 def stdio():
     with redirect(sys.__stdout__, sys.__stderr__) as (out, err):
         try:
@@ -56,14 +56,14 @@ def stdio():
         finally:
             pass
 
-@contextmanager
+@contextlib.contextmanager
 def nocontext():
     try:
         yield None
     finally:
         pass
 
-@contextmanager
+@contextlib.contextmanager
 def cd(path):
     oldpath = os.getcwd()
     try:
@@ -72,7 +72,7 @@ def cd(path):
     finally:
         os.chdir(oldpath)
 
-@contextmanager
+@contextlib.contextmanager
 def openfiles(*fnames, **kw):
     files = [ipd.dev.openfile(f, **kw) for f in fnames]
     if len(files) == 1: files = files[0]
@@ -93,13 +93,13 @@ class TracePrints(object):
     def flush(self):
         self.stdout.flush()
 
-@contextmanager
+@contextlib.contextmanager
 def trace_prints():
     tp = TracePrints()
     with redirect(stdout=tp):
         yield tp
 
-@contextmanager
+@contextlib.contextmanager
 def np_printopts(**kw):
     npopt = np.get_printoptions()
     try:
@@ -111,7 +111,7 @@ def np_printopts(**kw):
 def np_compact(precision=4, suppress=True, **kw):
     return np_printopts(precision=precision, suppress=suppress, **kw)
 
-@contextmanager
+@contextlib.contextmanager
 def temporary_random_seed(seed=None):
     randstate = np.random.get_state()
     if seed is not None: np.random.seed(seed)
@@ -120,7 +120,7 @@ def temporary_random_seed(seed=None):
     finally:
         if seed is not None: np.random.set_state(randstate)
 
-@contextmanager
+@contextlib.contextmanager
 def capture_asserts():
     errors = []
     try:
@@ -130,7 +130,7 @@ def capture_asserts():
     finally:
         pass
 
-@contextmanager
+@contextlib.contextmanager
 def catchall():
     errors = []
     try:
@@ -139,3 +139,6 @@ def catchall():
         errors.append(e)
     finally:
         pass
+
+def optional_imports():
+    return contextlib.suppress(ImportError)

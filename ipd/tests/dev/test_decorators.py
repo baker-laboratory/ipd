@@ -330,5 +330,44 @@ def test_getitem_picklable():
     foo = Foo()
     assert foo.pick('a b').keys() == {'a', 'b'}
 
+def test_safe_lru_cache():
+    ncompute = 0
+
+    @ipd.dev.safe_lru_cache(maxsize=32)
+    def example(x):
+        nonlocal ncompute
+        ncompute += 1
+        return x * 2
+
+    example(2)  #  Computing 2
+    example(2)  # No print (cached)
+    example([1, 2, 3])  #  Computing [1, 2, 3]
+    example([1, 2, 3])  #  Computing [1, 2, 3] (because list is unhashable)
+    assert ncompute == 3
+
+def test_safe_lru_cache_noarg():
+    ncompute = 0
+
+    @ipd.dev.safe_lru_cache
+    def example(x):
+        nonlocal ncompute
+        ncompute += 1
+        return x * 2
+
+    example(2)  #  Computing 2
+    example(2)  # No print (cached)
+    example([1, 2, 3])  #  Computing [1, 2, 3]
+    example([1, 2, 3])  #  Computing [1, 2, 3] (because list is unhashable)
+    assert ncompute == 3
+
+def test_is_safe_lru_cache_necessary():
+
+    @ipd.ft.lru_cache
+    def example(x):
+        return x * 2
+
+    with pytest.raises(TypeError):
+        example([1, 2, 3])
+
 if __name__ == '__main__':
     main()

@@ -158,7 +158,7 @@ for op in 'add mul matmul or_ and_'.split():
     opname = op.strip('_')
     globals()[f'{opname}reduce'] = functools.partial(opreduce, getattr(operator, op))
 
-def kwcall(kw: dict, func: Callable[P, R], *a: P.args, **kwargs: P.kwargs) -> R:  # type: ignore
+def kwcall(kw: ipd.KW, func: Callable[P, R], *a: P.args, **kwargs: P.kwargs) -> R:  # type: ignore
     """Call a function with filtered keyword arguments.
 
     This function merges provided keyword arguments, filters them to match only those
@@ -249,6 +249,8 @@ def kwcheck(kw: ipd.KW, func=None, checktypos=True) -> ipd.KW:
     func = func or get_function_for_which_call_to_caller_is_argument()
     if not callable(func): raise TypeError('Couldn\'t get function for which kwcheck(kw) is an argument')
     params = func_params(func)
+    takeskwargs = any(param.kind == inspect.Parameter.VAR_KEYWORD for param in params.values())
+    if takeskwargs: return kw
     newkw = {k: v for k, v in kw.items() if k in params}
     if checktypos:
         unused = kw.keys() - newkw.keys()
@@ -388,48 +390,6 @@ def func_params(func, required_only=False):
     if required_only:
         params = {k: param for k, param in params.items() if param_is_required(param)}
     return params
-
-def has_pytest_mark(obj, mark):
-    """Checks if an object has a specific pytest mark.
-
-    Args:
-        obj (Any): The object to check.
-        mark (str): The name of the pytest mark to check for.
-
-    Returns:
-        bool: True if the object has the specified mark, False otherwise.
-
-    Example:
-        import pytest
-
-        @pytest.mark.custom
-        def test_example():
-            pass
-
-        print(has_pytest_mark(test_example, 'custom'))  # True
-        print(has_pytest_mark(test_example, 'skip'))    # False
-    """
-    return mark in [m.name for m in getattr(obj, 'pytestmark', ())]
-
-def no_pytest_skip(obj):
-    """Checks if an object does not have the `skip` pytest mark.
-
-    Args:
-        obj (Any): The object to check.
-
-    Returns:
-        bool: True if the object does not have the `skip` mark, False otherwise.
-
-    Example:
-        import pytest
-
-        @pytest.mark.skip
-        def test_example():
-            pass
-
-        print(no_pytest_skip(test_example))  # False
-    """
-    return not has_pytest_mark(obj, 'skip')
 
 def list_classes(data):
     seenit = set()

@@ -346,5 +346,10 @@ def test_search_empty_dict():
     result = ipd.bunch.search(data, 'key')
     assert result == {}
 
+def test_bunch_underscore():
+    data = Bunch(_foo='bar', foo_='baz')
+    assert data._foo == 'bar'
+    assert data.foo_ == 'baz'
+
 if __name__ == "__main__":
     main()

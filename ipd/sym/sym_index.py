@@ -1,6 +1,6 @@
 import math
 
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 from ipd.sym.sym_slice import SymSlice
 
 from typing import TYPE_CHECKING

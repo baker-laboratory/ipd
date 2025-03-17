@@ -421,3 +421,24 @@ def subscriptable_for_attributes(cls: C) -> C:
     cls.groupby = generic_groupby
     cls.pick = make_getitem_for_attributes(provide='item')
     return cls
+
+def safe_lru_cache(func=None, *, maxsize=128):
+    if func is not None and callable(func):
+        # Case when used as @safe_lru_cache without parentheses
+        return safe_lru_cache(maxsize=maxsize)(func)
+
+    def decorator(func):
+        cache = functools.lru_cache(maxsize=maxsize)(func)
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                hash(args)
+                frozenset(kwargs.items())
+                return cache(*args, **kwargs)
+            except TypeError:
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator

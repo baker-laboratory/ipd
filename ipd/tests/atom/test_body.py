@@ -34,7 +34,14 @@ def _celllist_nclash(cell_list, other, radius: float = 3) -> int:
     return nclash
 
 def debug_body_load_speed():
-    body = ipd.atom.symbody_from_file('2tbv', assembly='largest', components='largest_assembly')
+    symbody = ipd.atom.symbody_from_file('2tbv',
+                                         assembly='largest',
+                                         components='largest_assembly',
+                                         maxsub=9999)
+    ic(symbody.meta.assembly_xforms)
+    symbody.asu.atoms = symbody.asu.atoms[symbody.asu.atoms.atom_name == 'CA']
+
+    # ipd.showme(symbody.asu)
     ipd.dev.global_timer.report()
 
 def helper_test_body_chash_v_celllist(body):

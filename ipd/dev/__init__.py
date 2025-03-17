@@ -6,6 +6,7 @@ from ipd.dev.instrumentation import *
 from ipd.dev.instrumentation import timed as profile  # noqa
 
 # runtime utils
+from ipd.dev.debug import *
 from ipd.dev.objinfo import *
 from ipd.dev.iterables import *
 from ipd.dev.format import *
@@ -24,13 +25,13 @@ from ipd.dev.storage import *
 from ipd.dev.strings import *
 from ipd.project_config import *
 from ipd.dev.tolerances import *
+from ipd.dev.testing import *
 
-from ipd.lazy_import import lazyimport as lazyimport
+from ipd import lazyimport as lazyimport
 # utils involving optional dependencies
 cli = lazyimport('ipd.dev.cli')
 cuda = lazyimport('ipd.dev.cuda')
 qt = lazyimport('ipd.dev.qt')
-testing = lazyimport('ipd.dev.testing')
 
 _global_timer = None
 

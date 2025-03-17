@@ -6,7 +6,8 @@ def show_body_pymol(body, name='body'):
 
 def show_symbody_pymol(symbody, name='symbody'):
     origids = symbody.asu.atoms.chain_id
-    uniqids = ipd.dev.UniqueIDs()
+    all_pymol_chains = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz")
+    uniqids = ipd.dev.UniqueIDs(all_pymol_chains)
     for i, body in enumerate(symbody.bodies):
         body.atoms.chain_id = uniqids(body.atoms.chain_id, reset=True)
         show_body_pymol(body)
@@ -15,13 +16,13 @@ def show_symbody_pymol(symbody, name='symbody'):
 @lazy_register('Body')
 def regester_body():
 
-    @pymol_load.register(ipd.atom.Body)
+    @ipd.viz.pymol_load.register(ipd.atom.Body)
     def pymol_viz_body(body, name, state, **kw):
-        show_body_pymol(body)
+        show_body_pymol(body, name, **kw)
 
 @lazy_register('SymBody')
 def regester_symbody():
 
-    @pymol_load.register(ipd.atom.SymBody)
+    @ipd.viz.pymol_load.register(ipd.atom.SymBody)
     def pymol_viz_symbody(symbody, name, state, **kw):
-        show_symbody_pymol(symbody)
+        show_symbody_pymol(symbody, name, **kw)
