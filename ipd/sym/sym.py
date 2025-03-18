@@ -24,6 +24,9 @@ def frames(
     ontop=None,
     sgonly=False,
     torch=False,
+    helix_radius=None,
+    helix_angle=None,
+    helix_shift=None,
     **kw,
 ):
     """Generate symmetrical coordinate frames axis aligns Cx or bbaxis or axis0
@@ -38,11 +41,14 @@ def frames(
     sym = sym.lower()
 
     okexe = (SystemExit, ) if sgonly else (KeyError, AttributeError)
-    with contextlib.suppress(okexe):  # type: ignore
+    with contextlib.suppress(okexe):
         return ipd.sym.xtal.sgframes(sym, ontop=ontop, **kw)
     try:
         if ipd.sym.is_known_xtal(sym):
             return xtal(sym).frames(ontop=ontop, **kw).copy()
+        elif sym.startswith('h'):
+            helix_nfold = 1 if sym == 'h' else int(sym[1:])
+            return helix_frames(helix_radius, helix_angle, helix_shift, helix_nfold)
         else:
             f = sym_frames[sym].copy()
     except KeyError as e:
@@ -87,7 +93,7 @@ def frames(
         elif sym.startswith("c"):
             startax = ipd.homog.hvec([0, 0, 1])
         elif bbsym:
-            startax = axes(sym, bbnfold)  # type: ignore
+            startax = axes(sym, bbnfold)
         elif asym_of:
             startax = axes(sym, asym_of)
         else:
@@ -178,6 +184,13 @@ def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize
 
     ipd.dev.checkpoint(kw)
     return f
+
+def helix_frames(helix_radius, helix_angle, helix_shift, helix_nfold):
+    unit = hrot([0, 0, 1], helix_angle, [0, 0, 0], hel=helix_shift)
+    xglobal = frames(f'c{helix_nfold}')
+    hframes = np.stack([np.eye(4), unit, hinv(unit)])
+    xasu = htrans(helix_radius)
+    return hxform(xglobal, hframes, xasu).reshape(-1, 4, 4)
 
 def make(sym, x, **kw):
     return ipd.homog.hxform(frames(sym, **kw), x)
@@ -312,19 +325,20 @@ def ambiguous_axes(sym):
 _ = -1
 
 tetrahedral_axes = {
-    2: hnormalized([1, 0, 0]),
+    2: hnormalized([0, 0, 1]),
     3: hnormalized([1, 1, 1]),
-    "3b": hnormalized([1, 1, _]),  # other c3
+    "3b": hnormalized([_, 1, 1]),  # other c3
 }
-octahedral_axes = {2: hnormalized([1, 1, 0]), 3: hnormalized([1, 1, 1]), 4: hnormalized([1, 0, 0])}
+octahedral_axes = {2: hnormalized([1, 0, 1]), 3: hnormalized([1, 1, 1]), 4: hnormalized([0, 0, 1])}
 icosahedral_axes = {
-    2: hnormalized([1, 0, 0]),
-    3: hnormalized([0.934172, 0.000000, 0.356822]),
-    5: hnormalized([0.850651, 0.525731, 0.000000]),
+    2: hnormalized([0, 0, 1]),
+    3: hnormalized([0, 0.35682209, 0.93417236]),
+    5: hnormalized([0.525731, 0.000000, 0.850651]),
 }
 
 tetrahedral_axes_all = {
-    2: hnormalized([
+    2:
+    hnormalized([
         [1, 0, 0],
         [0, 1, 0],
         [0, 0, 1],
@@ -332,7 +346,8 @@ tetrahedral_axes_all = {
         # [0, _, 0],
         # [0, 0, _],
     ]),
-    3: hnormalized([
+    3:
+    hnormalized([
         [1, 1, 1],
         [1, _, _],
         [_, _, 1],
@@ -342,7 +357,8 @@ tetrahedral_axes_all = {
         # [1, 1, _],
         # [1, _, 1],
     ]),
-    "3b": hnormalized([
+    "3b":
+    hnormalized([
         [_, 1, 1],
         [1, _, 1],
         [1, 1, _],
@@ -352,9 +368,9 @@ tetrahedral_axes_all = {
 octahedral_axes_all = {
     2:
     hnormalized([
-        [1, 1, 0],
-        [0, 1, 1],
         [1, 0, 1],
+        [0, 1, 1],
+        [1, 1, 0],
         [_, 1, 0],
         [0, _, 1],
         [_, 0, 1],
@@ -396,7 +412,6 @@ def _icosahedral_axes_all():
     a2 = a2[np.unique(np.around(a2, decimals=6), axis=0, return_index=True)[1]]
     a3 = a3[np.unique(np.around(a3, decimals=6), axis=0, return_index=True)[1]]
     a5 = a5[np.unique(np.around(a5, decimals=6), axis=0, return_index=True)[1]]
-
     a2 = np.stack([a for i, a in enumerate(a2) if np.all(np.sum(a * a2[:i], axis=-1) > -0.999)])
     a3 = np.stack([a for i, a in enumerate(a3) if np.all(np.sum(a * a3[:i], axis=-1) > -0.999)])
     a5 = np.stack([a for i, a in enumerate(a5) if np.all(np.sum(a * a5[:i], axis=-1) > -0.999)])
@@ -708,7 +723,7 @@ def subframes(frames, bbsym, asym):
     axs, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(relframes)
 
     for i in range(len(frames)):
-        axdist = ipd.homog.hpointlinedis(coords, cen[i, :], axs[i, :])  # type: ignore
+        axdist = ipd.homog.h_point_line_dist(coords, cen[i, :], axs[i, :])  # type: ignore
         ic(axdist)  # type: ignore
     # what about multiple nfold axes???\
     # can distinguish by axis direction?
@@ -756,10 +771,50 @@ _canon_asucen['i5'] = _canon_asucen['i5'] * 0.8 + _canon_asucen['i532'] * 0.2
 
 def canonical_asu_center(sym, cuda=False):
     sym = ipd.sym.map_sym_abbreviation(sym).lower()
+    if sym.startswith('h'): return [0, 0, 0]
     try:
         if cuda:
             import torch as th  # type: ignore
             return th.tensor(_canon_asucen[sym], device='cuda')
         return _canon_asucen[sym]
     except KeyError as e:
-        raise ValueError(f'canonical_asu_center: unknown sym {sym}') from e
+        if cuda:
+            import torch as th  # type: ignore
+            return th.tensor(compute_canonical_asucen(sym), device='cuda')
+        return compute_canonical_asucen(sym)
+        # except KeyError as e:
+        #     raise ValueError(f'canonical_asu_center: unknown sym {sym}') from e
+
+def compute_canonical_asucen(sym, neighbors=None):
+    import torch as th  # type: ignore
+    import ipd.homog.thgeom as h
+    sym = ipd.sym.map_sym_abbreviation(sym).lower()
+    frames = ipd.sym.frames(sym)
+    x = h.randunit(int(5e5))
+    symx = h.xform(frames[1:], x)
+    d2 = th.sum((x[None] - symx)**2, dim=-1)
+
+    mind2 = d2.min(dim=0)[0]
+    if neighbors:
+        # ic(d2.shape)  # type: ignore
+        sort = d2.sort(dim=0)[0]
+        rank = sort[neighbors] - sort[neighbors - 1]
+    else:
+        rank = mind2
+
+    ibest = th.argmax(rank)
+    best = x[ibest]
+    dbest = th.sqrt(mind2[ibest])
+    symbest = h.xform(frames, best)
+    aln = th.sum(symbest * th.tensor([1, 2, 10]), dim=1)
+    best = symbest[th.argmax(aln)] / dbest * 2
+    if sym.startswith('c'):
+        best = th.tensor([h.norm(best), 0, 0])
+    return best.cpu().numpy()
+
+magic_angle_DTOI = ipd.Bunch(
+    D=float(np.pi / 2),
+    T=0.955316621,
+    O=0.615479714,
+    I=0.364863837,
+)

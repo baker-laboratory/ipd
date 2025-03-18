@@ -1,69 +1,137 @@
 [build-system]
-requires = ['hatchling']
-build-backend = 'hatchling.build'
+requires = ["hatchling", "hatch-cython"]
+build-backend = "hatchling.build"
+
+# [tool.hatch.build.targets.wheel.hooks.cython]
+# sources = ["src/my_package/**/*.pyx"]
+# extra_compile_args = ["-O3"]
+
+#[tool.hatch.build.targets.wheel]
+#only-include = ["ipd"]
+#
+#[tool.hatch.build.targets.wheel.hooks.cython]
+#dependenciees = ["hatch-cython"]
+#
+[tool.hatch.metadata]
+allow-direct-references = true
+#
+#[build.targets.wheel.hooks.cython.options.files]
+#targets = ["ipd/cython/dynamic_float_array.pyx"]
+#
+# [tool.hatch.build.hooks.custom]
+# path = "build.py"
 
 [project]
 name = 'ipd'
-version = '0.1'
+version = '0.2'
+requires-python = '>3.9,<4' # for woodys old pipeline stuff
 dependencies = [
+    'attrs',
     'assertpy',
     'colorlog',
     'compact-json',
-    'debugpy',
-    # 'eliot-tree',
     'gitpython',
     'hydra-core',
-    'hypothesis[numpy]',
+    'hypothesis',
+    'httpx',
     'icecream',
-    'ipython',
-    'ipykernel',
-    'ipywidgets',
-    'ipdb',
-    'jinja2',
-    'more_itertools',
-    'numba',
+    'lark',
+    # 'numba',
     'numpy',
     'opt_einsum',
-    # 'pre-commit',
-    'pandas',
-    'plotly',
-    'pendulum',
+    # 'pandas',
     'pydantic',
-    'pdot',
-    'pyright[nodejs]',
-    'pytest',
-    'pytest-sugar',
-    'pytest-xdist',
-    'pytest-cov',
-    'pytest-benchmark',
-    'pytest-dotenv',
-    'python-box',
-    'requests',
+    'rich',
     'RestrictedPython',
-    'ruff',
-    'seaborn',
-    'submitit',
-    'tqdm',
+    # 'seaborn',
     'typer',
-    'validate-pyproject[all]',
-    'yapf',
+    "toolz>=1.0.0",
+    'pytest',
+    'pytest-xdist',
 ]
 [project.optional-dependencies]
 crud = [
     'fastapi[standard]',
-    'psycopg2',
+    # 'psycopg2',
     'sqlmodel',
     'uvicorn[standard]',
+    'pdot',
 ]
-
+tools = [
+    'submitit',
+    'gitpython',
+    'jinja2',
+    ]
+ml = [
+    'torch',
+    'pandas',
+    'biotite',
+    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp"
+]
+# docs = [
+#     'sphinx',
+#     'sphinx-pydata-theme',
+#     'matplotlib',
+#     'pybtex',
+#     'sphinx_gallery',
+#     'apidoc',
+#     'bibliography',
+#     'preamble',
+#     'scraper',
+#     'switcher',
+# ]
+dev = [
+    'debugpy',
+    'hypothesis[numpy]',
+    "pytest",
+    'gitpython',
+    'jinja2',
+    'nox',
+    'pytest-xdist',
+    'pytest-sugar',
+    'pytest-cov',
+    'pytest-benchmark',
+    'pytest-dotenv',
+    'basedpyright',
+    'ruff',
+    'validate-pyproject[all]',
+    'yapf',
+]
+all = [
+    "biotite",
+    'debugpy',
+    'fastapi[standard]',
+    'gitpython',
+    'jinja2',
+    'pandas',
+    'pdot',
+    'psycopg2',
+    'scipy',
+    'sqlmodel',
+    'submitit',
+    'torch',
+    'uvicorn[standard]',
+    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp",
+]
 [project.scripts]
 ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
 minversion = '6.0'
-addopts = '-m "not ci" --disable-warnings'
+addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure'
+
 testpaths = [
     'ipd/tests',
+    'ipd/atom',
+    'ipd/homog',
+    'ipd/sym',
+    'ipd/bunch.py',
+    'ipd/crud',
+    'ipd/dev',
+    'ipd/observer',
+    'ipd/pdb',
+    'ipd/protocol',
+    'ipd/tool',
 ]
 markers = [
     'slow: marks tests as slow to run',
@@ -74,36 +142,42 @@ markers = [
 [tool.yapf]
 based_on_style = 'pep8'
 indent_width = 4
-column_limit = 123
-blank_line_before_nested_class_or_def = false
+column_limit = 111
+blank_line_before_nested_class_or_def = true
 blank_lines_around_top_level_definition = 1
 arithmetic_precedence_indication = true
 
-[tool.pyright]
-include = ['ipd']
-exclude = [
-    'ipd/crud/*',
-    'ipd/fit/*',
-    'ipd/homog/*',
-    'ipd/pdb/*',
-    'ipd/voxel/*',
-    'ipd/samp/*',
-    'ipd/sym/old/*',
-    'ipd/sym/xtal/*',
-    'ipd/tests/*',
-    'ipd/viz/*',
-    '*_viz.py',
-    '**/*.log',
-    '**/__pycache__',
-]
-threads = 4
-defineConstant = { DEBUG = true }
-typeCheckingMode = 'standard'
-reportMissingImports = true
-reportMissingTypeStubs = false
-pythonPlatform = 'Linux'
-requires-python = '>=3.11'
-pythonVersion = '3.12'
+# [tool.pyright]
+# pythonVersion = "3.12"
+# pythonPlatform = "Linux"
+# venvPath = "/home/sheffler/sw/MambaForge/envs"
+# venv = "rfdsym312"
+# include = ['ipd']
+# exclude = [
+#     # 'ipd/crud/*',
+#     # 'ipd/fit/*',
+#     # 'ipd/homog/*',
+#     # 'ipd/pdb/*',
+#     # 'ipd/voxel/*',
+#     # 'ipd/samp/*',
+#     # 'ipd/sym/old/*',
+#     # 'ipd/sym/xtal/*',
+#     # 'ipd/tests/*',
+#     # 'ipd/viz/*',
+#     # '*_viz.py',
+#     '**/*.log',
+#     '**/__pycache__',
+# ]
+# threads = 12
+# defineConstant = { DEBUG = true }
+# # typeCheckingMode = 'basic'
+# typeCheckingMode = 'standard'
+# reportMissingImports = false
+# reportMissingTypeStubs = false
+#
+# executionEnvironments = [
+#   { root = 'ipd' }
+# ]
 
 [tool.ruff]
 lint.ignore = [
@@ -118,7 +192,7 @@ lint.ignore = [
 
 ]
 lint.dummy-variable-rgx = '^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?)|ic)$'
-line-length = 123
+line-length = 113
 target-version = 'py39'
 format.quote-style = 'single'
 format.indent-style = 'space'

@@ -2,25 +2,26 @@ import pytest
 
 pytest.importorskip('torch')
 import ipd
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
-from ipd.sym import SymAdaptTensor
+from ipd.sym.sym_adapt import SymAdaptTensor
 
-@pytest.mark.fast
 def test_symcheck_mapping():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'])
     sym.idx = [2]
     sym.assert_symmetry_correct(dict(a=[1, 1]))
 
-@pytest.mark.fast
 def test_symcheck_sequence():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'])
     sym.idx = [2]
     sym.assert_symmetry_correct([[1, 1], [7, 7], [13, 13]])
 
-@pytest.mark.fast
 def test_symcheck():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'])
     sym.idx = [2]

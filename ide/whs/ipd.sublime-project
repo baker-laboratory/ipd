@@ -22,62 +22,62 @@
     "build_systems": [
         {
             "name": "runtest.py",
-            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ipd/tools/run_tests_on_file.py ipd $file &> ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=../.. \\$PYTHON ipd/tools/run_tests_on_file.py ipd $file &> sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "ruff",
-            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/rfdsym312/bin/ruff check  2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/rfdsym312/bin/ruff check  2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "pyright",
-            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m pyright ipd 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m pyright ipd 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "pyright comment errors",
-            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd code pyright typeignore ipd/dev/code/typecheck.py 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd code pyright typeignore ipd/dev/code/typecheck.py 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "pytest",
-            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m pytest  -x 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m pytest  -x 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "test ppp plugin",
-            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/pymol/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/pymol/bin/python ipd/tests/ppp/plugin/test_prettier_protein_project_pymol_plugin.py 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "test ppp server",
-            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/ppp/bin/python ipd/tests/ppp/server/test_pppapi.py $file 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/ppp/bin/python ipd/tests/ppp/server/test_pppapi.py $file 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "test crud",
-            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON ipd/tests/crud/test_crud.py 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON ipd/tests/crud/test_crud.py 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "test citool",
-            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd ci tests ruff 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd ci tests ruff 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "test pkgtool",
-            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd.tools.pkgtool 2>&1 | tee ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. \\$PYTHON -m ipd.tools.pkgtool 2>&1 | tee sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "test bunch",
-            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/dev/test_bunch.py &> ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/dev/test_bunch.py &> sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {
             "name": "test state",
-            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/dev/test_state.py &> ide/sublime_build.log",
+            "shell_cmd": "cd $folder && PYTHONPATH=. /home/sheffler/sw/MambaForge/envs/TEST/bin/python ipd/tests/dev/test_state.py &> sublime_build.log",
             "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
         },
         {

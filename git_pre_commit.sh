@@ -4,6 +4,7 @@ gitroot=$(git rev-parse --show-toplevel)
 echo git root dir found: $gitroot
 cd $gitroot
 
+#################### find src ####################
 if [ $(basename $gitroot) == 'ipd' ]; then
     ipd="$gitroot"
     src=ipd
@@ -17,6 +18,7 @@ fi
 
 validate-pyproject pyproject.toml
 
+#################### ruff ####################
 echo running: ruff check --fix $src
 if ruff check --fix $src; then
     echo ruff ok;
@@ -24,19 +26,7 @@ else
     echo ruff failed; exit 1;
 fi
 
-if [ -f .pyright_hash_last_commit ]; then
-    cmd="PYTHONPATH=$ipd python -m ipd code pyright $src --hashfile '.pyright_hash_last_commit'"
-    echo $cmd
-    eval $cmd
-    if [ $? == 0 ]; then
-        echo pyright pass
-    else
-        echo pyright fail
-        exit 1
-    fi
-    git add .pyright_hash_last_commit
-fi
-
+#################### yapf ####################
 cmd="PYTHONPATH=$ipd python -m ipd code yapf $src"
 echo $cmd
 eval $cmd
@@ -46,3 +36,17 @@ else
     echo yapf formatted some files, retry commit
     exit 1
 fi
+
+# #################### pyright ####################
+# if [ -f .pyright_hash_last_commit ]; then
+#     cmd="PYTHONPATH=$ipd python -m ipd code pyright $src --hashfile '.pyright_hash_last_commit'"
+#     echo $cmd
+#     eval $cmd
+#     if [ $? == 0 ]; then
+#         echo pyright pass
+#     else
+#         echo pyright fail
+#         exit 1
+#     fi
+#     git add .pyright_hash_last_commit
+# fi

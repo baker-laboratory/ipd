@@ -18,16 +18,18 @@ from sqlmodel import Field, Relationship
 import ipd
 
 def main():
-    for k, v in globals().copy().items():
-        if not k.startswith('test_'): continue
-        with tempfile.TemporaryDirectory() as td:
-            v(td)
-    print('test_crud PASS')
+    with tempfile.TemporaryDirectory() as td:
+        # test_duplicate_one_to_many(td)
+        test_user_group(td)
+        test_many2many_basic(td)
+        test_one2many_parent(td)
+        test_many2many_parent(td)
+        test_many2many_sanity_check(td)
+        print('test_crud PASS')
 
 def create_new_sqlmodel_base() -> type[sqlmodel.SQLModel]:
     return type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
 
-@pytest.mark.fast
 @pytest.mark.xfail
 def test_duplicate_one_to_many(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
@@ -71,7 +73,6 @@ def test_duplicate_one_to_many(tmpdir):
     # f, g = b.newgroupd(), b.newgroupd()
     # b.newuserd(group1=f, group2=g)
 
-@pytest.mark.fast
 def test_user_group(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
@@ -132,7 +133,6 @@ def test_user_group(tmpdir):
     assert a in c.following
     assert a in d.following
 
-@pytest.mark.fast
 def test_many2many_basic(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
@@ -148,7 +148,6 @@ def test_many2many_basic(tmpdir):
     MyBackend = type('MyBackend', (ipd.crud.BackendBase, ), {}, models=models, SQL=LocalSQLModel)
     helper_test_users_groups(tmpdir, LocalSQLModel, MyBackend.DBUserC, MyBackend.DBGroupC)
 
-@pytest.mark.fast
 def test_one2many_parent(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
@@ -176,7 +175,6 @@ def test_one2many_parent(tmpdir):
     assert c.parent.id == b.id
     assert c.id == b.children[0].id
 
-@pytest.mark.fast
 def test_many2many_parent(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
@@ -211,7 +209,6 @@ def test_many2many_parent(tmpdir):
     assert c.id in {_.id for _ in b.followers}
     assert d.id in {_.id for _ in b.followers}
 
-@pytest.mark.fast
 def test_many2many_sanity_check(tmpdir):
     LocalSQLModel = create_new_sqlmodel_base()
 
@@ -236,10 +233,11 @@ def test_many2many_sanity_check(tmpdir):
     helper_test_users_groups(tmpdir, LocalSQLModel, DBUserA, DBGroupA)
 
 def helper_create_db(tmpdir, LocalSQLModel):
-    engine = sqlmodel.create_engine(f'sqlite:///{tmpdir}/test.db',
-                                    # connect_args={"check_same_thread": False},
-                                    # poolclass=sqlmodel.pool.StaticPool,
-                                    )
+    engine = sqlmodel.create_engine(
+        f'sqlite:///{tmpdir}/test.db',
+        # connect_args={"check_same_thread": False},
+        # poolclass=sqlmodel.pool.StaticPool,
+    )
     print('metadata id', id(LocalSQLModel.metadata))
     LocalSQLModel.metadata.create_all(engine)
     session = sqlmodel.Session(engine)

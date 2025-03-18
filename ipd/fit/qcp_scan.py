@@ -1,17 +1,21 @@
 import itertools
 
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import numpy as np
 import torch.utils.cpp_extension  # type: ignore
 from icecream import ic
 
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 
-_rms = ipd.dev.lazyimport('ipd.fit.qcp_rms_cuda')
+_rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
 
 def scan_rms_seqpos(bb, tgt, ranges, cyclic=1, rmsout=False, maxdist=9e9, lasu=0, nthread=256, chainbreak=0):
     """"""

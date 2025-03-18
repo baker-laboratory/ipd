@@ -2,9 +2,13 @@ import random
 
 import pytest
 
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import ipd
 
@@ -12,7 +16,7 @@ pytest.importorskip('ipd.fit.qcp_rms_cuda')
 import numpy as np
 from icecream import ic
 
-from ipd import h
+import ipd.homog.thgeom as h
 from ipd.fit.qcp_rms import _rms
 
 def main():
@@ -30,7 +34,6 @@ def main():
     ipd.global_timer.report()
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_scan_partition():
     for i in range(100):
         bb = th.randn((60, 3), dtype=th.float32, device='cuda')
@@ -40,7 +43,6 @@ def test_qcp_scan_partition():
         assert idx.sum() == 6
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_bbhetero():
     nscan = 10
     bb0 = th.randn((60, 1, 3), dtype=th.float32, device='cuda')
@@ -59,7 +61,6 @@ def test_qcp_bbhetero():
     # assert 0
 
 @ipd.timed
-@pytest.mark.fast
 def helper_test_qcp_scan_cuda(N, Ncyc, natom, i=0, ntgt=0, bbhetero=False):
     try:
         seed = hash((N, i, Ncyc, natom, random.random()))
@@ -89,25 +90,21 @@ def helper_test_qcp_scan_cuda(N, Ncyc, natom, i=0, ntgt=0, bbhetero=False):
         raise e
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_scan_cuda():
     for N in range(1, 16):
         helper_test_qcp_scan_cuda(N, 1, 1)
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_scan_cuda_ncac():
     for N in range(1, 16):
         helper_test_qcp_scan_cuda(N, 1, 3)
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_scan_cuda_cyclic():
     for N in range(1, 16):
         helper_test_qcp_scan_cuda(N, 3, 1)
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_scan_cuda_ncac_cyclic():
     for N in range(1, 16):
         helper_test_qcp_scan_cuda(N, 3, 3)
@@ -151,7 +148,6 @@ def perf_test_qcpscan_cuda():
         helper_test_qcpscan_perf(50, 4, natom, 1, 3)
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_scan_AB():
     for i in range(3, 7):
         pts1 = th.randn((30, 3), dtype=th.float32, device='cuda')
@@ -160,7 +156,6 @@ def test_qcp_scan_AB():
         assert i // 2 <= sum(10 <= idx) <= (i - i//2)
 
 @ipd.timed
-@pytest.mark.fast
 def test_qcp_scan():
     helper_test_qcp_scan(ranges=[[0, 1], [10, 11], [20, 21]])
     helper_test_qcp_scan(ranges=[[0, 3], [10, 12], [20, 22]])

@@ -22,12 +22,12 @@ sym:
 
   Lasu_prot: null
   Lasu_ligand: null
-  ligand_is_symmetric: True
+  make_ligand_symmetric: True
   contig_is_symmetric: False
 
   # Symmetry options
   # recenter: True
-  start_radius: null
+  radius: null
   force_radius: null
   asu_to_best_frame: null
   fit: False

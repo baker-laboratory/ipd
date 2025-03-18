@@ -16,7 +16,6 @@ def main():
     # assert 0
     check_frame_opids()
 
-@pytest.mark.fast
 def test_screw_elem_frames():
     f31a = ipd.homog.hrot([0, 0, 1], 120) @ ipd.homog.htrans([0, 0, 1 / 3])
     assert ipd.sym.xtal.symelem_of(f31a) == SymElem(
@@ -45,7 +44,6 @@ def test_screw_elem_frames():
         hel=2 / 3,  # type: ignore
         label="C32")  # type: ignore
 
-@pytest.mark.fast
 def test_screw_elem():
     ic("test_screw_elem")
     S2 = np.sqrt(2)
@@ -175,7 +173,12 @@ def check_frame_opids():
                 continue
 
             opids = elem.frame_operator_ids(frames, sanitycheck=True)
-            opcompids = _make_operator_component_joint_ids(elem, elem, frames, opids, compids, sanitycheck=True)
+            opcompids = _make_operator_component_joint_ids(elem,
+                                                           elem,
+                                                           frames,
+                                                           opids,
+                                                           compids,
+                                                           sanitycheck=True)
 
             print("SUCCESS", flush=True)
             break

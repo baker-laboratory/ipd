@@ -15,37 +15,41 @@ _file_mappings can be set to mannually map a file to another file
 import argparse
 import os
 import sys
+from pathlib import Path
 from collections import defaultdict
 from time import perf_counter
 from assertpy import assert_that
 
 # set to manually specipy a command for a file
 _overrides = {
-    # "foo.py": "PYTHONPATH=.. python foo/bar.py -baz"
+    # 'foo.py': 'PYTHONPATH=.. python foo/bar.py -baz'
 }
 
 # set to mannually map a file to another file
 _file_mappings = {
-    # ex: 'sym_slice.py': ['../rf2aa/tests/sym/test_rf2_sym_manager.py'],
+    'pymol_selection_algebra.lark': ['ipd/tests/sel/test_sel_pymol.py'],
 }
 
 # postprocess command
-_post = defaultdict(lambda: "")
+_post = defaultdict(lambda: '')
 
 def get_args(sysargv):
+    """get command line arguments"""
     parser = argparse.ArgumentParser()
-    parser.add_argument("projects", type=str, nargs='+', default='')
-    parser.add_argument("testfile", type=str, default='')
-    parser.add_argument("--pytest", action='store_true')
+    parser.add_argument('projects', type=str, nargs='+', default='')
+    parser.add_argument('testfile', type=str, default='')
+    parser.add_argument('--pytest', action='store_true')
+    parser.add_argument('--quiet', action='store_true')
+    parser.add_argument('--filter_build_log', action='store_true')
     args = parser.parse_args(sysargv[1:])
     return args.__dict__
 
 def file_has_main(fname):
-    "check if file has a main block"
+    'check if file has a main block'
     if not os.path.exists(fname): return False
     with open(fname) as inp:
         for line in inp:
-            if line.startswith("if __name__ == ") and not line.strip().endswith('{# in template #}'):
+            if line.startswith('if __name__ == ') and not line.strip().endswith('{# in template #}'):
                 return True
     return False
 
@@ -83,12 +87,12 @@ def rindex(lst, val):
         return -1
 
 def testfile_of(projects, path, bname, debug=False, **kw) -> str:
-    "find testfile for a given file"
+    'find testfile for a given file'
     if bname.startswith('_'): return None  # type: ignore
     root = '/' if path and path[0] == '/' else ''
     spath = path.split('/')
     i = max(rindex(spath, proj) for proj in projects)
-    # assert i >= 0, f'no {" or ".join(projects)} dir in {path}'
+    # assert i >= 0, f'no {' or '.join(projects)} dir in {path}'
     if i < 0:
         pre, post = '', f'{path}/'
     else:
@@ -104,16 +108,17 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
 def dispatch(
         projects,
         fname,
-        pytest_args='--disable-warnings -m "not nondeterministic"',
+        pytest_args='-x --disable-warnings -m "not nondeterministic" --doctest-modules',
         file_mappings=dict(),
         overrides=dict(),
         strict=True,
         pytest=False,
         **kw,
 ):
-    "dispatch command for a given file. see above"
+    'dispatch command for a given file. see above'
 
     fname = os.path.relpath(fname)
+    module_fname = '' if fname[:5] == 'test_' else fname
     path, bname = os.path.split(fname)
 
     if bname in overrides:
@@ -129,10 +134,10 @@ def dispatch(
         bname = file_mappings[bname][0]
         path, bname = os.path.split(bname)
 
-    if not file_has_main(fname) and not bname.startswith("test_"):
+    if not file_has_main(fname) and not bname.startswith('test_'):
         testfile = testfile_of(projects, path, bname, **kw)
         if testfile:
-            if not os.path.exists(testfile):
+            if not os.path.exists(testfile) and fname.endswith('.py'):
                 print('autogen test file', testfile)
                 os.system(f'{sys.executable} -mipd code make_testfile {fname} {testfile}')
                 os.system(f'subl {testfile}')
@@ -143,27 +148,33 @@ def dispatch(
         test()
         sys.exit()
 
-    if pytest or (not file_has_main(fname) and bname.startswith("test_")):
-        cmd = f"{sys.executable} -mpytest {pytest_args} {fname}"
-    elif fname.endswith(".py") and bname != 'conftest.py':
-        cmd = f"PYTHONPATH=. {sys.executable} " + fname
+    pypath = f'PYTHONPATH={":".join(p for p in sys.path if "python3" not in p)}'
+    if pytest or (not file_has_main(fname) and bname.startswith('test_')):
+        cmd = f'{pypath} {sys.executable} -m pytest {pytest_args} {module_fname}'
+    elif fname.endswith('.py') and bname != 'conftest.py':
+        cmd = f'{pypath} {sys.executable} ' + fname
     else:
-        cmd = f"{sys.executable} -mpytest {pytest_args}"
+        cmd = f'{pypath} {sys.executable} -mpytest {pytest_args}'
     return cmd, _post[bname]
 
-def main(projects, **kw):
+def main(projects, quiet=False, filter_build_log=False, **kw):
     t = perf_counter()
-    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest', '')
-    print("call:", sys.argv)
-    print("cwd:", os.getcwd())
-    print("cmd:", cmd)
-    print(f"{' ide/runtests.py running cmd in cwd ':=^80}")
-    sys.stdout.flush()
+    cmd, post = dispatch(projects, kw['testfile'], **kw) if kw['testfile'] else (f'{sys.executable} -mpytest',
+                                                                                 '')
+    if not quiet:
+        print('call:', sys.argv)
+        print('cwd:', os.getcwd())
+        print('cmd:', cmd)
+        print(f'{" run_tests_on_file.py running cmd in cwd ":=^69}')
+        sys.stdout.flush()
     os.system(cmd)
-    print(f"{' main command done ':=^80}")
     os.system(post)
     t = perf_counter() - t
-    print(f"{f' runtests.py done, time {t:7.3f} ':=^80}")
+    if filter_build_log:
+        p = Path('sublime_build.log')
+        assert p.exists()
+
+    print(f'{f" run_tests_on_file.py done, time {t:7.3f} ":=^69}')
 
 if __name__ == '__main__':
     args = get_args(sys.argv)

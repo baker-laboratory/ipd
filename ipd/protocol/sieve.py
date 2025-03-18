@@ -9,6 +9,7 @@ class SieveError(ValueError):
     pass
 
 class SieveManager:
+
     def __init__(self):
         self._sieve_classes = {}
         self.sieves = []
@@ -49,6 +50,7 @@ def apply(*a, **kw):
     _manager.apply_sieves(*a, **kw)  # type: ignore
 
 class Sieve:
+
     def __init_subclass__(cls, **kw):
         super().__init_subclass__(**kw)
         _manager._sieve_classes[cls.__name__] = cls  # type: ignore

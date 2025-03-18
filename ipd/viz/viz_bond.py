@@ -6,8 +6,9 @@ except ImportError:
 import numpy as np
 
 import ipd
+from ipd.viz.viz_deco import pymol_scene
 
-@ipd.viz.pymol_scene
+@pymol_scene
 def show_bonds(xyz, bonds, colors=None, **kw):
     cgo = list()
     if not colors: colors = [(0.3, 0.3, 0.3)] * len(xyz)

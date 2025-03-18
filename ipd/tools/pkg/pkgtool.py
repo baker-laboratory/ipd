@@ -1,7 +1,7 @@
 # import os
 import sys
 
-from ipd.dev import CliBase  # type: ignore
+from ipd.dev.cli import CliBase
 
 def main():
     tool = PkgTool()
@@ -10,21 +10,25 @@ def main():
     print('check_package_structure.py DONE')
 
 class PkgTool(CliBase):
+
     def cwd_package(self):
         return '/home/sheffler/ipd'
 
-class Config(PkgTool):
+class ConfigTool(PkgTool):
+
     def cmd_check(self):
         print('check_import')
 
-class Tests(PkgTool):
+class TestsTool(PkgTool):
+
     def cmd_check(self):
         print('check_import')
 
     def cmd_run(self):
         print('run_tests')
 
-class Imports(PkgTool):
+class ImportsTool(PkgTool):
+
     def cmd_check(self):
         print('check_import')
 

@@ -5,52 +5,236 @@ import os
 import pickle
 import ipd
 
-data_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../data"))
+def joinpaths(a, b):
+    """Join two filesystem paths.
+
+    Args:
+        a (str): First part of the path.
+        b (str): Second part of the path.
+
+    Returns:
+        str: Combined path.
+
+    Example:
+        >>> joinpaths('/home/user', 'data/file.txt')
+        '/home/user/data/file.txt'
+    """
+    a, b = a.rstrip('/'), b.lstrip('/')
+    return os.path.join(a, b)
+
+package_dir = os.path.realpath(joinpaths(os.path.dirname(__file__), "../.."))
+data_dir = os.path.realpath(joinpaths(os.path.dirname(__file__), "../../data"))
 _compression_extensions = ("gz", "tgz", "xz", "txz")
 
 def package_data_path(fname=None, emptyok=True, datadir=data_dir):
-    if not fname: return datadir
-    if os.path.exists(os.path.join(datadir, fname)):
-        return os.path.join(datadir, fname)
-    elif os.path.exists(os.path.join(datadir, fname + ".pickle")):
-        return os.path.join(datadir, fname + ".pickle")
-    elif os.path.exists(os.path.join(datadir, fname + ".pickle.gz")):
-        return os.path.join(datadir, fname + ".pickle.gz")
-    elif os.path.exists(os.path.join(datadir, fname + ".pickle.xz")):
-        return os.path.join(datadir, fname + ".pickle.xz")
+    """Get the full path to a package data file.
+
+    Args:
+        fname (str, optional): File name to locate. Defaults to None.
+        emptyok (bool, optional): If True, returns the path even if the file doesn't exist. Defaults to True.
+        datadir (str, optional): Base data directory. Defaults to `data_dir`.
+
+    Returns:
+        str: Full path to the data file or None if not found and emptyok is False.
+
+    Example:
+        >>> package_data_path('spacegroup_data.pickle') # doctest:+ELLIPSIS
+        '.../ipd/data/spacegroup_data.pickle'
+    """
+    if not fname:
+        return datadir
+    elif os.path.exists(joinpaths(datadir, fname)):
+        return joinpaths(datadir, fname)
+    elif os.path.exists(joinpaths(datadir, fname + ".pickle")):
+        return joinpaths(datadir, fname + ".pickle")
+    elif os.path.exists(joinpaths(datadir, fname + ".pickle.gz")):
+        return joinpaths(datadir, fname + ".pickle.gz")
+    elif os.path.exists(joinpaths(datadir, fname + ".pickle.xz")):
+        return joinpaths(datadir, fname + ".pickle.xz")
     if emptyok:
-        return os.path.join(datadir, fname)
+        return joinpaths(datadir, fname)
     else:
         return None
 
 def package_testdata_path(fname=None, emptyok=True):
-    return package_data_path(fname, emptyok, datadir=os.path.join(data_dir, 'tests'))
+    """Get the full path to a test data file.
+
+    Args:
+        fname (str, optional): File name to locate. Defaults to None.
+        emptyok (bool, optional): If True, returns the path even if the file doesn't exist. Defaults to True.
+
+    Returns:
+        str: Full path to the test data file.
+
+    Example:
+        >>> package_testdata_path('pdb/1a2n.bcif.gz') # doctest:+ELLIPSIS
+        '.../ipd/data/tests/pdb/1a2n.bcif.gz'
+    """
+    return package_data_path(fname, emptyok, datadir=joinpaths(data_dir, 'tests'))
 
 def load_package_data(fname):
+    """Load data from a package file.
+
+    Args:
+        fname (str): File name to load.
+
+    Returns:
+        object: Loaded data.
+
+    Example:
+        >>> data = load_package_data('spacegroup_data.pickle')
+        >>> isinstance(data, dict)
+        True
+    """
     datapath = package_data_path(fname)
     data = load(datapath)
     return data
 
 def have_package_data(fname):
+    """Check if a package data file exists.
+
+    Args:
+        fname (str): File name to check.
+
+    Returns:
+        bool: True if the file exists, False otherwise.
+
+    Example:
+        >>> have_package_data('spacegroup_data.pickle')
+        True
+    """
     datapath = package_data_path(fname, emptyok=False)
     return datapath is not None
 
 def open_package_data(fname):
+    """Open a package data file.
+
+    Args:
+        fname (str): File name to open.
+
+    Returns:
+        file object: Open file object.
+
+    Example:
+        >>> with open_package_data('spacegroup_data.pickle') as f:
+        ...     data = pickle.load(f)
+        >>> isinstance(data, dict)
+        True
+    """
     if fname.endswith(".xz"):
         return open_lzma_cached(package_data_path(fname))
     else:
-        return open(package_data_path(fname))  # type: ignore
-
-def save_package_data(stuff, fname):
-    return save(stuff, package_data_path(fname))
+        return open(package_data_path(fname), "rb")
 
 def load_json(f):
+    """Load JSON data from a file.
+
+    Args:
+        f (str): File path.
+
+    Returns:
+        dict: Parsed JSON data.
+
+    Example:
+        >>> import tempfile
+        >>> with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+        ...     charswritten = f.write('{"key": "value"}')
+        >>> load_json(f.name)
+        {'key': 'value'}
+    """
     with open(f, "r") as inp:
         return json.load(inp)
 
 def dump_json(j, f, indent=True):
+    """Dump JSON data to a file.
+
+    Args:
+        j (dict): JSON data to write.
+        f (str): File path.
+        indent (bool, optional): If True, formats JSON with indentation. Defaults to True.
+
+    Example:
+        >>> import tempfile
+        >>> data = {"key": "value"}
+        >>> with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+        ...     dump_json(data, f.name)
+        >>> load_json(f.name)
+        {'key': 'value'}
+    """
     with open(f, "w") as out:
         return json.dump(j, out, indent=indent)
+
+def is_pickle_fname(fname):
+    """Check if a file name refers to a pickle file.
+
+    Args:
+        fname (str): File name.
+
+    Returns:
+        bool: True if the file is a pickle file, False otherwise.
+
+    Example:
+        >>> is_pickle_fname('data.pickle')
+        True
+        >>> is_pickle_fname('data.json')
+        False
+    """
+    return os.path.basename(fname).count(".pickle") > 0
+
+class open_lzma_cached:
+    """Context manager for opening LZMA-compressed files with caching.
+
+    Args:
+        fname (str): File name.
+        mode (str, optional): File mode. Defaults to "rb".
+    """
+
+    def __init__(self, fname, mode="rb"):
+        self.file_obj = lzma.open(fname, mode)
+
+    def __enter__(self):
+        return self.file_obj
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.file_obj.close()
+
+def is_pdb_fname(fn, maxlen=1000):
+    """Check if a file name is a PDB file.
+
+    Args:
+        fn (str): File name.
+        maxlen (int, optional): Maximum allowed length. Defaults to 1000.
+
+    Returns:
+        bool: True if the file is a PDB file, False otherwise.
+
+    Raises:
+        ValueError: If the file format is unknown.
+    """
+    if len(fn) > maxlen:
+        return False
+    elif len(fn.split()) > 1:
+        return False
+    elif not os.path.exists(fn):
+        return False
+    elif fn.endswith((".pdb.gz", ".pdb")):
+        return True
+    elif fn[-4:-1] == "pdb" and fn[-1].isnumeric():
+        return True
+    elif fn.endswith(".gz") and fn[-8:-4] == ".pdb" and fn[-4].isnumeric():
+        return True
+    else:
+        raise ValueError(f"Can't tell if is PDB fname: {fn}")
+
+def package_testcif_path(pdbcode=None, emptyok=False):
+    if not pdbcode: return joinpaths(package_data_path(), 'pdb')
+    return package_testdata_path(f'pdb/{pdbcode}.bcif.gz')
+
+def open_package_file(fname):
+    return open(joinpaths(package_dir, fname))
+
+def save_package_data(stuff, fname):
+    return save(stuff, package_data_path(fname))
 
 def decompress_lzma_file(fn, overwrite=True, use_existing=False, missing_ok=False):
     assert fn.endswith(".xz") and not fn.endswith(".xz.xz")
@@ -123,9 +307,6 @@ def fname_extensions(fname):
         extcomp=extcomp,
         uncomp=uncomp,
     )
-
-def is_pickle_fname(fname):
-    return os.path.basename(fname).count(".pickle") > 0
 
 def load(fname, **kw):
     import numpy as np
@@ -227,37 +408,3 @@ def save_pickle(stuff, fname, add_dotpickle=True, uselzma=False, **kw):
         fname += ".pickle"
     with opener(fname, "wb") as out:
         pickle.dump(stuff, out)  # type: ignore
-
-class open_lzma_cached:
-    def __init__(self, fname, mode="rb"):
-        assert mode == "rb"
-        cachefile = os.path.expanduser(os.path.relpath(f"~/.cache/ipd/{fname}"))
-        fname = os.path.abspath(fname)
-        if not os.path.exists(cachefile):
-            os.makedirs(os.path.dirname(cachefile), exist_ok=True)
-            self.file_obj = lzma.open(fname, "rb")
-            with open(cachefile, "wb") as out:
-                out.write(self.file_obj.read())
-        self.file_obj = open(cachefile, mode)
-
-    def __enter__(self):
-        return self.file_obj
-
-    def __exit__(self, __type__, __value__, __traceback__):
-        self.file_obj.close()
-
-def is_pdb_fname(fn, maxlen=1000):
-    if len(fn) > maxlen:
-        return False
-    elif len(fn.split()) > 1:
-        return False
-    elif not os.path.exists(fn):
-        return False
-    elif fn.endswith((".pdb.gz", ".pdb")):
-        return True
-    elif fn[-4:-1] == "pdb" and fn[-1].isnumeric():
-        return True
-    elif fn.endswith(".gz") and fn[-8:-4] == ".pdb" and fn[-4].isnumeric():
-        return True
-    else:
-        raise ValueError(f"cant tell if is pdb fname: {fn}")

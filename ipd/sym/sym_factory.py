@@ -8,6 +8,7 @@ _default_sym_manager = 'base'
 class MetaSymManager(abc.ABCMeta):
     """Metaclass for SymmetryManager, ensures all subclasses are registered
     here even if in other modules."""
+
     def __init__(cls, cls_name, cls_bases, cls_dict):
         # sourcery skip: instance-method-first-arg-name
         """Register the SymmetryManager subclass."""
@@ -30,7 +31,7 @@ def set_default_sym_manager(kind):
     _default_sym_manager = kind
     # ic('set_default_sym_manager', kind, _default_sym_manager)
 
-def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **kw):
+def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, setglobal=True, **kw):
     """Create a symmetry manager based on the configuration.
 
     Args:
@@ -47,7 +48,8 @@ def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, **k
     kind = kind or opt.get(kind, None) or _default_sym_manager
     if kind == 'input_defined': opt.symid = 'input_defined'
     elif opt.symid == 'C1': kind = 'C1'
-    sym = _sym_managers[kind](opt, device=device)
-    ipd.sym.set_global_symmetry(sym)
-    assert ipd.symmetrize is sym
+    sym = _sym_managers[kind](conf=conf, opt=opt, device=device)
+    if setglobal:
+        ipd.sym.set_global_symmetry(sym)
+        assert ipd.symmetrize is sym
     return sym

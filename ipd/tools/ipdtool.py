@@ -2,14 +2,17 @@ import sys
 from pathlib import Path
 import os
 from typing_extensions import Annotated
-
-import git
-import typer
+from typing import Optional
 
 import ipd
+
+git = ipd.lazyimport('git')
+typer = ipd.lazyimport('typer')
+
 from ipd.dev.cli.clibase import CliBase
 
 class IPDTool(CliBase):
+
     def __init__(self, secretfile: str = '~/.secrets'):
         self.secrets = ipd.Bunch()
         self._add_secrets(secretfile)
@@ -20,8 +23,11 @@ class IPDTool(CliBase):
         secrets: list[str] = Path(os.path.expanduser(secretfile)).read_text().splitlines()
         self.secrets |= ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
 
-    def _fill_secrets(self, stuff: list[str] | str):
-        if isinstance(stuff, list): return [self._fill_secrets(_) for _ in stuff]
+    def _fill_secrets(self, stuff: list[str]):
+        assert isinstance(stuff, list)
+        return [self._fill_secrets_str(_) for _ in stuff]
+
+    def _fill_secrets_str(self, stuff):
         for k, v in self.secrets.items():
             stuff = stuff.replace(f'${{{k}}}', v)
             stuff = stuff.replace(f'{k}', v)
@@ -41,7 +47,7 @@ class IPDTool(CliBase):
     def clone(self,
               url: str,
               branch: Annotated[str, typer.Argument()] = 'main',
-              path: Annotated[str | None, typer.Argument()] = None,
+              path: Annotated[Optional[str], typer.Argument()] = None,
               secrets: str = '',
               norecurse: bool = False):
         path = path or branch

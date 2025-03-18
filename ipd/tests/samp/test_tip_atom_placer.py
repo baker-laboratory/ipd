@@ -1,11 +1,17 @@
 import pytest
 
-from ipd.lazy_import import lazyimport
+pytest.importorskip('torch')
 
-th = lazyimport('torch')
+from ipd import lazyimport
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 
 pytest.skip(allow_module_level=True)
 
@@ -18,7 +24,6 @@ def main():
     test_tip_atom_target()
     test_tip_atom_groups()
 
-@pytest.mark.fast
 def test_place_tip_atoms():
     tgt = ipd.samp.TipAtomTarget.from_pdb(ipd.tests.path('pdb/dna_example.pdb'), clashthresh=2.0)
     tips = ipd.samp.get_tip_atom_groups()
@@ -35,18 +40,15 @@ def helper_test_ray_frames(thing, inv=False):
             assert th.allclose(h.xform(frame, cen), h.point([0, 0, 0]), atol=1e-3)
             assert th.allclose(h.xform(frame, ori), h.vec([0, 0, 1]), atol=1e-3)
 
-@pytest.mark.fast
 def test_tip_frames():
     for tip in ipd.samp.get_tip_atom_groups():
         helper_test_ray_frames(tip)
 
-@pytest.mark.fast
 def test_tgt_frames():
     fname = ipd.tests.path('pdb/dna_example.pdb')
     tgt = ipd.samp.TipAtomTarget.from_pdb(fname, clashthresh=2.0)
     helper_test_ray_frames(tgt, inv=True)
 
-@pytest.mark.fast
 def test_hypercone_samp():
     for _ in range(3):
         spacing = th.rand(1).item() * 30 * th.pi / 180
@@ -87,17 +89,14 @@ def test_hypercone_samp():
     #      Quaterniond q(w,x,y,z);
     #      q.normalize();
 
-@pytest.mark.fast
 def test_tip_atom_groups():
     ipd.samp.get_tip_atom_groups()
 
-@pytest.mark.fast
 def test_tip_atom_definitions():
     ipd.samp.get_tip_atom_groups()
     # print()
     # assert 0
 
-@pytest.mark.fast
 def test_tip_atom_target():
     fname = ipd.tests.path('pdb/dna_example.pdb')
     tgtres = None

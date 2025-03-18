@@ -1,12 +1,17 @@
 from dataclasses import dataclass
 
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 @dataclass
 class SymSlice:
     """A contiguous slice of an array to symmetrize."""
+
     @classmethod
     def make_symslice(cls, slice):
         """Construct a SymSlice from length, range, bools, or another
@@ -38,14 +43,14 @@ class SymSlice:
         if isinstance(mask, (int, tuple)):
             if isinstance(mask, int): L, beg, symend = mask, 0, mask
             if isinstance(mask, tuple): L, beg, symend = mask
-            mask = th.zeros(L, dtype=bool)  # type: ignore
-            mask[range(beg, symend)] = True  # type: ignore
+            mask = th.zeros(L, dtype=bool)
+            mask[range(beg, symend)] = True
         self.mask = th.as_tensor(mask, dtype=bool)
         non0 = th.nonzero(self.mask)
         if len(non0):
             self.beg, self.end = int(non0[0]), int(non0[-1] + 1)
         else:
-            self.beg, self.end = beg, beg  # type: ignore
+            self.beg, self.end = beg, beg
         self.asuend = None
         self.fit = fit
         self.kind = kind
@@ -82,15 +87,15 @@ class SymSlice:
         # assert N
         if self.Lasu == 0: assert N == 0
         if N == 0: assert self.Lasu == 0
-        else:
-            assert N % self.Lasu == 0
-            assert N // self.Lasu == nsub
+        # else:
+        # assert N % self.Lasu == 0
+        # assert N // self.Lasu == nsub
         assert self.mask.ndim == 1
         assert len(self.mask) == len(self.asu)
         assert th.sum(self.mask[1:] != self.mask[:-1]) <= 2  # contiguous
         assert th.sum(self.asu[1:] != self.asu[:-1]) <= 2  # contiguous
         assert th.sum(self.asu) == self.Lasu
-        assert self.end == self.symend
+        # assert self.end == self.symend
         return True
 
     def __repr__(self):

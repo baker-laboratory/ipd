@@ -1,9 +1,25 @@
-import sys
 import contextlib
 import datetime
+import functools
 import uuid
+import sys
 
 import ipd
+
+@functools.total_ordering
+class Missing:
+    __slots__ = ()
+
+    def __repr__(self):
+        return 'NA'
+
+    def __eq__(self, other):
+        return False
+
+    def __lt__(self, other):
+        return True
+
+NA = Missing()
 
 def classname_or_str(T):
     return T if isinstance(T, str) else T.__name__
@@ -42,6 +58,7 @@ def check_torch_to_numpy(stuff):
     return stuff
 
 class Tee:
+
     def __init__(self, fd1, fd2=sys.stdout):
         if isinstance(fd1, str):
             self.fname = fd1
@@ -82,6 +99,7 @@ def stdout_untee():
     print("!!!!!!! stdout_untee", tee.fname)  # type: ignore
 
 class Flusher:
+
     def __init__(self, out):
         self.out = out
 
@@ -168,6 +186,7 @@ def generic_equals(this, that, checktypes=False, debug=False):
     return this == that
 
 class UnhashableSet:
+
     def __init__(self, stuff, strict=True):
         self.stuff = list()
         for thing in stuff:

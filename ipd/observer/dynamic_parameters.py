@@ -182,6 +182,7 @@ class StepObserver(Observer):
 
 class DynamicParameters(Mapping):
     """A central class that manages all dynamic parameters for a run."""
+
     def __init__(self, ndesign=None, ndiffuse=None, nrfold=40, _testing=False):
         self._step = Step(None, None, None)
         self._nstep = Step(ndesign, ndiffuse, nrfold)
@@ -452,11 +453,13 @@ def _as_set(thing, n):
     return thing
 
 class _NotIn:
+
     def __init__(self, *vals):
         self.vals = vals
 
 class DynamicParam(ABC):
     """Parameter that can change values through a process."""
+
     def __init__(self, manager=None):
         self.manager = manager
 
@@ -482,6 +485,7 @@ class DynamicParam(ABC):
         pass
 
 class _Not(DynamicParam):
+
     def __init__(self, parent):
         self.parent = parent
         self.manager = parent.manager
@@ -490,6 +494,7 @@ class _Not(DynamicParam):
         return not self.parent.value()
 
 class _TrueOnIters(DynamicParam):
+
     def __init__(self, manager, design, diffuse, rfold, levels=(True, False)):
         super().__init__(manager)
         ndesign, ndiffuse, nrfold = self.manager._nstep  # type: ignore
@@ -523,6 +528,7 @@ class _TrueOnIters(DynamicParam):
         return s
 
 class _Spline1D(DynamicParam):
+
     def __init__(self, manager, design, diffuse, rfold, **kw):
         pytest.importorskip('scipy')
         import numpy as np
@@ -547,6 +553,7 @@ class _Spline1D(DynamicParam):
         else: assert self.which in 'design diffuse rfold'.split()
 
 class _Spline2D(DynamicParam):
+
     def __init__(self, manager, diffuse_rfold, **kw):
         pytest.importorskip('scipy')
         import numpy as np

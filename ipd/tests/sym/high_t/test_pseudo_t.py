@@ -6,11 +6,9 @@ from ipd import *
 
 th = pytest.importorskip('torch')
 
-@pytest.mark.fast
 def test_t2():
     ipd.sym.high_t.pseudo_t_start(7)
 
-@pytest.mark.fast
 def test_t4():
     ipd.sym.high_t.pseudo_t_start(4)
 

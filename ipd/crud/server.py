@@ -8,9 +8,11 @@ import time
 import sqlmodel
 import uvicorn
 
-import ipd
+from ipd.crud.backend import BackendBase
+from ipd.crud.frontend import ClientBase
 
 class Server(uvicorn.Server):
+
     def run_in_thread(self):
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
@@ -22,7 +24,8 @@ class Server(uvicorn.Server):
 
         # sys.exit()
 class CrudRun:
-    def __getitem__(self, BackFront=tuple[ipd.crud.BackendBase, ipd.crud.ClientBase]):
+
+    def __getitem__(self, BackFront=tuple[BackendBase, ClientBase]):
         Backend, Client = BackFront
         return functools.partial(self.runserver, Client=Client, Backend=Backend)
 
@@ -35,8 +38,8 @@ class CrudRun:
         local=False,
         workers=1,
         background=True,
-        Backend: ipd.crud.BackendBase = None,  # type: ignore
-        Client: ipd.crud.ClientBase = None,  # type: ignore
+        Backend: BackendBase = None,  # type: ignore
+        Client: ClientBase = None,  # type: ignore
         **kw,
     ):
         datadir = os.path.abspath(os.path.expanduser(datadir))

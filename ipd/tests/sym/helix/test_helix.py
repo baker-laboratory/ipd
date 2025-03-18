@@ -4,6 +4,10 @@ import pytest
 import ipd
 
 def main():
+    ipd.tests.maintest(globals())
+    return
+
+    ipd.tests.maintest(globals())
     test_helix_scaling()
     assert 0
 
@@ -17,14 +21,12 @@ def main():
     test_helix_params()
     test_helix_upper_neighbors()
 
-@pytest.mark.fast
 def test_helix_upper_neighbors():
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0)
-    ipd.showme(h)
-    ipd.showme(h, closest=9)
-    ipd.showme(h, closest=5, closest_upper_only=True)
+    # ipd.showme(h)
+    # ipd.showme(h, closest=9)
+    # ipd.showme(h, closest=5, closest_upper_only=True)
 
-@pytest.mark.fast
 def test_helix_params():
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0.001)
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0.999)
@@ -33,7 +35,6 @@ def test_helix_params():
     with pytest.raises(ValueError):
         h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=1.001)
 
-@pytest.mark.fast
 def test_helix_scaling():
     pytest.skip()
     pytest.importorskip("willutil_cpp")
@@ -74,7 +75,6 @@ def test_helix_scaling():
     assert not np.allclose(rb.orientations(), origori)
 
 @pytest.mark.skip
-@pytest.mark.fast
 @pytest.mark.skipif(np.__version__[0] == '2', reason='ipd.sym.Helix breaks on numpy 2')
 def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
     pytest.importorskip('torch')
@@ -127,7 +127,6 @@ def test_helix_9_1_1_r100_s40_p50_t2_d80_c7():
     assert np.allclose(foo, hframes, atol=1e-4)
 
 @pytest.mark.skip
-@pytest.mark.fast
 @pytest.mark.skipif(np.__version__[0] == '2', reason='ipd.sym.Helix breaks on numpy 2')
 def test_helix_7_1_1_r80_s30_p20_t1_c7():
     pytest.importorskip('torch')

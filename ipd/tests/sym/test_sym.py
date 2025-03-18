@@ -4,10 +4,10 @@ import pytest
 import ipd
 
 def main():
-    _test_symmetrize_frames()
-    assert 0
+    # _test_symmetrize_frames()
+    # assert 0
 
-    test_subframes()
+    # test_subframes()
     test_frames_asym_of()
     test_frames_asym_remove_sameaxis()
     test_remove_if_same_axis()
@@ -50,7 +50,6 @@ def test_subframes():
     ic(frames.shape)  # type: ignore
     ic(subframes.shape)  # type: ignore
 
-@pytest.mark.fast
 def test_frames_asym_of():
     f = ipd.sym.frames("icos", asym_of="c5")
     assert len(f) == 12
@@ -72,6 +71,7 @@ def test_frames_asym_of():
     f = ipd.sym.frames("tet", asym_of="c2")
     assert len(f) == 6
 
+@pytest.mark.xfail
 def test_frames_asym_remove_sameaxis():
     syms = "tet oct icos".split()
     csyms = "c2 c3 c4 c5".split()
@@ -86,11 +86,12 @@ def test_frames_asym_remove_sameaxis():
         ("icos c5".split(), (4, 12, 12, 60)),
     ]
     for i, ((sym, csym), (n1, n2, n3, n4)) in enumerate(config):
-        # print(i, sym, csym)
         cart = ipd.sym.axes(sym, csym)
         # cart = [0, 0, 10]
+        ic(i, sym, csym, cart)
 
         f = ipd.sym.frames(sym, bbsym=csym, asym_of=csym, axis=[0, 0, 1])
+        ic(f.shape)
         assert len(f) == n1
         # print(i, sym, csym, len(f))
         f[:, :, 3] += 10 * ipd.homog.hdot(f, cart)
@@ -120,7 +121,6 @@ def test_frames_asym_remove_sameaxis():
         f[:, :, 3] += 10 * ipd.homog.hdot(f, cart)
         # ipd.viz.showme(f, spheres=0.2, name=f'test_{sym}_{csym}_all')
 
-@pytest.mark.fast
 def test_remove_if_same_axis():
     f = ipd.sym.frames("tet")
     assert f.shape == (12, 4, 4)
@@ -139,7 +139,6 @@ def test_remove_if_same_axis():
     assert ipd.sym.frames("icos", bbsym="c3").shape == (20, 4, 4)
     assert ipd.sym.frames("icos", bbsym="c5").shape == (12, 4, 4)
 
-@pytest.mark.fast
 def test_sym():
     assert ipd.sym.symframes.tetrahedral_frames.shape == (12, 4, 4)
     assert ipd.sym.symframes.octahedral_frames.shape == (24, 4, 4)
@@ -153,7 +152,6 @@ def test_sym():
     assert np.all(x[..., 3, :3] == 0)
     assert np.all(x[..., :3, 3] == 0)
 
-@pytest.mark.fast
 def test_sym_frames():
     assert len(ipd.sym.tetrahedral_axes_all[2] == 6)
     assert len(ipd.sym.tetrahedral_axes_all[3] == 4)

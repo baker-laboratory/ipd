@@ -4,31 +4,37 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Any, Annotated
+from typing import Any, Annotated, Optional
 from typer import Argument
 
-import git
-import submitit
-
 import ipd
+from ipd.tools.ipdtool import IPDTool
 
-class CITool(ipd.tools.IPDTool):
+git = ipd.lazyimport('git')
+
+class CITool(IPDTool):
+
     def __init__(self, secretfile: str = '~/.secrets'):
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
         self.secrets = ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
         self.repos: dict[str, str] = {
             'cifutils': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/cifutils.git',
             'datahub': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/ai/datahub.git',
-            'github-cifutils': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/cifutils.git',
-            'github-datahub': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/datahub.git',
+            'github-cifutils':
+            f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/cifutils.git',
+            'github-datahub':
+            f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/datahub.git',
             'frame-flow': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/frame-flow.git',
             'fused_mpnn': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/fused_mpnn.git',
             'RF2-allatom': f'https://{self.secrets.GITLAB_SHEFFLER}@git.ipd.uw.edu/jue/RF2-allatom.git',
-            'rf_diffusion': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
+            'rf_diffusion':
+            f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/rf_diffusion.git',
             'ipd': f'https://{self.secrets.GITHUB_SHEFFLER}@github.com/baker-laboratory/ipd.git',
         }
 
-    def update_library(self, libs: Annotated[list[str] | None, Argument()] = None, path: Path = Path('~/bare_repos')):
+    def update_library(self,
+                       libs: Annotated[Optional[list[str]], Argument()] = None,
+                       path: Path = Path('~/bare_repos')):
         # sourcery skip: default-mutable-arg
         path = path.expanduser()
         assert os.path.isdir(path)
@@ -58,6 +64,7 @@ def init_submodules(repo: git.Repo, repolib: str = '~/bare_repos', recursive: bo
                 init_submodules(subrepo, repolib, True)
 
 class RepoTool(CITool):
+
     def setup_submodules(self, path: str = '.', repolib: str = '~/bare_repos', recursive: bool = False):
         """Setup submodules in a git repository from a bare repo library."""
         repo = git.Repo(path, search_parent_directories=True)
@@ -66,6 +73,7 @@ class RepoTool(CITool):
             init_submodules(repo, repolib, recursive)
 
 class Future:
+
     def __init__(self, result):
         self._result = result
 
@@ -140,6 +148,7 @@ def run_pytest(
         return cmd, Future(ipd.dev.run(cmd, errok=True, capture=False)), log
 
 class TestsTool(CITool):
+
     def ruff(self, project):
         ipd.dev.run(f'ruff check {project} 2>&1 | tee ruff_ipd_ci_test_run.log', echo=True, capture=False)
 
@@ -185,14 +194,15 @@ class TestsTool(CITool):
             list of tuples (cmd, job, log)
         """
         # os.makedirs(os.path.dirname(log), exist_ok=True)
+        submitit = ipd.importornone('submitit')
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'
-        flags = f'{flags} --benchmark-disable --disable-warnings --cov --junitxml=junit.xml -o junit_family=legacy --durations=10'
+        flags = f'{flags} --benchmark-disable --disable-warnings --cov --junitxml=junit2.xml -o junit_family=legacy --durations=10'
         env = f'OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}'
         sel = ' or '.join(which.split()) if which else ''
         jobs = []
-        executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm else None
+        executor = submitit.AutoExecutor(folder='slurm_logs_%j') if slurm and submitit else None
         kw: dict[str, Any] = dict(exe=exe,
                                   env=env,
                                   mark=mark,
@@ -212,7 +222,9 @@ class TestsTool(CITool):
                 jobs.append(run_pytest(sel=sel, parallel=1, log=log, mem=mem[0], **kw))  # type: ignore
             else:
                 nosel = ' and '.join([f'not {t}' for t in which.split()])
-                jobs.append(run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log', **kw))
+                jobs.append(
+                    run_pytest(sel=nosel, parallel=parallel, mem=mem[1 % len(mem)], log=f'{log}.par.log',
+                               **kw))
                 kw['exe'] = None  # run the nonparallel tests on head node... they are quick
                 kw['flags'] = kw['flags'].replace('junit.xml', 'junit2.xml')
                 jobs.append(run_pytest(sel=sel, parallel=1, mem=mem[0], log=f'{log}.nopar.log', **kw))

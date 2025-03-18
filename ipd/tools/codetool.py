@@ -1,10 +1,16 @@
+import os
 from typing import Annotated
 import typer
 import ipd
+from ipd.tools.ipdtool import IPDTool
 
-class CodeTool(ipd.tools.IPDTool):
+class CodeTool(IPDTool):
+
     def make_testfile(self, sourcefile, testfile):
         ipd.dev.make_testfile(sourcefile, testfile)
+
+    def clean_pycache(self, path: ipd.Path = ipd.Path('.')):
+        os.system(fr'find {path} -name *.pyc -delete')
 
     def yapf(
         self,
@@ -54,3 +60,29 @@ class CodeTool(ipd.tools.IPDTool):
         cmd = 'pyright -p {conffile} {" ".join(changed_files)}'
         result = ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
         raise typer.Exit(code=result.exitcode)
+
+    def filter_python_output(self, path: Annotated[str, typer.Argument()]):
+        with open(path) as inp:
+            text = inp.read()
+        with open(f'{path}.orig', 'w') as out:
+            out.write(text)
+        try:
+            new = ipd.dev.filter_python_output(text, entrypoint='codetool', preset='ipd_boilerplate')
+        except RuntimeError as e:
+            with open(path, 'w') as out:
+                out.write('ERROR WHEN RUNNING `ipd code filter_python_output <fname>`')
+                out.write(e)
+                raise typer.Exit()
+        with open(path, 'w') as out:
+            out.write(new)
+            out.write('\nTHIS FILE WAS FILTERED THRU `ipd code filter_python_output {path}`\n')
+
+    def unique_errors(self, files: list[str]):
+        text = ipd.dev.addreduce(ipd.Path(f).read_text() for f in files)
+        try:
+            result = ipd.dev.analyze_python_errors_log(text)
+            print(result)
+        except RuntimeError as e:
+            print('ERROR WHEN RUNNING `ipd code alalyze_python_errors_log <fname>`')
+            print(e)
+            raise typer.Exit()

@@ -1,8 +1,10 @@
 import os
 import pathlib
+import pytest
+
+pytest.importorskip('jinja2')
 
 from assertpy import assert_that as at
-import pytest
 
 import ipd
 
@@ -24,6 +26,8 @@ def test_qualname_of_file():
         if expected.startswith('rf2aa') and 'rf2aa' not in __file__: continue
         if expected.startswith('rf_diffusion') and 'rf_diffusion' not in __file__: continue
         at(ipd.dev.qualname_of_file(fname)).is_equal_to(expected)
+
+9
 
 def test_make_testfile(tmpdir):
     sourcefile = os.path.join(tmpdir, 'sourcefile.py')
@@ -73,8 +77,22 @@ import pytest
 
 import ipd
 
+config_test = ipd.Bunch(
+    re_only=[
+        #
+    ],
+    re_exclude=[
+        #
+    ],
+)
+
 def main():
-    ipd.tests.testmain(namespace=globals())
+    ipd.tests.maintest(
+        namespace=globals(),
+        config=config_test,
+        verbose=1,
+        check_xfail=False,
+    )
 
 def test_some_func():
     # some_func(a, *, b=5) -> None

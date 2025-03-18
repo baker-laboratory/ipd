@@ -163,7 +163,6 @@ def main():
     # _test_hxtal_viz_gyroid(headless=False)
     ic("test_xtal.py DONE")  # type: ignore
 
-@pytest.mark.fast
 def test_xtal_performance():
     t = ipd.dev.Timer()
 
@@ -182,7 +181,6 @@ def test_xtal_performance():
 
     t.report()
 
-@pytest.mark.fast
 def test_xtalrad_I213():
     x = ipd.sym.Xtal("I213")
     # ipd.showme(x, scale=100)
@@ -221,7 +219,6 @@ def helper_test_coords_to_asucen_0():
         cen2 = xtal.coords_to_asucen(cen1).reshape(4)
         assert np.allclose(cen0, cen2, atol=deltalen + 0.0001)
 
-@pytest.mark.fast
 def test_dump_pdb():
     sym = "I213"
     xtal = ipd.sym.Xtal(sym)
@@ -234,7 +231,6 @@ def test_dump_pdb():
     with tempfile.TemporaryDirectory() as td:
         xtal.dump_pdb(f"{td}/test.pdb", xyz, cellsize=csize, cells=(-1, 0), xtalrad=0.5, allowcellshift=True)
 
-@pytest.mark.fast
 def test_asucen(headless=True):
     return
     csize = 62.144
@@ -246,7 +242,6 @@ def test_asucen(headless=True):
     ipd.showme(asucen, sphere=4, headless=headless)
     ipd.showme(cellpts, sphere=4, headless=headless)
 
-@pytest.mark.fast
 def test_xtal_L6m322(headless=True):
     xtal = ipd.sym.Xtal("L6m322")
 
@@ -259,7 +254,6 @@ def test_xtal_L6m322(headless=True):
     # ipd.showme(xtal.unitframes, name='arstn', scale=3)
     ipd.showme(xtal, headless=headless, showgenframes=False, symelemscale=1, pointscale=0.8, vizfresh=True)
 
-@pytest.mark.fast
 def test_xtal_L6_32(headless=False):
     xtal = ipd.sym.Xtal("L6_32")
     # ic(xtal.symelems)vizfresh
@@ -271,7 +265,6 @@ def test_xtal_L6_32(headless=False):
     # ipd.showme(xtal.unitframes, name='arstn')
     # ipd.showme(xtal, headless=False, showgenframes=False, symelemscale=1, pointscale=0.8, vizfresh=True)
 
-@pytest.mark.fast
 def test_symelem_mobile():
     assert 0 == ipd.sym.xtal.SymElem(2, [1, 0, 0], [0, 0, 0]).mobile
     assert 0 == ipd.sym.xtal.SymElem(2, [1, 0, 0], [1, 0, 0]).mobile
@@ -281,7 +274,6 @@ def test_symelem_mobile():
     assert 0 == ipd.sym.xtal.SymElem(2, [1, 1, 0], [10, 10, 0]).mobile
     assert 1 == ipd.sym.xtal.SymElem(2, [1, 1, 0], [10, 10, 0.001]).mobile
 
-@pytest.mark.fast
 def test_symelem(headless=True):
     elem1 = ipd.sym.xtal.SymElem(2, [1, 0, 0], [0, 0, 0])
     elem2 = ipd.sym.xtal.SymElem(2, [1, 0, 0], [0, 10, 0])
@@ -303,7 +295,6 @@ def test_symelem(headless=True):
     # ipd.showme(ipd.homog.hxform(ipd.homog.hrot([0, 1, 0]s, 120, [0, 0, 1]), elem1), headless=headless)
     # ipd.showme([elem1], fancover=0.8)
 
-@pytest.mark.fast
 def test_xtal_cellframes():
     xtal = ipd.sym.Xtal("P 2 3")
     assert xtal.nsub == 12
@@ -394,7 +385,6 @@ def helper_test_xtal_cryst1(xtalname, dump_pdbs=False):
     s2 = set([tuple(x) for x in coords2])
     assert s1 == s2
 
-@pytest.mark.fast
 def test_hxtal_viz(headless=True, xtalname="P 2 3", symelemscale=0.7, cellsize=10, **kw):
     pymol = pytest.importorskip("pymol")
     xtal = ipd.sym.Xtal(xtalname)
@@ -442,47 +432,36 @@ def _test_hxtal_viz_gyroid(headless=True):
     #   ipd.showme(xtal, cellshift=[a, b, c], headless=headless, fanshift=[-0.03, 0.05],
     #             fansize=[0.15, 0.12])
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_4_3_2_432(*a, **kw):
     helper_test_xtal_cellframes("P 4 3 2 432", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_4_3_2_432(*a, **kw):
     helper_test_xtal_cryst1("P 4 3 2 432", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_4_3_2_422(*a, **kw):
     helper_test_xtal_cellframes("P 4 3 2 422", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_4_3_2_422(*a, **kw):
     helper_test_xtal_cryst1("P 4 3 2 422", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_4_3_2(*a, **kw):
     helper_test_xtal_cellframes("P 4 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_4_3_2(*a, **kw):
     helper_test_xtal_cryst1("P 4 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_4_3_2_443(*a, **kw):
     helper_test_xtal_cellframes("P 4 3 2 443", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_4_3_2_443(*a, **kw):
     helper_test_xtal_cryst1("P 4 3 2 443", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_4_3_2_43(*a, **kw):
     helper_test_xtal_cellframes("P 4 3 2 43", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_4_3_2_43(*a, **kw):
     helper_test_xtal_cryst1("P 4 3 2 43", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_F_4_3_2(*a, **kw):
     helper_test_xtal_cellframes("F 4 3 2", *a, **kw)
 
@@ -490,79 +469,60 @@ def test_xtal_cellframes_F_4_3_2(*a, **kw):
 def test_xtal_cryst1_F_4_3_2(*a, **kw):
     helper_test_xtal_cryst1("F 4 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_I_4_3_2(*a, **kw):
     helper_test_xtal_cellframes("I 4 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_I_4_3_2(*a, **kw):
     helper_test_xtal_cryst1("I 4 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_2_3(*a, **kw):
     helper_test_xtal_cellframes("P 2 3", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_2_3(*a, **kw):
     helper_test_xtal_cryst1("P 2 3", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_21_3(*a, **kw):
     helper_test_xtal_cellframes("P 21 3", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_21_3(*a, **kw):
     helper_test_xtal_cryst1("P 21 3", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_I_21_3(*a, **kw):
     helper_test_xtal_cellframes("I 21 3", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_I_21_3(*a, **kw):
     helper_test_xtal_cryst1("I 21 3", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_P_41_3_2(*a, **kw):
     helper_test_xtal_cellframes("P 41 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_P_41_3_2(*a, **kw):
     helper_test_xtal_cryst1("P 41 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_I_41_3_2(*a, **kw):
     helper_test_xtal_cellframes("I 41 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_I_41_3_2(*a, **kw):
     helper_test_xtal_cryst1("I 41 3 2", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_I4132_322(*a, **kw):
     helper_test_xtal_cellframes("I4132_322", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cryst1_I4132_322(*a, **kw):
     helper_test_xtal_cryst1("I4132_322", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_L6_32(*a, **kw):
     helper_test_xtal_cellframes("L6_32", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_L6M_322(*a, **kw):
     helper_test_xtal_cellframes("L6M_322", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_L4_44(*a, **kw):
     helper_test_xtal_cellframes("L4_44", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_L4_42(*a, **kw):
     helper_test_xtal_cellframes("L4_42", *a, **kw)
 
-@pytest.mark.fast
 def test_xtal_cellframes_L3_33(*a, **kw):
     helper_test_xtal_cellframes("L3_33", *a, **kw)
 

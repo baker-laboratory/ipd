@@ -1,19 +1,15 @@
-"""Symmetry checks."""
-import contextlib
-from typing import TYPE_CHECKING
+from icecream import ic
 import ipd
-
-th = ipd.lazyimport('torch')
-
-with contextlib.suppress(ImportError):
-    import assertpy
+from typing import TYPE_CHECKING
+import assertpy
+import numpy as np
+from ipd.sym import ShapeKind, ValueKind
 
 if TYPE_CHECKING:
-    import assertpy
-
-import numpy as np
-
-from ipd.sym import ShapeKind, ValueKind
+    import torch as th
+else:
+    from ipd import lazyimport
+    th = lazyimport("torch")
 
 def symcheck(sym, thing, kind=None, **kw):
     thing, kind, adaptor = get_kind_and_adaptor(sym, thing, kind)
@@ -37,10 +33,10 @@ def symcheck(sym, thing, kind=None, **kw):
 def get_kind_and_adaptor(sym, thing, kind):
     if kind is not None:
         adaptor = sym.sym_adapt(thing)
-    elif isinstance(thing, ipd.sym.SimpleSparseTensor):
+    elif isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor):
         adaptor = None
         kind = thing.kind
-    elif isinstance(thing, ipd.sym.SymAdapt):
+    elif isinstance(thing, ipd.sym.sym_adapt.SymAdapt):
         adaptor = thing
         thing = adaptor.orig  # type: ignore
         kind = adaptor.kind  # type: ignore
@@ -50,7 +46,7 @@ def get_kind_and_adaptor(sym, thing, kind):
     if isinstance(thing, (th.Tensor, np.ndarray)):
         while len(thing) == 1:  # type: ignore
             thing = thing[0]  # type: ignore
-    if isinstance(thing, ipd.sym.SimpleSparseTensor):
+    if isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor):
         thing.idx = thing.idx.to(sym.device)
         thing.val = thing.val.to(sym.device)
     elif isinstance(thing, th.Tensor):
@@ -71,7 +67,6 @@ def symcheck_XYZ(*args, kind, **kw):
 def symcheck_INDEX(*args, kind, **kw):
     'verify symmetry type INDEX'
     assert isinstance(kw['idx'], ipd.sym.SymIndex)
-
     if kind.shapekind == ipd.sym.ShapeKind.ONEDIM:  # type: ignore
         symcheck_INDEX_1D(*args, kind=kind, **kw)
     elif kind.shapekind == ipd.sym.ShapeKind.TWODIM:  # type: ignore
@@ -104,9 +99,10 @@ def symcheck_XYZ_1D(sym, idx, thing, **kw):
         # ic(s.beg, s.asuend)
         # ic(s.Lasu)
         for i in range(idx.nsub):
+            frame = sym.frames[i] if sym.frames is not None else ipd.h.homog(sym.symmRs[i])
             # ic(i, thing.shape, sym.symmRs.shape, sym.symid, sym.nsub,idx.nsub)
             tmp1 = thing[s.beg + i * s.Lasu:s.asuend + i * s.Lasu]
-            tmp2 = ipd.h.xform(ipd.h.homog(sym.symmRs[i]), thing[s.asu])  # type: ignore
+            tmp2 = ipd.h.xform(frame, thing[s.asu])  # type: ignore
             # ic(tmp1.shape,tmp2.shape)
             th.testing.assert_close(tmp1, tmp2.to(tmp1.dtype), atol=1e-3, rtol=1e-5, equal_nan=True)
 
@@ -114,7 +110,7 @@ def symcheck_XYZ_2D(idx, thing, **kw):
     raise NotImplementedError('symcheck_XYZ_2D')
 
 def symcheck_XYZ_SPARSE(idx, thing, **kw):
-    assert isinstance(thing, ipd.sym.SimpleSparseTensor)
+    assert isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor)
     thing, idx, isidx = thing.val, thing.idx, thing.isidx
     assert not isidx
     raise NotImplementedError('symcheck_XYZ_SPARSE')
@@ -132,13 +128,13 @@ def symcheck_INDEX_2D(idx, thing, **kw):
 
 def symcheck_INDEX_SPARSE(idx, thing, **kw):
     assert isinstance(idx, ipd.sym.SymIndex)
-    assert isinstance(thing, ipd.sym.SimpleSparseTensor)
+    assert isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor)
     thing.val = thing.val.to(idx.sub.device)
     thing.idx = thing.idx.to(idx.sub.device)
     x, _, isidx = thing.val, thing.idx, thing.isidx
     if isidx is not None and isidx is not True:
         x = x[:, thing.isidx]
-    x = x.to(int)
+    x = x.to(int)  # type: ignore
     symcheck_INDEX_common(idx, x)
     sub = idx.subnum[x]
     asu = idx.idx_sym_to_sub[0, x[sub == 0]]
@@ -166,10 +162,8 @@ def symcheck_BASIC_1D(idx, thing, **kw):
 
 def symcheck_BASIC_2D(idx, thing, kind, sympair_protein_only=None, **kw):
     stopslice = None
-    if kind.valuekind == ValueKind.PAIR and sympair_protein_only:
-        stopslice = 1
-    if thing.ndim < 3:
-        thing = thing[..., None]
+    if kind.valuekind == ValueKind.PAIR and sympair_protein_only: stopslice = 1
+    if thing.ndim < 3: thing = thing[..., None]
     assertpy.assert_that(thing.shape[:2]).is_equal_to((idx.L, idx.L))
     assert not th.any(thing.isnan())
     for s in idx[:stopslice]:
@@ -179,13 +173,13 @@ def symcheck_BASIC_2D(idx, thing, kind, sympair_protein_only=None, **kw):
                 sym = thing[lb:ub, lb:ub, ..., k]
                 asu = thing[s.beg:s.asuend, s.beg:s.asuend, ..., k]
                 if not th.allclose(sym, asu, atol=1e-3, rtol=1e-5):
-                    ic(sym.device, sym.shape, asu.shape, s, i, k)  # type: ignore
+                    ic(sym.device, sym.shape, asu.shape, s, i, k)
                     # import torchshow
                     # torchshow.show([sym, asu])
                     th.testing.assert_close(sym, asu, atol=1e-3, rtol=1e-5)
 
 def symcheck_BASIC_SPARSE(idx, thing, **kw):
-    assert isinstance(thing, ipd.sym.SimpleSparseTensor)
+    assert isinstance(thing, ipd.sym.sym_adapt.SimpleSparseTensor)
     thing, idx, isidx = thing.val, thing.idx, thing.isidx
     assert not isidx
     raise NotImplementedError('symcheck_BASIC_SPARSE')

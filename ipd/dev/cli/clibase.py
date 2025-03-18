@@ -1,7 +1,8 @@
 import typer
 
 import ipd
-from ipd.dev.types import KW
+from ipd import KW
+from typing import Optional
 
 DEBUG = False
 CB = type['CliBase']
@@ -11,13 +12,13 @@ class CliBase:
     __init_called__ = set()
 
     @classmethod
-    def mrca(_, classes: set[CB], cls: CB | None = None) -> CB | None:  # type: ignore
+    def mrca(cls, classes: set[CB], clibase: Optional[CB] = None) -> Optional[CB]:
         classes = set(classes)
-        cls = cls or _.__root__
-        for c in cls.__children__:
-            if val := cls.mcra(classes, c): return val  # type: ignore
-        if classes.issubset(cls.__descendants__):
-            return cls
+        clibase = clibase or cls.__root__
+        for c in clibase.__children__:
+            if val := clibase.mcra(classes, c): return val  # type: ignore
+        if classes.issubset(clibase.__descendants__):
+            return clibase
 
     @classmethod
     def __add_all_cmds__(cls, self: 'CliBase', **kw: KW) -> None:
@@ -49,7 +50,8 @@ class CliBase:
             cls.__ancestors__ |= cls.__parent__.__ancestors__  # type: ignore
             for ancestor in cls.__ancestors__:
                 ancestor.__descendants__.add(cls)
-            cls.__parent__.__app__.add_typer(cls.__app__, name=cls.__name__.replace('Tool', '').lower())  # type: ignore
+            cls.__parent__.__app__.add_typer(cls.__app__,
+                                             name=cls.__name__.replace('Tool', '').lower())  # type: ignore
 
     def __init_subclass__(cls, **kw: KW):
         if DEBUG: print('__init_subclass__', cls)

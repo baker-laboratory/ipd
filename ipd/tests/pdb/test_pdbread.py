@@ -1,6 +1,7 @@
 import os
+import pytest
 
-import pandas as pd
+pd = pytest.importorskip('pandas')
 
 import ipd
 
@@ -56,7 +57,8 @@ def test_pdbread(pdbfname, pdbcontents):
         "HETATM12345 ATOM RES C 1234   1236.8572215.5813376.721440.50547.32      SEGIPBCH\n" +
         "ATOM1234567 ATOM RES C 1234   1236.8572215.5813376.721440.50547.32      SEGIPBCH\n")
     pdb = ipd.pdb.readpdb(foo)
-    assert all(pdb.df.columns == ["het", "ai", "an", "rn", "ch", "ri", "x", "y", "z", "occ", "bfac", "elem", "mdl"])
+    assert all(
+        pdb.df.columns == ["het", "ai", "an", "rn", "ch", "ri", "x", "y", "z", "occ", "bfac", "elem", "mdl"])
     assert pdb.df.shape == (2, 13)
     assert all(pdb.df.ai == (12345, 1234567))
 

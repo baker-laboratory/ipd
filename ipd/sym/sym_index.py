@@ -1,9 +1,13 @@
 import math
 
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 from ipd.sym.sym_slice import SymSlice
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 class SymIndex:
     """A collection of slices to symmetrize.
@@ -39,6 +43,7 @@ class SymIndex:
         contig            (Tensor): map to contiguous numbering
         kind              (Tensor): residue kind, where 0 is 'standard'
     """
+
     def __init__(self, nsub: int, slices, debug=False):
         '''
         Args:
@@ -181,7 +186,7 @@ class SymIndex:
 
     def is_asu_subsequence(self, idx):
         try:
-            return th.all(self.idx_asu_to_sym[idx] >= 0)  # type: ignore
+            return th.all(self.idx_asu_to_sym[idx] >= 0)
         except IndexError:
             return False
 
@@ -249,6 +254,21 @@ class SymIndex:
             t[idx[:, 0], idx[:, 1]] = val
             return t.reshape(t.shape)
 
+    def extract_asu(self, ary):
+        return ary[self.asu.to(ary.device)]
+
+    def extract_asym(self, ary):
+        return ary[self.asym.to(ary.device)]
+
+    def extract_unsym(self, ary):
+        return ary[self.unsym.to(ary.device)]
+
+    def extract_symonly(self, ary):
+        return ary[self.symonly.to(ary.device)]
+
+    def extract_sub(self, ary, isub):
+        return ary[self.sub[isub].to(ary.device)]
+
     def asymidx(self, idx):
         idx = idx.to(self.asym.device)
         return idx[self.asym[idx]]
@@ -275,6 +295,8 @@ class SymIndex:
         assert 0 <= sum(s.fit for s in self.slices[1:]) <= 1
         assert all(s.sanity_check(self.nsub) for s in self.slices)
         assert all(len(s.mask) == self.L for s in self.slices)
+        # for i, s in enumerate(self.slices):
+        # ic(i, s)
         for i, s1 in enumerate(self.slices):
             for j, s2 in enumerate(self.slices[:i]):
                 assert th.sum(s1.mask & s2.mask) == 0

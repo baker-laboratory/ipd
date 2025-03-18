@@ -15,7 +15,7 @@ def check_if_symelems_complete(spacegroup, symelems, depth=60, radius=5, trials=
         # ipd.showme(ipd.homog.htrans([0.02, 0.03, 0.04]) @ ops)
     generators = np.concatenate(generators)
 
-    frames, _ = ipd.homog.hcom.geom.expand_xforms_rand(generators, depth=depth, radius=radius, trials=trials)
+    frames, _ = ipd.homog.hgeom.expand_xforms_rand(generators, depth=depth, radius=radius, trials=trials)
     frames = ipd.sym.tounitcell(latticevec, frames)
     x, y, z = frames[:, :3, 3].T
     nunitcell = np.sum((-0.001 < x) * (x < 1.999) * (-0.001 < y) * (y < 1.999) * (-0.001 < z) * (z < 1.999))

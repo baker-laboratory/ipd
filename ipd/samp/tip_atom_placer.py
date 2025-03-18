@@ -1,19 +1,23 @@
 import numpy as np
 
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 import dataclasses
 
 from icecream import ic
 
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 
 ic.configureOutput(includeContext=False)
 
-_sampling = ipd.dev.lazyimport('ipd.samp.sampling_cuda')
+_sampling = ipd.lazyimport('ipd.samp.sampling_cuda')
 
 def rayframe(rays, cross=None, primary='z', device='cpu'):
     ori = rays[:, :, 1]
@@ -40,6 +44,7 @@ class TipAtom:
         return h.inv(rayframe(self.don)), h.inv(rayframe(self.acc))
 
 class TipAtomTarget:
+
     @staticmethod
     def from_pdb(fname, tgtres=None, clashthresh=2):
         pdb = ipd.pdb.readpdb(fname)
@@ -67,7 +72,8 @@ class TipAtomTarget:
         # ipd.showme(self, name='ref')
         for tip in tips:
             ic(tip.xyz.shape)
-            _sampling.tip_atom_placer(vox, don, acc, tip.xyz.to('cuda'), tip.don.to('cuda'), tip.acc.to('cuda'), kw)
+            _sampling.tip_atom_placer(vox, don, acc, tip.xyz.to('cuda'), tip.don.to('cuda'),
+                                      tip.acc.to('cuda'), kw)
             for fd, fa in zip(fdon, facc):
                 cgo = list()
                 tip_atom_cgo(fd, fa, tip, cgo)
@@ -200,7 +206,8 @@ try:
         atomcol = dict(C=(1, 1, 1), O=(1, 0, 0), N=(0, 0, 1))
         acol = [atomcol[n[0]] for n in tip.aname]
         for fd, fa in zip(fdon.cpu(), facc.cpu()):
-            for rays, rcol, f, ftip in zip([tip.don, tip.acc], [(1, 1, 1), (1, 0, 0)], [fd, fa], tip.donacc_frames()):
+            for rays, rcol, f, ftip in zip([tip.don, tip.acc], [(1, 1, 1), (1, 0, 0)], [fd, fa],
+                                           tip.donacc_frames()):
                 if len(rays) == 0: continue
                 for ray, ft in zip(rays, ftip):
                     frame = f @ ft

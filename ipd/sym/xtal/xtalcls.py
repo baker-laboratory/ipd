@@ -19,6 +19,7 @@ def xtal(sym, **kw):
     return _xtal_cache[sym]
 
 class Xtal:
+
     def __init__(self, name="xtal", symelems=None, **kw):
         self.info = None
         self.symelems = symelems
@@ -333,7 +334,7 @@ class Xtal:
         cachefile = ipd.dev.package_data_path(f'xtal/lots_of_frames_{self.name.replace(" ","_")}.npy')
         if self.dimension == 2:
             generators = np.concatenate([s.operators for s in self.symelems])  # type: ignore
-            x, _ = ipd.homog.hcom.geom.expand_xforms_rand(generators, depth=depth, radius=genradius, trials=trials)
+            x, _ = ipd.homog.hgeom.expand_xforms_rand(generators, depth=depth, radius=genradius, trials=trials)
             testpoint = [0.001, 0.002, 0.003]
             cens = ipd.homog.hxform(x, testpoint)
             inboundslow = np.all(cens >= -bound - 0.001, axis=-1)

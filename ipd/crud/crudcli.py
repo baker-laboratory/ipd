@@ -1,4 +1,5 @@
 class CrudCli:
+
     def __init_subclass__(cls, Client, **kw):
         super().__init_subclass__(**kw)
         cls.__spec_models__ = Client.__spec_models__

@@ -5,13 +5,13 @@ import numpy as np
 import pytest
 from icecream import ic
 
-import ipd
-from ipd import h
-
 pytest.importorskip('torch')
 pytest.importorskip('gemmi')
 pytest.importorskip('ipd.voxel.voxel_cuda')
 th = lazimport('torch')  # type: ignore
+
+import ipd
+import ipd.homog.thgeom as h
 from ipd.voxel.voxel_cuda import _voxel
 
 def main():
@@ -49,7 +49,6 @@ def Voxel_score_converse():
     # assert 0
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score_boundscheck():
     xyz = make_test_points(100, 30, 200)
     # xyz2 = make_test_points(100, 30, 200)
@@ -63,7 +62,6 @@ def test_Voxel_score_boundscheck():
     print(sc.min(), th.sum(sc == 0) / len(sc))
 
 @ipd.timed
-@pytest.mark.fast
 def test_numba_vox_create():
     xyz = th.rand(1000, 3, device='cuda') * 90 + 5
     rad, resl = th.tensor([3, 4], device='cuda', dtype=th.float32), 1
@@ -80,7 +78,8 @@ def test_numba_vox_create():
             grid = th.zeros(tuple(th.ceil((ub-lb) / resl).to(int)), dtype=th.float16, device='cuda')
             irad = int(math.ceil(rad[-1] / resl))
             block, thread = (len(xyz), 2*irad + 1, 2*irad + 1), (32, 2, 2)
-            ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl, grid.cuda())
+            ipd.voxel.create_voxel_numba[block, thread](xyz.cuda(), lb.cuda(), rad.cuda(), irad, resl,
+                                                        grid.cuda())
 
     # ipd.showme(vox)
     vox.grid = grid  # type: ignore
@@ -102,7 +101,6 @@ def make_test_points(npts, bound, ngen=None):
     return xyz
 
 @ipd.timed
-@pytest.mark.fast
 def test_create_voxel_grid_clash():
     xyz = make_test_points(1000, 50)
     xyzorig = xyz.clone()
@@ -134,7 +132,6 @@ def test_create_voxel_grid_clash():
     assert mintime < 0.01
 
 @ipd.timed
-@pytest.mark.fast
 def test_create_voxel_grid_contact():
     xyz = make_test_points(1000, 50)
     xyzorig = xyz.clone()
@@ -167,7 +164,6 @@ def test_create_voxel_grid_contact():
     assert mintime < 0.01
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score_outerfalse():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
@@ -188,7 +184,6 @@ def test_Voxel_score_outerfalse():
     assert th.sum(th.abs(sc3 - sc1) > 0.001) < 100
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score_voxpos():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
@@ -202,13 +197,11 @@ def test_Voxel_score_voxpos():
     # assert th.allclose(sc1, sc2, atol=1e-3)
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_class():
     xyz = make_test_points(300, 30)
     ipd.voxel.Voxel(xyz, func=ipd.dev.cuda.ClashFunc(3, 4), resl=1)
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score_clash_perf():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
@@ -227,7 +220,6 @@ def test_Voxel_score_clash_perf():
     assert mintime < 0.01
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score_contact_perf():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(200, 30)
@@ -247,7 +239,6 @@ def test_Voxel_score_contact_perf():
     # assert 0
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score_symcheck_perf():
     voxpts = make_test_points(1000, 30)
     localxyz = make_test_points(30, 30)
@@ -268,7 +259,6 @@ def test_Voxel_score_symcheck_perf():
 
 # @pytest.mark.flaky(retries=2)
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score():
     nframe, nxyz = 100, 30
     for isamp in range(3):
@@ -310,7 +300,6 @@ def test_Voxel_score():
             assert th.allclose(sc2, sc, atol=1e-3)
 
 @ipd.timed
-@pytest.mark.fast
 def test_Voxel_score_symcheck():
     nframe, nxyz = 100, 30
     for isamp in range(3):

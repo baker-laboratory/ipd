@@ -1,9 +1,16 @@
 import ipd
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
+from ipd.sym.sym_manager import SymmetryManager
+from ipd.sym.sym_index import SymIndex
+from ipd.sym.sym_factory import set_default_sym_manager
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
-class IpdSymmetryManager(ipd.sym.SymmetryManager):
+class IpdSymmetryManager(SymmetryManager):
     """Implements default ipd symmetry operations.
 
     This class is the default symmetry manager for ipd. It implements
@@ -19,6 +26,7 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
     anything with shape that starts with L
     """
     kind = 'ipd'
+    SymIndexType: type[SymIndex] = SymIndex
 
     def init(self, *a, idx=None, **kw):
         """Create an IpdSymmetryManager."""
@@ -31,7 +39,8 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
         if self.symid == 'I' and self.opt.max_nsub == 4:  # type: ignore
             self.asucen = th.as_tensor(ipd.sym.canonical_asu_center('icos4')[:3], device=self.device)
         else:
-            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center(self.symid)[:3], device=self.device)  # type: ignore
+            self.asucen = th.as_tensor(ipd.sym.canonical_asu_center(self.symid)[:3],
+                                       device=self.device)  # type: ignore
         self.asucenvec = ipd.h.normalized(self.asucen)  # type: ignore
         if 'nsub' in self.opt and self.opt.nsub:
             # assert int(self.metasymm[1][0]) == self.opt.nsub
@@ -44,17 +53,19 @@ class IpdSymmetryManager(ipd.sym.SymmetryManager):
         self.opt.nsub = len(self.symmsub)
         self.post_init()
 
-    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, disable_all_fitting=False, **_):  # type: ignore
+    def apply_symmetry(self, xyz, pair, opts, update_symmsub=False, fixed=False, **kw):  # type: ignore
         """Apply symmetry to an object or xyz/pair."""
-        opts.disable_all_fitting = disable_all_fitting
+        opts.fixed = fixed
         xyz = ipd.sym.asu_to_best_frame_if_necessary(self, xyz, **opts)
         xyz = ipd.sym.set_particle_radius_if_necessary(self, xyz, **opts)
         xyz = ipd.sym.asu_to_canon_if_necessary(self, xyz, **opts)
 
-        assert pair is None
-
         xyz = th.einsum('fij,raj->frai', self._symmRs[self.symmsub],
                         xyz[:len(xyz) // self.nsub]).reshape(-1, *xyz.shape[1:])  # type: ignore
+        if pair is not None:
+            pair = self.apply_symmetry_pair(pair, **kw)
+            return xyz, pair
+
         return xyz
 
-ipd.sym.set_default_sym_manager('ipd')
+set_default_sym_manager('ipd')

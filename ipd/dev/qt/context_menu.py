@@ -10,6 +10,7 @@ class MenuAction(pydantic.BaseModel):
     item: bool = True
 
 class ContextMenuMixin(abc.ABC):
+
     def _install_event_filter(self, parent):
         self.widget.installEventFilter(parent)  # type: ignore
 

@@ -2,18 +2,23 @@ import pytest
 
 pytest.importorskip('torch')
 import ipd
-from ipd.lazy_import import lazyimport
+from ipd import lazyimport
 
-th = lazyimport('torch')
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import torch as th
+else:
+    th = lazyimport('torch')
 
 pytestmark = pytest.mark.fast
 
 def main():
-    # test_align_asu_c2()
-    # test_align_asu_c7()
+    test_align_asu_c2()
+    test_align_asu_c7()
     test_align_asu_tet()
     test_align_asu_oct()
     test_align_asu_icos()
+    print('test_sym_fitting.py PASS')
 
 def make_test_points(npts, bound, cen=[0, 0, 0], ngen=None):
     ngen = ngen or npts * 10
@@ -44,27 +49,22 @@ def helper_test_align_asu(sym, Lasu=13):
         # ipd.showme(xyz[:Lasu,0])
         assert th.allclose(xyzs[0][:Lasu], xyz[:Lasu], atol=1e-3)
 
-@pytest.mark.fast
 def test_align_asu_c2():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C2'], max_nsub=5)
     helper_test_align_asu(sym)
 
-@pytest.mark.fast
 def test_align_asu_c7():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C7'], max_nsub=5)
     helper_test_align_asu(sym)
 
-@pytest.mark.fast
 def test_align_asu_tet():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=T'], max_nsub=12)
     helper_test_align_asu(sym)
 
-@pytest.mark.fast
 def test_align_asu_oct():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=O'], max_nsub=5)
     helper_test_align_asu(sym)
 
-@pytest.mark.fast
 def test_align_asu_icos():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=I'], max_nsub=5)
     helper_test_align_asu(sym)

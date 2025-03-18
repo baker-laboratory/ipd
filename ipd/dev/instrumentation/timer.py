@@ -6,6 +6,8 @@ import os
 import statistics
 import time
 
+import ipd
+
 log = logging.getLogger(__name__)
 
 _summary_types = dict(
@@ -17,6 +19,7 @@ _summary_types = dict(
 )
 
 class _TimerGetter:
+
     def __init__(self, timer, summary):
         self.timer = timer
         self.summary = summary
@@ -32,6 +35,7 @@ class _TimerGetter:
         return getattr(self, name)
 
 class Timer:
+
     def __init__(
         self,
         name="Timer",
@@ -45,10 +49,10 @@ class Timer:
         self.min = _TimerGetter(self, min)
         self.max = _TimerGetter(self, max)
         self.median = _TimerGetter(self, statistics.median)
-        self._start = None
+        self._start = 0
         self.checkpoints = collections.defaultdict(list)
-        if start:
-            self.start()
+        if start: self.start()
+        self._in_interjection = None
 
     def start(self):
         return self.__enter__()
@@ -73,15 +77,23 @@ class Timer:
         verbose=False,
         keeppriorname=False,
         autolabel=False,
+        interject=False,
     ):
+        if name is None or interject: name = '__interject__'
+        elif not keeppriorname: self.lastname = str(name)
         name = str(name)
-        if name is None:
-            name = self.lastname
-        elif not keeppriorname:
-            self.lastname = name
-        if autolabel:
-            name = name + "$$$$"
+        if autolabel: name = name + "$$$$"
         t = time.perf_counter()
+
+        if name == '__interject__':
+            self._in_interjection = '__waiting__'
+        elif self._in_interjection == '__waiting__':
+            self._in_interjection = name
+        elif self._in_interjection and name != self._in_interjection:
+            interjection_credit = sum(self.checkpoints.pop('__interject__'))
+            self.checkpoints[name].append(interjection_credit)
+            self._in_interjection = None
+
         self.checkpoints[name].append(t - self.last)
         self.last = t
         if self.verbose or verbose:
@@ -98,8 +110,8 @@ class Timer:
         value=None,
         traceback=None,
     ):
-        self.checkpoints["total"].append(time.perf_counter() - self._start)  # type: ignore
-        self._start = None
+        self.checkpoints["total"].append(time.perf_counter() - self._start)
+        # self._start = None
         if self.verbose:
             log.debug(f"Timer {self.name} finished")
             self.report()
@@ -118,7 +130,7 @@ class Timer:
         self,
         order="longest",
         summary="sum",
-        timecut=0,
+        timecut: float = 0,
     ):
         if not callable(summary):
             if summary not in _summary_types:
@@ -141,25 +153,24 @@ class Timer:
         precision="10.5f",
         printme=True,
         scale=1.0,
-        timecut=0,
+        timecut=0.001,
         file=None,
         pattern="",
     ):
         if namelen is None:
             namelen = max(len(n.rstrip("$")) for n in self.checkpoints) if self.checkpoints else 0
+        if len(self.checkpoints) <= 10: timecut = 0
         lines = [f"Times(name={self.name}, order={order}, summary={summary}):"]
         times = self.report_dict(order=order, summary=summary, timecut=timecut)
-        if not times:
-            times["total$$$$"] = time.perf_counter() - self._start  # type: ignore
+        if not times: times["total$$$$"] = time.perf_counter() - self._start
         for cpoint, t in times.items():
-            if not cpoint.count(pattern):
-                continue
+            if not cpoint.count(pattern): continue
             a = " " if cpoint.endswith("$$$$") else "*"
             lines.append(f'    {cpoint.rstrip("$"):>{namelen}} {a} {t*scale:{precision}}')
-            if scale == 1000:
-                lines[-1] += "ms"
+            if scale == 1000: lines[-1] += "ms"
         r = os.linesep.join(lines)
         if printme:
+            print()
             if file is None:
                 print(r, flush=True)
             else:
@@ -171,7 +182,7 @@ class Timer:
     def total(self):
         if "total" in self.checkpoints:
             return sum(self.checkpoints["total"])
-        return time.perf_counter() - self._start  # type: ignore
+        return time.perf_counter() - self._start
 
     def __str__(self):
         return self.report(printme=False)
@@ -186,14 +197,19 @@ class Timer:
             for k, v in other.checkpoints.items():
                 self.checkpoints[k].extend(v)
 
-def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=None, clsname=None, funcname=None):
+def checkpoint(kw={},
+               label=None,
+               funcbegin=False,
+               dont_mod_label=False,
+               filename=None,
+               clsname=None,
+               funcname=None,
+               interject=False):
     t = None
-    if isinstance(kw, Timer):
-        t = kw
-    elif "timer" in kw:
-        t = kw["timer"]
-    else:
-        t = global_timer
+    if isinstance(kw, Timer): t = kw
+    elif "timer" in kw: t = kw["timer"]
+    else: t = ipd.dev.global_timer
+    if interject: return t.checkpoint(interject=True)
     # autogen_label = False
     istack = 1 + int(funcbegin)
     func = funcname or inspect.stack()[istack][3]
@@ -203,7 +219,7 @@ def checkpoint(kw, label=None, funcbegin=False, dont_mod_label=False, filename=N
     if not dont_mod_label:
         fulllabel = f"{fn}:{clsname}{func}"
     if label:
-        fulllabel += f":{label}"  # type: ignore
+        fulllabel += f":{label}"
     t.checkpoint(fulllabel, autolabel=label is None)
 
 def timed_func(func, *, label=None):
@@ -216,40 +232,62 @@ def timed_func(func, *, label=None):
     if inspect.iscoroutinefunction(func):
 
         @functools.wraps(func)
-        async def wrapper(*a, **kw):  # type: ignore
+        async def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
-            checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
+            # should interject instead? refactor to use stack?
+            checkpoint(kw, funcbegin=True, **kwarg)
             val = await func(*a, **kw)
-            checkpoint(kw, **kwarg)  # type: ignore
+            checkpoint(kw, **kwarg)
             return val
     else:
 
         @functools.wraps(func)
         def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
-            checkpoint(kw, funcbegin=True, **kwarg)  # type: ignore
+            # should interject instead? refactor to use stack?
+            checkpoint(kw, funcbegin=True, **kwarg)
             val = func(*a, **kw)
-            checkpoint(kw, **kwarg)  # type: ignore
+            checkpoint(kw, **kwarg)
             return val
 
     return wrapper
 
 def timed_class(cls, *, label=None):
     # label = label or rs
-    for k in cls.__dict__:
-        v = getattr(cls, k)
+    for k, v in vars(cls).items():
         if callable(v) and not inspect.isclass(v):  # skip inner classes
             setattr(cls, k, timed_func(v))
 
     return cls
 
-def timed(thing=None, *, label=None):
+def timed(thing=None, *, label=None, name=None):
     if thing is None:
         return functools.partial(timed, label=label)
-
+    if name: thing.__qualname__ = name
     if inspect.isclass(thing):
         return timed_class(thing, label=label)
     else:
         return timed_func(thing, label=label)
 
-global_timer = Timer()
+'''
+<instructions>
+Please help me craft the following prompt. Do no create code at this time, but instead help me imporve this prompt and general plan of action for my timer. I will submit this prompt for a coding task to several ai assistants, so I would like to make sure it is well crafted, clear, and actually includes everything I am looking for. In particular analyze the feasivility of a stack based checkpoint system integrated with decorator usage for accurately keeping track of complex nested call pattens. would it be feasible to use a stack rather than the hacky interjection logic (which I think is effectively a stack with a max depth of one)
+</instructions>
+
+<summary>
+I have attached below module and test code for a versitile timer utility module which can be used as a class and function decorator, as a context manager, as a module level checkpoint function for a timer stored in kw or a global timer. It also includes basic usage as a Timer class instance.  It has the ability to inject additional checkpoints while still including the runtime before the injection in the next checkpoint.  It also has different report types (sum, mean, median, min, max) as well as autolabeling with the autolabel parameter, and automatically labels checkpoints based on class/function name when used as a decorator. I am looking for a very high quality, professional level of code here. I have no problem with using third party libraries, but they must be well maintained and have a good license.  I am not interested in using libraries that are not well known or widely used.  If you suggest a third party library, please include a link to the project page and a brief description of its features.
+</summary>
+
+<code improvements>
+Please suggest or make improvements, especially for more accurate results when timing nested function calls, perhaps generalizing the "injection" mechanism with a checkpoint stack (NOT a stack of timers)following function calls when used as a decorator, making sure the times spend in each function are allotted to correctly labeled checkpoints for those functions. please make suggestions for general useability and accuracy improvements. I would also like the optionI have no problem with "magical" code here, and I prefer short and highly expressive, functional code without comments. if you feel the need to comment, consider adding to the relevant docstring instead. only include comments for particularly obtuse or magical code, or where it may be uncler *why* the code is doing something nonobvious.
+</code improvements>
+
+<documentation>
+please write docstrings for the module, classes and functions for this versitile and magical timer utility module.  include comprehensive usage examples including as a class and function decorator, as a context manager, usage of the module level checkpoint function for a timer stored in kw, and basic usage as a Timer class instance. include information about and an example of checkpoint interjection, where additional checkpoints can be injected while still including the runtime before the injection in the next checkpoint. have information and examples of different report types (sum, mean, median, min, max) as well as autolabeling with the autolabel parameter, as well as automatically labeling checkpoints based on class/function name when used as a decorator.
+</documentation>
+
+<tests>
+please also produce a comprehensive test suite, paying special attention to any new checkpoint stack you may add (as an improvement to interjection), focusing on correctness when used as a decorator on multiple functions that may call each other in a complex pattern, sharing a single global timer and making sure all time spent in each function is accounted for correctly using a checkpoint stack when decorating functions and class members. please also consider the examples in docstrings will be tested with doctest, but keep the doctest/docstring examples simpler that the main test suite. please make sure decorating generator functions is tested.
+</tests>
+
+'''

@@ -3,16 +3,42 @@ import hashlib
 import os
 import shutil
 from pathlib import Path
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Mapping, Iterable
+from ipd.dev.element_wise import element_wise_operations
+from ipd.dev.decorators import subscriptable_for_attributes
 
 with contextlib.suppress(ImportError):
-    from icecream import ic
+    pass
+
+import ipd
 
 __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake_autosave_hierarchy')
 
 T = TypeVar('T')
 
+def search(haystack, needle, path='', seenit=None):
+    seenit = seenit or set()
+    found = {}
+    if id(haystack) in seenit: return found
+    seenit.add(id(haystack))
+    items = enumerate(haystack)
+    if isinstance(haystack, Mapping):
+        found |= {f'{path}{k}': v for k, v in haystack.items() if needle in k}
+        items = haystack.items()
+    for k, v in items:
+        if isinstance(v, (Mapping, Iterable)):
+            found |= search(v, needle, f"{path}{k}.", seenit)
+    return found
+
+@subscriptable_for_attributes
+@element_wise_operations
 class Bunch(dict, Generic[T]):
+    """
+    a dot-accessable dict subclass with defaultdict and chainmap functionallity
+
+    keys must be strings. Can autosync with a .yaml file on disk. supports parent-child relationships. has considerable runtime overhead compared to a normal dict, so dont use in place of one. can
+    """
+
     def __init__(
         self,
         __arg_or_ns=None,
@@ -30,6 +56,7 @@ class Bunch(dict, Generic[T]):
             except TypeError:
                 super().__init__(vars(__arg_or_ns))
         self.update(kw)
+
         if _default == "__NODEFALT": _default = None
         self.__dict__['_special'] = {}
         self.__dict__["_special"]['strict_lookup'] = _strict is True or _strict == "__STRICT"
@@ -39,11 +66,16 @@ class Bunch(dict, Generic[T]):
         self.__dict__["_special"]["autoreload"] = _autoreload
         if _autoreload:
             Path(_autoreload).touch()
-            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload, 'rb').read()).hexdigest()
+            self.__dict__['_special']['autoreloadhash'] = hashlib.md5(open(_autoreload,
+                                                                           'rb').read()).hexdigest()
         self.__dict__["_special"]["parent"] = _parent
-        for k in self:
+        for k in list(self.keys()):
             if hasattr(super(), k):
-                raise ValueError(f"{k} is a reseved name for Bunch")
+                self[f'{k}_'] = super().__getitem__(k)
+                del self[k]
+                # print(f'WARNING {k} is a reserved name for dict, renaming to {k}_')
+
+    search = search
 
     def _autoreload_check(self):
         if not self.__dict__['_special']['autoreload']: return
@@ -61,35 +93,33 @@ class Bunch(dict, Generic[T]):
         special = self._special
         super().clear()
         for k, v in new.items():
-            self[k] = make_autosave_hierarchy(  # type: ignore
-                v,  # type: ignore
-                _parent=(self, None),
-                _default=self._special['default'],  # type: ignore
-                _strict=self._special['strict_lookup'])  # type: ignore
+            self[k] = make_autosave_hierarchy(v,
+                                              _parent=(self, None),
+                                              _default=self._special['default'],
+                                              _strict=self._special['strict_lookup'])
         self.__dict__['_special']['autosave'] = orig
         assert self._special == special
 
     def _notify_changed(self, k=None, v=None):  # sourcery skip: extract-method
-        if self._special['parent']:  # type: ignore
-            parent, selfkey = self._special['parent']  # type: ignore
+        if self._special['parent']:
+            parent, selfkey = self._special['parent']
             return parent._notify_changed(f'{selfkey}.{k}', v)
-        if self._special['autosave']:  # type: ignore
-            ic(self._special['autosave'])  # type: ignore
+        if self._special['autosave']:
+            # ic(self._special['autosave'])
             import yaml
             if k:
                 k = k.split('.')[0]
                 if isinstance(v, (list, set, tuple, Bunch)):
-                    self[k] = make_autosave_hierarchy(  # type: ignore
-                        self[k],  # type: ignore
-                        _parent=(self, None),
-                        _default=self._special['default'],  # type: ignore
-                        _strict=self._special['strict_lookup'])  # type: ignore
-            os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)  # type: ignore
-            with open(self._special['autosave'] + '.tmp', 'w') as out:  # type: ignore
+                    self[k] = make_autosave_hierarchy(self[k],
+                                                      _parent=(self, None),
+                                                      _default=self._special['default'],
+                                                      _strict=self._special['strict_lookup'])
+            os.makedirs(os.path.dirname(self._special['autosave']), exist_ok=True)
+            with open(self._special['autosave'] + '.tmp', 'w') as out:
                 yaml.dump(unmake_autosave_hierarchy(self), out)
-            shutil.move(self._special['autosave'] + '.tmp', self._special['autosave'])  # type: ignore
-            with open(self._special['autoreload'], 'rb') as inp:  # type: ignore
-                self._special['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()  # type: ignore
+            shutil.move(self._special['autosave'] + '.tmp', self._special['autosave'])
+            with open(self._special['autoreload'], 'rb') as inp:
+                self._special['autoreloadhash'] = hashlib.md5(inp.read()).hexdigest()
                 # print('SAVE TO ', self.__dict__['_special']['autosave'])
 
     def default(self, key):
@@ -107,53 +137,10 @@ class Bunch(dict, Generic[T]):
         else:
             return dflt
 
-    def __str__(self):
-        self._autoreload_check()
-        s = "Bunch(" + ", ".join([f"{k}={v}" for k, v in self.items()])
-        s += ")"
-        if len(s) > 120:
-            s = f"Bunch({os.linesep}"
-            if len(self) == 0:
-                return "Bunch()"
-            w = int(min(40, max(len(str(k)) for k in self)))
-            for k, v in self.items():
-                s += f'  {k:{f"{w}"}} = {v}{os.linesep}'
-            s += ")"
-        return s
-
     def __eq__(self, other):
         self._autoreload_check()
         if hasattr(other, '_autoreload_check'): other._autoreload_check()
         return super().__eq__(other)
-
-    def printme(self):
-        self._autoreload_check()
-
-        def short(thing):
-            s = str(thing)
-            if len(s) > 80:
-                import numpy as np
-
-                if isinstance(thing, np.ndarray):
-                    s = f"shape {thing.shape}"
-                else:
-                    s = str(s)[:67].replace("\n", "") + "..."
-            return s
-
-        s = "Bunch("
-        s += ", ".join([f"{k}={v}" for k, v in self.items()])
-
-        s += ")"
-        if len(s) > 120:
-            s = f"Bunch({os.linesep}"
-            if len(self) == 0:
-                return "Bunch()"
-            w = int(min(40, max(len(str(k)) for k in self)))
-            for k, v in self.items():
-                s += f'  {k:{f"{w}"}} = {short(v)}{os.linesep}'
-            s += ")"
-        print(s, flush=True)
-        return s
 
     def reduce(self, func, strict=True):
         "reduce all contained iterables using <func>"
@@ -180,13 +167,13 @@ class Bunch(dict, Generic[T]):
             if k not in self:
                 if strict and not_empty:
                     raise ValueError(f"{k} not in this Bunch")
-                self[k] = []  # type: ignore
+                self[k] = []
             if not isinstance(self[k], list):
-                self[k] = [self[k]]  # type: ignore
+                self[k] = [self[k]]
             o = other[k]
             if not isinstance(o, list):
                 o = [o]
-                self[k].extend(o)  # type: ignore
+                self[k].extend(o)
         return self
 
     def __contains__(self, k):
@@ -202,6 +189,9 @@ class Bunch(dict, Generic[T]):
         return self.__dict__['_special']["strict_lookup"]
 
     def __getitem__(self, key: str) -> T:
+        if ' ' in key: key = key.split()
+        if not isinstance(key, str):
+            return [getattr(self, k) for k in key]
         return self.__getattr__(key)
 
     # try:
@@ -214,8 +204,11 @@ class Bunch(dict, Generic[T]):
         if k == "_special":
             raise ValueError("_special is a reseved name for Bunch")
         if k == "__deepcopy__":
-            return None  # type: ignore
+            return None
         if self.__dict__['_special']["strict_lookup"] and k not in self:
+            if self.__dict__['_special']['default']:
+                self[k] = new = self.default(k)
+                return new
             raise AttributeError(f"Bunch is missing value for key {k}")
         try:
             # Throws exception if not in prototype chain
@@ -226,8 +219,8 @@ class Bunch(dict, Generic[T]):
             except KeyError as e:
                 if self.__dict__['_special']["strict_lookup"]:
                     raise e
-                if self._special['storedefault']:  # type: ignore
-                    self[k] = self.default(k)  # type: ignore
+                if self._special['storedefault']:
+                    self[k] = self.default(k)
                     return self[k]
                 return self[k]
 
@@ -238,9 +231,11 @@ class Bunch(dict, Generic[T]):
         super().__setitem__(k, v)
 
     def __setattr__(self, k: str, v: T):
-        assert k != 'polls'
         if hasattr(super(), k):
             raise ValueError(f"{k} is a reseved name for Bunch")
+        if k.startswith('__'):
+            self.__dict__[k] = v
+            return
         try:
             # Throws exception if not in prototype chain
             object.__getattribute__(self, k)
@@ -276,7 +271,7 @@ class Bunch(dict, Generic[T]):
         super().__delitem__(k)
         self._notify_changed(k)
 
-    def copy(self):  # type: ignore
+    def copy(self):
         self._autoreload_check()
         return Bunch.from_dict(super().copy())
 
@@ -294,10 +289,10 @@ class Bunch(dict, Generic[T]):
             else:
                 kw = vars(__BUNCH_SUB_ITEMS)
         newbunch = self.copy()
-        newbunch._special = self.__dict__['_special']  # type: ignore
+        newbunch._special = self.__dict__['_special']
         for k, v in kw.items():
             if v is None and k in newbunch:
-                del newbunch[k]  # type: ignore
+                del newbunch[k]
             elif not _onlynone or k not in self or self[k] is None:
                 if k not in exclude:
                     newbunch.__setattr__(k, v)
@@ -355,10 +350,52 @@ class Bunch(dict, Generic[T]):
     def __setstate__(self, d):
         self.__dict__.update(d)
 
+    def __str__(self):
+        self._autoreload_check()
+        s = "Bunch(" + ", ".join([f"{k}={v}" for k, v in self.items()])
+        s += ")"
+        if len(s) > 120:
+            s = f"Bunch({os.linesep}"
+            if len(self) == 0:
+                return "Bunch()"
+            w = int(min(40, max(len(str(k)) for k in self)))
+            for k, v in self.items():
+                s += f'  {k:{f"{w}"}} = {ipd.dev.summary(v)}{os.linesep}\n'
+            s += ")"
+        return s
+
+    def printme(self):
+        self._autoreload_check()
+
+        def short(thing):
+            s = str(thing)
+            if len(s) > 80:
+                import numpy as np
+
+                if isinstance(thing, np.ndarray):
+                    s = f"shape {thing.shape}"
+                else:
+                    s = str(s)[:67].replace("\n", "") + "..."
+            return s
+
+        s = "Bunch(" + ", ".join([f"{k}={v}" for k, v in self.items()]) + ")"
+        if len(s) > 120:
+            s = f"Bunch({os.linesep}"
+            if len(self) == 0:
+                return "Bunch()"
+            w = int(min(40, max(len(str(k)) for k in self)))
+            for k, v in self.items():
+                s += f'  {k:{f"{w}"}} = {short(v)}{os.linesep}'
+            s += ")"
+        print(s, flush=True)
+        return s
+
     def __repr__(self):
         self._autoreload_check()
-        args = ", ".join(["%s=%r" % (key, self[key]) for key in self.keys()])
-        return f"{self.__class__.__name__}({args})"
+        # args = ["%s=%r" % (k, v) for k, v in self.items()]
+        # args = str.join(',\n  ', args)
+        # return rf"{self.__class__.__name__}(\n  {args})"
+        return str(self)
 
     def asdict(self):
         return unbunchify(self)
@@ -368,6 +405,7 @@ class Bunch(dict, Generic[T]):
         return bunchify(d)
 
 class BunchChild:
+
     def __init__(self, *a, _parent, **kw):
         super().__init__(*a, **kw)
         assert isinstance(_parent[0], Bunch)
@@ -380,6 +418,7 @@ class BunchChild:
     #    return f'{self.__class__.__name__}<{super().__repr__()}>'
 
 class BunchChildList(BunchChild, list):
+
     def append(self, elmnt):
         super().append(elmnt)
         self._parent[0]._notify_changed(self._parent[1], elmnt)
@@ -389,6 +428,7 @@ class BunchChildList(BunchChild, list):
         self._parent[0]._notify_changed(f'{self._parent[1]}[{index}]', elem)
 
 class BunchChildSet(BunchChild, set):
+
     def add(self, elem):
         super().add(elem)
         self._parent[0]._notify_changed(self._parent[1], elem)
@@ -411,24 +451,23 @@ def make_autosave_hierarchy(x, _parent=None, seenit=None, _strict=True, _autosav
     kw = dict(seenit=seenit, _parent=_parent, _default=_default, _strict=_strict)
     assert _parent is None or isinstance(_parent[0], Bunch)
     if isinstance(x, dict):
-        x = Bunch(
-            **x,
-            _parent=_parent,
-            _autosave=_autosave,
-            _autoreload=_autosave,
-            _default=_default,  # type: ignore
-            _strict=_strict)  # type: ignore
+        x = Bunch(**x,
+                  _parent=_parent,
+                  _autosave=_autosave,
+                  _autoreload=_autosave,
+                  _default=_default,
+                  _strict=_strict)
         for k, v in x.items():
             kw['_parent'] = (x, k)
-            x[k] = make_autosave_hierarchy(v, **kw)  # type: ignore
+            x[k] = make_autosave_hierarchy(v, **kw)
     elif isinstance(x, list):
-        val = (make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        val = (make_autosave_hierarchy(v, **kw) for v in x)
         x = BunchChildList(val, _parent=_parent)
     elif isinstance(x, set):
-        val = (make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        val = (make_autosave_hierarchy(v, **kw) for v in x)
         x = BunchChildSet(val, _parent=_parent)
     elif isinstance(x, (tuple, )):
-        x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        x = type(x)(make_autosave_hierarchy(v, **kw) for v in x)
     seenit.add(id(x))
     return x
 
@@ -439,13 +478,13 @@ def unmake_autosave_hierarchy(x, seenit=None, depth=0, verbose=False, _autosave=
     if isinstance(x, dict):
         x = dict(**x)
         for k, v in x.items():
-            x[k] = unmake_autosave_hierarchy(v, **kw)  # type: ignore
+            x[k] = unmake_autosave_hierarchy(v, **kw)
     elif isinstance(x, list):
-        x = [unmake_autosave_hierarchy(v, **kw) for v in x]  # type: ignore
+        x = [unmake_autosave_hierarchy(v, **kw) for v in x]
     elif isinstance(x, set):
-        x = {unmake_autosave_hierarchy(v, **kw) for v in x}  # type: ignore
+        x = {unmake_autosave_hierarchy(v, **kw) for v in x}
     elif isinstance(x, (tuple, )):
-        x = type(x)(unmake_autosave_hierarchy(v, **kw) for v in x)  # type: ignore
+        x = type(x)(unmake_autosave_hierarchy(v, **kw) for v in x)
     seenit.add(id(x))
     return x
 

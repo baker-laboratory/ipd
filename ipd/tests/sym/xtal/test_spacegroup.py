@@ -38,18 +38,15 @@ def main():
     test_spacegroup_frames_I432()
     ic("PASS test_spacegroup")
 
-@pytest.mark.fast
 def test_spacegroup_identify_chiral():
     assert len(ipd.sym.xtal.sg_all_chiral) == 65
 
-@pytest.mark.fast
 @pytest.mark.parametrize('sym', ipd.sym.xtal.sg_all_chiral)
 def test_spacegroup_frames_sanity_check(sym):
     f = ipd.sym.xtal.sgframes(sym, cells=3, cellgeom="nonsingular")
     if not ipd.homog.hvalid(f):
         assert not ipd.sym.xtal.sg_is_chiral(sym)
 
-@pytest.mark.fast
 def test_spacegroup_lattice_transpose_bug():
     sym = "P3"
     lat = ipd.sym.xtal.lattice_vectors(sym, cellgeom="nonsingular")
@@ -69,7 +66,6 @@ def test_spacegroup_lattice_transpose_bug():
     r = ipd.homog.hxformpts(ipd.homog.hrot([0, 0, 1], [0, 120, 240]), p)
     assert np.allclose(q, r)
 
-@pytest.mark.fast
 def test_spacegroup_frames_order():
     f1 = ipd.sym.xtal.sgframes("I213", cells=1, cellgeom="unit")
     f2 = ipd.sym.xtal.sgframes("I213", cells=2, cellgeom="unit")
@@ -107,7 +103,6 @@ def _test_spacegroup_symelems():
     ipd.showme(ipd.sym.xtal.sgframes("P3", cells=1) @ ipd.homog.htrans([0.1, 0.2, 0.3]))
     assert 0
 
-@pytest.mark.fast
 def test_lattice_cellgeom():
     for i in range(100):
         a, b, c = np.random.rand(3) * 100
@@ -141,7 +136,6 @@ def helper_test_spacegroup_frames(sg):
         assert match is not None
     # print(f'pass {sg}')
 
-@pytest.mark.fast
 def test_lattice_vectors():
     print(
         """
@@ -156,7 +150,6 @@ def test_lattice_vectors():
     foo = np.array([[15.737, 0.0, 0.0], [5.47013594, 14.91557514, 0.0], [1.67156711, 1.28870451, 25.06729822]])
     assert np.allclose(lvec, foo.T)
 
-@pytest.mark.fast
 def test_spacegroup_frames_P1():
     f = ipd.sym.xtal.spacegroup.sgframes("P1", [15.737, 15.887, 25.156, 85.93, 86.19, 69.86], cells=3)
     ref = np.array([
@@ -219,42 +212,33 @@ def test_spacegroup_frames_tounitcell(sgroup, cellgeom, ncell):
     assert np.allclose(funit[:, :3, :3], ftest[:, :3, :3])
     assert np.allclose(funit[:, :3, 3], ftest[:, :3, 3])
 
-@pytest.mark.fast
 def test_two_iface():
     assert len(ipd.sym.xtal.spacegroup_data.two_iface_spacegroups) == 31
     for sg in ipd.sym.xtal.spacegroup_data.two_iface_spacegroups:
         if sg not in ipd.sym.xtal.spacegroup_data.sg_lattice:
             assert sg == "R3"
 
-@pytest.mark.fast
 def test_spacegroup_frames_I213():
     helper_test_spacegroup_frames("I213")
 
-@pytest.mark.fast
 def test_spacegroup_frames_P213():
     helper_test_spacegroup_frames("P213")
 
-@pytest.mark.fast
 def test_spacegroup_frames_P4132():
     helper_test_spacegroup_frames("P4132")
 
-@pytest.mark.fast
 def test_spacegroup_frames_I4132():
     helper_test_spacegroup_frames("I4132")
 
-@pytest.mark.fast
 def test_spacegroup_frames_P432():
     helper_test_spacegroup_frames("P432")
 
-@pytest.mark.fast
 def test_spacegroup_frames_F432():
     helper_test_spacegroup_frames("F432")
 
-@pytest.mark.fast
 def test_spacegroup_frames_I432():
     helper_test_spacegroup_frames("I432")
 
-@pytest.mark.fast
 def test_spacegroup_frames_P23():
     helper_test_spacegroup_frames("P23")
 

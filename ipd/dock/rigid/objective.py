@@ -35,6 +35,7 @@ def tooclose_primary_overlap(bodies, nbrs=None, contactfrac=0.1, nprimary=None, 
     # return maxcfrac > contactfrac
 
 class RBLatticeOverlapObjective:
+
     def __init__(self, *args, **kw):
         self.rbojective = RBOverlapObjective(*args, **kw)
 
@@ -46,6 +47,7 @@ class RBLatticeOverlapObjective:
         return self.rbojective(state.position, **kw)
 
 class RBOverlapObjective:
+
     def __init__(
         self,
         initial,

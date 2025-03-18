@@ -7,11 +7,12 @@ from icecream import ic
 from numba import cuda
 
 import ipd
-from ipd import h
+import ipd.homog.thgeom as h
 
-_voxel = ipd.dev.lazyimport('ipd.voxel.voxel_cuda')
+_voxel = ipd.lazyimport('ipd.voxel.voxel_cuda')
 
 class Voxel:
+
     def __init__(
             self,
             xyz: th.Tensor,
@@ -24,7 +25,8 @@ class Voxel:
         self.resl = float(resl)
         self.func = func
         self.create_threads = th.tensor([32, 2, 2])
-        self.repulsive_only = th.empty(0, dtype=bool) if repulsive_only is None else repulsive_only  # type: ignore
+        self.repulsive_only = th.empty(
+            0, dtype=bool) if repulsive_only is None else repulsive_only  # type: ignore
         import ipd.samp.sampling_cuda
         self.boundcen, self.boundrad = ipd.samp.bounding_sphere(self.xyz)
         self.boundcen = h.point(self.boundcen.to('cuda'))

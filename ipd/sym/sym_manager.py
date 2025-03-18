@@ -1,28 +1,32 @@
+from abc import ABC, abstractmethod
+import attrs
+import collections
 import contextlib
 import copy
 import itertools
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+import random
 from typing_extensions import TypeVar
 
-with contextlib.suppress(ImportError):
-    from icecream import ic
-
-if TYPE_CHECKING:
-    from icecream import ic
-
+from icecream import ic
 import numpy as np
 
 import ipd
+from ipd.sym.sym_factory import MetaSymManager
 
-th = ipd.dev.lazyimport('torch')
+h = ipd.lazyimport('ipd.homog.thgeom')
+th = ipd.lazyimport('torch')
 from ipd.sym import ShapeKind, ValueKind
-from ipd.sym.sym_adapt import _sym_adapt, SymAdapt
+# from ipd.sym.sym_adapt import _sym_adapt, SymAdapt
 from ipd.sym.sym_index import SymIndex
 
 T = TypeVar('T')
+XYZPair = collections.namedtuple('XYZPair', 'xyz pair')
 
-class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # type: ignore
+class XYZPairUnsupportedError(Exception):
+    pass
+
+@attrs.define(slots=False)
+class SymmetryManager(ABC, metaclass=MetaSymManager):
     """The SymmetryManager class encapsulates symmetry related functionality
     and parameters.
 
@@ -54,12 +58,16 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
     from kwargs by adding a function argument is slightly more correct
     and more convenient.
     """
+    symid: str
+    nsub: int
     kind: str = 'base'
+    _frames: ipd.FramesN44 = None
     SymIndexType: type[SymIndex] = SymIndex
 
-    def __init__(self, opt, symid=None, device=None, **kw) -> None:
+    def __init__(self, conf, opt, symid=None, device=None, **kw) -> None:
         """Create a SymmetryManager."""
         super().__init__()
+        self.conf = conf
         self.opt = opt
         # self.opt.symid =symid or self.opt.symid
         self.device = device or ('cuda' if th.cuda.is_available() else 'cpu')
@@ -67,6 +75,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         self._idx = None
         self._post_init_args = ipd.dev.Bunch(kw)
         self._frames = None
+        self.x2local = self.x2global = self.xasuinit = th.eye(4, device=self.device)
         self.add_properties()
         self.init(**kw)
 
@@ -75,7 +84,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         pass
 
     @abstractmethod
-    def apply_symmetry(self, xyz: 'th.Tensor', pair=None, **kw) -> 'th.Tensor':  # type: ignore
+    def apply_symmetry(self, xyz: 'th.Tensor', pair=None, **kw) -> 'th.Tensor':
         """All subclasses must implement this method.
 
         Calls will recieve only the part of the structure that needs to
@@ -84,7 +93,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         """
         pass
 
-    def setup_for_symmetry(self, thing: T) -> T:
+    def setup_for_symmetry(self, thing: T, *_, **__) -> T:
         """Default implementation no-op."""
         return thing
 
@@ -93,14 +102,16 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         ipd.hub.sym_manager_created(self)
 
     def add_properties(self):
+        self.symid = self.opt.symid
         locprops = dict(
             opt=[
-                'nsub', 'symid', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats',
-                'sym_enabled', 'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template', 'ligand_is_symmetric'
+                'nsub', 'pseudo_cycle', 'sympair_method', 'fit', 'asu_to_best_frame', 'symmetrize_repeats',
+                'sym_enabled', 'rfsym_enabled', 'sympair_enabled', 'copy_main_block_template',
+                'make_ligand_symmetric'
             ],
             idx=[
-                'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym', 'Nsym',
-                'Nunsym'
+                'L', 'Lasuprot', 'Lsymprot', 'masu', 'masym', 'msym', 'munsym', 'mnonprot', 'Nasu', 'Nasym',
+                'Nsym', 'Nunsym'
             ],
         )
         for location, props in locprops.items():
@@ -115,7 +126,14 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                     name = name[1:]
                 setattr(self.__class__, prop, makeprop(location, name))
 
-    def __call__(self, thing: T = None, pair=None, key=None, isasym=None, **kw) -> T:
+    def __call__(
+        self,
+        thing: T,
+        key=None,
+        isasym=None,
+        kind=None,
+        **kw,
+    ) -> T:
         """This is the main entry point for applying symmetry to any object.
 
         The object can be a sequence, coordinates, or a pair of
@@ -128,55 +146,48 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         with the asu copies to the symmetric subs. 'sequence' can be
         anything with shape that starts with L
         """
-
-        kw = self.opt.to_bunch().sub(kw)
-        if any([not self, key in self.skip_keys, thing is None]):
-            if pair is not None: return thing, pair  # type: ignore
-            return thing
-
+        SCALAR = (bool, int, float)
+        if any([not self, key in self.skip_keys, thing is None, isinstance(thing, SCALAR)]): return thing
         self.verify_index(thing)
+        adaptor = self.sym_adapt(thing, isasym=isasym)
+        kw = self.opt.to_bunch().sub(kind=adaptor.kind, **kw)
 
-        thing = self.sym_adapt(thing, isasym=isasym)  # type: ignore
-        # print(f'sym {type(thing)}', key, flush=True)
-        pair = self.sym_adapt(pair, isasym=isasym)
-        assert thing
-        kw.kind = thing.kind  # type: ignore
-        if pair:
-            orig = thing.adapted  # type: ignore
-            newxyz, newpair = self.apply_sym_slices_xyzpair(thing, pair, **kw)
+        if isinstance(thing, XYZPair):
+            xyzadapt, pairadapt = adaptor.adapted
+            orig = xyzadapt.adapted
+            newxyz, newpair = self.apply_sym_slices_xyzpair(xyzadapt, pairadapt, **kw)
             self.move_unsym_to_match_asu(orig, newxyz)
-            if self.symid.startswith('C') and self.opt.center_cyclic:  # type: ignore
+            if self.symid.startswith('C') and self.opt.center_cyclic:
                 newxyz[self.idx.kind < 1, :, 2] -= newxyz[self.idx.kind < 1, 1, 2].mean()
-            newxyz = thing.reconstruct(newxyz)  # type: ignore
-            newpair = pair.reconstruct(newpair)
+            newxyz = xyzadapt.reconstruct(newxyz)
+            newpair = pairadapt.reconstruct(newpair)
             newxyz[0] = ipd.sym.set_motif_placement_if_necessary(self, newxyz[0], **kw)
             # self.assert_symmetry_correct(newxyz, **kw)
             # self.assert_symmetry_correct(newpair, **kw)
-            self.mark_symmetrical(newxyz, newpair)
-            return newxyz, newpair  # type: ignore
-        elif thing.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
-            result = thing.reconstruct([self(x, **kw) for x in thing.adapted])  # type: ignore
-        elif thing.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
-            result = thing.reconstruct(  # type: ignore
-                ipd.Bunch({  # type: ignore
+            return XYZPair(*self.mark_symmetrical(newxyz, newpair))
+        elif adaptor.kind.shapekind == ShapeKind.SEQUENCE:
+            result = adaptor.reconstruct([self(x, **kw) for x in adaptor.adapted])
+        elif adaptor.kind.shapekind == ShapeKind.MAPPING:
+            result = adaptor.reconstruct(
+                ipd.Bunch({
                     k: self(x, key=k, **kw)
-                    for k, x in thing.adapted.items()  # type: ignore
-                }))  # type: ignore
-        elif thing.kind.shapekind == ShapeKind.SCALAR:  # type: ignore
-            result = thing.orig  # type: ignore
-        elif th.is_tensor(thing.orig) and thing.orig.shape[-1] == 0:  # type: ignore
-            result = thing.orig  # type: ignore
+                    for k, x in adaptor.adapted.items()
+                }))
+        elif adaptor.kind.shapekind == ShapeKind.SCALAR:
+            result = adaptor.orig
+        elif th.is_tensor(adaptor.orig) and adaptor.orig.shape[-1] == 0:
+            result = adaptor.orig
         else:
-            result = thing.reconstruct(self.apply_sym_slices(thing, **kw))  # type: ignore
-        self.mark_symmetrical(result)
-        return result
+            result = adaptor.reconstruct(self.apply_sym_slices(adaptor, **kw))
+
+        return self.mark_symmetrical(result)
 
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
-        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)  # type: ignore
+        xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)
         if isinstance(xyz, tuple): xyz, pair = xyz
-        if origxyz.ndim == 2: xyz = xyz[:, None, :]  # type: ignore
+        if origxyz.ndim == 2: xyz = xyz[:, None, :]
         if len(xyz) == 1: xyz = xyz[0]
-        return xyz if pair is None else (xyz, pair)
+        return xyz if pair is None else XYZPair(xyz, pair)
 
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
         kw = ipd.dev.Bunch(kw)
@@ -184,6 +195,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
+        # ic(xyz.shape, pair.shape)
         xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
@@ -191,39 +203,39 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         pair = self.fill_from_contiguous(pairadaptor, origpair, pair, **kw)
         xyz = self.move_unsym_to_match_asu(origxyz, xyz, move_all_nonprot=False)
         if xyzpair_on_subset:
-            xyz = self(xyz, **kw.sub(fit=False, disable_all_fitting=True))  # type: ignore
+            xyz = self(xyz, **kw.sub(fit=False, fixed=True))
         ipd.hub.sym_xyzpair(xyz, pair=pair)
         return xyz, pair
 
-    def apply_sym_slices(self, thing: SymAdapt[T], **kw) -> T:
+    def apply_sym_slices(self, thing: 'SymAdapt[T]', **kw) -> T:
         adapted, contig, kw['Lasu'] = self.to_contiguous(thing, **kw)
         if thing.kind.valuekind == ValueKind.XYZ:
-            assert thing.kind.shapekind == ShapeKind.ONEDIM  # type: ignore
-            contig = self.apply_symmetry_xyz_maybe_pair(contig, pari=None, origxyz=adapted, **kw)
+            assert thing.kind.shapekind == ShapeKind.ONEDIM
+            contig = self.apply_symmetry_xyz_maybe_pair(contig, pair=None, origxyz=adapted, **kw)
         elif thing.kind.valuekind == ValueKind.INDEX:
             contig = self.apply_symmetry_index(adapted.idx, adapted.val, adapted.isidx, **kw)
         elif thing.kind.valuekind == ValueKind.BASIC:
-            contig = self.apply_symmetry_scalar(thing.kind.shapekind, contig, **kw)  # type: ignore
+            contig = self.apply_symmetry_scalar(thing.kind.shapekind, contig, **kw)
         elif thing.kind.valuekind == ValueKind.PAIR:
-            assert thing.kind.shapekind == ShapeKind.TWODIM  # type: ignore
+            assert thing.kind.shapekind == ShapeKind.TWODIM
             contig = self.apply_symmetry_pair(contig, **kw)
         else:
-            assert 0, f'bad kind {thing.kind}'  # type: ignore
+            assert 0, f'bad kind {thing.kind}'
         if len(contig) == 1: contig = contig[0]
         result = self.fill_from_contiguous(thing, adapted, contig, **kw)
-        if thing.kind.valuekind == ValueKind.XYZ:  # type: ignore
+        if thing.kind.valuekind == ValueKind.XYZ:
             result = self.move_unsym_to_match_asu(adapted, result)
         return result
 
-    def apply_symmetry_pair(self, pair: 'th.Tensor', **kw) -> 'th.Tensor':  # type: ignore
+    def apply_symmetry_pair(self, pair: 'th.Tensor', **kw) -> 'th.Tensor':
         if not self.opt.symmetrize_repeats and not self.opt.sympair_enabled:
             return pair
         if kw['sympair_protein_only']:
-            assert len(pair) == self.Lsymprot  # type: ignore
-            L, N = self.Lsymprot, self.Lasuprot  # type: ignore
+            assert len(pair) == self.Lsymprot
+            L, N = self.Lsymprot, self.Lasuprot
         else:
-            L, N = self.Nsym, self.Nasu  # type: ignore
-        symmsub_k = self.opt.symmsub_k or self.nsub - 1  # type: ignore
+            L, N = self.Nsym, self.Nasu
+        symmsub_k = self.opt.symmsub_k or self.nsub - 1
         groups = ipd.sym.find_symmsub_pair(L, N, symmsub_k, self.opt.pseudo_cycle)
         grouped = th.zeros([th.max(groups) + 1, N, N, *pair.shape[2:]], device=pair.device, dtype=pair.dtype)
         if self.opt.sympair_method == 'max': grouped -= 9e9
@@ -242,38 +254,42 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                 raise NotImplementedError(f'unknown sympair_method {self.opt.sympair_method}')
 
         for i, j in itertools.product(*[range(0, L, N)] * 2):
-            Nmembers = th.sum(groups == group)  # type: ignore
+            Nmembers = th.sum(groups == group)
             group = groups[i // N, j // N]
             if group < 0: continue
             pair[i:i + N, j:j + N] = grouped[group]
 
         return pair
 
-    def apply_symmetry_index(self, idx: T, val, isidx, **kw) -> T:
-        s = self.idx
-        asu = val[s.asu[idx]]
-        asuidx = idx[s.asu[idx]]  # type: ignore
-        asym = val[s.asym[idx]]
-        asymidx = idx[s.asym[idx]]  # type: ignore
+    def apply_symmetry_index(self, idx: T, val: T, isidx, **kw) -> T:
+        """handles index data types where values must be reindexed in context of the symmetric object"""
+        ic(self.symid, self.nsub, idx, val, isidx)
+        asu = val[self.idx.asu[idx]]
+        asuidx = idx[self.idx.asu[idx]]
+        asym = val[self.idx.asym[idx]]
+        asymidx = idx[self.idx.asym[idx]]
         new = [asym]
         newidx = [asymidx]
-        for i in range(1, self.nsub):  # type: ignore
+        for i in range(1, self.nsub):
             new1 = asu.clone()
-            new1[:, isidx] = s.idx_asu_to_sub.to(self.device)[i, asu[:, isidx].to(int)].to(asu.dtype)
+            new1[:, isidx] = self.idx.idx_asu_to_sub.to(self.device)[i, asu[:, isidx].to(int)].to(asu.dtype)
+            ic(new1)
             new.append(new1)
-            newidx.append(s.idx_asu_to_sub.to(self.device)[i, asuidx])
+            newidx.append(self.idx.idx_asu_to_sub.to(self.device)[i, asuidx])
         new = th.cat(new, 0)
         newidx = th.cat(newidx)
         assert th.allclose(newidx, idx)
+        ic(new)
+        assert 0
         return new
 
-    def apply_symmetry_scalar(self, shapekind: ShapeKind, contig: 'th.Tensor', **kw) -> 'th.Tensor':  # type: ignore
-        N = len(contig) // self.nsub  # type: ignore
+    def apply_symmetry_scalar(self, shapekind: ShapeKind, contig: 'th.Tensor', **kw) -> 'th.Tensor':
+        N = len(contig) // self.nsub
         if shapekind == ShapeKind.ONEDIM:
-            for i in range(1, self.nsub):  # type: ignore
+            for i in range(1, self.nsub):
                 contig[i * N:(i+1) * N] = contig[:N]
         if shapekind == ShapeKind.TWODIM:
-            for i in range(1, self.nsub):  # type: ignore
+            for i in range(1, self.nsub):
                 contig[i * N:(i+1) * N, i * N:(i+1) * N] = contig[:N, :N]
             # for i in range(1, self.nsub - 1):
             # contig[(i + 1) * N:(i + 2) * N, i * N:(i + 1) * N] = contig[N:2 * N, :N]
@@ -282,18 +298,18 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
 
     def move_unsym_to_match_asu(self, orig, moved, move_all_nonprot=False):
         if not self.opt.move_unsym_with_asu: return moved
-        tomove = self.munsym | (self.mnonprot if move_all_nonprot else False)  # type: ignore
+        tomove = self.munsym | (self.mnonprot if move_all_nonprot else False)
         # ic(move_all_nonprot)
         # ic(self.munsym)
         # ic(self.mnonprot)
         if not th.sum(tomove): return moved
-        origasu = orig[self.masu, 0]  # type: ignore
-        movedasu = moved[self.masu, 0]  # type: ignore
+        origasu = orig[self.masu, 0]
+        movedasu = moved[self.masu, 0]
         unsym = orig[tomove]
         # ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
         if len(unsym) and len(origasu) > 2 and not th.allclose(origasu, movedasu, atol=1e-3):
-            rms, _, xfit = ipd.h.rmsfit(origasu, movedasu)  # type: ignore
-            moved[tomove] = ipd.h.xform(xfit, unsym)  # type: ignore
+            rms, _, xfit = ipd.h.rmsfit(origasu, movedasu)
+            moved[tomove] = ipd.h.xform(xfit, unsym)
             if rms > 1e-3:
                 ic(orig)
                 ic(moved)
@@ -311,27 +327,27 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                       thing,
                       matchpair=False,
                       sympair_protein_only=None,
-                      **kw) -> tuple['th.Tensor', 'th.Tensor', int]:  # type: ignore
+                      **kw) -> tuple['th.Tensor', 'th.Tensor', int]:
         if isinstance(thing, tuple):
-            return tuple(self.make_contiguous(t) for t in thing)  # type: ignore
+            return tuple(self.make_contiguous(t) for t in thing)
         adapted = thing.adapted
         ctg = self.idx.contiguous
         if isinstance(adapted, np.ndarray): ctg = ctg.cpu().numpy()
         if thing.kind.shapekind == ShapeKind.SPARSE:
-            assert len(adapted.idx) == len(adapted.val)  # type: ignore
-            return adapted, adapted.val[self.idx.to_contiguous(adapted.idx)], self.Nasu  # type: ignore
-        if thing.kind.shapekind == ShapeKind.ONEDIM:
-            assert len(adapted) == self.L  # type: ignore
+            assert len(adapted.idx) == len(adapted.val)
+            return adapted, adapted.val[self.idx.to_contiguous(adapted.idx)], self.Nasu
+        elif thing.kind.shapekind == ShapeKind.ONEDIM:
+            assert len(adapted) == self.L
             if sympair_protein_only and matchpair:
-                return adapted, adapted[:self.Lsymprot], self.Lsymprot // self.nsub  # type: ignore
-            return adapted, adapted[ctg], self.Nasu  # type: ignore
-        if thing.kind.shapekind == ShapeKind.TWODIM:
+                return adapted, adapted[:self.Lsymprot], self.Lsymprot // self.nsub
+            return adapted, adapted[ctg], self.Nasu
+        elif thing.kind.shapekind == ShapeKind.TWODIM:
             if sympair_protein_only:
-                return adapted, adapted[:self.Lsymprot, :self.Lsymprot], self.Lsymprot // self.nsub  # type: ignore
-            assert len(adapted) == self.L  # type: ignore
+                return adapted, adapted[:self.Lsymprot, :self.Lsymprot], self.Lsymprot // self.nsub
+            assert len(adapted) == self.L
             idx = th.cartesian_prod(ctg, ctg)
             shape = (len(ctg), len(ctg), *adapted.shape[2:])
-            return adapted, adapted[idx[:, 0], idx[:, 1]].reshape(shape), self.Nasu  # type: ignore
+            return adapted, adapted[idx[:, 0], idx[:, 1]].reshape(shape), self.Nasu
         raise ValueError(f'SymManager.to_contiguous: unknown thing {type(thing)}')
 
     def fill_from_contiguous(self,
@@ -340,28 +356,28 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                              contig,
                              matchpair=False,
                              sympair_protein_only=None,
-                             **kw) -> 'th.Tensor':  # type: ignore
+                             **kw) -> 'th.Tensor':
         ctg = self.idx.contiguous
         if isinstance(orig, np.ndarray): ctg = ctg.cpu().numpy()
         new = copy.deepcopy(orig)
         if isinstance(thing, tuple):
-            return tuple(self.fill_from_contiguous(t) for t in thing)  # type: ignore
+            return tuple(self.fill_from_contiguous(t) for t in thing)
         if thing.kind.shapekind == ShapeKind.SPARSE:
-            new.val[self.idx.to_contiguous(new.idx)] = contig  # type: ignore
+            new.val[self.idx.to_contiguous(new.idx)] = contig
         elif thing.kind.shapekind == ShapeKind.ONEDIM:
             if sympair_protein_only and matchpair:
-                new[:self.Lsymprot] = contig  # type: ignore
+                new[:self.Lsymprot] = contig
             else:
                 new[ctg] = contig
         elif thing.kind.shapekind == ShapeKind.TWODIM:
             if sympair_protein_only:
-                new[:self.Lsymprot, :self.Lsymprot] = contig  # type: ignore
+                new[:self.Lsymprot, :self.Lsymprot] = contig
             else:
                 idx = th.cartesian_prod(ctg, ctg)
                 new[idx[:, 0], idx[:, 1]] = contig.reshape(-1, *contig.shape[2:])
         return new
 
-    def extract(self, thing: T, mask: 'th.Tensor', key=None, skip_keys=None, **kw) -> T:  # type: ignore
+    def extract(self, thing: T, mask: 'th.Tensor', key=None, skip_keys=None, **kw) -> T:
         """Extract the asu from an object.
 
         This should basically be the inverse of __call__. residues not
@@ -369,35 +385,49 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         """
         if skip_keys is None: skip_keys = []
         if key in skip_keys: return thing
-        if thing is None: return None  # type: ignore
-        thing = self.sym_adapt(thing, isasym=False)  # type: ignore
-        if thing.kind.shapekind == ShapeKind.SEQUENCE:  # type: ignore
-            return thing.reconstruct([self.extract(x, mask) for x in thing.adapted], **kw)  # type: ignore
-        if thing.kind.shapekind == ShapeKind.MAPPING:  # type: ignore
-            d = {
-                k: self.extract(x, mask, key=k, skip_keys=skip_keys)
-                for k, x in thing.adapted.items()  # type: ignore
-            }  # type: ignore
-            return thing.reconstruct(d, **kw)  # type: ignore
-        if thing.kind.shapekind == ShapeKind.ONEDIM:  # type: ignore
-            return thing.reconstruct(thing.adapted[mask], **kw)  # type: ignore
-        if thing.kind.shapekind == ShapeKind.TWODIM:  # type: ignore
-            x = thing.adapted[mask[None] * mask[:, None]]  # type: ignore
+        if thing is None: return None
+        # ic('extract', type(thing), kw.keys())
+        thing = self.sym_adapt(thing, isasym=False)
+        if isinstance(thing.adapted, np.ndarray):
+            mask = mask.cpu().numpy()
+        if thing.kind.shapekind == ShapeKind.SEQUENCE:
+            return thing.reconstruct([self.extract(x, mask, **kw) for x in thing.adapted], **kw)
+        elif thing.kind.shapekind == ShapeKind.MAPPING:
+            d = {k: self.extract(x, mask, key=k, skip_keys=skip_keys, **kw) for k, x in thing.adapted.items()}
+            return thing.reconstruct(d, **kw)
+        elif thing.kind.shapekind == ShapeKind.ONEDIM:
+            return thing.reconstruct(thing.adapted[mask], **kw)
+        elif thing.kind.shapekind == ShapeKind.TWODIM:
+            x = thing.adapted[mask[None] * mask[:, None]]
             # ic(x.shape, mask.sum(), mask.shape, kw)
-            return thing.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)  # type: ignore
-        if thing.kind.shapekind == ShapeKind.SPARSE:  # type: ignore
-            assert len(thing.adapted.idx) == 0, 'spares not implemented yet'  # type: ignore
-            return thing.orig  # type: ignore
+            return thing.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)
+        elif thing.kind.shapekind == ShapeKind.SPARSE:
+            # ic(mask.shape, mask)
+            # ic(thing.adapted.idx.shape)
+            # ic(thing.adapted.val.shape)
+            v = thing.adapted.val.rename(None)
+            is_not_index = v.to(int) != v
+            # ic(is_not_index)
+            thing.adapted.val[:] = th.where(is_not_index, v, self.idx.idx_sym_to_asym[v.to(int)])
+            # ic(mask.shape, mask)
+            keep = mask[thing.adapted.idx]
+            # ic(keep.shape, keep)
+            thing.adapted.idx = thing.adapted.idx[keep]
+            thing.adapted.val = thing.adapted.val[keep, ...]
+            return thing.reconstruct(thing.adapted)
 
-        raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')  # type: ignore
+            # assert len(thing.adapted.idx) == 0, 'sparse not implemented yet'
+            # return thing.orig
+
+        raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')
 
     def asym(self, thing: T, **kw) -> T:
-        return self.extract(thing, self.masym, asym=True, **kw)  # type: ignore
+        return self.extract(thing, self.masym, asym=True, **kw)
 
     def asu(self, thing: T, **kw) -> T:
-        return self.extract(thing, self.masu, asu=True, **kw)  # type: ignore
+        return self.extract(thing, self.masu, asu=True, **kw)
 
-    def symdims(self, tensor: 'th.Tensor', idx=None) -> 'th.Tensor':  # type: ignore
+    def symdims(self, tensor: 'th.Tensor', idx=None) -> 'th.Tensor':
         """Try to guess which dimensions are symmetrical, could be 1 or 2."""
         if idx is None:
             symdims = th.where(th.tensor(tensor.shape) == self.idx.L)[0]
@@ -414,6 +444,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
         for a in args:
             with contextlib.suppress(AttributeError):
                 a.__HAS_BEEN_SYMMETRIZED = True
+        return args[0] if len(args) == 1 else args
 
     def is_symmetrical(self, obj):
         if hasattr(obj, '__HAS_BEEN_SYMMETRIZED'): return True
@@ -437,25 +468,28 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
                 # ic(L,Lasu,nsub)
                 self._idx = self.SymIndexType(nsub, [(L, 0, Lasu * nsub)])
             except (TypeError, AttributeError):
-                return None  # type: ignore
+                return None
         return self._idx
 
     @idx.setter
     def idx(self, idx: SymIndex):
         """Set the idx of the symmetry manager."""
+        self.set_idx(idx)
+
+    def set_idx(self, idx):
         if isinstance(idx, self.SymIndexType):
             self._idx = idx
-        elif self.nsub:  # type: ignore
-            self._idx = self.SymIndexType(self.nsub, idx)  # type: ignore
-        self._idx.to(self.device)  # type: ignore
+        elif self.nsub:
+            self._idx = self.SymIndexType(self.nsub, idx)
+        self._idx.to(self.device)
 
     def verify_index(self, thing):
-        pass
+        assert self._idx
 
-    def sym_adapt(self, thing, isasym=None) -> ipd.sym.SymAdapt:  # type: ignore
+    def sym_adapt(self, thing, isasym=None) -> 'ipd.sym.sym_adapt.SymAdapt':
         """Return a SymAdapt object with metadata about the symmetry of the
         thing."""
-        return _sym_adapt(thing, self, isasym)
+        return ipd.sym.sym_adapt._sym_adapt(thing, self, isasym)
 
     @property
     def is_dummy_sym(self) -> bool:
@@ -476,27 +510,30 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
     def reset(self):
         self.skip_keys.clear()
         self.opt.symmsub = None
-        self._symmRs = self._symmRs.to(self.device)
+        self._idx = None
 
     def is_on_symaxis(self, xyz):
         if len(xyz) == 0: return None
-        axes = ipd.sym.axes(self.symid, all=True)  # type: ignore
+        onaxis = th.zeros(len(xyz), dtype=bool)
+        try:
+            axes = ipd.sym.axes(self.symid, all=True)
+        except ValueError:
+            return onaxis
         onanyaxis = False
         for axis in itertools.chain(axes.values()):
-            onanyaxis |= th.any(ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)  # type: ignore
+            onanyaxis |= th.any(ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001)
         if not onanyaxis: return th.tensor([], dtype=int)
         if self.opt.subsymid is None:
-            if len(axes) > 1: raise ValueError(f'atom on axes and dont know which subsymid {self.symid}')  # type: ignore
-            axes = axes[int(self.symid[1:])]  # type: ignore
+            if len(axes) > 1: raise ValueError(f'atom on axes and dont know which subsymid {self.symid}')
+            axes = axes[int(self.symid[1:])]
             if axes.ndim: axes = axes[None]
-        onaxis = th.zeros(len(xyz), dtype=bool)
         for axis in axes:
-            onaxis |= ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001  # type: ignore
+            onaxis |= ipd.h.point_line_dist2(xyz, [0, 0, 0], axis) < 0.001
         return onaxis
 
     def __repr__(self):
         """Return a string representation of the SymmetryManager."""
-        return f'ipd.sym.{self.__class__.__name__}(symid="{self.opt.symid}", idx={self.idx})'  # type: ignore
+        return f'ipd.sym.{self.__class__.__name__}(symid="{self.opt.symid}", idx={self.idx})'
 
     def __bool__(self):
         """Return True if symmetry is currently enabled.
@@ -526,7 +563,7 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
     @property
     def symmRs(self):
         """Return the symmetry matrices of the current symmsub."""
-        return self._symmRs[self.symmsub]  # type: ignore
+        return self._symmRs[self.symmsub]
 
     @property
     def allsymmRs(self):
@@ -535,12 +572,34 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
 
     @property
     def full_symmetry(self):
-        if hasattr(self, '_full_symmetry'):
-            return self._full_symmetry  # type: ignore
+        if hasattr(self, '_full_symmetry'): return self._full_symmetry
         return self.allsymmRs
 
-    def apply_initial_offset(self, x):
-        return x + self.asucenvec.to(x.device).to(x.dtype) * self.opt.start_radius  # type: ignore
+    def place_global_symmetry(self):
+        self.opt.symcen_samp = list(map(_sample_range_or_float_value, self.opt.symcen))
+        self.x2local = h.trans(self.opt.symcen_samp, device=self.device, dtype=self.frames.dtype)
+        self.x2global = h.inv(self.x2local)
+        self.frames = h.xform(self.x2local, h.xform(self.frames, self.x2global))
+        self.allframes = h.xform(self.x2local, h.xform(self.allframes, self.x2global))
+        self.xasuinit = h.rot([0, 0, 1], self.opt.asurotzdeg / 180 * th.pi).to(self.device) @ self.xasuinit
+        self.xasuinit = h.trans(self.opt.asucen).to(self.device) @ self.xasuinit
+        assert th.allclose(th.eye(4, device=self.device), self.x2local @ self.x2global, atol=1e-3)
+
+    def apply_initial_offset(self, x, resym=True):
+        if self.opt.radius != 0: raise ValueError('sym.radius parameter is opsolete')
+        # xnew[self.idx.asu] += self.asucenvec.to(dev).to(xnew.dtype) * self.opt.radius
+        ipd.debug300('symoffset_begin', x, sym=self)
+        xnew, dev = x.clone(), x.device
+        assert th.allclose(th.eye(4, device=dev), self.x2local @ self.x2global, atol=1e-3)
+        xnew = h.xform(self.x2global, xnew)
+        ipd.debug300('symoffset_toglobal', xnew, sym=self)
+        xnew = h.xform(self.xasuinit, xnew)
+        ipd.debug300('symoffset_asuinit', xnew, sym=self)
+        xnew = h.xform(self.x2local, xnew)
+        ipd.debug300('symoffset_tolocal', xnew, sym=self)
+        xnew = self(xnew, fixed=True) if resym else xnew
+        ipd.debug300('symoffset_end', xnew, sym=self)
+        return xnew.to(dev)
 
     @property
     def frames(self):
@@ -560,9 +619,13 @@ class SymmetryManager(ABC, metaclass=ipd.sym.sym_factory.MetaSymManager):  # typ
             xyz[m] += tgtcom - xyzcom
         return xyz
 
+class NullSymIndex(SymIndex):
+    pass
+
 class C1SymmetryManager(SymmetryManager):
     """Basically a null symmetry manager, does not modify anything."""
     kind = 'C1'
+    SymIndexType: type[SymIndex] = NullSymIndex
 
     def init(self, opt=None, symid=None, idx=None, device=None, **kw):
         super().init(**kw)
@@ -581,6 +644,12 @@ class C1SymmetryManager(SymmetryManager):
         if xyz is None: return pair
         return xyz if pair is None else (xyz, pair)
 
+    def asym(self, thing, **kw):
+        return thing
+
+    def asu(self, thing, **kw):
+        return thing
+
     @property
     def is_dummy_sym(self) -> bool:
         """Return True if this is a dummy symmetry manager."""
@@ -589,3 +658,17 @@ class C1SymmetryManager(SymmetryManager):
     def __bool__(self):
         """Return False if this is a dummy symmetry manager."""
         return False
+
+    def copy_without_guideposts(self):
+        return self
+
+    def copy_with_full_sym(self):
+        return self
+
+    def copy_for_indep(self, _):
+        return self
+
+def _sample_range_or_float_value(inp):
+    if isinstance(inp, (int, float)): return inp
+    assert len(inp) == 2
+    return random.uniform(*inp)

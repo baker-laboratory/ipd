@@ -4,7 +4,55 @@ import sys
 
 import numpy as np
 
+import ipd
+from ipd.homog.npth_common import *
+
+def as_tensor(array, **kw):
+    """
+    Convert input to a NumPy tensor.
+
+    Args:
+        array (array-like): Input data.
+        **kw: Additional keyword arguments for `np.asarray`.
+
+    Returns:
+        np.ndarray: Converted array.
+
+    Example:
+        >>> import numpy as np
+        >>> data = [[1, 2], [3, 4]]
+        >>> tensor = as_tensor(data)
+        >>> print(tensor)
+        [[1 2]
+         [3 4]]
+
+    """
+    if hasattr(array, 'data'): array = array.data
+    return np.asarray(array, **kw)
+
+as_tensors = ipd.dev.iterize_on_first_param(basetype=np.ndarray)(as_tensor)
+
 def hconstruct(rot, trans=None):
+    """
+    Construct a homogeneous transformation matrix from rotation and translation.
+
+    Args:
+        rot (np.ndarray): Rotation matrix of shape (..., 3, 3).
+        trans (np.ndarray, optional): Translation vector of shape (..., 3). Defaults to None.
+
+    Returns:
+        np.ndarray: Homogeneous transformation matrix of shape (..., 4, 4).
+
+    Example:
+        >>> rot = np.eye(3)
+        >>> trans = np.array([1, 2, 3])
+        >>> hmat = hconstruct(rot, trans)
+        >>> print(hmat)
+        [[1. 0. 0. 1.]
+         [0. 1. 0. 2.]
+         [0. 0. 1. 3.]
+         [0. 0. 0. 1.]]
+    """
     x = np.zeros((rot.shape[:-2] + (4, 4)))
     x[..., :3, :3] = rot[..., :3, :3]
     if trans is not None:
@@ -13,21 +61,64 @@ def hconstruct(rot, trans=None):
     return x
 
 def isarray(x):
-    if isinstance(x, np.array):  # type: ignore
+    """
+    Check if input is a NumPy array or a PyTorch tensor.
+
+    Args:
+        x (any): Input object.
+
+    Returns:
+        bool: True if x is a NumPy array or PyTorch tensor, False otherwise.
+
+    Example:
+        >>> isarray(np.array([1, 2, 3]))
+        True
+    """
+    if isinstance(x, np.ndarray):
         return True
     if "torch" in sys.modules:
-        import torch  # type: ignore
+        import torch
         if isinstance(x, torch.Tensor):
             return True
     return False
 
 def to_xyz(x):
+    """
+    Convert input to a 3D coordinate vector.
+
+    Args:
+        x (float or sequence of floats): Input value(s).
+
+    Returns:
+        np.ndarray: 3D coordinate vector.
+
+    Example:
+        >>> to_xyz(1)
+        array([1., 1., 1.])
+    """
     if isinstance(x, (int, float)):
         x = [x] * 3
     x = np.array(x, dtype=np.float64)
     return x
 
 def hvalid(stuff, is_points=None, strict=False, **kw):
+    """
+    Validate a homogeneous transformation matrix or a set of coordinates.
+
+    Args:
+        stuff (np.ndarray): Input data.
+        is_points (bool, optional): Whether input represents points. Defaults to None.
+        strict (bool, optional): If True, enforce stricter validation. Defaults to False.
+        **kw: Additional arguments for validation.
+
+    Returns:
+        bool: True if valid, False otherwise.
+
+    Example:
+        >>> hmat = np.eye(4)
+        >>> hvalid(hmat)
+        True
+    """
     if stuff.shape[-2:] == (4, 4) and not is_points:
         return hvalid44(stuff, **kw)
     if stuff.shape[-2:] == (4, 2) and not is_points:
@@ -46,16 +137,52 @@ def hvalid_norm(x):
     return np.all(normok)
 
 def hvalid44(x, improper_ok=False, **kw):
+    """
+    Validate a 4x4 homogeneous transformation matrix.
+
+    Args:
+        x (np.ndarray): Input matrix.
+        improper_ok (bool, optional): Whether to allow improper rotations. Defaults to False.
+        **kw: Additional arguments for validation.
+
+    Returns:
+        bool: True if valid, False otherwise.
+
+    Example:
+        >>> hmat = np.eye(4)
+        >>> hvalid44(hmat)
+        True
+    """
     if x.shape[-2:] != (4, 4):
         return False
     det = np.linalg.det(x[..., :3, :3])
     if improper_ok:
         det = np.abs(det)
-    detok = np.allclose(det, 1.0)
+    detok = np.allclose(det, 1.0, atol=1e-4)
 
     return all([np.allclose(x[..., 3, 3], 1), np.allclose(x[..., 3, :3], 0), detok])
 
 def hscaled(scale, stuff, is_points=None):
+    """
+    Scale a homogeneous transformation matrix or a set of coordinates.
+
+    Args:
+        scale (float): Scale factor.
+        stuff (np.ndarray): Input matrix or coordinates.
+        is_points (bool, optional): Whether input represents points. Defaults to None.
+
+    Returns:
+        np.ndarray: Scaled matrix or coordinates.
+
+    Example:
+        >>> hmat = htrans([3,2,1])
+        >>> scaled = hscaled(2.0, hmat)
+        >>> print(scaled)
+        [[1. 0. 0. 6.]
+         [0. 1. 0. 4.]
+         [0. 0. 1. 2.]
+         [0. 0. 0. 1.]]
+    """
     stuff = stuff.copy()
     if hvalid44(stuff):
         stuff[..., :3, 3] *= scale
@@ -64,17 +191,52 @@ def hscaled(scale, stuff, is_points=None):
     return stuff
 
 def hdist(x, y):
-    assert x.shape[-2:] == 4, 4
-    assert y.shape[-2:] == 4, 4
-    shape1 = x.shape[:-2]
-    shape2 = y.shape[:-2]
-    a = x.reshape(shape1 + (1, ) * len(shape1) + (4, 4))
-    b = y.reshape((1, ) * len(shape2) + shape2 + (4, 4))
-    ic(a.shape, b.shape)  # type: ignore
-    dist = np.linalg.norm(a[..., :, 3] - b[..., :, 3], axis=-1)
-    return dist
+    """
+    Compute the Euclidean distance between two homogeneous transformation matrices.
+
+    Args:
+        x (np.ndarray): First object.
+        y (np.ndarray): Second object.
+
+    Returns:
+        float: Euclidean distance.
+
+    Example:
+        >>> x = hpoint([1,1,3])
+        >>> y = hpoint([2,1,3])
+        >>> hdist(x, y)
+        np.float64(1.0)
+
+    """
+    return hnorm(x - y)
+
+def hdist2(x, y):
+    return hnorm2(x - y)
 
 def hdiff(x, y, lever=10.0):
+    """
+    Compute the average difference between two homogeneous transformation matrices.
+
+    This function calculates the difference between two transformation matrices,
+    considering both rotational and translational components.
+
+    Args:
+        x (np.ndarray): First transformation matrix of shape (..., 4, 4).
+        y (np.ndarray): Second transformation matrix of shape (..., 4, 4).
+        lever (float, optional): Scaling factor for rotational difference. Defaults to 10.0.
+
+    Returns:
+        float: Average difference between matrices.
+
+    Example:
+        >>> x = hrot([1, 0, 0], [1, 2])
+        >>> y = hrot([1, 0, 0], [1.1, 2.1])
+        >>> hdiff(x, y)
+        array([[0.66638892, 6.96916305],
+               [5.79954045, 0.66638892]])
+
+    """
+
     shape1 = x.shape[:-2]
     shape2 = y.shape[:-2]
     a = x.reshape(shape1 + (1, ) * len(shape1) + (4, 4))
@@ -88,46 +250,206 @@ def hdiff(x, y, lever=10.0):
 
     return diff
 
-def hxformx(x, stuff, **kw):
+def hxformx(*x, **kw):
+    """
+    Apply a homogeneous transformation to a matrix.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Input matrix to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed matrix.
+
+    Example:
+        >>> x = hrot([1,0,0], 90)
+        >>> x2 = htrans([1,0,0])
+        >>> hxformx(x, x2).round(4)
+        array([[ 1.,  0.,  0.,  1.],
+               [ 0.,  0., -1.,  0.],
+               [ 0.,  1.,  0.,  0.],
+               [ 0.,  0.,  0.,  1.]])
+    """
+    *x, stuff = x
+    stuff = as_tensor(stuff)
     assert np.allclose(stuff[..., 3, :], [0, 0, 0, 1])
-    result = hxform(x, stuff, is_points=False, **kw)
+    result = hxform(*x, stuff, is_points=False, **kw)
     assert np.allclose(stuff[..., 3, :], [0, 0, 0, 1])
     return result
 
-def hxformpts(x, stuff, **kw):
+def hxformpts(*x, **kw):
+    """
+    Apply a homogeneous transformation to points.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Points to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed points.
+
+    Example:
+        >>> x = np.eye(4)
+        >>> points = np.array([[1, 2, 3]])
+        >>> hpoints = hpoint(points)
+        >>> transformed = hxformpts(x, hpoints)
+        >>> print(transformed)
+        [[1. 2. 3. 1.]]
+    """
+    *x, stuff = x
+    stuff, hdim = hpoint(stuff), stuff.shape[-1]
     assert np.allclose(stuff[..., 3], 1)
-    result = hxform(x, stuff, is_points=True, **kw)
+    result = hxform(*x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 1)
-    return result
+    return result[..., :hdim]
 
-def hxformvec(x, stuff, **kw):
+def hxformvec(*x, **kw):
+    """
+    Apply a homogeneous transformation to vectors.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Vectors to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed vectors.
+
+    Example:
+        >>> x = hrot([0,1,0], 90)
+        >>> vec = np.array([1, 0, 0])
+        >>> hxformvec(x, vec).round(4)
+        array([ 0.,  0., -1.])
+    """
+    *x, stuff = x
+    stuff, hdim = hvec(stuff), stuff.shape[-1]
     assert np.allclose(stuff[..., 3], 0)
-    result = hxform(x, stuff, is_points=True, **kw)
+    result = hxform(*x, stuff, is_points=True, **kw)
     assert np.allclose(result[..., 3], 0)
-    return result
+    return result[..., :hdim]
 
-def hxform(x, stuff, homogout="auto", **kw):
+def invxform(x, stuff, **kw):
+    """
+    Apply the inverse of a homogeneous transformation.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Input matrix to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed matrix using the inverse of `x`.
+
+    Example:
+        >>> x = htrans([1,0,0])
+        >>> vec = np.array([[1, 2, 3, 0]])
+        >>> pt = np.array([[1, 2, 3, 1]])
+        >>> newpt = invxform(x, pt)
+        >>> newvec = invxform(x, vec)
+        >>> print(newpt, newvec)
+        [[0. 2. 3. 1.]] [[1. 2. 3. 0.]]
+    """
+    return hxform(hinv(x), stuff, **kw)
+
+def invxformpts(x, stuff, **kw):
+    """
+    Apply the inverse of a homogeneous transformation to points.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Points to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed points using the inverse of `x`.
+
+    Example:
+        >>> x = htrans([1,0,0])
+        >>> points = np.array([[0,0,0]])
+        >>> hpoints = hpoint(points)
+        >>> transformed = invxformpts(x, hpoints)
+        >>> print(transformed)
+        [[-1.  0.  0.  1.]]
+    """
+    return hxformpts(hinv(x), stuff, **kw)
+
+def invxformvec(x, stuff, **kw):
+    """
+    Apply the inverse of a homogeneous transformation to vectors.
+
+    Args:
+        x (np.ndarray): Transformation matrix of shape (..., 4, 4).
+        stuff (np.ndarray): Vectors to be transformed.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Transformed vectors using the inverse of `x`.
+
+    Example:
+        >>> x = hrot([1,1,0], 180)
+        >>> vec = np.array([1, 0, 0])
+        >>> invxformvec(x, vec).round(4)
+        array([0., 1., 0.])
+    """
+    return hxformvec(hinv(x), stuff, **kw)
+
+def product(*factors, **kw):
+    """
+    Compute the product of multiple homogeneous transformations.
+
+    Args:
+        *factors: Sequence of transformation matrices.
+        **kw: Additional arguments for transformation.
+
+    Returns:
+        np.ndarray: Resulting transformation matrix.
+
+    Example:
+        >>> x = np.eye(4)
+        >>> y = np.eye(4)
+        >>> product(x, y)
+        array([[1., 0., 0., 0.],
+               [0., 1., 0., 0.],
+               [0., 0., 1., 0.],
+               [0., 0., 0., 1.]])
+    """
+    if len(factors) == 0: return np.eye(4)
+    if len(factors) == 1: return factors[0]
+    x, *xforms, stuff = factors
+    for x1 in xforms:
+        x = hxform(x, x1)
+    return hxform(x.astype(stuff.dtype), stuff, **kw)
+
+def hxform(*x, homogout="auto", **kw):
+    if len(x) > 1:
+        *x, stuff = x
+        x = product(*x, **kw | {'is_points': False})
+    else:
+        raise TypeError('hxform missing required positional arguments hxform(x, stuff, ...)')
     if isinstance(stuff, list) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return [hxform(x, v) for v in stuff]
     if isinstance(stuff, dict) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return {k: hxform(x, v) for k, v in stuff.items()}
     if hasattr(stuff, "xformed"):
-        return stuff.xformed(x)  # type: ignore
+        return stuff.xformed(x)
     orig = None
-    if hasattr(stuff, "coords"):
+    coords = None
+    if hasattr(stuff, "coords"): coords = 'coords'
+    if hasattr(stuff, "coord"): coords = 'coord'
+    if coords:
         isxarray = False
         if "xarray" in sys.modules:
-            import xarray  # type: ignore
+            import xarray
             # coords is perhaps poor choice of convention
             # xarray.DataArry has coords member already...
             print("WARNING Deprivation of .coords convention in favor of .xformed method")
             isxarray = isinstance(stuff, xarray.DataArray)
         if not isxarray:
-            if hasattr(stuff, "copy"):
-                orig = stuff.copy()
-            else:
-                orig = copy.copy(stuff)
-            stuff = stuff.coords  # type: ignore
+            if hasattr(stuff, "copy"): orig = stuff.copy()
+            else: orig = copy.copy(stuff)
+            stuff = getattr(stuff, coords)
             assert x.ndim in (2, 3)
 
     stuff, origstuff = np.asarray(stuff), stuff
@@ -154,13 +476,13 @@ def hxform(x, stuff, homogout="auto", **kw):
         result = result[..., :3]
 
     if result.shape[-1] == 4 and not hvalid(result, **kw):
-        ic(x.shape)  # type: ignore
-        ic(stuff.shape)  # type: ignore
+        ic(x.shape)
+        ic(stuff.shape)
         # ic(result)
         for x in result:
             if not hvalid(x, **kw):
-                ic(x)  # type: ignore
-                assert 0
+                ic(x, np.linalg.det(x))
+                assert 0, 'invalid transform'
         # this is a bad copout.. should make this check handle nans correctly
         if not stuff.shape[-2:] == (4, 1):
             raise ValueError(f"malformed homogeneous coords with shape {stuff.shape}, "
@@ -175,18 +497,28 @@ def hxform(x, stuff, homogout="auto", **kw):
                     o = orig.copy()
                 else:
                     o = copy.copy(orig)
-                o.coords = x  # type: ignore
+                setattr(o, coords, x)
                 r.append(o)
             result = r
         else:
-            orig.coords = result  # type: ignore
+            setattr(orig, coords, result)
             result = orig
 
     assert result is not None
 
     return result
 
-def _hxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", improper_ok=False):
+def _hxform_impl(
+    x,
+    stuff,
+    *,
+    outerprod="auto",
+    flat=False,
+    is_points="auto",
+    improper_ok=False,
+    uppertri=None,
+    dtype=None,
+):
     if is_points == "auto":
         is_points = not hvalid44(stuff, improper_ok=improper_ok)
         if is_points:
@@ -247,8 +579,11 @@ def _hxform_impl(x, stuff, outerprod="auto", flat=False, is_points="auto", impro
         if flat:
             result = result.reshape(-1, 4)
 
-        # assert 0
-    # ic('result', result.shape)
+    if uppertri is not None:
+        assert result.ndim > 2
+        assert result.shape[0] == result.shape[1]
+        result = np.concatenate([x[i + uppertri:] for i, x in enumerate(result[:-uppertri])])
+
     return result
 
 def is_valid_quat_rot(quat):
@@ -266,20 +601,16 @@ def quat_to_upper_half(quat):
     # ic(ineg3.shape)
     ineg = ineg0 + ineg1 + ineg2 + ineg3
     quat = quat.copy()
+    # TODO: is this right?
     quat[ineg] = -quat[ineg]
     return quat
 
-def rand_quat(shape=(), seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
+@ipd.dev.preserve_random_state
+def rand_quat(shape=()):
     if isinstance(shape, int):
         shape = (shape, )
     q = np.random.randn(*shape, 4)
     q /= np.linalg.norm(q, axis=-1)[..., np.newaxis]
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return quat_to_upper_half(q)
 
 def rot_to_quat(xform):
@@ -444,9 +775,41 @@ def is_homog_xform(xforms):
             and (np.allclose(xforms[..., 3, :], [0, 0, 0, 1])))
 
 def hinv(xforms):
+    """
+    Compute the inverse of a homogeneous transformation matrix.
+
+    Args:
+        xforms (np.ndarray): Transformation matrix of shape (..., 4, 4).
+
+    Returns:
+        np.ndarray: Inverse of the input transformation matrix.
+
+    Example:
+        >>> x = ipd.hnumpy.trans([1,2,3])
+        >>> inv = hinv(x)
+        >>> print(inv)
+        [[ 1.  0.  0. -1.]
+         [ 0.  1.  0. -2.]
+         [ 0.  0.  1. -3.]
+         [ 0.  0.  0.  1.]]
+    """
     return np.linalg.inv(xforms)
 
 def hunique(xforms):
+    """
+    Check if transformation matrices are unique.
+
+    Args:
+        xforms (np.ndarray): Array of transformation matrices.
+
+    Returns:
+        bool: True if matrices are unique, False otherwise.
+
+    Example:
+        >>> xforms = np.array([np.eye(4), np.eye(4)])
+        >>> hunique(xforms)
+        np.False_
+    """
     if len(xforms) == 0:
         return True
     diff = hdiff(xforms, xforms)
@@ -457,6 +820,11 @@ def hunique(xforms):
 def axis_angle_of(xforms, debug=False):
     axis = axis_of(xforms, debug=debug)
     angl = angle_of(xforms, debug=debug)
+    if angl.ndim == 0:
+        if angl < 0: axis, angl = axis * -1, angl * -1
+    else:
+        axis[angl < 0] *= -1
+        angl[angl < 0] *= -1
     return axis, angl
 
 def axis_angle_hel_of(xforms):
@@ -481,10 +849,10 @@ def angle_of_degrees(xforms, debug=False):
     angl = np.arccos(np.clip(cos, -1, 1))
     return np.degrees(angl)
 
-def rot(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
+def rot3(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
     """Angle will override nfold."""
     if angle is None:
-        angle = 2 * np.pi / nfold  # type: ignore
+        angle = 2 * np.pi / nfold
     angle = np.array(angle, dtype=dtype)
 
     axis = np.array(axis, dtype=dtype)
@@ -531,7 +899,7 @@ def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
         axis = axis
         center = np.array([0, 0, 0], dtype=dtype) if center is None else np.asarray(center, dtype=dtype)
 
-    r = rot(axis, angle, dtype=dtype, shape=(4, 4), **kw)
+    r = rot3(axis, angle, dtype=dtype, shape=(4, 4), **kw)
     if center.ndim > 1 and axis.ndim == 1:
         rshape, cshape = r.shape, center.shape
         r = np.tile(r, cshape[:-1] + (1, ) * len(rshape))
@@ -553,7 +921,7 @@ def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
     return r
 
 def hpoint(point):
-    point = np.asanyarray(point)
+    point = as_tensor(point)
     if point.shape[-1] == 4:
         if np.allclose(point[..., 3], 1):
             # if True:
@@ -570,13 +938,13 @@ def hpoint(point):
         raise ValueError("point must len 3 or 4")
 
 def hpointorvec(point):
-    point = np.asanyarray(point)
+    point = as_tensor(point)
     if point.shape[-1] == 4:
         return point.copy()
     return hpoint(point)
 
 def hvec(vec):
-    vec = np.asanyarray(vec)
+    vec = as_tensor(vec)
     if vec.shape[-1] == 4:
         vec = vec.copy()
         vec[..., 3] = 0
@@ -681,16 +1049,17 @@ def hnorm(a):
     return np.sqrt(np.sum(a[..., :3]**2, axis=-1))
 
 def hnorm2(a):
-    a = np.asanyarray(a)
+    a = hvec(a)
     return np.sum(a[..., :3] * a[..., :3], axis=-1)
 
 def normalized_3x3(a):
     return a / np.linalg.norm(a, axis=-1)[..., np.newaxis]
 
-def hnormalized(a):
-    a = np.asanyarray(a)
+def hnormalized(a, dtype=None):
+    a = hvec(a)
+    dtype = dtype or a.dtype
     if (not a.shape and len(a) == 3) or (a.shape and a.shape[-1] == 3):
-        a, tmp = np.zeros(a.shape[:-1] + (4, )), a
+        a, tmp = np.zeros(a.shape[:-1] + (4, ), dtype=dtype), a
         a[..., :3] = tmp
     a2 = a.copy()
     a2[..., 3] = 0
@@ -706,41 +1075,27 @@ def is_valid_rays(r):
         return False
     return True
 
+@ipd.dev.preserve_random_state
 def hrandpoint(shape=(), mean=0, std=1, seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
     if isinstance(shape, int):
         shape = (shape, )
     p = hpoint(np.random.randn(*(shape + (3, ))) * std + mean)
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return p
 
+@ipd.dev.preserve_random_state
 def rand_vec(shape=(), seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
     if isinstance(shape, int):
         shape = (shape, )
     v = hvec(np.random.randn(*(shape + (3, ))))
     if isinstance(shape, int):
         shape = (shape, )
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return v
 
+@ipd.dev.preserve_random_state
 def rand_unit(shape=(), seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
     if isinstance(shape, int):
         shape = (shape, )
     v = hnormalized(np.random.randn(*(shape + (3, ))))
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return v
 
 def angle(u, v, outerprod=False):
@@ -759,10 +1114,8 @@ def line_angle(u, v, outerprod=False):
 def line_angle_degrees(u, v, outerprod=False):
     return np.degrees(line_angle(u, v, outerprod))
 
-def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
+@ipd.dev.preserve_random_state
+def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None, dtype=np.float64):
     if isinstance(shape, int):
         shape = (shape, )
     cen = np.asanyarray(cen)
@@ -776,14 +1129,10 @@ def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None):
     r[..., :3, 0] = cen
     r[..., 3, 0] = 1
     r[..., :3, 1] = norm
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return r
 
-def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
+@ipd.dev.preserve_random_state
+def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None, dtype=np.float64):
     if isinstance(shape, int):
         shape = (shape, )
     if axis is None:
@@ -791,16 +1140,12 @@ def rand_xform_aac(shape=(), axis=None, ang=None, cen=None, seed=None):
     if ang is None:
         ang = np.random.rand(*shape) * np.pi  # todo: make uniform!
     if cen is None:
-        cen = rand_point(shape)  # type: ignore
+        cen = rand_point(shape)
     # q = rand_quat(shape)
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return hrot(axis, ang, cen)
 
-def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, doto=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
+@ipd.dev.preserve_random_state
+def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, doto=None, dtype=np.float64):
     if isinstance(shape, int):
         shape = (shape, )
     axis = rand_unit(shape)
@@ -812,52 +1157,36 @@ def hrandsmall(shape=(), cart_sd=0.001, rot_sd=0.001, centers=None, seed=None, d
     x = hrot(axis, ang, centers, degrees=False).squeeze()
     trans = np.random.normal(0, cart_sd, x[..., :3, 3].shape)
     x[..., :3, 3] += trans
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return x.squeeze() if doto is None else hxform(x, doto)
 
 rand_xform_small = hrandsmall
 
-def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
+@ipd.dev.preserve_random_state
+def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None, dtype=np.float64):
     if isinstance(shape, int):
         shape = (shape, )
     q = rand_quat(shape, )
     x = quat_to_xform(q)
     x[..., :3, 3] = np.random.randn(*shape, 3) * cart_sd + cart_cen
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return x
 
 rand_xform = hrand
 
-def hrandrot(shape=(), seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
+@ipd.dev.preserve_random_state
+def hrandrot(shape=(), seed=None, dtype=np.float64):
     if isinstance(shape, int):
         shape = (shape, )
     quat = rand_quat(shape)
     rot = quat_to_rot(quat)
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
     return hconvert(rot)
 
+@ipd.dev.preserve_random_state
 def hrandrotsmall(shape=(), rot_sd=0.001, seed=None):
-    if seed is not None:
-        randstate = np.random.get_state()
-        np.random.seed(seed)
-
     if isinstance(shape, int):
         shape = (shape, )
     axis = rand_unit(shape)
     ang = np.random.normal(0, rot_sd, shape) * np.pi
-    r = rot(axis, ang, degrees=False).squeeze()  # type: ignore
-    if seed is not None:
-        np.random.set_state(randstate)  # type: ignore
+    r = rot3(axis, ang, degrees=False).squeeze()
     return hconvert(r.squeeze())
 
 def hrms(a, b):
@@ -874,6 +1203,7 @@ def unhomog(stuff):
 
 Result_hrmsfit = collections.namedtuple("Result_hrmsfit", "rms fitcoords xfit")
 
+@ipd.dev.timed
 def hrmsfit(mobile, target):
     """Use kabsch method to get rmsd fit."""
     mobile = hpoint(mobile)
@@ -903,7 +1233,7 @@ def hrmsfit(mobile, target):
 
     mobile = mobile + mobile_cen
     target = target + target_cen
-    mobile_fit_to_target = hxform(xform_mobile_to_target, mobile)
+    mobile_fit_to_target = hxformpts(xform_mobile_to_target, mobile)
     rms = hrms(target, mobile_fit_to_target)
 
     return Result_hrmsfit(rms, mobile_fit_to_target, xform_mobile_to_target)
@@ -956,9 +1286,16 @@ def h_point_line_dist(point, cen, norm):
     perp = hprojperp(norm, point)
     return hnorm(perp)
 
+def closest_point_on_line(target, cen, norm):
+    target = hpoint(target)
+    cen = hpoint(cen)
+    norm = hnormalized(norm)
+    cen2point = target - cen
+    return hdot(cen2point, norm)[..., None] * norm + cen
+
 def intesect_line_plane(p0, n, l0, l):
-    l = hm.hnormalized(l)  # type: ignore
-    d = hm.hdot(p0 - l0, n) / hm.hdot(l, n)  # type: ignore
+    l = hm.hnormalized(l)
+    d = hm.hdot(p0 - l0, n) / hm.hdot(l, n)
     return l0 + l*d
 
 def intersect_planes(plane1, plane2):
@@ -1030,6 +1367,9 @@ def axis_ang_cen_of_eig(xforms, debug=False):
     cen = cen - axis * np.sum(axis * cen)
     return axis, angle, cen
 
+_axis_ang_cen_magic_points_numpy = np.array([[-32.09501046777237, 3.36227004372687, 35.34672781477340, 1.0],
+                                             [21.15113978202345, 12.55664537217840, -37.48294301885574, 1.0]])
+
 def axis_ang_cen_of_planes(xforms, debug=False, ident_match_tol=1e-8):
     """If angle is 0, will return axis along translation."""
     origshape = xforms.shape[:-2]
@@ -1085,7 +1425,8 @@ def line_line_distance_pa(pt1, ax1, pt2, ax2):
     i = abs(d) > 0.00001
     r[i] = n[i] / d[i]
     pp = hnorm(hprojperp(ax1, pt2 - pt1))
-    return np.where(np.abs(hdot(ax1, ax2)) > 0.9999, pp, r)
+    dist = np.where(np.abs(hdot(ax1, ax2)) > 0.9999, pp, r)
+    return dist
 
 def line_line_distance(ray1, ray2):
     pt1, pt2 = ray1[..., :, 0], ray2[..., :, 0]
@@ -1112,14 +1453,14 @@ def line_line_closest_points_pa(pt1, ax1, pt2, ax2, verbose=0):
     Q2 = pt2 - t2*ax2
 
     if verbose:
-        ic("C21", C21)  # type: ignore
-        ic("M", M)  # type: ignore
-        ic("m2", m2)  # type: ignore
-        ic("R", R)  # type: ignore
-        ic("t1", t1)  # type: ignore
-        ic("t2", t2)  # type: ignore
-        ic("Q1", Q1)  # type: ignore
-        ic("Q2", Q2)  # type: ignore
+        ic("C21", C21)
+        ic("M", M)
+        ic("m2", m2)
+        ic("R", R)
+        ic("t1", t1)
+        ic("t2", t2)
+        ic("Q1", Q1)
+        ic("Q2", Q2)
     return Q1, Q2
 
 hlinesisect = line_line_closest_points_pa
@@ -1301,7 +1642,7 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
         # vector delta between pt2 and pt1
         d = hprojperp(ax1, pt2 - pt1)
         Xalign = halign2(ax1, d, ta1, sl2)  # align d to Y axis
-        Xalign[..., :, 3] = -Xalign @ pt1  # type: ignore
+        Xalign[..., :, 3] = -Xalign @ pt1
         slide_dist = (Xalign @ pt2)[..., 1]
     else:
         try:
@@ -1311,13 +1652,13 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
             # assert np.allclose(Xalign @ ax2, ta2, atol=0.0001)
             # ic(Xalign)
         except AssertionError as e:
-            ic("halign2 error")  # type: ignore
-            ic("   ", ax1)  # type: ignore
-            ic("   ", ax2)  # type: ignore
-            ic("   ", ta1)  # type: ignore
-            ic("   ", ta2)  # type: ignore
+            ic("halign2 error")
+            ic("   ", ax1)
+            ic("   ", ax2)
+            ic("   ", ta1)
+            ic("   ", ta2)
             raise e
-        Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin  # type: ignore
+        Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin
         Xalign[..., 3, 3] = 1
         cen2_0 = Xalign @ pt2  # moving pt2 by Xalign
         D = np.stack([ta1[:3], sl2[:3], ta2[:3]]).T
@@ -1406,9 +1747,9 @@ def scale_translate_lines_isect_lines(pt1, ax1, pt2, ax2, tp1, ta1, tp2, ta2):
     xalign[3, 3] = 1
 
     if np.any(np.isnan(xalign)):
-        ic("=============================")  # type: ignore
-        ic(xalign)  # type: ignore
-        ic(delta1, delta2)  # type: ignore
+        ic("=============================")
+        ic(xalign)
+        ic(delta1, delta2)
     # rays = np.array([
     #    hm.hray(xalign @ pt1, xalign @ ax1),
     #    hm.hray(xalign @ pt2, xalign @ ax2),
@@ -1459,9 +1800,10 @@ def hexpand(
     cen=[0, 0, 0],
     deterministic=True,
 ):
+    raise NotImplementedError('expand_xforms_rand lives in willutil_cpp now')
     generators = np.asarray(generators).astype(np.float64)
     cen = np.asarray(cen).astype(np.float64)
-    x, _ = ipd.homog.hcom.geom.expand_xforms_rand(  # type: ignore
+    x, _ = ipd.homog.hgeom.expand_xforms_rand(
         generators,
         depth=depth,
         trials=ntrials,
@@ -1542,17 +1884,277 @@ def hconvert(rot=np.eye(3), trans=None, **kw):
     h[..., 3, 3] = 1
     return h
 
-_axis_ang_cen_magic_points_numpy = np.array([
-    [
-        -32.09501046777237,
-        3.36227004372687,
-        35.34672781477340,
-        1.0,
-    ],
-    [
-        21.15113978202345,
-        12.55664537217840,
-        -37.48294301885574,
-        1.0,
-    ],
-])
+def lines_concurrent_isect(cen, axis, tol=1e-4):
+    cen, axis = as_tensors([cen, axis])
+    cen, axis = cen.reshape(-1, 4), axis.reshape(-1, 4)
+    assert cen.shape == axis.shape
+    if len(cen) == 1: return True, cen, np.array([0])
+    pt1, pt2 = line_line_closest_points_pa(cen[0], axis[0], cen[1], axis[1])
+    pt = (pt1+pt2) / 2
+    if not np.sqrt(np.sum((pt1 - pt2)**2)) < tol: return False, None, None
+    if len(cen) == 2: return True, pt, hnorm(pt1 - pt2)
+    dist = point_line_dist_pa(pt, cen, axis)
+    return all(dist < tol), pt, dist
+
+def lines_all_concurrent(cen, axis, tol=1e-4):
+    """
+    test if all lines defined by cen and axis intersect at a common point
+    """
+    return lines_concurrent_isect(cen, axis, tol=tol)[0]
+
+def unique_symaxes(
+    axis,
+    cen,
+    ang=None,
+    hel=None,
+    *extra,
+    frames=np.eye(4)[None],
+    target=None,
+    tol=1e-3,
+    lineuniq_method='symaverage',
+    lever=100,
+    debug=False,
+    **kw,
+):
+    """
+    return unique set of lines, where lines in different frames are considered the same.
+    also checks anything in extras
+    """
+    assert axis.shape == cen.shape and axis.ndim == 2 and axis.shape[1] == 4
+    tol = ipd.dev.Tolerances(tol, **kw)
+    assert tol.angle.threshold < .1
+    assert axis.shape == cen.shape
+    if ang is None: ang = np.ones(len(cen))
+    if hel is None: hel = np.zeros(len(cen))
+    if target is None: target = normalized([10, .1, 999, 0])
+    frames = frames.reshape(-1, 4, 4)
+    ax = axis.reshape(-1, axis.shape[-1])
+    cn = cen.reshape(-1, cen.shape[-1])
+    an = ang.reshape(ang.shape[-1])
+    hl = hel.reshape(hel.shape[-1])
+    extra = list(extra)
+    for i, e in enumerate(extra):
+        if e.ndim == 1: extra[i] = e[:, None]
+        extra[i] = e.reshape(-1, extra[i].shape[-1])
+        assert len(e) == len(ax)
+    uniq = []
+    # ic(tol.isect, tol.dot_norm, tol.misc_lineuniq)
+    for step in range(100):
+        # ic(ax.shape, cn.shape, frames.shape)
+        sax, scn = hxformvec(frames, ax[0]), hxformpts(frames, cn[0])
+        pdist = h_point_line_dist(cn[:, None], scn[None], sax[None])
+        adot = dot(sax[None], ax[:, None])
+        same = 1 - np.abs(adot) < tol.dot_norm
+        # print('dot  ', same.any(axis=1).sum())
+        same &= (pdist < tol.isect)
+        same = same.any(axis=1)
+        # ic(same.shape, an.shape, (an[0]-an).shape)
+        if an is not None: same &= np.abs(an[0] - an) < tol.angle
+        if hl is not None: same &= np.abs(hl[0] - hl) < tol.helical_shift
+        # print('pdist', same.sum())
+        for e in extra:
+            same &= np.sqrt(np.sum((e[0] - e)**2, axis=1)) < tol.misc_lineuniq
+            # print('extra', same.sum())
+        # print('final', same.sum())
+        if debug:
+            pdistmin, adotmax = pdist.min(1), np.abs(adot).max(1)
+            ipd.print_table(ipd.dev.picklocals('pdistmin adotmax an hl', idx=same))
+        assert np.any(same)
+        if same.sum() == 1:
+            sel = lambda x: x[same][0]
+            pick = sel(ax), sel(cn), sel(an), sel(hl), *(sel(e) for e in extra)
+        elif lineuniq_method == 'closest':
+            which = np.argmin(h_point_line_dist(target, cn[same], ax[same]))
+            sel = lambda x: x[same][which]
+            if hdot(sel(ax), target) < 0: ax[same] *= -1
+            pick = sel(ax), sel(cn), sel(an), sel(hl), *(sel(e) for e in extra)
+        elif lineuniq_method == 'symaverage':
+            cax, ccn = sym_closest_lines_if_already_close(ax[same], cn[same], frames, target=target)
+            sel = lambda x: x[same].mean()
+            pick = cax.mean(0), ccn.mean(0), sel(an), sel(hl), *(sel(e) for e in extra)
+        uniq.append(pick)
+        if np.all(same): break
+        ax, cn, an, hl, extra = ax[~same], cn[~same], an[~same], hl[~same], [e[~same] for e in extra]
+    else:
+        raise ValueError('too many steps of unique_symaxes')
+    result = tuple(np.stack([tup[i] for tup in uniq]) for i in range(len(uniq[0])))
+    return result
+
+def _target_axis_cen(target):
+    if len(target) == 2 and target[1] is None: target = target[0]
+    if len(target) == 2:
+        if np.allclose(target[0, 3], 1) and np.allclose(target[0, 3], 0): target = target[[1, 0]]
+        return hvec(target[0]), hpoint(target[1])
+    if len(target) == 1: return hvec(target[0]), None
+    if len(target) in (3, 4): return hvec(target), None
+    raise ValueError('bad target, must be vec or (vec, point)')
+
+def line_line_diff_pa(p1, n1, p2, n2, lever, directed=False):
+    assert np.allclose(p1[..., 3], 1) and np.allclose(n1[..., 3], 0)
+    assert np.allclose(p2[..., 3], 1) and np.allclose(n2[..., 3], 0)
+    dist = line_line_distance_pa(p1, n1, p2, n2)
+    dist += (angle if directed else line_angle)(n1, n2) * lever
+    return dist
+
+def sym_line_line_diff_pa(cn1, ax1, cn2, ax2, lever, frames):
+    assert cn1.shape == ax1.shape and cn2.shape == ax2.shape
+    assert cn1.ndim == cn2.ndim == 2
+    symcn1 = hxform(frames, cn1)[:, :, None]
+    symax1 = hxform(frames, ax1)[:, :, None]
+    diff = line_line_diff_pa(symcn1, symax1, cn2, ax2, lever)
+    return diff.min(0)
+
+def sym_closest_lines_if_already_close(axis, cen, frames, target, lever=100):
+    if len(axis) > 1:
+        symaxis = xformvec(frames, axis[1:])
+        symcen = xformpts(frames, cen[1:])
+        symdist = line_line_diff_pa(cen[0], axis[0], symcen, symaxis, lever)
+        closest = np.argmin(symdist, axis=0)
+        axis[1:] = symaxis[closest, range(len(closest))]
+        cen[1:] = symcen[closest, range(len(closest))]
+    target = _target_axis_cen(target)
+    axis[hdot(axis, axis[0]) < -0.1] *= -1
+    tgtaxis, tgtcen = _target_axis_cen(target)
+    if tgtcen is None: dist = angle(xformvec(frames, axis[0]), tgtaxis)
+    else:
+        dist = line_line_diff_pa(xformpts(frames, cen[0]),
+                                 xformvec(frames, axis[0]),
+                                 tgtcen,
+                                 tgtaxis,
+                                 lever,
+                                 directed=True)
+    axis = xformvec(frames[np.argmin(dist)], axis)
+    cen = xformpts(frames[np.argmin(dist)], cen)
+    return axis, cen
+
+def uniqlastdim(x, tol=1e-4):
+    x = np.asarray(x)
+    origshape, x = x.shape, x.reshape(-1, x.shape[-1])
+    uniq = []
+    while len(x):
+        uniq.append(x[0])
+        different = np.sum((x[0][None] - x)**2, axis=-1) > tol * tol
+        x = x[different]
+    return np.stack(uniq)
+
+def joinlastdim(u, v):
+    return np.concatenate([u, v], axis=-1)
+
+def get_dtype_dev(example, dtype=None, **_):
+    if isinstance(example, list) and len(example) < 100:
+        for e in example:
+            if isinstance(e, np.ndarray):
+                example = e
+                break
+    if dtype is None:
+        if isinstance(example, np.ndarray): dtype = example.dtype
+        else: dtype = th.float32
+    return dict(dtype=dtype)
+
+def toint(x):
+    if isinstance(x, np.ndarray): return x.round().astype(int)
+    return round(x)
+
+def randtrans(*a, rot_sd=None, **kw):
+    return hrandsmall(*a, rot_sd=0, **kw)
+
+def tensor_in(x, targets, atol=1e-3):
+    atol = float(atol)
+    targets = list(targets)
+    result = -np.ones_like(x, dtype=int)
+    for i, t in enumerate(targets):
+        result = np.where(np.isclose(x, t, atol=atol), i, result)
+    return result
+
+def allclose(a, b, atol=1e-3, **kw):
+    if isinstance(a, (np.ndarray, list, int, float)):
+        return ipd.kwcall(kw, np.allclose, a, b, atol=atol)
+    if isinstance(a, dict) and isinstance(b, dict):
+        with ipd.dev.capture_asserts() as result:
+            assert a.keys() == b.keys()
+            for k in a:
+                assert allclose(a[k], b[k])
+        return not result
+    if (xr := sys.modules.get('xarray')) and isinstance(a, xr.DataArray):
+        return ipd.kwcall(kw, np.allclose, a, b, atol=atol)
+    if (xr := sys.modules.get('xarray')) and isinstance(a, xr.Dataset):
+        if list(a.keys()) != list(b.keys()): return False
+        if list(a.coords) != list(b.coords): return False
+        for k in list(a.keys()) + list(a.coords):
+            return ipd.kwcall(kw, np.allclose, a[k], b[k], atol=atol)
+    raise TypeError(f'bad types for allclose {type(a)} {type(b)}')
+
+def xinfo(xforms):
+    return ipd.Bunch(zip('axis angle cen, hel'.split(), axis_angle_cen_hel_of(np.asarray(xforms))))
+
+def radius_of_gyration(points, com=None):
+    points = hpoint(points)
+    com = hcom(points) if com is None else hpoint(com)
+    delta2 = hdist2(points, com)
+    rg = np.sqrt(np.mean(delta2))
+    return rg
+
+# compatibility with thgeom (torch version of these)
+axis_angle = axis_angle_of
+axis_angle_cen_hel = axis_angle_cen_hel_of
+point_line_dist_pa = h_point_line_dist
+
+# aliasing all that start with h
+construct = hconstruct
+valid = hvalid
+valid_norm = hvalid_norm
+valid44 = hvalid44
+scaled = hscaled
+dist = hdist
+diff = hdiff
+xformx = hxformx
+xformpts = hxformpts
+xformvec = hxformvec
+xform = hxform
+inv = hinv
+unique = hunique
+rot = hrot
+point = hpoint
+pointorvec = hpointorvec
+vec = hvec
+centered = hcentered
+centered3 = hcentered3
+ray = hray
+frame = hframe
+trans = htrans
+dot = hdot
+cross = hcross
+norm = hnorm
+norm2 = hnorm2
+normalized = hnormalized
+randpoint = hrandpoint
+randray = hrandray
+randsmall = hrandsmall
+rand = hrand
+randrot = hrandrot
+randrotsmall = hrandrotsmall
+rms = hrms
+parallel = hparallel
+rmsfit = hrmsfit
+proj = hproj
+cart = hcart
+cart3 = hcart3
+ori3 = hori3
+ori = hori
+projperp = hprojperp
+pointlineclose = hpointlineclose
+point_line_dist = h_point_line_dist
+linesisect = hlinesisect
+align = halign
+align2 = halign2
+coherence = hcoherence
+mean = hmean
+expand = hexpand
+pow = hpow
+pow_int = hpow_int
+pow_float = hpow_float
+com_flat = hcom_flat
+com = hcom
+rog_flat = hrog_flat
+rog = hrog
+convert = hconvert

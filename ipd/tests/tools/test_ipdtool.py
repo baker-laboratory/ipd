@@ -1,11 +1,15 @@
 import os
 import pytest
+import re
 
 typer = pytest.importorskip('typer')
 pytest.mark.skipif(int(typer.__version__.split('.')[1]) < 12, reason='ipd.sym.Helix breaks on numpy 2')
 
 from typer.testing import CliRunner
 import ipd
+
+def main():
+    ipd.tests.maintest(globals())
 
 runner = CliRunner()
 ipdtool = ipd.tools.IPDTool()
@@ -19,19 +23,24 @@ def run(cmd):
     assert not result.exit_code
     return result
 
-def main():
-    test_ipdtool_basic()
-    # test_ipdtool_ci_update()
-    test_setup_submodules()
+def normalize_text(text):
+    """Normalize text by removing whitespace and newlines to make comparisons more robust."""
+    # Remove all whitespace (spaces, tabs, newlines)
+    return re.sub(r'\s+', '', text)
 
-@pytest.mark.fast
 def test_ipdtool_basic():
+    # Test the basic commands, normalizing output to handle formatting variations
     result = run('')
-    assert "Usage" in result.stdout
+    normalized_output = normalize_text(result.stdout)
+    assert "Usage" in normalized_output, f"Original output: {result.stdout}"
+
     result = run('ci')
-    assert "Usage" in result.stdout
+    normalized_output = normalize_text(result.stdout)
+    assert "Usage" in normalized_output, f"Original output: {result.stdout}"
+
     result = run('ci repo')
-    assert "Usage" in result.stdout
+    normalized_output = normalize_text(result.stdout)
+    assert "Usage" in normalized_output, f"Original output: {result.stdout}"
 
 @pytest.mark.skip
 def test_setup_submodules():
