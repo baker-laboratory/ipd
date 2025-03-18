@@ -2,6 +2,7 @@ import abc
 from typing import (
     Any,
     Callable,
+    cast as cast,
     Iterator,
     TypeVar,
     Union,

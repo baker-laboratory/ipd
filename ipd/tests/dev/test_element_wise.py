@@ -61,7 +61,7 @@ def test_element_wise_resulttypes():
     with pytest.raises(TypeError):
 
         @ipd.dev.element_wise_operations(result_types='foo')
-        class EwiseDictonly(dict):
+        class EwiseDictBad(dict):
             pass
 
     @ipd.dev.element_wise_operations(result_types='np dict')

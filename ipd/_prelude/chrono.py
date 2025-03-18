@@ -184,6 +184,7 @@ class Chrono:
         if self._start is not None:
             total_elapsed = time.perf_counter() - self._start
             self._store_checkpoint("total", total_elapsed)
+            ipd.ic(id(self), id(ipd.global_chrono))
             self._start = None
 
     def __enter__(self):

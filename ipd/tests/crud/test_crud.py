@@ -18,11 +18,14 @@ from sqlmodel import Field, Relationship
 import ipd
 
 def main():
-    for k, v in globals().copy().items():
-        if not k.startswith('test_'): continue
-        with tempfile.TemporaryDirectory() as td:
-            v(td)
-    print('test_crud PASS')
+    with tempfile.TemporaryDirectory() as td:
+        # test_duplicate_one_to_many(td)
+        test_user_group(td)
+        test_many2many_basic(td)
+        test_one2many_parent(td)
+        test_many2many_parent(td)
+        test_many2many_sanity_check(td)
+        print('test_crud PASS')
 
 def create_new_sqlmodel_base() -> type[sqlmodel.SQLModel]:
     return type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())

@@ -30,6 +30,7 @@ dependencies = [
     'assertpy',
     'colorlog',
     'compact-json',
+    'gitpython',
     'hydra-core',
     'hypothesis',
     'httpx',
