@@ -71,7 +71,7 @@ def cherry_pick_import(qualname: str, attribute: str = '', path: str = '') -> An
     try:
         return getattr(sys.modules[qualname], attribute)
     except AttributeError as e:
-        raise AttributeError(f"Module '{qualname}' has no attribute '{attribute}'") from e
+        raise AttributeError(f"Cherry Picked Module '{qualname}' has no attribute '{attribute}'") from e
 
 def cherry_pick_imports(qualname: str, attributes: str, path='') -> List[Any]:
     """Import multiple attributes from a module without importing the entire package hierarchy.

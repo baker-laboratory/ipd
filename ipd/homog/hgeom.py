@@ -1,3 +1,63 @@
+"""
+Module: ipd.homog.hgeom
+=======================
+
+This module provides functionality to create and manipulate 4x4 homogeneous
+transformation matrices used throughout the IPD library for representing positions,
+stubs, and symmetry frames. These transforms are essential when aligning, rotating,
+or translating atomic bodies and symmetry bodies.
+
+Key features include:
+  - Generation of random homogeneous transformation matrices.
+  - Construction of translation and rotation matrices.
+  - Composition of multiple transformations.
+  - Application of transforms to points, vectors, stubs, and higher-level structures.
+
+Many of these functions are used to set up bodies or to manipulate AtomArrays, as well as
+to test for clashes and contacts in a highly efficient manner using the rotationally
+invariant bounding volume hierarchy (SphereBVH_double from willutil_cpp). For large
+symmetrical structures (e.g., virus capsids), this approach can be hundreds of times faster
+than traditional alternatives such as the biotite cell list.
+
+Usage Examples:
+    >>> from ipd import hgeom as h
+    >>> import numpy as np
+    >>> # Create a random transformation matrix (4x4)
+    >>> T = h.rand()
+    >>> T.shape
+    (4, 4)
+
+    >>> # Create a translation matrix that shifts by [1, 2, 3]
+    >>> T_trans = h.trans([1.0, 2.0, 3.0])
+    >>> # Create a rotation matrix: 90° about the z-axis at the origin
+    >>> T_rot = h.rot([0, 0, 1], 90, [0, 0, 0])
+
+    >>> # Compose the translation and rotation transforms
+    >>> T_combined = h.xform(T_trans, T_rot)
+
+    >>> # Apply the composed transformation to a point
+    >>> pt = h.point(1, 0, 0)
+    >>> pt_transformed = h.xform(T_combined, pt)
+    >>> pt_transformed[0] > pt[0]  # Verify the transformation altered the x-coordinate
+    True
+
+Additional Examples with Bodies and AtomArrays:
+    >>> # Using AtomArrays and Bodies (assume these helper functions exist)
+    >>> from ipd import atom, hgeom as h
+    >>> aa = atom.load("1A0J")
+    >>> from ipd.atom import body
+    >>> b = body.body_from_file("1A0J")
+    >>> # Apply a random rotation to the Body
+    >>> T_random = h.rand()
+    >>> b_rotated = b.apply_transform(T_random)
+    >>> # Demonstrate contact checking (conceptual; actual return may vary)
+    >>> contacts = b.contact_check(aa)
+    >>> isinstance(contacts, list)
+    True
+
+.. note::
+    For more usage details, please see the tests in ipd/tests/homog/test_hgeom.py.
+"""
 import collections
 import copy
 import sys

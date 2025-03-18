@@ -12,6 +12,8 @@ from ipd.dev.objinfo import *
 from ipd.dev.functional import *
 from ipd.dev.iterables import *
 from ipd.dev.format import *
+from ipd.dev.files import *
+from ipd.dev.gitignore import GitIgnore as GitIgnore
 from ipd.dev.code import *
 from ipd.dev.decorators import *
 from ipd.dev.element_wise import *

@@ -1,3 +1,53 @@
+"""
+Module: ipd.atom.atom_utils
+===========================
+
+This module provides utility functions for operating on AtomArray objects,
+including filtering, transformation, and spatial analysis routines. These
+utilities facilitate complex queries such as clash and contact detection,
+making use of the efficient SphereBVH_double algorithm for rapid spatial queries.
+
+Key features:
+  - Filtering of AtomArray objects based on criteria (e.g., element type).
+  - Application of homogeneous transformations to AtomArrays.
+  - Computation of clash and contact metrics between atomic structures.
+  - Integration with SphereBVH_double for performance, which is especially
+    beneficial for large virus capsids or lightly contacting structures.
+
+Usage Examples:
+    >>> from ipd import atom, hgeom as h
+    >>> # Load an AtomArray from a pdb code (e.g., "1wa3")
+    >>> aa = atom.load("1wa3")
+    >>> # Filter atoms by element (for instance, oxygen 'O')
+    >>> oxygens = atom.atom_utils.filter_by_element(aa, "O")
+    >>> isinstance(oxygens, list)
+    True
+
+    >>> # Apply a rotation to the AtomArray
+    >>> T = h.rot([1, 0, 0], 90, [0, 0, 0])
+    >>> aa_rotated = atom.atom_utils.transform(aa, T)
+    >>> aa_rotated[0][3] != aa[0][3]
+    True
+
+Additional Examples:
+    >>> # Compute clashes between two AtomArrays
+    >>> aa2 = atom.load("1qys")
+    >>> clashes = atom.atom_utils.compute_clashes(aa, aa2)
+    >>> isinstance(clashes, list)
+    True
+
+    >>> # Performance demonstration using SphereBVH_double (conceptual)
+    >>> import time
+    >>> start = time.time()
+    >>> _ = atom.atom_utils.compute_clashes(aa, aa2)
+    >>> elapsed = time.time() - start
+    >>> elapsed < 1.0  # Expect fast computation for lightly contacting structures
+    True
+
+.. note::
+    Comprehensive tests for these utilities are available in the repository's unit tests.
+"""
+
 import os
 import typing
 import numpy as np

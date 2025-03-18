@@ -1,3 +1,41 @@
+"""
+Module: ipd.pdb.pdbfetch
+========================
+
+This module provides the functionality to fetch PDB files from online databases.
+It enables the IPD library to dynamically retrieve the latest structural data using a
+given PDB code. The fetched content can then be parsed directly via readstruct.
+
+Key features:
+  - Download PDB files from remote repositories.
+  - Support for caching to speed up repeated access.
+  - Integration with the readstruct module to immediately convert content into AtomArrays.
+
+Usage Examples:
+    >>> from ipd import pdb
+    >>> # Fetch the raw PDB content for a given pdb code (e.g., "1dxh")
+    >>> content = pdb.pdbfetch("1dxh")
+    >>> isinstance(content, str)
+    True
+
+    >>> # Parse the fetched content into an AtomArray
+    >>> aa = pdb.readstruct(content)
+    >>> len(aa) > 0
+    True
+
+Additional Examples:
+    >>> # Fetch a structure and then apply a rotation using hgeom
+    >>> from ipd import hgeom as h
+    >>> content = pdb.pdbfetch("1g5q")
+    >>> aa = pdb.readstruct(content)
+    >>> T = h.rot([1,0,0], 180, [0,0,0])
+    >>> aa_transformed = h.xform(T, aa)
+    >>> aa_transformed[0][3] != aa[0][3]
+    True
+
+.. note::
+    For more usage examples, please refer to the tests provided in the IPD repository.
+"""
 import glob
 import os
 

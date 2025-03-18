@@ -149,7 +149,7 @@ class Timer:
         self,
         order="longest",
         summary="sum",
-        namelen=None,
+        namelen=60,
         precision="10.5f",
         printme=True,
         scale=1.0,
@@ -157,16 +157,17 @@ class Timer:
         file=None,
         pattern="",
     ):
-        if namelen is None:
-            namelen = max(len(n.rstrip("$")) for n in self.checkpoints) if self.checkpoints else 0
-        if len(self.checkpoints) <= 10: timecut = 0
+        if len(self.checkpoints) <= 1: timecut = 0
+        namelen = min(namelen, max(len(n.rstrip("$")) for n in self.checkpoints) if self.checkpoints else 0)
         lines = [f"Times(name={self.name}, order={order}, summary={summary}):"]
         times = self.report_dict(order=order, summary=summary, timecut=timecut)
+
         if not times: times["total$$$$"] = time.perf_counter() - self._start
-        for cpoint, t in times.items():
-            if not cpoint.count(pattern): continue
-            a = " " if cpoint.endswith("$$$$") else "*"
-            lines.append(f'    {cpoint.rstrip("$"):>{namelen}} {a} {t*scale:{precision}}')
+        for checkpoint, t in times.items():
+            if not checkpoint.count(pattern): continue
+            a = " " if checkpoint.endswith("$$$$") else "*"
+            cpstr = checkpoint.rstrip("$")[-namelen:]
+            lines.append(f'{t*scale:{precision}} {a} {cpstr:<{namelen}}')
             if scale == 1000: lines[-1] += "ms"
         r = os.linesep.join(lines)
         if printme:
@@ -268,26 +269,3 @@ def timed(thing=None, *, label=None, name=None):
         return timed_class(thing, label=label)
     else:
         return timed_func(thing, label=label)
-
-'''
-<instructions>
-Please help me craft the following prompt. Do no create code at this time, but instead help me imporve this prompt and general plan of action for my timer. I will submit this prompt for a coding task to several ai assistants, so I would like to make sure it is well crafted, clear, and actually includes everything I am looking for. In particular analyze the feasivility of a stack based checkpoint system integrated with decorator usage for accurately keeping track of complex nested call pattens. would it be feasible to use a stack rather than the hacky interjection logic (which I think is effectively a stack with a max depth of one)
-</instructions>
-
-<summary>
-I have attached below module and test code for a versitile timer utility module which can be used as a class and function decorator, as a context manager, as a module level checkpoint function for a timer stored in kw or a global timer. It also includes basic usage as a Timer class instance.  It has the ability to inject additional checkpoints while still including the runtime before the injection in the next checkpoint.  It also has different report types (sum, mean, median, min, max) as well as autolabeling with the autolabel parameter, and automatically labels checkpoints based on class/function name when used as a decorator. I am looking for a very high quality, professional level of code here. I have no problem with using third party libraries, but they must be well maintained and have a good license.  I am not interested in using libraries that are not well known or widely used.  If you suggest a third party library, please include a link to the project page and a brief description of its features.
-</summary>
-
-<code improvements>
-Please suggest or make improvements, especially for more accurate results when timing nested function calls, perhaps generalizing the "injection" mechanism with a checkpoint stack (NOT a stack of timers)following function calls when used as a decorator, making sure the times spend in each function are allotted to correctly labeled checkpoints for those functions. please make suggestions for general useability and accuracy improvements. I would also like the optionI have no problem with "magical" code here, and I prefer short and highly expressive, functional code without comments. if you feel the need to comment, consider adding to the relevant docstring instead. only include comments for particularly obtuse or magical code, or where it may be uncler *why* the code is doing something nonobvious.
-</code improvements>
-
-<documentation>
-please write docstrings for the module, classes and functions for this versitile and magical timer utility module.  include comprehensive usage examples including as a class and function decorator, as a context manager, usage of the module level checkpoint function for a timer stored in kw, and basic usage as a Timer class instance. include information about and an example of checkpoint interjection, where additional checkpoints can be injected while still including the runtime before the injection in the next checkpoint. have information and examples of different report types (sum, mean, median, min, max) as well as autolabeling with the autolabel parameter, as well as automatically labeling checkpoints based on class/function name when used as a decorator.
-</documentation>
-
-<tests>
-please also produce a comprehensive test suite, paying special attention to any new checkpoint stack you may add (as an improvement to interjection), focusing on correctness when used as a decorator on multiple functions that may call each other in a complex pattern, sharing a single global timer and making sure all time spent in each function is accounted for correctly using a checkpoint stack when decorating functions and class members. please also consider the examples in docstrings will be tested with doctest, but keep the doctest/docstring examples simpler that the main test suite. please make sure decorating generator functions is tested.
-</tests>
-
-'''

@@ -1,11 +1,38 @@
 """
-Module for frame searching and alignment of atomic structures.
+Module: ipd.atom.components
+===========================
 
-This module provides tools to calculate frames from atomic coordinates and
-perform sequence alignment and RMS fitting on atomic structures. It includes
-a `Components` class to store and manipulate search results.
+This module defines the low-level components that make up an atom in the IPD framework.
+It includes classes and helper functions to manage atom properties, connectivity, and
+spatial attributes that serve as the building blocks for higher-level constructs such as
+Body and SymBody.
 
-Examples:
+Key features:
+  - Definitions for atom components (e.g., element type, position, connectivity).
+  - Functions to manage and manipulate component data.
+  - Integration with transformation functions from ipd.homog.hgeom.
+
+Usage Examples:
+    >>> from ipd import atom
+    >>> # Load an AtomArray and inspect an atom's component
+    >>> aa = atom.load("1hv4")
+    >>> # For example, each atom might have a 'component' attribute
+    >>> comp = aa[0].component
+    >>> isinstance(comp, str)
+    True
+
+    >>> # Demonstrate the effect of a transformation on atom components
+    >>> from ipd import hgeom as h
+    >>> T = h.trans([2, 2, 2])
+    >>> aa_transformed = h.xform(T, aa)
+    >>> aa_transformed[0][3] != aa[0][3]
+    True
+
+Additional Examples:
+    >>> # Filter AtomArray based on component type (conceptual example)
+    >>> filtered = [atom for atom in aa if atom.component == "C"]
+    >>> len(filtered) <= len(aa)
+    True
     >>> atoms = ipd.atom.get('1dxh', assembly='largest', het=False, chainlist=True)
     >>> frameset = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
     >>> print(frameset)
@@ -17,6 +44,10 @@ Examples:
       idx: [array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])]
       source_: <class 'list'>
     >>> atoms, frames, rms, matches = frameset['atoms frames rmsd seqmatch']
+
+.. note::
+    For more advanced atom-level operations, refer to ipd.atom.atom_utils.
+
 
 
 Dependencies:

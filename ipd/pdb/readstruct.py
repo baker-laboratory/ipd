@@ -1,3 +1,41 @@
+"""
+Module: ipd.pdb.readstruct
+==========================
+
+This module is responsible for reading and parsing PDB structure files.
+It extracts atomic coordinates, chain information, and other structural details,
+returning them in a format (typically as an AtomArray) that is usable by the rest
+of the IPD library.
+
+Key features:
+  - Parse PDB files from either file paths or direct content.
+  - Create AtomArray objects which are used by Body and SymBody operations.
+  - Support for a wide variety of PDB formats.
+
+Usage Examples:
+    >>> from ipd import pdb
+    >>> # Read a structure from a PDB file using a pdb code (e.g., "1A0J")
+    >>> aa = pdb.readstruct("1A0J")
+    >>> len(aa) > 0
+    True
+
+    >>> # Apply a translation to the AtomArray using hgeom functions
+    >>> from ipd import hgeom as h
+    >>> T = h.trans([0, 0, 10])
+    >>> aa_transformed = h.xform(T, aa)
+    >>> aa_transformed[0][3] > aa[0][3]
+    True
+
+Additional Examples:
+    >>> # Detailed inspection of a structure
+    >>> aa = pdb.readstruct("1n0e")
+    >>> # Verify that each atom has an 'element' attribute of type str
+    >>> all(isinstance(atom.element, str) for atom in aa)
+    True
+
+.. note::
+    For a complete set of examples, please refer to the unit tests in the repository.
+"""
 import functools
 import itertools
 import io

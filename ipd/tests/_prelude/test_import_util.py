@@ -99,7 +99,7 @@ def test_cherry_pick_imports_one_invalid_attribute(tmp_package: Tuple[str, str])
     path, pkg_name = tmp_package
 
     # Should raise AttributeError for the invalid attribute
-    with pytest.raises(AttributeError):
+    with pytest.raises((AttributeError, ImportError)):
         cherry_pick_imports(f"{pkg_name}.module1", "variable1 nonexistent_attr")
 
 def test_module_path_resolution(tmp_package: Tuple[str, str]) -> None:

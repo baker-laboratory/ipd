@@ -1,6 +1,59 @@
 """
-represents coordinates as biotite AtomArray along with a bounding volume hierarchy for fast geom checks. should behave as a decorator around AtomArray and
+Module: ipd.atom.body
+=====================
+
+This module defines the Body class that represents a collection of atoms organized
+as a coherent structure. It provides methods for spatial operations such as clash
+and contact detection and supports transformation operations through homogeneous
+transforms (using the ipd.homog.hgeom module).
+
+Key features:
+  - Construction of Body objects from PDB files using helper functions (e.g., body_from_file).
+  - Efficient clash detection and contact checks between bodies and AtomArrays.
+  - Application of 4x4 homogeneous transformations to manipulate the spatial arrangement.
+  - Utilization of the highly efficient SphereBVH_double from willutil_cpp, which can
+    deliver hundreds of times speedup for large, lightly contacting structures (e.g., virus capsids).
+
+Usage Examples:
+    >>> from ipd import atom, hgeom as h
+    >>> # Create a Body from a PDB code using a helper function
+    >>> b = atom.body_from_file("1byf")
+    >>> # Apply a translation to the Body
+    >>> T = h.trans([5, 0, 0])
+    >>> b2 = b.apply_transform(T)
+    >>> # Check for a clash between the original and transformed bodies
+    >>> b.clash(b2) in [True, False]
+    True
+
+    >>> # Demonstrate contact checking between a Body and an AtomArray
+    >>> aa = atom.load("1dxh")
+    >>> contacts = b.contact_check(aa)
+    >>> isinstance(contacts, list)
+    True
+
+Additional Examples:
+    >>> # Apply a combined rotation and translation
+    >>> T1 = h.trans([1, 2, 3])
+    >>> T2 = h.rot([0, 0, 1], 45, [0, 0, 0])
+    >>> b_transformed = b.apply_transform(h.xform(T1, T2))
+    >>> contacts_new = b_transformed.contact_check(aa)
+    >>> isinstance(contacts_new, list)
+    True
+
+    >>> # Create another Body with a different pdb code and check for clashes
+    >>> b3 = atom.body_from_file("1ql2")
+    >>> b3.clash(b)
+    False
+
+.. note::
+    The SphereBVH_double bounding volume hierarchy used here is extremely efficient
+    for large symmetrical structures and is far superior in performance compared to more
+    traditional methods.
+
+.. seealso::
+    ipd.atom.components and ipd.atom.atom_utils for further atom-level operations.
 """
+
 import copy
 from dataclasses import dataclass, field
 import numpy as np
