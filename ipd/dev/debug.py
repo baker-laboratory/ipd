@@ -1,3 +1,4 @@
+import types
 from contextlib import contextmanager
 from icecream import IceCreamDebugger, ic
 import inspect
@@ -16,7 +17,8 @@ def _getContextOneBack(self, callFrame):
 
 ic_one_frame_back = IceCreamDebugger()
 ic_one_frame_back.configureOutput(includeContext=True)
-newmember = ipd.ft.partial(_getContextOneBack, ic_one_frame_back)
+newmember = types.MethodType(_getContextOneBack, ic_one_frame_back)
+
 setattr(ic_one_frame_back, '_getContext', newmember)
 
 @contextmanager
