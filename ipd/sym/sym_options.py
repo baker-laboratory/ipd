@@ -80,9 +80,11 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if conf and 'sym' in conf:
         for key, val in conf.sym.items():
             opt.parse_dynamic_param(key, val)
+        if opt.symid != '_training':
+            opt.asu_input_pdb = conf.inference.input_pdb
     # ic(extra_params)
-    if conf:
-        opt.asu_input_pdb = conf.inference.input_pdb  # storing this in the sym manager as well for easy ref if needed
+    if opt.has('kind'):
+        ipd.sym.set_default_sym_manager(opt.kind)
     for name, val in default_params.items():
         key = name.split('.')[-1]
         if key in opt: continue
@@ -92,8 +94,6 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
         # ic(key, val)
         opt.parse_dynamic_param(key, val, overwrite=True)
     opt = process_symmetry_options(opt, **kw)
-    if opt.has('kind'):
-        ipd.sym.set_default_sym_manager(opt.kind)
     if 'nsub' not in opt or not opt.nsub:
         if opt.symid.startswith('CYCLIC_VEE_'): opt.nsub = 2 * int(opt.symid[11:])
         elif opt.symid[0] == 'C': opt.nsub = int(opt.symid[1:])
