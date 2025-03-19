@@ -47,7 +47,7 @@ def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, set
     opt = ipd.sym.process_symmetry_options(opt)
     kind = kind or opt.get(kind, None) or _default_sym_manager
     if kind == 'input_defined': opt.symid = 'input_defined'
-    elif opt.symid == 'C1': kind = 'C1'
+    elif opt.symid == 'C1': kind = 'C1' 
     sym = _sym_managers[kind](conf=conf, opt=opt, device=device)
     if setglobal:
         ipd.sym.set_global_symmetry(sym)
