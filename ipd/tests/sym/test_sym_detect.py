@@ -6,6 +6,7 @@ from ipd.homog import hgeom as h
 from ipd.data.tests.numeric import sym_detect_test_frames
 
 TEST_PDBS = [
+    # '6u9d',
     '3sne',
     '1dxh',
     '1n0e',

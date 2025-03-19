@@ -16,12 +16,12 @@ def test_broken_package():
         with pytest.raises(ipd.LazyImportError) as e:
             borked.foo
 
-def test_importornone():
-    re = ipd.importornone('re')
+def test_maybeimport():
+    re = ipd.maybeimport('re')
     assert re is sys.modules['re']
-    missing = ipd.importornone('noufuomemioixecmeiorutnaufoinairesvoraisevmraoui')
+    missing = ipd.maybeimport('noufuomemioixecmeiorutnaufoinairesvoraisevmraoui')
     assert not missing
-    missing = ipd.importsornone('noufuomem ioixecmeiorutnaufoina iresvoraisevmraoui')
+    missing = ipd.maybeimports('noufuomem ioixecmeiorutnaufoina iresvoraisevmraoui')
     assert not any(missing)
 
 def test_lazyimport_re():

@@ -60,7 +60,7 @@ bpdbx = lazyimport('biotite.structure.io.pdbx')
 @functools.lru_cache
 def readatoms(fname, **kw) -> 'AtomArray|list[AtomArray]':
     fname = str(fname)
-    if not ipd.importornone('biotite'):
+    if not ipd.maybeimport('biotite'):
         raise ImportError('ipd.pdb.readatoms requires biotite')
     if not os.path.exists(fname):
         fname = ipd.dev.package_testcif_path(fname)

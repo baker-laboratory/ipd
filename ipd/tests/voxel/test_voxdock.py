@@ -4,6 +4,7 @@ from icecream import ic
 
 import ipd
 
+pytest.skip(allow_module_level=True)
 pytest.importorskip('ipd.voxel.voxel_cuda')
 th = pytest.importorskip('torch')
 

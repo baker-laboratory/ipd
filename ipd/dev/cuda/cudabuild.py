@@ -32,7 +32,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         Extension module.
     """
     import torch as th  # type: ignore
-    import torch.utils.cpp_extension  # type: ignore
+    import torch.utils.cpp_extension
     # os.environ['CC'] = "gcc-9"
     commonflags = ['-DEIGEN_NO_DEBUG'] if mode == 'release' else []
     # ic('start cuda build')
@@ -48,7 +48,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         verbose=verbose,
         extra_cflags=['-O3'] + commonflags,
         extra_cuda_cflags=['-Xnvlink', '-use-host-info'] + commonflags,
-        extra_include_paths=[f'{ipd.projdir}/{d}' for d in ['../lib', 'cuda'] + incpath] + I)
+        extra_include_paths=[f'{ipd.projdir}/{d}' for d in ['../lib', 'dev/cuda'] + incpath] + I)
     # ic('done cuda build')
     if module:
         for k, v in extension.__dict__.items():

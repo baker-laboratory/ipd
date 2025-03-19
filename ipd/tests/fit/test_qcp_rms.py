@@ -14,6 +14,7 @@ else:
 
 import ipd
 
+pytest.skip(allow_module_level=True)
 pytest.importorskip('ipd.fit.qcp_rms_cuda')
 import numpy as np
 

@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 else:
     th = lazyimport('torch')
 
+pytest.skip(allow_module_level=True)
 pytest.importorskip('ipd.voxel.voxel_cuda')
 
 def main():

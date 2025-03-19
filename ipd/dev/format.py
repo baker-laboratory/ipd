@@ -22,7 +22,7 @@ def make_table(thing, precision=3, **kw):
         if isinstance(thing, ipd.Bunch): return make_table_bunch(thing, **kw)
         if isinstance(thing, dict): return make_table_dict(thing, **kw)
         if isinstance(thing, (list, tuple)): return make_table_list(thing, **kw)
-        xr = ipd.importornone('xarray')
+        xr = ipd.maybeimport('xarray')
         if xr and isinstance(thing, xr.Dataset): return make_table_dataset(thing, **kw)
         raise TypeError(f'cant make table for {type(thing)}')
     finally:

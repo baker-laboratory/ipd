@@ -3,22 +3,18 @@
 The CUDA implementation is very fast, can compute > 100 million RMSDs
 per second on a single GPU.
 """
-from ipd import lazyimport
-
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    import torch as th
-else:
-    th = lazyimport('torch')
-
-import math
-
-from numba import cuda
-
 import ipd
 
-_rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
+rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
 
+# from typing import TYPE_CHECKING
+# if TYPE_CHECKING:
+#     import torch as th
+# else:
+#     th = lazyimport('torch')
+'''
+import math
+from numba import cuda
 def rmsd(xyz1, xyz2, getfit=False, nthread=128, usenumba=False):
     """Compute RMSD of xyz1 to xyz2.
 
@@ -316,3 +312,4 @@ def qcp_rms_align(xyz1, xyz2):
 #         return _rms.qcp_rmsd_raw_vec_f8(iprod, E0, len)
 #     else:
 #         raise ValueError(f"Unsupported dtype: {xyz1.dtype}")
+'''

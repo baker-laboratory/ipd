@@ -1,8 +1,10 @@
 import sys
-
 import ipd
 
 th, xr, np = ipd.lazyimports('torch', 'xarray', 'numpy')
+
+if ipd.not_installed('torch'): Tensor = np.ndarray
+else: Tensor = ipd.Union[np.ndarray, "th.Tensor"]
 
 def splitlastdim(x, i):
     return x[..., :i], x[..., i:]

@@ -232,7 +232,7 @@ def timed_func(func, *, label=None):
 
     if inspect.iscoroutinefunction(func):
 
-        @functools.wraps(func)
+        @ipd.wraps(func)
         async def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
             # should interject instead? refactor to use stack?
@@ -242,7 +242,7 @@ def timed_func(func, *, label=None):
             return val
     else:
 
-        @functools.wraps(func)
+        @ipd.wraps(func)
         def wrapper(*a, **kw):
             kwarg = dict(label=label, filename=filen, funcname=funcn)
             # should interject instead? refactor to use stack?

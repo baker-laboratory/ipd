@@ -1,10 +1,8 @@
 import math
 
-import gemmi  # type: ignore
 import numpy as np
 import torch as th  # type: ignore
 from icecream import ic
-from numba import cuda
 
 import ipd
 import ipd.homog.thgeom as h
@@ -125,6 +123,7 @@ class Voxel:
         self.ccp4().write_ccp4_map(fname)
 
     def ccp4(self):
+        import gemmi
         npgrid = self.grid.to(th.float32).cpu().numpy()
         grid = gemmi.FloatGrid(npgrid)
         grid.set_size(*npgrid.shape)
@@ -139,6 +138,8 @@ class Voxel:
         # print(ccp4)
         # ccp4.write_ccp4_map(fname)
 
+'''
+from numba import cuda
 @cuda.jit('void(f4[:, :], f4[:], f4[:], i4, f4, float16[:, :, :])', cache=True, fastmath=True)
 def create_voxel_numba(xyz, lb, rad, irad, resl, vox):
     ixyz = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x  # type: ignore
@@ -162,3 +163,4 @@ def create_voxel_numba(xyz, lb, rad, irad, resl, vox):
         elif dist < rad[0]: val = 1.0
         else: val = (rad[1] - dist) / (rad[1] - rad[0])
         if val: vox[i, j, k] += val
+'''

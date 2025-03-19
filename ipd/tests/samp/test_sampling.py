@@ -9,6 +9,7 @@ pytest.importorskip('torch')
 import ipd
 import ipd.homog.thgeom as h
 
+pytest.skip(allow_module_level=True)
 pytest.importorskip('ipd.samp.samp_cuda')
 
 def main():

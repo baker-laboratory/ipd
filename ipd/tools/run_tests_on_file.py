@@ -19,7 +19,7 @@ from pathlib import Path
 from collections import defaultdict
 from time import perf_counter
 from assertpy import assert_that
-
+import ipd
 # set to manually specipy a command for a file
 _overrides = {
     # 'foo.py': 'PYTHONPATH=.. python foo/bar.py -baz'
@@ -105,6 +105,14 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
     t = f'{root}{pre}tests/{post}test_{bname}'
     return t
 
+def locate_fname(fname):
+    'locate file in sys.path'
+    if os.path.exists(fname): return fname
+    candidates = [fn for fn in ipd.dev.project_files() if fn.endswith(fname)]
+    if len(candidates) == 1: return candidates[0]
+    if len(candidates) == 0: raise FileNotFoundError(f'file {fname} not found in git project')
+    raise FileNotFoundError(f'file {fname} found ambiguous {candidates} in git project')
+
 def dispatch(
         projects,
         fname,
@@ -116,7 +124,7 @@ def dispatch(
         **kw,
 ):
     'dispatch command for a given file. see above'
-
+    fname = locate_fname(fname)
     fname = os.path.relpath(fname)
     module_fname = '' if fname[:5] == 'test_' else fname
     path, bname = os.path.split(fname)

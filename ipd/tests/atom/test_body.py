@@ -1,4 +1,3 @@
-from icecream import ic
 import numpy as np
 import pytest
 
@@ -14,7 +13,7 @@ config_test = ipd.Bunch(
 )
 BODY_TEST_PDBS = ['1qys']
 # BODY_TEST_PDBS = ['2tbv']
-SYMBODY_TEST_PDBS = ['3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr', '1g5q']
+SYMBODY_TEST_PDBS = ['6u9d', '3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr', '1g5q']
 
 def main():
     debug_body_load_speed()

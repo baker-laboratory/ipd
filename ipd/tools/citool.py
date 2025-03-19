@@ -194,7 +194,7 @@ class TestsTool(CITool):
             list of tuples (cmd, job, log)
         """
         # os.makedirs(os.path.dirname(log), exist_ok=True)
-        submitit = ipd.importornone('submitit')
+        submitit = ipd.maybeimport('submitit')
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'

@@ -1,7 +1,7 @@
 import os
 import shutil
 import mimetypes
-from typing import Optional
+from typing import final
 
 import ipd
 
@@ -48,6 +48,7 @@ def is_text_file(file_path: str) -> bool:
         return False
     return False
 
+@final
 class CloneTextFiles:
     """
     Clone a directory structure but only copy text files (source code, config files, etc.).
@@ -70,26 +71,31 @@ class CloneTextFiles:
         self,
         source_dir: str,
         target_dir: str,
-        gitignore: str = '',
-        max_size_bytes: Optional[int] = None,
+        isignored: ipd.Callable[[str], bool] = lambda x: False,
+        max_size_bytes: int = 0,
         min_size_bytes: int = 0,
         include_small_binary: bool = False,
         small_binary_threshold: int = 10240,  # 10KB default
         verbose: bool = True,
+        filelist: list[str] = [],
     ):
         self.source_dir = os.path.abspath(source_dir)
         self.target_dir = os.path.abspath(target_dir)
-        self.gitignore = ipd.dev.GitIgnore(gitignore)
+        self.isignored = isignored
         self.max_size_bytes = max_size_bytes
         self.min_size_bytes = min_size_bytes
         self.include_small_binary = include_small_binary
         self.small_binary_threshold = small_binary_threshold
         self.verbose = verbose
         os.makedirs(self.target_dir, exist_ok=True)
-        self._recurse_dirs(self.source_dir)
+        if filelist:
+            for file in filelist:
+                self._process_file(os.path.join(self.source_dir, file))
+        else:
+            self._recurse_dirs(self.source_dir)
 
-    def _recurse_dirs(self, root):
-        if self.gitignore.is_ignored(root + '/'): return
+    def _recurse_dirs(self, root: str):
+        if self.isignored(root): return
         rootbase = os.path.basename(root)
         if rootbase[0] == '.' and rootbase != '.github': return
         if rootbase == 'lib': return
@@ -108,25 +114,18 @@ class CloneTextFiles:
                 self._recurse_dirs(source_file)
                 continue
 
-            rel_file_path = os.path.relpath(source_file, self.source_dir)
-            target_file = os.path.join(self.target_dir, rel_file_path)
+            self._process_file(source_file)
 
-            # Skip if matches self.gitignore patterns
-            if self.gitignore and self.gitignore.is_ignored(rel_file_path):
-                continue
-
-            # Check file size
-            file_size = os.path.getsize(source_file)
-            if self.max_size_bytes is not None and file_size > self.max_size_bytes:
-                continue
-
-            if file_size < self.min_size_bytes:
-                continue
-
-            is_text = is_text_file(source_file)
-            if is_text:  # or (self.include_small_binary and file_size <= self.small_binary_threshold):
-                # os.makedirs(os.path.dirname(target_file), exist_ok=True)
-                # shutil.copy2(source_file, target_file)
-                target = target_file.replace(self.target_dir, '').lstrip('/').replace('/', '__')
-                shutil.copy2(source_file, os.path.join(self.target_dir, target))
-                print(source_file)
+    def _process_file(self, source_file: str):
+        rel_file_path = os.path.relpath(source_file, self.source_dir)
+        target_file = os.path.join(self.target_dir, rel_file_path)
+        if self.isignored(rel_file_path): return
+        file_size = os.path.getsize(source_file)
+        if file_size > self.max_size_bytes: return
+        if file_size < self.min_size_bytes: return
+        if not is_text_file(source_file): return
+        os.makedirs(os.path.dirname(target_file), exist_ok=True)
+        shutil.copy2(source_file, target_file)
+        # target = target_file.replace(self.target_dir, '').lstrip('/').replace('/', '__')
+        # shutil.copy2(source_file, os.path.join(self.target_dir, target))
+        print(source_file)

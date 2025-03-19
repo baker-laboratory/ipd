@@ -31,7 +31,7 @@ def main():
     # assert 0
     test_qcp_scan_AB()
     print('test_qcp_scan PASS', flush=True)
-    ipd.global_timer.report()
+    ipd.dev.global_timer.report()
 
 @ipd.timed
 def test_qcp_scan_partition():

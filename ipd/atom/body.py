@@ -66,7 +66,7 @@ if typing.TYPE_CHECKING:
     from biotite.structure import AtomArray
     import willutil_cpp as wu
 
-wu = ipd.importornone('willutil_cpp')
+wu = ipd.maybeimport('willutil_cpp')
 bs = ipd.lazyimport('biotite.structure')
 
 @ipd.ft.lru_cache

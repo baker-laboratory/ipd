@@ -27,18 +27,12 @@ def test_cherry_pick_import_variable(tmp_package: Tuple[str, str]) -> None:
     ipd.ic('INTEST')
     var1 = cherry_pick_import(f"{pkg_name}.module1", "variable1", path=path)
     assert var1 == "module1_var"
-
-    # Verify the module is in sys.modules
     assert f"{pkg_name}.module1" in sys.modules
-
-    # But the package should not be fully imported
     assert pkg_name not in sys.modules
 
 def test_cherry_pick_import_function(tmp_package: Tuple[str, str]) -> None:
     """Test cherry_pick_import with a function."""
     path, pkg_name = tmp_package
-
-    # Import a function
     func1 = cherry_pick_import(f"{pkg_name}.module1", "func1", path=path)
     assert callable(func1)
     assert func1() == "func1_result"
@@ -46,16 +40,12 @@ def test_cherry_pick_import_function(tmp_package: Tuple[str, str]) -> None:
 def test_cherry_pick_import_from_subpackage(tmp_package: Tuple[str, str]) -> None:
     """Test cherry_pick_import from a subpackage."""
     path, pkg_name = tmp_package
-
-    # Import from subpackage
     var2 = cherry_pick_import(f"{pkg_name}.subpkg.module2", "variable2", path=path)
     assert var2 == 42
 
 def test_cherry_pick_import_class(tmp_package: Tuple[str, str]) -> None:
     """Test cherry_pick_import with a class."""
     path, pkg_name = tmp_package
-
-    # Import a class
     TestClass = cherry_pick_import(f"{pkg_name}.subpkg.module2", "TestClass", path=path)
     assert TestClass.method() == "class_method_result"
 
@@ -157,6 +147,11 @@ def test_circular_imports_simulation(tmp_package: Tuple[str, str]) -> None:
 
     # We haven't fully imported circular1, so this is a partial import
     assert "circular2_var uses " in var2
+
+def test_is_installed() -> None:
+    """Test is_installed function."""
+    assert ipd.is_installed("os")
+    assert not ipd.is_installed("nonexistent_package")
 
 @contextlib.contextmanager
 def make_temp_package_structure() -> Generator[Tuple[str, str], None, None]:

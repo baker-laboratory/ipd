@@ -69,6 +69,9 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/_apidoc
+docs/auto_examples
+docs/sg_execution_times.rst
 
 # PyBuilder
 .pybuilder/
@@ -180,3 +183,6 @@ junit*.xml
 uv.lock
 
 /*.sh
+/*.zip
+/*.tar.gz
+/tmp/

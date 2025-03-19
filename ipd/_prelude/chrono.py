@@ -126,7 +126,7 @@ from typing import List, Union
 import ipd
 
 try:
-    from your_package_name.dynamic_float_array import DynamicFloatArray
+    from ipd.cython.dynamic_float_array import DynamicFloatArray
     CYTHON_AVAILABLE = True
 except ImportError:
     CYTHON_AVAILABLE = False
@@ -143,7 +143,7 @@ class Chrono:
         - Provides statistical summaries.
     """
     name: str = "Chrono"
-    verbose: bool = True
+    verbose: bool = False
     use_cython: bool = False
     initial_capacity: int = 10
     _start: Union[float, None] = None
@@ -151,7 +151,7 @@ class Chrono:
     _checkpoint_stack: List[float] = field(default_factory=list)
     storage_type: str = ''
     active_stack: list[str] = field(default_factory=list)
-    checkpoints: dict[str, Union[List[float], 'DynamicFloatArray']] = field(init=False)
+    checkpoints: dict[str, Union[List[float], 'DynamicFloatArray']] = field(default_factory=dict)
     _entered: bool = False
     _exited: bool = False
     _last_interject: bool = False
@@ -159,10 +159,10 @@ class Chrono:
     def __post_init__(self):
         self.use_cython = self.use_cython and CYTHON_AVAILABLE
         if self.use_cython:
-            self.checkpoints = ipd.Bunch()
+            self.checkpoints = {}
             self.storage_type = "Cython (DynamicFloatArray)"
         else:
-            self.checkpoints = ipd.Bunch(_default=list)
+            self.checkpoints = {}
             self.storage_type = "Python List"
 
         if self.verbose:
@@ -200,12 +200,10 @@ class Chrono:
 
     def _store_checkpoint(self, name: str, elapsed: float):
         """Store elapsed time in either Python list or Cython storage."""
-        if self.use_cython:
-            if name not in self.checkpoints:
-                self.checkpoints[name] = DynamicFloatArray()
-            self.checkpoints[name].append(elapsed)
-        else:
-            self.checkpoints[name].append(elapsed)
+        if name not in self.checkpoints:
+            if self.use_cython: self.checkpoints[name] = DynamicFloatArray()
+            else: self.checkpoints[name] = []
+        self.checkpoints[name].append(elapsed)
 
     def checkpoint(self, name: str = None, interject: bool = False):
         """
@@ -320,7 +318,7 @@ def chrono(func=None, *, label=None, timer=None):
     if func is None: return functools.partial(chrono, label=label, timer=timer)
     if inspect.isclass(func): return chrono_class(cls=func, label=label, timer=timer)
 
-    @functools.wraps(func)
+    @ipd.wraps(func)
     def wrapper(*args, **kwargs):
         t = timer or kwargs.get("timer", ipd.global_chrono)
         function_name = func.__qualname__

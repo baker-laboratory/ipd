@@ -13,6 +13,23 @@ class ProjecConfigtError(RuntimeError):
 
 RunOnChangedFilesResult = collections.namedtuple('RunOnChangedFilesResult', 'exitcode, files_modified')
 
+def get_project_localconfig(path: str = '.', conffile: str = '[gitroot]/local.toml') -> dict:
+    """Get the local configuration for a project.
+
+    Args:
+        path (str): The directory to look for the configuration file in.
+        conffile (str): The configuration file to look for.
+
+    Returns:
+        dict: The local configuration for the project.
+    """
+    conffile = substitute_project_vars(conffile, path=path)[0]
+    if not exists(conffile): return {}
+    import tomllib
+    with open(conffile, 'rb') as inp:
+        return tomllib.load(inp)
+    return tomlfile(path)
+
 def run_on_changed_files(
     cmd_template: str,
     path: str = '[projname]',
@@ -32,7 +49,11 @@ def run_on_changed_files(
         conffile (str): The configuration file.
     """
     cmdname = cmd_template.split()[0]
-    path, excludefile, hashfile, conffile = substitute_project_vars(path, excludefile, hashfile, conffile, cmd=cmdname)
+    path, excludefile, hashfile, conffile = substitute_project_vars(path,
+                                                                    excludefile,
+                                                                    hashfile,
+                                                                    conffile,
+                                                                    cmd=cmdname)
     with ipd.dev.cd(os.path.dirname(excludefile)):
         prevhash = ipd.dev.run(fr'find {path} -name \*.py -exec md5sum {{}} \;')
         files = set(prevhash.strip().split(os.linesep))
@@ -52,7 +73,7 @@ def run_on_changed_files(
 
 def substitute_project_vars(*args, path: str = '.', **kw) -> list[str]:
     args = list(args)
-    pyproj = pyproject(path)
+    pyproj = tomlfile(path)
     for i in range(len(args)):
         args[i] = args[i].replace('[gitroot]', f'{git_root(path)}/')
         args[i] = args[i].replace('[projname]', pyproj.project.name)
@@ -71,7 +92,7 @@ def pyproject_file(path: str = '.') -> str:
     if fname := join(git_root(path), 'pyproject.toml'): return fname
     raise ProjecConfigtError('no pyproject.toml in project')
 
-def pyproject(path: str = '.') -> 'ipd.Bunch':
+def tomlfile(path: str = '.') -> 'ipd.Bunch':
     import tomllib
     with open(pyproject_file(path), 'rb') as inp:
         return ipd.bunchify(tomllib.load(inp))
@@ -92,8 +113,9 @@ def git_status(header=None, footer=None, printit=False):
         if printit: print(s)
         return s
 
-def install_ipd_pre_commit_hook(projdir, path=None):
+def install_ipd_pre_commit_hook(projdir, path=None, config=None):
     with contextlib.suppress(Exception):
+        if not config or not config['ipd_pre_commit']: return
         if path: projdir = join(projdir, path)
         projdir = abspath(projdir)
         if isdir(join(projdir, '.git')):
@@ -122,3 +144,9 @@ def install_package(pkg):
         ipd.dev.run(f'pip install {pkg}', echo=True)
     except RuntimeError:
         ipd.dev.run(f'pip install --user {pkg}', echo=True)
+
+def project_files():
+    root = git_root()
+    files = ipd.dev.run(f'git ls-files {root}|grep -v Eigen')
+    files = [f.strip() for f in files.split(os.linesep) if f.strip()]
+    return files

@@ -81,7 +81,7 @@ def read_pdb_atoms(fname_or_buf, **kw):
 
 ##@timed
 def parse_pdb_atoms(atomstr, **kw):
-    if not (pd := ipd.importornone('pandas')): return None
+    if not (pd := ipd.maybeimport('pandas')): return None
 
     assert atomstr
 
@@ -128,7 +128,7 @@ def parse_pdb_atoms(atomstr, **kw):
 
 ##@timed
 def concatenate_models(df):
-    if not (pd := ipd.importornone('pandas')): return None
+    if not (pd := ipd.maybeimport('pandas')): return None
 
     assert isinstance(df, dict)
     df = {k: v for k, v in df.items() if len(v)}

@@ -1,15 +1,16 @@
 from collections.abc import Iterable
 import sys
-from typing import Union
 import attrs
 import numpy as np
 import ipd
 import ipd.homog.hgeom as h
 
+bs = ipd.lazyimport('biotite.structure')
+
 def detect(
-    thing: Union['np.ndarray', 'torch.Tensor', 'AtomArray', 'Iterable[AtomArray]'],
-    tol: Union[ipd.Tolerances, float, None] = None,
-    order: int = None,
+    thing,  #Union[ipd.Tensor, 'AtomArray', 'Iterable[bs.AtomArray]'],
+    tol: ipd.Union[ipd.Tolerances, float, None] = None,
+    order: int = 0,
     **kw,
 ) -> 'SymInfo':
     """
@@ -46,13 +47,13 @@ def detect(
         from biotite.structure import AtomArray
         atoms = thing
         if not isinstance(atoms, AtomArray) and len(atoms) == 1: atoms = atoms[0]
-        if order is not None and len(atoms) % order == 0 and isinstance(atoms, AtomArray):
+        if order and len(atoms) % order == 0 and isinstance(atoms, AtomArray):
             atoms = ipd.atom.split(atoms, order)
-        elif order is None and isinstance(atoms, AtomArray):
+        elif not order and isinstance(atoms, AtomArray):
             atoms = ipd.atom.split(atoms, bychain=True)
         if isinstance(atoms, Iterable) and all(isinstance(a, AtomArray) for a in atoms):
             return syminfo_from_atomslist(atoms, tol=tol, **kw)
-    raise ValueError(f'cant detect symmetry on object {type(atoms)} order {order}')
+    raise ValueError(f'cant detect symmetry on object {type(thing)} order {order}')
 
 @ipd.dev.subscriptable_for_attributes
 # @ipd.dev.element_wise_operations

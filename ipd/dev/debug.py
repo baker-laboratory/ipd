@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from icecream import IceCreamDebugger, ic
 import inspect
 import os
+
 import ipd
 
 stdio = ipd.cherry_pick_import('ipd.dev.contexts.stdio')
@@ -34,9 +35,11 @@ def ic_config(iclocal=ic, *a, **kw):
 def icm(*args, **kwargs):
     with stdio(), ic_config(ic_one_frame_back, includeContext=False):
         ic_one_frame_back(*args, **kwargs)
+    if e: ic_one_frame_back(f'icm() caused Exception: {e}')
 
 def icv(*args, **kwargs):
     with stdio(), ic_config(ic_one_frame_back, includeContext=True):
         ic_one_frame_back(*args, **kwargs)
+    if e: ic_one_frame_back(f'icv() caused Exception: {e}')
 
-__all__ = 'ic ic_config icm icv'.split()
+__all__ = ['ic', 'ic_config', 'icm', 'icv']

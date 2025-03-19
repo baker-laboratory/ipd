@@ -3,14 +3,7 @@ import sys
 from importlib import import_module
 from types import ModuleType
 import typing
-
-class FakeModule(ModuleType):
-
-    def __bool__(self):
-        return False
-
-fake_module = FakeModule('__THIS_IS_NOT_A_REAL_MODULE__')
-assert not fake_module
+from .import_util import is_installed
 
 def lazyimports(
         *names: str,
@@ -41,20 +34,20 @@ def lazyimport(name: str,
                mamba: bool = False,
                channels: str = '',
                warn: bool = True,
-               importornone=False) -> ModuleType:
-    if typing.TYPE_CHECKING or importornone:
+               maybeimport=False) -> ModuleType:
+    if typing.TYPE_CHECKING or maybeimport:
         try:
             return import_module(name)
         except ImportError:
-            return fake_module
+            return FalseModule(name)
     else:
         return _LazyModule(name, package, pip, mamba, channels, warn)
 
-def importornone(name) -> ModuleType:
-    return lazyimport(name, importornone=True)
+def maybeimport(name) -> ModuleType:
+    return lazyimport(name, maybeimport=True)
 
-def importsornone(*names) -> list[ModuleType]:
-    return lazyimports(*names, importornone=True)
+def maybeimports(*names) -> list[ModuleType]:
+    return lazyimports(*names, maybeimport=True)
 
 class LazyImportError(ImportError):
     pass
@@ -82,7 +75,7 @@ class _LazyModule(ModuleType):
         try:
             return import_module(self._lazymodule_name)
         except ImportError:
-            if 'doctest' in sys.modules: return fake_module
+            if 'doctest' in sys.modules: return FalseModule(self._lazymodule_name)
             ci = self._lazymodule_callerinfo
             callinfo = f'\n  File "{ci.filename}", line {ci.lineno}\n    {ci.code}'
             raise LazyImportError(callinfo)
@@ -143,6 +136,14 @@ class _LazyModule(ModuleType):
             t=type(self).__name__,
             n=self._lazymodule_name,
         )
+
+    def __bool__(self) -> bool:
+        return bool(is_installed(self._lazymodule_name))
+
+class FalseModule(ModuleType):
+
+    def __bool__(self):
+        return False
 
 _all_skipped_lazy_imports = set()
 _skip_global_install = False

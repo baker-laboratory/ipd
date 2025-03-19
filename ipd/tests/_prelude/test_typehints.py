@@ -1,5 +1,5 @@
 import unittest
-from ipd._prelude import (isstr, isint, islist, isdict, isseq, ismap, isseqmut, ismapmut, isiter)
+from ipd import (isstr, isint, islist, isdict, isseq, ismap, isseqmut, ismapmut, isiter)
 
 import ipd
 

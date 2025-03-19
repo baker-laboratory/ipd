@@ -5,6 +5,12 @@ from typing import Any, List, TypeVar
 
 T = TypeVar('T')
 
+def is_installed(name):
+    return importlib.util.find_spec(name)
+
+def not_installed(name):
+    return not importlib.util.find_spec(name)
+
 def cherry_pick_import(qualname: str, attribute: str = '', path: str = '') -> Any:
     """Import a specific attribute from a module without importing the entire package hierarchy.
 

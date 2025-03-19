@@ -1,5 +1,4 @@
 import contextlib
-import functools
 import inspect
 import os
 import sys
@@ -555,7 +554,7 @@ def add_basic_client_model_methods(clientcls):
 
 def model_method(func, layer):
 
-    @functools.wraps(func)
+    @ipd.wraps(func)
     def wrapper(self, *a, **kw):
         err = f'{inspect.signature(func)} only valid in {layer} model, not {self.__class__.__name__}'
         assert self.modellayer() == layer, err

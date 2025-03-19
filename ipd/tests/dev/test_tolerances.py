@@ -38,12 +38,12 @@ def test_tolerances_numpy():
 
 def test_tolerances_torch():
     tol = ipd.dev.Tolerances(1e-4, foo=4)
-    if th := ipd.importornone('torch'):
+    if th := ipd.maybeimport('torch'):
         assert th.all(tol.foo > th.eye(4))
 
 def test_tolerances_xarray():
     tol = ipd.dev.Tolerances(1e-4, foo=4)
-    if xr := ipd.importornone('xarray'):
+    if xr := ipd.maybeimport('xarray'):
         assert np.all(tol.foo > xr.DataArray([1, 3, 3]))
 
 def test_tolerances_numpy_right():
@@ -52,17 +52,17 @@ def test_tolerances_numpy_right():
 
 def test_tolerances_torch_right():
     tol = ipd.dev.Tolerances(1e-4, foo=4)
-    if th := ipd.importornone('torch'):
+    if th := ipd.maybeimport('torch'):
         assert th.all(th.eye(4) < tol.foo)
 
 def test_tolerances_xarray_right():
     tol = ipd.dev.Tolerances(1e-4, foo=4)
-    if xr := ipd.importornone('xarray'):
+    if xr := ipd.maybeimport('xarray'):
         assert np.all(xr.DataArray([1, 3, 3]) < tol.foo)
 
 def test_tolerances_xarray_dataset_unsupported():
     tol = ipd.dev.Tolerances(1e-4, foo=4)
-    if xr := ipd.importornone('xarray'):
+    if xr := ipd.maybeimport('xarray'):
         ds = xr.Dataset(dict(foo=xr.DataArray([1, 3, 3])))
         with pytest.raises(TypeError):
             np.all(tol.foo > ds)
