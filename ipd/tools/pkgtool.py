@@ -27,7 +27,6 @@ class PkgTool(IPDTool):
         Binary files are skipped by default, with options to include small binary files.
         """
         os.system(f'rm {target}')
-        target, origtarget = f'/tmp/{target}', target
         target, compressed = ipd.dev.decompressed_fname(target), target
         assert not target.endswith('.tar.gz') and not target.endswith('.zip')
         files = ipd.dev.project_files()
@@ -48,7 +47,6 @@ class PkgTool(IPDTool):
         if compressed.endswith('.zip'):
             os.system(f'zip -r {target}.zip {target}')
             os.system(f'rm -rf {target}')
-        os.system(f'mv {target} {origtarget}')
 
 class ConfigTool(PkgTool):
 

@@ -27,36 +27,63 @@ class XYZPairUnsupportedError(Exception):
 
 @attrs.define(slots=False)
 class SymmetryManager(ABC, metaclass=MetaSymManager):
-    """The SymmetryManager class encapsulates symmetry related functionality
-    and parameters.
+    """Abstract base class for managing symmetry operations in the IPD framework.
 
-    It is extensible, allowing for new parameters and functionality to
-    be added outside of the rf codebase. For example, for unbounded
-    symmetries, translations and slide operations can be added without
-    need to change the existing core symmetry code in ipd. With a
-    SymmetryManager holding all relevant parameters, function signatures
-    and other code can be cleaned up, removing up to seven parameters
-    from many functions, and future additional parameters can be added
-    without changing function signatures. Some places in the code now
-    require that a SymmetryManager is present in self.sym, so a sym=None
-    argument has been added to some classes __init__ functions. If no
-    symmetry is specified, a no-op C1SymmetryManager is created via sym
-    = create_sym_manager(). To create a symmetry manager based on config
-    / command line, sym = create_sym_manager(conf) can be called.
-    Symmetry is applied to various subjects via the __call__ operator:
-    xyz = sym(xyz), seq = sym(seq), etc. Any SymmetryManager can also
-    symmetrize arbitrary arrays like seq and the diffusion Indep object.
-    Subclasses of SymmetryManager need only call
-    super().__init__(*a,**kw) and implement the apply_symmetry method.
-    apply_symmetry will be passed the correct slice containing only the
-    coordinates that need to be symmetrized, already converted to the
-    correct shape/dtype/device, along with all relevant parameters in
-    kwargs. The kwargs will already be update based on the rfold and/or
-    diffusion timestep as appropriate. Currently, kwargs provides the
-    following and will also include any additions to sym.yaml. Most of
-    these are also available via self.<whatever>, but extracting them
-    from kwargs by adding a function argument is slightly more correct
-    and more convenient.
+    This class encapsulates symmetry-related parameters and operations, allowing
+    flexible management of transformations applied to molecular structures. It is
+    designed to be extensible so that new symmetry behaviors can be integrated
+    without modifying core logic.
+
+    Key Features:
+        - **Encapsulates symmetry parameters and functionality**
+        - **Simplifies function signatures** by reducing the number of explicit parameters
+        - **Supports unbounded symmetries**, including translations and slides
+        - **Allows future extension** without modifying core function signatures
+        - **Handles symmetry applications via `__call__` operator**
+
+    Some parts of the codebase now expect a `SymmetryManager` instance to be
+    present in `self.sym`. If no symmetry is specified, a no-op
+    `C1SymmetryManager` is created via:
+
+    .. code-block:: python
+
+       sym = create_sym_manager()
+
+    To create a symmetry manager based on configuration or command-line options:
+
+    .. code-block:: python
+
+       sym = create_sym_manager(conf)
+
+    Symmetry is applied to various data types via the `__call__` operator:
+
+    .. code-block:: python
+
+       xyz = sym(xyz)  # Symmetrizes coordinates
+       seq = sym(seq)  # Symmetrizes a sequence
+
+    Any `SymmetryManager` can also symmetrize arbitrary arrays like sequences and diffusion objects.
+
+    **Implementation Details:**
+
+    - Subclasses must implement :meth:`apply_symmetry`, which will be passed a correctly sliced
+      subset of the data, converted to the proper shape, dtype, and device.
+    - The method receives relevant parameters via `kwargs`, pre-updated based on
+      refinement folding (rfold) and/or diffusion timesteps.
+    - Additional parameters from `sym.yaml` are also included in `kwargs`, making it
+      slightly more convenient and correct to extract these values through function
+      arguments rather than instance attributes.
+
+    Attributes:
+        symid (str): The symmetry identifier, e.g., 'C1', 'C2', 'D3', etc.
+        opt (dict): Configuration options controlling symmetry behavior.
+        idx (SymIndex): Indexing structure used for symmetric transformations.
+
+    Example:
+        >>> sym = create_sym_manager(symid='C3')
+        >>> xyz = np.random.rand(10, 3)
+        >>> xyz_sym = sym(xyz)
+
     """
     symid: str
     nsub: int
