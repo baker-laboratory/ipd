@@ -80,11 +80,11 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
     if conf and 'sym' in conf:
         for key, val in conf.sym.items():
             opt.parse_dynamic_param(key, val)
+        if opt.symid != '_training':
+            opt.asu_input_pdb = conf.inference.input_pdb
     # ic(extra_params)
     if opt.has('kind'):
         ipd.sym.set_default_sym_manager(opt.kind)
-    if conf.sym.symid != '_training':
-        opt.asu_input_pdb = conf.inference.input_pdb  # storing this in the sym manager as well for easy ref if needed
     for name, val in default_params.items():
         key = name.split('.')[-1]
         if key in opt: continue
