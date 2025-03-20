@@ -47,7 +47,7 @@ def main():
 
     if True:
         for xname in ipd.sym.all_xtal_names():
-            ic(xname)  # type: ignore
+            ipd.icv(xname)  # type: ignore
             x = ipd.sym.Xtal(xname)
 
             # print(
@@ -161,7 +161,7 @@ def main():
     test_symelem()
 
     # _test_hxtal_viz_gyroid(headless=False)
-    ic("test_xtal.py DONE")  # type: ignore
+    ipd.icv("test_xtal.py DONE")  # type: ignore
 
 def test_xtal_performance():
     t = ipd.dev.Timer()
@@ -192,16 +192,16 @@ def test_xtalrad_I213():
 
     pt = [2, 2, 2]
     symcoord = x.symcoords(pt, cellsize=10, cells=3, xtalrad=0.7, center=pt, ontop=None)
-    ic(symcoord.shape)  # type: ignore
+    ipd.icv(symcoord.shape)  # type: ignore
     # ipd.showme(symcoord, kind='point')
     # assert 0
 
 def _analize_xtal_asu_placement(sym="I_4_3_2_432", showme=False):
     x = ipd.sym.Xtal(sym)
-    ic(x.asucen(method="closest_approach"))  # type: ignore
-    ic(x.asucen(method="closest_to_cen"))  # type: ignore
-    ic(x.asucen(method="closest_to_cen", use_olig_nbrs=True))  # type: ignore
-    # ic(x.asucen(method='stored'))
+    ipd.icv(x.asucen(method="closest_approach"))  # type: ignore
+    ipd.icv(x.asucen(method="closest_to_cen"))  # type: ignore
+    ipd.icv(x.asucen(method="closest_to_cen", use_olig_nbrs=True))  # type: ignore
+    # ipd.icv(x.asucen(method='stored'))
     # assert 0
     ipd.sym.analyze_xtal_asu_placement(sym)
 
@@ -209,7 +209,7 @@ def helper_test_coords_to_asucen_0():
     xtal = ipd.sym.Xtal(sym)  # type: ignore
     cen0 = xtal.asucen()
 
-    ic(cen0)  # type: ignore
+    ipd.icv(cen0)  # type: ignore
     frames = xtal.frames()
     for i, f in enumerate(frames):
         cen1 = ipd.homog.hxform(f, cen0)
@@ -245,22 +245,22 @@ def test_asucen(headless=True):
 def test_xtal_L6m322(headless=True):
     xtal = ipd.sym.Xtal("L6m322")
 
-    # ic(xtal.symelems)
-    # ic(xtal.genframes.shape)
-    # ic(len(xtal.coverelems))
-    # ic(len(xtal.coverelems[0]))
-    # ic(len(xtal.coverelems[1]))
+    # ipd.icv(xtal.symelems)
+    # ipd.icv(xtal.genframes.shape)
+    # ipd.icv(len(xtal.coverelems))
+    # ipd.icv(len(xtal.coverelems[0]))
+    # ipd.icv(len(xtal.coverelems[1]))
     ipd.showme(xtal.genframes, scale=3, headless=headless)
     # ipd.showme(xtal.unitframes, name='arstn', scale=3)
     ipd.showme(xtal, headless=headless, showgenframes=False, symelemscale=1, pointscale=0.8, vizfresh=True)
 
 def test_xtal_L6_32(headless=False):
     xtal = ipd.sym.Xtal("L6_32")
-    # ic(xtal.symelems)vizfresh
-    # ic(xtal.genframes.shape)
-    # ic(len(xtal.coverelems))
-    # ic(len(xtal.coverelems[0]))
-    # ic(len(xtal.coverelems[1]))
+    # ipd.icv(xtal.symelems)vizfresh
+    # ipd.icv(xtal.genframes.shape)
+    # ipd.icv(len(xtal.coverelems))
+    # ipd.icv(len(xtal.coverelems[0]))
+    # ipd.icv(len(xtal.coverelems[1]))
     ipd.showme(xtal.genframes, scale=3, headless=headless)
     # ipd.showme(xtal.unitframes, name='arstn')
     # ipd.showme(xtal, headless=False, showgenframes=False, symelemscale=1, pointscale=0.8, vizfresh=True)
@@ -280,11 +280,11 @@ def test_symelem(headless=True):
 
     x = ipd.homog.hrandsmall()
     e2 = ipd.homog.hxform(x, elem1, strict=False)
-    # ic(x)
-    # ic(elem1.coords)
-    # ic(elem2.coords)
-    # ic(e2.coords)
-    # ic(ipd.homog.hxform(x, elem1.coords))
+    # ipd.icv(x)
+    # ipd.icv(elem1.coords)
+    # ipd.icv(elem2.coords)
+    # ipd.icv(e2.coords)
+    # ipd.icv(ipd.homog.hxform(x, elem1.coords))
     assert np.allclose(e2.axis, ipd.homog.hxform(x, elem1.axis))
     # assert np.allclose(e2.cen, ipd.homog.hxform(x, elem1.cen))
 
@@ -349,9 +349,9 @@ def helper_test_xtal_cryst1(xtalname, dump_pdbs=False):
         coords2 = coords2.round().astype("i")[..., :3]
         s1 = set([tuple(x) for x in coords1])
         s2 = set([tuple(x) for x in coords2])
-        # ic(xtalname, len(s1), len(coords1))
-        # ic(xtalname, len(s2), len(coords2))
-        # ic(xtalname, len(s2 - s1), (64 - 27) * 3 * xtal.nsub)
+        # ipd.icv(xtalname, len(s1), len(coords1))
+        # ipd.icv(xtalname, len(s2), len(coords2))
+        # ipd.icv(xtalname, len(s2 - s1), (64 - 27) * 3 * xtal.nsub)
         expected_ratio = (4**3 - 3**3) / 3**3
         assert len(s2 - s1) == (64-27) * 3 * xtal.nsub
         assert len(s1 - s2) == 0, f"canonical frames mismatch {xtalname}"
@@ -376,9 +376,9 @@ def helper_test_xtal_cryst1(xtalname, dump_pdbs=False):
         ipd.pdb.dump_pdb_from_points(f'test_{xtalname.replace(" ","_")}_pymol.pdb', coords1)
         ipd.pdb.dump_pdb_from_points(f'test_{xtalname.replace(" ","_")}_wxtal.pdb', coords2)
 
-    # ic(xtalname)
-    # ic(coords1.shape)
-    # ic(coords2.shape)
+    # ipd.icv(xtalname)
+    # ipd.icv(coords1.shape)
+    # ipd.icv(coords2.shape)
     coords1 = coords1.round().astype("i")
     coords2 = coords2.round().astype("i")[..., :3]
     s1 = set([tuple(x) for x in coords1])
@@ -388,9 +388,9 @@ def helper_test_xtal_cryst1(xtalname, dump_pdbs=False):
 def test_hxtal_viz(headless=True, xtalname="P 2 3", symelemscale=0.7, cellsize=10, **kw):
     pymol = pytest.importorskip("pymol")
     xtal = ipd.sym.Xtal(xtalname)
-    # ic(xtal.unitframes.shape)
+    # ipd.icv(xtal.unitframes.shape)
     cen = xtal.asucen(cellsize=cellsize, xtalasumethod="closest_to_cen")
-    # ic(cellsize, cen)
+    # ipd.icv(cellsize, cen)
     # assert 0
     # ipd.showme(xtal.symelems, scale=cellsize)
     # ipd.showme(cen, vizsphereradius=1)

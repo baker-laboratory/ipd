@@ -4,7 +4,6 @@ REBUILD_SPACEGROUP_DATA = False
 import itertools
 
 import numpy as np
-from icecream import ic
 
 from ipd.dev import have_package_data, load_package_data, save_package_data
 from ipd.sym.permutations import symframe_permutations_torch
@@ -24,7 +23,8 @@ def _get_spacegroup_data():
     sg_permutations444_dict = sgdata.get('sg_permutations444_dict', dict())  # type: ignore
     sg_symelem_frame444_opids_dict = sgdata.get('sg_symelem_frame444_opids_dict', dict())  # type: ignore
     sg_symelem_frame444_compids_dict = sgdata.get('sg_symelem_frame444_compids_dict', dict())  # type: ignore
-    sg_symelem_frame444_opcompids_dict = sgdata.get('sg_symelem_frame444_opcompids_dict', dict())  # type: ignore
+    sg_symelem_frame444_opcompids_dict = sgdata.get('sg_symelem_frame444_opcompids_dict',
+                                                    dict())  # type: ignore
     if not REBUILD_SPACEGROUP_DATA:
         return sgdata
     #
@@ -88,7 +88,8 @@ def _get_spacegroup_data():
             # print(sym, 'detect symelems', flush=True)
             print('_compute_symelems', flush=True)
             sg_symelem_dict[sym] = _compute_symelems(sym, frames)
-            sg_symelem_dict[sym] = list(itertools.chain(*sg_symelem_dict[sym].values()))  # flatten  # type: ignore
+            sg_symelem_dict[sym] = list(
+                itertools.chain(*sg_symelem_dict[sym].values()))  # flatten  # type: ignore
             print('_find_compound_symelems', flush=True)
             celems = _find_compound_symelems(sym, sg_symelem_dict[sym], stdframes, stdframes2, stdframes1)
             sg_symelem_dict[sym] += list(itertools.chain(*celems.values()))  # type: ignore
@@ -118,7 +119,8 @@ def _get_spacegroup_data():
                 sg_symelem_frame444_opids_dict[sym][:, ielem] = elem.frame_operator_ids(stdframes)
 
                 try:
-                    sg_symelem_frame444_compids_dict[sym][:, ielem] = elem.frame_component_ids(stdframes, perms)
+                    sg_symelem_frame444_compids_dict[sym][:,
+                                                          ielem] = elem.frame_component_ids(stdframes, perms)
                 except ComponentIDError:
                     print('!' * 80)
                     print('ERROR making component ids for symelem', sym, ielem)
@@ -137,7 +139,7 @@ def _get_spacegroup_data():
                     fopid = sg_symelem_frame444_opids_dict[sym][:, ielem]
                     fcompid = sg_symelem_frame444_compids_dict[sym][:, jelem]
                     # if not elem.iscompound or not elem2.iscompound: continue
-                    # ic(elem, elem2)
+                    # ipd.icv(elem, elem2)
                     ids = fcompid.copy()
                     for ifopid in range(np.max(fopid)):
                         fcids = fcompid[fopid == ifopid]
@@ -170,7 +172,7 @@ def _get_spacegroup_data():
                 sg_symelem_frame444_compids_dict=sg_symelem_frame444_compids_dict,
                 sg_symelem_frame444_opcompids_dict=sg_symelem_frame444_opcompids_dict,
             )
-            ic('saving spacegroup data')
+            ipd.icv('saving spacegroup data')
             save_package_data(sgdata, 'spacegroup_data.pickle')
 
     return sgdata
@@ -197,7 +199,7 @@ sg_symelem_frame444_opcompids_dict = _sgdata['sg_symelem_frame444_opcompids_dict
 #         sg_symelem_frame444_compids_dict[k] = -np.ones((len(frames4), nops), dtype=np.int32)
 #         sg_symelem_frame444_opcompids_dict[k] = -np.ones((len(frames4), nops, nops), dtype=np.int32)
 #         for ielem, se in enumerate(sg_symelem_dict[k]):
-#            ic(k, ielem)
+#            ipd.icv(k, ielem)
 #            sg_symelem_frame444_opids_dict[k][:, ielem] = se.frame_operator_ids(frames4)
 #            sg_symelem_frame444_compids_dict[k][:, ielem] = se.frame_component_ids(frames4, perms)
 #            for jelem, se2 in enumerate(sg_symelem_dict[k]):

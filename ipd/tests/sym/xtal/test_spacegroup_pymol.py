@@ -46,7 +46,7 @@ def test_spacegroup_frames_pymol(spacegroup):
 
 def helper_test_spacegroup_frames_pymol(spacegroup, cellgeom, ncells, dump_pdbs=False):
     pymol = pytest.importorskip("pymol")
-    # ic(spacegroup, cellgeom, ncells)
+    # ipd.icv(spacegroup, cellgeom, ncells)
 
     frames = ipd.sym.xtal.sgframes(spacegroup, cellgeom="nonsingular", cells=ncells)
     unitcrd = ipd.homog.hpoint(np.array([
@@ -81,7 +81,7 @@ def helper_test_spacegroup_frames_pymol(spacegroup, cellgeom, ncells, dump_pdbs=
         # assert 0
 
         delta = np.sum((crdtst[None, :, :3] - crdref[:, None])**2, axis=-1)
-        # ic(np.sum(~np.isclose(0, np.min(delta, axis=1))))
+        # ipd.icv(np.sum(~np.isclose(0, np.min(delta, axis=1))))
         ok = np.allclose(np.min(delta, axis=1), 0, atol=1e-4)
 
         # print(np.max(np.min(delta, axis=1), 0))

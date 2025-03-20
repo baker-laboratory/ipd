@@ -96,7 +96,7 @@ def symslices_from_colors(
     slices = list()
     start = 0
     for i, (l, lsym) in enumerate(zip(L, Lsym)):
-        # ic(len(colors), start)
+        # ipd.icv(len(colors), start)
         slice = (Ltot, start, start + (0 if not isasym and ignore[start] else int(lsym)))
         if ignore_slice is not None:
             if not ignore_slice[i]: slices.append(slice)
@@ -105,7 +105,7 @@ def symslices_from_colors(
     if isasym and slices:
         idx = ipd.sym.SymIndex(nsub, slices)
         ignoresym = th.zeros(idx.L, dtype=bool)
-        # ic(idx.L, Ltot, slices)
+        # ipd.icv(idx.L, Ltot, slices)
         ignoresym[idx.idx_asym_to_sym] = ignore
         slices, slices2 = list(), slices
         for s in slices2:

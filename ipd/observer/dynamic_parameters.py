@@ -155,13 +155,13 @@ class StepObserver(Observer):
             observer._set_nstep(self._nstep.design, self._nstep.diffuse, self._nstep.rfold)
 
     def set_nstep(self, design=None, diffuse=None, rfold=None):
-        # ic('set_nstep', design, diffuse, rfold)
+        # ipd.icv('set_nstep', design, diffuse, rfold)
         self._nstep = Step(design, diffuse, rfold)
         for observer in self.observers:  # type: ignore
             observer._set_nstep(design, diffuse, rfold)
 
     def set_step(self, design=None, diffuse=None, rfold=None):
-        # ic('set_step', design, diffuse, rfold)
+        # ipd.icv('set_step', design, diffuse, rfold)
         if diffuse is not None:
             diffuse = self._nstep.diffuse - diffuse
         for observer in self.observers:  # type: ignore
@@ -176,7 +176,7 @@ class StepObserver(Observer):
             observer._rfold_end()
 
     def rfold_iter_begin(self, tag, **kw):
-        # ic('rfold_iter_begin', tag)
+        # ipd.icv('rfold_iter_begin', tag)
         for observer in self.observers:  # type: ignore
             observer._rfold_iter_begin(tag, **kw)
 
@@ -214,9 +214,11 @@ class DynamicParameters(Mapping):
                     levels = a if a else (True, False)
                     args[k] = ipd.dev.safe_eval(v)
                 if any(isinstance(v[0], (tuple, list)) for v in args.values()):
-                    self.newparam_true_in_range(name, overwrite=overwrite, levels=levels, **args)  # type: ignore
+                    self.newparam_true_in_range(name, overwrite=overwrite, levels=levels,
+                                                **args)  # type: ignore
                 else:
-                    self.newparam_true_on_steps(name, overwrite=overwrite, levels=levels, **args)  # type: ignore
+                    self.newparam_true_on_steps(name, overwrite=overwrite, levels=levels,
+                                                **args)  # type: ignore
             except ValueError as e:
                 raise ValueError(f'bad dynam param string "{value}"') from e
         else:
@@ -537,7 +539,8 @@ class _Spline1D(DynamicParam):
         if 1 != sum([design is not None, diffuse is not None, rfold is not None]):
             raise ValueError('add_spline_1d requires exactly one of design, diffuse, or rfold ')
         self.which, vals, n = 'design', design, self.manager._nstep.design  # type: ignore
-        if diffuse is not None: self.which, vals, n = 'diffuse', diffuse, self.manager._nstep.diffuse  # type: ignore
+        if diffuse is not None:
+            self.which, vals, n = 'diffuse', diffuse, self.manager._nstep.diffuse  # type: ignore
         if rfold is not None: self.which, vals, n = 'rfold', rfold, self.manager._nstep.rfold  # type: ignore
         x, y = [np.array(_) for _ in zip(*vals)]
         if not np.all(np.logical_and(-0.001 <= x, x <= 1.001)):
@@ -569,7 +572,8 @@ class _Spline2D(DynamicParam):
         if not np.all(np.logical_and(-0.001 <= y, y <= 1.001)):
             raise ValueError(f'interpolation points {y} must be 0 <= y <= 1')
         self.interp = CloughTocher2DInterpolator(xy, z)
-        xx, yy = np.meshgrid(np.linspace(0, 1, manager._nstep.diffuse), np.linspace(0, 1, manager._nstep.rfold))
+        xx, yy = np.meshgrid(np.linspace(0, 1, manager._nstep.diffuse),
+                             np.linspace(0, 1, manager._nstep.rfold))
         try:
             self.interpvals = self.interp(xx, yy).astype(np.float32).T
             assert not np.any(np.isnan(self.interpvals))

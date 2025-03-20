@@ -1,6 +1,6 @@
 import ipd
 
-th, np = ipd.importsornone('torch', 'numpy')
+th, np = ipd.lazyimports('torch', 'numpy')
 
 def main():
     ipd.tests.maintest(namespace=globals())

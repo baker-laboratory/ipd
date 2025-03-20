@@ -1,13 +1,11 @@
 import contextlib
 import functools
 from pathlib import Path
-from typing import Mapping, Callable, Any, Iterable
+from typing import Mapping, Any, Iterable
 
 import numpy as np
 
 import ipd
-
-T, P, R, F, C = ipd.basic_typevars('TPRFC')
 
 def generic_get_keys(obj, exclude: ipd.FieldSpec = ()):
     if hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
@@ -46,7 +44,7 @@ def get_fields(obj, fields: ipd.FieldSpec, exclude: ipd.FieldSpec = ()) -> tuple
     """return list of string fields and bool isplural"""
     if callable(fields): fields = fields(obj)
     if fields is None: return generic_get_keys(obj, exclude=exclude), True
-    if ' ' in fields: return fields.split(), True
+    if ' ' in fields: return ipd.cast(str, fields).split(), True
     if isinstance(fields, str): return [fields], False
     return fields, True
 
@@ -79,23 +77,26 @@ def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: b
         if basetype == 'notlist': return isinstance(arg, list)
         elif arg.__class__.__name__ == basetype: basetype = type(arg)
         elif arg.__class__.__qualname__ == basetype: basetype = type(arg)
-        else: basetype = None
+        else: basetype = type(None)
     if isinstance(arg, str) and ' ' in arg: return True
     if basetype and isinstance(arg, basetype): return False
     if not allowmap and isinstance(arg, Mapping): return False
     if hasattr(arg, '__iter__'): return True
     return False
 
+def NoneFunc():
+    pass
+
 def iterize_on_first_param(
-    func0: 'F|None' = None,
+    func0: ipd.F = NoneFunc,
     *,
-    basetype: 'str|type' = str,
+    basetype: 'str|type|tuple[type,...]' = str,
     splitstr=True,
     asdict=False,
     asbunch=False,
     asnumpy=False,
     allowmap=False,
-) -> F:
+) -> ipd.F:
     """
     Decorator that vectorizes a function over its first parameter.
 
@@ -194,10 +195,10 @@ def iterize_on_first_param(
           of the mapping and return a new mapping.
     """
 
-    def deco(func) -> Callable:
+    def deco(func: ipd.F) -> ipd.F:
 
-        @functools.wraps(func)
-        def wrapper(arg0: F, *args, **kw):
+        @ipd.wraps(func)
+        def wrapper(arg0, *args, **kw):
             if is_iterizeable(arg0, basetype=basetype, splitstr=splitstr, allowmap=allowmap):
                 if splitstr and isinstance(arg0, str) and ' ' in arg0:
                     arg0 = arg0.split()
@@ -218,7 +219,7 @@ def iterize_on_first_param(
 
         return wrapper
 
-    if func0:  # handle case with no call/args
+    if func0 is not NoneFunc:  # handle case with no call/args
         assert callable(func0)
         return deco(func0)
     return deco
@@ -241,9 +242,9 @@ def preserve_random_state(func0=None, seed0=None):
         callable: The decorated function.
 
     Example:
-        @preserve_random_state(seed0=42)
-        def my_function():
-            # Function code here
+        >>> @preserve_random_state(seed0=42)
+        >>> def my_function():
+        >>>     # Function code here
 
     Raises:
         AssertionError: If `func0` is provided but is not callable or if `seed0` is not None when `func0` is used.
@@ -251,7 +252,7 @@ def preserve_random_state(func0=None, seed0=None):
 
     def deco(func):
 
-        @functools.wraps(func)
+        @ipd.wraps(func)
         def wrapper(*args, **kw):
             with ipd.dev.temporary_random_seed(seed=kw.get('seed', seed0)):
                 return func(*args, **kw)
@@ -281,10 +282,10 @@ def make_getitem_for_attributes(get=getattr, provide='value') -> 'Any':
         Any: The attribute value(s) corresponding to the field(s).
 
     Example:
-        obj = MyClass()
-        value = obj['x']  # Single field
-        values = obj['x y z']  # Multiple keys as a string
-        values = obj[['x', 'y', 'z']]  # Multiple keys as a list
+        >>> obj = MyClass()
+        >>> value = obj['x']  # Single field
+        >>> values = obj['x y z']  # Multiple keys as a string
+        >>> values = obj[['x', 'y', 'z']]  # Multiple keys as a list
     """
         field, plural = get_fields(self, field)
         if provide == 'value':
@@ -308,9 +309,9 @@ def generic_enumerate(self, fields: ipd.FieldSpec, order=lambda x: x) -> ipd.Enu
         tuple[int, ...]: A tuple containing the index and the attribute values.
 
     Example:
-        obj = MyClass()
-        for i, x, y in obj.enumerate(['x', 'y']):
-            print(i, x, y)
+        >>> obj = MyClass()
+        >>> for i, x, y in obj.enumerate(['x', 'y']):
+        >>>     print(i, x, y)
     """
     fields = list(zip(*self[fields]))
     idx = range(len(fields[0]))
@@ -384,7 +385,7 @@ def getattr_fzf(obj, field):
     if len(candidates) == 1: return getattr(obj, candidates[0])
     raise AttributeError(f'multiple attributes found for {field}: {candidates}')
 
-def subscriptable_for_attributes(cls: C) -> C:
+def subscriptable_for_attributes(cls: type[ipd.C]) -> type[ipd.C]:
     """Class decorator to enable subscriptable attribute access and enumeration.
 
     This decorator adds support for `__getitem__` and `enumerate` methods to a class
@@ -430,7 +431,7 @@ def safe_lru_cache(func=None, *, maxsize=128):
     def decorator(func):
         cache = functools.lru_cache(maxsize=maxsize)(func)
 
-        @functools.wraps(func)
+        @ipd.wraps(func)
         def wrapper(*args, **kwargs):
             try:
                 hash(args)

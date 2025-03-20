@@ -1,4 +1,3 @@
-from icecream import ic
 import ipd
 from typing import TYPE_CHECKING
 import assertpy
@@ -21,7 +20,10 @@ def symcheck(sym, thing, kind=None, **kw):
     if kind.shapekind == ShapeKind.SEQUENCE:
         return [symcheck(**kw.sub(thing=x, kind=None)) for x in adaptor.adapted]  # type: ignore
     if kind.shapekind == ShapeKind.MAPPING:
-        return {k: symcheck(key=k, **kw.sub(thing=x, kind=None)) for k, x in adaptor.adapted.items()}  # type: ignore
+        return {
+            k: symcheck(key=k, **kw.sub(thing=x, kind=None))
+            for k, x in adaptor.adapted.items()
+        }  # type: ignore
     if kind.valuekind == ValueKind.XYZ:
         return symcheck_XYZ(**kw)
     if kind.valuekind == ValueKind.INDEX:
@@ -94,16 +96,16 @@ def symcheck_INDEX_common(idx, thing, **kw):
 
 def symcheck_XYZ_1D(sym, idx, thing, **kw):
     for s in idx:
-        # ic(s)
-        # ic(s.asu)
-        # ic(s.beg, s.asuend)
-        # ic(s.Lasu)
+        # ipd.icv(s)
+        # ipd.icv(s.asu)
+        # ipd.icv(s.beg, s.asuend)
+        # ipd.icv(s.Lasu)
         for i in range(idx.nsub):
             frame = sym.frames[i] if sym.frames is not None else ipd.h.homog(sym.symmRs[i])
-            # ic(i, thing.shape, sym.symmRs.shape, sym.symid, sym.nsub,idx.nsub)
+            # ipd.icv(i, thing.shape, sym.symmRs.shape, sym.symid, sym.nsub,idx.nsub)
             tmp1 = thing[s.beg + i * s.Lasu:s.asuend + i * s.Lasu]
             tmp2 = ipd.h.xform(frame, thing[s.asu])  # type: ignore
-            # ic(tmp1.shape,tmp2.shape)
+            # ipd.icv(tmp1.shape,tmp2.shape)
             th.testing.assert_close(tmp1, tmp2.to(tmp1.dtype), atol=1e-3, rtol=1e-5, equal_nan=True)
 
 def symcheck_XYZ_2D(idx, thing, **kw):
@@ -138,7 +140,7 @@ def symcheck_INDEX_SPARSE(idx, thing, **kw):
     symcheck_INDEX_common(idx, x)
     sub = idx.subnum[x]
     asu = idx.idx_sym_to_sub[0, x[sub == 0]]
-    # ic(x, sub, asu)
+    # ipd.icv(x, sub, asu)
     for i in range(idx.nsub):
         # print(i, idx.idx_sym_to_sub[i, x[sub == i]])
         th.testing.assert_close(asu, idx.idx_sym_to_sub[i, x[sub == i]], atol=0, rtol=0)
@@ -173,7 +175,7 @@ def symcheck_BASIC_2D(idx, thing, kind, sympair_protein_only=None, **kw):
                 sym = thing[lb:ub, lb:ub, ..., k]
                 asu = thing[s.beg:s.asuend, s.beg:s.asuend, ..., k]
                 if not th.allclose(sym, asu, atol=1e-3, rtol=1e-5):
-                    ic(sym.device, sym.shape, asu.shape, s, i, k)
+                    ipd.icv(sym.device, sym.shape, asu.shape, s, i, k)
                     # import torchshow
                     # torchshow.show([sym, asu])
                     th.testing.assert_close(sym, asu, atol=1e-3, rtol=1e-5)

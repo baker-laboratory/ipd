@@ -10,7 +10,7 @@ hydra = lazyimport('hydra')
 
 def hydra_sandbox(func):
 
-    @functools.wraps(func)
+    @ipd.wraps(func)
     def wrapper(*args, **kwargs):
         hydra_instance = None
         if hydra.core.global_hydra.GlobalHydra().is_initialized():

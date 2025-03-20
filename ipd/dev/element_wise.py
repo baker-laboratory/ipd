@@ -7,14 +7,13 @@ to each element in a collection and collecting the results.
 
 from collections.abc import Mapping
 import itertools
+from functools import partial
 import operator
 
 import numpy as np
 
 import ipd
 from ipd.dev.decorators import generic_get_items
-
-T, P, R, C = ipd.basic_typevars('TPRC')
 
 def get_available_result_types():
     return dict(
@@ -24,7 +23,11 @@ def get_available_result_types():
         np=NumpyAccumulator,
     )
 
-def element_wise_operations(cls0: 'C|None' = None, result_types='map val np') -> C:
+class Missing:
+    pass
+
+def element_wise_operations(cls0: ipd.Optional[type[ipd.C]] = Missing,
+                            result_types='map val np') -> type[ipd.C]:
     """Decorator that adds element-wise operation capabilities to a class.
 
     Adds up to four attributes to the decorated class:
@@ -40,6 +43,8 @@ def element_wise_operations(cls0: 'C|None' = None, result_types='map val np') ->
     Returns:
         The decorated class
     """
+    if cls0 is Missing:
+        return partial(element_wise_operations, result_types=result_types)
     orig = result_types
     if isinstance(result_types, str):
         result_types = result_types.split() if ' ' in result_types else [result_types]
@@ -48,13 +53,11 @@ def element_wise_operations(cls0: 'C|None' = None, result_types='map val np') ->
     if not set(available_result_types) & result_types:
         raise TypeError(f'result_types {orig} is invalid')
 
-    def decorate(cls: C) -> C:
+    def decorate(cls: type[ipd.C]) -> type[ipd.C]:
         for rtype in result_types:
             setattr(cls, f'{rtype}wise', ElementWise(available_result_types[rtype]))
         return cls
 
-    if cls0 is None:
-        return decorate
     return decorate(cls0)
 
 class ElementWise:

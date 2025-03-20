@@ -1,4 +1,3 @@
-import attrs
 import copy
 import sys
 
@@ -53,7 +52,7 @@ class Tolerances:
                 ipd.dev.print_table(hist, key='Tolerances')
         return out.read()
 
-@attrs.define
+@ipd.struct
 class Checker:
     threshold: float
     n_checks: int = 0

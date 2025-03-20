@@ -138,7 +138,7 @@ def frames(
 
 def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize=None, **kw):
     ipd.dev.checkpoint(kw, funcbegin=True)
-    # ic(allowcellshift, cellsize)
+    # ipd.icv(allowcellshift, cellsize)
     frames2 = list(frames)
     if len(frames) == 0:
         return ontop
@@ -148,7 +148,7 @@ def put_frames_on_top(frames, ontop, strict=True, allowcellshift=False, cellsize
     diff = ipd.homog.hdiff(ontop, np.stack(frames2))
     w = np.nonzero(diff < 0.0001)
     if strict:
-        # ic(w, ontop.shape)
+        # ipd.icv(w, ontop.shape)
         assert len(w) == 2
         assert set(w[0]) == set(range(len(ontop)))
     for i in reversed(sorted(w[1])):
@@ -714,17 +714,17 @@ def subframes(frames, bbsym, asym):
     assert frames.ndim == 3 and frames.shape[1:] == (4, 4)
     subframes = ipd.sym.frames(bbsym)
     coords = ipd.homog.hxform(frames, ipd.homog.hcom(asym, flat=True))
-    ic(coords)  # type: ignore
-    ic(frames.shape)  # type: ignore
-    ic(subframes.shape)  # type: ignore
+    ipd.icv(coords)  # type: ignore
+    ipd.icv(frames.shape)  # type: ignore
+    ipd.icv(subframes.shape)  # type: ignore
     # relframes = frames[1:, None] @ ipd.homog.hinv(frames[None, :-1])
     relframes = frames[:, None] @ ipd.homog.hinv(frames[None, :])
-    ic(relframes.shape)  # type: ignore
+    ipd.icv(relframes.shape)  # type: ignore
     axs, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(relframes)
 
     for i in range(len(frames)):
         axdist = ipd.homog.h_point_line_dist(coords, cen[i, :], axs[i, :])  # type: ignore
-        ic(axdist)  # type: ignore
+        ipd.icv(axdist)  # type: ignore
     # what about multiple nfold axes???\
     # can distinguish by axis direction?
     assert 0
@@ -734,7 +734,7 @@ def subframes(frames, bbsym, asym):
     # closest axis
 
     axisdist = ipd.hprojperp(axs, cen)  # type: ignore
-    ic(axisdist)  # type: ignore
+    ipd.icv(axisdist)  # type: ignore
 
 # computed in ipd.sym.asufit.compute_canonical_asucen
 _canon_asucen = dict(
@@ -796,7 +796,7 @@ def compute_canonical_asucen(sym, neighbors=None):
 
     mind2 = d2.min(dim=0)[0]
     if neighbors:
-        # ic(d2.shape)  # type: ignore
+        # ipd.icv(d2.shape)  # type: ignore
         sort = d2.sort(dim=0)[0]
         rank = sort[neighbors] - sort[neighbors - 1]
     else:

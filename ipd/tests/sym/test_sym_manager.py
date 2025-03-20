@@ -103,10 +103,10 @@ def test_sym_manager_2d_2slice():
     sym.idx = [(n, 0, 4), (n, 5, 11)]
     m = th.arange(n * n).reshape(n, n).to(int).to(sym.device)
     asym = sym.idx.asym[None] * sym.idx.asym[:, None]  # type: ignore
-    # ic(asym.to(int))
+    # ipd.icv(asym.to(int))
     asym = m[asym].reshape(8, 8)
     msym = sym(asym)
-    # ic(msym)
+    # ipd.icv(msym)
     assert th.all(msym == th.tensor(
         [[0, 1, 0, 0, 4, 5, 6, 7, 0, 0, 0, 11, 12], [13, 14, 0, 0, 17, 18, 19, 20, 0, 0, 0, 24, 25],
          [0, 0, 0, 1, 0, 0, 0, 0, 5, 6, 7, 0, 0], [0, 0, 13, 14, 0, 0, 0, 0, 18, 19, 20, 0, 0],
@@ -153,8 +153,8 @@ def test_sym_asu_seq():
     seq = th.arange(20)
     seq = sym(seq)
     assert all(seq[10:] == seq[:10])
-    # ic(seq.shape)
-    # ic(sym.masym.shape)
+    # ipd.icv(seq.shape)
+    # ipd.icv(sym.masym.shape)
     asym = sym.asym(seq)
     asu = sym.asym(seq)
     assert all(asym == seq[:10])
@@ -203,7 +203,7 @@ def test_sym_asu_xyz():
     xyz = th.randn((1, 40, 1, 3))
     s = sym(xyz)
     # import ipd as ipd
-    # ic(s.shape)
+    # ipd.icv(s.shape)
     # ipd.showme(xyz[0,:20,0])
     # ipd.showme(s[0,:20,0])
     # ipd.showme(s[0,20:,0])

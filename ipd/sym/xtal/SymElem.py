@@ -40,10 +40,10 @@ def symelem_of(frame, **kw):
         nfold = 1
     else:
         nfold = np.pi * 2 / an
-        ic(nfold, a, an, c, h)
+        ipd.icv(nfold, a, an, c, h)
         if not np.allclose(nfold, nfold.round()):
             raise SymElemAngErr(f"angle {an} implies nfold {nfold} which is non-integer")
-    # ic(int(nfold), a, c, h, kw)
+    # ipd.icv(int(nfold), a, c, h, kw)
     return SymElem(int(nfold.round()), axis=a, cen=c, hel=h, **kw)  # type: ignore
 
 def _round(val):
@@ -160,7 +160,7 @@ class SymElem:
         self.nfold = nfold
 
     def frame_operator_ids(self, frames, sanitycheck=True):
-        # ic(self)
+        # ipd.icv(self)
         # from ipd.viz.pymol_viz import showme
         # showme(10 * einsum('fij,j->fi', frames, [0, 0, 0, 1]), scale=10)
         # showme(10 * einsum('fij,j->fi', frames, [0.5, 0.5, 0.5, 1]), scale=10)
@@ -188,7 +188,7 @@ class SymElem:
         assert len(permutations) == len(frames)
         opframes = np.eye(4).reshape(1, 4, 4)
         iframematch0 = self.matching_frames(frames)
-        # ic(iframematch0, len(frames), permutations.shape)
+        # ipd.icv(iframematch0, len(frames), permutations.shape)
         fid = 0
         compid = -np.ones(len(frames), dtype=np.int32)
         for iframe, perm in enumerate(permutations):
@@ -242,11 +242,11 @@ class SymElem:
         # ipd.showme(cen[w], scale=10)
         # ipd.showme(frames[w], scale=10)
         # assert 0
-        # ic(count)
+        # ipd.icv(count)
         # s = set(compid)
         # for i in range(np.max(compid)):
         # if not i in s:
-        # ic(i)
+        # ipd.icv(i)
         # assert len(set(compid)) == np.max(compid) + 1
         # assert 0
         return compid
@@ -282,8 +282,8 @@ class SymElem:
             cperr = ComponentIDError()
             cperr.match = match  # type: ignore
             raise cperr
-            ic(frames.shape)
-            ic(match)
+            ipd.icv(frames.shape)
+            ipd.icv(match)
             from ipd.viz.pymol_viz import showme
 
             showme(frames, scale=10)
@@ -362,11 +362,11 @@ class SymElem:
         unitcellfrac = self.hel / cellextent
 
         # raise ScrewError(f'incoherent screw values axis: {self.axis} hel: {self.hel} screw: {self.screw}')
-        # ic(unitcellfrac)
+        # ipd.icv(unitcellfrac)
         # if not 0 < unitcellfrac < (1 if self.nfold > 1 else 1.001):
         # raise ScrewError(f'screw translation out of unit cell')
         self.screw = unitcellfrac * self.nfold
-        # ic(self.nfold, self.screw)
+        # ipd.icv(self.nfold, self.screw)
         if not np.isclose(self.screw, round(self.screw)):  # type: ignore
             raise ScrewError(f"screw has non integer value {self.screw}")
         if self.screw >= max(2, self.nfold):  # C11 is ok
@@ -378,7 +378,7 @@ class SymElem:
             self.hel = self.hel % cellextent
             # if unitcellfrac < -0.9:
             # raise ScrewError(f'unitcellfrac below -0.9')
-            # ic(self.nfold, unitcellfrac)
+            # ipd.icv(self.nfold, unitcellfrac)
             if self.hel < 0:
                 assert 0
 
@@ -410,7 +410,7 @@ class SymElem:
         if frame is not None:
             assert axis2 is None
             a, an, c, h = ipd.homog.axis_angle_cen_hel_of(frame)
-            ic(a, axis, c, cen, nfold, an, h, hel)
+            ipd.icv(a, axis, c, cen, nfold, an, h, hel)
             assert np.allclose(axis, a)
             assert np.allclose(an, 0) or np.allclose(nfold, 2 * np.pi / an)
             assert np.allclose(cen, c)
@@ -431,9 +431,11 @@ class SymElem:
             self.axis2 = -self.axis2  # type: ignore
         if adjust_cyclic_center and (axis2 is None) and np.isclose(hel, 0):  # cyclic
             assert 0, "this needs an audit"
-            dist = ipd.homog.line_line_distance_pa(self.cen, self.axis, _cube_edge_cen * self.scale, _cube_edge_axis)
+            dist = ipd.homog.line_line_distance_pa(self.cen, self.axis, _cube_edge_cen * self.scale,
+                                                   _cube_edge_axis)
             w = np.argmin(dist)
-            newcen, _ = ipd.homog.line_line_closest_points_pa(self.cen, self.axis, _cube_edge_cen[w] * self.scale,
+            newcen, _ = ipd.homog.line_line_closest_points_pa(self.cen, self.axis,
+                                                              _cube_edge_cen[w] * self.scale,
                                                               _cube_edge_axis[w])
             if not np.any(np.isnan(newcen)):
                 self.cen = newcen
@@ -462,14 +464,14 @@ class SymElem:
         ])
 
     def make_operators(self):
-        # ic(self)
+        # ipd.icv(self)
         if self.label == "T":
             ops = tetrahedral_frames
             assert self._opinfo == (3, 2)
             aln = halign2([1, 1, 1], [0, 0, 1], self.axis, self.axis2)
             ops = aln @ ops @ hinv(aln)
             ops = htrans(self.cen) @ ops @ htrans(-self.cen)
-            # ic(self.axis, self.axis2)
+            # ipd.icv(self.axis, self.axis2)
         elif self.label == "O":
             assert self._opinfo in [(4, 3), (4, 2), (3, 2)]
             ops = octahedral_frames
@@ -489,8 +491,8 @@ class SymElem:
         if not self.isdihedral:
             self.origin = htrans(self.cen) @ halign([0, 0, 1], self.axis)
         else:
-            # ic(self.axis)
-            # ic(self.axis2)
+            # ipd.icv(self.axis)
+            # ipd.icv(self.axis2)
             self.origin = htrans(self.cen) @ halign2([0, 0, 1], [1, 0, 0], self.axis, self.axis2)
 
         return ops
@@ -642,9 +644,9 @@ def showsymelems(
             if scan and not s.iscompound:
                 f2 = (elemframes[:, None] @ ipd.homog.htrans(
                     s.axis[None] * np.linspace(-scale * np.sqrt(3), scale * np.sqrt(3), scan)[:, None])[None])
-                # ic(f2.shape)
+                # ipd.icv(f2.shape)
                 f2 = f2.reshape(-1, 4, 4)
-                # ic(f2.shape)
+                # ipd.icv(f2.shape)
 
             shift = ipd.homog.htrans(s.cen * scale + offset * ipd.homog.hvec([0.1, 0.2, 0.3]))
             # shift = ipd.homog.htrans(s.cen * scale)
@@ -671,12 +673,13 @@ def showsymelems(
             elif s.label == "D4":
                 configs = [
                     ((s.axis2, [1, 0, 0]), (s.axis, [0, 1, 0]), [0.7, 0, 0]),
-                    ((ipd.homog.hrot(s.axis, 45, s.cen) @ s.axis2, [1, 0, 0]), (s.axis, [0, 1, 0]), [0.7, 0, 0]),
+                    ((ipd.homog.hrot(s.axis, 45, s.cen) @ s.axis2, [1, 0, 0]), (s.axis, [0, 1,
+                                                                                         0]), [0.7, 0, 0]),
                     ((s.axis, [0, 0, 1]), (s.axis2, [1, 0, 0]), [0.0, 0, 0.9]),
                 ]
             elif s.label == "C11":
                 continue
-                # ic(configs)
+                # ipd.icv(configs)
                 # assert 0
             elif s.nfold == 2:
                 configs = [[(s.axis, [1, 0, 0]), (s.axis2, [0, 0, 1]), [1.0, 0.3, 0.6]]]
@@ -734,9 +737,9 @@ def showsymelems(
             ii += 1
     from ipd.viz.pymol_viz import showcell
 
-    # ic(sym)
-    # ic(lattice)
-    # ic(cellgeom)
+    # ipd.icv(sym)
+    # ipd.icv(lattice)
+    # ipd.icv(cellgeom)
     showcell(scale * lattice)
     # showcube()
 
@@ -771,8 +774,8 @@ def _make_operator_component_joint_ids(elem1, elem2, frames, fopid, fcompid, san
             cens = einsum("fij,j->fi", compframes, elem2.origin[:, 3])
             if np.any(np.all(np.isclose(cens[None], seenit[:, None]), axis=2)):  # type: ignore
                 raise ComponentIDError
-                ic(elem1)
-                ic(elem2)
+                ipd.icv(elem1)
+                ipd.icv(elem2)
                 # for i in range(np.max(fopid)):
                 showme(elem1.cen, scale=10, name="ref")
                 showme(elem1.operators, scale=10, name="ref1")

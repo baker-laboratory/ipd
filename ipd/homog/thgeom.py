@@ -145,7 +145,7 @@ def choose_axis_flip(axis, angle):
         return axis.reshape(oshape), angle.reshape(oshape[:-1])
 
 def axis_angle_cen(xforms, ident_match_tol=1e-8, flipaxis=True):
-    # ic(xforms.dtype)
+    # ipd.icv(xforms.dtype)
     origshape = xforms.shape[:-2]
     xforms = xforms.reshape(-1, 4, 4)
     axis, angle = axis_angle(xforms)
@@ -326,10 +326,10 @@ def quat_to_upper_half(quat):
     ineg1 = (quat[..., 0] == 0) * (quat[..., 1] < 0)
     ineg2 = (quat[..., 0] == 0) * (quat[..., 1] == 0) * (quat[..., 2] < 0)
     ineg3 = (quat[..., 0] == 0) * (quat[..., 1] == 0) * (quat[..., 2] == 0) * (quat[..., 3] < 0)
-    # ic(ineg0.shape)
-    # ic(ineg1.shape)
-    # ic(ineg2.shape)
-    # ic(ineg3.shape)
+    # ipd.icv(ineg0.shape)
+    # ipd.icv(ineg1.shape)
+    # ipd.icv(ineg2.shape)
+    # ipd.icv(ineg3.shape)
     ineg = ineg0 + ineg1 + ineg2 + ineg3
     quat2 = th.where(ineg, -quat, quat)
     return normalized(quat2)
@@ -390,9 +390,9 @@ def rot3(axis, angle, shape=(3, 3), squeeze=True, dtype=None, device=None):
     b, c, d = tmp[..., 0], tmp[..., 1], tmp[..., 2]
     aa, bb, cc, dd = a * a, b * b, c * c, d * d
     bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
-    # ic(axis.dtype)
-    # ic(angle.dtype)
-    # ic(a.dtype)
+    # ipd.icv(axis.dtype)
+    # ipd.icv(angle.dtype)
+    # ipd.icv(a.dtype)
     if shape == (3, 3):
         rot = th.stack([
             th.stack([aa + bb - cc - dd, 2 * (bc+ad), 2 * (bd-ac)], axis=-1),
@@ -410,10 +410,10 @@ def rot3(axis, angle, shape=(3, 3), squeeze=True, dtype=None, device=None):
                        axis=-2)
     else:
         raise ValueError(f"rot3 shape must be (3,3) or (4,4), not {shape}")
-    # ic('foo')
-    # ic(axis.shape)
-    # ic(angle.shape)
-    # ic(rot.shape)
+    # ipd.icv('foo')
+    # ipd.icv(axis.shape)
+    # ipd.icv(angle.shape)
+    # ipd.icv(rot.shape)
     if squeeze and rot.shape == (1, 3, 3):
         rot = rot.reshape(3, 3)
     if squeeze and rot.shape == (1, 4, 4):
@@ -471,17 +471,17 @@ def rmsfit(mobile, target):
     target_cen = th.mean(target, axis=0)
     mobile = mobile - mobile_cen
     target = target - target_cen
-    # ic(mobile.shape)
-    # ic(target.shape[-1] in (3, 4))
+    # ipd.icv(mobile.shape)
+    # ipd.icv(target.shape[-1] in (3, 4))
     covariance = mobile.T[:3] @ target[:, :3]
     V, S, W = th.linalg.svd(covariance)
     if 0 > th.det(V) * th.det(W):
         S = th.tensor([S[0], S[1], -S[2]], dtype=S.dtype, device=S.device)
         # S[-1] = -S[-1]
-        # ic(S - S1)
+        # ipd.icv(S - S1)
         V = th.cat([V[:, :-1], -V[:, -1, None]], dim=1)
         # V[:, -1] = -V[:, -1]
-        # ic(V - V1)
+        # ipd.icv(V - V1)
         # assert 0
     rot_m2t = homog(V @ W).T
     trans_m2t = target_cen - rot_m2t@mobile_cen
@@ -818,7 +818,7 @@ def _thxform_impl(x, stuff, outerprod='auto', flat=False, isxform='auto', improp
         if outerprod:
             shape1 = x.shape[:-2]
             shape2 = stuff.shape[:-2]
-            # ic(x.shape, stuff.shape, shape1, shape2)
+            # ipd.icv(x.shape, stuff.shape, shape1, shape2)
             a = x.reshape(shape1 + (1, ) * len(shape2) + (4, 4))
 
             b = stuff.reshape((1, ) * len(shape1) + shape2 + (4, 1))
@@ -829,7 +829,7 @@ def _thxform_impl(x, stuff, outerprod='auto', flat=False, isxform='auto', improp
             shape2 = stuff.shape[:-2]
             sameshape = tuple()
             for i, (s1, s2) in enumerate(zip(shape1, shape2)):
-                # ic(s1, s2)
+                # ipd.icv(s1, s2)
                 if s1 == s2:
                     shape1 = shape1[1:]
                     shape2 = shape2[1:]
@@ -838,7 +838,7 @@ def _thxform_impl(x, stuff, outerprod='auto', flat=False, isxform='auto', improp
                     break
             newshape1 = sameshape + shape1 + (1, ) * len(shape2) + (4, 4)
             newshape2 = sameshape + (1, ) * len(shape1) + shape2 + (4, 1)
-            # ic(shape1, shape2, newshape1, newshape2)
+            # ipd.icv(shape1, shape2, newshape1, newshape2)
             a = x.reshape(newshape1)
             b = stuff.reshape(newshape2)
             result = a @ b
@@ -849,7 +849,7 @@ def _thxform_impl(x, stuff, outerprod='auto', flat=False, isxform='auto', improp
             result = result.reshape(-1, 4)
 
         # assert 0
-    # ic('result', result.shape)
+    # ipd.icv('result', result.shape)
     return result
 
 def valid(stuff, isxform=True, strict=False, **kw):
@@ -881,7 +881,7 @@ def valid44(x, improper_ok=False, debug=False, **kw):
     is_one_33 = th.allclose(x[..., 3, 3], th.tensor(1.0, dtype=x.dtype))
     is_zero_3_012 = th.allclose(x[..., 3, :3], th.tensor(0.0, dtype=x.dtype))
     ok = is_zero_3_012 and is_one_33 and detok
-    if debug and not ok: ic(improper_ok, det, detok, is_one_33, is_zero_3_012)  # type: ignore
+    if debug and not ok: ipd.icv(improper_ok, det, detok, is_one_33, is_zero_3_012)  # type: ignore
     return ok
 
 def inv(x):

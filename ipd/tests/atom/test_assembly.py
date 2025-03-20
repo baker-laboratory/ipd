@@ -60,7 +60,7 @@ def helper_test_assembly_neighborhood_asu(assembly):
 def helper_test_assembly_neighborhood_neighbors(assembly):
     for ibasu, ifasu, basu, fasu in assembly.enumerate_symbodies():
         # for ibasu, ifasu, basu, fasu in assembly.enumerate_symbodies(order='random', n=10):
-        ic(ibasu, ifasu, basu.pos)
+        ipd.icv(ibasu, ifasu, basu.pos)
         asusel = ipd.atom.AsuSelector(bodyid=ibasu, frameid=ifasu)
         hoodsel = ipd.atom.NeighborhoodSelector(min_contacts=10, contact_dist=7)
         hood = hoodsel(asusel, assembly)
@@ -73,7 +73,7 @@ def helper_test_assembly_neighborhood_neighbors(assembly):
             # oldframe = assembly._framemap[bnew][orig_iframe_for_new]
             origbody = assembly.body(ibmap, ifmap)
             newbody = hood.body(ibnew, ifnew)
-            ic(origbody.pos, newbody.pos)
+            ipd.icv(origbody.pos, newbody.pos)
             # assert newbody.isclose(origbody)
         # assert 0
 

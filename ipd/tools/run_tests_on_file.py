@@ -20,6 +20,8 @@ from collections import defaultdict
 from time import perf_counter
 from assertpy import assert_that
 
+sys.path.append('.')
+import ipd
 # set to manually specipy a command for a file
 _overrides = {
     # 'foo.py': 'PYTHONPATH=.. python foo/bar.py -baz'
@@ -105,6 +107,14 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
     t = f'{root}{pre}tests/{post}test_{bname}'
     return t
 
+def locate_fname(fname):
+    'locate file in sys.path'
+    if os.path.exists(fname): return fname
+    candidates = [fn for fn in ipd.dev.project_files() if fn.endswith(fname)]
+    if len(candidates) == 1: return candidates[0]
+    if len(candidates) == 0: raise FileNotFoundError(f'file {fname} not found in git project')
+    raise FileNotFoundError(f'file {fname} found ambiguous {candidates} in git project')
+
 def dispatch(
         projects,
         fname,
@@ -116,15 +126,13 @@ def dispatch(
         **kw,
 ):
     'dispatch command for a given file. see above'
-
+    fname = locate_fname(fname)
     fname = os.path.relpath(fname)
     module_fname = '' if fname[:5] == 'test_' else fname
     path, bname = os.path.split(fname)
 
     if bname in overrides:
-        oride = overrides[bname]
-        return oride, _post[bname]
-
+        return overrides[bname], _post[bname]
     if bname in file_mappings:
         assert len(file_mappings[bname]) == 1
         fname = file_mappings[bname][0]
@@ -135,13 +143,13 @@ def dispatch(
         path, bname = os.path.split(bname)
 
     if not file_has_main(fname) and not bname.startswith('test_'):
-        testfile = testfile_of(projects, path, bname, **kw)
-        if testfile:
+        if testfile := testfile_of(projects, path, bname, **kw):
             if not os.path.exists(testfile) and fname.endswith('.py'):
                 print('autogen test file', testfile)
                 os.system(f'{sys.executable} -mipd code make_testfile {fname} {testfile}')
                 os.system(f'subl {testfile}')
-            fname = testfile
+                sys.exit()
+            fname = module_fname = testfile
             path, bname = os.path.split(fname)
 
     if bname == os.path.basename(__file__):

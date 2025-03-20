@@ -145,7 +145,7 @@ def main():
 
     # test_remove_redundant_screws()
 
-    ic("PASS test_spacegroup_symelems")  # type: ignore
+    ipd.icv("PASS test_spacegroup_symelems")  # type: ignore
 
 # yapf: disable
 
@@ -457,7 +457,7 @@ def test_compound_elems_I4132(debug=False, **kw):
     helper_test_symelem(sym, val, debug, compound=True, **kw)
 
 # def test_compound_elems_P4132(showme=False):
-#    ic('test_compound_elems_P4132')
+#    ipd.icv('test_compound_elems_P4132')
 #    sym = 'P4132'
 #    elems = ipd.sym.xtal.symelems(sym, asdict=True)
 #    celems = _find_compound_symelems(sym)
@@ -468,7 +468,7 @@ def test_compound_elems_I4132(debug=False, **kw):
 #    assert celems['D3'] == [SymElem(3, axis=[1, 1, 1], axis2=[-1.0, 1.0, 0.0], cen=[0.375, 0.375, 0.375], label='D3')]
 
 # def test_compound_elems_F4132(showme=False):
-#    ic('test_compound_elems_F4132')
+#    ipd.icv('test_compound_elems_F4132')
 #    sym = 'F4132'
 #    elems = ipd.sym.xtal.symelems(sym, asdict=True)
 #    celems = _find_compound_symelems(sym)
@@ -486,7 +486,7 @@ def test_compound_elems_I4132(debug=False, **kw):
 #    assert elems['D3'] == [SymElem(3, axis=[1, 1, 1], axis2=[0.0, -1.0, 1.0], cen=[0.125, 0.125, 0.125], label='D3')]
 
 # def test_compound_elems_P213(showme=False):
-#    ic('test_compound_elems_P213')
+#    ipd.icv('test_compound_elems_P213')
 #    sym = 'P213'
 #    elems = _find_compound_symelems(sym)
 
@@ -1330,10 +1330,10 @@ def test_remove_redundant_screws():
           SymElem(2, axis=[1, 0, 0], cen=[0.0, 1.25, 1.0], hel=0.5, label='C21'),  # type: ignore
        ]
     }
-    # ic(f4cel.shape)
-    # ic(lattice)
+    # ipd.icv(f4cel.shape)
+    # ipd.icv(lattice)
     elems2 = _remove_redundant_screws(elems, f4cel, lattice)
-    # ic(elems2)
+    # ipd.icv(elems2)
     assert elems2 == {
        'C21': [
           SymElem(2, axis=[0, 0, 1], cen=[0.25, 0.0, 0.0], hel=0.5, label='C21'),  # type: ignore

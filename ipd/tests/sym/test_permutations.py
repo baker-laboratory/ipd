@@ -16,11 +16,11 @@ def main():
     # WIP_P23_perm()
     # test_icos_perm()
     test_icos_perm()
-    ic("PASS test_permutations")  # type: ignore
+    ipd.icv("PASS test_permutations")  # type: ignore
 
 def WIP_opcompid():
     f = ipd.sym.frames("P23", cells=4)
-    ic(ipd.sym.xtal.symelems("P23"))  # type: ignore
+    ipd.icv(ipd.sym.xtal.symelems("P23"))  # type: ignore
     for ielem, se in enumerate(ipd.sym.xtal.symelems("P23")):
         fcompid = ipd.sym.xtal.sg_symelem_frame444_compids_dict["P23"][:, ielem]
         fopid = se.frame_operator_ids(f)
@@ -34,7 +34,7 @@ def WIP_opcompid():
         for i, id in enumerate(sorted(set(ids))):
             ids[ids == id] = i
         for i in range(max(ids)):
-            ic(f[ids == i, :3, 3])  # type: ignore
+            ipd.icv(f[ids == i, :3, 3])  # type: ignore
         assert 0
 
 def WIP_P23_perm():
@@ -52,13 +52,13 @@ def WIP_P23_perm():
 
     ielem = 4
     ecen, eaxs = selems[ielem].cen, selems[ielem].axis
-    ic(selems[ielem])  # type: ignore
+    ipd.icv(selems[ielem])  # type: ignore
     for icomp in range(np.max(compid[:, ielem])):
-        # ic(np.max(frames[:, :3, 3]))
+        # ipd.icv(np.max(frames[:, :3, 3]))
         selframes = compid[:, ielem] == icomp
         assert len(selframes)
         testf = frames[selframes] @ ipd.homog.htrans(ecen) @ ipd.homog.halign([0, 0, 1], eaxs)
-        # ic(testf.shape)
+        # ipd.icv(testf.shape)
         # print(testf[:, :3, 3])
         # ipd.showme(testf)
 
@@ -67,7 +67,7 @@ def WIP_P23_perm():
     # perms = ipd.sym.symframe_permutations_torch(frames)
     # perms = ipd.load('/home/sheffler/WILLUTIL_SYM_PERMS_I4132_5_int32.pickle')
     # unitframes = ipd.sym.xtal.sgframes('I4132', cellgeom='unit')
-    # ic(unitframes.shape)
+    # ipd.icv(unitframes.shape)
 
     # f = ipd.sym.xtal.sgframes('I213', cells=2, cellgeom=[10])
     # ipd.showme(f @ ipd.homog.htrans([0, 0, 0]) @ ipd.homog.halign([0, 0, 1], [1, 1, 1]),**vizopt)

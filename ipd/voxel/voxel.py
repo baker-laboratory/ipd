@@ -1,10 +1,7 @@
 import math
 
-import gemmi  # type: ignore
 import numpy as np
 import torch as th  # type: ignore
-from icecream import ic
-from numba import cuda
 
 import ipd
 import ipd.homog.thgeom as h
@@ -40,7 +37,7 @@ class Voxel:
                                                       nthread=self.create_threads,
                                                       repulsive_only=self.repulsive_only)
         if not th.all(self.lb + self.resl < self.xyz.min(0)[0]):
-            ic(self.lb)
+            ipd.icv(self.lb)
             assert th.all(self.lb + self.resl < self.xyz.min(0)[0])
 
     def score(
@@ -93,11 +90,11 @@ class Voxel:
             cen2 = xyzpos @ h.point(cen2.to('cuda'))
             pad = self.func.arg[-1] + self.resl * math.sqrt(3) / 2
             ok = h.norm2(cen1 - cen2) < (rad1 + rad2 + pad)**2
-            # ic(ok.sum() / len(ok))
+            # ipd.icv(ok.sum() / len(ok))
             if ok.sum() == 0: return th.zeros(1, device='cuda')
             if len(voxposinv) > 1: voxposinv = voxposinv[ok]
             if len(xyzpos) > 1: xyzpos = xyzpos[ok]
-            # ic(cen1.shape, cen2.shape, rad1, rad2)
+            # ipd.icv(cen1.shape, cen2.shape, rad1, rad2)
         if repulsive_only is None: repulsive_only = th.empty(0, dtype=bool)  # type: ignore
         score = _voxel.score_voxel_grid(
             self.grid,
@@ -125,6 +122,7 @@ class Voxel:
         self.ccp4().write_ccp4_map(fname)
 
     def ccp4(self):
+        import gemmi
         npgrid = self.grid.to(th.float32).cpu().numpy()
         grid = gemmi.FloatGrid(npgrid)
         grid.set_size(*npgrid.shape)
@@ -139,6 +137,8 @@ class Voxel:
         # print(ccp4)
         # ccp4.write_ccp4_map(fname)
 
+'''
+from numba import cuda
 @cuda.jit('void(f4[:, :], f4[:], f4[:], i4, f4, float16[:, :, :])', cache=True, fastmath=True)
 def create_voxel_numba(xyz, lb, rad, irad, resl, vox):
     ixyz = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x  # type: ignore
@@ -162,3 +162,4 @@ def create_voxel_numba(xyz, lb, rad, irad, resl, vox):
         elif dist < rad[0]: val = 1.0
         else: val = (rad[1] - dist) / (rad[1] - rad[0])
         if val: vox[i, j, k] += val
+'''

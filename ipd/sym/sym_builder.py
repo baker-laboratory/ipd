@@ -36,7 +36,7 @@ def build_from_components_abbas(atoms1: 'list[AtomArray]', atoms2: 'list[AtomArr
     return joint
     # joint = atoms1 + atoms2
     # sinfo = ipd.sym.syminfo_from_atoms(joint, tol=tol, **kw)
-    # ic(sinfo.symid)
-    # ic(sinfo.symcen)
-    # ic(sinfo.symelem)
+    # ipd.icv(sinfo.symid)
+    # ipd.icv(sinfo.symcen)
+    # ipd.icv(sinfo.symelem)
     # return SymBuild('none', None, [sinfo1, sinfo2])

@@ -22,7 +22,7 @@ def test_colors_to_slices():
     ]:
         cols = th.as_tensor(cols)
         slices = ipd.sym.symslices_from_colors(nsub=nsub, colors=cols, isasym=True)
-        # ic(nsub, cols, slices, expected)
+        # ipd.icv(nsub, cols, slices, expected)
         assert slices == expected
 
 def symslices_from_colors_should_fail(nsub, colors, Lasu, isasym):

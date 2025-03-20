@@ -75,7 +75,7 @@ def test_dynparam_bool_in_range():
 
     #
     dynp.newparam_true_in_range('range1', diffuse=(0.5, 0.5))
-    # ic(dynp.params['range1'].diffuse_steps)
+    # ipd.icv(dynp.params['range1'].diffuse_steps)
     assert SS(diffuse=0).range1 is False
     assert SS(diffuse=1).range1 is False
     assert SS(diffuse=2).range1 is False
@@ -85,7 +85,7 @@ def test_dynparam_bool_in_range():
     assert SS(diffuse=6).range1 is False
 
     dynp.newparam_true_in_range('range2', rfold=[(0, 2), (4, 5)])
-    # ic(dynp.params['range2'].diffuse_steps)
+    # ipd.icv(dynp.params['range2'].diffuse_steps)
     assert SS(rfold=0).range2 is True
     assert SS(rfold=1).range2 is True
     assert SS(rfold=2).range2 is True
@@ -95,7 +95,7 @@ def test_dynparam_bool_in_range():
     assert SS(rfold=6).range2 is False
 
     dynp.newparam_false_in_range('range3', rfold=[(0, 2), (4, 5)])
-    # ic(dynp.params['range3'].diffuse_steps)
+    # ipd.icv(dynp.params['range3'].diffuse_steps)
     assert SS(rfold=0).range3 is not True
     assert SS(rfold=1).range3 is not True
     assert SS(rfold=2).range3 is not True
@@ -149,7 +149,7 @@ def test_dynparam_bool_on_steps():
         dynp.newparam_true_on_steps('toi', diffuse=[-1, -3])
 
     dynp.newparam_true_on_steps('neg', diffuse=[-1, -3])
-    # ic(dynp.params['neg'].diffuse_steps)
+    # ipd.icv(dynp.params['neg'].diffuse_steps)
     assert not SS(diffuse=0).neg
     assert not SS(diffuse=1).neg
     assert not SS(diffuse=2).neg
@@ -159,7 +159,7 @@ def test_dynparam_bool_on_steps():
     assert SS(diffuse=6).neg
 
     dynp.newparam_true_on_steps('float1', diffuse=[0.33])
-    # ic(dynp.params['float1'].diffuse_steps)
+    # ipd.icv(dynp.params['float1'].diffuse_steps)
     assert SS(diffuse=0).float1 is False
     assert SS(diffuse=1).float1 is False
     assert SS(diffuse=2).float1 is True
@@ -169,7 +169,7 @@ def test_dynparam_bool_on_steps():
     assert SS(diffuse=6).float1 is False
 
     dynp.newparam_true_on_steps('float2', diffuse=[0.01, -0.33])
-    # ic(dynp.params['float2'].diffuse_steps)
+    # ipd.icv(dynp.params['float2'].diffuse_steps)
     assert SS(diffuse=0).float2 is True
     assert SS(diffuse=1).float2 is False
     assert SS(diffuse=2).float2 is False

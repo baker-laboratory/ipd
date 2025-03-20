@@ -3,11 +3,12 @@ from contextlib import contextmanager
 from icecream import IceCreamDebugger, ic
 import inspect
 import os
+
 import ipd
 
 stdio = ipd.cherry_pick_import('ipd.dev.contexts.stdio')
 
-def _getContextOneBack(self, callFrame):
+def _getContextOneBack(self, callFrame, callNode=None):
     callFrame = callFrame.f_back
     frameInfo = inspect.getframeinfo(callFrame)
     lineNumber = frameInfo.lineno
@@ -39,4 +40,4 @@ def icv(*args, **kwargs):
     with stdio(), ic_config(ic_one_frame_back, includeContext=True):
         ic_one_frame_back(*args, **kwargs)
 
-__all__ = 'ic ic_config icm icv'.split()
+__all__ = ['ic', 'ic_config', 'icm', 'icv']

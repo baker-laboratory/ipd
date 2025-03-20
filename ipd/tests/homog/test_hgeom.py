@@ -19,7 +19,7 @@ config_test = ipd.Bunch(
 def main():
     ipd.tests.maintest(namespace=globals(), config=config_test)
     return
-    ic("test_homog.py DONE")
+    ipd.icv("test_homog.py DONE")
 
 def test_xchain():
     u, v, w = [h.rand(random.randint(1, 4)) for _ in range(3)]
@@ -107,7 +107,7 @@ def test_halign():
         assert np.allclose(b, b2)
         ang = h.angle(a, b)
         ang2 = h.angle_of(x)
-        # ic(ang, ang2)
+        # ipd.icv(ang, ang2)
         assert np.allclose(ang, ang2)
 
 def test_hdiff():
@@ -217,7 +217,7 @@ def test_hpow():
 def test_hpow_float():
     x = h.rot([0, 0, 1], [1, 2, 3])
     h.pow(x, 0.3)
-    ic("test with int powers, maybe other cases")
+    ipd.icv("test with int powers, maybe other cases")
 
 def test_hmean():
     ang = np.random.normal(100)
@@ -287,7 +287,7 @@ def test_axis_angle_of():
     ax, an = h.axis_angle_of(h.rot([10, 10, 0], np.pi), debug=True)
     assert 1e-5 > np.abs(ax[0] - ax[1])
     assert 1e-5 > np.abs(ax[2])
-    # ic(np.linalg.norm(ax, axis=-1))
+    # ipd.icv(np.linalg.norm(ax, axis=-1))
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
     ax, an = h.axis_angle_of(h.rot([0, 1, 0], np.pi), debug=True)
@@ -297,18 +297,18 @@ def test_axis_angle_of():
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
     ax, an = h.axis_angle_of(h.rot([0, 1, 0], np.pi * 0.25), debug=True)
-    # ic(ax, an)
+    # ipd.icv(ax, an)
     assert np.allclose(ax, [0, 1, 0, 0], atol=1e-5)
     assert 1e-5 > np.abs(an - np.pi * 0.25)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
     ax, an = h.axis_angle_of(h.rot([0, 1, 0], np.pi * 0.75), debug=True)
-    # ic(ax, an)
+    # ipd.icv(ax, an)
     assert np.allclose(ax, [0, 1, 0, 0], atol=1e-5)
     assert 1e-5 > np.abs(an - np.pi * 0.75)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
     ax, an = h.axis_angle_of(h.rot([1, 0, 0], np.pi / 2), debug=True)
-    # ic(np.pi / an)
+    # ipd.icv(np.pi / an)
     assert 1e-5 > np.abs(an - np.pi / 2)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
 
@@ -331,15 +331,15 @@ def test_axis_angle_of_rand():
     ax[dot < 0] = -ax[dot < 0]
 
     # for a, b, d in zip(axis, ax, dot):
-    # ic(d)
-    # ic('old', a)
-    # ic('new', b)
+    # ipd.icv(d)
+    # ipd.icv('old', a)
+    # ipd.icv('new', b)
 
-    # ic(np.linalg.norm(ax, axis=-1), 1.0)
+    # ipd.icv(np.linalg.norm(ax, axis=-1), 1.0)
     try:
         assert np.allclose(axis, ax)
     except:  # noqa
-        ic("ax.shape", ax.shape)
+        ipd.icv("ax.shape", ax.shape)
         for u, v, w, x, y in zip(
                 axis.reshape(-1, 4),
                 ax.reshape(-1, 4),
@@ -348,9 +348,9 @@ def test_axis_angle_of_rand():
                 rot.reshape(-1, 4, 4),
         ):
             if not np.allclose(u, v):
-                ic("u", u, w)
-                ic("v", v, x)
-                ic(y)
+                ipd.icv("u", u, w)
+                ipd.icv("v", v, x)
+                ipd.icv(y)
         assert 0
     assert np.allclose(angl, an)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
@@ -360,11 +360,11 @@ def test_axis_angle_of_rand_180(nsamp=100):
     angl = np.pi
     rot = h.rot(axis, angl, dtype="f8")
     ax, an = h.axis_angle_of(rot, debug=True)
-    # ic('rot', rot)
-    # ic('ax,an', ax)
-    # ic('ax,an', axis)
+    # ipd.icv('rot', rot)
+    # ipd.icv('ax,an', ax)
+    # ipd.icv('ax,an', axis)
     dot = np.abs(np.sum(axis * ax, axis=-1))
-    # ic(dot)
+    # ipd.icv(dot)
     assert np.allclose(np.abs(dot), 1)  # abs b/c could be flipped
     assert np.allclose(angl, an, atol=1e-4, rtol=1e-4)
     assert np.allclose(np.linalg.norm(ax, axis=-1), 1.0)
@@ -546,16 +546,16 @@ def test_axis_ang_cen_of_rand_eig():
     rot = rot_pure.copy()
     rot[..., :, 3] += helical_trans
     axis, ang, cen = h.axis_ang_cen_of_eig(rot)
-    # ic(cen)
-    # ic(cen0)
+    # ipd.icv(cen)
+    # ipd.icv(cen0)
 
     assert np.allclose(axis0, axis, rtol=1e-5)
     assert np.allclose(ang0, ang, rtol=1e-5)
     #  check rotation doesn't move cen
     cenhat = (rot_pure @ cen[..., None]).squeeze()
-    # ic(cen)
-    # ic(cenhat)
-    # ic(helical_trans)
+    # ipd.icv(cen)
+    # ipd.icv(cenhat)
+    # ipd.icv(helical_trans)
     assert np.allclose(cen - helical_trans, cenhat, rtol=1e-4, atol=1e-4)
     assert np.allclose(np.linalg.norm(axis, axis=-1), 1.0)
 
@@ -585,7 +585,7 @@ def test_axis_angle_vs_axis_angle_cen_performance(N=1000):
     t.checkpoint("axis_angle_of")
     axis2, ang2, _cen = h.axis_ang_cen_of(xforms)
     t.checkpoint("h.axis_ang_cen_of")
-    # ic(t.report(scale=1_000_000 / N))
+    # ipd.icv(t.report(scale=1_000_000 / N))
 
     assert np.allclose(axis, axis2)
     assert np.allclose(ang, ang2)
@@ -649,7 +649,7 @@ def test_line_line_closest_points():
     assert p.shape[:-1] == shape and q.shape[:-1] == shape
     lldist0 = h.norm(p - q)
     lldist1 = lld(r1, r2)
-    # ic(lldist0 - lldist1)
+    # ipd.icv(lldist0 - lldist1)
     # TODO figure out how to compare better
     delta = np.abs(lldist1 - lldist0)
 
@@ -659,10 +659,10 @@ def test_line_line_closest_points():
     ]:
         fail = delta > distcut
         fracfail = np.sum(fail) / ntot
-        # ic(fracfail, fail.shape, ntot)
+        # ipd.icv(fracfail, fail.shape, ntot)
         if fracfail > allowedfailfrac:
-            ic("h.line_line_closest_points fail; distcut", distcut, "allowedfailfrac", allowedfailfrac)
-            ic("failpoints", delta[delta > distcut])
+            ipd.icv("h.line_line_closest_points fail; distcut", distcut, "allowedfailfrac", allowedfailfrac)
+            ipd.icv("failpoints", delta[delta > distcut])
             assert allowedfailfrac <= allowedfailfrac
 
     # assert np.allclose(lldist0, lldist1, atol=1e-1, rtol=1e-1)  # loose, but rarely fails otherwise
@@ -718,13 +718,13 @@ def test_halign2_una_case():
     ax2 = np.array([0.83822463, -0.43167392, 0.33322229, 0.0])
     tax1 = np.array([-0.57735027, 0.57735027, 0.57735027, 0.0])
     tax2 = np.array([0.57735027, -0.57735027, 0.57735027, 0.0])
-    # ic(angle_degrees(ax1, ax2))
-    # ic(angle_degrees(tax1, tax2))
+    # ipd.icv(angle_degrees(ax1, ax2))
+    # ipd.icv(angle_degrees(tax1, tax2))
     x = h.halign2(ax1, ax2, tax1, tax2)
-    # ic(tax1)
-    # ic(x@ax1)
-    # ic(tax2)
-    # ic(x@ax2)
+    # ipd.icv(tax1)
+    # ipd.icv(x@ax1)
+    # ipd.icv(tax2)
+    # ipd.icv(x@ax2)
     assert np.allclose(x @ ax1, tax1, atol=1e-2)
     assert np.allclose(x @ ax2, tax2, atol=1e-2)
 
@@ -774,16 +774,16 @@ def test_align_lines_dof_dihedral_rand_single():
     dang = h.calc_dihedral_angle(fix, [0.0, 0.0, 0.0, 0.0], dof, mov)
 
     ahat = h.rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_angle)
-    # ic(ahat, dang, abs(dang) + abs(ahat))
+    # ipd.icv(ahat, dang, abs(dang) + abs(ahat))
 
-    # ic('result', 'ta', np.degrees(target_angle), 'da', np.degrees(dof_angle), 'fda',
+    # ipd.icv('result', 'ta', np.degrees(target_angle), 'da', np.degrees(dof_angle), 'fda',
     # np.degrees(fix_to_dof_angle), dang, ahat, abs(abs(dang) - abs(ahat)))
 
     atol = 1e-5 if 0.05 < abs(dang) < np.pi - 0.05 else 1e-2
     close1 = np.allclose(abs(dang), abs(ahat), atol=atol)
     close2 = np.allclose(abs(dang), np.pi - abs(ahat), atol=atol)
     if not (close1 or close2):
-        ic("ERROR", abs(dang), abs(ahat), np.pi - abs(ahat))
+        ipd.icv("ERROR", abs(dang), abs(ahat), np.pi - abs(ahat))
     assert close1 or close2
 
 def test_align_lines_dof_dihedral_rand_3D():
@@ -813,12 +813,12 @@ def test_align_lines_dof_dihedral_rand_3D():
         for sol in solutions:
             assert np.allclose(target_angle, h.angle(fix, sol @ mov), atol=1e-5)
 
-    # ic(num_total, num_sol_found, num_no_sol, np.degrees(max_sol))
+    # ipd.icv(num_total, num_sol_found, num_no_sol, np.degrees(max_sol))
     assert (num_sol_found) / num_total > 0.6
 
 def test_align_lines_dof_dihedral_rand(n=100):
     for _ in range(n):
-        # ic(i)
+        # ipd.icv(i)
         test_align_lines_dof_dihedral_rand_single()
 
 def test_align_lines_dof_dihedral_basic():
@@ -859,10 +859,10 @@ def test_place_lines_to_isect_F432():
         xp2, xa2 = Xalign @ pt2, Xalign @ ax2
         assert np.allclose(Xalign[3, 3], 1.0)
 
-        # ic('ax1', xa1, ta1)
-        # ic('ax2', xa2, ta2)
-        # ic('pt1', xp1)
-        # ic('pt2', xp2)
+        # ipd.icv('ax1', xa1, ta1)
+        # ipd.icv('ax2', xa2, ta2)
+        # ipd.icv('pt1', xp1)
+        # ipd.icv('pt2', xp2)
 
         assert np.allclose(h.line_angle(xa1, xa2), h.line_angle(ta1, ta2))
         assert np.allclose(h.line_angle(xa1, ta1), 0.0, atol=0.001)
@@ -940,34 +940,34 @@ def _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i):
     ok_pt2 = abs(dis2) < 0.01  # in 99999/100000 cases, much tighter
 
     if not (ok_ax1 and ok_ax2 and ok_pt1 and ok_pt2):
-        # ic()
-        # ic('norm', np.linalg.norm((xalign @ pt1 - scale * tp1)),
+        # ipd.icv()
+        # ipd.icv('norm', np.linalg.norm((xalign @ pt1 - scale * tp1)),
         # np.linalg.norm((xalign @ pt2 - scale * tp2)))
-        # ic('dis', dis1, dis2)
-        # ic('sin', np.sin(h.angle(xalign @ pt1 - scale * tp1, ta1)),
+        # ipd.icv('dis', dis1, dis2)
+        # ipd.icv('sin', np.sin(h.angle(xalign @ pt1 - scale * tp1, ta1)),
         # np.sin(h.angle(xalign @ pt2 - scale * tp2, ta2)))
-        # ic()
+        # ipd.icv()
 
-        # ic(ta1, np.linalg.norm(ta1))
-        # ic(xalign @ pt1)
-        # ic(scale * tp1)
+        # ipd.icv(ta1, np.linalg.norm(ta1))
+        # ipd.icv(xalign @ pt1)
+        # ipd.icv(scale * tp1)
 
-        # ic()
-        # ic(np.linalg.norm(xalign @ pt2))
-        # ic(np.linalg.norm(xalign @ pt2 - scale * tp2))
-        # ic(ta2, np.linalg.norm(ta2))
-        # ic(xalign @ pt2)
-        # ic(scale * tp2)
+        # ipd.icv()
+        # ipd.icv(np.linalg.norm(xalign @ pt2))
+        # ipd.icv(np.linalg.norm(xalign @ pt2 - scale * tp2))
+        # ipd.icv(ta2, np.linalg.norm(ta2))
+        # ipd.icv(xalign @ pt2)
+        # ipd.icv(scale * tp2)
 
         if not ok_ax1:
-            ic("fail ax1 on %i" % i)
+            ipd.icv("fail ax1 on %i" % i)
         if not ok_ax2:
-            ic("fail ax2 on %i" % i)
+            ipd.icv("fail ax2 on %i" % i)
         if not ok_pt1:
-            ic("fail pt1 on %i" % i)
+            ipd.icv("fail pt1 on %i" % i)
         if not ok_pt2:
-            ic("fail pt2 on %i" % i)
-        # ic(repr(samp))
+            ipd.icv("fail pt2 on %i" % i)
+        # ipd.icv(repr(samp))
 
         if 0:
             _rays = np.array([
@@ -1068,7 +1068,7 @@ def test_scale_translate_lines_isect_lines_nonorthog():
         else:
             pass
 
-    # ic(ok, nsamp)
+    # ipd.icv(ok, nsamp)
     assert ok > nsamp * 0.5
 
 def test_scale_translate_lines_isect_lines_arbitrary():
@@ -1182,7 +1182,7 @@ def test_scale_translate_lines_isect_lines_cases():
         ),
     ]
     for i, samp in enumerate(samps):
-        # ic('SAMP', i)
+        # ipd.icv('SAMP', i)
         xalign, scale = h.scale_translate_lines_isect_lines(*samp)
         _vaildate_test_scale_translate_lines_isect_lines(samp, xalign, scale, i)
 
@@ -1197,9 +1197,9 @@ def test_xform_around_dof_for_vector_target_angle():
 
 # def marisa():
 #    data = rp.load('rpxdock/data/testdata/test_asym.pickle')
-#    ic(type(data))
-#    ic(data.xforms[3].data)
-#    ic(np.eye(4))
+#    ipd.icv(type(data))
+#    ipd.icv(data.xforms[3].data)
+#    ipd.icv(np.eye(4))
 #    rp.dump(data.data, 'tmp.pickle')
 #
 #    ary = np.array([1, 2, 3])
@@ -1209,12 +1209,12 @@ def test_xform_around_dof_for_vector_target_angle():
 #    orig_pts[:, 3] = 1
 #    new_pts = X @ orig_pts.T
 #
-#    ic(X)
+#    ipd.icv(X)
 #
-#    ic(orig_pts)
-#    ic('xformed (1,2,3)')
+#    ipd.icv(orig_pts)
+#    ipd.icv('xformed (1,2,3)')
 #
-#    ic(new_pts.T)
+#    ipd.icv(new_pts.T)
 
 def test_axis_angle_180_rand():
     pass
@@ -1222,21 +1222,21 @@ def test_axis_angle_180_rand():
 def test_axis_angle_180_bug():
     #    v = h.rand_unit()
     #    x = np.stack([h.rot(v, 180), h.rot(v, 180)] * 3)
-    #    ic('v', v)
-    #    ic()
+    #    ipd.icv('v', v)
+    #    ipd.icv()
     #    ev = np.linalgh..eig(x[..., :3, :3])
     #    val, vec = np.real(ev[0]), np.real(ev[1])
-    #    ic(val)
+    #    ipd.icv(val)
     #    cond = np.abs(val - 1) < 1e-6
     #    a, b = np.where(cond)
-    #    ic(a)
-    #    ic(b)
+    #    ipd.icv(a)
+    #    ipd.icv(b)
     #
     #    assert np.all(np.sum(np.abs(val - 1) < 1e-6, axis=-1) == 1)
     #
-    #    ic(vec[a, :, b])
+    #    ipd.icv(vec[a, :, b])
     #
-    #    ic(h.axis_of(np.array([
+    #    ipd.icv(h.axis_of(np.array([
     #        h.rot(v, 180),
     #        np.eye(4),
     #    ]), debug=True))
@@ -1395,16 +1395,16 @@ def test_axis_angle_180_bug():
     x01n = xform @ x01n
 
 
-    # ic(h.rot([1,2,3,0],2))
-    # ic()
-    # ic(h.rot([1,2,3,0],2)@xform)
-    # ic()
-    # ic(h.rot(xform@[1,2,3,0],2))
-    # ic()
-    # ic(xform@h.rot([1,2,3,0],2))
-    # ic()
-    # ic(h.rot([1,2,3,0]@xform,2))
-    # ic()
+    # ipd.icv(h.rot([1,2,3,0],2))
+    # ipd.icv()
+    # ipd.icv(h.rot([1,2,3,0],2)@xform)
+    # ipd.icv()
+    # ipd.icv(h.rot(xform@[1,2,3,0],2))
+    # ipd.icv()
+    # ipd.icv(xform@h.rot([1,2,3,0],2))
+    # ipd.icv()
+    # ipd.icv(h.rot([1,2,3,0]@xform,2))
+    # ipd.icv()
 
     assert np.allclose(        h.rot(       [1,2,3,0],2) @ xform,
                       xform @ h.rot(xinv @ [1,2,3,0],2)        )
@@ -1467,9 +1467,9 @@ def test_symfit_180_bug():
     assert np.allclose(rel @ frame1, frame2)
 
     axs, ang, _cen = h.axis_ang_cen_of(rel)
-    # ic('axs', axs)
-    # ic('ang', ang)
-    # ic('cen', cen)
+    # ipd.icv('axs', axs)
+    # ipd.icv('ang', ang)
+    # ipd.icv('cen', cen)
 
 def torque_delta_sanitycheck():
     nsamp, scale = 1000, 0.0001
@@ -1504,11 +1504,11 @@ def test_hrmsfit(trials=10):
         p = h.randpoint(10, std=10)
         p03 = h.unhomog(p)
         q = h.randpoint(10, std=10)
-        # ic(p)
+        # ipd.icv(p)
         rms0 = h.rms(p03, q)
         rms, qhat, xpqhat = h.rmsfit(p03, q)
         assert rms0 > rms
-        # ic(float(rms0), float(rms))
+        # ipd.icv(float(rms0), float(rms))
         assert np.allclose(h.rms(qhat, q), rms)
         for _ in range(10):
             rms2 = h.rms(q, h.xform(h.rand_xform_small(1, 0.01, 0.001), qhat))

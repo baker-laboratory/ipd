@@ -32,5 +32,5 @@ def tojson(thing):
 
 def set_from_file(fname):
     if os.path.exists(fname):
-        return set(Path(fname).read_text().strip().split(os.linesep))
+        return set(map(str.strip, Path(fname).read_text().split(os.linesep)))
     return set()

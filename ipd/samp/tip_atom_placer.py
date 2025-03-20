@@ -71,7 +71,7 @@ class TipAtomTarget:
         fdon, facc = self.donacc_frames('cuda')
         # ipd.showme(self, name='ref')
         for tip in tips:
-            ic(tip.xyz.shape)
+            ipd.icv(tip.xyz.shape)
             _sampling.tip_atom_placer(vox, don, acc, tip.xyz.to('cuda'), tip.don.to('cuda'),
                                       tip.acc.to('cuda'), kw)
             for fd, fa in zip(fdon, facc):
@@ -101,7 +101,7 @@ class TipAtomTarget:
         # ipd.showme(accpt)
         # donclash = self.vox.score_per_atom(donpt)
         # accclash = self.vox.score_per_atom(accpt)
-        # ic(donclash, accclash, clashthresh)
+        # ipd.icv(donclash, accclash, clashthresh)
         # self.don = self.don[donclash < clashthresh]
         # self.acc = self.acc[accclash < clashthresh]
 

@@ -40,7 +40,7 @@ def test_timed_class():
             time.sleep(0.001)
 
     foo().bar()
-    ic(ipd.dev.global_timer.checkpoints)
+    ipd.icv(ipd.dev.global_timer.checkpoints)
     assert 'test_timer.py:test_timed_class.<locals>.foo.bar$$$$' in ipd.dev.global_timer.checkpoints
 
 def test_context():

@@ -48,9 +48,9 @@ def test_asugrid_case1():
 
     frames = ipd.hscaled(newcell[0], frames)  # type: ignore
     sympos = ipd.homog.hxformpts(frames, newpos[0])
-    ic(sympos)  # type: ignore
+    ipd.icv(sympos)  # type: ignore
     dist = ipd.homog.hnorm(sympos[:, None] - sympos[None])[0, 1:]
-    ic(dist)  # type: ignore
+    ipd.icv(dist)  # type: ignore
     assert 0
 
 def test_asugrid_I213_offposition():
@@ -75,8 +75,8 @@ def test_asugrid_I213_offposition():
         distspread=9e9,
         clusterdist=0.05,
     )
-    # ic(pos)
-    # ic(newpos[0])
+    # ipd.icv(pos)
+    # ipd.icv(newpos[0])
     # ipd.sym.asugrid.vispoints(newpos, newcell, frames, allframes)
 
 def test_asugrid_I213_offposition2():
@@ -103,8 +103,8 @@ def test_asugrid_I213_offposition2():
         clusterdist=5,
     )
     assert len(newpos)
-    # ic(pos)
-    ic(newpos[0], newcell[0])  # type: ignore
+    # ipd.icv(pos)
+    ipd.icv(newpos[0], newcell[0])  # type: ignore
     ipd.sym.asugrid.vispoints(newpos, newcell, frames, allframes)
 
 def test_asugrid_I213():

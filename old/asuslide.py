@@ -82,7 +82,7 @@ def asuslide(
         if not closestfirst:
             axes = list(reversed(axes))
 
-    # ic(alongaxis, towardaxis)
+    # ipd.icv(alongaxis, towardaxis)
     if alongaxis is None and towardaxis is None:
         alongaxis = not isxtal
         towardaxis = isxtal
@@ -94,7 +94,7 @@ def asuslide(
         alongaxis = False
     if towardaxis is False and alongaxis is None:
         alongaxis = True
-    # ic(alongaxis, towardaxis)
+    # ipd.icv(alongaxis, towardaxis)
 
     if frames is None:
         frames = ipd.sym.frames(sym, cellsize=cellsize, xtalrad=xtalrad, allowcellshift=True, **kw)
@@ -120,15 +120,15 @@ def asuslide(
     if centerasu_at_start:
         recenter_asu_frames(assembly, method="to_center", axis=axes, **kw)
         if printme:
-            ic(f"recenter {centerasu}")  # type: ignore
-        # if printme: ic(f'scale {cellsize}')
+            ipd.icv(f"recenter {centerasu}")  # type: ignore
+        # if printme: ipd.icv(f'scale {cellsize}')
     if doscale and not alongaxis:
         cellsize = slide_scale(assembly, cellsize, step=scalestep, **kw)
     for i in range(iters):
         # if i >= clashiters: kw.tooclosefunc = userfunc
-        # ic(step)
+        # ipd.icv(step)
         for j in range(subiters):
-            # ic('asuslide iter', i, j)
+            # ipd.icv('asuslide iter', i, j)
             if doscaleiters and not alongaxis:
                 cellsize = slide_scale(assembly, cellsize, step=scalestep, **kw)
             # cellsize = slide_scale(assembly, cellsize, step=scalestep, **kw)
@@ -138,25 +138,25 @@ def asuslide(
                 axis = ipd.homog.hnormalized(axis)
                 axpos = ipd.hscaled(cellsize / cellsize0, ipd.homog.hpoint(axpos))
                 if towardaxis:
-                    # ic(axpos)
+                    # ipd.icv(axpos)
                     axisperp = ipd.homog.hnormalized(
                         ipd.hprojperp(axis,
                                       assembly.asym.com() - axpos - ipd.homog.hrandvec() / 1000))
-                    # ic(axis, assembly.asym.com() - axpos, cellsize, axisperp)
+                    # ipd.icv(axis, assembly.asym.com() - axpos, cellsize, axisperp)
                     if centerasu and i < receniters:
                         recenter_asu_frames(assembly, method=centerasu, axis=axisperp, **kw)
                         if printme:
-                            ic(f"recenter {centerasu}")  # type: ignore
+                            ipd.icv(f"recenter {centerasu}")  # type: ignore
                     else:
-                        # ic(axpos)
+                        # ipd.icv(axpos)
                         timer.checkpoint("slide_axis_perp_before")
                         slide = slide_axis(axisperp, assembly, perp=True, nbrs=None, step=step, **kw)  # type: ignore
-                        # if printme: ic(f'slide along {axisperp[:3]} by {slide}')
+                        # if printme: ipd.icv(f'slide along {axisperp[:3]} by {slide}')
                         timer.checkpoint("slide_axis_perp")
                 if i < alongaxis:  # type: ignore
                     slide = slide_axis(axis, assembly, nbrs="auto", step=step, **kw)
                     timer.checkpoint("slide_axis")
-                    # printme: ic(f'slide along {axis[:3]} by {slide}')
+                    # printme: ipd.icv(f'slide along {axis[:3]} by {slide}')
                 if doscale and alongaxis:
                     slide = slide_axis(assembly.asym.com(), assembly, nbrs=None, step=step, **kw)  # type: ignore
                     timer.checkpoint("slide_axis")
@@ -167,11 +167,11 @@ def asuslide(
             for axis in along_extra_axes:
                 slide = slide_axis(axis, assembly, nbrs="auto", step=step, **kw)
                 timer.checkpoint("slide_axis")
-                # printme: ic(f'slide along {axis[:3]} by {slide}')
+                # printme: ipd.icv(f'slide along {axis[:3]} by {slide}')
             if coords_to_asucen:
                 cencoords = ipd.sym.coords_to_asucen(sym, assembly.asym.coords)
-                # ic(ipd.homog.hcom(assembly.asym.coords))
-                # ic(ipd.homog.hcom(cencoords))
+                # ipd.icv(ipd.homog.hcom(assembly.asym.coords))
+                # ipd.icv(ipd.homog.hcom(cencoords))
                 assembly.set_asym_coords(cencoords)
         step *= iterstepscale
         scalestep *= iterstepscale
@@ -210,7 +210,7 @@ def slide_axis(
         nbrs = assembly.get_neighbors_by_axismatch(axis, perp)
     elif nbrs == "all":
         nbrs = None
-    # ic(repr(nbrs))
+    # ipd.icv(repr(nbrs))
 
     # origisect = tooclose_by_symelem(assembly, tooclosefunc)
     # if perp and (np.all(origisect) or np.all(~origisect)):
@@ -228,19 +228,19 @@ def slide_axis(
         # collect neighbors to "clash" check -- all not this point sym
         clashnbrs = []
         assoc = ipd.sym.xtal.symelem_associations(assembly.sym)
-        ic(assoc)
+        ipd.icv(assoc)
         for i, sa in enumerate(assoc):
             isect = bool(tooclosefunc(assembly, sa.nbrs))
             axispos = ipd.hscaled(assembly.cellsize, sa.symelem.cen)
             pointtowards = ipd.homog.hdot(axis, axispos - assembly.asym.com()) > 0
-            # ic(i, sa.symelem.nfold, axispos[0], isect, pointtowards)
-            # ic(sa.symelem.axis)
-            # ic(abs(ipd.homog.hdot(sa.symelem.axis, axis)))
+            # ipd.icv(i, sa.symelem.nfold, axispos[0], isect, pointtowards)
+            # ipd.icv(sa.symelem.axis)
+            # ipd.icv(abs(ipd.homog.hdot(sa.symelem.axis, axis)))
             notperp = abs(ipd.homog.hdot(sa.symelem.axis, axis)) > 0.01
             if notperp or (isect and pointtowards):
                 clashnbrs.extend(sa.nbrs)
-                # ic(i, clashnbrs)
-        ic(clashnbrs)
+                # ipd.icv(i, clashnbrs)
+        ipd.icv(clashnbrs)
         nassoc = 1 + sum([len(sa.nbrs) for sa in assoc])
         for i in range(nassoc, len(assembly)):
             clashnbrs.append(i)
@@ -252,7 +252,7 @@ def slide_axis(
             return 0
     if timer:
         timer.checkpoint("slide_axis_loop")
-    # ic(axis[0], flip, nbrs, clashnbrs)
+    # ipd.icv(axis[0], flip, nbrs, clashnbrs)
 
     total = 0.0
     delta = ipd.homog.htrans(flip * step * axis)
@@ -277,7 +277,7 @@ def slide_axis(
         if clashnbrs is not None and tooclosefunc(assembly, clashnbrs):  # type: ignore
             assert 0
             break
-    # ic('slideaxis', perp, success)
+    # ipd.icv('slideaxis', perp, success)
     if not success and resetonfail:
         assembly.asym.position = origpos
         if showme:
@@ -294,7 +294,7 @@ def slide_axis(
 
     if iflip == 0 and abs(total) > 0.01 and scaleslides != 1.0:
         # if slid into contact, apply scaleslides (-1) is to undo slide
-        # ic(total, total + (scaleslides - 1) * total)
+        # ipd.icv(total, total + (scaleslides - 1) * total)
         scaleslides_delta = ipd.homog.htrans((scaleslides-1) * total * axis)
         total += (scaleslides-1) * total
 
@@ -336,18 +336,18 @@ def slide_cellsize(
     elif ignoreimmobile and assembly.sym is not None:
         nbrs = []
         assoc = ipd.sym.xtal.symelem_associations(assembly.sym)
-        # ic(assoc)
+        # ipd.icv(assoc)
         for sa in assoc:
             if sa.symelem.mobile:
                 nbrs.extend(sa.nbrs)
         nassoc = 1 + sum([len(sa.nbrs) for sa in assoc])
         for i in range(nassoc, len(assembly)):
             nbrs.append(i)
-        # ic(nbrs)
+        # ipd.icv(nbrs)
         # assert 0
 
     step = ipd.to_xyz(step)
-    # ic(cellsize, assembly.cellsize)
+    # ipd.icv(cellsize, assembly.cellsize)
 
     if not np.allclose(cellsize, assembly.cellsize):
         raise ValueError(f"cellsize {cellsize} doesn't match assembly.cellsize {assembly.cellsize}")
@@ -357,14 +357,14 @@ def slide_cellsize(
     iflip, flip = 0, -1.0
     startsclose = bool(tooclosefunc(assembly, nbrs, **kw))  # type: ignore
     if startsclose:
-        # ic('scale cell tooclose')
+        # ipd.icv('scale cell tooclose')
         iflip, flip = -1, 1.0
 
     initpos = assembly.asym.position.copy()
     success, lastclose = False, 1.0
     for i in range(maxstep):
         close = tooclosefunc(assembly, nbrs, **kw)  # type: ignore
-        # ic('SLIDE CELLSIZE', i, bool(close), startsclose, nbrs)
+        # ipd.icv('SLIDE CELLSIZE', i, bool(close), startsclose, nbrs)
         if iflip + bool(close):
             # print(f'{i} {close}', flush=True)
             success = True
@@ -373,10 +373,10 @@ def slide_cellsize(
             # assert 0
             break
         lastclose = close
-        # ic(cellsize, flip, step)
+        # ipd.icv(cellsize, flip, step)
         delta = (cellsize + flip*step) / cellsize
-        # ic(delta)
-        # ic(cellsize, flip * step)
+        # ipd.icv(delta)
+        # ipd.icv(cellsize, flip * step)
 
         if np.min(np.abs(delta)) < 0.0001:
             print(f"bad delta {delta} cellsize {cellsize} flip {flip} step {step}", flush=True)
@@ -426,13 +426,13 @@ def slide_cellsize(
 
         newcellsize = (cellsize-orig_cellsize) * (scaleslides) + orig_cellsize
         newdelta = newcellsize / cellsize
-        # ic(cellsize, newcellsize)
+        # ipd.icv(cellsize, newcellsize)
         cellsize = newcellsize
 
         assembly.scale_frames(newdelta, safe=False)
 
     assembly.scale_com_with_cellsize = orig_scalecoords
-    # ic(cellsize)
+    # ipd.icv(cellsize)
     return cellsize
 
 ################################# NO ########################

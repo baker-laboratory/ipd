@@ -19,7 +19,7 @@ def symframe_permutations_torch(frames, maxcols=None):
     perm = list()
     for i, frame in enumerate(frames):
         # if i % 100 == 0:
-        # ic(i, len(frames))
+        # ipd.icv(i, len(frames))
         local_frames = einsum("ij,fjk->fik", torch.linalg.inv(frame), frames)
         dist2 = torch.sum((local_frames[None] - frames[:, None])**2, axis=(2, 3))  # type: ignore
         idx = torch.argmin(dist2, axis=1)[:maxcols]  # type: ignore
@@ -32,7 +32,7 @@ def symframe_permutations_torch(frames, maxcols=None):
 
 def _symperm1(i, frames):
     # if i % 100 == 0:
-    # ic(i, len(frames))
+    # ipd.icv(i, len(frames))
     local_frames = ipd.homog.hxform(ipd.homog.hinv(frames[i]), frames)
     dist = ipd.homog.hdiff(frames, local_frames, lever=3)
     idx = np.argmin(dist, axis=1)

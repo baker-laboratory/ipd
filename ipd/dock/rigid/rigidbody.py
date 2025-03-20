@@ -33,7 +33,7 @@ class RigidBodyFollowers:
         if self.asymexists:
             for i, b in enumerate(self.bodies):
                 if i > 0 and np.allclose(b.xfromparent, np.eye(4)):  # type: ignore
-                    ic(i)  # type: ignore
+                    ipd.icv(i)  # type: ignore
                     assert 0
 
         assert ipd.homog.hunique(self.frames())
@@ -95,7 +95,7 @@ class RigidBodyFollowers:
         self.scale_frames(scalefactor, scalecoords=True, safe=True)
 
     def scale_frames(self, scalefactor, scalecoords=None, safe=True):
-        # ic('CALL scale_frames', scalefactor, scalecoords)
+        # ipd.icv('CALL scale_frames', scalefactor, scalecoords)
         if scalecoords is None:
             scalecoords = self.scale_com_with_cellsize
         if safe and self.is_point_symmetry:
@@ -109,7 +109,7 @@ class RigidBodyFollowers:
         self.asym.scale = self.asym.scale * scalefactor  # type: ignore
 
         if scalecoords:
-            # ic(self.asym.xfromparent)
+            # ipd.icv(self.asym.xfromparent)
             assert np.allclose(self.asym.xfromparent[:3, :3], np.eye(3))  # type: ignore
             self.asym.moveby(ipd.htrans((scalefactor-1) * self.asym.com()[:3]))  # type: ignore
 
@@ -133,7 +133,7 @@ class RigidBodyFollowers:
         for i in range(1, len(self.bodies)):
             to_nbr_axs = ipd.axis_of(self.bodies[i].xfromparent)  # type: ignore
             ang = ipd.hangline(to_nbr_axs, axis)  # type: ignore
-            # ic(perp, ang, axis, to_nbr_axs)
+            # ipd.icv(perp, ang, axis, to_nbr_axs)
             if (not perp and ang > 0.001) or (perp and abs(ang - np.pi / 2) < 0.001):  # type: ignore
                 nbrs.append(i)
         return nbrs
@@ -145,7 +145,7 @@ class RigidBodyFollowers:
         coords = asym.allcoords.copy()  # type: ignore
         if not self.asym.isroot:
             coords = coords[1:]
-        # ic(coords.shape)
+        # ipd.icv(coords.shape)
         ipd.pdb.dumppdb(fname, coords, nchain=len(self.bodies), **kw)
 
     def frames(self):
@@ -387,19 +387,21 @@ class RigidBody:
 
     def clashes(self, other, clashdis=None):
         self.bvhopcount += 1
-        # ic(self.clashdis)
+        # ipd.icv(self.clashdis)
         clashdis = clashdis or self.clashdis
         return self.contact_count(other, self.clashdis)
 
     def hasclash(self, other, clashdis=None):
         self.bvhopcount += 1
         clashdis = clashdis or self.clashdis
-        isect = willutil_cpp.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position, clashdis)  # type: ignore
+        isect = willutil_cpp.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position,
+                                           clashdis)  # type: ignore
         return isect
 
     def intersects(self, other, otherpos, mindis=10):
         self.bvhopcount += 1
-        isect = willutil_cpp.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos, mindis)  # type: ignore
+        isect = willutil_cpp.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos,
+                                               mindis)  # type: ignore
         return isect
 
     def point_contact_count(self, other, contactdist=8):
@@ -407,8 +409,8 @@ class RigidBody:
         p = self.interactions(other, contactdist=contactdist)
         a = set(p[:, 0])
         b = set(p[:, 1])
-        # ic(a)
-        # ic(b)
+        # ipd.icv(a)
+        # ipd.icv(b)
         return len(a), len(b)
 
     def contact_fraction(self, other, contactdist=None):
@@ -421,18 +423,18 @@ class RigidBody:
         p = self.interactions(other, contactdist=contactdist)
         a = set(p[:, 0])
         b = set(p[:, 1])
-        # ic(len(a), len(self.coords))
-        # ic(len(b), len(other.coords))
+        # ipd.icv(len(a), len(self.coords))
+        # ipd.icv(len(b), len(other.coords))
         cfrac = len(a) / len(self.coords), len(b) / len(self.coords)
         assert cfrac[0] <= 1.0 and cfrac[1] <= 1.0
         if self.parent is not None:
             if cfrac[0] > 0.999 or cfrac[0] > 0.999:
-                ic(self.xfromparent)  # type: ignore
-                ic(self._xfromparent)  # type: ignore
-                ic(self.parent)  # type: ignore
-                ic(other.xfromparent)  # type: ignore
-                ic(other._xfromparent)  # type: ignore
-                ic(other.parent)  # type: ignore
+                ipd.icv(self.xfromparent)  # type: ignore
+                ipd.icv(self._xfromparent)  # type: ignore
+                ipd.icv(self.parent)  # type: ignore
+                ipd.icv(other.xfromparent)  # type: ignore
+                ipd.icv(other._xfromparent)  # type: ignore
+                ipd.icv(other.parent)  # type: ignore
                 assert 0
 
         return cfrac

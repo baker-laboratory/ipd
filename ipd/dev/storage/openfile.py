@@ -1,36 +1,50 @@
+import contextlib
 import gzip
+import zipfile
+import lzma
+import tarfile
 from pathlib import Path
 from ipd.dev.decorators import iterize_on_first_param
 
-openers = {'.gz': gzip.open, '': open}
+@contextlib.contextmanager
+def zipopen(zip, **kw):
+    try:
+        with zipfile.ZipFile(zip, **kw) as myzip:
+            with myzip.open('my_file.txt') as myfile:
+                yield myfile
+    finally:
+        pass
 
-def compressed_open(fname, **kw):
+openers = {'.gz': gzip.open, '.zip': zipopen, '.xz': lzma.open, '.tar': tarfile.open, '': open}
+
+def compressed_open(filepath, **kw):
     for ext, opener in openers.items():
-        if fname.endswith(ext):
-            return ext, opener(fname, **kw)
+        if str(filepath).endswith(ext):
+            return ext, opener(filepath, **kw)
     assert 0, 'should not be possible'
 
 @iterize_on_first_param(basetype=(str, Path))
-def decompressed_fname(fname):
+def decompressed_fname(filepath):
+    filepath, orig = str(filepath), type(filepath)
     for ext in openers:
-        if ext and fname.endswith(ext):
-            return fname[:-len(ext)]
-    return fname
+        if ext and filepath.endswith(ext):
+            return decompressed_fname(orig(filepath[:-len(ext)]))
+    return orig(filepath)
 
 @iterize_on_first_param(basetype=(str, Path))
-def openfile(fname, mode='r', **kw):
+def openfile(filepath, mode='r', **kw):
     """
     open a possibly compressed file based on suffix
     """
-    compression, file = compressed_open(fname, mode=mode)
+    compression, file = compressed_open(filepath, mode=mode)
     return file
 
 @iterize_on_first_param(basetype=(str, Path))
-def readfile(fname, **kw):
+def readfile(filepath, **kw):
     """
     read a possibly compressed file, inferring format txt, json, yaml, pdb, cif, etc
     """
-    file = openfile(fname, **kw)
+    file = openfile(filepath, **kw)
     # raise NotImplementedError
     val = file.read()
     file.close()

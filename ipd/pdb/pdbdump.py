@@ -166,7 +166,7 @@ def dump_pdb_from_points(
         chainstarts += list(np.cumsum([len(p) for p in pts[:-1]]))
         pts = np.concatenate(pts)
     pts = np.asarray(pts)
-    # ic(pts.shape)
+    # ipd.icv(pts.shape)
     if frames is not None:
         pts = ipd.homog.hxform(frames, pts)
     if mask is None:
@@ -203,7 +203,7 @@ def dump_pdb_from_points(
 
     if spacegroup is not None:
         cellgeom = ipd.sym.full_cellgeom(spacegroup, cellgeom)
-        # ic(cellgeom)
+        # ipd.icv(cellgeom)
         sgpdb = ipd.sym.sg_pymol_name(spacegroup)
         cryst1 = ipd.sym.cryst1_pattern_full % (*(dumppdbscale * cellgeom[:3]), *cellgeom[3:6], sgpdb)
         header += cryst1 + os.linesep
@@ -220,7 +220,7 @@ def dump_pdb_from_points(
         for ires, respts in enumerate(chainpts):
             if ires in chainstarts and isinstance(chain, int):
                 chain += 1
-                # ic('newchain', ires, chain)
+                # ipd.icv('newchain', ires, chain)
             for iatom, p in enumerate(respts[:len(anames)]):
                 if p[0] == skipval:
                     continue
@@ -256,9 +256,12 @@ def dump_pdb_from_ncac_points(fname, pts, nchain=1):
     with open(fname, "w") as out:
         for ichain, chainpts in enumerate(pts):
             for i, p in enumerate(chainpts):
-                a = pdb_format_atom(ia + 0, an="N", x=p[0, 0], y=p[0, 1], z=p[0, 2], ir=i, c=ichain)  # type: ignore
-                b = pdb_format_atom(ia + 1, an="CA", x=p[1, 0], y=p[1, 1], z=p[1, 2], ir=i, c=ichain)  # type: ignore
-                c = pdb_format_atom(ia + 2, an="C", x=p[2, 0], y=p[2, 1], z=p[2, 2], ir=i, c=ichain)  # type: ignore
+                a = pdb_format_atom(ia + 0, an="N", x=p[0, 0], y=p[0, 1], z=p[0, 2], ir=i,
+                                    c=ichain)  # type: ignore
+                b = pdb_format_atom(ia + 1, an="CA", x=p[1, 0], y=p[1, 1], z=p[1, 2], ir=i,
+                                    c=ichain)  # type: ignore
+                c = pdb_format_atom(ia + 2, an="C", x=p[2, 0], y=p[2, 1], z=p[2, 2], ir=i,
+                                    c=ichain)  # type: ignore
                 ia += 3
                 out.write(a)
                 out.write(b)

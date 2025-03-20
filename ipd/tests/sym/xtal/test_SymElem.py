@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-from icecream import ic
 
 import ipd
 from ipd.sym.permutations import symframe_permutations_torch
@@ -45,7 +44,7 @@ def test_screw_elem_frames():
         label="C32")  # type: ignore
 
 def test_screw_elem():
-    ic("test_screw_elem")
+    ipd.icv("test_screw_elem")
     S2 = np.sqrt(2)
     S3 = np.sqrt(3)
 
@@ -93,12 +92,12 @@ def test_screw_elem():
 def mcdock_bug1():
     sym = "I4132"
     elems = ipd.sym.xtal.symelems(sym)
-    ic(elems)
+    ipd.icv(elems)
 
     frames4 = ipd.sym.frames(sym, sgonly=True, cells=4)
     f = frames4[ipd.sym.xtal.sg_symelem_frame444_opcompids_dict[sym][:, 1, 1] == 109]
     ipd.showme(f, scale=10)
-    ic(f)
+    ipd.icv(f)
 
 def check_frame_opids():
     sym = "P3"
@@ -110,20 +109,20 @@ def check_frame_opids():
     frames2 = ipd.sym.xtal.sgframes(sym, cells=n_std_frames - 2, cellgeom="nonsingular")
 
     lattice = ipd.sym.xtal.lattice_vectors(sym, cellgeom="nonsingular")
-    ic(lattice)
-    # ic(unitframes.shape)
-    ic(frames.shape)
+    ipd.icv(lattice)
+    # ipd.icv(unitframes.shape)
+    ipd.icv(frames.shape)
 
     elems = _compute_symelems(sym, aslist=True)
     # for e in elems:
-    # ic(e)
+    # ipd.icv(e)
     # elems = _check_alternate_elems(sym, lattice, elems, frames, frames2)
     # for e in elems:
-    # ic(e)
+    # ipd.icv(e)
     # assert 0
     celems = _find_compound_symelems(sym, elems, aslist=True)
     for e in elems + celems:
-        ic(e)
+        ipd.icv(e)
         # ipd.showme(e.tolattice(lattice), scale=10)
     # perms = ipd.sym.xtal.sgpermutations(sym, cells=4)
 
@@ -144,15 +143,15 @@ def check_frame_opids():
             # if not elem.issues: continue
 
             # elem = elems[2]
-            # ic(elem)
-            # ic(elem.kind)
-            # ic(elem.isoct)
-            # ic(elem.cen)
-            ic(i)
-            # ic(unitelem)
-            # ic(elemframe)
+            # ipd.icv(elem)
+            # ipd.icv(elem.kind)
+            # ipd.icv(elem.isoct)
+            # ipd.icv(elem.cen)
+            ipd.icv(i)
+            # ipd.icv(unitelem)
+            # ipd.icv(elemframe)
             elem = unitelem.tolattice(lattice).xformed(elemframe)
-            ic(elem)
+            ipd.icv(elem)
             # continue
 
             # ipd.showme(elem, scale=scale, name='ref', symelemscale=5)
@@ -186,7 +185,7 @@ def check_frame_opids():
         if i != 8:
             continue
         # tmp = ipd.homog.hxformpts(ipd.hscaled(100, frames[opcompids == 109]), ipd.hscaled(100, elem.cen + elem.axis))
-        # ic(tmp)
+        # ipd.icv(tmp)
         # assert 0
         # ids = opids
         # ids = compids

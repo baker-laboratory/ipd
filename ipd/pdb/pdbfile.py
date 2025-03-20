@@ -43,7 +43,7 @@ class PDBFile:
             s = self.cryst1[:66].split()
             self.cellgeom = np.array([float(x) for x in s[1:7]])
             self.spacegroup = " ".join(s[7:])
-        # ic(self.cryst1)
+        # ipd.icv(self.cryst1)
         df = df.copy()
         df.reset_index(inplace=True, drop=True)
         self.df = df
@@ -56,7 +56,7 @@ class PDBFile:
         self.chainseq = _atomrecords_to_chainseq(df)
         self.seqhet = str.join("", self.chainseq.values())
         self.seq = self.seqhet.replace("Z", "")
-        # ic(self.seq)
+        # ipd.icv(self.seq)
         self.nres = len(self.seq)
         self.nreshet = len(self.seqhet)
         self.nchain = len(self.chainseq)
@@ -107,7 +107,8 @@ class PDBFile:
         if isinstance(ia, str):
             ia = ia.encode()
         if isinstance(ia, bytes):
-            return float(r.x[r.an == ia].iloc[0]), float(r.y[r.an == ia].iloc[0]), float(r.z[r.an == ia].iloc[0])
+            return float(r.x[r.an == ia].iloc[0]), float(r.y[r.an == ia].iloc[0]), float(
+                r.z[r.an == ia].iloc[0])
         raise ValueError(ia)
 
     def renumber_from_0(self, unique_chains=True):
@@ -184,8 +185,8 @@ class PDBFile:
             df = pd.DataFrame(df.to_dict())
         if removeatoms:
             idx = np.isin(df.ai, removeatoms)
-            # ic(df.loc[idx].an)
-            # ic(df.loc[idx].ri)
+            # ipd.icv(df.loc[idx].an)
+            # ipd.icv(df.loc[idx].ri)
             df = df.loc[~idx]
             df = pd.DataFrame(df.to_dict())
 
@@ -242,11 +243,11 @@ class PDBFile:
         an = atomname.encode() if isinstance(atomname, str) else atomname
         an = an.upper()
         mask = list()
-        # ic(self.df.iloc[0])
+        # ipd.icv(self.df.iloc[0])
         for i, (ri, g) in enumerate(self.df.groupby(["ri", "ch"])):
             if np.sum(g.an == an) > 1:
                 if not quiet:
-                    ic('warning duplicate atom', g, g.an)  # type: ignore
+                    ipd.icv('warning duplicate atom', g, g.an)  # type: ignore
                 # assert np.sum(g.an == an) <= 1
             # assert np.sum(g.an == an) <= np.sum(g.an == b'CA') # e.g. O in HOH
             hasatom = np.sum(g.an == an) > 0
@@ -279,11 +280,12 @@ class PDBFile:
         if not pdb.isonlyaa():
             pdb = pdb.subset(het=False)
         if not isinstance(atomname, (str, bytes)):
-            coords, masks = zip(*[pdb.atomcoords(a, aaonly, nomask=nomask, **kw) for a in atomname])  # type: ignore
-            # ic(len(coords))
-            # ic([len(_) for _ in coords])
+            coords, masks = zip(*[pdb.atomcoords(a, aaonly, nomask=nomask, **kw)
+                                  for a in atomname])  # type: ignore
+            # ipd.icv(len(coords))
+            # ipd.icv([len(_) for _ in coords])
             coords = np.stack(coords).swapaxes(0, 1)
-            # ic(coords.shape)
+            # ipd.icv(coords.shape)
             masks = None if nomask else np.stack(masks).T
             return coords, masks
 
@@ -323,7 +325,7 @@ class PDBFile:
         # mask = np.array(mask)
         # if aaonly:
         #    aaonly = self.aamask
-        #    # ic(aaonly)
+        #    # ipd.icv(aaonly)
         #    mask = mask[aaonly]
         # return mask
 
@@ -387,7 +389,7 @@ class PDBFile:
         assert self.isonlyaa()
         # chains = self.splitchains()
         seq = self.sequence()
-        # ic(seq)
+        # ipd.icv(seq)
         for nfold in range(10, 0, -1):
             if len(seq) % nfold:
                 continue
@@ -441,11 +443,12 @@ class PDBFile:
             for imodel, xform in enumerate(xform):
                 for ich, ch in enumerate(chains):
                     if chainA_contacts_only:
-                        isect = body.intersects(chainbodies[ich], xforms[imodel], mindis=contact_distance)  # type: ignore
+                        isect = body.intersects(chainbodies[ich], xforms[imodel],
+                                                mindis=contact_distance)  # type: ignore
                         if not isect:
                             continue
                     newch = ipd.pdb.all_pymol_chains[startchain + len(keeppdbs)].encode()
-                    # ic(imodel, ich, ch, newch)
+                    # ipd.icv(imodel, ich, ch, newch)
                     xpdb = chainpdbs[ich].xformed(xform)
                     # xpdb.df.loc[xpdb.df.ch == ch, 'ch'] = newch
                     assert len(set(xpdb.df.ch)) == 1
@@ -497,7 +500,8 @@ class PDBFile:
         ca1 = chains[jchain].ca()[seqmatch.b:seqmatch.b + seqmatch.size]
         rms, _, xrmsfit = ipd.hrmsfit(ca0, ca1)
         if rms > tolerances.rms:
-            raise ValueError(f"rmsd {rms:5.3f} between detected symmetric chains is above rms tolerance {tolerances.rms}")
+            raise ValueError(
+                f"rmsd {rms:5.3f} between detected symmetric chains is above rms tolerance {tolerances.rms}")
         axis, ang, cen, hel = ipd.haxis_angle_cen_hel_of(xrmsfit)
         if hel > tolerances.translation:
             raise ValueError(f'translation along symaxis of {hel:5.3f} between "symmetric"'

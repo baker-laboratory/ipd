@@ -12,7 +12,7 @@ class SymFit(Bunch):
     pass
 
 def symelems_from_frames(frames, center=True):
-    ic(frames.shape)
+    ipd.icv(frames.shape)
     assert 0
 
 def align(coords, symelem, **kw):
@@ -32,7 +32,7 @@ def aligncx(coords, symelem, rmsthresh=1, axistol=0.02, angtol=0.05, centol=1.0,
 
     coords = coords.reshape(symelem.nfold, -1, *coords.shape[-2:])
     origcoords = coords.copy()
-    # ic(coords.shape)
+    # ipd.icv(coords.shape)
     fitcoords = coords
     if coords.ndim > 3:  # ca only
         fitcoords = coords[:, :, 1]
@@ -50,7 +50,7 @@ def aligncx(coords, symelem, rmsthresh=1, axistol=0.02, angtol=0.05, centol=1.0,
     avgaxs = np.mean(axs, axis=0)
     avgang = np.mean(ang)
     avgcen = np.mean(cen, axis=0)
-    # ic(avgaxs, avgang, avgcen)
+    # ipd.icv(avgaxs, avgang, avgcen)
     coords = ipd.homog.htrans(-avgcen, doto=coords)
     if ipd.homog.angle(avgaxs, symelem.axis) > 0.0001:
         coords = ipd.homog.halign(avgaxs, symelem.axis, doto=coords)
@@ -119,8 +119,8 @@ def compute_symfit(
     if target_sub_com is not None:
         coms = fitframes @ target_sub_com_testpoint
         diff = ipd.homog.hdot(ipd.homog.hnormalized(target_sub_com), ipd.homog.hnormalized(coms))
-        ic(diff)  # type: ignore
-        ic(np.arccos(diff) * 180 / 3.1416)  # type: ignore
+        ipd.icv(diff)  # type: ignore
+        ipd.icv(np.arccos(diff) * 180 / 3.1416)  # type: ignore
         # assert 0
     else:
         diff = np.sum((fitframes - np.eye(4))**2, axis=(1, 2))

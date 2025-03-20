@@ -4,8 +4,8 @@ import ipd
 
 pytest.importorskip('biotite')
 TEST_PDBS = [
-    '1hv4', '1hv4', '1ql2', '5im6', '1out', '3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr', '1g5q',
-    '3woc', '7abl', '2tbv', '2btv'
+    '6u9d', '1hv4', '1hv4', '1ql2', '5im6', '1out', '3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr',
+    '1g5q', '3woc', '7abl', '2tbv', '2btv'
 ]
 ipd.pdb.download_test_pdbs(TEST_PDBS)
 

@@ -1,11 +1,38 @@
 """
-Module for frame searching and alignment of atomic structures.
+Module: ipd.atom.components
+===========================
 
-This module provides tools to calculate frames from atomic coordinates and
-perform sequence alignment and RMS fitting on atomic structures. It includes
-a `Components` class to store and manipulate search results.
+This module defines the low-level components that make up an atom in the IPD framework.
+It includes classes and helper functions to manage atom properties, connectivity, and
+spatial attributes that serve as the building blocks for higher-level constructs such as
+Body and SymBody.
 
-Examples:
+Key features:
+  - Definitions for atom components (e.g., element type, position, connectivity).
+  - Functions to manage and manipulate component data.
+  - Integration with transformation functions from ipd.homog.hgeom.
+
+Usage Examples:
+    >>> from ipd import atom
+    >>> # Load an AtomArray and inspect an atom's component
+    >>> aa = atom.load("1hv4")
+    >>> # For example, each atom might have a 'component' attribute
+    >>> comp = aa[0].component
+    >>> isinstance(comp, str)
+    True
+
+    >>> # Demonstrate the effect of a transformation on atom components
+    >>> from ipd import hgeom as h
+    >>> T = h.trans([2, 2, 2])
+    >>> aa_transformed = h.xform(T, aa)
+    >>> aa_transformed[0][3] != aa[0][3]
+    True
+
+Additional Examples:
+    >>> # Filter AtomArray based on component type (conceptual example)
+    >>> filtered = [atom for atom in aa if atom.component == "C"]
+    >>> len(filtered) <= len(aa)
+    True
     >>> atoms = ipd.atom.get('1dxh', assembly='largest', het=False, chainlist=True)
     >>> frameset = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
     >>> print(frameset)
@@ -18,14 +45,16 @@ Examples:
       source_: <class 'list'>
     >>> atoms, frames, rms, matches = frameset['atoms frames rmsd seqmatch']
 
+.. note::
+    For more advanced atom-level operations, refer to ipd.atom.atom_utils.
+
+
 
 Dependencies:
-    - attrs
     - numpy
     - biotite
 """
 
-import attrs
 import numpy as np
 import ipd
 
@@ -93,18 +122,16 @@ def find_components_by_seqaln_rmsfit(
     results = results.mapwise(np.array)
 
     ok = (results.rmsd < tol.rms_fit) & (results.seqmatch > tol.seqmatch)
-    # ic(results.rmsd,results.seqmatch)
+    # ipd.icv(results.rmsd,results.seqmatch)
     finalresult.add(atoms=atomslist[0], **results.mapwise[ok])
     if all(ok): return finalresult
     unfound = [a for i, a in enumerate(atomslist) if not ok[i]]
-    # ic(len(atomslist), len(unfound), idx, ok, kw.keys())
+    # ipd.icv(len(atomslist), len(unfound), idx, ok, kw.keys())
     return find_components_by_seqaln_rmsfit(unfound, finalresult=finalresult, idx=idx[~ok], tol=tol, **kw)
-
-listfield = attrs.field(factory=list)
 
 @ipd.dev.subscriptable_for_attributes
 @ipd.dev.element_wise_operations
-@attrs.define(slots=False)
+@ipd.mutablestruct
 class Components:
     """
     Result container for frame searching and alignment.
@@ -129,13 +156,13 @@ class Components:
             Tolerance parameters for alignment.
     """
 
-    atoms: list['bs.AtomArray'] = listfield
-    frames: list[np.ndarray] = listfield
-    seqmatch: list[float] = listfield
-    rmsd: list[float] = listfield
-    idx: list[list[int]] = listfield
-    source_: list['bs.AtomArray'] = listfield
-    intermediates_: list[dict] = listfield
+    atoms: list['bs.AtomArray'] = ipd.field(list)
+    frames: list[np.ndarray] = ipd.field(list)
+    seqmatch: list[float] = ipd.field(list)
+    rmsd: list[float] = ipd.field(list)
+    idx: list[list[int]] = ipd.field(list)
+    source_: list['bs.AtomArray'] = ipd.field(list)
+    intermediates_: list[dict] = ipd.field(list)
     tolerances_: ipd.Tolerances = None
 
     def add(self, **atom_frame_match_rms_idx):

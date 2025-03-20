@@ -1,0 +1,39 @@
+name: 🐛 Bug Report
+description: Report a problem with the codebase
+title: "[Bug] "
+labels: [bug]
+assignees: ""
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: What went wrong? Please provide a clear and concise description.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can this issue be reproduced?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened instead?
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, dependencies, etc.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other details?

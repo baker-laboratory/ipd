@@ -25,7 +25,7 @@ def test_iterize_basetype():
 
     assert bar('foo') == 'foofoo'
     assert bar(['a', 'b']) == ['aa', 'bb']
-    ic(bar('a b'))
+    ipd.icv(bar('a b'))
     assert bar('a b') == ['aa', 'bb']
     assert bar(1.1) == 2.2
 
@@ -285,7 +285,7 @@ def test_subscriptable_for_attributes_groupby():
 
     foo = Foo()
     for g, a, b, c in foo.groupby('group', 'a b c'):
-        ic(g, a, b, c)
+        ipd.icv(g, a, b, c)
     v = list(foo.groupby('group', 'a c'))
     assert v == [('a', (0, 1, 2), (10, 11, 12)), ('b', (3, 4, 5), (13, 14, 15))]
     v = list(foo.groupby('group'))

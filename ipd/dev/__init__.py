@@ -12,6 +12,7 @@ from ipd.dev.objinfo import *
 from ipd.dev.functional import *
 from ipd.dev.iterables import *
 from ipd.dev.format import *
+from ipd.dev.files import *
 from ipd.dev.code import *
 from ipd.dev.decorators import *
 from ipd.dev.element_wise import *
@@ -40,5 +41,5 @@ _global_timer = None
 def __getattr__(name) -> Any:
     if name == 'global_timer':
         global _global_timer
-        return (_global_timer := _global_timer or Timer())
+        return (_global_timer := _global_timer or Timer('IPD Global Timer'))
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")

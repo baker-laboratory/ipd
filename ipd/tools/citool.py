@@ -15,6 +15,7 @@ git = ipd.lazyimport('git')
 class CITool(IPDTool):
 
     def __init__(self, secretfile: str = '~/.secrets'):
+        if not os.path.exists(secretfile): return
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
         self.secrets = ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
         self.repos: dict[str, str] = {
@@ -194,7 +195,7 @@ class TestsTool(CITool):
             list of tuples (cmd, job, log)
         """
         # os.makedirs(os.path.dirname(log), exist_ok=True)
-        submitit = ipd.importornone('submitit')
+        submitit = ipd.maybeimport('submitit')
         if mark: mark = f'-m "{mark}"'
         if not str(exe).endswith('pytest'): exe = f'{exe} -mpytest'
         if verbose: exe += ' -v'

@@ -24,8 +24,8 @@ def test_seqaln_rmsfit_1dxh():
 
 def test_seqaln_rmsfit_1g5q():
     atoms = ipd.atom.get('1g5q', assembly='largest', het=False, chainlist=True)
-    # ic(len(atoms), len(atoms[0]))
-    # ic(ipd.atom.chain_ranges(atoms))
+    # ipd.icv(len(atoms), len(atoms[0]))
+    # ipd.icv(ipd.atom.chain_ranges(atoms))
 
     # for i, a in enumerate(atoms):
     # ipd.pdb.dump(a, f'lib/ipd/test{i}.pdb')

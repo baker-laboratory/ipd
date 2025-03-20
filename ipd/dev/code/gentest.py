@@ -35,7 +35,7 @@ def make_testfile(sourcefile, testfile):
     try:
         exec(code, globals(), globals())
     except OSError as e:
-        ic(e)
+        ipd.icv(e)
     module = {k: v for k, v in globals().items() if k not in prev_globals}
     cnames = {n for n in re.findall(r'class (.+)[\[\(:]', code) if n[0] != '_'}
     mnames = {n for n in re.findall(r' def (.+)[\[\(]', code) if n[0] != '_'}

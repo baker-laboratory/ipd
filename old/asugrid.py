@@ -43,7 +43,7 @@ def place_asu_grid_multiscale(
             kw.refpos = pos.copy()
         if "refcell" not in kw:
             kw.refcell = cellsize
-        # ic(i, repr(pos), cellsize)
+        # ipd.icv(i, repr(pos), cellsize)
         print("place_asu_grid_multiscale", i, flush=True)
         newpos, newcell = place_asu_grid(
             pos,
@@ -59,10 +59,10 @@ def place_asu_grid_multiscale(
             ),
         )
         pos, cellsize = newpos[0], newcell[0]
-        # ic(kw.refpos)
-        # ic(newpos[1] - kw.refpos)
-        # ic(newpos[:5])
-        # ic(ipd.homog.hnorm(newpos - kw.refpos)[:5])
+        # ipd.icv(kw.refpos)
+        # ipd.icv(newpos[1] - kw.refpos)
+        # ipd.icv(newpos[:5])
+        # ipd.icv(ipd.homog.hnorm(newpos - kw.refpos)[:5])
 
         # vispoints(newpos[:1], newcell[:1], kw.frames, kw.framesavoid)
 
@@ -136,7 +136,7 @@ def place_asu_grid(
     cellsizes = cellsize + np.linspace(*lbubcell, nsampcell)  # type: ignore
     if nsampcell < 2:
         cellsizes = np.array([cellsize])
-    # ic(frames0.shape, framesavoid0.shape)
+    # ipd.icv(frames0.shape, framesavoid0.shape)
     allframes = np.concatenate([frames0, framesavoid0])
     frames = np.stack([ipd.hscaled(s, frames[1:]) for s in cellsizes])
     framesavoid = np.stack([ipd.hscaled(s, framesavoid) for s in cellsizes])
@@ -153,7 +153,7 @@ def place_asu_grid(
     okccontactmin = dcontactmin > distcontact[0]  # type: ignore
     okccontactmax = dcontactmax < distcontact[1]  # type: ignore
     okspread = dcontactmax - dcontactmin < distspread
-    ic(np.sum(okavoid), np.sum(okccontactmin), np.sum(okccontactmax), np.sum(okspread))  # type: ignore
+    ipd.icv(np.sum(okavoid), np.sum(okccontactmin), np.sum(okccontactmax), np.sum(okspread))  # type: ignore
     ok = okavoid * okccontactmin * okccontactmax * okspread
     w = np.where(ok)
     goodcell = cellsizes[w[:][0]]
@@ -163,10 +163,10 @@ def place_asu_grid(
     origdist = np.sqrt(ipd.homog.hnorm2(goodpos - refpos) + ((goodcell-refcell) * 1.1)**2)
     order = np.argsort(origdist)
     goodcell, goodpos = goodcell[order], goodpos[order]
-    # ic(origdist[order])
-    # ic(goodpos[0])
-    # ic(goodcell[0])
-    # ic(refpos)
+    # ipd.icv(origdist[order])
+    # ipd.icv(goodpos[0])
+    # ipd.icv(goodcell[0])
+    # ipd.icv(refpos)
     # assert 0
     if clusterdist > 0 and len(goodpos) > 1:
         coords = ipd.homog.hxformpts(frames0, goodpos, outerprod=True)
@@ -177,13 +177,13 @@ def place_asu_grid(
 
     # f = ipd.hscaled(goodcell[0], frames0)
     # p = ipd.homog.hxformpts(f, goodpos[0])
-    # ic(ipd.homog.hnorm(p[0] - p[1]), ipd.homog.hnorm(p[0] - p[-1]))
+    # ipd.icv(ipd.homog.hnorm(p[0] - p[1]), ipd.homog.hnorm(p[0] - p[-1]))
 
     # if len(goodpos):
-    # ic(refpos)
-    # ic(goodpos[:5])
-    # ic(goodpos[1] - refpos)
-    # ic(ipd.homog.hnorm(goodpos - refpos)[:5])
+    # ipd.icv(refpos)
+    # ipd.icv(goodpos[:5])
+    # ipd.icv(goodpos[1] - refpos)
+    # ipd.icv(ipd.homog.hnorm(goodpos - refpos)[:5])
 
     return goodpos, goodcell
 
@@ -205,4 +205,4 @@ def place_asu_sample_dof(
     cartsamp = ipd.homog.htrans(axis * np.linspace(-cartrange, cartrange, cartnsamp))
     cellsamp = np.linspace(-cellrange, cellrange, cellnsamp)
     cframes = np.stack([ipd.sym.frames(sym, cellsize=c) for c in cellsamp])
-    ic(cframes.shape)  # type: ignore
+    ipd.icv(cframes.shape)  # type: ignore

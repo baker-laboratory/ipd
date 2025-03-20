@@ -26,7 +26,7 @@ def _test_symmetrize_frames():
     N = 5
     R = np.stack([R[:N], R[100:100 + N], R[200:200 + N], R[300:300 + N]])
     T = np.stack([T[:N], T[100:100 + N], T[200:200 + N], T[300:300 + N]])
-    ic(x.shape)  # type: ignore
+    ipd.icv(x.shape)  # type: ignore
     x = np.stack([x[:N], x[100:100 + N], x[200:200 + N], x[300:300 + N]])
 
     RT = ipd.homog.hconstruct(R, T)
@@ -34,10 +34,10 @@ def _test_symmetrize_frames():
 
     crd = np.stack([[0, 0, 0, 1], [2, 0, 0, 1], [0, 2, 0, 1]])
     crd = ipd.homog.hxform(RT, crd)
-    ic(crd.shape)  # type: ignore
+    ipd.icv(crd.shape)  # type: ignore
     ipd.pdb.dumppdb("test.pdb", crd)
 
-    ic(R.shape, x.shape)  # type: ignore
+    ipd.icv(R.shape, x.shape)  # type: ignore
     ipd.pdb.dumppdb("xyzorig.pdb", x + T[:, :, None, :])
     ipd.pdb.dumppdb("RT_x.pdb", einsum("srij,sraj->srai", R, x) + T[:, :, None, :])
 
@@ -47,8 +47,8 @@ def _test_symmetrize_frames():
 def test_subframes():
     frames = ipd.sym.frames("tet")
     subframes = ipd.sym.subframes(frames, "C3", asym=[100, 10, 1])
-    ic(frames.shape)  # type: ignore
-    ic(subframes.shape)  # type: ignore
+    ipd.icv(frames.shape)  # type: ignore
+    ipd.icv(subframes.shape)  # type: ignore
 
 def test_frames_asym_of():
     f = ipd.sym.frames("icos", asym_of="c5")
@@ -88,10 +88,10 @@ def test_frames_asym_remove_sameaxis():
     for i, ((sym, csym), (n1, n2, n3, n4)) in enumerate(config):
         cart = ipd.sym.axes(sym, csym)
         # cart = [0, 0, 10]
-        ic(i, sym, csym, cart)
+        ipd.icv(i, sym, csym, cart)
 
         f = ipd.sym.frames(sym, bbsym=csym, asym_of=csym, axis=[0, 0, 1])
-        ic(f.shape)
+        ipd.icv(f.shape)
         assert len(f) == n1
         # print(i, sym, csym, len(f))
         f[:, :, 3] += 10 * ipd.homog.hdot(f, cart)

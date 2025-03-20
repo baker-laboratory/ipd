@@ -260,7 +260,7 @@ def xtalinfo(name):
             raise ValueError(f'unknown xtal {name}')
     if name not in _xtal_info_dict:  # type: ignore
         name = name.replace("_", " ")
-    # ic(name)
+    # ipd.icv(name)
     info = _xtal_info_dict[name]  # type: ignore
     return name, info
 

@@ -1,3 +1,56 @@
+"""
+Module: ipd.sym.sym
+===================
+
+This module handles symmetry-related operations within the IPD library.
+It defines functions and classes for creating and manipulating symmetry bodies (SymBody),
+which are extended representations of a Body that incorporate the notion of symmetry.
+These are particularly useful when working with large symmetrical structures where
+efficient spatial queries are critical.
+
+Key features:
+  - Creation of SymBody objects from file data.
+  - Application of homogeneous transformations (using hgeom) to symmetrical structures.
+  - Fast clash and contact checks using SphereBVH_double.
+
+Usage Examples:
+    >>> from ipd import sym, hgeom as h, atom
+    >>> # Create a SymBody using a built-in helper function and a pdb code
+    >>> sb = sym.symbody_from_file("1A0J")
+    >>> # Apply a random transformation
+    >>> T = h.rand()
+    >>> sb_transformed = sb.apply_transform(T)
+
+    >>> # Clash detection between two symmetry bodies
+    >>> sb2 = sym.symbody_from_file("1bfr")
+    >>> result = sb.clash(sb2)
+    >>> isinstance(result, bool)
+    True
+
+    >>> # Checking contacts with an AtomArray
+    >>> aa = atom.load("1A0J")
+    >>> contacts = sb.contact_check(aa)
+    >>> isinstance(contacts, list)
+    True
+
+Additional Examples:
+    >>> # Compose a translation and a rotation and apply to a SymBody
+    >>> T_trans = h.trans([1, 2, 3])
+    >>> T_rot = h.rot([0, 1, 0], 45, [0, 0, 0])
+    >>> T_combined = h.xform(T_trans, T_rot)
+    >>> sb_new = sb.apply_transform(T_combined)
+
+    >>> # Performance demonstration (conceptual timing check)
+    >>> import time
+    >>> start = time.time()
+    >>> _ = sb.clash(sb2)
+    >>> elapsed = time.time() - start
+    >>> elapsed < 1.0  # Expect fast computation
+    True
+
+.. note::
+    Additional tests and examples can be found in ipd/tests/test_sym_detect.py.
+"""
 import os
 import traceback
 

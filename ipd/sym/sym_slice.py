@@ -64,7 +64,7 @@ class SymSlice:
     def set_nsub(self, nsub):
         """Set the number of subunits in the symmetry."""
         self.Lasu = self.mask.sum() // nsub
-        # ic(self.Lasu, self.mask.sum(), nsub)
+        # ipd.icv(self.Lasu, self.mask.sum(), nsub)
         # assert self.Lasu
         if self.Lasu == 0: self.asuend, self.symend = 0, 0
         else: self.asuend = int(th.where(th.cumsum(self.mask, 0) == self.Lasu)[0][0]) + 1

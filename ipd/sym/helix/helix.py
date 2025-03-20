@@ -20,7 +20,15 @@ class Helix:
         symcoords = ipd.homog.hxform(frames, coords)
         ipd.pdb.dump_pdb_from_points(fname, symcoords)
 
-    def frames(self, radius, spacing, coils=1, xtalrad=9e9, start=None, closest=0, closest_upper_only=False, **kw):
+    def frames(self,
+               radius,
+               spacing,
+               coils=1,
+               xtalrad=9e9,
+               start=None,
+               closest=0,
+               closest_upper_only=False,
+               **kw):
         """Phase is a little artifical here, as really it just changes
         self.turns "central" frame will be ontop.
 
@@ -38,12 +46,13 @@ class Helix:
         ang = 2 * np.pi / (self.turns + self.phase)
         lb = coils[0] * self.turns - 1
         ub = coils[1] * self.turns + 2
-        # ic(coils, self.turns, lb, ub)
+        # ipd.icv(coils, self.turns, lb, ub)
         frames = list()
         for icyc in range(self.nfold):
             xcyc = ipd.homog.hrot(axis, (np.pi * 2) / self.nfold * icyc, degrees=False)
             frames += [
-                xcyc @ ipd.homog.hrot(axis, i * ang, hel=i * spacing / self.turns, degrees=False) for i in range(lb, ub)
+                xcyc @ ipd.homog.hrot(axis, i * ang, hel=i * spacing / self.turns, degrees=False)
+                for i in range(lb, ub)
             ]
 
         frames = np.stack(frames)
@@ -56,10 +65,11 @@ class Helix:
                 closest = 2 * (closest-1) + 1
             frames = frames[:closest]
             if closest_upper_only:
-                isupper = ipd.homog.hdot(ipd.homog.hnormalized([0, 1, 1]), frames[:, :, 3] - frames[0, :, 3]) >= 0
+                isupper = ipd.homog.hdot(ipd.homog.hnormalized([0, 1, 1]),
+                                         frames[:, :, 3] - frames[0, :, 3]) >= 0
                 isupper[0] = True
                 nframes = len(frames)
                 frames = frames[isupper]
-                # ic(frames.shape, nframes)
+                # ipd.icv(frames.shape, nframes)
                 assert len(frames) - 1 == (nframes-1) // 2
         return frames

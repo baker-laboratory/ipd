@@ -21,7 +21,7 @@ def check_if_symelems_complete(spacegroup, symelems, depth=60, radius=5, trials=
     nunitcell = np.sum((-0.001 < x) * (x < 1.999) * (-0.001 < y) * (y < 1.999) * (-0.001 < z) * (z < 1.999))
     nunitcell_target = 8 * ipd.sym.copies_per_cell(spacegroup)
 
-    # ic(nunitcell, nunitcell_target)
+    # ipd.icv(nunitcell, nunitcell_target)
     if nunitcell >= nunitcell_target * fudgefactor:
         # print('\t'.join(e.label for e in symelems))
         # for e in symelems:
@@ -46,7 +46,7 @@ def minimal_spacegroup_cover_symelems(spacegroup, maxelems=5, noscrew=False, noc
             if any([combo[i] >= combo[i + 1] for i in range(ncombo - 1)]):
                 continue
             genelems = [allsymelems[i] for i in combo]
-            # ic(genelems)
+            # ipd.icv(genelems)
             complete = check_if_symelems_complete(spacegroup, genelems)
             if complete:
                 generators.append(genelems)

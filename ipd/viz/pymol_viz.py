@@ -8,7 +8,6 @@ from collections import defaultdict
 from functools import singledispatch
 
 import numpy as np
-from icecream import ic
 
 import ipd
 from ipd.viz.viz_deco import pymol_scene
@@ -207,7 +206,7 @@ def pymol_viz_list(
         pymol.cmd.load_cgo(toshow, name)
         state["seenit"][name] += 1
         name += "_%i" % state["seenit"][name]
-        ic(name)
+        ipd.icv(name)
         return
 
     name += toshow[0].__class__.__name__
@@ -273,7 +272,7 @@ try:
         **kw,
     ):
         np_array = toshow.cpu().detach().numpy()
-        # ic('showme torch.Tensor', np_array.shape)
+        # ipd.icv('showme torch.Tensor', np_array.shape)
         pymol_load_npndarray(np_array, *a, **kw)
 except ImportError:
     pass
@@ -289,7 +288,7 @@ def get_different_colors(ncol, niter=1000, colorseed=1):
     maxmincoldis, best = 0, None
     for i in range(niter):
         colors = np.random.rand(ncol, 3)
-        # ic(np.max(colors[:, ], axis=1))
+        # ipd.icv(np.max(colors[:, ], axis=1))
         b = np.min(np.max(colors[
             :,
         ], axis=1))
@@ -300,15 +299,15 @@ def get_different_colors(ncol, niter=1000, colorseed=1):
             ], axis=1))
             if score > b:
                 colors = colors0
-        # ic(colors.shape)
+        # ipd.icv(colors.shape)
         cdis2 = np.linalg.norm(colors[None] - colors[:, None], axis=-1)
         np.fill_diagonal(cdis2, 4.0)
         if np.min(cdis2) > maxmincoldis:
             maxmincoldis, best = np.min(cdis2), colors
 
     best = best[np.argsort(-np.min(best**2, axis=1))]  # type: ignore
-    # ic(np.argsort(-np.min(best**2, axis=1)))
-    # ic(best)
+    # ipd.icv(np.argsort(-np.min(best**2, axis=1)))
+    # ipd.icv(best)
     # assert 0
     np.random.set_state(rs)
     # paranoid sanity cheeck
@@ -386,7 +385,7 @@ def pymol_visualize_xforms(
         xform = xform.copy()
         xform[:3, 3] *= scale
         colorset = colorsets[ix % len(colorsets)]  # type: ignore
-        # ic(colorset)
+        # ipd.icv(colorset)
         cen = xform @ c0
         x = xform @ x0
         y = xform @ y0
@@ -491,7 +490,7 @@ def cgo_frame_points(frames, scale, showpts, scaleptrad=1, **kw):
     for i, frame in enumerate(frames):
         for p, r, c in zip(*showpts):
             if i == 0:
-                ic(p)
+                ipd.icv(p)
             cgo += cgo_sphere(scale * ipd.homog.hxform(frame, p), rad=scale * scaleptrad * r, col=c)
 
     return cgo
@@ -672,7 +671,7 @@ def show_array_ncacoh(
     assert toshow.shape[-2:] in [(5, 3), (5, 4)]
     if toshow.shape[-1] == 3:
         toshow = ipd.homog.hpoint(toshow)
-    # ic(toshow.shape)
+    # ipd.icv(toshow.shape)
 
     ipd.pdb.dump_pdb_from_points(fname, toshow, anames='N CA C O H'.split())
     pymol.cmd.load(fname, name)  # type: ignore
@@ -692,7 +691,7 @@ def show_ndarray_n_ca_c(
     assert toshow.shape[-2:] in [(3, 3), (3, 4)]
     if toshow.shape[-1] == 3:
         toshow = ipd.homog.hpoint(toshow)
-    # ic(toshow.shape)
+    # ipd.icv(toshow.shape)
 
     ipd.pdb.dumppdb(fname, toshow)
 
@@ -722,7 +721,7 @@ def showme_pymol(
     if 'pymol' not in sys.modules:
         raise NotImplementedError('pymol package not available')
 
-    # if name != 'noname': ic('SHOWME', name)
+    # if name != 'noname': ipd.icv('SHOWME', name)
     global _showme_state
 
     if "PYTEST_CURRENT_TEST" in os.environ and not headless:
@@ -764,7 +763,7 @@ def showme_pymol(
         pymol.cmd.turn("y", pngturn)
         if ray:
             pymol.cmd.ray()
-        ic("PNG", pngfile)
+        ipd.icv("PNG", pngfile)
         pymol.cmd.png(pngfile)
         if one_png_only:
             assert 0

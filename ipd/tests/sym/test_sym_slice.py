@@ -148,7 +148,7 @@ def test_contiguous():
             ipd.sym.SymSlice([0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0]),
             ipd.sym.SymSlice([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0]),
         ])
-    # ic(th.all(sidx.contiguous == th.tensor([0, 1, 5, 6, 7, 11, 2, 3, 8, 9, 10, 12])))
+    # ipd.icv(th.all(sidx.contiguous == th.tensor([0, 1, 5, 6, 7, 11, 2, 3, 8, 9, 10, 12])))
     t, t2 = th.arange(15), th.arange(15)
     contig = t[sidx.contiguous]
     t[sidx.contiguous] = contig
@@ -161,7 +161,7 @@ def test_contiguous():
     idx2[idx] = idx
     idx2 = idx2[sidx.contiguous]
     idx2 = idx2[idx2 >= 0]
-    # ic(idx.subnum[idx2])
+    # ipd.icv(idx.subnum[idx2])
     # assert 0
 
 def test_chirals():

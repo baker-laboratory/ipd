@@ -10,7 +10,7 @@ import numpy as np
 import ipd
 
 def main():
-    # ic(ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom((100, 5)))
+    # ipd.icv(ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom((100, 5)))
     # assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom((100, 5)) == (1, 100, 5)
     # assert 0
     test_dump_pdb_nchain_nres_natom()
@@ -19,7 +19,7 @@ def main():
     test_pdbdump(f.pdb1pgx())
     test_pdbdump_ncac(f.pdb1pgx())
     test_pdbdump_sequential()
-    ic("test_pdbdump.py DONE")  # type: ignore
+    ipd.icv("test_pdbdump.py DONE")  # type: ignore
 
 def test_dump_pdb_nchain_nres_natom():
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom((10, 11, 12)) == (10, 11, 12)
@@ -35,7 +35,7 @@ def test_dump_pdb_nchain_nres_natom():
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nres=5) == (1, 5, 4)
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nresatom=5) == (1, 4, 5)
 
-    ic(ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=5))  # type: ignore
+    ipd.icv(ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=5))  # type: ignore
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(4, 15), nchain=4, nresatom=3) == (4, 5, 3)
 
 def test_pdbdump_sequential():
@@ -59,13 +59,13 @@ def test_pdbdump(pdb1pgx):
         xyz, mask = xyz[10:20], mask[10:20]
         ipd.pdb.dumppdb(fname, xyz, mask, nchain=1)
         newpdb = ipd.pdb.readpdb(fname)
-        # ic(newpdb.df)
+        # ipd.icv(newpdb.df)
         newxyz, mask = newpdb.atomcoords()
         assert mask.dtype == bool
         assert np.all(mask[:, :4] == 1)
         assert np.sum(mask[:, 4] == 1) == 8
-        # ic(xyz[:, 4])
-        # ic(newxyz[:, 4])
+        # ipd.icv(xyz[:, 4])
+        # ipd.icv(newxyz[:, 4])
         assert np.allclose(xyz, newxyz, atol=0.002)
         xyz = pdb1pgx.bb()[:13]
         ipd.pdb.dumppdb(fname, xyz, nchain=1)

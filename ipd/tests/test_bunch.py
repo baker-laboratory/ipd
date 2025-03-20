@@ -321,14 +321,14 @@ def test_search_basic_match():
 def test_search_nested_match():
     data = {'person': {'name': 'Bob', 'details': {'age': 25, 'location_name': 'Los Angeles'}}}
     result = ipd.bunch.search(data, 'name')
-    ic(result)
+    ipd.icv(result)
     assert result == {'person.name': 'Bob', 'person.details.location_name': 'Los Angeles'}
 
 def test_search_nested_match_recursive():
     data = {'person': {'name': 'Bob', 'details': {'age': 25, 'location_name': 'Los Angeles'}}}
     data['self'] = data
     result = ipd.bunch.search(data, 'name')
-    ic(result)
+    ipd.icv(result)
     assert result == {'person.name': 'Bob', 'person.details.location_name': 'Los Angeles'}
 
 def test_search_no_match():

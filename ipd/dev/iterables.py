@@ -1,9 +1,10 @@
 from typing import Sequence, Any
 import numpy as np
+import typing
 import ipd
 from ipd.dev.strings import ascii_chars
 
-T = ipd.basic_typevars('T')
+T = typing.TypeVar('T')
 
 def nth(thing: ipd.Iterable[T], n: int = 0) -> T:
     iterator = iter(thing)
@@ -76,5 +77,5 @@ class UniqueIDs:
         newids = ipd.copy(ids)
         for u in uniq:
             newids[ids == u] = self.idmap[u]
-        # ic(self.idmap)
+        # ipd.icv(self.idmap)
         return newids

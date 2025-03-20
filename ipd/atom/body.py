@@ -1,6 +1,59 @@
 """
-represents coordinates as biotite AtomArray along with a bounding volume hierarchy for fast geom checks. should behave as a decorator around AtomArray and
+Module: ipd.atom.body
+=====================
+
+This module defines the Body class that represents a collection of atoms organized
+as a coherent structure. It provides methods for spatial operations such as clash
+and contact detection and supports transformation operations through homogeneous
+transforms (using the ipd.homog.hgeom module).
+
+Key features:
+  - Construction of Body objects from PDB files using helper functions (e.g., body_from_file).
+  - Efficient clash detection and contact checks between bodies and AtomArrays.
+  - Application of 4x4 homogeneous transformations to manipulate the spatial arrangement.
+  - Utilization of the highly efficient SphereBVH_double from willutil_cpp, which can
+    deliver hundreds of times speedup for large, lightly contacting structures (e.g., virus capsids).
+
+Usage Examples:
+    >>> from ipd import atom, hgeom as h
+    >>> # Create a Body from a PDB code using a helper function
+    >>> b = atom.body_from_file('1byf')
+    >>> # Apply a translation to the Body
+    >>> T = h.trans([5, 0, 0])
+    >>> b2 = b.apply_transform(T)
+    >>> # Check for a clash between the original and transformed bodies
+    >>> b.clash(b2) in [True, False]
+    True
+
+    >>> # Demonstrate contact checking between a Body and an AtomArray
+    >>> aa = atom.load('1dxh')
+    >>> contacts = b.contact_check(aa)
+    >>> isinstance(contacts, list)
+    True
+
+Additional Examples:
+    >>> # Apply a combined rotation and translation
+    >>> T1 = h.trans([1, 2, 3])
+    >>> T2 = h.rot([0, 0, 1], 45, [0, 0, 0])
+    >>> b_transformed = b.apply_transform(h.xform(T1, T2))
+    >>> contacts_new = b_transformed.contact_check(aa)
+    >>> isinstance(contacts_new, list)
+    True
+
+    >>> # Create another Body with a different pdb code and check for clashes
+    >>> b3 = atom.body_from_file('1ql2')
+    >>> b3.clash(b)
+    False
+
+.. note::
+    The SphereBVH_double bounding volume hierarchy used here is extremely efficient
+    for large symmetrical structures and is far superior in performance compared to more
+    traditional methods.
+
+.. seealso::
+    ipd.atom.components and ipd.atom.atom_utils for further atom-level operations.
 """
+
 import copy
 from dataclasses import dataclass, field
 import numpy as np
@@ -13,7 +66,7 @@ if typing.TYPE_CHECKING:
     from biotite.structure import AtomArray
     import willutil_cpp as wu
 
-wu = ipd.importornone('willutil_cpp')
+wu = ipd.maybeimport('willutil_cpp')
 bs = ipd.lazyimport('biotite.structure')
 
 @ipd.ft.lru_cache
@@ -27,7 +80,6 @@ def body_from_file(
     atoms = ipd.pdb.readatoms(fname, assembly=assembly, **kw)
     if isinstance(atoms, list): atoms = ipd.dev.addreduce(atoms)
     ipd.dev.checkpoint('read atoms')
-
     return Body(atoms)
 
 @ipd.ft.lru_cache
@@ -49,7 +101,7 @@ def symbody_from_file(
     else:
         comp = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, **kw)
         ipd.atom.process_components(comp, **kw)
-        # ic(comp.frames[0][3], comp.frames[1][3])
+        # ipd.icv(comp.frames[0][3], comp.frames[1][3])
         # ipd.showme(h.xform(comp.frames[0],h.trans([1,3,10])) , xyzscale=4, weight=4,name='baz')
         # ipd.showme(h.xform(comp.frames[1][0::2],h.trans([1,3,10])) , xyzscale=4, weight=4,name='bar')
         # ipd.showme(h.xform(comp.frames[1][1::2],h.trans([1,3,10])) , xyzscale=4, weight=4,name='foo')
@@ -251,6 +303,7 @@ class SymBody:
         first, *rest = slices
         frames = self.frames[first]
         if rest: return h.xformpts(frames, self.asu[rest])
+        else: pass
         return h.xformpts(frames, self.asu[:])
 
     # def __getattr__(self, name):
@@ -294,14 +347,6 @@ def _bvh_binary_operation(
     residue_wise=False,
     **kw,
 ) -> 'bool|int|float|np.ndarray|tuple[np.ndarray, np.ndarray]':
-    """abailable:
-            bvh_collect_pairs bvh_collect_pairs_range_vec bvh_collect_pairs_vec
-            bvh_count_pairs bvh_count_pairs_vec
-            bvh_isect bvh_isect_range bvh_isect_vec
-            bvh_min_dist bvh_min_dist_vec
-            bvh_slide bvh_slide_vec
-            bvh_print
-        """
     other = other or this
     bvh = bvh or this._resbvh if residue_wise else this._atombvh
     otherbvh = otherbvh or other._resbvh if residue_wise else other._atombvh
@@ -313,7 +358,7 @@ def _bvh_binary_operation(
         npos, nother = len(pos), len(otherpos)
         pos = np.repeat(pos, nother, axis=0)
         otherpos = np.tile(otherpos, (npos, 1, 1))
-    # ic(op, pos.shape, otherpos.shape)
+    # ipd.icv(op, pos.shape, otherpos.shape)
     extra = kw.values()
     result = op(bvh, otherbvh, pos, otherpos, *extra)
     if op.__name__.endswith('_vec'):

@@ -99,7 +99,7 @@ def quat_torus_xform(resl, maxtip=th.pi / 6, ringang=2 * th.pi, bcc=True, device
     n1 = int(math.ceil(ringang / resl))
     n2 = int(math.ceil(maxtip / resl))
     n3 = n2*2 + 1
-    # ic(n1, n2, n3)
+    # ipd.icv(n1, n2, n3)
     o = th.as_tensor([0, resl / 2])[:, None] if bcc else th.as_tensor([0])
     wx = th.linspace(0, ringang, n1).repeat_interleave(n3**2)
     wx = (wx + o).reshape(-1)
@@ -111,14 +111,14 @@ def quat_torus_xform(resl, maxtip=th.pi / 6, ringang=2 * th.pi, bcc=True, device
     # w, x, y, z = w.reshape(-1), x.reshape(-1), y.reshape(-1), z.reshape(-1)
     y, z = y / 3, z / 3  # why /3 rather than /2 ??
     idx = (y**2 + z**2 <= maxtip**2 / 4)
-    # ic(oi, idx.sum() / len(idx))
+    # ipd.icv(oi, idx.sum() / len(idx))
 
     #
     # w, x, y, z = w[idx], x[idx], y[idx], z[idx]
     idx = y**2 + z**2 < maxtip**2 / 4
     q = h.normQ(th.stack([w.reshape(-1), y.reshape(-1), z.reshape(-1), x.reshape(-1)], dim=1))
     q = q[idx].to(device)
-    # ic(q.shape, (2 * n2 + 1)**2 * n1, n2, n1)
+    # ipd.icv(q.shape, (2 * n2 + 1)**2 * n1, n2, n1)
     # d = h.norm(q[None] - q[:, None])
     # d.fill_diagonal_(9e9)
     # dclosest = d.min(1).values
