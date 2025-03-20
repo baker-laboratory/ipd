@@ -58,6 +58,8 @@ def __getattr__(name):
     elif name == 'global_chrono':
         _global_chrono = _global_chrono or Chrono(checkpoints=_timings)
         return _global_chrono
+    elif name.startswith('debug'):
+        return getattr(hub, name)
     raise AttributeError(f"module {__name__} has no attribute {name}")
 
 _checkpoint('ipd globals')
