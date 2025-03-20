@@ -1,5 +1,4 @@
 import pytest
-from icecream import ic
 
 import ipd
 from ipd import *
@@ -16,7 +15,7 @@ def test_t4():
 def test_pseudo_t_dist_min():
     asym = ipd.sym.high_t.pseudo_t_start(2)
     loss, asym2 = ipd.sym.high_t.min_pseudo_t_dist2(asym)
-    ic(asym2.shape)
+    ipd.icv(asym2.shape)
     # ipd.showme(hscaled(0.1, asym))
     # ipd.showme(hscaled(0.1, asym2))
     # ipd.showme(hscaled(0.1, ipd.sym.make('I', asym)))
@@ -25,7 +24,7 @@ def test_pseudo_t_dist_min():
 def test_pseudo_t_env_min():
     asym = ipd.sym.high_t.pseudo_t_start(2)
     loss, asym2 = ipd.sym.high_t.min_pseudo_t_symerror(asym)
-    ic(asym2.shape)
+    ipd.icv(asym2.shape)
     # ipd.showme(hscaled(0.1, asym))
     # ipd.showme(hscaled(0.1, asym2))
     # ipd.showme(hscaled(0.1, ipd.sym.make('I', asym)))

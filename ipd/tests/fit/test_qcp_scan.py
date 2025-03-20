@@ -14,7 +14,6 @@ import ipd
 
 pytest.importorskip('ipd.fit.qcp_rms_cuda')
 import numpy as np
-from icecream import ic
 
 import ipd.homog.thgeom as h
 from ipd.fit.qcp_rms import _rms
@@ -72,17 +71,17 @@ def helper_test_qcp_scan_cuda(N, Ncyc, natom, i=0, ntgt=0, bbhetero=False):
         idx2, rms2, _ = ipd.fit.qcp_scan_ref(bb, tgt, lbub, rmsout=True, cyclic=Ncyc)
         rms = rms.reshape(rms2.shape)
         if not th.allclose(rms, rms2, atol=1e-2):
-            ic(th.sum(~th.isclose(rms, rms2)))
-        # ic(rms, rms2)
+            ipd.icv(th.sum(~th.isclose(rms, rms2)))
+        # ipd.icv(rms, rms2)
         assert th.abs(rms - rms2).mean() < 1e-4
         assert th.allclose(rms, rms2, atol=1e-2)
         if not th.allclose(idx, idx2):
             print('-' * 22, 'test_qcp_scan_cuda index mismatch', '-' * 22, flush=True)
-            # ic(lbub)
-            # ic(rms.shape, rms2.shape)
+            # ipd.icv(lbub)
+            # ipd.icv(rms.shape, rms2.shape)
             idxrms = rms[tuple(idx - lbub[:, 0])].item()
             idx2rms = rms[tuple(idx2 - lbub[:, 0])].item()
-            ic((i, N, Ncyc, natom), idx, idx2, idxrms - idx2rms)
+            ipd.icv((i, N, Ncyc, natom), idx, idx2, idxrms - idx2rms)
             print('-' * 80, flush=True)
             assert th.allclose(rms2[tuple(idx - lbub[:, 0])], rms2[tuple(idx2 - lbub[:, 0])], atol=1e-3)
     except AssertionError as e:
@@ -124,15 +123,15 @@ def helper_test_qcpscan_perf(nscan, nres, natom, cyclic, nsamp):
         assert all(idx == idx0)  # type: ignore
         assert abs(rms) < 0.001  # type: ignore
         assert th.allclose(xrand[:3, :3], xfit[:3, :3], atol=1e-4)  # type: ignore
-        # ic(xrand[:3,3], xfit[:3,3])
-        # ic(h.xform(xfit, tgt))
-        # ic(h.xform(xrand, tgt))
-        # ic(bb[idx])
+        # ipd.icv(xrand[:3,3], xfit[:3,3])
+        # ipd.icv(h.xform(xfit, tgt))
+        # ipd.icv(h.xform(xrand, tgt))
+        # ipd.icv(bb[idx])
         assert th.allclose(xrand[:3, 3], xfit[:3, 3], atol=1e-4)  # type: ignore
         rate = th.prod(lbub[:, 1] - lbub[:, 0]) / t.elapsed() / 1_000_000 * nsamp
         print(f'qcp_scan_ref torch        {nscan:4}s {nres:2}r {natom:3}a {cyclic:2}c rate {rate:8.3f}M')
     # lbub = th.tensor([[0, 50], [0, 50], [0, 50], [0, 50]], dtype=th.int32, device='cuda')
-    # ic(lbub[:,1], bb.shape)
+    # ipd.icv(lbub[:,1], bb.shape)
     for threads in [4]:  #range(1, 20):
         with ipd.dev.Timer(verbose=False) as t:
             for isamp in range(nsamp):
@@ -169,7 +168,7 @@ def helper_test_qcp_scan(ranges):
     _, scan_rms, _ = ipd.fit.qcp_scan_ref(pts1, pts2, lbub, rmsout=True)
     # return
     # scan_rms = _rms.qcp_scan_ref(pts1, pts2, lbub, False).cpu()
-    # ic(scan_rms)
+    # ipd.icv(scan_rms)
     pts1 = pts1.cpu()
     pts2 = pts2.cpu()
     scan_rms = scan_rms.cpu()
@@ -181,7 +180,7 @@ def helper_test_qcp_scan(ranges):
     myrms = th.zeros_like(scan_rms)
     for i in range(state_size):
         # for i in range(5, 6):
-        # ic(i)
+        # ipd.icv(i)
         cen = th.zeros(3)
         iprod = th.zeros((3, 3))
         E0 = 0
@@ -206,17 +205,17 @@ def helper_test_qcp_scan(ranges):
         E02 = pts3cen.square().sum() + pts2.square().sum()
         E0 /= 2
         E02 /= 2
-        # ic(cen, cen2)
-        # ic(iprod)
-        # ic(E0)
+        # ipd.icv(cen, cen2)
+        # ipd.icv(iprod)
+        # ipd.icv(E0)
         rms1 = _rms.qcp_rms_f4(pts2.reshape(-1, 3), pts3.reshape(-1, 3))
         rms2, _ = _rms.qcp_rmsd_raw_vec_f4(iprod, E0, len(sizes) * pts1.shape[1] * th.ones_like(E0))
         rms3, _ = _rms.qcp_rmsd_raw_vec_f4(iprod2, E02, len(sizes) * pts1.shape[1] * th.ones_like(E0))
-        # ic(rms1, rms2, rms3)
+        # ipd.icv(rms1, rms2, rms3)
         assert np.allclose(rms3, rms2, atol=1e-3)
         assert np.allclose(rms1, rms2, atol=1e-3)
         assert np.allclose(rms3, rms1, atol=1e-3)
-        # ic(rms1, scan_rms[i])
+        # ipd.icv(rms1, scan_rms[i])
         # assert np.allclose(rms1, scan_rms[i], atol=1e-3)
         myrms[tuple(index)] = rms1
     assert th.allclose(myrms, scan_rms, atol=1e-3)

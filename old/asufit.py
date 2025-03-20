@@ -12,7 +12,7 @@ def compute_canonical_asucen(sym, neighbors=None):
 
     mind2 = d2.min(dim=0)[0]
     if neighbors:
-        # ic(d2.shape)  # type: ignore
+        # ipd.icv(d2.shape)  # type: ignore
         sort = d2.sort(dim=0)[0]
         rank = sort[neighbors] - sort[neighbors - 1]
     else:
@@ -50,7 +50,7 @@ def asufit(
     verbose=False,
     **kw,
 ):
-    ic("asufit", sym)  # type: ignore
+    ipd.icv("asufit", sym)  # type: ignore
     kw = ipd.dev.Bunch(kw)
     asym = ipd.dock.rigid.RigidBody(coords, contact_coords, **kw)
     if frames is None:
@@ -95,7 +95,7 @@ def asufit(
 
     if showme:
         ipd.showme(bodies, name="start", pngi=0, **kw)
-    ic(asym.scale())  # type: ignore
+    ipd.icv(asym.scale())  # type: ignore
     if dumppdb:
         asym.dumppdb("debugpdbs/asufit_000000.pdb", **kw)
     # assert 0
@@ -111,7 +111,7 @@ def asufit(
             if mc.acceptfrac > 0.3:
                 mc.temperature /= correctionfactor / resetinterval * 100
                 sampler.cartsd *= correctionfactor / resetinterval * 100
-            # ic(mc.acceptfrac, mc.best)
+            # ipd.icv(mc.acceptfrac, mc.best)
 
         pos, prev = sampler(asym.state)
 
@@ -135,7 +135,7 @@ def asufit(
             asym.state = prev
         else:
             if mc.best < thresh:
-                # ic('end', i, objfunc(mc.beststate))
+                # ipd.icv('end', i, objfunc(mc.beststate))
                 # if showme: ipd.showme(bodies, name='mid%i' % i, **kw)
                 return mc
 
@@ -146,30 +146,30 @@ def asufit(
                 asym.dumppdb(f"debugpdbs/asufit_{i+1:06}.pdb", **kw)
 
             if verbose:
-                ic("accept", i, mc.last)  # type: ignore
+                ipd.icv("accept", i, mc.last)  # type: ignore
         if mc.new_best_last:
-            ic("best", i, mc.best)  # type: ignore
+            ipd.icv("best", i, mc.best)  # type: ignore
     assert mc.beststate is not None
-    # ic('end', mc.best)
+    # ipd.icv('end', mc.best)
     initscore = objfunc(mc.startstate, verbose=True)
     stopscore = objfunc(mc.beststate, verbose=True)
-    ic("init", initscore)  # type: ignore
-    ic("stop", stopscore)  # type: ignore
-    # ic(mc.beststate[:3, :3])
-    # ic(mc.beststate[:3, 3])
-    # ic(mc.beststate)
+    ipd.icv("init", initscore)  # type: ignore
+    ipd.icv("stop", stopscore)  # type: ignore
+    # ipd.icv(mc.beststate[:3, :3])
+    # ipd.icv(mc.beststate[:3, 3])
+    # ipd.icv(mc.beststate)
     asym.state = mc.beststate
     # ipd.pdb.dump_pdb_from_points('stopcoords.pdb', ipd.homog.hxform(mc.beststate.position, asym._coords))
 
-    # ic('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    # ic(bodies[0].contact_fraction(bodies[1]))
-    # ic(bodies[0].contact_fraction(bodies[2]))
+    # ipd.icv('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    # ipd.icv(bodies[0].contact_fraction(bodies[1]))
+    # ipd.icv(bodies[0].contact_fraction(bodies[2]))
     if showme:
         ipd.showme(bodies, name="end", pngi=9999999, **kw)
     # if dumppdb:
     xyz = asym.coords
     cellsize = mc.beststate.scale
-    ic(cellsize, xyz.shape)  # type: ignore
+    ipd.icv(cellsize, xyz.shape)  # type: ignore
     TEST = 1
     if TEST:
         frames = ipd.hscaled(mc.beststate.scale, frames)
@@ -182,7 +182,7 @@ def asufit(
     # ipd.showme(bodies[1], name='pairs10', showcontactswith=bodies[0], showpairsdist=16, col=(1, 0, 0))
     # ipd.showme(bodies[2], name='pairs20', showcontactswith=bodies[0], showpairsdist=16, col=(0, 0, 1))
 
-    # ic(coords.shape)
+    # ipd.icv(coords.shape)
     # ipd.showme(hpoint(coords))
     # coords = asym.coords
     # ipd.showme(ipd.homog.hxform(mc.beststate, coords))

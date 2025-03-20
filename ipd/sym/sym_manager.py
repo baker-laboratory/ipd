@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import attrs
 import collections
 import contextlib
 import copy
@@ -7,7 +6,6 @@ import itertools
 import random
 from typing_extensions import TypeVar
 
-from icecream import ic
 import numpy as np
 
 import ipd
@@ -25,7 +23,7 @@ XYZPair = collections.namedtuple('XYZPair', 'xyz pair')
 class XYZPairUnsupportedError(Exception):
     pass
 
-@attrs.define(slots=False)
+@ipd.mutablestruct
 class SymmetryManager(ABC, metaclass=MetaSymManager):
     """Abstract base class for managing symmetry operations in the IPD framework.
 
@@ -222,7 +220,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
-        # ic(xyz.shape, pair.shape)
+        # ipd.icv(xyz.shape, pair.shape)
         xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
@@ -274,8 +272,8 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             if self.opt.sympair_method == 'max':
                 grouped[group] = th.maximum(grouped[group], pair[i:i + N, j:j + N])
             elif self.opt.sympair_method == 'mean':
-                # ic(grouped[group].shape)
-                # ic(pair[i:i + N, j:j + N].shape)
+                # ipd.icv(grouped[group].shape)
+                # ipd.icv(pair[i:i + N, j:j + N].shape)
                 grouped[group] += pair[i:i + N, j:j + N] / Nmembers
             else:
                 raise NotImplementedError(f'unknown sympair_method {self.opt.sympair_method}')
@@ -290,7 +288,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
     def apply_symmetry_index(self, idx: T, val: T, isidx, **kw) -> T:
         """handles index data types where values must be reindexed in context of the symmetric object"""
-        ic(self.symid, self.nsub, idx, val, isidx)
+        ipd.icv(self.symid, self.nsub, idx, val, isidx)
         asu = val[self.idx.asu[idx]]
         asuidx = idx[self.idx.asu[idx]]
         asym = val[self.idx.asym[idx]]
@@ -300,13 +298,13 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         for i in range(1, self.nsub):
             new1 = asu.clone()
             new1[:, isidx] = self.idx.idx_asu_to_sub.to(self.device)[i, asu[:, isidx].to(int)].to(asu.dtype)
-            ic(new1)
+            ipd.icv(new1)
             new.append(new1)
             newidx.append(self.idx.idx_asu_to_sub.to(self.device)[i, asuidx])
         new = th.cat(new, 0)
         newidx = th.cat(newidx)
         assert th.allclose(newidx, idx)
-        ic(new)
+        ipd.icv(new)
         assert 0
         return new
 
@@ -326,23 +324,23 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def move_unsym_to_match_asu(self, orig, moved, move_all_nonprot=False):
         if not self.opt.move_unsym_with_asu: return moved
         tomove = self.munsym | (self.mnonprot if move_all_nonprot else False)
-        # ic(move_all_nonprot)
-        # ic(self.munsym)
-        # ic(self.mnonprot)
+        # ipd.icv(move_all_nonprot)
+        # ipd.icv(self.munsym)
+        # ipd.icv(self.mnonprot)
         if not th.sum(tomove): return moved
         origasu = orig[self.masu, 0]
         movedasu = moved[self.masu, 0]
         unsym = orig[tomove]
-        # ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
+        # ipd.icv(origasu.shape, movedasu.shape, orig.shape, moved.shape)
         if len(unsym) and len(origasu) > 2 and not th.allclose(origasu, movedasu, atol=1e-3):
             rms, _, xfit = ipd.h.rmsfit(origasu, movedasu)
             moved[tomove] = ipd.h.xform(xfit, unsym)
             if rms > 1e-3:
-                ic(orig)
-                ic(moved)
-                ic(rms)
-                ic(th.where(self.idx.unsym)[0])
-                ic(self.idx)
+                ipd.icv(orig)
+                ipd.icv(moved)
+                ipd.icv(rms)
+                ipd.icv(th.where(self.idx.unsym)[0])
+                ipd.icv(self.idx)
                 import sys
                 sys.exit()
                 # ipd.showme(origasu)
@@ -413,7 +411,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         if skip_keys is None: skip_keys = []
         if key in skip_keys: return thing
         if thing is None: return None
-        # ic('extract', type(thing), kw.keys())
+        # ipd.icv('extract', type(thing), kw.keys())
         thing = self.sym_adapt(thing, isasym=False)
         if isinstance(thing.adapted, np.ndarray):
             mask = mask.cpu().numpy()
@@ -426,19 +424,19 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             return thing.reconstruct(thing.adapted[mask], **kw)
         elif thing.kind.shapekind == ShapeKind.TWODIM:
             x = thing.adapted[mask[None] * mask[:, None]]
-            # ic(x.shape, mask.sum(), mask.shape, kw)
+            # ipd.icv(x.shape, mask.sum(), mask.shape, kw)
             return thing.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)
         elif thing.kind.shapekind == ShapeKind.SPARSE:
-            # ic(mask.shape, mask)
-            # ic(thing.adapted.idx.shape)
-            # ic(thing.adapted.val.shape)
+            # ipd.icv(mask.shape, mask)
+            # ipd.icv(thing.adapted.idx.shape)
+            # ipd.icv(thing.adapted.val.shape)
             v = thing.adapted.val.rename(None)
             is_not_index = v.to(int) != v
-            # ic(is_not_index)
+            # ipd.icv(is_not_index)
             thing.adapted.val[:] = th.where(is_not_index, v, self.idx.idx_sym_to_asym[v.to(int)])
-            # ic(mask.shape, mask)
+            # ipd.icv(mask.shape, mask)
             keep = mask[thing.adapted.idx]
-            # ic(keep.shape, keep)
+            # ipd.icv(keep.shape, keep)
             thing.adapted.idx = thing.adapted.idx[keep]
             thing.adapted.val = thing.adapted.val[keep, ...]
             return thing.reconstruct(thing.adapted)
@@ -488,11 +486,11 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         None."""
         if not self._idx:
             try:
-                # ic(self.opt.L,self.opt.Lasu,self.opt.nsub)
+                # ipd.icv(self.opt.L,self.opt.Lasu,self.opt.nsub)
                 L = self.opt.L or self.opt.Lasu * self.opt.nsub
                 Lasu = self.opt.Lasu or L // self.opt.nsub
                 nsub = self.opt.nsub or L // Lasu
-                # ic(L,Lasu,nsub)
+                # ipd.icv(L,Lasu,nsub)
                 self._idx = self.SymIndexType(nsub, [(L, 0, Lasu * nsub)])
             except (TypeError, AttributeError):
                 return None

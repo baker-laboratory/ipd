@@ -280,8 +280,8 @@ def fname_extensions(fname):
     else:
         assert 0
 
-    # ic(e)
-    # ic(f'{b}.{e}' if e else b)
+    # ipd.icv(e)
+    # ipd.icv(f'{b}.{e}' if e else b)
     directory = f"{d}/" if d else ""
     base = f  # type: ignore
     ext = f".{e}" if e else ""  # type: ignore

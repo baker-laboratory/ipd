@@ -33,7 +33,7 @@ def test_symcheck():
     # x = sym(SAT(th.tensor([0, 1, 5, 10]), sym, idx=[0, 1, 5, 10], isidx=slice(None)))
     # sym.assert_symmetry_correct(x)
     x = SAT(th.tensor([0, 1, 2, 3, 5, 10, 12]), sym, idx=[0, 1, 2, 3, 5, 10, 12], isidx=True).adapted
-    # ic(x)
+    # ipd.icv(x)
     sym.assert_symmetry_correct(x)
     with pytest.raises((AssertionError, ValueError)):
         sym.assert_symmetry_correct(

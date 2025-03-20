@@ -49,10 +49,10 @@ def pymol_viz_RigidBody(
     ipd.showme(body.coords, addtocgo=cgo, sphere=vizsphereradius, col=col, **kw)
 
     if showcontactswith is not None:
-        # ic(body.point_contact_count(showcontactswith, contactdist=showpairsdist))
+        # ipd.icv(body.point_contact_count(showcontactswith, contactdist=showpairsdist))
         pairs = body.interactions(showcontactswith, contactdist=showpairsdist)
-        # ic(len(set(pairs[:, 0])))
-        # ic(len(set(pairs[:, 1])))
+        # ipd.icv(len(set(pairs[:, 0])))
+        # ipd.icv(len(set(pairs[:, 1])))
 
         crds = body.coords
         for i in set(pairs[:, 0]):

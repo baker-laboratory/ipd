@@ -78,7 +78,7 @@ def test_sym_adapt_tensor_1d():
 
     sym.sym_adapt(th.randn(10, 3)).adapted.shape == (10, 1, 3)
     x = sym.sym_adapt(th.randn(7, 3))
-    # ic(x.adapted.shape)
+    # ipd.icv(x.adapted.shape)
     assert x.adapted.shape == (10, 1, 3)
     assert x.reconstruct(x.adapted).shape == (10, 3)
     x = sym.sym_adapt(th.randn(1, 1, 7, 3, 2, 1))
@@ -117,7 +117,7 @@ def test_sym_adapt_tensor_3d():
     sym.idx = [(10, 0, 6)]
     # sym.sym_adapt(th.randn(10, 3)).adapted[0].shape == (10, 3)
     x = sym.sym_adapt(th.randn(1, 1, 1, 10, 2, 4, 3))
-    # ic(x.adapted.shape)
+    # ipd.icv(x.adapted.shape)
     assert x.adapted.shape == (10, 2, 4, 3, 1, 1, 1)
 
 def _dispatch_symfunc_on_type_shape(*a, **kw):

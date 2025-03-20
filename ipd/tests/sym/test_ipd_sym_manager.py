@@ -10,7 +10,6 @@ else:
     th = lazyimport('torch')
 
 import hypothesis
-from icecream import ic
 
 import ipd
 import ipd.homog.thgeom as h
@@ -42,7 +41,7 @@ def test_sym_manager():
     ])
 
     assert sym.idx.Nasu == 1
-    ic(sym.nsub)
+    ipd.icv(sym.nsub)
     assert sym.nsub == 2
 
     xyz = th.randn((2, 3))
@@ -87,8 +86,8 @@ def test_sym_asu_align_icos_unsym():
     xyz = th.randn((N, 3)) + 10
     n = sym.nsub
     sym.idx = [ipd.sym.SymSlice((N, 0, 180))]
-    # ic(sym.idx.asufit.to(int))
-    # ic(sym.idx.asunotfit.to(int))
+    # ipd.icv(sym.idx.asufit.to(int))
+    # ipd.icv(sym.idx.asunotfit.to(int))
     symxyz = sym(xyz, showme=0)
     # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
@@ -123,10 +122,10 @@ def test_sym_fit_icos_unsym_multislice():
     xyz = th.randn((N, 3)) + 10
     n = sym.nsub
     sym.idx = [(N, 10, 40), (N, 50, 80), (N, 120, 150)]
-    # ic(sym.idx.asufit.to(int))
-    # ic(sym.idx.asunotfit.to(int))
-    # ic(sym.idx.unsym.to(int))
-    # ic(sym.idx.asu.to(int))
+    # ipd.icv(sym.idx.asufit.to(int))
+    # ipd.icv(sym.idx.asunotfit.to(int))
+    # ipd.icv(sym.idx.unsym.to(int))
+    # ipd.icv(sym.idx.asu.to(int))
     symxyz = sym(xyz, showme=0)
     # ipd.showme(symxyz)
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)

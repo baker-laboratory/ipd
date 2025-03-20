@@ -1,5 +1,4 @@
 import numpy as np
-from icecream import ic
 
 import ipd as ipd
 
@@ -64,7 +63,7 @@ def test_hxformpts_bug():
     assert result.shape == (4, 6, 4)
     result = ipd.homog.hxformpts(frames, pts4, outerprod=True)
     assert result.shape == (4, 4, 4)
-    ic(result.shape)
+    ipd.icv(result.shape)
 
 def test_homog_misc1():
     # coords = np.array([[
@@ -375,16 +374,16 @@ def test_homog_misc1():
     ])
 
     assert ipd.homog.hvalid(symframes)
-    # ic(np.linalg.det(symframes[:, :3, :3]))
+    # ipd.icv(np.linalg.det(symframes[:, :3, :3]))
     # ipd.showme(symframes)
-    # ic(np.linalg.norm(symframes[:, :3, 3], axis=1))
+    # ipd.icv(np.linalg.norm(symframes[:, :3, 3], axis=1))
     # ipd.showme(coords.reshape(-1, 3))
-    # ic(coords.shape)
-    # ic(coords)
+    # ipd.icv(coords.shape)
+    # ipd.icv(coords)
     x = ipd.homog.hxform(symframes, coords, homogout=True)
     # x = ipd.homog.hxform(symframes.swapaxes(1, 2), coords)
-    # ic(x.shape)
-    # ic(x[:, :, 3])
+    # ipd.icv(x.shape)
+    # ipd.icv(x[:, :, 3])
     # ipd.showme(x.reshape(-1, 4))
 
 if __name__ == "__main__":

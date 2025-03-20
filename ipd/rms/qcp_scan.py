@@ -10,7 +10,6 @@ else:
 
 import numpy as np
 import torch.utils.cpp_extension  # type: ignore
-from icecream import ic
 
 import ipd
 import ipd.homog.thgeom as h
@@ -59,7 +58,7 @@ def qcp_scan_ref(bb, tgt, ranges=None, cyclic=1, rmsout=False, maxdist=9e9):
         ranges0 = list()
     if maxdist < 9e9:
         ranges = th.stack([r & (maxdist > h.norm(rp[0] - bb[:, 0])) for r, rp in zip(ranges, tgt)])
-        ic(ranges.to(int))
+        ipd.icv(ranges.to(int))
         assert 0
     tgtcen = tgt - tgt.mean((0, 1))
     sizes = ranges.sum(1)
@@ -89,18 +88,18 @@ def _qcp_scan_impl(bb, tgt, ranges, sizes, Lasu=0, cyclic=1):
         shape[i] = sizes[i]
         w = torch.where(mask)[0]
         for j in range(cyclic):
-            # ic(bb[w+j*Lasu])
+            # ipd.icv(bb[w+j*Lasu])
             cen += bb[w + j*Lasu].mean(1).reshape(shape)
     cen /= len(ranges) * cyclic
-    # ic(cen)
+    # ipd.icv(cen)
     for i, mask in enumerate(ranges):
         shape = [1] * len(ranges) + list(tgt.shape[1:])
         shape[i] = sizes[i]
         w = torch.where(mask)[0]
         for j in range(cyclic):
             mcen = bb[w + j*Lasu].reshape(shape) - cen.unsqueeze(-2)
-            # ic(mcen.shape, tgt[i, ..., None, :].shape)
-            # ic((mcen[..., None] * tgt[i, ..., None, :]).shape)
+            # ipd.icv(mcen.shape, tgt[i, ..., None, :].shape)
+            #  ipd.icv(mcen[..., None] * tgt[i, ..., None, :]).shape)
             iprod += (mcen[..., None] * tgt[i + j * len(ranges), ..., None, :]).sum(-3)
             E0 += mcen.square().sum((-1, -2))
 
@@ -121,8 +120,8 @@ def _mark_overlapping_refpts(ranges, sizes, rms):
             idx = [slice(None)] * len(ranges)
             idx[i] = ir
             idx[j] = jr
-            # ic(ranges)
-            # ic(idx)
+            # ipd.icv(ranges)
+            # ipd.icv(idx)
             rms[tuple(idx)] = 9e9
 
             # assert 0
@@ -139,19 +138,19 @@ def _qcp_scan_checks(bb, tgt, idx0, idx, rmsfull, cyclic, Lasu):
     rms, R, T = ipd.fit.qcp_rms_align(tgt.cpu().to(float), selpts.to(float))
     R, T = R.to(th.float32), T.to(th.float32)
     if abs(minrms - rms) > 0.001:
-        ic(rms, minrms, idx)
+        ipd.icv(rms, minrms, idx)
         assert abs(minrms - rms) < 0.001
     hrms, _, xfit = h.rmsfit(tgt.cpu(), selpts)
     assert abs(rms - hrms) < 0.001
     if not th.allclose(R, xfit[:3, :3], atol=1e-2):
-        ic(R, xfit[:3, :3])
-        ic(R - xfit[:3, :3])
-        ic(T, xfit[:3, 3])
+        ipd.icv(R, xfit[:3, :3])
+        ipd.icv(R - xfit[:3, :3])
+        ipd.icv(T, xfit[:3, 3])
         assert th.allclose(R, xfit[:3, :3], atol=1e-2)
     assert th.allclose(T, xfit[:3, 3], atol=1e-2)
     hnewxyz = h.xform(xfit, tgt.cpu())
     halnrms = th.sqrt((hnewxyz - selpts).square().sum() / len(tgt))
-    # ic(halnrms, hrms)
+    # ipd.icv(halnrms, hrms)
     assert abs(halnrms - hrms) < 0.001
     newxyz = th.einsum('ij,rj->ri', R, tgt.cpu()) + T
     alnrms = th.sqrt((newxyz - selpts).square().sum() / len(tgt))

@@ -37,7 +37,7 @@ def showcom(sel="all"):
 def cgo_sphere(cen, rad=1, col=(1, 1, 1)):
     cen = ipd.homog.hpoint(cen).reshape(-1, 4)
     # white sphere with 3A radius
-    # ic(col)
+    # ipd.icv(col)
     mycgo = [cgo.COLOR, col[0], col[1], col[2]]  # type: ignore
     for c in cen:
         mycgo.extend([cgo.SPHERE, c[0], c[1], c[2], rad])  # type: ignore
@@ -232,7 +232,7 @@ def cgo_fan(
     col2 = col2 or col
     rot = ipd.homog.hrot(axis, arc / (ntri+0), cen)
 
-    # ic(startpoint - cen)
+    # ipd.icv(startpoint - cen)
     dirn = ipd.homog.hprojperp(axis, startpoint - cen)
     dirn = ipd.homog.hnormalized(dirn)
     cen = cen + fanshift*axis
@@ -363,7 +363,7 @@ def showcell(*args, **kw):
     cmd.set_view(v)  # type: ignore
 
 def cgo_cell(lattice, r=0.03):
-    ic(lattice)  # type: ignore
+    ipd.icv(lattice)  # type: ignore
     lattice = lattice.T
     a = [
         [0, 0, 0],
@@ -395,7 +395,8 @@ def cgo_cell(lattice, r=0.03):
     ]
 
     mycgo = [
-        [cgo.CYLINDER, a[i][0], a[i][1], a[i][2], b[i][0], b[i][1], b[i][2], r, 1, 1, 1, 1, 1, 1]  # type: ignore
+        [cgo.CYLINDER, a[i][0], a[i][1], a[i][2], b[i][0], b[i][1], b[i][2], r, 1, 1, 1, 1, 1,
+         1]  # type: ignore
         for i in range(len(a))
     ]
     mycgo = list(itertools.chain(*mycgo))
@@ -436,7 +437,8 @@ def cgo_cube(lb=[-10, -10, -10], ub=[10, 10, 10], r=0.03, xform=np.eye(4)):
         ipd.homog.hxform(xform, [ub[0], lb[1], lb[2]]),
     ]
     mycgo = [
-        [cgo.CYLINDER, a[i][0], a[i][1], a[i][2], b[i][0], b[i][1], b[i][2], r, 1, 1, 1, 1, 1, 1]  # type: ignore
+        [cgo.CYLINDER, a[i][0], a[i][1], a[i][2], b[i][0], b[i][1], b[i][2], r, 1, 1, 1, 1, 1,
+         1]  # type: ignore
         for i in range(len(a))
     ]
     mycgo = list(itertools.chain(*mycgo))

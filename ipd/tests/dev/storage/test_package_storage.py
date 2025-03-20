@@ -53,7 +53,7 @@ def test_package_testdata_path():
 # def test_load_package_data():
 # pickle.dump({"key": "value"}, tmpfile)
 # tmpfile.flush()
-# ic(tmpfile.name)
+# ipd.icv(tmpfile.name)
 # data = load_package_data(tmpfile.name)
 # assert data == {"key": "value"}
 

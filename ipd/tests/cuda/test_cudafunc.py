@@ -77,8 +77,8 @@ def test_cudafunc_contact_on_gpu():
     dist = th.arange(0, 10.001, 0.5).to('cuda').to(th.float32)
     ref = th.tensor([func.reference_impl(x) for x in dist])
     tst = func(dist)
-    # ic(dist)
-    # ic(tst)
+    # ipd.icv(dist)
+    # ipd.icv(tst)
     assert th.allclose(tst.cpu(), ref)
 
 if __name__ == '__main__':

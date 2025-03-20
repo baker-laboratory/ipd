@@ -28,7 +28,7 @@ def set_default_motif_manager(kind):
     """Set the default motifmetry manager."""
     global _default_motif_manager
     _default_motif_manager = kind
-    # ic('set_default_motif_manager', kind, _default_motif_manager)
+    # ipd.icv('set_default_motif_manager', kind, _default_motif_manager)
 
 def create_motif_manager(conf=None, extra_params=None, kind=None, device=None, **kw):
     """Create a motif manager based on the configuration.

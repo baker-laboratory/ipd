@@ -41,5 +41,5 @@ _global_timer = None
 def __getattr__(name) -> Any:
     if name == 'global_timer':
         global _global_timer
-        return (_global_timer := _global_timer or Timer())
+        return (_global_timer := _global_timer or Timer('IPD Global Timer'))
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")

@@ -6,7 +6,7 @@ from ipd.viz.pymol_viz import lazy_register
 
 def show_atoms_pymol(atoms, name='atoms'):
     tag = str(random.random())[2:]
-    # ic(tag)
+    # ipd.icv(tag)
     with tempfile.TemporaryDirectory() as td:
         td = '/tmp'
         ipd.atom.dump(atoms, f'{td}/{tag}.pdb')

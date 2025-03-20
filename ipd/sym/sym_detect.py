@@ -1,6 +1,5 @@
 from collections.abc import Iterable
 import sys
-import attrs
 import numpy as np
 import ipd
 import ipd.homog.hgeom as h
@@ -57,7 +56,7 @@ def detect(
 
 @ipd.dev.subscriptable_for_attributes
 # @ipd.dev.element_wise_operations
-@attrs.define
+@ipd.struct
 class SymInfo:
     """
     Contains information about detected symmetry, returned from `detect`.
@@ -104,7 +103,7 @@ class SymInfo:
     is_1d: bool = None
     is_2d: bool = None
     is_3d: bool = None
-    provenance: ipd.Bunch = attrs.field(factory=ipd.Bunch)
+    provenance: ipd.Bunch = ipd.field(ipd.Bunch)
 
     unique_nfold: list = None
     nfaxis: dict[int, np.ndarray] = None
@@ -117,14 +116,14 @@ class SymInfo:
     tol_checks: dict = None
 
     # if constructed from coords
-    rms: np.ndarray = attrs.field(factory=lambda: np.array([0.0]))
+    rms: np.ndarray = ipd.field(lambda: np.array([0.0]))
     stub0: np.ndarray = None
 
     # if is_multichain asu
     asurms: np.ndarray = None
     seqmatch: np.ndarray = None
     asumatch: np.ndarray = None
-    asuframes: np.ndarray = attrs.field(factory=lambda: np.eye(4)[None])
+    asuframes: np.ndarray = ipd.field(lambda: np.eye(4)[None])
     allframes: np.ndarray = None
 
     # coords and is_multichain
@@ -135,7 +134,7 @@ class SymInfo:
     is_dihedral = property(lambda self: self.symid[0] == 'D')
     is_cage = property(lambda self: self.symid[0] in 'TIO')
 
-    def __attrs_post_init__(self):
+    def __post_init__(self):
         _syminfo_post_init(self)
 
     def __getattr__(self, name):
@@ -196,7 +195,7 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw)
     if len(atomslist) == 1: return syminfo_from_frames(np.eye(4)[None])
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))
     components = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, maxsub=60, **kw)
-    # ic(len(components.atoms))
+    # ipd.icv(len(components.atoms))
     # ipd.showme(components.atoms[0])
     # ipd.showme(components.atoms[1])
     # ipd.print_table(components.pick('seqmatch rmsd'))
@@ -439,14 +438,14 @@ def check_sym_combinations(syminfos, incomplete=False):
     if not incomplete:
         return syminfos
 
-    ic(symids)
+    ipd.icv(symids)
 
     frames, stubs = list(), list()
     for sinfo in syminfos:
         # ipd.print_table(sinfo.symelem)
         frames.append(sinfo.frames)
         stubs.append(h.xform(sinfo.frames, sinfo.stub0))
-        ic(sinfo.frames.shape)
+        ipd.icv(sinfo.frames.shape)
 
     frames = np.concatenate(frames)
     frames = np.concatenate(stubs)

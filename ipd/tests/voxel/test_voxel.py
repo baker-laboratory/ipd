@@ -3,7 +3,6 @@ import random
 
 import numpy as np
 import pytest
-from icecream import ic
 
 import ipd
 import ipd.homog.thgeom as h
@@ -46,7 +45,7 @@ def Voxel_score_converse():
     x = ipd.samp.randxform(1000, cartmean=[30, 0, 0], cartsd=10)
     sc1 = vox1.score(xyz2, xyzpos=x)
     sc2 = vox2.score(xyz1, voxpos=x)
-    ic(sc1[0], sc2[0])
+    ipd.icv(sc1[0], sc2[0])
     # ipd.viz.scatter(sc1.cpu(),sc2.cpu())
     # assert 0
 
@@ -58,7 +57,7 @@ def test_Voxel_score_boundscheck():
     x = ipd.samp.randxform(1000000, cartmean=[30, 0, 0], cartsd=10)
     sc = vox.score(xyz, xyzpos=x)
     sc2 = vox.score(xyz, xyzpos=x, boundscheck=True)
-    ic(th.max(sc - sc2))
+    ipd.icv(th.max(sc - sc2))
     assert th.allclose(sc, sc2, atol=1e-3)
     # print(th.quantile(sc, th.linspace(0,1,7,device='cuda')))
     print(sc.min(), th.sum(sc == 0) / len(sc))
@@ -177,7 +176,7 @@ def test_Voxel_score_outerfalse():
     sc1 = vox.score(localxyz, xyzpos, voxpos, outerprod=False)
     sc2 = vox.score(localxyz, xyzpos=pos2)
     sc3 = vox.score(localxyz, voxpos=pos3)
-    # ic(th.sum(th.abs(sc1 - sc2) > 0.001), th.sum(th.abs(sc1 - sc3) > 0.001))
+    # ipd.icv(th.sum(th.abs(sc1 - sc2) > 0.001), th.sum(th.abs(sc1 - sc3) > 0.001))
     assert th.sum(th.abs(sc2 - sc1) > 0.1) < 15
     assert th.sum(th.abs(sc2 - sc1) > 0.01) < 35
     assert th.sum(th.abs(sc2 - sc1) > 0.001) < 100
@@ -278,14 +277,14 @@ def test_Voxel_score():
         xyz = h.xform(frame, localxyz, outerprod=True)
         xyzvox = h.xform(h.inv(voxpos), xyz, outerprod=False)
         # xyzvox2 = h.xform(h.xform(h.inv(voxpos), frame), localxyz, outerprod=True)
-        # ic(xyzvox.shape)
-        # ic(xyzvox2.shape)
+        # ipd.icv(xyzvox.shape)
+        # ipd.icv(xyzvox2.shape)
         # assert th.allclose(xyzvox, xyzvox2, atol=1e-3) # sanity check in the midst of debugging...
-        # ic(h.inv(voxpos))
-        # ic(frame[0])
-        # ic(h.xform(h.inv(voxpos), frame[0]))
-        # ic(xyz)
-        # ic(xyzvox)
+        # ipd.icv(h.inv(voxpos))
+        # ipd.icv(frame[0])
+        # ipd.icv(h.xform(h.inv(voxpos), frame[0]))
+        # ipd.icv(xyz)
+        # ipd.icv(xyzvox)
         idx = ((xyzvox - vox.lb) / vox.resl).to(int).cpu()
         sc2 = th.zeros(len(frame), device='cuda')
         gridsize = th.tensor(vox.grid.shape, dtype=int)
@@ -308,7 +307,7 @@ def test_Voxel_score_symcheck():
         th.manual_seed(isamp)
         np.random.seed(isamp)
         symx = ipd.h.rot([0, 0, 1], random.choice([60, 72, 90, 120, 180])).to(th.float32).to('cuda')
-        # ic(symx)
+        # ipd.icv(symx)
         symclashdist = float(th.rand(1) * 8)
         voxpts = make_test_points(400, 30)
         localxyz = make_test_points(nxyz, 30)
@@ -334,16 +333,16 @@ def test_Voxel_score_symcheck():
                 sc2[i] += vox.grid[idx[i, j, 0], idx[i, j, 1], idx[i, j, 2]]
         if symclashdist > 0:
             symxyz = h.xform(symx, xyz)
-            # ic(localxyz)
-            # ic(xyz)
-            # ic(symxyz)
+            # ipd.icv(localxyz)
+            # ipd.icv(xyz)
+            # ipd.icv(symxyz)
             if nxyz == 1: symdist = (xyz - symxyz).norm()[None, None]
             else: symdist = (xyz[:, None] - symxyz[:, :, None]).norm(dim=-1).min(-1)[0]
             (xyz[:, None] - symxyz[:, :, None]).norm(dim=-1)
-            # ic(symdistfull)
+            # ipd.icv(symdistfull)
             sc = th.where(th.any(symdist < symclashdist, dim=1), 9e9, sc)
             sc2 = th.where(th.any(symdist < symclashdist, dim=1), 9e9, sc2)
-        # ic(sc-sc2)
+        # ipd.icv(sc-sc2)
         if not th.allclose(sc2, sc, atol=1e-3):
             print("test_Voxel_score_symcheck FAIL", isamp)
             assert th.allclose(sc2, sc, atol=1e-3)

@@ -2,7 +2,6 @@ import math
 
 import numpy as np
 import torch as th  # type: ignore
-from icecream import ic
 
 import ipd
 import ipd.homog.thgeom as h
@@ -38,7 +37,7 @@ class Voxel:
                                                       nthread=self.create_threads,
                                                       repulsive_only=self.repulsive_only)
         if not th.all(self.lb + self.resl < self.xyz.min(0)[0]):
-            ic(self.lb)
+            ipd.icv(self.lb)
             assert th.all(self.lb + self.resl < self.xyz.min(0)[0])
 
     def score(
@@ -91,11 +90,11 @@ class Voxel:
             cen2 = xyzpos @ h.point(cen2.to('cuda'))
             pad = self.func.arg[-1] + self.resl * math.sqrt(3) / 2
             ok = h.norm2(cen1 - cen2) < (rad1 + rad2 + pad)**2
-            # ic(ok.sum() / len(ok))
+            # ipd.icv(ok.sum() / len(ok))
             if ok.sum() == 0: return th.zeros(1, device='cuda')
             if len(voxposinv) > 1: voxposinv = voxposinv[ok]
             if len(xyzpos) > 1: xyzpos = xyzpos[ok]
-            # ic(cen1.shape, cen2.shape, rad1, rad2)
+            # ipd.icv(cen1.shape, cen2.shape, rad1, rad2)
         if repulsive_only is None: repulsive_only = th.empty(0, dtype=bool)  # type: ignore
         score = _voxel.score_voxel_grid(
             self.grid,

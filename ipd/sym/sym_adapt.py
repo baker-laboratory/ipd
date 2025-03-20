@@ -236,7 +236,7 @@ with contextlib.suppress(ImportError):
         if isasym is not None: return isasym
         if sym.L in tensor.shape: return False
         if sym.Nasym in tensor.shape: return True
-        ic(sym.L, sym.Nasu, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
+        ipd.icv(sym.L, sym.Nasu, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
         assert idx is not None
 
     class SymAdaptNamedDenseTensor(SymAdapt):
@@ -301,8 +301,8 @@ with contextlib.suppress(ImportError):
             idxdim = [n for n in tensor.names if n.startswith('Idx')][0]
             self.perm = tensor.align_to('Lsparse', idxdim, ...)
             idx = self.perm[:, int(idxdim.replace('IdxAll', '').replace('Idx', ''))].rename(None).to(int)
-            # ic(idx, self.perm.shape)
-            # ic(tensor.shape, tensor.names, idxdim, idx)
+            # ipd.icv(idx, self.perm.shape)
+            # ipd.icv(tensor.shape, tensor.names, idxdim, idx)
             if sym.idx.is_sym_subsequence(idx):
                 assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.L)
                 self.asym = False
@@ -329,7 +329,7 @@ with contextlib.suppress(ImportError):
             self.adapted.val = self.adapted.val.rename(None).to(sym.device).to(self.orig.dtype)
 
         def reconstruct(self, x, **kw):  # type: ignore
-            # ic(self.perm.names, self.orig.names)
+            # ipd.icv(self.perm.names, self.orig.names)
             x = x.val.rename(*self.perm.names).align_to(*self.orig.names).rename(None)
             return x.to(self.orig.device).to(self.orig.dtype)
 
@@ -378,7 +378,7 @@ with contextlib.suppress(ImportError):
                 oldshape = x.shape
                 x = x.swapdims(0, altpos - 1)
                 undo.insert(0, [x.shape, (altpos - 1, 0), oldshape])
-                # ic(undo[0])
+                # ipd.icv(undo[0])
         if x.shape[0] != keydim:
             raise ValueError(f'bad no keydim {keydim} in tensor shape {x.shape}')
         return x, undo
@@ -393,7 +393,7 @@ with contextlib.suppress(ImportError):
         oldL = int(resizefrom)
         newL = int(x.shape[0])
         for oldshape, swap, newshape in undo[:-1]:
-            # ic(x.shape, oldshape, swap, newshape)
+            # ipd.icv(x.shape, oldshape, swap, newshape)
             x = x.view(_resize(oldshape, oldL, newL)).swapdims(*swap).view(_resize(newshape, oldL, newL))
         return x.view(_resize(undo[-1], oldL, newL))
 
@@ -476,9 +476,9 @@ with contextlib.suppress(ImportError):
                 elif symonly: x.val = x.val[self.sym.idx.asymidx(x.idx)].reshape(self.symonlyshape)
                 else: x.val = x.val.reshape(self.symshape)
                 return x
-            # ic(x.shape)
-            # ic(self.sym.L)
-            # ic(self.undo)
+            # ipd.icv(x.shape)
+            # ipd.icv(self.sym.L)
+            # ipd.icv(self.undo)
             new = tensor_undo_perm(x, self.undo, resizefrom=self.sym.Nasym if self.isasym else self.sym.L)
             if self.tlib == 'torch': new = new.to(self.orig.device)
             else: new = new.cpu().numpy()
@@ -509,7 +509,7 @@ with contextlib.suppress(ImportError):
                 self.new = self.new.reshape(s.L, s.L, *tensor.shape[2:])
                 assert not self.isidx
             elif tensor.shape[0] == s.Nasym and s.Nasym != s.L:
-                # ic(tensor.shape, s.Nasym, s.L)
+                # ipd.icv(tensor.shape, s.Nasym, s.L)
                 if self.isasym is not None: assert self.isasym
                 shape = (s.L, *tensor.shape[1:])
                 if self.tlib == 'torch': self.new = th.zeros(shape, dtype=tensor.dtype, **kw)
@@ -576,8 +576,8 @@ with contextlib.suppress(ImportError):
                     self.new.val[:, self.isidx] = tosym
                 assert len(self.new.idx) == len(self.new.val)
             else:
-                ic(self.sym)  # type: ignore
-                ic(self.idx)  # type: ignore
+                ipd.icv(self.sym)  # type: ignore
+                ipd.icv(self.idx)  # type: ignore
                 raise ValueError('sparse indices are not asym or sym compatible')
             self.symdims = []
             self.symshape = self.new.val.shape

@@ -165,9 +165,9 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **_)
     _asmid, opers, _asymids, _order = asminfo.assemblies.valwise[iasm]
     xforms = np.array([h.product(*[asminfo.xforms[op] for op in opstep]) for opstep in opers])
     asu = ipd.atom.select(asu, chains=np.unique(atoms.chain_id))
-    # ic(asmid, opers, asymids, order)
-    # ic(len(asu), len(atoms), asu.coord.shape, atoms.coord[:len(asu):].shape)
-    # ic(len(atoms), len(asu), len(atoms) / len(asu))
+    # ipd.icv(asmid, opers, asymids, order)
+    # ipd.icv(len(asu), len(atoms), asu.coord.shape, atoms.coord[:len(asu):].shape)
+    # ipd.icv(len(atoms), len(asu), len(atoms) / len(asu))
     err = f'number of atoms {len(atoms)} is not a multiple of the number of ASU atoms {len(asu)}'
     assert len(atoms) % len(asu) == 0, err
     f'number of ASU atoms {len(asu)} times number of assemblies {len(xforms)} does not match number of atoms {len(atoms)}'
@@ -186,24 +186,24 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **_)
     for c, crng in chains.items():
         for _lb, ub in crng:
             assert 0 < ub <= len(atoms), f'bad chain range {crng} for {c} in assembly {len(atoms)}'
-        # ic(breaks[-1], len(atoms) + 1)
+        # ipd.icv(breaks[-1], len(atoms) + 1)
         # assert 0
         # assert breaks[-1][1] == len(atoms) + 1
-    # ic(chainsasu)
-    # ic(chains)
-    # ic(xforms)
-    # ic(asminfo)
+    # ipd.icv(chainsasu)
+    # ipd.icv(chains)
+    # ipd.icv(xforms)
+    # ipd.icv(asminfo)
     asmx = ipd.Bunch(_xforms=xforms, ix=[], asurange=[], symrange=[])
     for ix, _x in enumerate(xforms):
         for c, crngasu, crng in ipd.dev.zipitems(chainsasu, chains):
             num_asu_ranges = len(crngasu)
-            # ic(len(xforms), ix, c, len(crng), num_asu_ranges)
+            # ipd.icv(len(xforms), ix, c, len(crng), num_asu_ranges)
             assert len(xforms) == len(
                 crng
             ) / num_asu_ranges, f'number of assemblies {len(xforms)} does not match number of chains {len(crng) / num_asu_ranges} for {c}'
             for iasurange in range(num_asu_ranges):
                 (lb1, ub1), (lb2, ub2) = crngasu[iasurange], crng[ix*num_asu_ranges + iasurange]
-                # ic(ix, c, iasurange)
+                # ipd.icv(ix, c, iasurange)
                 assert ub1 - lb1 == ub2 - lb2, f'number of atoms in ASU {ub1 - lb1} does not match number of atoms in assembly {ub2 - lb2} for {c}'
                 asmx.ix.append(ix)
                 asmx.asurange.append((lb1, ub1))
@@ -211,7 +211,7 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **_)
                 if strict:
                     orig = h.xform(xforms[ix], asu.coord[lb1:ub1])
                     new = atoms.coord[lb2:ub2]
-                    # ic(orig.shape, new.shape)
+                    # ipd.icv(orig.shape, new.shape)
                     # ipd.showme(orig, new)
                     close = np.allclose(orig, new, atol=1e-3)
                     if not close:
@@ -223,7 +223,7 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **_)
     asmx = asmx.mapwise(np.array)
     asmx._chainasu, asmx._chains = chainsasu, chains
     # assert np.allclose(asu.coord, atoms.coord[:len(asu)], atol=1e-3)
-    # ic(ipd.bunch.zip(asymchainstart, asymchainlen, chainstart, chainlen, order='val'))
+    # ipd.icv(ipd.bunch.zip(asymchainstart, asymchainlen, chainstart, chainlen, order='val'))
     return asmx
 
 def _readatoms_pdb(fname, file, **kw) -> 'AtomArray':
@@ -301,7 +301,7 @@ def cif_assembly_info(cif):
         _cif_parse_oper(op_expr)
         asymids = asym_id_expr.split(',')
         op_expr = _cif_parse_oper(op_expr)
-        # ic([f'{k}{v.shape}' for k,v in xforms.items()])
+        # ipd.icv([f'{k}{v.shape}' for k,v in xforms.items()])
         for op in ipd.dev.addreduce(op_expr):
             assert op in xforms, f'bad oper {op} in {op_expr} {xforms.keys()}'
         assemblies.mapwise.append(id=str(id), oper=op_expr, asymids=asymids, order=int(order))

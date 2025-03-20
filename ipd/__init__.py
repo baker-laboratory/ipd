@@ -46,6 +46,7 @@ from ipd._prelude.typehints import (KW as KW, FieldSpec as FieldSpec, EnumerIter
 optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
 capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
 ic, icm, icv = cherry_pick_imports('ipd.dev.debug', 'ic icm icv')
+timed = cherry_pick_import('ipd.dev.instrumentation.timer.timed')
 _global_chrono = None
 _checkpoint('ipd prelude imports')
 
@@ -74,7 +75,6 @@ from ipd.observer import hub as hub
 from ipd.dev.tolerances import Tolerances as Tolerances
 from ipd.dev.iterables import first as first
 from ipd.dev.contexts import stdio as stdio, catch_em_all as catch_em_all
-from ipd.project_config import install_ipd_pre_commit_hook
 
 _checkpoint('ipd from subpackage imports')
 from ipd import dev as dev, homog as homog
@@ -123,8 +123,9 @@ def showme(*a, **kw):
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
 
-install_ipd_pre_commit_hook(projdir, '..')
-_checkpoint('ipd pre commit hook')
+# from ipd.project_config import install_ipd_pre_commit_hook
+# install_ipd_pre_commit_hook(projdir, '..')
+# _checkpoint('ipd pre commit hook')
 
 if _global_chrono: _global_chrono.checkpoints.update(_timings)
 else: _global_chrono = Chrono(checkpoints=_timings)

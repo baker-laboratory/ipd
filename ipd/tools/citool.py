@@ -15,6 +15,7 @@ git = ipd.lazyimport('git')
 class CITool(IPDTool):
 
     def __init__(self, secretfile: str = '~/.secrets'):
+        if not os.path.exists(secretfile): return
         secrets: list[str] = Path(secretfile).expanduser().read_text().splitlines()
         self.secrets = ipd.Bunch({s.split('=')[0].replace('export ', ''): s.split('=')[1] for s in secrets})
         self.repos: dict[str, str] = {

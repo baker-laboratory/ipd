@@ -26,7 +26,6 @@ name = 'ipd'
 version = '0.2'
 requires-python = '>3.9,<4' # for woodys old pipeline stuff
 dependencies = [
-    'attrs',
     'assertpy',
     'colorlog',
     'compact-json',
@@ -105,7 +104,7 @@ all = [
     'jinja2',
     'pandas',
     'pdot',
-    'psycopg2',
+    # 'psycopg2',
     'scipy',
     'sqlmodel',
     'submitit',

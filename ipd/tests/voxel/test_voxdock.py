@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-from icecream import ic
 
 import ipd
 
@@ -42,7 +41,7 @@ def test_voxdock_ab(timer=ipd.dev.Timer()):
                          func=ipd.dev.cuda.ContactFunc(1000, -1, 4, 5, 9, 10),
                          repulsive_only=repulsive_only)
     # trans_score = rb.score(rb, th.eye(4), ipd.h.trans(x=th.arange(40, 50, 0.1))).min()
-    # ic(trans_score)
+    # ipd.icv(trans_score)
     timer.checkpoint('vox')
     # ipd.showme(rb, col=(1, 1, 1), name='ref', sphere=2)
     # rb._vizpos = ipd.h.trans([45,0,0])
@@ -66,7 +65,7 @@ def test_voxdock_ab(timer=ipd.dev.Timer()):
         maxcart, maxangle = maxcart * 0.5, maxangle * 0.5
         # itop = ipd.samp.sort_inplace_topk(sc, Ntop)
         itop = sc.topk(Ntop, largest=False).indices
-        # ic( len(set(itop) & set(itop2)))
+        # ipd.icv( len(set(itop) & set(itop2)))
         timer.checkpoint('topk')
         xform = th.tile(xform[itop], (N // Ntop, 1, 1))
         timer.checkpoint('xform tile')
@@ -134,7 +133,7 @@ def asuvec_frames_minimal_z(sym):
     # ncopy = list()
     # for nf in ipd.sym.axes(sym):
     #     x = h.rot(ipd.sym.axes(sym, nfold=nf, all=True), th.pi * 2 / nf)
-    #     ic(x.shape)
+    #     ipd.icv(x.shape)
     #     xsymuniq.append(x)
     #     ncopy.append(th.ones(len(x)) * (2 if nf > 2 else 1))
     # xsymuniq = th.cat(xsymuniq).to('cuda')
@@ -155,7 +154,7 @@ def scoreme(rb, xform, xsym, ncopy, maxcart, Ntop):
     #     for i, x in enumerate(xsym):
     #         if inbounds[i]:
     #             ipd.showme(h.xform(x @ xform[0], rb.xyz))
-    # ic(inbounds.shape)
+    # ipd.icv(inbounds.shape)
     if Ntop: inbounds = inbounds.max(1).values
     return sum(ncopy[i] * rb.score(rb, xsym[i] @ xform, xform) for i in range(len(xsym)) if inbounds[i])
 
@@ -172,7 +171,7 @@ def test_voxdock_cage_T():
         showme=0,  # type: ignore
         resl=0.5,  # type: ignore
         niters=5)  # type: ignore
-    ic(sc.min())  # type: ignore
+    ipd.icv(sc.min())  # type: ignore
     assert sc.min() < -100  # type: ignore
 
 def test_voxdock_cage_O():
@@ -188,7 +187,7 @@ def test_voxdock_cage_O():
         showme=0,  # type: ignore
         resl=0.5,  # type: ignore
         niters=5)  # type: ignore
-    ic(sc.min())  # type: ignore
+    ipd.icv(sc.min())  # type: ignore
     assert sc.min() < -150  # type: ignore
 
 def test_voxdock_cage_I():
@@ -204,7 +203,7 @@ def test_voxdock_cage_I():
         showme=0,  # type: ignore
         resl=0.5,  # type: ignore
         niters=5)  # type: ignore
-    ic(sc.min())  # type: ignore
+    ipd.icv(sc.min())  # type: ignore
     assert sc.min() < -200  # type: ignore
 
 def voxdock_cage(xyz,

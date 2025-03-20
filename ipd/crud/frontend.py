@@ -400,7 +400,7 @@ class ClientBase:
 
     def getattr(self, thing, id, attr):
         result = self.get(f'/getattr/{thing}/{id}/{attr}')
-        # ic(self, thing, attr, result)
+        # ipd.icv(self, thing, attr, result)
         return result
 
     def setattr(self, thing, attr, val, attrkind=''):
@@ -438,7 +438,7 @@ class ClientBase:
         else:
             url = f'http://{self.server_addr}/api{url}'
             response = httpx.post(url, data=body)  # type: ignore
-        # ic(response)
+        # ipd.icv(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
             reason = response.reason if hasattr(response, 'reason') else '???'  # type: ignore
@@ -478,9 +478,9 @@ class ClientBase:
     def getorupload_by_name(self, thing, modelkind=None, **kw):
         modelkind = modelkind or thing.modelkind()
         if 'name' in thing:
-            # ic(thing)
+            # ipd.icv(thing)
             if existing := getattr(self, f'{modelkind}s')(name=thing['name']):
-                # ic(len(existing))
+                # ipd.icv(len(existing))
                 assert len(existing) == 1
                 return existing[0]
         return self.upload(thing, modelkind=modelkind, **kw)
@@ -495,7 +495,7 @@ class ClientBase:
             if isinstance(v, ClientModelBase):
                 args[k] = v.id  # type: ignore
                 del remote[k]
-        # ic(cls, args, remote, extra)
+        # ipd.icv(cls, args, remote, extra)
         return cls.__spec__(**args), remote, extra
 
 def add_basic_client_model_methods(clientcls):

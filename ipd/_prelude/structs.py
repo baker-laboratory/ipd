@@ -1,12 +1,18 @@
-import dataclasses
-import typing
+import sys
+import dataclasses as dc
+from typing import final
 
-struct = dataclasses.dataclass(frozen=True)
-mutablestruct = dataclasses.dataclass()
-finalstruct = typing.final(dataclasses.dataclass(frozen=True))
-finalmutablestruct = typing.final(dataclasses.dataclass())
+if sys.version_info.minor > 9:
+    struct = lambda cls: final(dc.dataclass(slots=True)(cls))
+    basestruct = dc.dataclass(slots=True)
+else:
+    struct = lambda cls: final(dc.dataclass()(cls))
+    basestruct = dc.dataclass()
 
-def field(dfac=None, *a, **kw):
+mutablestruct = lambda cls: final(dc.dataclass()(cls))
+basemutablestruct = dc.dataclass()
+
+def field(dfac=dc.MISSING, *a, **kw):
     if dfac and 'default_factory' in kw:
         raise TypeError("default_factory specified twice (as arg0 dfac)")
-    return dataclasses.field(*a, **kw)
+    return dc.field(*a, default_factory=dfac, **kw)

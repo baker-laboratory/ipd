@@ -148,9 +148,9 @@ def atoms_to_seqstr(atoms):
     if len(atoms) == 0: return None
     # protein = np.isin(atoms.res_name, np_amino_acid)
     # nucleic = np.isin(atoms.res_name, np_nucleotide)
-    # ic(atoms[~protein])
+    # ipd.icv(atoms[~protein])
     # assert all(nucleic) or all(protein)
-    # ic(atoms.atom_name[0], atoms.atom_name[0]=='CA')
+    # ipd.icv(atoms.atom_name[0], atoms.atom_name[0]=='CA')
     if atoms.atom_name[0] == 'CA':
         return ''.join(amino_acid_321[x] for x in atoms.res_name), True
     return ''.join(nucleotide_321[x] for x in atoms.res_name), False

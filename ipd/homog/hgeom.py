@@ -44,9 +44,9 @@ Usage Examples:
 Additional Examples with Bodies and AtomArrays:
     >>> # Using AtomArrays and Bodies (assume these helper functions exist)
     >>> from ipd import atom, hgeom as h
-    >>> aa = atom.load("1A0J")
+    >>> aa = atom.load('1A0J')
     >>> from ipd.atom import body
-    >>> b = body.body_from_file("1A0J")
+    >>> b = body.body_from_file('1A0J')
     >>> # Apply a random rotation to the Body
     >>> T_random = h.rand()
     >>> b_rotated = b.apply_transform(T_random)
@@ -58,6 +58,7 @@ Additional Examples with Bodies and AtomArrays:
 .. note::
     For more usage details, please see the tests in ipd/tests/homog/test_hgeom.py.
 """
+
 import collections
 import copy
 import sys
@@ -136,8 +137,9 @@ def isarray(x):
     """
     if isinstance(x, np.ndarray):
         return True
-    if "torch" in sys.modules:
+    if 'torch' in sys.modules:
         import torch
+
         if isinstance(x, torch.Tensor):
             return True
     return False
@@ -235,7 +237,7 @@ def hscaled(scale, stuff, is_points=None):
         np.ndarray: Scaled matrix or coordinates.
 
     Example:
-        >>> hmat = htrans([3,2,1])
+        >>> hmat = htrans([3, 2, 1])
         >>> scaled = hscaled(2.0, hmat)
         >>> print(scaled)
         [[1. 0. 0. 6.]
@@ -262,8 +264,8 @@ def hdist(x, y):
         float: Euclidean distance.
 
     Example:
-        >>> x = hpoint([1,1,3])
-        >>> y = hpoint([2,1,3])
+        >>> x = hpoint([1, 1, 3])
+        >>> y = hpoint([2, 1, 3])
         >>> hdist(x, y)
         np.float64(1.0)
 
@@ -323,8 +325,8 @@ def hxformx(*x, **kw):
         np.ndarray: Transformed matrix.
 
     Example:
-        >>> x = hrot([1,0,0], 90)
-        >>> x2 = htrans([1,0,0])
+        >>> x = hrot([1, 0, 0], 90)
+        >>> x2 = htrans([1, 0, 0])
         >>> hxformx(x, x2).round(4)
         array([[ 1.,  0.,  0.,  1.],
                [ 0.,  0., -1.,  0.],
@@ -378,7 +380,7 @@ def hxformvec(*x, **kw):
         np.ndarray: Transformed vectors.
 
     Example:
-        >>> x = hrot([0,1,0], 90)
+        >>> x = hrot([0, 1, 0], 90)
         >>> vec = np.array([1, 0, 0])
         >>> hxformvec(x, vec).round(4)
         array([ 0.,  0., -1.])
@@ -403,7 +405,7 @@ def invxform(x, stuff, **kw):
         np.ndarray: Transformed matrix using the inverse of `x`.
 
     Example:
-        >>> x = htrans([1,0,0])
+        >>> x = htrans([1, 0, 0])
         >>> vec = np.array([[1, 2, 3, 0]])
         >>> pt = np.array([[1, 2, 3, 1]])
         >>> newpt = invxform(x, pt)
@@ -426,8 +428,8 @@ def invxformpts(x, stuff, **kw):
         np.ndarray: Transformed points using the inverse of `x`.
 
     Example:
-        >>> x = htrans([1,0,0])
-        >>> points = np.array([[0,0,0]])
+        >>> x = htrans([1, 0, 0])
+        >>> points = np.array([[0, 0, 0]])
         >>> hpoints = hpoint(points)
         >>> transformed = invxformpts(x, hpoints)
         >>> print(transformed)
@@ -448,7 +450,7 @@ def invxformvec(x, stuff, **kw):
         np.ndarray: Transformed vectors using the inverse of `x`.
 
     Example:
-        >>> x = hrot([1,1,0], 180)
+        >>> x = hrot([1, 1, 0], 180)
         >>> vec = np.array([1, 0, 0])
         >>> invxformvec(x, vec).round(4)
         array([0., 1., 0.])
@@ -482,7 +484,7 @@ def product(*factors, **kw):
         x = hxform(x, x1)
     return hxform(x.astype(stuff.dtype), stuff, **kw)
 
-def hxform(*x, homogout="auto", **kw):
+def hxform(*x, homogout='auto', **kw):
     if len(x) > 1:
         *x, stuff = x
         x = product(*x, **kw | {'is_points': False})
@@ -492,7 +494,7 @@ def hxform(*x, homogout="auto", **kw):
         return [hxform(x, v) for v in stuff]
     if isinstance(stuff, dict) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return {k: hxform(x, v) for k, v in stuff.items()}
-    if hasattr(stuff, "xformed"):
+    if hasattr(stuff, 'xformed'):
         return stuff.xformed(x)
     orig = None
     coords = None
@@ -500,11 +502,12 @@ def hxform(*x, homogout="auto", **kw):
     if hasattr(stuff, "coord"): coords = 'coord'
     if coords:
         isxarray = False
-        if "xarray" in sys.modules:
+        if 'xarray' in sys.modules:
             import xarray
+
             # coords is perhaps poor choice of convention
             # xarray.DataArry has coords member already...
-            print("WARNING Deprivation of .coords convention in favor of .xformed method")
+            print('WARNING Deprivation of .coords convention in favor of .xformed method')
             isxarray = isinstance(stuff, xarray.DataArray)
         if not isxarray:
             if hasattr(stuff, "copy"): orig = stuff.copy()
@@ -532,28 +535,28 @@ def hxform(*x, homogout="auto", **kw):
     if isray:
         result = result.swapaxes(-1, -2)
 
-    if homogout is False or homogout == "auto" and nothomog:
+    if homogout is False or homogout == 'auto' and nothomog:
         result = result[..., :3]
 
     if result.shape[-1] == 4 and not hvalid(result, **kw):
-        ic(x.shape)
-        ic(stuff.shape)
-        # ic(result)
+        ipd.icv(x.shape)
+        ipd.icv(stuff.shape)
+        # ipd.icv(result)
         for x in result:
             if not hvalid(x, **kw):
-                ic(x, np.linalg.det(x))
+                ipd.icv(x, np.linalg.det(x))
                 assert 0, 'invalid transform'
         # this is a bad copout.. should make this check handle nans correctly
         if not stuff.shape[-2:] == (4, 1):
-            raise ValueError(f"malformed homogeneous coords with shape {stuff.shape}, "
-                             "if passing points, try is_points=True")
+            raise ValueError(f'malformed homogeneous coords with shape {stuff.shape}, '
+                             'if passing points, try is_points=True')
 
     if orig:
-        # ic(result.shape)
+        # ipd.icv(result.shape)
         if result.ndim > 2:
             r = list()
             for x in result:
-                if hasattr(orig, "copy"):
+                if hasattr(orig, 'copy'):
                     o = orig.copy()
                 else:
                     o = copy.copy(orig)
@@ -572,21 +575,21 @@ def _hxform_impl(
     x,
     stuff,
     *,
-    outerprod="auto",
+    outerprod='auto',
     flat=False,
-    is_points="auto",
+    is_points='auto',
     improper_ok=False,
     uppertri=None,
     dtype=None,
 ):
-    if is_points == "auto":
+    if is_points == 'auto':
         is_points = not hvalid44(stuff, improper_ok=improper_ok)
         if is_points:
             if stuff.shape[-1] != 4 and stuff.shape[-2:] == (4, 1):
-                raise ValueError(f"hxform cant understand shape {stuff.shape}")
+                raise ValueError(f'hxform cant understand shape {stuff.shape}')
 
     if not is_points:
-        if outerprod == "auto":
+        if outerprod == 'auto':
             outerprod = x.shape[:-2] != stuff.shape[:-2]
         if outerprod:
             shape1 = x.shape[:-2]
@@ -601,7 +604,7 @@ def _hxform_impl(
         if flat:
             result = result.reshape(-1, 4, 4)
     else:
-        if outerprod == "auto":
+        if outerprod == 'auto':
             outerprod = x.shape[:-2] != stuff.shape[:-1]
 
         if stuff.shape[-1] != 1:
@@ -609,7 +612,7 @@ def _hxform_impl(
         if outerprod:
             shape1 = x.shape[:-2]
             shape2 = stuff.shape[:-2]
-            # ic(x.shape, stuff.shape, shape1, shape2)
+            # ipd.icv(x.shape, stuff.shape, shape1, shape2)
             a = x.reshape(shape1 + (1, ) * len(shape2) + (4, 4))
 
             b = stuff.reshape((1, ) * len(shape1) + shape2 + (4, 1))
@@ -620,7 +623,7 @@ def _hxform_impl(
             shape2 = stuff.shape[:-2]
             sameshape = tuple()
             for i, (s1, s2) in enumerate(zip(shape1, shape2)):
-                # ic(s1, s2)
+                # ipd.icv(s1, s2)
                 if s1 == s2:
                     shape1 = shape1[1:]
                     shape2 = shape2[1:]
@@ -629,7 +632,7 @@ def _hxform_impl(
                     break
             newshape1 = sameshape + shape1 + (1, ) * len(shape2) + (4, 4)
             newshape2 = sameshape + (1, ) * len(shape1) + shape2 + (4, 1)
-            # ic(shape1, shape2, newshape1, newshape2)
+            # ipd.icv(shape1, shape2, newshape1, newshape2)
             a = x.reshape(newshape1)
             b = stuff.reshape(newshape2)
             result = a @ b
@@ -655,10 +658,10 @@ def quat_to_upper_half(quat):
     ineg1 = (quat[..., 0] == 0) * (quat[..., 1] < 0)
     ineg2 = (quat[..., 0] == 0) * (quat[..., 1] == 0) * (quat[..., 2] < 0)
     ineg3 = (quat[..., 0] == 0) * (quat[..., 1] == 0) * (quat[..., 2] == 0) * (quat[..., 3] < 0)
-    # ic(ineg0.shape)
-    # ic(ineg1.shape)
-    # ic(ineg2.shape)
-    # ic(ineg3.shape)
+    # ipd.icv(ineg0.shape)
+    # ipd.icv(ineg1.shape)
+    # ipd.icv(ineg2.shape)
+    # ipd.icv(ineg3.shape)
     ineg = ineg0 + ineg1 + ineg2 + ineg3
     quat = quat.copy()
     # TODO: is this right?
@@ -713,7 +716,7 @@ def rot_to_quat(xform):
 
 xform_to_quat = rot_to_quat
 
-def quat_to_rot(quat, dtype="f8", shape=(3, 3)):
+def quat_to_rot(quat, dtype='f8', shape=(3, 3)):
     quat = np.asarray(quat)
     assert quat.shape[-1] == 4
     qr = quat[..., 0]
@@ -733,7 +736,7 @@ def quat_to_rot(quat, dtype="f8", shape=(3, 3)):
     rot[..., 2, 2] = 1 - 2 * (qi**2 + qj**2)
     return rot
 
-def quat_to_xform(quat, dtype="f8"):
+def quat_to_xform(quat, dtype='f8'):
     r = quat_to_rot(quat, dtype, shape=(4, 4))
     r[..., 3, 3] = 1
     return r
@@ -782,7 +785,7 @@ def fast_axis_of(xforms):
             axis=-1,
         )
     else:
-        raise ValueError("wrong shape for xform/rotation matrix: " + str(xforms.shape))
+        raise ValueError('wrong shape for xform/rotation matrix: ' + str(xforms.shape))
 
 def axis_of(xforms, tol=1e-7, debug=False):
     xdim = xforms.shape[-1]
@@ -806,19 +809,19 @@ def axis_of(xforms, tol=1e-7, debug=False):
         eigval_is_1 = np.abs(eigval - 1) < 1e-6
         ixform, ieigval = np.where(eigval_is_1)
 
-        # ic(ixform)
-        # ic(ieigval)
+        # ipd.icv(ixform)
+        # ipd.icv(ieigval)
         try:
             axs[is180, :3] = eigvec[ixform, :, ieigval]
         except Exception as e:
-            # ic(is_ident)
-            # ic(is180)
-            # ic(x180.shape)
+            # ipd.icv(is_ident)
+            # ipd.icv(is180)
+            # ipd.icv(x180.shape)
             # for a, b, c in zip(eigval, eigvec, eigval_is_1):
-            # ic(a)
-            # ic(b)
-            # ic(c)
-            # ic()
+            # ipd.icv(a)
+            # ipd.icv(b)
+            # ipd.icv(c)
+            # ipd.icv()
             raise e
         # assert 0
 
@@ -845,7 +848,7 @@ def hinv(xforms):
         np.ndarray: Inverse of the input transformation matrix.
 
     Example:
-        >>> x = ipd.hnumpy.trans([1,2,3])
+        >>> x = ipd.hnumpy.trans([1, 2, 3])
         >>> inv = hinv(x)
         >>> print(inv)
         [[ 1.  0.  0. -1.]
@@ -874,7 +877,7 @@ def hunique(xforms):
         return True
     diff = hdiff(xforms, xforms)
     np.fill_diagonal(diff, 9e9)
-    # ic(diff.shape, np.min(diff))
+    # ipd.icv(diff.shape, np.min(diff))
     return 0.0001 < np.min(diff)
 
 def axis_angle_of(xforms, debug=False):
@@ -909,7 +912,7 @@ def angle_of_degrees(xforms, debug=False):
     angl = np.arccos(np.clip(cos, -1, 1))
     return np.degrees(angl)
 
-def rot3(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3), **kw):
+def rot3(axis, angle=None, nfold=None, degrees='auto', dtype='f8', shape=(3, 3), **kw):
     """Angle will override nfold."""
     if angle is None:
         angle = 2 * np.pi / nfold
@@ -917,11 +920,11 @@ def rot3(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3),
 
     axis = np.array(axis, dtype=dtype)
     angle = np.array(angle, dtype=dtype)
-    if degrees == "auto":
+    if degrees == 'auto':
         degrees = guess_is_degrees(angle)
     angle = angle * np.pi / 180.0 if degrees else angle
     if axis.shape and angle.shape and not is_broadcastable(axis.shape[:-1], angle.shape):
-        raise ValueError("axis and angle not compatible: " + str(axis.shape) + " " + str(angle.shape))
+        raise ValueError('axis and angle not compatible: ' + str(axis.shape) + ' ' + str(angle.shape))
     axis /= np.linalg.norm(axis, axis=-1)[..., np.newaxis]
     a = np.cos(angle / 2.0)
     tmp = axis * -np.sin(angle / 2)[..., np.newaxis]
@@ -943,7 +946,7 @@ def rot3(axis, angle=None, nfold=None, degrees="auto", dtype="f8", shape=(3, 3),
         rot3[..., 3, 3] = 1.0
     return rot3
 
-def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
+def hrot(axis, angle=None, center=None, dtype='f8', hel=0.0, **kw):
     """Angle will override nfold."""
     # if isinstance(axis, ipd.dev.Bunch):
     #   bunch = axis
@@ -966,11 +969,11 @@ def hrot(axis, angle=None, center=None, dtype="f8", hel=0.0, **kw):
         center = np.tile(center, rshape[:-2] + (1, ) * len(cshape))
         assert center.ndim == 3
         center = center.swapaxes(0, 1)
-        # ic(r.shape)
-        # ic(center.shape)
+        # ipd.icv(r.shape)
+        # ipd.icv(center.shape)
         # x, y, z = center[..., 0], center[..., 1], center[..., 2]
-        # ic(x.shape)
-        # ic(r[..., 0, 3].shape)
+        # ipd.icv(x.shape)
+        # ipd.icv(r[..., 0, 3].shape)
         # assert 0
     x, y, z = center[..., 0], center[..., 1], center[..., 2]
     r[..., 0, 3] = x - r[..., 0, 0] * x - r[..., 0, 1] * y - r[..., 0, 2] * z
@@ -995,7 +998,7 @@ def hpoint(point):
     elif point.shape[-2:] == (4, 4):
         return point[..., :, 3].copy()
     else:
-        raise ValueError("point must len 3 or 4")
+        raise ValueError('point must len 3 or 4')
 
 def hpointorvec(point):
     point = as_tensor(point)
@@ -1014,7 +1017,7 @@ def hvec(vec):
         r[..., :3] = vec
         return r
     else:
-        raise ValueError("vec must len 3 or 4")
+        raise ValueError('vec must len 3 or 4')
 
 def hcentered(coords, singlecom=False):
     origshape = coords.shape[:-1]
@@ -1074,14 +1077,14 @@ def yaxis_of(xforms):
 def zaxis_of(xforms):
     return xforms[..., :, 2]
 
-def htrans(trans, dtype="f8", doto=None):
+def htrans(trans, dtype='f8', doto=None):
     if isinstance(trans, (int, float)):
         trans = np.array([trans, 0, 0])
     trans = np.asanyarray(trans)
     if trans.shape[-1] == 4:
         trans = trans[..., :3]
     if trans.shape[-1] != 3:
-        raise ValueError("trans should be shape (..., 3)")
+        raise ValueError('trans should be shape (..., 3)')
     tileshape = trans.shape[:-1] + (1, 1)
     t = np.tile(np.identity(4, dtype), tileshape)
     t[..., :trans.shape[-1], 3] = trans
@@ -1180,7 +1183,7 @@ def hrandray(shape=(), cen=(0, 0, 0), sdev=1, seed=None, dtype=np.float64):
         shape = (shape, )
     cen = np.asanyarray(cen)
     if cen.shape[-1] not in (3, 4):
-        raise ValueError("cen must be len 3 or 4")
+        raise ValueError('cen must be len 3 or 4')
     shape = shape or cen.shape[:-1]
     cen = cen + np.random.randn(*(shape + (3, ))) * sdev
     norm = np.random.randn(*(shape + (3, )))
@@ -1261,7 +1264,7 @@ def hparallel(a, b):
 def unhomog(stuff):
     return stuff[..., :3]
 
-Result_hrmsfit = collections.namedtuple("Result_hrmsfit", "rms fitcoords xfit")
+Result_hrmsfit = collections.namedtuple('Result_hrmsfit', 'rms fitcoords xfit')
 
 @ipd.dev.timed
 def hrmsfit(mobile, target):
@@ -1275,17 +1278,17 @@ def hrmsfit(mobile, target):
     target_cen = np.mean(target, axis=0)
     mobile = mobile - mobile_cen
     target = target - target_cen
-    # ic(mobile.shape)
-    # ic(target.shape[-1] in (3, 4))
+    # ipd.icv(mobile.shape)
+    # ipd.icv(target.shape[-1] in (3, 4))
     covariance = mobile.T[:3] @ target[:, :3]
     V, S, W = np.linalg.svd(covariance)
     if 0 > np.linalg.det(V) * np.linalg.det(W):
         S = np.array([S[0], S[1], -S[2]], dtype=S.dtype)
         # S[-1] = -S[-1]
-        # ic(S - S1)
+        # ipd.icv(S - S1)
         V = np.concatenate([V[:, :-1], -V[:, -1, None]], axis=1)
         # V[:, -1] = -V[:, -1]
-        # ic(V - V1)
+        # ipd.icv(V - V1)
         # assert 0
     rot_m2t = hconvert(V @ W).T
     trans_m2t = target_cen - rot_m2t@mobile_cen
@@ -1374,12 +1377,12 @@ def intersect_planes(plane1, plane2):
     shape=(...,4,2), status: int (0 = intersection returned, 1 = no
     intersection, 2 = the two planes coincide)"""
     if not is_valid_rays(plane1):
-        raise ValueError("invalid plane1")
+        raise ValueError('invalid plane1')
     if not is_valid_rays(plane2):
-        raise ValueError("invalid plane2")
+        raise ValueError('invalid plane2')
     shape1, shape2 = np.array(plane1.shape), np.array(plane2.shape)
     if np.any((shape1 != shape2) * (shape1 != 1) * (shape2 != 1)):
-        raise ValueError("incompatible shapes for plane1, plane2:")
+        raise ValueError('incompatible shapes for plane1, plane2:')
     p1, n1 = plane1[..., :3, 0], plane1[..., :3, 1]
     p2, n2 = plane2[..., :3, 0], plane2[..., :3, 1]
     shape = tuple(np.maximum(plane1.shape, plane2.shape))
@@ -1427,8 +1430,10 @@ def axis_ang_cen_of_eig(xforms, debug=False):
     cen = cen - axis * np.sum(axis * cen)
     return axis, angle, cen
 
-_axis_ang_cen_magic_points_numpy = np.array([[-32.09501046777237, 3.36227004372687, 35.34672781477340, 1.0],
-                                             [21.15113978202345, 12.55664537217840, -37.48294301885574, 1.0]])
+_axis_ang_cen_magic_points_numpy = np.array([
+    [-32.09501046777237, 3.36227004372687, 35.34672781477340, 1.0],
+    [21.15113978202345, 12.55664537217840, -37.48294301885574, 1.0],
+])
 
 def axis_ang_cen_of_planes(xforms, debug=False, ident_match_tol=1e-8):
     """If angle is 0, will return axis along translation."""
@@ -1456,7 +1461,7 @@ def axis_ang_cen_of_planes(xforms, debug=False, ident_match_tol=1e-8):
         plane2 = hray(c2, n2)
         isect, status = intersect_planes(plane1, plane2)
         cen1 = isect[..., :, 0]
-        # ic(cen1)
+        # ipd.icv(cen1)
 
         if len(cen) == len(cen1):
             cen = cen1
@@ -1500,7 +1505,7 @@ def line_line_closest_points_pa(pt1, ax1, pt2, ax2, verbose=0):
     ax2 = hvec(ax2)
     assert pt1.shape == pt2.shape == ax1.shape == ax2.shape
     # origshape = pt1.shape
-    # ic(pt1.shape)
+    # ipd.icv(pt1.shape)
     C21 = pt2 - pt1
     M = hcross(ax1, ax2)
     m2 = np.sum(M**2, axis=-1)[..., None]
@@ -1513,14 +1518,14 @@ def line_line_closest_points_pa(pt1, ax1, pt2, ax2, verbose=0):
     Q2 = pt2 - t2*ax2
 
     if verbose:
-        ic("C21", C21)
-        ic("M", M)
-        ic("m2", m2)
-        ic("R", R)
-        ic("t1", t1)
-        ic("t2", t2)
-        ic("Q1", Q1)
-        ic("Q2", Q2)
+        ipd.icv('C21', C21)
+        ipd.icv('M', M)
+        ipd.icv('m2', m2)
+        ipd.icv('R', R)
+        ipd.icv('t1', t1)
+        ipd.icv('t2', t2)
+        ipd.icv('Q1', Q1)
+        ipd.icv('Q2', Q2)
     return Q1, Q2
 
 hlinesisect = line_line_closest_points_pa
@@ -1554,15 +1559,15 @@ def halign(a, b, doto=None):
         return np.eye(4)
     x = np.tile(np.eye(4), (*ax.shape[:-1], 1, 1))
     ok = ~np.all(np.isclose(ax, 0), axis=-1)
-    # ic(ok.shape, x.shape, a.shape, b.shape)
+    # ipd.icv(ok.shape, x.shape, a.shape, b.shape)
     if a.ndim > 1:
         a = a[ok]
     if b.ndim > 1:
         b = b[ok]
-    # ic(ok.shape, x.shape, a.shape, b.shape)
+    # ipd.icv(ok.shape, x.shape, a.shape, b.shape)
     tmp = align_around_axis(ax[ok], a, b)
     x[ok] = tmp
-    # ic(x.shape)
+    # ipd.icv(x.shape)
     return x if doto is None else hxform(x, doto)
 
 def halign2(a1, a2, b1, b2, doto=None, strict=False):
@@ -1579,7 +1584,7 @@ def halign2(a1, a2, b1, b2, doto=None, strict=False):
     Xmiddle = hrot(spinaxis, np.pi)
     Xaround = align_around_axis(baxis, Xmiddle @ a1, b1)
     X = Xaround @ Xmiddle
-    # ic(angle(b1, a1), angle(b2, a2), angle(b1, X @ a1), angle(b2, X @ a2))
+    # ipd.icv(angle(b1, a1), angle(b2, a2), angle(b1, X @ a1), angle(b2, X @ a2))
     assert (angle(b1, a1) + angle(b2, a2)) + 0.001 >= (angle(b1, X @ a1) + angle(b2, X @ a2))
     return X if doto is None else hxform(X, doto)
 
@@ -1616,15 +1621,15 @@ def rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_ang
     l_dof = np.cos(dof_angle)
     h_tgt = np.sin(target_angle)
     l_tgt = np.cos(target_angle)
-    # ic('l_dof', l_dof)
-    # ic('l_tgt', l_tgt)
+    # ipd.icv('l_dof', l_dof)
+    # ipd.icv('l_tgt', l_tgt)
     xdof = np.sin(fix_to_dof_angle) * l_dof
     ydof = np.cos(fix_to_dof_angle) * l_dof
     assert np.allclose(np.sqrt(xdof**2 + ydof**2), l_dof)
     ytgt = np.cos(target_angle)
     slope = -np.tan(np.pi / 2 - fix_to_dof_angle)
 
-    # ic('ytgt', ytgt, 'xdof', xdof, 'ydof', ydof)
+    # ipd.icv('ytgt', ytgt, 'xdof', xdof, 'ydof', ydof)
 
     yhat = ytgt
     xhat = xdof + (ytgt-ydof) * slope
@@ -1642,14 +1647,14 @@ def rotation_around_dof_for_target_angle(target_angle, dof_angle, fix_to_dof_ang
     hhat = np.sqrt(1.0 - lhat**2)
     ahat = np.arcsin(hhat / hdof)
 
-    # ic('xhat', xhat, 'yhat', yhat, 'slope', slope, 'lhat', lhat, 'hhat', hhat, 'ahat', ahat)
+    # ipd.icv('xhat', xhat, 'yhat', yhat, 'slope', slope, 'lhat', lhat, 'hhat', hhat, 'ahat', ahat)
 
-    # ic('ytgt', ytgt)
-    # ic('xdof', xdof)
-    # ic('ydof', ydof)
-    # ic('xhat', xhat)
-    # ic('yhat', yhat)
-    # ic('ahat', ahat, np.degrees(ahat))
+    # ipd.icv('ytgt', ytgt)
+    # ipd.icv('xdof', xdof)
+    # ipd.icv('ydof', ydof)
+    # ipd.icv('xhat', xhat)
+    # ipd.icv('yhat', yhat)
+    # ipd.icv('ahat', ahat, np.degrees(ahat))
 
     return ahat
 
@@ -1698,7 +1703,7 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
     if strict:
         assert np.allclose(angle(ta1, ta2), angle(ax1, ax2))
     if abs(angle(ta1, ta2)) < 0.01:
-        assert 0, "case not tested"
+        assert 0, 'case not tested'
         # vector delta between pt2 and pt1
         d = hprojperp(ax1, pt2 - pt1)
         Xalign = halign2(ax1, d, ta1, sl2)  # align d to Y axis
@@ -1707,23 +1712,23 @@ def align_lines_isect_axis2(pt1, ax1, pt2, ax2, ta1, tp1, ta2, sl2, strict=True)
     else:
         try:
             Xalign = halign2(ax1, ax2, ta1, ta2)
-            # ic(Xalign @ ax1, ta1)
+            # ipd.icv(Xalign @ ax1, ta1)
             # assert np.allclose(Xalign @ ax1, ta1, atol=0.0001)
             # assert np.allclose(Xalign @ ax2, ta2, atol=0.0001)
-            # ic(Xalign)
+            # ipd.icv(Xalign)
         except AssertionError as e:
-            ic("halign2 error")
-            ic("   ", ax1)
-            ic("   ", ax2)
-            ic("   ", ta1)
-            ic("   ", ta2)
+            ipd.icv('halign2 error')
+            ipd.icv('   ', ax1)
+            ipd.icv('   ', ax2)
+            ipd.icv('   ', ta1)
+            ipd.icv('   ', ta2)
             raise e
         Xalign[..., :, 3] = -Xalign @ pt1  ## move pt1 to origin
         Xalign[..., 3, 3] = 1
         cen2_0 = Xalign @ pt2  # moving pt2 by Xalign
         D = np.stack([ta1[:3], sl2[:3], ta2[:3]]).T
         A1offset, slide_dist, _ = np.linalg.inv(D) @ cen2_0[:3]
-        # ic(A1offset, slide_dist)
+        # ipd.icv(A1offset, slide_dist)
         Xalign[..., :, 3] = Xalign[..., :, 3] - (A1offset*ta1)
 
     return Xalign, slide_dist
@@ -1740,11 +1745,11 @@ def scale_translate_lines_isect_lines(pt1, ax1, pt2, ax2, tp1, ta1, tp2, ta2):
 
     if abs(angle(_ax1, _ax2) - angle(_ta1, _ta2)) > 0.00001:
         _ta2 = -_ta2
-    # ic(_ax1)
-    # ic(_ax2)
-    # ic(_ta1, ta1)
-    # ic(_ta2)
-    # ic(line_angle(_ax1, _ax2), line_angle(_ta1, _ta2))
+    # ipd.icv(_ax1)
+    # ipd.icv(_ax2)
+    # ipd.icv(_ta1, ta1)
+    # ipd.icv(_ta2)
+    # ipd.icv(line_angle(_ax1, _ax2), line_angle(_ta1, _ta2))
     assert np.allclose(line_angle(_ax1, _ax2), line_angle(_ta1, _ta2))
 
     # scale target frame to match input line separation
@@ -1807,9 +1812,9 @@ def scale_translate_lines_isect_lines(pt1, ax1, pt2, ax2, tp1, ta1, tp2, ta2):
     xalign[3, 3] = 1
 
     if np.any(np.isnan(xalign)):
-        ic("=============================")
-        ic(xalign)
-        ic(delta1, delta2)
+        ipd.icv('=============================')
+        ipd.icv(xalign)
+        ipd.icv(delta1, delta2)
     # rays = np.array([
     #    hm.hray(xalign @ pt1, xalign @ ax1),
     #    hm.hray(xalign @ pt2, xalign @ ax2),
@@ -1834,8 +1839,8 @@ def hmean(xforms):
     idx = np.dot(q, [13, 7, 3, 1]) < 0
     if np.any(idx):
         q[idx] *= -1
-    # ic('hmean')
-    # ic(q)
+    # ipd.icv('hmean')
+    # ipd.icv(q)
     # for i in range(10):
     # qmean = np.mean(q, axis=0)
     # dot = hdot(qmean, q)
@@ -1849,7 +1854,7 @@ def hmean(xforms):
     r = quat_to_rot(q)
     t = np.mean(xforms[..., :3, 3], axis=0)
     x = hconstruct(r, t)
-    # ic(x)
+    # ipd.icv(x)
     return x
 
 def hexpand(
@@ -1881,7 +1886,7 @@ def hpow(xform, power):
 
 def hpow_int(xform, power):
     if not power % 1 == 0:
-        raise ValueError(f"power {power} is not integer")
+        raise ValueError(f'power {power} is not integer')
     result = np.tile(np.eye(4), (*xform.shape[:-2], 1, 1))
     if power < 0:
         power = -power
@@ -1891,8 +1896,8 @@ def hpow_int(xform, power):
     return result
 
 def hpow_float(xform, power):
-    # ic('get rot, axis, hel, cen')
-    # ic('interp rot/hel around axis/cen')
+    # ipd.icv('get rot, axis, hel, cen')
+    # ipd.icv('interp rot/hel around axis/cen')
     return NotImplemented
 
 def hcom_flat(points):
@@ -1982,7 +1987,7 @@ def unique_symaxes(
     """
     assert axis.shape == cen.shape and axis.ndim == 2 and axis.shape[1] == 4
     tol = ipd.dev.Tolerances(tol, **kw)
-    assert tol.angle.threshold < .1
+    assert tol.angle.threshold < 0.1
     assert axis.shape == cen.shape
     if ang is None: ang = np.ones(len(cen))
     if hel is None: hel = np.zeros(len(cen))
@@ -1998,17 +2003,17 @@ def unique_symaxes(
         extra[i] = e.reshape(-1, extra[i].shape[-1])
         assert len(e) == len(ax)
     uniq = []
-    # ic(tol.isect, tol.dot_norm, tol.misc_lineuniq)
+    # ipd.icv(tol.isect, tol.dot_norm, tol.misc_lineuniq)
     for step in range(100):
-        # ic(ax.shape, cn.shape, frames.shape)
+        # ipd.icv(ax.shape, cn.shape, frames.shape)
         sax, scn = hxformvec(frames, ax[0]), hxformpts(frames, cn[0])
         pdist = h_point_line_dist(cn[:, None], scn[None], sax[None])
         adot = dot(sax[None], ax[:, None])
         same = 1 - np.abs(adot) < tol.dot_norm
         # print('dot  ', same.any(axis=1).sum())
-        same &= (pdist < tol.isect)
+        same &= pdist < tol.isect
         same = same.any(axis=1)
-        # ic(same.shape, an.shape, (an[0]-an).shape)
+        # ipd.icv(same.shape, an.shape, (an[0]-an).shape)
         if an is not None: same &= np.abs(an[0] - an) < tol.angle
         if hl is not None: same &= np.abs(hl[0] - hl) < tol.helical_shift
         # print('pdist', same.sum())

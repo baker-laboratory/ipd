@@ -37,7 +37,7 @@ def debug_body_load_speed():
                                          assembly='largest',
                                          components='largest_assembly',
                                          maxsub=9999)
-    ic(symbody.meta.assembly_xforms)
+    ipd.icv(symbody.meta.assembly_xforms)
     symbody.asu.atoms = symbody.asu.atoms[symbody.asu.atoms.atom_name == 'CA']
 
     # ipd.showme(symbody.asu)
@@ -61,10 +61,10 @@ def helper_test_body_chash_v_celllist(body):
             # print(ncell, nbvh)
             results.mapwise.append(ncell, nbvh)
             # assert abs(((ncell+1) / (nbvh+1)) - 1) < 0.1
-            # ic(ncell, nbvh)
+            # ipd.icv(ncell, nbvh)
             if nbvh > 100: assert 1 - abs(ncell / nbvh) < 0.01
             else: assert nbvh == ncell
-        ic(sum(t.cell) / sum(t.bvh))
+        ipd.icv(sum(t.cell) / sum(t.bvh))
         assert sum(t.cell) > 10 * sum(t.bvh)
 
 def helper_test_body_positioned_atoms(body):
@@ -73,7 +73,7 @@ def helper_test_body_positioned_atoms(body):
 def helper_test_body_contacts(body):
     otherbody = body.clone()
     kissing = otherbody.slide_into_contact(body, radius=3, direction='random')
-    # ic(kissing.pos[:3, 3] - otherbody.pos[:3, 3])
+    # ipd.icv(kissing.pos[:3, 3] - otherbody.pos[:3, 3])
     # ipd.showme(kissing, body)
     contacts = kissing.contacts(body, radius=5)
     assert len(contacts.pairs) > 0
@@ -100,7 +100,7 @@ def helper_test_symbody_contct(symbody):
     symbody2 = symbody.movedby([4 * rg, 0, 0])
     assert not np.any(symbody.hasclash(symbody2))
     assert h.allclose(symbody.pos, np.eye(4))
-    # ic(symbody.pos)
+    # ipd.icv(symbody.pos)
     symbody2 = symbody.movedto([int(1.5 * rg), 0, 0])
     searchrange, stopisect = range(int(1.5 * rg), int(4 * rg)), False
     if not np.any(symbody.hasclash(symbody2)):

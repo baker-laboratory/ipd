@@ -186,7 +186,7 @@ def make_temp_package_structure() -> Generator[Tuple[str, str], None, None]:
         sys.path.insert(0, temp_dir)
         os.chdir(temp_dir)
         assert os.path.exists(f'{temp_dir}/{pkg_name}/__init__.py')
-        ic(f'{temp_dir}/{pkg_name}/__init__.py')
+        ipd.icv(f'{temp_dir}/{pkg_name}/__init__.py')
         assert os.path.exists(f'{temp_dir}/{pkg_name}/module1.py')
         assert os.path.exists(f'{temp_dir}/{pkg_name}/subpkg/__init__.py')
         assert os.path.exists(f'{temp_dir}/{pkg_name}/subpkg/module2.py')

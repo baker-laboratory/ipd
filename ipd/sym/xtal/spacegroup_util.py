@@ -111,7 +111,7 @@ def process_num_cells(cells):
     else:
         raise ValueError(f"bad cells {cells}")
     cells = np.array(cells)
-    # ic(set(cells[:, 0]))
+    # ipd.icv(set(cells[:, 0]))
 
     # order in stages, cell 0 first, cell 0 to 1, cells -1 to 1, cells -1 to 2, etc
     blocked = list()
@@ -191,15 +191,15 @@ def lattice_vectors(lattice, cellgeom=None, strict=True):
         # cellgeom = [1.0, 1.0, 1.0, 90.0, 90.0, 120.0]
     elif isinstance(cellgeom, str) and cellgeom == "nonsingular":
         cellgeom = full_cellgeom(lattice, sg_nonsingular_cellgeom, strict=False)
-        # ic('cellgeom nonsingular', cellgeom)
+        # ipd.icv('cellgeom nonsingular', cellgeom)
 
     a, b, c, A, B, C = full_cellgeom(lattice, cellgeom, strict=strict)
     cosA, cosB, cosC = [np.cos(np.radians(_)) for _ in (A, B, C)]
     sinB, sinC = [np.sin(np.radians(_)) for _ in (B, C)]
 
-    # ic(cosB * cosC - cosA)
-    # ic(sinB, sinC)
-    # ic(1.0 - ((cosB * cosC - cosA) / (sinB * sinC))**2)
+    # ipd.icv(cosB * cosC - cosA)
+    # ipd.icv(sinB, sinC)
+    # ipd.icv(1.0 - ((cosB * cosC - cosA) / (sinB * sinC))**2)
 
     lattice_vectors = np.array([
         [

@@ -38,8 +38,8 @@ def rmsd(xyz1, xyz2, getfit=False, nthread=128, usenumba=False):
     if xyz1.shape[-1] == 4: xyz1 = xyz1[:, :, :3]
     if xyz2.shape[-1] == 4: xyz2 = xyz2[:, :, :3]
     a, b, c1, c2, iprod, E0 = calc_iprod_E0(xyz1, xyz2)
-    # ic(iprod.shape)
-    # ic(E0.shape)
+    # ipd.icv(iprod.shape)
+    # ipd.icv(E0.shape)
 
     if xyz1.device.type == 'cuda':
         if usenumba:
@@ -55,9 +55,9 @@ def rmsd(xyz1, xyz2, getfit=False, nthread=128, usenumba=False):
     rms = rms.reshape(len(a), len(b))
     if getfit:
         xfit = xfit.reshape(len(a), len(b), 4, 4)
-        # ic(xfit[..., :3, :3].shape, c1[:, None, :, None].shape, c2[None, :, None, :].shape)
-        # ic(th.matmul(xfit[..., :3, :3], -c1[:, None, :, None])[...,0].shape)
-        # ic(th.matmul(xfit[..., :3, :3], -c1[:, None, :, None] + c2[None, :, :]).shape)
+        # ipd.icv(xfit[..., :3, :3].shape, c1[:, None, :, None].shape, c2[None, :, None, :].shape)
+        # ipd.icv(th.matmul(xfit[..., :3, :3], -c1[:, None, :, None])[...,0].shape)
+        # ipd.icv(th.matmul(xfit[..., :3, :3], -c1[:, None, :, None] + c2[None, :, :]).shape)
         xfit[..., :3, 3] = th.matmul(xfit[..., :3, :3], -c1[:, None, :, None])[..., 0] + c2[None, :, :]
         xfit[..., 3, 3] = 1
 

@@ -65,9 +65,9 @@ def test_hypercone_samp():
         if th.sum(ang > spacing / 2) / len(ang) > 0.1:
             print(f'FAIL {shorttol/spacing:7.3f} {spacing/ang.max()}')
         del xsamp, xrel, ang
-    # ic(h.angle(x).max()*180/th.pi)
-    # ic(h.angle(x[idx]).max()*180/th.pi)
-    # ic(x.shape)
+    # ipd.icv(h.angle(x).max()*180/th.pi)
+    # ipd.icv(h.angle(x[idx]).max()*180/th.pi)
+    # ipd.icv(x.shape)
     # ipd.showme(x, xyzlen=(3, 3, 3), showneg=0)
     # ipd.showme(x[idx], xyzlen=(3, 3, 3), showneg=0)
 

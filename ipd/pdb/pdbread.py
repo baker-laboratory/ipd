@@ -74,7 +74,7 @@ def read_pdb_atoms(fname_or_buf, **kw):
             assert not meta.cryst1
             meta.cryst1 = line.strip()
 
-    # ic(len(atomlines))
+    # ipd.icv(len(atomlines))
     assert atomlines
 
     return {k: "\n".join(v) for k, v in atomlines.items()}, meta, contents

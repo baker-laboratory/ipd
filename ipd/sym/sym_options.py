@@ -82,7 +82,7 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
             opt.parse_dynamic_param(key, val)
         if opt.symid != '_training':
             opt.asu_input_pdb = conf.inference.input_pdb
-    # ic(extra_params)
+    # ipd.icv(extra_params)
     if opt.has('kind'):
         ipd.sym.set_default_sym_manager(opt.kind)
     for name, val in default_params.items():
@@ -91,7 +91,7 @@ def get_sym_options(conf=None, opt=None, extra_params=None, **kw):
         opt.parse_dynamic_param(key, val, overwrite=True)
     for name, val in extra_params.items():
         key = name.split('.')[-1]
-        # ic(key, val)
+        # ipd.icv(key, val)
         opt.parse_dynamic_param(key, val, overwrite=True)
     opt = process_symmetry_options(opt, **kw)
     if 'nsub' not in opt or not opt.nsub:

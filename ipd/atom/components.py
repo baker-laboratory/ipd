@@ -51,12 +51,10 @@ Additional Examples:
 
 
 Dependencies:
-    - attrs
     - numpy
     - biotite
 """
 
-import attrs
 import numpy as np
 import ipd
 
@@ -124,18 +122,16 @@ def find_components_by_seqaln_rmsfit(
     results = results.mapwise(np.array)
 
     ok = (results.rmsd < tol.rms_fit) & (results.seqmatch > tol.seqmatch)
-    # ic(results.rmsd,results.seqmatch)
+    # ipd.icv(results.rmsd,results.seqmatch)
     finalresult.add(atoms=atomslist[0], **results.mapwise[ok])
     if all(ok): return finalresult
     unfound = [a for i, a in enumerate(atomslist) if not ok[i]]
-    # ic(len(atomslist), len(unfound), idx, ok, kw.keys())
+    # ipd.icv(len(atomslist), len(unfound), idx, ok, kw.keys())
     return find_components_by_seqaln_rmsfit(unfound, finalresult=finalresult, idx=idx[~ok], tol=tol, **kw)
-
-listfield = attrs.field(factory=list)
 
 @ipd.dev.subscriptable_for_attributes
 @ipd.dev.element_wise_operations
-@attrs.define(slots=False)
+@ipd.mutablestruct
 class Components:
     """
     Result container for frame searching and alignment.
@@ -160,13 +156,13 @@ class Components:
             Tolerance parameters for alignment.
     """
 
-    atoms: list['bs.AtomArray'] = listfield
-    frames: list[np.ndarray] = listfield
-    seqmatch: list[float] = listfield
-    rmsd: list[float] = listfield
-    idx: list[list[int]] = listfield
-    source_: list['bs.AtomArray'] = listfield
-    intermediates_: list[dict] = listfield
+    atoms: list['bs.AtomArray'] = ipd.field(list)
+    frames: list[np.ndarray] = ipd.field(list)
+    seqmatch: list[float] = ipd.field(list)
+    rmsd: list[float] = ipd.field(list)
+    idx: list[list[int]] = ipd.field(list)
+    source_: list['bs.AtomArray'] = ipd.field(list)
+    intermediates_: list[dict] = ipd.field(list)
     tolerances_: ipd.Tolerances = None
 
     def add(self, **atom_frame_match_rms_idx):

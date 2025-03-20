@@ -2,7 +2,6 @@ from timeit import timeit
 
 import numpy as np
 import pytest
-from icecream import ic
 
 pytest.importorskip('torch')
 
@@ -92,7 +91,7 @@ def test_randxform_large_angle():
     quat = h.normQ(quat)
     ang2 = 2 * th.arccos(quat[:, 0])  #th.atan2(qunif[:, 1:].norm(dim=-1), qunif[:, 0])  # type: ignore
     ang2 = th.minimum(2 * th.pi - ang2, ang2)  # type: ignore
-    # ic(maxang, ang2.max())
+    # ipd.icv(maxang, ang2.max())
     assert abs(ang2.max() - maxang) < 0.01
     quant2 = th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))  # type: ignore
     print('randxlarge 1rad unif', (quant1 * 1000).to(int).tolist())
@@ -108,7 +107,7 @@ def test_randxform_large_angle():
         assert th.allclose(xform[..., 3, :3], th.zeros(1, device='cuda'))  # type: ignore
         assert th.allclose(xform[..., 3, 3], th.ones(1, device='cuda'))  # type: ignore
         ang2 = ipd.h.angle(xform)
-        # ic(maxang, ang2.max())
+        # ipd.icv(maxang, ang2.max())
         assert abs(maxang - ang2.max()) < 0.01
         quat_height = np.cos(np.clip(maxang, 0, th.pi) / 2)  # type: ignore
         print(f'{maxang:7.3f} {quat_height:7.3f} {t.elapsed()*1000:7.3f}ms')
@@ -161,7 +160,7 @@ def test_randxform_small_angle():
         th.quantile(ang2, th.arange(0, 1.001, 0.12, device='cuda'))  # type: ignore
         # xform = h.randsmall(N, rot_sd=sd, device='cuda', dtype=th.float32)
         # ang3 = ipd.h.angle(xform)
-        # ic(ang3[:10])
+        # ipd.icv(ang3[:10])
         # quant3 = th.quantile(ang3, th.arange(0, 1.001, 0.12, device='cuda'))
         # print((quant2 * 1000).to(int).tolist())
         # print((quant3 * 1000).to(int).tolist())
@@ -185,7 +184,7 @@ def test_quat_angle():
     maxang = 0.1
     q = th.randn((10, 4), device='cuda')  # type: ignore
     q[:, 0] = maxang
-    # ic(th.sqrt(1 - q[:, 0]**2))
+    # ipd.icv(th.sqrt(1 - q[:, 0]**2))
     q[:,
       1:] *= th.sqrt(1 - q[:, 0]**2)[:, None] / th.linalg.norm(q[:, 1:], keepdim=True, dim=-1)  # type: ignore
     assert th.allclose(th.linalg.norm(q, keepdim=True, dim=-1), th.tensor(1.0))  # type: ignore
@@ -253,7 +252,7 @@ def fitsd():
         0.4323, 0.4326, 0.4326, 0.4324, 0.4324, 0.4324, 0.4321, 0.4321, 0.4321
     ])
     std2qh = np.polynomial.polynomial.Polynomial.fit(std, qh, 14)
-    ic(std2qh)
+    ipd.icv(std2qh)
     # ipd.viz.scatter(std, std2qh(std))
 
     assert 0

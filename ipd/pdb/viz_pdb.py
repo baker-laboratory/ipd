@@ -12,7 +12,7 @@ def pymol_viz_pdbfile(
     **kw,
 ):
     tag = str(random.random())[2:]
-    # ic(tag)
+    # ipd.icv(tag)
     with tempfile.TemporaryDirectory() as td:
 
         pdb.dump_pdb(f'{td}/{tag}.pdb')

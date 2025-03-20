@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-from icecream import ic
 from opt_einsum import contract as einsum
 
 import ipd
@@ -36,7 +35,7 @@ def main():
     test_spacegroup_frames_P432()
     test_spacegroup_frames_F432()
     test_spacegroup_frames_I432()
-    ic("PASS test_spacegroup")
+    ipd.icv("PASS test_spacegroup")
 
 def test_spacegroup_identify_chiral():
     assert len(ipd.sym.xtal.sg_all_chiral) == 65
@@ -80,14 +79,14 @@ def test_spacegroup_frames_order():
 @pytest.mark.xfail
 def test_spacegroup_frames_P3():
     f = ipd.sym.xtal.sgframes("P3")
-    ic(f @ ipd.homog.htrans([0.1, 0.2, 0.3]))
+    ipd.icv(f @ ipd.homog.htrans([0.1, 0.2, 0.3]))
     # ipd.showme(f @ ipd.homog.htrans([0.1, 0.2, 0.3]))
     latticevec = np.array([
         [1.00000000e00, 0.00000000e00, 0.00000000e00],
         [-5.00000000e-01, 8.66025404e-01, 0.00000000e00],
         [6.12323400e-17, 1.06057524e-16, 1.00000000e00],
     ])
-    ic(latticevec)
+    ipd.icv(latticevec)
     fname = ipd.dev.package_testdata_path("pdb/i213fittest.pdb")
     coords = ipd.pdb.readpdb(fname).subset(chain="A").ca()
     ipd.showme(coords)
@@ -111,12 +110,12 @@ def test_lattice_cellgeom():
         # A, B, C = 180 - A, 180 - B, 180 - C
         g = [a, b, c, A, B, C]
         l = ipd.sym.xtal.lattice_vectors("TRICLINIC", g)
-        # ic(l)
+        # ipd.icv(l)
         assert not np.any(np.isnan(l))
         h = ipd.sym.xtal.cellgeom_from_lattice(l)
 
-        # ic(g)
-        # ic(h)
+        # ipd.icv(g)
+        # ipd.icv(h)
         assert np.allclose(g, h)
 
 def helper_test_spacegroup_frames(sg):
@@ -198,17 +197,17 @@ def test_spacegroup_frames_P1():
 )
 def test_spacegroup_frames_tounitcell(sgroup, cellgeom, ncell):
     fcell = ipd.sym.xtal.spacegroup.sgframes(sgroup, cellgeom, cells=ncell)
-    # ic(fcell.shape)
+    # ipd.icv(fcell.shape)
     funit = ipd.sym.xtal.spacegroup.sgframes(sgroup, cellgeom="unit", cells=ncell)
-    # ic(funit.shape)
+    # ipd.icv(funit.shape)
     lattice = ipd.sym.xtal.lattice_vectors(sgroup, cellgeom)
     ftest2 = ipd.sym.xtal.spacegroup.applylattice(lattice, funit)
     assert np.allclose(fcell, ftest2)
 
     ftest = ipd.sym.xtal.spacegroup.tounitcell(lattice, fcell)
-    # ic(ftest.shape)
-    # ic(funit)
-    # ic(ftest)
+    # ipd.icv(ftest.shape)
+    # ipd.icv(funit)
+    # ipd.icv(ftest)
     assert np.allclose(funit[:, :3, :3], ftest[:, :3, :3])
     assert np.allclose(funit[:, :3, 3], ftest[:, :3, 3])
 
@@ -264,17 +263,17 @@ def ___test_spacegroup_frames_I4132():
         for j, y in enumerate(f2):
             # if i == 25 and np.isclose(y[0, 1], -1):
             # if i == 25 and np.allclose(x[:3, :3], y[:3, :3]):
-            # ic(i, j, x, y)
+            # ipd.icv(i, j, x, y)
             if np.allclose(x, y, atol=1e-4):
                 assert match is None
                 match = j
         # if match is None:
-        # ic(i)
+        # ipd.icv(i)
         # for j, y in enumerate(f2):
         # if np.allclose(x[:3, :3], y[:3, :3]):
-        # ic(x, y)
+        # ipd.icv(x, y)
         assert match is not None
-    # ic('pass')
+    # ipd.icv('pass')
 
 if __name__ == "__main__":
     main()

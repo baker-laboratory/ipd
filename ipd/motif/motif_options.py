@@ -36,14 +36,14 @@ def get_motif_options(conf=None, opt=None, extra_params=None, **kw):
     if conf and 'motif' in conf:
         for key, val in conf.motif.items():
             opt.parse_dynamic_param(key, val)
-    # ic(extra_params)
+    # ipd.icv(extra_params)
     for name, val in default_params.items():
         key = name.split('.')[-1]
         if key in opt: continue
         opt.parse_dynamic_param(key, val, overwrite=True)
     for name, val in extra_params.items():
         key = name.split('.')[-1]
-        # ic(key, val)
+        # ipd.icv(key, val)
         opt.parse_dynamic_param(key, val, overwrite=True)
     opt = process_motif_options(opt, **kw)
     if opt.has('kind'):

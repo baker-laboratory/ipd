@@ -41,11 +41,11 @@ def guess_cx_axis(coords, nfold):
         nfold = len(nfold)
     coords = coords.reshape(coords.shape[0], -1, coords.shape[-1])
     ncheck = nfold if nfold > 2 else 1
-    # ic(coords.shape)
+    # ipd.icv(coords.shape)
     fit = [ipd.hrmsfit(coords[idx[i]], coords[idx[(i+1) % len(idx)]]) for i in range(ncheck)]
     rms, fit, xform = zip(*fit)
     axis, ang, cen, hel = ipd.homog.axis_angle_cen_hel_of(np.stack(xform))
-    # ic(hel)
+    # ipd.icv(hel)
     return axis.mean(0), cen.mean(0)
 
 def xtalfit_I213(coords):
@@ -59,7 +59,7 @@ def xtalfit_I213(coords):
     xtal = ipd.sym.xtal.xtal("I213_32")
     ax3, _ = guess_cx_axis(cacoords, [0, 1, 2])
     ax2, _ = guess_cx_axis(cacoords, [0, 3])
-    # ic(ax3, ax2)
+    # ipd.icv(ax3, ax2)
     if ipd.homog.hdot([1, 1, 1], ax3) < 0:
         ax3 = -ax3
     if ipd.homog.hdot([0, 0, 1], ax2) < 0:
@@ -72,7 +72,7 @@ def xtalfit_I213(coords):
     cen3 = ipd.homog.hcom(cacoords[:3].mean(axis=0))
     cen2 = ipd.homog.hcom(cacoords[0]) / 2 + ipd.homog.hcom(cacoords[3]) / 2
 
-    # ic(cen3, cen2)
+    # ipd.icv(cen3, cen2)
 
     def loss(x):
         # ((cen3[0] + x[0]) - (cen3[1] + x[1]))**2 + ((cen2[0] + x[0]) / 2 - (cen2[1] + x[1]))**2
@@ -104,7 +104,7 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
     if isinstance(cellsize, np.ndarray):
         cellsize = cellsize[0]
     cellsize = cellsize if cellsize is not None else 100.0
-    # ic(coms)
+    # ipd.icv(coms)
 
     scom = list()
     n = 0
@@ -113,12 +113,12 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
         nops = len(s.operators)
         for i in range(nops - 1):
             n += 1
-            # ic(len(scom), n)
+            # ipd.icv(len(scom), n)
             scom[-1] += coms[n]
         scom[-1] /= nops
-    # ic(scom)
+    # ipd.icv(scom)
     elem0 = xtal.symelems[0]
-    # ic(scom)
+    # ipd.icv(scom)
 
     if noshift:
         cartshift = ipd.homog.hvec([0, 0, 0])
@@ -149,7 +149,7 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
             else:
                 # print(state.cellsize, ipd.homog.hnorm(state.cartshift), mc.best)
                 pass
-                # ic(mc.acceptfrac, step)
+                # ipd.icv(mc.acceptfrac, step)
                 # if mc.acceptfrac > 0.25: step *= 1.01
                 # else: step *= 0.99
 
@@ -183,7 +183,7 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
             mul = 1
             cellsize = (cellsize - mul*cellgrad).clone().detach().requires_grad_(True)  # type: ignore
             cartshift = (cartshift - mul*cartshiftgrad).clone().detach().requires_grad_(True)  # type: ignore
-            ic(err)  # , cellsize, cartshift, cartshiftgrad)  # type: ignore
+            ipd.icv(err)  # , cellsize, cartshift, cartshiftgrad)  # type: ignore
         assert 0
 
         cellsize = 100
@@ -204,9 +204,9 @@ def fix_xtal_to_coords(xtal, coords, cellsize=None, domc=True, domin=False, nosh
                 laststate = cellsize, cartshift
             else:
                 cellsize, cartshift = laststate  # type: ignore
-            ic(cellsize, err, step)  # type: ignore
+            ipd.icv(cellsize, err, step)  # type: ignore
             step *= 0.99
-        ic(besterr, beststate)  # type: ignore
+        ipd.icv(besterr, beststate)  # type: ignore
     assert 0
 
 def analyze_xtal_asu_placement(sym):
@@ -214,22 +214,22 @@ def analyze_xtal_asu_placement(sym):
 
     xtal = Xtal(sym)
     cen = xtal.asucen(xtalasumethod="closest_to_cen", use_olig_nbrs=True)
-    ic(cen)  # type: ignore
+    ipd.icv(cen)  # type: ignore
     side = np.linspace(0, 1, 13, endpoint=False)
     samp = np.meshgrid(side, side, side)
     samp = np.stack(samp, axis=3).reshape(-1, 3)
-    # ic(samp[:10])
+    # ipd.icv(samp[:10])
     mindisxtal = collections.defaultdict(list)
 
     for i, pt in enumerate(samp):
         if i % 10 == 0:
-            ic(i, len(samp))  # type: ignore
+            ipd.icv(i, len(samp))  # type: ignore
         ptsym = xtal.symcoords(pt, cells=3, ontop=None)
         # ipd.showme(ptsym * 5)
         # assert 0
         delta = np.sqrt(np.sum((ipd.homog.hpoint(pt) - ptsym)**2, axis=1))
 
-        # ic(delta)
+        # ipd.icv(delta)
         # np.fill_diagonal(delta, 9e9)
         zero = np.abs(delta) < 0.000001
         if np.sum(zero) != 1:
@@ -238,29 +238,29 @@ def analyze_xtal_asu_placement(sym):
         mindis = np.round(np.min(delta), 3)
         if mindis > 0.001:
             mindisxtal[mindis].append(pt)
-    ic(len(samp))  # type: ignore
+    ipd.icv(len(samp))  # type: ignore
     frames = xtal.cellframes(cells=3)
 
-    ic(list(mindisxtal.keys()))  # type: ignore
+    ipd.icv(list(mindisxtal.keys()))  # type: ignore
     for k in reversed(sorted(mindisxtal.keys())):
         pts = mindisxtal[k]
         ptset = set()
         for i, pt in enumerate(pts):
-            # ic(pt)
+            # ipd.icv(pt)
             ptset.add(tuple(np.round(xtal.coords_to_asucen(pt, frames=frames)[0], 3)))
-        ic(k)  # type: ignore
+        ipd.icv(k)  # type: ignore
         for pt in ptset:
-            ic(pt, ipd.homog.hnorm(pt - cen), ipd.homog.hnorm(pt))  # type: ignore
+            ipd.icv(pt, ipd.homog.hnorm(pt - cen), ipd.homog.hnorm(pt))  # type: ignore
     # assert 0
 
     keys = sorted(mindisxtal.keys())
     scale = 8
     for k in keys:
         v = mindisxtal[k]
-        ic(k, len(v))  # type: ignore
+        ipd.icv(k, len(v))  # type: ignore
         ptsym = xtal.symcoords(v[0] * 8, cellsize=8, cells=2, ontop=None)
         # ipd.showme(ptsym, name=f'{k}')
-        ic(v[0])  # type: ignore
+        ipd.icv(v[0])  # type: ignore
     for i, v in enumerate(mindisxtal[0.288]):
         ptsym = xtal.symcoords(v * 8, cellsize=8, cells=2, ontop=None)
         ipd.showme(ptsym, name=f"{i}")

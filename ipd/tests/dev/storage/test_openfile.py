@@ -45,7 +45,7 @@ def test_decompressed_fname():
     for fname, expected in cases:
         dcomp = decompressed_fname(fname)
         if dcomp != expected:
-            ic(type(fname), type(expected))
+            ipd.icv(type(fname), type(expected))
             print(f'Failed for "{repr(fname)}" expected "{repr(expected)}", got "{repr(dcomp)}"')
         assert dcomp == expected
 

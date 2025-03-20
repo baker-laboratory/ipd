@@ -12,14 +12,37 @@ class CodeTool(IPDTool):
     def clean_pycache(self, path: ipd.Path = ipd.Path('.')):
         os.system(fr'find {path} -name *.pyc -delete')
 
-    def yapf(
-        self,
-        path: Annotated[str, typer.Argument()] = '[projname]',
-        dryrun: bool = False,
-        excludefile: str = '[gitroot].yapf_exclude',
-        hashfile: str = '[gitroot].yapf_hash',
-        conffile: str = '[gitroot]/pyproject.toml',
-    ):
+    def format_project(self,
+                       path: Annotated[str, typer.Argument()] = '[projname]',
+                       dryrun: bool = False,
+                       excludefile: str = '[gitroot].yapf_exclude',
+                       hashfile: str = '[gitroot].yapf_hash',
+                       conffile: str = '[gitroot]/pyproject.toml'):
+        """run ipd fromatting tool on all python files in path
+
+        Args:
+            path (str, optional): path to run ipdformat on. Defaults to '.'.
+        """
+        _ = ipd.dev.OnlyChangedFiles('ipdformat', path, excludefile, hashfile, conffile)
+        with _ as fileinfo:
+            ipd.kwcall(fileinfo, ipd.dev.format_files, fileinfo.changed_files, dryrun=dryrun)
+
+    def format(self, path: Annotated[ipd.Path, typer.Argument(allow_dash=True)], dryrun: bool = False):
+        """run ipd fromatting tool on all python files in path
+
+        Args:
+            path (str, optional): path to run ipdformat on. Defaults to '.'.
+        """
+        if path == '-': sys.stdout.write(ipd.dev.format_buffer(sys.stdin.read()))
+        else: ipd.dev.format_files(path, dryrun=dryrun)
+        ipd.dev.global_timer.report()
+
+    def yapf(self,
+             path: Annotated[str, typer.Argument()] = '[projname]',
+             dryrun: bool = False,
+             excludefile: str = '[gitroot].yapf_exclude',
+             hashfile: str = '[gitroot].yapf_hash',
+             conffile: str = '[gitroot]/pyproject.toml'):
         """run yapf on all python files in path
 
         Args:
@@ -31,7 +54,7 @@ class CodeTool(IPDTool):
         """
         cmd = 'yapf -ip --style {conffile} -m {" ".join(changed_files)}'
         result = ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
-        raise typer.Exit(code=int(result.files_modified))
+        raise typer.Exit(code=int(bool(result.files_modified)))
 
     def pyright(
         self,

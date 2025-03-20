@@ -74,7 +74,7 @@ def main():
 
     test_asuslide_I213()
 
-    ic("DONE")  # type: ignore
+    ipd.icv("DONE")  # type: ignore
 
 def manual_test():
     # yapf: disable
@@ -167,8 +167,8 @@ def test_asuslide_L632_2(showme=False):
         resetonfail=True,
     )
     # ipd.showme(slid, vizsphereradius=6)
-    ic(slid.cellsize)  # type: ignore
-    ic(slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 101.875)
     assert np.allclose(slid.asym.com(), [3.02441406e01, -1.27343750e00, 3.42139511e-16, 1.00000000e00])
     # assert np.allclose(slid.cellsize, 95)
@@ -214,8 +214,8 @@ def test_asuslide_L632_ignoreimmobile(showme=False):
         iterstepscale=0.5,
     )
     # ipd.showme(slid, vizsphereradius=6)
-    ic(slid.cellsize)  # type: ignore
-    ic(slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 90.25)
     assert np.allclose(slid.asym.com(), [2.37973395e01, 1.44932026e-15, 7.30711512e-16, 1.00000000e00])
 
@@ -326,15 +326,15 @@ def test_asuslide_helix_case1(showme=False):
     rb1 = ipd.sym.helix_slide(h, xyz, cellsize, iters=0, closest=9)
     rb2 = ipd.sym.helix_slide(h, xyz, cellsize, contactfrac=0.1, closest=9)
     # rb3 = ipd.sym.helix_slide(h, xyz, cellsize, contactfrac=0.1, closest=20)
-    # ic(cellsize, rb1.cellsize, rb2.cellsize, rb3.cellsize)
+    # ipd.icv(cellsize, rb1.cellsize, rb2.cellsize, rb3.cellsize)
     # assert 0
 
     # ipd.showme(rb1, **showmeopts)
     # ipd.showme(rb2, **showmeopts)
     # ipd.showme(rb3, **showmeopts)
 
-    # ic(rb1.cellsize)
-    ic(rb2.cellsize)  # type: ignore
+    # ipd.icv(rb1.cellsize)
+    ipd.icv(rb2.cellsize)  # type: ignore
     assert np.allclose(rb1.cellsize, [70, 70, 50])
     # assert np.allclose(rb2.cellsize, rb3.cellsize)
     assert np.allclose(rb2.cellsize, [113.7143553, 113.7143553, 44.31469973])
@@ -355,16 +355,16 @@ def test_asuslide_helix_nfold1(showme=False):
     rb2 = ipd.sym.helix_slide(h, xyz, cellsize, contactfrac=0.1, closest=9, showme=False, step=5)
     rb3 = ipd.sym.helix_slide(h, xyz, cellsize, contactfrac=0.1, closest=20, step=5)
 
-    # ic(cellsize, rb1.cellsize, rb2.cellsize, rb3.cellsize)
+    # ipd.icv(cellsize, rb1.cellsize, rb2.cellsize, rb3.cellsize)
     # assert 0
 
     # ipd.showme(rb1, **showmeopts)
     # ipd.showme(rb2, **showmeopts)
     # ipd.showme(rb3, **showmeopts)
 
-    ic(rb1.cellsize)  # type: ignore
-    ic(rb2.cellsize)  # type: ignore
-    ic(rb3.cellsize)  # type: ignore
+    ipd.icv(rb1.cellsize)  # type: ignore
+    ipd.icv(rb2.cellsize)  # type: ignore
+    ipd.icv(rb3.cellsize)  # type: ignore
     assert np.allclose(rb1.cellsize, [133.6901522, 133.6901522, 70.0])
     assert np.allclose(rb2.cellsize, rb3.cellsize)
     assert np.allclose(rb2.cellsize, [109.21284284, 109.21284284, 43.59816075])
@@ -393,13 +393,13 @@ def test_asuslide_helix_nfold1_2():
                               showme=False,
                               **showmeopts)
 
-    # ic(rb2.frames())
+    # ipd.icv(rb2.frames())
 
     # ipd.showme(rb1, **showmeopts)
     # ipd.showme(rb2, **showmeopts)
 
-    ic(rb1.cellsize)  # type: ignore
-    ic(rb2.cellsize)  # type: ignore
+    ipd.icv(rb1.cellsize)  # type: ignore
+    ipd.icv(rb2.cellsize)  # type: ignore
     assert np.allclose(rb1.cellsize, [115.86479857, 115.86479857, 70.0])
     assert np.allclose(rb2.cellsize, [55.93962805, 55.93962805, 38.53925788])
 
@@ -421,8 +421,8 @@ def test_asuslide_helix_nfold3():
     # ipd.showme(rb1, **showmeopts)
     # ipd.showme(rb2, **showmeopts)
 
-    # ic(rb1.cellsize)
-    ic(rb2.cellsize)  # type: ignore
+    # ipd.icv(rb1.cellsize)
+    ipd.icv(rb2.cellsize)  # type: ignore
     assert np.allclose(rb1.cellsize, [47.74648293, 47.74648293, 50.0])
     assert np.allclose(rb2.cellsize, [44.70186644, 44.70186644, 146.78939426])
 
@@ -446,8 +446,8 @@ def test_asuslide_helix_nfold5():
     # ipd.showme(rb2, **showmeopts)
     # ipd.showme(rb3, **showmeopts)
 
-    ic(rb.cellsize)  # type: ignore
-    ic(rb2.cellsize)  # type: ignore
+    ipd.icv(rb.cellsize)  # type: ignore
+    ipd.icv(rb2.cellsize)  # type: ignore
     assert np.allclose(rb.cellsize, [127.32395447, 127.32395447, 40.0])
     assert np.allclose(rb2.cellsize, [153.14643468, 153.14643468, 49.28047224])
     assert np.allclose(rb3.cellsize, rb2.cellsize)
@@ -497,7 +497,7 @@ def test_asuslide_L442():
         cellscalelimit=1.2,
     )
     # ipd.showme(slid)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 99.16625977)
     assert np.allclose(slid.asym.com(), [2.86722158e01, -1.14700730e00, 4.03010958e-16, 1.00000000e00])
 
@@ -553,7 +553,7 @@ def test_asuslide_I4132_clashframes():
     # xtal.dump_pdb('test0.pdb', slid.asym.coords, cellsize=slid.cellsize, cells=0)
     # xtal.dump_pdb('test1.pdb', slid.asym.coords, cellsize=slid.cellsize, cells=(-1, 0), ontop='primary')
     # ipd.showme(slid)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 180.390625)
     assert np.allclose(slid.asym.com(), [-4.80305991, 11.55346709, 28.23302801, 1.0])
 
@@ -580,7 +580,7 @@ def test_asuslide_I4132_clashframes():
     # xtal.dump_pdb('test0.pdb', slid.asym.coords, cellsize=slid.cellsize, cells=0)
     # xtal.dump_pdb('test1.pdb', slid.asym.coords, cellsize=slid.cellsize, cells=(-1, 0), ontop='primary')
     # ipd.showme(slid)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 241.25)
     assert np.allclose(slid.asym.com(), [-3.44916815, 14.59051223, 37.75725345, 1.0])
 
@@ -638,14 +638,14 @@ def asuslide_case1():
 
     cachains = pdb.ca().reshape(xtal.nprimaryframes, -1, 4)
     csize = ipd.homog.hnorm(ipd.homog.hcom(chainD.ca()) * 2)
-    ic(csize)  # type: ignore
+    ipd.icv(csize)  # type: ignore
     csize, shift = xtal.fit_coords(cachains, noshift=True)
-    ic(csize)  # type: ignore
+    ipd.icv(csize)  # type: ignore
     # xyz = np.stack([pdb.df['x'], pdb.df['y'], pdb.df['z']]).T
     xyz = chainA.ca()
     # xyz = pdb.ca()
     # xyz = xyz[:, :4].reshape(-1, 3)
-    # ic(xyz.shape)
+    # ipd.icv(xyz.shape)
 
     # primary_frames = np.stack([
     # ipd.hscaled(csize, np.eye(4)),
@@ -679,12 +679,12 @@ def asuslide_case1():
         centerasu="toward_other",
         centerasu_at_start=True,
     )
-    ic(slid.cellsize)  # type: ignore
+    ipd.icv(slid.cellsize)  # type: ignore
     assert 0
     # x = ipd.sym.xtal.Xtal(sym)
     # x.dump_pdb('test.pdb', slid.asym.coords, cellsize=slid.cellsize)
     # print(x)
-    # ic(ipd.hcart3(slid.asym.globalposition))
+    # ipd.icv(ipd.hcart3(slid.asym.globalposition))
     # assert np.allclose(slid.cellsize, 262.2992230399999)
     # assert np.allclose(ipd.hcart3(slid.asym.globalposition), [67.3001427, 48.96971455, 60.86220864])
 
@@ -740,8 +740,8 @@ def test_asuslide_I213():
     # ipd.showme(slid, vizsphereradius=6)
     # ipd.showme(asym, vizsphereradius=6)
 
-    ic(slid.cellsize)  # type: ignore
-    ic(slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 142.5)
     assert np.allclose(slid.asym.com(), [82.59726537, 52.63939034, 90.46451613, 1.0])
 
@@ -790,7 +790,7 @@ def test_asuslide_L632():
         centerasu=False,
     )
     # ipd.showme(slid)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 97.5)
     assert np.allclose(slid.asym.com(), [2.89453125e01, -1.21875000e00, 3.27446403e-16, 1.00000000e00])
 
@@ -834,9 +834,9 @@ def test_asuslide_I4132():
         centerasu=False,
     )
     # ipd.showme(slid, vizsphereradius=6)
-    ic(slid.cellsize)  # type: ignore
-    ic(slid.asym.com())  # type: ignore
-    # ic(ipd.hcart3(slid.asym.globalposition))
+    ipd.icv(slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com())  # type: ignore
+    # ipd.icv(ipd.hcart3(slid.asym.globalposition))
     # x = ipd.sym.xtal.Xtal(sym)
     # x.dump_pdb('test.pdb', slid.asym.coords, cellsize=slid.cellsize)
     assert np.allclose(slid.cellsize, 183.75)
@@ -862,9 +862,9 @@ def test_asuslide_I4132():
         xtalrad=0.5,
     )
     # ipd.showme(slid2, vizsphereradius=6)
-    ic(slid.cellsize)  # type: ignore
-    ic(slid.asym.com())  # type: ignore
-    # ic(ipd.hcart3(slid.asym.globalposition))
+    ipd.icv(slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com())  # type: ignore
+    # ipd.icv(ipd.hcart3(slid.asym.globalposition))
     assert np.allclose(slid.cellsize, 183.75)
     assert np.allclose(slid.asym.com(), [0.26694229, 19.87146628, 36.37601256, 1.0])
     # assert 0
@@ -901,8 +901,8 @@ def test_asuslide_p213():
     )
     # ipd.showme(slid)
     # slid.dump_pdb('test1.pdb')
-    # ic(slid.bvh_op_count, len(slid.bodies))
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    # ipd.icv(slid.bvh_op_count, len(slid.bodies))
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 161.5703125)
     assert np.allclose(slid.asym.com(), [81.45648685, 41.24336469, 62.20570401, 1.0])
 
@@ -928,8 +928,8 @@ def test_asuslide_p213():
         iterstepscale=0.75,
     )
     # slid.dump_pdb('test2.pdb')
-    # ic(slid.bvh_op_count, len(slid.bodies))
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    # ipd.icv(slid.bvh_op_count, len(slid.bodies))
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 161.5703125)
     assert np.allclose(slid.asym.com(), [81.45648685, 41.24336469, 62.20570401, 1.0])
 
@@ -953,10 +953,10 @@ def test_asuslide_p213():
     )
     # ipd.showme(slid)
     # slid.dump_pdb('test3.pdb')
-    # ic(slid.bvh_op_count, len(slid.bodies))
-    # ic(slid.cellsize, slid.asym.com())
-    # ic(ipd.hcart3(slid.asym.globalposition))
-    # ic(slid.asym.tolocal)
+    # ipd.icv(slid.bvh_op_count, len(slid.bodies))
+    # ipd.icv(slid.cellsize, slid.asym.com())
+    # ipd.icv(ipd.hcart3(slid.asym.globalposition))
+    # ipd.icv(slid.asym.tolocal)
     assert np.allclose(slid.cellsize, 161.5703125)
     assert np.allclose(slid.asym.com(), [81.45648685, 41.24336469, 62.20570401, 1.0])
 
@@ -990,7 +990,7 @@ def test_asuslide_oct():
         contactdis=16,
         vizsphereradius=6,
     )
-    ic(slid.asym.com(), slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com(), slid.cellsize)  # type: ignore
     assert np.all(np.abs(slid.frames()[:, :3, 3]) < 0.0001)
     assert np.allclose(slid.asym.com(), [67.39961966, 67.39961966, 25.00882048, 1.0])
     assert np.allclose(slid.cellsize, [1, 1, 1])
@@ -1011,7 +1011,7 @@ def test_asuslide_oct():
         contactdis=16,
         vizsphereradius=6,
     )
-    # ic(slid.asym.com(), slid.cellsize)
+    # ipd.icv(slid.asym.com(), slid.cellsize)
     assert np.all(np.abs(slid.frames()[:, :3, 3]) < 0.0001)
     assert np.allclose(slid.asym.com(), [67.39961966, 67.39961966, 25.00882048, 1.0])
     assert np.allclose(slid.cellsize, [1, 1, 1])
@@ -1034,7 +1034,7 @@ def test_asuslide_oct():
         towardaxis=False,
         along_extra_axes=[[0, 0, 1]],
     )
-    # ic(slid.asym.com(), slid.cellsize)
+    # ipd.icv(slid.asym.com(), slid.cellsize)
     assert np.all(np.abs(slid2.frames()[:, :3, 3]) < 0.0001)
     assert np.allclose(np.eye(3), slid2.asym.position[:3, :3])
     assert np.allclose(slid.asym.com(), [67.39961966, 67.39961966, 25.00882048, 1.0])
@@ -1055,7 +1055,7 @@ def test_asuslide_oct():
         subiters=3,
         towardaxis=False,
     )
-    # ic(slid.asym.com(), slid.cellsize)
+    # ipd.icv(slid.asym.com(), slid.cellsize)
     assert np.all(np.abs(slid2.frames()[:, :3, 3]) < 0.0001)
     assert np.allclose(np.eye(3), slid2.asym.position[:3, :3])
     assert np.allclose(slid.asym.com(), [67.39961966, 67.39961966, 25.00882048, 1.0])
@@ -1110,7 +1110,7 @@ def test_asuslide_P432_44(showme=False):
         resetonfail=True,
     )
     # ipd.showme(slid)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 146.85425)
     assert np.allclose(slid.asym.com(), [18.666027, 37.33205399, 55.99808099, 1.0])
 
@@ -1138,7 +1138,7 @@ def test_asuslide_P432_44(showme=False):
         xtalrad=0.6,
     )
     # ipd.showme(slid)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 145.5535)
     assert np.allclose(slid.asym.com(), [18.74043474, 37.48086949, 56.22130423, 1.0])
 
@@ -1185,8 +1185,8 @@ def test_asuslide_P432_43(showme=False):
         resetonfail=True,
     )
     # ipd.showme(slid)
-    ic(slid.cellsize)  # type: ignore
-    ic(slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 147.10025)
     assert np.allclose(slid.asym.com(), [18.69073977, 37.38147955, 56.07221932, 1.0])
 
@@ -1197,13 +1197,13 @@ def test_asuslide_F432():
     np.random.seed(7)
     xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
     asucen = xtal.asucen(method="stored", cellsize=csize)
-    # ic(asucen / csize)
+    # ipd.icv(asucen / csize)
     # assert 0
     xyz += ipd.homog.hvec(asucen)
 
     # frames = ipd.sym.frames(sym, cells=None, cellsize=csize)
     frames = ipd.sym.frames(sym, cellsize=csize, cen=ipd.homog.hcom(xyz), xtalrad=0.5, strict=False)
-    # ic(frames.shape)
+    # ipd.icv(frames.shape)
     # assert 0
 
     slid = asuslide(
@@ -1227,7 +1227,7 @@ def test_asuslide_F432():
         iterstepscale=0.7,
     )
     ipd.showme(slid, vizsphereradius=6)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 201.5)
     assert np.allclose(slid.asym.com(), [154.9535, 15.5155, 77.5775, 1.0])
 
@@ -1235,7 +1235,7 @@ def test_asuslide_F432():
     # cen = ipd.homog.hcom(xyz + [0, 0, 0, 0])
     # frames = ipd.sym.frames(sym, ontop=primary_frames, cells=(-1, 1), cellsize=csize, center=asucen, asucen=cen,
     # xtalrad=csize * 0.7)
-    # ic(len(frames))
+    # ipd.icv(len(frames))
     # assert 0
 
     # ipd.showme(slid2)
@@ -1246,13 +1246,13 @@ def test_asuslide_I432():
     csize = 250
     np.random.seed(7)
     xyz = ipd.homog.point_cloud(100, std=30, outliers=0)
-    # ic(xyz.shape)
+    # ipd.icv(xyz.shape)
     # xyz += ipd.homog.hvec(xtal.asucen(method='stored', cellsize=csize))
     xyz += ipd.homog.hvec(xtal.asucen(method="closest", cellsize=csize))
 
     # p = xtal.primary_frames(cellsize=csize)
-    # ic(p.shape)
-    # ic(ipd.hcart3(p))
+    # ipd.icv(p.shape)
+    # ipd.icv(ipd.hcart3(p))
     # assert 0
 
     # ipd.showme(ipd.dock.rigid.RigidBodyFollowers(sym=sym, coords=xyz, cellsize=csize, xtalrad=0.7, strict=False))
@@ -1280,9 +1280,9 @@ def test_asuslide_I432():
         iterstepscale=0.5,
     )
 
-    # ic(slid.bvh_op_count)
+    # ipd.icv(slid.bvh_op_count)
     # ipd.showme(slid)
-    ic(slid.cellsize, slid.asym.com())  # type: ignore
+    ipd.icv(slid.cellsize, slid.asym.com())  # type: ignore
     assert np.allclose(slid.cellsize, 165)
     assert np.allclose(slid.asym.com(), [48.91764706, 29.7, 13.97647059, 1.0])
 
@@ -1290,7 +1290,7 @@ def test_asuslide_I432():
     # cen = ipd.homog.hcom(xyz + [0, 0, 0, 0])
     # frames = ipd.sym.frames(sym, ontop=primary_frames, cells=(-1, 1), cellsize=csize, center=asucen, asucen=cen,
     # xtalrad=csize * 0.7)
-    # ic(len(frames))
+    # ipd.icv(len(frames))
 
     # ipd.showme(slid2)
 
@@ -1333,7 +1333,7 @@ def test_asuslide_from_origin():
         vizsphereradius=6,
         **kw,
     )
-    ic(slid.asym.com(), slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com(), slid.cellsize)  # type: ignore
 
 def test_asuslide_case2():
     from ipd.tests.testdata.misc.asuslide_misc import test_asuslide_case2_coords  # type: ignore
@@ -1374,7 +1374,7 @@ def test_asuslide_case2():
         **kw,
     )
     # ipd.showme(slid)
-    # ic(slid.asym.com(), slid.cellsize)
+    # ipd.icv(slid.asym.com(), slid.cellsize)
     assert np.allclose(slid.asym.com(), [18.33744584, 0.30792098, 3.55403141, 1])
     assert np.allclose(slid.cellsize, [58.96, 58.96, 58.96])
     slid = asuslide(
@@ -1407,13 +1407,13 @@ def test_asuslide_case2():
         **kw,
     )
     # ipd.showme(slid)
-    # ic(slid.asym.com(), slid.cellsize)
+    # ipd.icv(slid.asym.com(), slid.cellsize)
     assert np.allclose(slid.asym.com(), [18.33744584, 0.30792098, 3.55403141, 1])
     assert np.allclose(slid.cellsize, [58.96, 58.96, 58.96])
 
-    # ic(test_asuslide_case2_coords.shape)
-    # ic(slid.asym.coords.shape)
-    # ic(slid.coords.shape)
+    # ipd.icv(test_asuslide_case2_coords.shape)
+    # ipd.icv(slid.asym.coords.shape)
+    # ipd.icv(slid.coords.shape)
     # slid.dump_pdb('ref.pdb')
 
     def boundscheck_L632(bodies):
@@ -1431,7 +1431,7 @@ def test_asuslide_case2():
     coords = ipd.hcentered(test_asuslide_case2_coords, singlecom=True)
     coords[..., 0] += 5
     # ipd.showme(test_asuslide_case2_coords[:, 1])
-    # ic(ipd.homog.hcom(coords))
+    # ipd.icv(ipd.homog.hcom(coords))
     slid = asuslide(
         showme=0,
         sym=sym,
@@ -1464,8 +1464,8 @@ def test_asuslide_case2():
     )
     # slid.dump_pdb('test.pdb')
     # ipd.showme(slid)
-    ic(slid.asym.com(), slid.cellsize)  # type: ignore
-    ic("=======")  # type: ignore
+    ipd.icv(slid.asym.com(), slid.cellsize)  # type: ignore
+    ipd.icv("=======")  # type: ignore
     # don't know why this is unstable... generally off by a few thou
     assert np.allclose(slid.asym.com(), [1.81500000e01, -4.17462713e-04, 4.31305757e-15, 1.00000000e00], atol=0.1)
     assert np.allclose(slid.cellsize, [58.96, 58.96, 58.96], atol=0.01)
@@ -1504,7 +1504,7 @@ def test_asuslide_case2():
         **kw,
     )
     # ipd.showme(slid)
-    ic(slid.asym.com(), slid.cellsize)  # type: ignore
+    ipd.icv(slid.asym.com(), slid.cellsize)  # type: ignore
     assert np.allclose(slid.asym.com(), [1.81500000e01, -4.17462713e-04, 4.31305757e-15, 1.00000000e00], atol=0.1)
 
     assert np.allclose(slid.cellsize, 57.34, atol=0.01)

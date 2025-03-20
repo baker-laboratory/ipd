@@ -110,7 +110,7 @@ def pseudo_t_start(t):
     }
     frames = ipd.dev.load_package_data(dat[t])
     assert len(frames) == 60 * t
-    ic(frames.shape)  # type: ignore
+    ipd.icv(frames.shape)  # type: ignore
     asu = extract_t_asu(frames, t)
     return asu
 

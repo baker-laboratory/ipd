@@ -35,7 +35,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
     import torch.utils.cpp_extension
     # os.environ['CC'] = "gcc-9"
     commonflags = ['-DEIGEN_NO_DEBUG'] if mode == 'release' else []
-    # ic('start cuda build')
+    # ipd.icv('start cuda build')
     I = [
         # '/home/sheffler/sw/MambaForge/envs/TEST/lib/python3.12/site-packages/numba/cuda/',
         # f'{os.path.dirname(th.__file__)}/include/torch/csrc/api/include/torch',
@@ -49,7 +49,7 @@ def build_extension(name, sources, incpath, module=None, verbose=False):
         extra_cflags=['-O3'] + commonflags,
         extra_cuda_cflags=['-Xnvlink', '-use-host-info'] + commonflags,
         extra_include_paths=[f'{ipd.projdir}/{d}' for d in ['../lib', 'dev/cuda'] + incpath] + I)
-    # ic('done cuda build')
+    # ipd.icv('done cuda build')
     if module:
         for k, v in extension.__dict__.items():
             if not k.startswith('__'):

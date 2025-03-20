@@ -159,7 +159,7 @@ class Timer:
     ):
         if len(self.checkpoints) <= 1: timecut = 0
         namelen = min(namelen, max(len(n.rstrip("$")) for n in self.checkpoints) if self.checkpoints else 0)
-        lines = [f"Times(name={self.name}, order={order}, summary={summary}):"]
+        lines = [f"Timer.report: {self.name} order={order}: summary: {summary}"]
         times = self.report_dict(order=order, summary=summary, timecut=timecut)
 
         if not times: times["total$$$$"] = time.perf_counter() - self._start

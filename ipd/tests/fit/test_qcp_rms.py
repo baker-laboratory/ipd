@@ -53,8 +53,8 @@ def test_qcp_kernel_numba():
     rms2 = rms2.reshape(N1, N2)
     xfit1 = xfit1.reshape(N1, N2, 4, 4)
     rms2, xfit2 = ipd.fit.rmsd(pts1.cpu(), pts2.cpu(), True)
-    # ic(xfit1[...,:3,:3])
-    # ic(xfit2[...,:3,:3])
+    # ipd.icv(xfit1[...,:3,:3])
+    # ipd.icv(xfit2[...,:3,:3])
     assert th.allclose(rms2.cpu(), rms2, atol=1e-3)
     assert th.allclose(xfit1[..., :3, :3].cpu(), xfit2[..., :3, :3], atol=1e-2)
     # assert 0
@@ -89,7 +89,7 @@ def test_rms():
 def helper_test_qcp_raw_cuda(getfit):
     pts1 = th.randn((7, 10, 3), dtype=th.float32, device='cuda')
     pts2 = th.randn((7, 10, 3), dtype=th.float32, device='cuda')
-    # ic(iprod.shape, E0.shape)
+    # ipd.icv(iprod.shape, E0.shape)
     # with ipd.dev.Timer():
     if True:
         pts1cen, pts2cen = pts1 - pts1.mean(1).unsqueeze(1), pts2 - pts2.mean(1).unsqueeze(1)
@@ -110,7 +110,7 @@ def helper_test_qcp_raw_cuda(getfit):
     rms2 = rms2.reshape(-1)
     assert th.allclose(rms1.cpu(), rms2)
     if getfit:
-        # ic(x1.shape, x2.shape)
+        # ipd.icv(x1.shape, x2.shape)
         assert th.allclose(x1.cpu(), x2, atol=1e-3)  # type: ignore
 
 def test_qcp_raw_cuda():
@@ -124,7 +124,7 @@ def test_qcp_vec():
     pts2 = h.randpoint((7, 10), dtype=th.float32)[:, :, :3].contiguous()
     rms1 = th.tensor([[_rms.qcp_rms_f4(p1, p2) for p2 in pts2] for p1 in pts1])
     rms2 = _rms.qcp_rms_vec_f4(pts1, pts2)
-    # ic(rms1.shape, rms2.shape)
+    # ipd.icv(rms1.shape, rms2.shape)
     assert th.allclose(rms1, rms2)
 
 @pytest.mark.skip
@@ -156,10 +156,10 @@ def test_qcp_regions_simple_1seg():
     # pts1[:100] = pts1[:100] * 0.01 + pts2 * 0.99
     offsets = np.arange(10).reshape(10, 1)
     # offsets = np.tile(offsets, (170_000, 1))
-    # ic(offsets.shape)
+    # ipd.icv(offsets.shape)
     # with ipd.dev.Timer():
     rms = _rms.qcp_rms_regions_f4i4(pts1, pts2, [N], offsets)
-    # ic(rms)
+    # ipd.icv(rms)
     for i in range(10):
         rmsref = _rms.qcp_rms_f8(pts1[i:N + i], pts2)
         assert rms.shape == (len(offsets), )
@@ -270,8 +270,8 @@ def test_qcp_regions_junct_simple():
     offsets = [[0]]
     rmsref = compute_rms_offsets_brute(pts1, pts2, sizes, offsets, junct=4)
     rms = _rms.qcp_rms_regions_f4i4(pts1, pts2, sizes, offsets, junct=4)
-    # ic(rmsref)
-    # ic(rms)
+    # ipd.icv(rmsref)
+    # ipd.icv(rms)
     assert np.allclose(rms, rmsref)
 
 @pytest.mark.skip

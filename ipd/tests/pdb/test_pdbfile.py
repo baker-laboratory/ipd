@@ -116,14 +116,14 @@ def test_pdb_mask(pdb1pgx):
 
     seq = p.sequence()
     cbmask = pdb.cbmask(aaonly=True)
-    # ic(len(seq), sum(cbmask))
+    # ipd.icv(len(seq), sum(cbmask))
     assert len(seq) == np.sum(camask)
     for s, m in zip(pdb.seq, cbmask):
         assert m == (s != "G")
     # isgly = np.array(list(seq)) == 'G'
     # wgly = np.where(isgly)[0]
-    # ic(wgly)
-    # ic(cbmask[wgly])
+    # ipd.icv(wgly)
+    # ipd.icv(cbmask[wgly])
 
 def test_pdb_bbcoords(pdb1pgx):
     pdb = pdb1pgx
@@ -153,8 +153,8 @@ def test_pdb_bbcoords2(pdb1pgx):
     cbmask = pdb1pgx.cbmask(aaonly=True)
     assert np.sum(camask) == len(cbmask)
     seq = pdb1pgx.sequence()
-    # ic(len(seq), len(cbmask), len(camask))
-    # ic(seq)
+    # ipd.icv(len(seq), len(cbmask), len(camask))
+    # ipd.icv(seq)
     assert len(seq) == len(cbmask)
     wcb = np.where(cbmask)[0]
     cb = 9e9 * np.ones((len(ncaco), 3))
@@ -167,7 +167,7 @@ def test_pdb_bbcoords2(pdb1pgx):
 
 def test_pdbfile(pdbfile):
     # print(pdbfile.df)
-    # ic(pdbfile.nreshet)
+    # ipd.icv(pdbfile.nreshet)
     assert pdbfile.nreshet == 85
     a = pdbfile.subset("A")
     b = pdbfile.subset("B")

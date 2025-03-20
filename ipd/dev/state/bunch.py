@@ -77,7 +77,7 @@ from ipd.bunch import Bunch as Bunch
 #             parent, selfkey = self._special['parent']  # type: ignore
 #             return parent._notify_changed(f'{selfkey}.{k}', v)
 #         if self._special['autosave']:  # type: ignore
-#             ic(self._special['autosave'])  # type: ignore
+#             ipd.icv(self._special['autosave'])  # type: ignore
 #             import yaml
 #             if k:
 #                 k = k.split('.')[0]

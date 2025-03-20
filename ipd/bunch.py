@@ -105,7 +105,7 @@ class Bunch(dict, Generic[T]):
             parent, selfkey = self._special['parent']
             return parent._notify_changed(f'{selfkey}.{k}', v)
         if self._special['autosave']:
-            # ic(self._special['autosave'])
+            # ipd.icv(self._special['autosave'])
             import yaml
             if k:
                 k = k.split('.')[0]

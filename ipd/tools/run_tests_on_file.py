@@ -19,6 +19,8 @@ from pathlib import Path
 from collections import defaultdict
 from time import perf_counter
 from assertpy import assert_that
+
+sys.path.append('.')
 import ipd
 # set to manually specipy a command for a file
 _overrides = {
@@ -130,9 +132,7 @@ def dispatch(
     path, bname = os.path.split(fname)
 
     if bname in overrides:
-        oride = overrides[bname]
-        return oride, _post[bname]
-
+        return overrides[bname], _post[bname]
     if bname in file_mappings:
         assert len(file_mappings[bname]) == 1
         fname = file_mappings[bname][0]
@@ -143,13 +143,13 @@ def dispatch(
         path, bname = os.path.split(bname)
 
     if not file_has_main(fname) and not bname.startswith('test_'):
-        testfile = testfile_of(projects, path, bname, **kw)
-        if testfile:
+        if testfile := testfile_of(projects, path, bname, **kw):
             if not os.path.exists(testfile) and fname.endswith('.py'):
                 print('autogen test file', testfile)
                 os.system(f'{sys.executable} -mipd code make_testfile {fname} {testfile}')
                 os.system(f'subl {testfile}')
-            fname = testfile
+                sys.exit()
+            fname = module_fname = testfile
             path, bname = os.path.split(fname)
 
     if bname == os.path.basename(__file__):

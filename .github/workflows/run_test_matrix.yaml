@@ -1,0 +1,39 @@
+name: Run Nox Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  nox:
+    name: Run Nox - Python ${{ matrix.python }} (extra=${{ matrix.extra }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: [3.13]
+        # python: [3.9, 3.10, 3.11, 3.12, 3.13]
+        extra: ["", "all"]
+        # extra: [""]
+        exclude:
+          - python: 3.9
+            extra: "all"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.8"
+          enable-cache: true
+
+      - name: Install nox using uv
+        run: uv venv --system-site-packages && uv pip install nox
+
+      - name: Run Nox session
+        run: |
+          uv run nox --session test_matrix -- ${{ matrix.python }} ${{ matrix.extra }}

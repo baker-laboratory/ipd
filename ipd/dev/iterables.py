@@ -77,5 +77,5 @@ class UniqueIDs:
         newids = ipd.copy(ids)
         for u in uniq:
             newids[ids == u] = self.idmap[u]
-        # ic(self.idmap)
+        # ipd.icv(self.idmap)
         return newids
