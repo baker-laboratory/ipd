@@ -24,9 +24,7 @@ def compute_xform_distances(true_xforms, pred_xforms):
     Find pairwise deviations between transforms
     """
     assert true_xforms.shape == pred_xforms.shape
-    dists = []
-    for i, X in enumerate(true_xforms):
-        dists.append(comb_dist(X, pred_xforms[i]))
+    dists = [comb_dist(X, pred_xforms[i]) for i, X in enumerate(true_xforms)]
     return th.stack(dists)
 
 def get_sym_frames(symid, opt, cenvec):
