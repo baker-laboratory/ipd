@@ -26,7 +26,7 @@ def compute_xform_distances(true_xforms, pred_xforms):
     assert true_xforms.shape == pred_xforms.shape
     dists = []
     for i, X in enumerate(true_xforms):
-        dists.append(X, pred_xforms[i])
+        dists.append(comb_dist(X, pred_xforms[i]))
     return th.stack(dists)
 
 def get_sym_frames(symid, opt, cenvec):
