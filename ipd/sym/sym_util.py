@@ -7,6 +7,28 @@ th = ipd.lazyimport('torch')
 
 SYMA = 1.0
 
+def get_frames_from_xyz_stack(coords):
+    """
+    Get transforms for stack of coords [N, L, 3, 3]
+    """
+    xforms = []
+    rmsds = []
+    for N in range(coords.shape[0]):
+        rms, _, X = ipd.h.rmsfit(coords[0], coords[N])
+        xforms.append(X)
+        rmsds.append(rms)
+    return th.stack(xforms), th.stack(rmsds)
+
+def compute_xform_distances(true_xforms, pred_xforms):
+    """
+    Find pairwise deviations between transforms
+    """
+    assert true_xforms.shape == pred_xforms.shape
+    dists = []
+    for i, X in enumerate(true_xforms):
+        dists.append(X, pred_xforms[i])
+    return th.stack(dists)
+
 def get_sym_frames(symid, opt, cenvec):
     if opt.H_K is not None: allframes = ipd.sym.high_t.get_pseudo_highT(opt)
     elif symid.lower().startswith('cyclic_vee_'): allframes = cyclic_vee_frames(symid, opt)
@@ -110,6 +132,18 @@ def cyclic_vee_frames(symid, opt):
     # frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
     # return allframes, frames
 
+def comb_dist(T1, T2, w_t=1.0, w_r=1.0):
+    '''
+    Compute the combined distance.
+    '''
+    t1, t2 = T1[:3, 3], T2[:3, 3]
+    t_dist = th.norm(t1 - t2)
+    R1, R2 = T1[:3, :3], T2[:3, :3]
+    rotation_diff = th.matmul(R1.T, R2)
+    trace_value = th.clip((th.trace(rotation_diff) - 1) / 2, -1, 1)
+    r_dist = th.acos(trace_value)
+    return w_t*t_dist + w_r*r_dist
+
 def get_nneigh(allframes, nsub, w_t=1.0, w_r=1.0):
     '''
     Args:
@@ -117,18 +151,6 @@ def get_nneigh(allframes, nsub, w_t=1.0, w_r=1.0):
     Returns:
         symsub (list): indices corresponding to nearest neighbors around main sub
     '''
-
-    def comb_dist(T1, T2, w_t=1.0, w_r=1.0):
-        '''
-        Compute the combined distance.
-        '''
-        t1, t2 = T1[:3, 3], T2[:3, 3]
-        t_dist = th.norm(t1 - t2)
-        R1, R2 = T1[:3, :3], T2[:3, :3]
-        rotation_diff = th.matmul(R1.T, R2)
-        trace_value = th.clip((th.trace(rotation_diff) - 1) / 2, -1, 1)
-        r_dist = th.acos(trace_value)
-        return w_t*t_dist + w_r*r_dist
 
     dists = th.tensor([comb_dist(allframes[0], x) for x in allframes])
     _, symsub = th.topk(dists, k=nsub, largest=False)
