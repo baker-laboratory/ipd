@@ -5,6 +5,7 @@ import shutil
 import subprocess
 from os.path import abspath, exists, isdir, join
 from pathlib import Path
+import tomli
 
 import ipd
 
@@ -13,7 +14,7 @@ class ProjecConfigtError(RuntimeError):
 
 RunOnChangedFilesResult = collections.namedtuple('RunOnChangedFilesResult', 'exitcode, files_modified')
 
-def get_project_localconfig(path: str = '.', conffile: str = '[gitroot]/local.toml') -> dict:
+def project_local_config(key: str = '', path: str = '.', conffile: str = '[gitroot]/local.toml') -> dict:
     """Get the local configuration for a project.
 
     Args:
@@ -25,10 +26,10 @@ def get_project_localconfig(path: str = '.', conffile: str = '[gitroot]/local.to
     """
     conffile = substitute_project_vars(conffile, path=path)[0]
     if not exists(conffile): return {}
-    import tomllib
     with open(conffile, 'rb') as inp:
-        return tomllib.load(inp)
-    return tomlfile(path)
+        conf = tomli.load(inp)
+    if key: return conf.get(key, {})
+    return conf
 
 @contextlib.contextmanager
 def OnlyChangedFiles(label: str,
@@ -164,9 +165,8 @@ def pyproject_file(path: str = '.') -> str:
     raise ProjecConfigtError('no pyproject.toml in project')
 
 def tomlfile(path: str = '.') -> 'ipd.Bunch':
-    import tomllib
     with open(pyproject_file(path), 'rb') as inp:
-        return ipd.bunchify(tomllib.load(inp))
+        return ipd.bunchify(tomli.load(inp))
 
 def git_status(header=None, footer=None, printit=False):
     srcdir = ipd.proj_dir

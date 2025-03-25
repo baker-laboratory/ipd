@@ -230,8 +230,8 @@ class RigidBody:
             self._contact_coords = ipd.homog.hpoint(contact_coords)
             self._com = ipd.homog.hcom(self._coords)
             if usebvh:
-                self.bvh = willutil_cpp.bvh.BVH(coords[..., :3])  # type: ignore
-                self.contactbvh = willutil_cpp.bvh.BVH(contact_coords[..., :3])  # type: ignore
+                self.bvh = hgeom.bvh.BVH(coords[..., :3])  # type: ignore
+                self.contactbvh = hgeom.bvh.BVH(contact_coords[..., :3])  # type: ignore
         elif parent is not None:
             self.bvh = parent.bvh
             self.contactbvh = parent.contactbvh
@@ -367,7 +367,7 @@ class RigidBody:
         self.bvhopcount += 1
         assert isinstance(other, RigidBody)
         if usebvh or (usebvh is None and self.usebvh):
-            count = willutil_cpp.bvh.bvh_count_pairs(  # type: ignore
+            count = hgeom.bvh.bvh_count_pairs(  # type: ignore
                 self.contactbvh,
                 other.contactbvh,
                 self.position,
@@ -394,14 +394,13 @@ class RigidBody:
     def hasclash(self, other, clashdis=None):
         self.bvhopcount += 1
         clashdis = clashdis or self.clashdis
-        isect = willutil_cpp.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position,
-                                           clashdis)  # type: ignore
+        isect = hgeom.bvh.bvh_isect(self.bvh, other.bvh, self.position, other.position,
+                                    clashdis)  # type: ignore
         return isect
 
     def intersects(self, other, otherpos, mindis=10):
         self.bvhopcount += 1
-        isect = willutil_cpp.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos,
-                                               mindis)  # type: ignore
+        isect = hgeom.bvh.bvh_isect_vec(self.bvh, other.bvh, self.position, otherpos, mindis)  # type: ignore
         return isect
 
     def point_contact_count(self, other, contactdist=8):
@@ -454,7 +453,7 @@ class RigidBody:
         if usebvh or (usebvh is None and self.usebvh):
             if not buf:
                 buf = np.empty((100000, 2), dtype="i4")
-            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(  # type: ignore
+            pairs, overflow = hgeom.bvh.bvh_collect_pairs(  # type: ignore
                 self.contactbvh,
                 other.contactbvh,
                 self.position,  # type: ignore
@@ -473,7 +472,7 @@ class RigidBody:
         if usebvh or (usebvh is None and self.usebvh):
             if not buf:
                 buf = np.empty((100000, 2), dtype="i4")
-            pairs, overflow = willutil_cpp.bvh.bvh_collect_pairs(  # type: ignore
+            pairs, overflow = hgeom.bvh.bvh_collect_pairs(  # type: ignore
                 self.bvh,
                 other.bvh,
                 self.position,

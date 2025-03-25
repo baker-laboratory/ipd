@@ -19,7 +19,7 @@ from copy import copy as copy, deepcopy as deepcopy
 from typing import (TYPE_CHECKING as TYPE_CHECKING, Any as Any, Callable as Callable, cast as cast, Iterator as
                     Iterator, TypeVar as TypeVar, Union as Union, Iterable as Iterable, Mapping as Mapping,
                     MutableMapping as MutableMapping, Sequence as Sequence, MutableSequence as MutableSequence,
-                    Optional as Optional, ParamSpec as ParamSpec)
+                    Optional as Optional)
 
 _checkpoint('ipd basic imports')
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
@@ -34,7 +34,8 @@ from ipd._prelude.import_util import (is_installed as is_installed, not_installe
 from ipd._prelude.lazy_import import (lazyimport as lazyimport, lazyimports as lazyimports, maybeimport as
                                       maybeimport, maybeimports as maybeimports, LazyImportError as
                                       LazyImportError)
-from ipd._prelude.structs import struct as struct, mutablestruct as mutablestruct, field as field
+from ipd._prelude.structs import (struct as struct, mutablestruct as mutablestruct, basestruct as basestruct,
+                                  field as field)
 from ipd._prelude.typehints import (KW as KW, FieldSpec as FieldSpec, EnumerIter as EnumerIter, EnumerListIter
                                     as EnumerListIter, T as T, R as R, C as C, P as P, F as F, basic_typevars
                                     as basic_typevars, Frames44Meta as Frames44Meta, Frames44 as Frames44,
@@ -130,3 +131,5 @@ def showme(*a, **kw):
 if _global_chrono: _global_chrono.checkpoints.update(_timings)
 else: _global_chrono = Chrono(checkpoints=_timings)
 dev.global_timer.checkpoints.update(_timings)
+
+caching_enabled = True

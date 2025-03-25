@@ -12,26 +12,8 @@ Key features:
   - Integration with the readstruct module to immediately convert content into AtomArrays.
 
 Usage Examples:
-    >>> from ipd import pdb
-    >>> # Fetch the raw PDB content for a given pdb code (e.g., "1dxh")
-    >>> content = pdb.pdbfetch("1dxh")
-    >>> isinstance(content, str)
-    True
-
-    >>> # Parse the fetched content into an AtomArray
-    >>> aa = pdb.readstruct(content)
-    >>> len(aa) > 0
-    True
-
-Additional Examples:
-    >>> # Fetch a structure and then apply a rotation using hgeom
-    >>> from ipd import hgeom as h
-    >>> content = pdb.pdbfetch("1g5q")
-    >>> aa = pdb.readstruct(content)
-    >>> T = h.rot([1,0,0], 180, [0,0,0])
-    >>> aa_transformed = h.xform(T, aa)
-    >>> aa_transformed[0][3] != aa[0][3]
-    True
+    >>> ipd.pdb.sym_annotation('1dxh').sym
+    ('T',)
 
 .. note::
     For more usage examples, please refer to the tests provided in the IPD repository.
@@ -40,7 +22,9 @@ import glob
 import os
 
 # import requests
-import httpx
+
+import requests
+import requests_cache
 
 import ipd
 
@@ -74,7 +58,7 @@ def download_bcif(pdb_code: str, output_file: str, verbose: bool = True) -> None
     url = f"https://models.rcsb.org/{pdb_code.upper()}.bcif.gz"
     if os.path.isdir(output_file): output_file = os.path.join(output_file, f"{pdb_code}.bcif.gz")
     # response = requests.get(url, stream=True)
-    response = httpx.get(url)
+    response = requests.get(url)
     if response.status_code == 200:
         with open(output_file, 'wb') as f:
             f.write(response.content)
@@ -86,12 +70,13 @@ def download_bcif(pdb_code: str, output_file: str, verbose: bool = True) -> None
     else:
         raise RuntimeError(f"Failed to download {url} (status code: {response.status_code})")
 
-@ipd.dev.safe_lru_cache
 @ipd.dev.timed
 def rcsb_get(path, retries=3):
     url = f'https://data.rcsb.org/rest/v1/core/{path}'
+    if ipd.caching_enabled: session = requests_cache.CachedSession('rcsb')
+    else: session = requests
     for _ in range(retries):
-        response = httpx.get(url)
+        response = session.get(url)
         if response.status_code == 200: return response.json()
     raise ValueError(f'cant fetch rcsb info: {url}, tried {retries} times')
 

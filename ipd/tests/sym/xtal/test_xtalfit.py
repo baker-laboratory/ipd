@@ -9,7 +9,7 @@ def main():
     test_xtalfit_I213()
 
 def test_xtalfit_I213():
-    pytest.importorskip("willutil_cpp")
+    pytest.importorskip("hgeom")
     sym = "I213_32"
     xtal = ipd.sym.xtal.xtal(sym)
     fname = ipd.dev.package_testdata_path("pdb/i213fittest.pdb")
@@ -124,7 +124,7 @@ def DISABLED_test_xtalfit_I213_bk():
     # ipd.icv(d[w], x[w], y[w])
 
 def test_fit_xtal_to_coords():
-    pytest.importorskip("willutil_cpp")
+    pytest.importorskip("hgeom")
     x = ipd.sym.Xtal("L632")
 
     np.random.seed(7)

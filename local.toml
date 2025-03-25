@@ -1,0 +1,2 @@
+[filter_python_output]
+keep_blank_lines = true

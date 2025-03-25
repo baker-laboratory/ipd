@@ -25,6 +25,8 @@ def filter_python_output(
     filter_numpy_version_nonsense=True,
     **kw,
 ):
+    kw = ipd.dev.project_local_config('filter_python_output') | kw
+    assert kw['keep_blank_lines']
     # if entrypoint == 'codetool': return text
     if preset and re_file == re_null: re_file = re_presets[preset].file
     if preset and re_func == re_null: re_func = re_presets[preset].func
@@ -38,7 +40,7 @@ def filter_python_output(
         return text
     for line in lines:
         line = _strip_line_extra_whitespace(line)
-        if not line.strip(): continue
+        if not line.strip() and not kw['keep_blank_lines']: continue
         if m := re_block.match(line):
             _finish_block(block, file, func, re_file, re_func, result, skipped)
             file, linene, func, block = *m.groups(), [line]
@@ -73,8 +75,8 @@ def _strip_line_extra_whitespace(line):
     if not line[:60].strip(): return line.strip()
     return line.rstrip()
 
-def _strip_text_extra_whitespace(text):
-    return re.sub(r'\n\n', os.linesep, text, re.MULTILINE)
+# def _strip_text_extra_whitespace(text):
+# return re.sub(r'\n\n', os.linesep, text, re.MULTILINE)
 
 def _filter_numpy_version_nonsense(text):
     text = text.replace(

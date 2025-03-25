@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 bs = pytest.importorskip('biotite.structure')
-wu = pytest.importorskip('willutil_cpp')
+hg = pytest.importorskip('hgeom')
 
 import ipd
 import ipd.homog.hgeom as h
@@ -16,8 +16,6 @@ BODY_TEST_PDBS = ['1qys']
 SYMBODY_TEST_PDBS = ['6u9d', '3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr', '1g5q']
 
 def main():
-    debug_body_load_speed()
-    return
     ipd.tests.maintest(
         namespace=globals(),
         config=config_test,
@@ -42,6 +40,11 @@ def debug_body_load_speed():
 
     # ipd.showme(symbody.asu)
     ipd.dev.global_timer.report()
+
+def helper_test_body_centered(body):
+    assert h.allclose(body.rg, body.centered.rg, atol=1)
+    assert h.allclose(body.pos, np.eye(4))
+    assert h.allclose(body.centered.com, [0, 0, 0])
 
 def helper_test_body_chash_v_celllist(body):
     results = ipd.Bunch(cell=[], bvh=[])

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Annotated, Optional, Union
 
 import fastapi
-import httpx
+import requests
 import pydantic
 import yaml
 
@@ -421,7 +421,7 @@ class ClientBase:
             response = self.testclient.get(f'/api{url}')
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = httpx.get(url)
+            response = requests.get(url)
         if response.status_code != 200:
             reason = response.reason if hasattr(response, 'reason') else '???'  # type: ignore
             raise ClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
@@ -437,7 +437,7 @@ class ClientBase:
             response = self.testclient.post(url, content=body)
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = httpx.post(url, data=body)  # type: ignore
+            response = requests.post(url, data=body)  # type: ignore
         # ipd.icv(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'

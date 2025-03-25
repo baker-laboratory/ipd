@@ -29,10 +29,11 @@ dependencies = [
     'assertpy',
     'colorlog',
     'compact-json',
+    'evn',
     'gitpython',
+    "hgeom",
     'hydra-core',
     'hypothesis',
-    'httpx',
     'icecream',
     'lark',
     # 'numba',
@@ -40,13 +41,15 @@ dependencies = [
     'opt_einsum',
     # 'pandas',
     'pydantic',
+    'requests',
+    'requests_cache',
     'rich',
     'RestrictedPython',
     # 'seaborn',
+    'tomli',
     'typer',
-    "toolz>=1.0.0",
+    "toolz",
     'pytest',
-    'pytest-xdist',
 ]
 [project.optional-dependencies]
 crud = [
@@ -65,7 +68,6 @@ ml = [
     'torch',
     'pandas',
     'biotite',
-    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp"
 ]
 # docs = [
 #     'sphinx',
@@ -83,6 +85,7 @@ dev = [
     'debugpy',
     'hypothesis[numpy]',
     "pytest",
+    'pytest-xdist',
     'gitpython',
     'jinja2',
     'nox',
@@ -110,7 +113,6 @@ all = [
     'submitit',
     'torch',
     'uvicorn[standard]',
-    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp",
 ]
 [project.scripts]
 ipd = 'ipd.__main__:main'

@@ -78,7 +78,8 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         idx (SymIndex): Indexing structure used for symmetric transformations.
 
     Example:
-        >>> sym = create_sym_manager(symid='C3')
+        >>> sym = ipd.sym.create_sym_manager(symid='C3')
+        >>> sym.idx = ipd.sym.SymIndex(3, [(30, 0, 30)])
         >>> xyz = np.random.rand(10, 3)
         >>> xyz_sym = sym(xyz)
 

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from ipd.sym.guess_symmetry import *
 from ipd.sym.permutations import *
 from ipd.sym.sym import *
@@ -31,14 +31,25 @@ else:
     sym_adapt = lazyimport('ipd.sym.sym_adapt')
     # sym_tensor = lazyimport('ipd.sym.sym_tensor')
 
+# class IdentityFuncs:
+
+#     def __call__(self, x):
+#         return x
+
+#     def __getattr__(self, name: str):
+#         return lambda x: x
+
+#     def __bool__(self):
+#         return False
+
 def set_global_symmetry(sym: 'SymmetryManager'):
     global _global_symmetry
     _global_symmetry = sym
 
-def get_global_symmetry() -> 'SymmetryManager':
+def get_global_symmetry() -> Optional['SymmetryManager']:
     global _global_symmetry
-    if _global_symmetry is None:
-        raise RuntimeError('Global symmetry not set')
+    # if not _global_symmetry:
+    # raise RuntimeError("SymmetryManager not set. Please create a sym mamager first.")
     return _global_symmetry
 
 _global_symmetry = None

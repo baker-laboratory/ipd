@@ -15,34 +15,19 @@ Key features:
     beneficial for large virus capsids or lightly contacting structures.
 
 Usage Examples:
-    >>> from ipd import atom, hgeom as h
+    >>> from ipd import atom, hnumpy as h
     >>> # Load an AtomArray from a pdb code (e.g., "1wa3")
     >>> aa = atom.load("1wa3")
     >>> # Filter atoms by element (for instance, oxygen 'O')
-    >>> oxygens = atom.atom_utils.filter_by_element(aa, "O")
-    >>> isinstance(oxygens, list)
-    True
+    >>> oxygens = atom.select(aa, element="O")
+    >>> np.all(oxygens.element=='O')
+    np.True_
 
     >>> # Apply a rotation to the AtomArray
     >>> T = h.rot([1, 0, 0], 90, [0, 0, 0])
-    >>> aa_rotated = atom.atom_utils.transform(aa, T)
-    >>> aa_rotated[0][3] != aa[0][3]
-    True
-
-Additional Examples:
-    >>> # Compute clashes between two AtomArrays
-    >>> aa2 = atom.load("1qys")
-    >>> clashes = atom.atom_utils.compute_clashes(aa, aa2)
-    >>> isinstance(clashes, list)
-    True
-
-    >>> # Performance demonstration using SphereBVH_double (conceptual)
-    >>> import time
-    >>> start = time.time()
-    >>> _ = atom.atom_utils.compute_clashes(aa, aa2)
-    >>> elapsed = time.time() - start
-    >>> elapsed < 1.0  # Expect fast computation for lightly contacting structures
-    True
+    >>> aa_rotated = h.xform(T, aa)
+    >>> aa_rotated.coord[0] == aa.coord[0]
+    array([ True, False, False])
 
 .. note::
     Comprehensive tests for these utilities are available in the repository's unit tests.
@@ -217,7 +202,10 @@ def select(
     bbonly=False,
     chaindict=False,
     het=True,
-    chains=None,
+    element=None,
+    chain_id=None,
+    atom_name=None,
+    res_name=None,
     **kw,
 ) -> 'AtomArray':
     if isinstance(atoms, bs.AtomArrayStack):
@@ -227,8 +215,12 @@ def select(
     if caonly: atoms = atoms[atoms.atom_name == 'CA']
     elif bbonly: atoms = atoms[atoms.atom_nameisin(('CA', 'N', 'C', 'O'))]
     if not het: atoms = atoms[~atoms.hetero]
-    if chains is not None:
-        atoms = atoms[np.isin(atoms.chain_id, chains)]
+    for attr in 'element atom_name res_name chain_id'.split():
+        if (val := locals()[attr]) is not None:
+            if isinstance(val, str):
+                atoms = atoms[getattr(atoms, attr) == val]
+            else:
+                atoms = atoms[np.isin(getattr(atoms, attr), val)]
     if chaindict: atoms = ipd.atom.chain_dict(atoms)
     if chainlist: atoms = ipd.atom.split(atoms)
     ipd.dev.set_metadata(atoms, meta)

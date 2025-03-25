@@ -11,39 +11,33 @@ Key features:
   - Construction of Body objects from PDB files using helper functions (e.g., body_from_file).
   - Efficient clash detection and contact checks between bodies and AtomArrays.
   - Application of 4x4 homogeneous transformations to manipulate the spatial arrangement.
-  - Utilization of the highly efficient SphereBVH_double from willutil_cpp, which can
+  - Utilization of the highly efficient SphereBVH_double from hgeom, which can
     deliver hundreds of times speedup for large, lightly contacting structures (e.g., virus capsids).
 
 Usage Examples:
-    >>> from ipd import atom, hgeom as h
+    >>> from ipd import atom, hnumpy as h
     >>> # Create a Body from a PDB code using a helper function
-    >>> b = atom.body_from_file('1byf')
+    >>> b = atom.body_from_file('1byf').centered
     >>> # Apply a translation to the Body
     >>> T = h.trans([5, 0, 0])
-    >>> b2 = b.apply_transform(T)
+    >>> b2 = h.xform(T, b)
     >>> # Check for a clash between the original and transformed bodies
-    >>> b.clash(b2) in [True, False]
-    True
-
-    >>> # Demonstrate contact checking between a Body and an AtomArray
-    >>> aa = atom.load('1dxh')
-    >>> contacts = b.contact_check(aa)
-    >>> isinstance(contacts, list)
+    >>> b.hasclash(b2)
     True
 
 Additional Examples:
     >>> # Apply a combined rotation and translation
     >>> T1 = h.trans([1, 2, 3])
     >>> T2 = h.rot([0, 0, 1], 45, [0, 0, 0])
-    >>> b_transformed = b.apply_transform(h.xform(T1, T2))
-    >>> contacts_new = b_transformed.contact_check(aa)
-    >>> isinstance(contacts_new, list)
+    >>> b_transformed = h.xform(T1, T2, b)
+    >>> contacts_new = b_transformed.contacts(b)
+    >>> contacts_new.nuniq > 10
     True
 
     >>> # Create another Body with a different pdb code and check for clashes
-    >>> b3 = atom.body_from_file('1ql2')
-    >>> b3.clash(b)
-    False
+    >>> b3 = atom.body_from_file('1ql2').centered
+    >>> b3.hasclash(b)
+    True
 
 .. note::
     The SphereBVH_double bounding volume hierarchy used here is extremely efficient
@@ -64,9 +58,9 @@ import ipd.homog.hgeom as h
 
 if typing.TYPE_CHECKING:
     from biotite.structure import AtomArray
-    import willutil_cpp as wu
+    import hgeom as hg
 
-wu = ipd.maybeimport('willutil_cpp')
+hg = ipd.maybeimport('hgeom')
 bs = ipd.lazyimport('biotite.structure')
 
 @ipd.ft.lru_cache
@@ -95,7 +89,7 @@ def symbody_from_file(
     assert isinstance(atomslist, list)
     asmx = ipd.dev.get_metadata(atomslist[0]).assembly_xforms
 
-    if use_cif_xforms and 'assembly_xforms' in ipd.dev.get_metadata(atomslist[0]):
+    if False and use_cif_xforms and 'assembly_xforms' in ipd.dev.get_metadata(atomslist[0]):
         ipd.ic(asmx._chainasu)
         assert 0
     else:
@@ -132,8 +126,8 @@ class Body:
     atoms: 'AtomArray'
     pos: np.ndarray = field(default_factory=lambda: np.eye(4))
     rescen: np.ndarray = None
-    _atombvh: 'wu.SphereBVH_double' = None
-    _resbvh: 'wu.SphereBVH_double' = None
+    _atombvh: 'hg.SphereBVH_double' = None
+    _resbvh: 'hg.SphereBVH_double' = None
     hydro: bool = False
     hetero: bool = False
     water: bool = False
@@ -143,14 +137,15 @@ class Body:
     positioned_atoms = property(lambda self: h.xform(self.pos, self.atoms))
     com = property(lambda self: h.xform(self.pos, bs.mass_center(self.atoms)))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
+    centered = property(lambda self: self.movedby(-self.com))
 
     def __post_init__(self):
         if not self.hetero: self.atoms = self.atoms[~self.atoms.hetero]
         if not self.hydro: self.atoms = self.atoms[self.atoms.element != 'H']
         if not self.water: self.atoms = self.atoms[self.atoms.res_name != 'HOH']
         self.rescen = bs.apply_residue_wise(self.atoms, self.atoms.coord, np.mean, axis=0)
-        self._atombvh = wu.SphereBVH_double(self.atoms.coord)
-        self._resbvh = wu.SphereBVH_double(self.rescen)
+        self._atombvh = hg.SphereBVH_double(self.atoms.coord)
+        self._resbvh = hg.SphereBVH_double(self.rescen)
         # self.seq = ipd.atom.atoms_to_seqstr(self.atoms)
         assert h.valid44(self.pos)
 
@@ -161,15 +156,15 @@ class Body:
         return self.atoms is other.atoms and np.allclose(self.pos, other.pos)
 
     def hasclash(self, other=None, radius: float = 2, **kw) -> bool:
-        result = _bvh_binary_operation(wu.bvh_isect, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(hg.bvh_isect, self, other, radius=radius, **kw)
         return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
-        result = _bvh_binary_operation(wu.bvh_count_pairs, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(hg.bvh_count_pairs, self, other, radius=radius, **kw)
         return ipd.cast(int, result)
 
     def contacts(self, other=None, radius: float = 4, **kw) -> ipd.Bunch:
-        result = _bvh_binary_operation(wu.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(hg.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
         p, b = ipd.cast(tuple[np.ndarray, np.ndarray], result)
         uniq0, uniq1 = np.unique(p[:, 0]), np.unique(p[:, 1])
         fields = 'pairs breaks pair0 pair1 uniq0 uniq1 nuniq0 nuniq'.split()
@@ -178,7 +173,7 @@ class Body:
 
     def slide_into_contact(self, other, direction=(1, 0, 0), radius=3.0) -> 'Body':
         if direction == 'random': direction = h.rand_unit()[:3]
-        delta = _bvh_binary_operation(wu.bvh_slide, self, other, rad=radius, dirn=direction)
+        delta = _bvh_binary_operation(hg.bvh_slide, self, other, rad=radius, dirn=direction)
         return self.movedby((delta - np.sign(delta) * radius) * np.array(direction))
 
     @property
@@ -202,13 +197,13 @@ class Body:
     def __getitem__(self, *slices):
         return h.xformpts(self.pos, self.atoms.coord[tuple(slices)])
 
-    def __getattr__(self, name):
-        if name == 'atoms':
-            raise AttributeError
-        try:
-            return getattr(self.atoms, name)
-        except AttributeError:
-            raise AttributeError(f'Body (nor AtomArray) has no attribute: {name}')
+    # def __getattr__(self, name):
+    #     if name == 'atoms':
+    #         raise AttributeError
+    #     try:
+    #         return getattr(self.atoms, name)
+    #     except AttributeError:
+    #         raise AttributeError(f'Body (nor AtomArray) has no attribute: {name}')
 
     def summary(self):
         nhet = np.sum(self.atoms.hetero)
@@ -241,7 +236,7 @@ class SymBody:
     bodies = property(lambda self: [self.asu.movedby(self.pos @ f) for f in self.frames])
     atoms = property(lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.atoms)))
     com = property(lambda self: h.xform(self.pos, self.frames, self.asu.com).mean(0))
-    centered = property(lambda self: self.movedby(h.trans(-self.com)))
+    centered = property(lambda self: self.movedby(-self.com))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
     natoms = property(lambda self: len(self) * len(self.asu.atoms))
 
@@ -264,17 +259,17 @@ class SymBody:
 
     def hasclash(self, other: 'Body|SymBody|None' = None, radius: float = 2, **kw) -> bool:
         kw |= self._get_pos_otherpos(other)
-        result = _bvh_binary_operation(wu.bvh_isect_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(hg.bvh_isect_vec, self, other, radius=radius, **kw)
         return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
         kw |= self._get_pos_otherpos(other)
-        result = _bvh_binary_operation(wu.bvh_count_pairs_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(hg.bvh_count_pairs_vec, self, other, radius=radius, **kw)
         return ipd.cast(int, result)
 
     def contacts(self, other=None, radius: float = 4, **kw) -> 'SymBodyContacts':
         kw |= self._get_pos_otherpos(other)
-        result = _bvh_binary_operation(wu.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation(hg.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
         p, r = ipd.cast(tuple[np.ndarray, np.ndarray], result)
         return SymBodyContacts(self, other or self, p, r)
 

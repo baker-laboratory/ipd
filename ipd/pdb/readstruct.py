@@ -15,20 +15,20 @@ Key features:
 Usage Examples:
     >>> from ipd import pdb
     >>> # Read a structure from a PDB file using a pdb code (e.g., "1A0J")
-    >>> aa = pdb.readstruct("1A0J")
+    >>> aa = pdb.readatoms("1A0J")
     >>> len(aa) > 0
     True
 
     >>> # Apply a translation to the AtomArray using hgeom functions
-    >>> from ipd import hgeom as h
+    >>> from ipd import hnumpy as h
     >>> T = h.trans([0, 0, 10])
     >>> aa_transformed = h.xform(T, aa)
-    >>> aa_transformed[0][3] > aa[0][3]
-    True
+    >>> aa_transformed.coord[0] == aa.coord[0]
+    array([ True,  True, False])
 
 Additional Examples:
     >>> # Detailed inspection of a structure
-    >>> aa = pdb.readstruct("1n0e")
+    >>> aa = pdb.readatoms("1n0e")
     >>> # Verify that each atom has an 'element' attribute of type str
     >>> all(isinstance(atom.element, str) for atom in aa)
     True
@@ -164,7 +164,7 @@ def _validate_cif_assembly(cif, asminfo, assembly, asu, atoms, strict=True, **_)
         iasm = int(assembly) - 1
     _asmid, opers, _asymids, _order = asminfo.assemblies.valwise[iasm]
     xforms = np.array([h.product(*[asminfo.xforms[op] for op in opstep]) for opstep in opers])
-    asu = ipd.atom.select(asu, chains=np.unique(atoms.chain_id))
+    asu = ipd.atom.select(asu, chain_id=np.unique(atoms.chain_id))
     # ipd.icv(asmid, opers, asymids, order)
     # ipd.icv(len(asu), len(atoms), asu.coord.shape, atoms.coord[:len(asu):].shape)
     # ipd.icv(len(atoms), len(asu), len(atoms) / len(asu))

@@ -241,11 +241,6 @@ def preserve_random_state(func0=None, seed0=None):
     Returns:
         callable: The decorated function.
 
-    Example:
-        >>> @preserve_random_state(seed0=42)
-        >>> def my_function():
-        >>>     # Function code here
-
     Raises:
         AssertionError: If `func0` is provided but is not callable or if `seed0` is not None when `func0` is used.
     """
@@ -309,12 +304,22 @@ def generic_enumerate(self, fields: ipd.FieldSpec, order=lambda x: x) -> ipd.Enu
         tuple[int, ...]: A tuple containing the index and the attribute values.
 
     Example:
+        >>> @ipd.dev.subscriptable_for_attributes
+        ... class MyClass:
+        ...     def __init__(self):
+        ...         self.x = range(5)
+        ...         self.y = range(5, 10)
         >>> obj = MyClass()
-        >>> for i, x, y in obj.enumerate(['x', 'y']):
-        >>>     print(i, x, y)
+        >>> for i, x, y in obj.enumerate('x y'):
+        ...     print(i, x, y)
+        0 0 5
+        1 1 6
+        2 2 7
+        3 3 8
+        4 4 9
     """
     fields = list(zip(*self[fields]))
-    idx = range(len(fields[0]))
+    idx = range(len(fields))
     for i, vals in zip(order(idx), order(fields)):
         yield i, *vals
 

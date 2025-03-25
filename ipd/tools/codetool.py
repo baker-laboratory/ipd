@@ -84,13 +84,16 @@ class CodeTool(IPDTool):
         result = ipd.dev.run_on_changed_files(cmd, path, dryrun, excludefile, hashfile, conffile)
         raise typer.Exit(code=result.exitcode)
 
-    def filter_python_output(self, path: Annotated[str, typer.Argument()]):
+    def filter_python_output(self, path: Annotated[str, typer.Argument()], keep_blank_lines=False):
         with open(path) as inp:
             text = inp.read()
         with open(f'{path}.orig', 'w') as out:
             out.write(text)
         try:
-            new = ipd.dev.filter_python_output(text, entrypoint='codetool', preset='ipd_boilerplate')
+            new = ipd.dev.filter_python_output(text,
+                                               entrypoint='codetool',
+                                               preset='ipd_boilerplate',
+                                               keep_blank_lines=keep_blank_lines)
         except RuntimeError as e:
             with open(path, 'w') as out:
                 out.write('ERROR WHEN RUNNING `ipd code filter_python_output <fname>`')

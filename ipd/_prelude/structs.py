@@ -1,6 +1,7 @@
 import sys
 import dataclasses as dc
-from typing import final
+# from typing import final
+final = lambda x: x
 
 if sys.version_info.minor > 9:
     struct = lambda cls: final(dc.dataclass(slots=True)(cls))

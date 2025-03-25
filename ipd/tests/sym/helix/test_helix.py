@@ -37,7 +37,7 @@ def test_helix_params():
 
 def test_helix_scaling():
     pytest.skip()
-    pytest.importorskip("willutil_cpp")
+    pytest.importorskip("hgeom")
     h = ipd.sym.helix.Helix(turns=9, nfold=1, turnsB=1, phase=0)
 
     np.random.seed(7)

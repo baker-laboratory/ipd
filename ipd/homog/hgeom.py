@@ -15,12 +15,12 @@ Key features include:
 
 Many of these functions are used to set up bodies or to manipulate AtomArrays, as well as
 to test for clashes and contacts in a highly efficient manner using the rotationally
-invariant bounding volume hierarchy (SphereBVH_double from willutil_cpp). For large
+invariant bounding volume hierarchy (SphereBVH_double from hgeom). For large
 symmetrical structures (e.g., virus capsids), this approach can be hundreds of times faster
 than traditional alternatives such as the biotite cell list.
 
 Usage Examples:
-    >>> from ipd import hgeom as h
+    >>> from ipd import hnumpy as h
     >>> import numpy as np
     >>> # Create a random transformation matrix (4x4)
     >>> T = h.rand()
@@ -36,23 +36,23 @@ Usage Examples:
     >>> T_combined = h.xform(T_trans, T_rot)
 
     >>> # Apply the composed transformation to a point
-    >>> pt = h.point(1, 0, 0)
+    >>> pt = h.point([1, 0, 0])
     >>> pt_transformed = h.xform(T_combined, pt)
     >>> pt_transformed[0] > pt[0]  # Verify the transformation altered the x-coordinate
-    True
+    np.True_
 
 Additional Examples with Bodies and AtomArrays:
     >>> # Using AtomArrays and Bodies (assume these helper functions exist)
-    >>> from ipd import atom, hgeom as h
-    >>> aa = atom.load('1A0J')
+    >>> from ipd import atom, hnumpy as h
     >>> from ipd.atom import body
-    >>> b = body.body_from_file('1A0J')
+    >>> a = body.body_from_file('1A0J').centered
+    >>> b = body.body_from_file('1A0J').centered
     >>> # Apply a random rotation to the Body
     >>> T_random = h.rand()
-    >>> b_rotated = b.apply_transform(T_random)
+    >>> b_rotated = h.xform(T_random, b)
     >>> # Demonstrate contact checking (conceptual; actual return may vary)
-    >>> contacts = b.contact_check(aa)
-    >>> isinstance(contacts, list)
+    >>> contacts = b.contacts(a)
+    >>> contacts.nuniq > 1000
     True
 
 .. note::
@@ -494,12 +494,12 @@ def hxform(*x, homogout='auto', **kw):
         return [hxform(x, v) for v in stuff]
     if isinstance(stuff, dict) and len(stuff) and not isinstance(stuff[0], (int, float, list, tuple)):
         return {k: hxform(x, v) for k, v in stuff.items()}
-    if hasattr(stuff, 'xformed'):
-        return stuff.xformed(x)
+    if hasattr(stuff, 'xformed'): return stuff.xformed(x)
+    if hasattr(stuff, 'movedby'): return stuff.movedby(x)
     orig = None
     coords = None
     if hasattr(stuff, "coords"): coords = 'coords'
-    if hasattr(stuff, "coord"): coords = 'coord'
+    elif hasattr(stuff, "coord"): coords = 'coord'
     if coords:
         isxarray = False
         if 'xarray' in sys.modules:
@@ -507,7 +507,7 @@ def hxform(*x, homogout='auto', **kw):
 
             # coords is perhaps poor choice of convention
             # xarray.DataArry has coords member already...
-            print('WARNING Deprivation of .coords convention in favor of .xformed method')
+            # print('WARNING Deprivation of .coords convention in favor of .xformed method')
             isxarray = isinstance(stuff, xarray.DataArray)
         if not isxarray:
             if hasattr(stuff, "copy"): orig = stuff.copy()
@@ -1231,7 +1231,7 @@ def hrand(shape=(), cart_cen=0, cart_sd=1, seed=None, dtype=np.float64):
     q = rand_quat(shape, )
     x = quat_to_xform(q)
     x[..., :3, 3] = np.random.randn(*shape, 3) * cart_sd + cart_cen
-    return x
+    return np.ascontiguousarray(x)
 
 rand_xform = hrand
 
@@ -1241,7 +1241,7 @@ def hrandrot(shape=(), seed=None, dtype=np.float64):
         shape = (shape, )
     quat = rand_quat(shape)
     rot = quat_to_rot(quat)
-    return hconvert(rot)
+    return np.ascontiguousarray(hconvert(rot))
 
 @ipd.dev.preserve_random_state
 def hrandrotsmall(shape=(), rot_sd=0.001, seed=None):
@@ -1865,7 +1865,7 @@ def hexpand(
     cen=[0, 0, 0],
     deterministic=True,
 ):
-    raise NotImplementedError('expand_xforms_rand lives in willutil_cpp now')
+    raise NotImplementedError('expand_xforms_rand lives in hgeom now')
     generators = np.asarray(generators).astype(np.float64)
     cen = np.asarray(cen).astype(np.float64)
     x, _ = ipd.homog.hgeom.expand_xforms_rand(
