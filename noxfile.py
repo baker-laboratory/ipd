@@ -17,8 +17,10 @@ def test_matrix(session, extra):
     if session.python >= '3.12' and extra == 'all':
         args.append('--doctest-modules')
     args.extend([
-        '--ignore', 'ipd/tests/homog/test_hgeom_library.py', '--ignore',
-        'ipd/tests/dev/code/test_format_code.py'
+        '--ignore', 'ipd/tests/homog/test_hgeom_library.py',
+        '--ignore', 'ipd/tests/dev/code/test_format_code.py',
+        '--ignore', 'ipd/cuda',
+        '--ignore', 'ipd/tests/cuda',
     ])
 
     session.run(*args)

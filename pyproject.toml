@@ -120,6 +120,7 @@ ipd = 'ipd.__main__:main'
 [tool.pytest.ini_options]
 minversion = '6.0'
 addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure'
+ignore = ['ipd/cuda', 'ipd/tests/cuda']
 
 testpaths = [
     'ipd/tests',
