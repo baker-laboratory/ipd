@@ -86,6 +86,8 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     """
     symid: str
     nsub: int
+    L: int
+    _idx: SymIndex
     kind: str = 'base'
     _frames: ipd.FramesN44 = None
     SymIndexType: type[SymIndex] = SymIndex
@@ -181,6 +183,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         if isinstance(thing, XYZPair):
             xyzadapt, pairadapt = adaptor.adapted
             orig = xyzadapt.adapted
+            assert len(orig) == self.L, f'bad length {len(orig)}, expected {self.L}'
             newxyz, newpair = self.apply_sym_slices_xyzpair(xyzadapt, pairadapt, **kw)
             self.move_unsym_to_match_asu(orig, newxyz)
             if self.symid.startswith('C') and self.opt.center_cyclic:
@@ -209,23 +212,25 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         return self.mark_symmetrical(result)
 
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
+        # assert len(xyz) == self.L, f'bad length {xyz.shape}, expected {self.L}'
         xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)
         if isinstance(xyz, tuple): xyz, pair = xyz
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         if len(xyz) == 1: xyz = xyz[0]
         return xyz if pair is None else XYZPair(xyz, pair)
 
-    def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
+    def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, matchpair=False, **kw):
         kw = ipd.dev.Bunch(kw)
-        origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
-        origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
+        origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=matchpair, **kw)
+        origpair, pair, _ = self.to_contiguous(pairadaptor, **kw)
+        assert kw['Lasu'] == self.Nasu, f'bad Lasu {kw["Lasu"]}, expected {self.Nasu}'
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
         # ipd.icv(xyz.shape, pair.shape)
         xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
-        xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
+        xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=matchpair, **kw)
         pair = self.fill_from_contiguous(pairadaptor, origpair, pair, **kw)
         xyz = self.move_unsym_to_match_asu(origxyz, xyz, move_all_nonprot=False)
         if xyzpair_on_subset:
@@ -257,7 +262,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         if not self.opt.symmetrize_repeats and not self.opt.sympair_enabled:
             return pair
         if kw['sympair_protein_only']:
-            assert len(pair) == self.Lsymprot
+            assert len(pair) == self.Lsymprot, f'bad length {len(pair)}, expected {self.Lsymprot}'
             L, N = self.Lsymprot, self.Lasuprot
         else:
             L, N = self.Nsym, self.Nasu
@@ -304,7 +309,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             newidx.append(self.idx.idx_asu_to_sub.to(self.device)[i, asuidx])
         new = th.cat(new, 0)
         newidx = th.cat(newidx)
-        assert th.allclose(newidx, idx)
+        assert th.allclose(newidx, idx), f'bad newidx {newidx} {idx}'
         ipd.icv(new)
         assert 0
         return new
@@ -360,17 +365,17 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         ctg = self.idx.contiguous
         if isinstance(adapted, np.ndarray): ctg = ctg.cpu().numpy()
         if thing.kind.shapekind == ShapeKind.SPARSE:
-            assert len(adapted.idx) == len(adapted.val)
+            assert len(adapted.idx) == len(adapted.val), f'bad len {len(adapted.idx)} {len(adapted.val)}'
             return adapted, adapted.val[self.idx.to_contiguous(adapted.idx)], self.Nasu
         elif thing.kind.shapekind == ShapeKind.ONEDIM:
-            assert len(adapted) == self.L
+            assert len(adapted) == self.L, f'bad len {len(adapted)} {self.L}'
             if sympair_protein_only and matchpair:
                 return adapted, adapted[:self.Lsymprot], self.Lsymprot // self.nsub
             return adapted, adapted[ctg], self.Nasu
         elif thing.kind.shapekind == ShapeKind.TWODIM:
             if sympair_protein_only:
                 return adapted, adapted[:self.Lsymprot, :self.Lsymprot], self.Lsymprot // self.nsub
-            assert len(adapted) == self.L
+            assert len(adapted) == self.L, f'bad len {len(adapted)} {self.L}'
             idx = th.cartesian_prod(ctg, ctg)
             shape = (len(ctg), len(ctg), *adapted.shape[2:])
             return adapted, adapted[idx[:, 0], idx[:, 1]].reshape(shape), self.Nasu
@@ -508,9 +513,11 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         elif self.nsub:
             self._idx = self.SymIndexType(self.nsub, idx)
         self._idx.to(self.device)
+        assert self.L == self.idx.L, f'bad L {self.L} {self.idx.L}'
+        assert self.L == len(self.idx.kind), f'bad L {self.L} {len(self.idx.kind)}'
 
     def verify_index(self, thing):
-        assert self._idx
+        assert self._idx, 'SymmetryManager.idx is not set'
 
     def sym_adapt(self, thing, isasym=None) -> 'ipd.sym.sym_adapt.SymAdapt':
         """Return a SymAdapt object with metadata about the symmetry of the
@@ -633,7 +640,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
     @frames.setter
     def frames(self, frames):
-        assert frames.shape[-2:] == (4, 4) and frames.ndim == 3
+        assert frames.shape[-2:] == (4, 4) and frames.ndim == 3, f'bad shape {frames.shape}'
         self._frames = th.as_tensor(frames, device=self.device, dtype=th.float32)
         self.opt.nsub = len(frames)
 
@@ -696,5 +703,5 @@ class C1SymmetryManager(SymmetryManager):
 
 def _sample_range_or_float_value(inp):
     if isinstance(inp, (int, float)): return inp
-    assert len(inp) == 2
+    assert len(inp) == 2, f'bad range {inp}'
     return random.uniform(*inp)

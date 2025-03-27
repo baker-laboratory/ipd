@@ -40,6 +40,9 @@ def basic_typevars(which) -> list[Union[TypeVar, ParamSpec]]:
     result = [globals()[k] for k in which]
     return result
 
+Vec = Union[np.ndarray, tuple, list]
+Point = Union[np.ndarray, tuple, list]
+
 class Frames44Meta(abc.ABCMeta):
 
     def __instancecheck__(cls, obj: Any) -> bool:

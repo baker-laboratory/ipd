@@ -19,6 +19,8 @@ extensions = [
 ]
 
 # -- HTML Theme Configuration ------------------------------------------------
+pygments_style = 'sphinx'
+
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "navigation_depth": 2,
@@ -33,3 +35,7 @@ sphinx_gallery_conf = {
 }
 
 # extensions.remove("sphinx_gallery.gen_gallery")
+
+autodoc_docstring_signature = True
+autodoc_inherit_docstrings = False
+# suppress_warnings = ['autodoc']

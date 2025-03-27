@@ -14,6 +14,15 @@ import hypothesis
 import ipd
 import ipd.homog.thgeom as h
 
+def main():
+    test_sym_manager_fuzz_xyz_sym()
+    test_sym_manager()
+    test_sym_fit()
+    test_sym_asu_align_icos_nounsym()
+    test_sym_asu_align_icos_unsym()
+    test_sym_fit_icos_unsym()
+    test_sym_fit_icos_unsym_multislice()
+
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 def test_sym_manager_fuzz_xyz_sym(sym):
@@ -131,11 +140,4 @@ def test_sym_fit_icos_unsym_multislice():
     assert ipd.sym.check_sym_asu(sym, xyz, symxyz, perm_ok=True)
 
 if __name__ == '__main__':
-    test_sym_fit_icos_unsym_multislice()
-    test_sym_fit_icos_unsym()
-    test_sym_asu_align_icos_unsym()
-    test_sym_asu_align_icos_nounsym()
-    test_sym_fit()
-    test_sym_manager()
-
-    print('DONE')
+    main()

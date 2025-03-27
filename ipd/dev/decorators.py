@@ -318,7 +318,11 @@ def generic_enumerate(self, fields: ipd.FieldSpec, order=lambda x: x) -> ipd.Enu
         3 3 8
         4 4 9
     """
-    fields = list(zip(*self[fields]))
+    vals = self[fields]
+    try:
+        fields = list(zip(*vals))
+    except TypeError:
+        fields = [vals]
     idx = range(len(fields))
     for i, vals in zip(order(idx), order(fields)):
         yield i, *vals
@@ -381,8 +385,16 @@ def getattr_fzf(obj, field):
         Any: The attribute value corresponding to the field.
 
     Example:
-        obj = MyClass()
-        value = obj.fzf('x')  # Finds 'x' or similar
+    >>> @ipd.dev.subscriptable_for_attributes
+    ... class MyClass:
+    ...     def __init__(self):
+    ...         self.abc = 1
+    ...         self.xyz = 2
+    >>> obj = MyClass()
+    >>> obj.fzf('ab')  # Finds 'ab' or similar
+    1
+    >>> obj.fzf('xy')  # Finds 'xy' or similar
+    2
     """
     fields = generic_get_keys(obj, exclude=())
     candidates = [f for f in fields if is_fuzzy_match(field, f)]
@@ -403,17 +415,20 @@ def subscriptable_for_attributes(cls: type[ipd.C]) -> type[ipd.C]:
         type: The modified class.
 
     Example:
-        @subscriptable_for_attributes
-        class MyClass:
-            def __init__(self):
-                self.x = 1
-                self.y = 2
+    >>> @subscriptable_for_attributes
+    ... class MyClass:
+    ...     def __init__(self):
+    ...         self.x = 1
+    ...         self.y = 2
 
-        obj = MyClass()
-        print(obj['x'])  # 1
-        print(obj['x y'])  # (1, 2)
-        for i, x, y in obj.enumerate(['x', 'y']):
-            print(i, x, y)
+    >>> obj = MyClass()
+    >>> print(obj['x'])
+    1
+    >>> print(obj['x y'])  # (1, 2)
+    (1, 2)
+    >>> for i, x, y in obj.enumerate(['x', 'y']):
+    ...     print(i, x, y)
+    0 1 2
 
     Raises:
         TypeError: If the class already defines `__getitem__` or `enumerate`.

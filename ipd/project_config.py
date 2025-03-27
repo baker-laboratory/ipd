@@ -66,12 +66,10 @@ def OnlyChangedFiles(label: str,
         conffile (str): Path to project configuration file, with support for project variables
         **kw_project_vars: Additional key-value pairs for variable substitution in paths
 
-    Example:
-        ```
-        with OnlyChangedFiles('pylint --rcfile={conffile} {changed_files}') as env:
-            if env.changed_files:
-                run_command_on_files(env.changed_files)
-        ```
+
+    seealso::
+        ipd.dev.run_on_changed_files
+        ipd.tools.codetool.codeTool.format_project
 
     Notes:
         - Path strings can include variables like [projname], [gitroot], or [cmd] which
@@ -82,6 +80,7 @@ def OnlyChangedFiles(label: str,
     try:
         _ = substitute_project_vars(path, excludefile, hashfile, conffile, **kw_project_vars)
         path, excludefile, hashfile, conffile = _
+        ic(hashfile)
         with ipd.dev.cd(os.path.dirname(excludefile)):
             hashes = ipd.dev.run(fr'find {path} -name \*.py -exec md5sum {{}} \;')
             prevhash |= {l.strip() for l in hashes.split(os.linesep)}

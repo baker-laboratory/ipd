@@ -23,8 +23,8 @@ class CodeTool(IPDTool):
         Args:
             path (str, optional): path to run ipdformat on. Defaults to '.'.
         """
-        _ = ipd.dev.OnlyChangedFiles('ipdformat', path, excludefile, hashfile, conffile)
-        with _ as fileinfo:
+        context = ipd.dev.OnlyChangedFiles('ipdformat', path, excludefile, hashfile, conffile)
+        with context as fileinfo:
             ipd.kwcall(fileinfo, ipd.dev.format_files, fileinfo.changed_files, dryrun=dryrun)
 
     def format(self, path: Annotated[ipd.Path, typer.Argument(allow_dash=True)], dryrun: bool = False):

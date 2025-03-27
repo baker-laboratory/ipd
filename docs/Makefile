@@ -18,6 +18,5 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	rm -rf _apidoc
-# 	sphinx-apidoc -o docs/_apidoc ../ipd --separate --module-first --force
-	sphinx-apidoc --separate --module-first --force -o _apidoc ../ipd ../ipd/cython ../ipd/tests ../ipd/voxel ../ipd/rms ../ipd/sam
+	sphinx-apidoc --separate --module-first --force -o _apidoc ../ipd ../ipd/cython ../ipd/tests/cuda ../ipd/cuda ../ipd/tests
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

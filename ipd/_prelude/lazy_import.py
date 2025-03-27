@@ -28,6 +28,13 @@ def lazyimports(
     modules = [lazyimport(name, package=pkg, **kw) for name, pkg in zip(names, package)]
     return modules
 
+def timed_import_module(name):
+    import ipd
+    ipd.dev.global_timer.checkpoint(interject=True)
+    mod = import_module(name)
+    ipd.dev.global_timer.checkpoint(f'import {name}')
+    return mod
+
 def lazyimport(name: str,
                package: str = '',
                pip: bool = False,
@@ -37,7 +44,7 @@ def lazyimport(name: str,
                maybeimport=False) -> ModuleType:
     if typing.TYPE_CHECKING or maybeimport:
         try:
-            return import_module(name)
+            return timed_import_module(name)
         except ImportError:
             return FalseModule(name)
     else:
@@ -73,7 +80,7 @@ class _LazyModule(ModuleType):
     def _lazymodule_import_now(self) -> ModuleType:
         """Import the module _lazymodule_import_now."""
         try:
-            return import_module(self._lazymodule_name)
+            return timed_import_module(self._lazymodule_name)
         except ImportError:
             if 'doctest' in sys.modules: return FalseModule(self._lazymodule_name)
             ci = self._lazymodule_callerinfo
@@ -92,7 +99,7 @@ class _LazyModule(ModuleType):
     def _pipimport(self):
         global _skip_global_install
         try:
-            return import_module(self._lazymodule_name)
+            return timed_import_module(self._lazymodule_name)
         except (ValueError, AssertionError, ModuleNotFoundError):
             if self._lazymodule_pip and self._lazymodule_pip != 'user':
                 if not _skip_global_install:
@@ -103,7 +110,7 @@ class _LazyModule(ModuleType):
                     except:  # noqa
                         pass
             try:
-                return import_module(self._lazymodule_name)
+                return timed_import_module(self._lazymodule_name)
             except (ValueError, AssertionError, ModuleNotFoundError):
                 if self._lazymodule_pip and self._lazymodule_pip != 'nouser':
                     _skip_global_install = True
@@ -114,7 +121,7 @@ class _LazyModule(ModuleType):
                         sys.stderr.write(str(result))
                     except:  # noqa
                         pass
-                return import_module(self._lazymodule_name)
+                return timed_import_module(self._lazymodule_name)
 
     def _lazymodule_is_loaded(self):
         return self._lazymodule_name in sys.modules

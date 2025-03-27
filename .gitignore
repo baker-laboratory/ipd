@@ -180,8 +180,6 @@ slurm_logs_*
 server_datadir
 junit*.xml
 
-uv.lock
-
 /*.sh
 /*.zip
 /*.tar.gz

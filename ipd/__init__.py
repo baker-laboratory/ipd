@@ -42,7 +42,8 @@ from ipd._prelude.typehints import (KW as KW, FieldSpec as FieldSpec, EnumerIter
                                     FramesN44Meta as FramesN44Meta, FramesN44 as FramesN44, NDArray_MN2_int32
                                     as NDArray_MN2_int32, NDArray_N2_int32 as NDArray_N2_int32, isstr as isstr,
                                     isint as isint, islist as islist, isdict as isdict, isseq as isseq, ismap
-                                    as ismap, isseqmut as isseqmut, ismapmut as ismapmut, isiter as isiter)
+                                    as ismap, isseqmut as isseqmut, ismapmut as ismapmut, isiter as isiter, Vec
+                                    as Vec, Point as Point)
 
 optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
 capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
@@ -53,15 +54,15 @@ _checkpoint('ipd prelude imports')
 
 def __getattr__(name):
     global _global_chrono
-    if name == 'symmetrize':
+    if name.startswith('debug'):
+        return getattr(hub, name)
+    elif name == 'symmetrize':
         return sym.get_global_symmetry()
     elif name == 'motif_applier':
         return motif.get_global_motif_manager()
     elif name == 'global_chrono':
         _global_chrono = _global_chrono or Chrono(checkpoints=_timings)
         return _global_chrono
-    elif name.startswith('debug'):
-        return getattr(hub, name)
     raise AttributeError(f"module {__name__} has no attribute {name}")
 
 _checkpoint('ipd globals')
@@ -121,6 +122,8 @@ with contextlib.suppress(ImportError):
     setattr(builtins, 'ic', ic)
 
 def showme(*a, **kw):
+    if all(homog.viz.can_showme(a, **kw)):
+        return homog.viz.showme(a, **kw)
     from ipd.viz import showme as viz_showme
     viz_showme(*a, **kw)
 

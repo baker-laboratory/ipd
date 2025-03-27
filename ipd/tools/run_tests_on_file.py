@@ -22,7 +22,8 @@ from assertpy import assert_that
 
 # set to manually specipy a command for a file
 _overrides = {
-    # 'foo.py': 'PYTHONPATH=.. python foo/bar.py -baz'
+    'noxfile.py': 'nox -- 3.13 all',
+    'pyproject.toml': 'uv run validate-pyproject pyproject.toml',
 }
 
 # set to mannually map a file to another file
@@ -116,7 +117,7 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
 def dispatch(
         projects,
         fname,
-        pytest_args='-x --disable-warnings -m "not nondeterministic" --doctest-modules',
+        pytest_args='-x --disable-warnings -m "not nondeterministic" --doctest-modules --durations=7',
         file_mappings=dict(),
         overrides=dict(),
         strict=True,

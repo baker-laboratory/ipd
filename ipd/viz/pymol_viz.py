@@ -715,6 +715,7 @@ def showme_pymol(
     ray=False,
     one_png_only=False,
     save=False,
+    force=False,
     **kw,
 ):
 
@@ -724,7 +725,7 @@ def showme_pymol(
     # if name != 'noname': ipd.icv('SHOWME', name)
     global _showme_state
 
-    if "PYTEST_CURRENT_TEST" in os.environ and not headless:
+    if "PYTEST_CURRENT_TEST" in os.environ and not headless and not force:
         print("NOT RUNNING PYMOL IN UNIT TEST")
         return
 

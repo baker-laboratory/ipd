@@ -6,5 +6,5 @@ This example demonstrates how to construct a biological assembly.
 
 """
 
-import ipd.hgeom as h
+from ipd import hnumpy as h
 print(h.rand())  # Example usage

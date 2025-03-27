@@ -30,3 +30,6 @@ def numel(tensor):
 def tensor_summary(tensor, maxnumel=24):
     if numel(tensor) <= maxnumel: return str(tensor)
     return f'{tensor.__class__.__name__}{list(tensor.shape)}'
+
+def all_lte(a, b):
+    return np.all(np.asarray(a) <= np.asarray(b))

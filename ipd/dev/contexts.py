@@ -26,48 +26,39 @@ debugging, and experimental setups.
 ## **📌 Usage Examples**
 
 ### **Redirect stdout and stderr**
-```python
-with redirect(stdout=open("output.log", "w")):
-    print("This will be written to output.log")
-```
+>>> with redirect(stdout=open("/tmp/output.log", "w")):
+...    print("This will be written to output.log")
 
 ### **Temporarily Change Working Directory**
-```python
-import os
-print("Current directory:", os.getcwd())
-with cd("/tmp"):
-    print("Inside /tmp:", os.getcwd())
-print("Reverted directory:", os.getcwd())
-```
+>>> import os
+>>> curdir = os.getcwd()
+>>> with cd("/tmp"):
+...     assert os.getcwd().startswith('/tmp')
+>>> curdir == os.getcwd()
+True
 
 ### **Capture Standard Output**
-```python
-with capture_stdio() as captured:
-    print("Captured output")
-# Use captured.getvalue() to retrieve the captured text.
-print("Captured text:", captured.getvalue())
-```
+>>> with capture_stdio() as captured:
+...     print("Captured output")
+>>> print("Captured text:", captured.read(), end='')
+Captured text: Captured output
 
 ### **Set a Temporary Random Seed**
-```python
-import numpy as np
-with temporary_random_seed(42):
-    print(np.random.rand(3))
-# Outside the context, the previous random state is restored.
-```
+>>> import numpy as np
+>>> with temporary_random_seed(42):
+...    print(np.random.rand(3))
+[0.37454012 0.95071431 0.73199394]
+>>> # Outside the context, the previous random state is restored.
 
 ### **Capture Assertion Errors**
-```python
-with capture_asserts() as errors:
-    assert False, "This assertion error will be captured"
-print("Captured errors:", errors)
-```
+>>> with capture_asserts() as errors:
+...     assert False, "This assertion error will be captured"
+>>> print("Captured errors:", errors)
+Captured errors: [AssertionError('This assertion error will be captured')]
 
 ### **Suppress Optional Imports**
-```python
-with optional_imports():
-    import some_optional_module  # Will not raise ImportError if module is absent.
-```
+>>> with optional_imports():
+...     import some_optional_module  # Will not raise ImportError if module is absent.
 """
 
 import atexit

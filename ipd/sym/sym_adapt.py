@@ -35,7 +35,7 @@ with contextlib.suppress(ImportError):
     @_sym_adapt.register(th.Tensor)  # type: ignore
     def _(tensor, sym, isasym):
         if all(n is None for n in tensor.names):
-            return SymAdaptTensor(tensor, sym, isasym)
+            return DepRecatEd_symAdaptTensor(tensor, sym, isasym)
         elif 'Lsparse' in tensor.names:
             return SymAdaptNamedSparseTensor(tensor, sym, isasym)
         else:
@@ -45,7 +45,7 @@ with contextlib.suppress(ImportError):
 def _(ary, sym, isasym):
     if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32,
                      np.int16, np.int8, np.uint8, bool):
-        return SymAdaptTensor(ary, sym, isasym, tlib='numpy')
+        return DepRecatEd_symAdaptTensor(ary, sym, isasym, tlib='numpy')
     else:
         return SymAdaptNDArray(ary, sym, isasym)
 
@@ -53,8 +53,11 @@ def _(ary, sym, isasym):
 class SymAdapt(ABC, Generic[T]):
     """You must define a subclass of SymAdapt for each type you want to symmetrize.
 
-    Must have a kind and adapted property. See the :SymAdaptDataClass:`ipd.sim.SymAdaptDataClass` class for an example.
-    These classes are not meant for the end user, they will be used internally by the sym manager
+    Must have a kind and adapted property. These classes are not meant for the end user,
+    they will be used internally by the sym manager
+
+    seelso::
+        ipd.sym.SymAdaptDataClass
     """
 
     orig: T
@@ -230,7 +233,7 @@ with contextlib.suppress(ImportError):
 
     # @_sym_adapt.register(SimpleSparseTensor)  # type: ignore
     # def _(sparse, sym):
-    # return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
+    # return DepRecatEd_symAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
 
     def check_isasym(tensor, sym, isasym, idx):
         if isasym is not None: return isasym
@@ -361,9 +364,9 @@ with contextlib.suppress(ImportError):
         def reconstruct(self, ary, **kw):  # type: ignore
             return ary
 
-    ########## SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
+    ########## DepRecatEd_symAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
 
-    def tensor_keydims_to_front(x, keydim):
+    def deprecated_tensor_keydims_to_front(x, keydim):
         if tensor_is_xyz(x):
             undo = [x.shape]
             while x.shape[0] == 1:
@@ -400,7 +403,7 @@ with contextlib.suppress(ImportError):
     def tensor_is_xyz(x):
         return 2 <= x.ndim < 5 and x.shape[-1] == 3 and th.is_floating_point(x)
 
-    class SymAdaptTensor(SymAdapt):
+    class DepRecatEd_symAdaptTensor(SymAdapt):
         adapts = None
 
         def __init__(self, tensor, sym, isasym=None, idx=None, isidx=None, kind=None, tlib='torch'):
@@ -498,7 +501,7 @@ with contextlib.suppress(ImportError):
             kw = {} if self.tlib == 'numpy' else dict(device=tensor.device)
             s = self.sym.idx
             keydim = s.Nasym if self.isasym else s.L
-            tensor, self.undo = tensor_keydims_to_front(tensor, keydim)
+            tensor, self.undo = deprecated_tensor_keydims_to_front(tensor, keydim)
             if tensor.shape[:2] == (s.Nasym, s.Nasym) and s.Nasym != s.L:
                 if self.isasym is not None: assert self.isasym
                 shape = (s.L * s.L, *tensor.shape[2:])

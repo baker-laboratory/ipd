@@ -50,7 +50,6 @@ def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, set
     elif opt.symid == 'C1': kind = 'C1'
     sym = _sym_managers[kind](conf=conf, opt=opt, device=device)
     if setglobal:
-        # ipd.icv('factory', id(sym))
         ipd.sym.set_global_symmetry(sym)
         assert ipd.symmetrize is sym
     return sym

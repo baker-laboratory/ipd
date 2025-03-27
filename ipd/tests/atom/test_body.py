@@ -1,3 +1,4 @@
+import random
 import numpy as np
 import pytest
 
@@ -13,7 +14,7 @@ config_test = ipd.Bunch(
 )
 BODY_TEST_PDBS = ['1qys']
 # BODY_TEST_PDBS = ['2tbv']
-SYMBODY_TEST_PDBS = ['6u9d', '3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr', '1g5q']
+SYMBODY_TEST_PDBS = ['1dxh', '1wa3', '6u9d', '3sne', '1n0e', '1a2n', '1n0e', '1bfr', '1g5q']
 
 def main():
     ipd.tests.maintest(
@@ -31,10 +32,14 @@ def _celllist_nclash(cell_list, other, radius: float = 3) -> int:
     return nclash
 
 def debug_body_load_speed():
-    symbody = ipd.atom.symbody_from_file('2tbv',
+    # body = ipd.atom.body_from_file('3sne', assembly='1')
+    # ipd.showme(body)
+    # return
+    symbody = ipd.atom.symbody_from_file('3sne',
                                          assembly='largest',
                                          components='largest_assembly',
                                          maxsub=9999)
+    ipd.showme(symbody)
     ipd.icv(symbody.meta.assembly_xforms)
     symbody.asu.atoms = symbody.asu.atoms[symbody.asu.atoms.atom_name == 'CA']
 
@@ -75,14 +80,31 @@ def helper_test_body_positioned_atoms(body):
 
 def helper_test_body_contacts(body):
     otherbody = body.clone()
-    kissing = otherbody.slide_into_contact(body, radius=3, direction='random')
+    kissing = otherbody.slide_into_contact(body, radius=3)
     # ipd.icv(kissing.pos[:3, 3] - otherbody.pos[:3, 3])
     # ipd.showme(kissing, body)
     contacts = kissing.contacts(body, radius=5)
     assert len(contacts.pairs) > 0
-    assert len(contacts.breaks) == 1
+    assert len(contacts.ranges) == 1
     for i, j in contacts.pairs:
         assert 5 > h.norm(kissing[i] - body[j])
+
+def helper_test_symbody_slide(symbody):
+    top7 = ipd.atom.body_from_file('1qys').centered
+    symbody = symbody.centered
+    for body1, body2 in ipd.it.combinations([symbody, top7], 2):
+        # kissing, slidedir = body1.slide_into_contact_rand(body2, radius=2)
+        kissing, slidedir = body1.slide_into_contact(body2, radius=2), h.vec([1, 0, 0])
+        fail = np.any(body2.hasclash(kissing))
+        body_clash = kissing.movedby(3 * slidedir)  # slide is a little goofy, move a lot
+        fail |= not np.any(body_clash.hasclash(body2))
+        fail |= not body2.contacts(kissing, radius=5).total_contacts
+        # ic(np.any(body_clash.hasclash(body2)))
+        # ic(body2.contacts(kissing, radius=5).total_contacts)
+        assert not fail
+        if fail:
+            ipd.showme(body2, kissing)
+            assert 0
 
 def helper_test_symbody_atoms(symbody):
     test = h.xform(symbody.pos, symbody.frames, symbody.asu.atoms)
@@ -98,7 +120,7 @@ def helper_test_symbody_selfclash(symbody):
 def helper_test_symbody_selfnclash(symbody):
     assert symbody.nclash(symbody, radius=0.3).sum() == symbody.natoms
 
-def helper_test_symbody_contct(symbody):
+def helper_test_symbody_contacts(symbody):
     rg = symbody.rg
     symbody2 = symbody.movedby([4 * rg, 0, 0])
     assert not np.any(symbody.hasclash(symbody2))
@@ -121,8 +143,18 @@ def helper_test_symbody_contct(symbody):
     contact4 = symbody.contacts(symbody2, radius=4)
     # if not contact4: ipd.showme(symbody, symbody2)
     assert len(contact4)
-    for body1, body2, iatom1, iatom2 in contact4:
+    for ibody1, ibody2, body1, body2, iatom1, iatom2 in contact4:
         assert np.all(h.dist(body1[iatom1], body2[iatom2]) < 4)
+
+def helper_test_symbody_contact_scan(symbody):
+    isub = random.randint(0, len(symbody.frames) - 1)
+    asu = symbody.bodies[isub]
+    contactlist = symbody.contacts(asu, exclude=isub, radius=5)
+    contactmat = contactlist.contact_matrix_stack(symbody.asu.atoms.res_id)
+    topk = contactmat.topk_fragment_contact_by_subset_summary(fragsize=21, k=13, stride=7)
+    assert topk.index.keys() == topk.vals.keys()
+    for subs, idx in topk.index.items():
+        ic(subs, idx[:4], topk.vals[subs][:4])
 
 ipd.tests.make_parametrized_tests(
     globals(),
@@ -130,6 +162,7 @@ ipd.tests.make_parametrized_tests(
     BODY_TEST_PDBS,
     ipd.atom.body_from_file,
 )
+
 ipd.tests.make_parametrized_tests(
     globals(),
     'helper_test_symbody_',
