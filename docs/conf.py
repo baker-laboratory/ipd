@@ -1,11 +1,13 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath(".."))
+import importlib.metadata
+import sphinx_pydata_theme
 
 # -- Project information -----------------------------------------------------
 project = "IPD"
-author = "Your Name"
-release = "0.1"
+author = "Will Sheffler"
+release = importlib.metadata.version('ipd')
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -22,9 +24,11 @@ extensions = [
 pygments_style = 'sphinx'
 
 html_theme = "pydata_sphinx_theme"
+# html_theme = "sphinx_rtd_theme"
+
 html_theme_options = {
-    "navigation_depth": 2,
-    "show_nav_level": 2,
+    "navigation_depth": 3,
+    "show_nav_level": 3,
 }
 html_static_path = ["_static"]
 autosummary_generate = True

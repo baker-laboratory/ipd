@@ -157,7 +157,9 @@ def dispatch(
 
     python = python or sys.executable
     pypath = f'PYTHONPATH={":".join(p for p in sys.path if "python3" not in p)}'
-    if pytest or (not file_has_main(fname) and bname.startswith('test_')):
+    if fname.endswith('.rst'):
+        cmd = f'{pypath} {python} -m doctest {module_fname}'
+    elif pytest or (not file_has_main(fname) and bname.startswith('test_')):
         if module_fname == fname: fname = ''
         cmd = f'{pypath} {python} -m pytest {pytest_args} {module_fname} {fname}'
     elif fname.endswith('.py') and bname != 'conftest.py':

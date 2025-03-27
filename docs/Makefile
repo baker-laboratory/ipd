@@ -19,4 +19,4 @@ help:
 %: Makefile
 	rm -rf _apidoc
 	sphinx-apidoc --separate --module-first --force -o _apidoc ../ipd ../ipd/cython ../ipd/tests/cuda ../ipd/cuda ../ipd/tests
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+# 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
