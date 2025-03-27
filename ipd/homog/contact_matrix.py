@@ -367,50 +367,12 @@ class ContactMatrixStack:
         return result
 
     def fragment_contact_torch(self, fragsize):
-        """
-        GPU-accelerated version of :meth:`fragment_contact` using PyTorch.
-
-        Args:
-            fragsize (int): Fragment fragsize size.
-
-        Returns:
-            torch.Tensor: Lower triangular contact matrix on CUDA device.
-
-        Example:
-            >>> from ipd.homog import ContactMatrixStack
-            >>> import numpy as np
-            >>> contacts = np.ones((1, 10, 10))
-            >>> cms = ContactMatrixStack(contacts)
-            >>> result = cms.fragment_contact_torch(5)
-            >>> result.shape
-            torch.Size([1, 6, 6])
-        """
         cumsum = th.tensor(self.cumsum, device='cuda')
         result = (cumsum[:, fragsize:, fragsize:] - cumsum[:, fragsize:, :-fragsize] -
                   cumsum[:, :-fragsize, fragsize:] + cumsum[:, :-fragsize, :-fragsize])
         return th.tril(result)
 
     def topk_fragment_contact_by_subset_summary_torch(self, fragsize=20, k=13, summary=None):
-        """
-        Torch-accelerated version of :meth:`topk_fragment_contact_by_subset_summary`.
-
-        Args:
-            fragsize (int): Fragment size.
-            k (int): Top-k selection count.
-            summary (Callable): Reduction function, defaults to torch.min.
-
-        Returns:
-            ipd.Bunch: Dictionary with `vals` and `index` of top-k values per subset.
-
-        Example:
-            >>> from ipd.homog import ContactMatrixStack
-            >>> import numpy as np
-            >>> contacts = np.random.rand(4, 50, 50)
-            >>> cms = ContactMatrixStack(contacts)
-            >>> result = cms.topk_fragment_contact_by_subset_summary_torch(fragsize=10, k=5)
-            >>> isinstance(result.vals, dict)
-            True
-        """
         summary = summary or th.min
         result = ipd.Bunch(index=dict(), vals=dict())
         nwindow = self.fragment_contact_torch(fragsize)
