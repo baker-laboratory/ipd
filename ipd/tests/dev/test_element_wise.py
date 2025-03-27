@@ -2,7 +2,6 @@ from collections import OrderedDict
 import operator
 import unittest
 
-import attrs
 import pytest
 import numpy as np
 
@@ -32,7 +31,6 @@ def test_generic_get_items():
     foo.a, foo.b, foo._c = 1, 1, 1
     assert ipd.dev.generic_get_items(foo) == [('a', 1), ('b', 1)]
     assert ipd.dev.generic_get_items([0, 1, 2]) == [(0, 0), (1, 1), (2, 2)]
-    attrs.define
 
     class Bar:
         a: int = 1
@@ -80,9 +78,9 @@ def test_element_wise_resulttypes():
 
 def test_element_wise():
     b = EwiseDict(zip('abcdefg', ([] for i in range(7))))
-    ic(b)
+    ipd.icv(b)
     assert all(b.valwise == [])
-    ic(b.mapwise == [])
+    ipd.icv(b.mapwise == [])
     r = b.mapwise.append(1)
     assert all(b.valwise == [1])
 
@@ -98,7 +96,7 @@ def test_element_wise_multi():
     with pytest.raises(ValueError):
         r = b.mapwise.append(1, 2)
     b.mapwise.append(*range(7))
-    ic(b)
+    ipd.icv(b)
     assert list(b.values()) == [[i] for i in range(7)]
 
 def test_element_wise_equal():
@@ -142,7 +140,7 @@ def test_element_wise_slicing():
     dat = np.arange(7 * 4).reshape(7, 4)
     b = EwiseDict(zip('abcdefg', dat))
     indexed = b.npwise[1:3]
-    ic(indexed)
+    ipd.icv(indexed)
     assert np.all(indexed == dat[:, 1:3])
 
 def test_element_wise_call_operator():
@@ -153,7 +151,7 @@ def test_element_wise_call_operator():
     assert np.all(b.npwise == d)
 
 @ipd.dev.element_wise_operations
-@attrs.define(slots=False)
+@ipd.mutablestruct
 class Foo:
     a: list
     b: list
@@ -169,7 +167,7 @@ def test_element_wise_attrs():
         foo.mapwise.append(1, 2, 3, 4)
 
 @ipd.dev.element_wise_operations
-@attrs.define
+@ipd.struct
 class Bar:
     a: list
     b: list
@@ -259,7 +257,7 @@ class TestElementWiseOperations(unittest.TestCase):
     def test_multiple_args(self):
         """Test operations with multiple arguments."""
         # Test with exact number of arguments
-        ic(self.test_dict)
+        ipd.icv(self.test_dict)
         result = self.test_dict.mapwise.__getattr__(operator.add)(10, 20, 30)
         self.assertEqual(result.a, 11)
         self.assertEqual(result.b, 22)
@@ -285,7 +283,7 @@ class TestElementWiseOperations(unittest.TestCase):
 
         # Right subtraction (special case)
         result = 10 - self.test_dict.mapwise
-        ic(result)
+        ipd.icv(result)
         self.assertEqual(result.a, 9)
         self.assertEqual(result.b, 8)
         self.assertEqual(result.c, 7)
@@ -314,8 +312,8 @@ class TestElementWiseOperations(unittest.TestCase):
         container = [1, 2, 3, 4]
         testmap = EwiseDict(a=1, b=3, c=7)
         result = testmap.mapwise.contained_by(container)
-        ic(self.test_container_dict)
-        ic(result)
+        ipd.icv(self.test_container_dict)
+        ipd.icv(result)
         self.assertEqual(result.a, True)  # all elements in [1,2,3] are in container
         self.assertEqual(result.b, True)  # all elements in [2,3,4] are in container
         self.assertEqual(result.c, False)  # 5 is not in container

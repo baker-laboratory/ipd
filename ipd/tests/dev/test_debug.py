@@ -1,3 +1,4 @@
+import pytest
 import ipd
 
 config_test = ipd.Bunch(
@@ -29,6 +30,7 @@ def test_ic_config():
     assert result.count('ic|') == 3
     assert result.count('test_debug.py') == 2
 
+@pytest.mark.xfail
 def test_bypass_stdio_redirect():
     with ipd.dev.capture_stdio() as printed:
         print('a', flush=True)

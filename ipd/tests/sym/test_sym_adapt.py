@@ -38,7 +38,7 @@ def test_dim_rearrange_basic():
     ]:
         t = th.arange(th.prod(th.tensor(shape))).reshape(shape)
         assert not ipd.sym.sym_adapt.tensor_is_xyz(t)
-        t2, undo = ipd.sym.sym_adapt.tensor_keydims_to_front(t, keydim)
+        t2, undo = ipd.sym.sym_adapt.deprecated_tensor_keydims_to_front(t, keydim)
         assert t2.shape[0] == keydim
         t3 = ipd.sym.sym_adapt.tensor_undo_perm(t2, undo)
         if len(undo) == 1: assert t.data_ptr() == t3.data_ptr()
@@ -52,7 +52,7 @@ def test_dim_rearrange_xyz():
     ]:
         t = th.arange(th.prod(th.tensor(shape)), dtype=float).reshape(shape)
         assert ipd.sym.sym_adapt.tensor_is_xyz(t)
-        t2, undo = ipd.sym.sym_adapt.tensor_keydims_to_front(t, keydim)
+        t2, undo = ipd.sym.sym_adapt.deprecated_tensor_keydims_to_front(t, keydim)
         assert t2.shape[0] == keydim
         t3 = ipd.sym.sym_adapt.tensor_undo_perm(t2, undo)
         assert t.data_ptr() == t3.data_ptr()
@@ -65,7 +65,7 @@ def test_dim_rearrange_errors():
     ]:
         t = th.arange(th.prod(th.tensor(shape))).reshape(shape)
         with pytest.raises(ValueError):
-            t2, undo = ipd.sym.sym_adapt.tensor_keydims_to_front(t, keydim)
+            t2, undo = ipd.sym.sym_adapt.deprecated_tensor_keydims_to_front(t, keydim)
 
 def test_sym_adapt_tensor_1d():
     sym = ipd.sym.create_sym_manager(symid='c1', L=7)
@@ -78,7 +78,7 @@ def test_sym_adapt_tensor_1d():
 
     sym.sym_adapt(th.randn(10, 3)).adapted.shape == (10, 1, 3)
     x = sym.sym_adapt(th.randn(7, 3))
-    # ic(x.adapted.shape)
+    # ipd.icv(x.adapted.shape)
     assert x.adapted.shape == (10, 1, 3)
     assert x.reconstruct(x.adapted).shape == (10, 3)
     x = sym.sym_adapt(th.randn(1, 1, 7, 3, 2, 1))
@@ -117,7 +117,7 @@ def test_sym_adapt_tensor_3d():
     sym.idx = [(10, 0, 6)]
     # sym.sym_adapt(th.randn(10, 3)).adapted[0].shape == (10, 3)
     x = sym.sym_adapt(th.randn(1, 1, 1, 10, 2, 4, 3))
-    # ic(x.adapted.shape)
+    # ipd.icv(x.adapted.shape)
     assert x.adapted.shape == (10, 2, 4, 3, 1, 1, 1)
 
 def _dispatch_symfunc_on_type_shape(*a, **kw):

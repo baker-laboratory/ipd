@@ -92,7 +92,7 @@ def test_state_manager(tmpdir):  # sourcery skip: extract-duplicate-method
     assert state._state.polls is state.polls  # type: ignore
     assert not state.polls.__dict__['_special']['strict_lookup']
     assert 'foo bar' not in state.polls
-    # ic(type(state.polls['foo bar']))
+    # ipd.icv(type(state.polls['foo bar']))
     # assert isinstance(state.polls['foo bar'], ipd.dev.Bunch)
 
 if __name__ == '__main__':

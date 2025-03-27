@@ -112,7 +112,7 @@ class SymIndex:
             self.idx_sub_to_asu[s.mask] = n + th.arange(s.Lasu).repeat(nsub)
             n += s.Lasu
         self.contiguous = -th.ones(self.Nasu * self.nsub, dtype=int)
-        # ic(self.sub.shape, len(self.contiguous), self.Nasu * self.nsub)
+        # ipd.icv(self.sub.shape, len(self.contiguous), self.Nasu * self.nsub)
         for i in range(self.nsub):
             self.contiguous[i * self.Nasu:(i+1) * self.Nasu] = th.where(self.sub[i])[0]
 
@@ -160,7 +160,7 @@ class SymIndex:
         if th.all(self.unsym[idx]): return True
         # if idx.max() < len(self.idx_asym_to_sym) and th.all(self.asym[self.idx_asym_to_sym[idx]]): return False
         idx = th.as_tensor(idx, dtype=int)
-        # ic(self.asym)
+        # ipd.icv(self.asym)
         replicates = th.bincount(idx)
         replicates = replicates[replicates != 0]
         if strict: assert len(replicates.unique()) == 1
@@ -170,8 +170,8 @@ class SymIndex:
         subcount = th.bincount(self.subnum[idx])
         asucount = th.bincount(self.idx_sub_to_asu[idx])
         asucount = asucount[asucount != 0]
-        # ic(self.idx_sub_to_asu[idx])
-        # ic(idx, subcount, asucount)
+        # ipd.icv(self.idx_sub_to_asu[idx])
+        # ipd.icv(idx, subcount, asucount)
         if len(subcount) != self.nsub: return False
         if len(subcount.unique()) != 1: return False
         if strict and len(asucount) != len(idx) // replicates // self.nsub: return False
@@ -205,15 +205,15 @@ class SymIndex:
         # bc = bc[bc>0]
         # bcbc = th.bincount(bc)
         # bcbc = bcbc[bcbc>0]
-        # ic(idx,self.subnum[idx2],bc,bcbc)
+        # ipd.icv(idx,self.subnum[idx2],bc,bcbc)
         # assert len(bc) == self.nsub
         # assert len(bcbc[bcbc != 0]) == 1
-        # ic(idx)
-        # ic(idx2)
+        # ipd.icv(idx)
+        # ipd.icv(idx2)
         # remap = -th.ones(self.L, dtype=int)
         # remap[idx] = th.arange(len(idx), dtype=int)
         # idx2 = remap[idx2]
-        # ic(idx2)
+        # ipd.icv(idx2)
         # assert 0
         # return idx2
 
@@ -222,7 +222,7 @@ class SymIndex:
         assert th.all(new >= 0)
         asu = new[self.asu[new]]
         for i in range(1, self.nsub):
-            # ic(self.idx_asu_to_sub[i, asu])
+            # ipd.icv(self.idx_asu_to_sub[i, asu])
             new = th.cat([new, self.idx_asu_to_sub[i, asu]])
         return new
 
@@ -296,7 +296,7 @@ class SymIndex:
         assert all(s.sanity_check(self.nsub) for s in self.slices)
         assert all(len(s.mask) == self.L for s in self.slices)
         # for i, s in enumerate(self.slices):
-        # ic(i, s)
+        # ipd.icv(i, s)
         for i, s1 in enumerate(self.slices):
             for j, s2 in enumerate(self.slices[:i]):
                 assert th.sum(s1.mask & s2.mask) == 0

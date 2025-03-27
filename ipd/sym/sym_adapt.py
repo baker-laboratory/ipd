@@ -35,7 +35,7 @@ with contextlib.suppress(ImportError):
     @_sym_adapt.register(th.Tensor)  # type: ignore
     def _(tensor, sym, isasym):
         if all(n is None for n in tensor.names):
-            return SymAdaptTensor(tensor, sym, isasym)
+            return DepRecatEd_symAdaptTensor(tensor, sym, isasym)
         elif 'Lsparse' in tensor.names:
             return SymAdaptNamedSparseTensor(tensor, sym, isasym)
         else:
@@ -45,7 +45,7 @@ with contextlib.suppress(ImportError):
 def _(ary, sym, isasym):
     if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32,
                      np.int16, np.int8, np.uint8, bool):
-        return SymAdaptTensor(ary, sym, isasym, tlib='numpy')
+        return DepRecatEd_symAdaptTensor(ary, sym, isasym, tlib='numpy')
     else:
         return SymAdaptNDArray(ary, sym, isasym)
 
@@ -53,8 +53,11 @@ def _(ary, sym, isasym):
 class SymAdapt(ABC, Generic[T]):
     """You must define a subclass of SymAdapt for each type you want to symmetrize.
 
-    Must have a kind and adapted property. See the :SymAdaptDataClass:`ipd.sim.SymAdaptDataClass` class for an example.
-    These classes are not meant for the end user, they will be used internally by the sym manager
+    Must have a kind and adapted property. These classes are not meant for the end user,
+    they will be used internally by the sym manager
+
+    seelso::
+        ipd.sym.SymAdaptDataClass
     """
 
     orig: T
@@ -230,13 +233,13 @@ with contextlib.suppress(ImportError):
 
     # @_sym_adapt.register(SimpleSparseTensor)  # type: ignore
     # def _(sparse, sym):
-    # return SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
+    # return DepRecatEd_symAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
 
     def check_isasym(tensor, sym, isasym, idx):
         if isasym is not None: return isasym
         if sym.L in tensor.shape: return False
         if sym.Nasym in tensor.shape: return True
-        ic(sym.L, sym.Nasu, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
+        ipd.icv(sym.L, sym.Nasu, sym.Nasym, isasym, tensor.shape, idx)  # type: ignore
         assert idx is not None
 
     class SymAdaptNamedDenseTensor(SymAdapt):
@@ -301,8 +304,8 @@ with contextlib.suppress(ImportError):
             idxdim = [n for n in tensor.names if n.startswith('Idx')][0]
             self.perm = tensor.align_to('Lsparse', idxdim, ...)
             idx = self.perm[:, int(idxdim.replace('IdxAll', '').replace('Idx', ''))].rename(None).to(int)
-            # ic(idx, self.perm.shape)
-            # ic(tensor.shape, tensor.names, idxdim, idx)
+            # ipd.icv(idx, self.perm.shape)
+            # ipd.icv(tensor.shape, tensor.names, idxdim, idx)
             if sym.idx.is_sym_subsequence(idx):
                 assert len(idx) == 0 or (0 <= idx.min() and idx.max() < sym.idx.L)
                 self.asym = False
@@ -329,7 +332,7 @@ with contextlib.suppress(ImportError):
             self.adapted.val = self.adapted.val.rename(None).to(sym.device).to(self.orig.dtype)
 
         def reconstruct(self, x, **kw):  # type: ignore
-            # ic(self.perm.names, self.orig.names)
+            # ipd.icv(self.perm.names, self.orig.names)
             x = x.val.rename(*self.perm.names).align_to(*self.orig.names).rename(None)
             return x.to(self.orig.device).to(self.orig.dtype)
 
@@ -361,9 +364,9 @@ with contextlib.suppress(ImportError):
         def reconstruct(self, ary, **kw):  # type: ignore
             return ary
 
-    ########## SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
+    ########## DepRecatEd_symAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
 
-    def tensor_keydims_to_front(x, keydim):
+    def deprecated_tensor_keydims_to_front(x, keydim):
         if tensor_is_xyz(x):
             undo = [x.shape]
             while x.shape[0] == 1:
@@ -378,7 +381,7 @@ with contextlib.suppress(ImportError):
                 oldshape = x.shape
                 x = x.swapdims(0, altpos - 1)
                 undo.insert(0, [x.shape, (altpos - 1, 0), oldshape])
-                # ic(undo[0])
+                # ipd.icv(undo[0])
         if x.shape[0] != keydim:
             raise ValueError(f'bad no keydim {keydim} in tensor shape {x.shape}')
         return x, undo
@@ -393,14 +396,14 @@ with contextlib.suppress(ImportError):
         oldL = int(resizefrom)
         newL = int(x.shape[0])
         for oldshape, swap, newshape in undo[:-1]:
-            # ic(x.shape, oldshape, swap, newshape)
+            # ipd.icv(x.shape, oldshape, swap, newshape)
             x = x.view(_resize(oldshape, oldL, newL)).swapdims(*swap).view(_resize(newshape, oldL, newL))
         return x.view(_resize(undo[-1], oldL, newL))
 
     def tensor_is_xyz(x):
         return 2 <= x.ndim < 5 and x.shape[-1] == 3 and th.is_floating_point(x)
 
-    class SymAdaptTensor(SymAdapt):
+    class DepRecatEd_symAdaptTensor(SymAdapt):
         adapts = None
 
         def __init__(self, tensor, sym, isasym=None, idx=None, isidx=None, kind=None, tlib='torch'):
@@ -476,9 +479,9 @@ with contextlib.suppress(ImportError):
                 elif symonly: x.val = x.val[self.sym.idx.asymidx(x.idx)].reshape(self.symonlyshape)
                 else: x.val = x.val.reshape(self.symshape)
                 return x
-            # ic(x.shape)
-            # ic(self.sym.L)
-            # ic(self.undo)
+            # ipd.icv(x.shape)
+            # ipd.icv(self.sym.L)
+            # ipd.icv(self.undo)
             new = tensor_undo_perm(x, self.undo, resizefrom=self.sym.Nasym if self.isasym else self.sym.L)
             if self.tlib == 'torch': new = new.to(self.orig.device)
             else: new = new.cpu().numpy()
@@ -498,7 +501,7 @@ with contextlib.suppress(ImportError):
             kw = {} if self.tlib == 'numpy' else dict(device=tensor.device)
             s = self.sym.idx
             keydim = s.Nasym if self.isasym else s.L
-            tensor, self.undo = tensor_keydims_to_front(tensor, keydim)
+            tensor, self.undo = deprecated_tensor_keydims_to_front(tensor, keydim)
             if tensor.shape[:2] == (s.Nasym, s.Nasym) and s.Nasym != s.L:
                 if self.isasym is not None: assert self.isasym
                 shape = (s.L * s.L, *tensor.shape[2:])
@@ -509,7 +512,7 @@ with contextlib.suppress(ImportError):
                 self.new = self.new.reshape(s.L, s.L, *tensor.shape[2:])
                 assert not self.isidx
             elif tensor.shape[0] == s.Nasym and s.Nasym != s.L:
-                # ic(tensor.shape, s.Nasym, s.L)
+                # ipd.icv(tensor.shape, s.Nasym, s.L)
                 if self.isasym is not None: assert self.isasym
                 shape = (s.L, *tensor.shape[1:])
                 if self.tlib == 'torch': self.new = th.zeros(shape, dtype=tensor.dtype, **kw)
@@ -576,8 +579,8 @@ with contextlib.suppress(ImportError):
                     self.new.val[:, self.isidx] = tosym
                 assert len(self.new.idx) == len(self.new.val)
             else:
-                ic(self.sym)  # type: ignore
-                ic(self.idx)  # type: ignore
+                ipd.icv(self.sym)  # type: ignore
+                ipd.icv(self.idx)  # type: ignore
                 raise ValueError('sparse indices are not asym or sym compatible')
             self.symdims = []
             self.symshape = self.new.val.shape

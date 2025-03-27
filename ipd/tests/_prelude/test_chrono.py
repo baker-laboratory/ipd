@@ -2,7 +2,7 @@ import statistics
 import pytest
 import time
 import random
-from ipd._prelude import Chrono, chrono, chrono_class, checkpoint
+from ipd._prelude.chrono import Chrono, chrono, chrono_class, checkpoint
 # from ipd.dynamic_float_array import DynamicFloatArray
 
 import ipd

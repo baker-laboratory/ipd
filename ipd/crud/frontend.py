@@ -1,5 +1,4 @@
 import contextlib
-import functools
 import inspect
 import os
 import sys
@@ -10,7 +9,7 @@ from pathlib import Path
 from typing import Annotated, Optional, Union
 
 import fastapi
-import httpx
+import requests
 import pydantic
 import yaml
 
@@ -401,7 +400,7 @@ class ClientBase:
 
     def getattr(self, thing, id, attr):
         result = self.get(f'/getattr/{thing}/{id}/{attr}')
-        # ic(self, thing, attr, result)
+        # ipd.icv(self, thing, attr, result)
         return result
 
     def setattr(self, thing, attr, val, attrkind=''):
@@ -422,7 +421,7 @@ class ClientBase:
             response = self.testclient.get(f'/api{url}')
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = httpx.get(url)
+            response = requests.get(url)
         if response.status_code != 200:
             reason = response.reason if hasattr(response, 'reason') else '???'  # type: ignore
             raise ClientError(f'GET failed URL: "{url}"\n    RESPONSE: {response}\n    '
@@ -438,8 +437,8 @@ class ClientBase:
             response = self.testclient.post(url, content=body)
         else:
             url = f'http://{self.server_addr}/api{url}'
-            response = httpx.post(url, data=body)  # type: ignore
-        # ic(response)
+            response = requests.post(url, data=body)  # type: ignore
+        # ipd.icv(response)
         if response.status_code != 200:
             if len(str(body)) > 2048: body = f'{body[:1024]} ... {body[-1024:]}'
             reason = response.reason if hasattr(response, 'reason') else '???'  # type: ignore
@@ -479,9 +478,9 @@ class ClientBase:
     def getorupload_by_name(self, thing, modelkind=None, **kw):
         modelkind = modelkind or thing.modelkind()
         if 'name' in thing:
-            # ic(thing)
+            # ipd.icv(thing)
             if existing := getattr(self, f'{modelkind}s')(name=thing['name']):
-                # ic(len(existing))
+                # ipd.icv(len(existing))
                 assert len(existing) == 1
                 return existing[0]
         return self.upload(thing, modelkind=modelkind, **kw)
@@ -496,7 +495,7 @@ class ClientBase:
             if isinstance(v, ClientModelBase):
                 args[k] = v.id  # type: ignore
                 del remote[k]
-        # ic(cls, args, remote, extra)
+        # ipd.icv(cls, args, remote, extra)
         return cls.__spec__(**args), remote, extra
 
 def add_basic_client_model_methods(clientcls):
@@ -555,7 +554,7 @@ def add_basic_client_model_methods(clientcls):
 
 def model_method(func, layer):
 
-    @functools.wraps(func)
+    @ipd.wraps(func)
     def wrapper(self, *a, **kw):
         err = f'{inspect.signature(func)} only valid in {layer} model, not {self.__class__.__name__}'
         assert self.modellayer() == layer, err

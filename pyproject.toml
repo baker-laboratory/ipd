@@ -1,39 +1,39 @@
 [build-system]
-requires = ["hatchling", "hatch-cython"]
-build-backend = "hatchling.build"
+requires = ['hatchling', 'hatch-cython']
+build-backend = 'hatchling.build'
 
 # [tool.hatch.build.targets.wheel.hooks.cython]
-# sources = ["src/my_package/**/*.pyx"]
-# extra_compile_args = ["-O3"]
+# sources = ['src/my_package/**/*.pyx']
+# extra_compile_args = ['-O3']
 
 #[tool.hatch.build.targets.wheel]
-#only-include = ["ipd"]
+#only-include = ['ipd']
 #
 #[tool.hatch.build.targets.wheel.hooks.cython]
-#dependenciees = ["hatch-cython"]
+#dependenciees = ['hatch-cython']
 #
 [tool.hatch.metadata]
 allow-direct-references = true
 #
 #[build.targets.wheel.hooks.cython.options.files]
-#targets = ["ipd/cython/dynamic_float_array.pyx"]
+#targets = ['ipd/cython/dynamic_float_array.pyx']
 #
 # [tool.hatch.build.hooks.custom]
-# path = "build.py"
+# path = 'build.py'
 
 [project]
 name = 'ipd'
 version = '0.2'
 requires-python = '>3.9,<4' # for woodys old pipeline stuff
 dependencies = [
-    'attrs',
     'assertpy',
     'colorlog',
     'compact-json',
+    'evn',
     'gitpython',
+    'hgeom',
     'hydra-core',
     'hypothesis',
-    'httpx',
     'icecream',
     'lark',
     # 'numba',
@@ -41,20 +41,22 @@ dependencies = [
     'opt_einsum',
     # 'pandas',
     'pydantic',
+    'requests',
+    'requests_cache',
     'rich',
     'RestrictedPython',
     # 'seaborn',
+    'tomli',
     'typer',
-    "toolz>=1.0.0",
+    'toolz',
     'pytest',
-    'pytest-xdist',
 ]
 [project.optional-dependencies]
 crud = [
-    'fastapi[standard]',
+    'fastapi',
     # 'psycopg2',
     'sqlmodel',
-    'uvicorn[standard]',
+    'uvicorn',
     'pdot',
 ]
 tools = [
@@ -66,27 +68,30 @@ ml = [
     'torch',
     'pandas',
     'biotite',
-    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp"
+    'Bio',
 ]
-# docs = [
-#     'sphinx',
-#     'sphinx-pydata-theme',
-#     'matplotlib',
-#     'pybtex',
-#     'sphinx_gallery',
-#     'apidoc',
-#     'bibliography',
-#     'preamble',
-#     'scraper',
-#     'switcher',
-# ]
+docs = [
+    'sphinx',
+    'sphinx-pydata-theme',
+    'matplotlib',
+    # 'pybtex',
+    'sphinx_gallery',
+    # 'apidoc',
+    # 'bibliography',
+    # 'preamble',
+    # 'scraper',
+    # 'switcher',
+    'urllib3>2',
+]
 dev = [
     'debugpy',
     'hypothesis[numpy]',
-    "pytest",
+    'pytest',
+    'pytest-xdist',
     'gitpython',
     'jinja2',
     'nox',
+    'packaging',
     'pytest-xdist',
     'pytest-sugar',
     'pytest-cov',
@@ -98,20 +103,20 @@ dev = [
     'yapf',
 ]
 all = [
-    "biotite",
+    'Bio',
+    'biotite',
     'debugpy',
-    'fastapi[standard]',
+    'fastapi',
     'gitpython',
     'jinja2',
     'pandas',
     'pdot',
-    'psycopg2',
+    # 'psycopg2',
     'scipy',
     'sqlmodel',
     'submitit',
     'torch',
-    'uvicorn[standard]',
-    "willutil_cpp @ git+https://github.com/willsheffler/willutil_cpp",
+    'uvicorn',
 ]
 [project.scripts]
 ipd = 'ipd.__main__:main'
@@ -119,6 +124,7 @@ ipd = 'ipd.__main__:main'
 [tool.pytest.ini_options]
 minversion = '6.0'
 addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure'
+ignore = ['ipd/cuda', 'ipd/tests/cuda']
 
 testpaths = [
     'ipd/tests',
@@ -148,10 +154,10 @@ blank_lines_around_top_level_definition = 1
 arithmetic_precedence_indication = true
 
 # [tool.pyright]
-# pythonVersion = "3.12"
-# pythonPlatform = "Linux"
-# venvPath = "/home/sheffler/sw/MambaForge/envs"
-# venv = "rfdsym312"
+# pythonVersion = '3.12'
+# pythonPlatform = 'Linux'
+# venvPath = '/home/sheffler/sw/MambaForge/envs'
+# venv = 'rfdsym312'
 # include = ['ipd']
 # exclude = [
 #     # 'ipd/crud/*',

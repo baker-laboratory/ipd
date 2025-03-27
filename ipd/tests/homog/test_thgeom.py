@@ -2,7 +2,6 @@ import pytest
 
 th = pytest.importorskip('torch')
 import numpy as np
-from icecream import ic
 
 import ipd as ipd
 import ipd.homog.thgeom as h
@@ -54,7 +53,7 @@ def test_randsmall_dtype_device():
 def test_th_vec():
     th = th = pytest.importorskip("torch")
     v = h.randvec(10)
-    # ic(v)
+    # ipd.icv(v)
     v2 = h.vec(v)
     assert v is v2
     p = h.randpoint(10)
@@ -140,7 +139,7 @@ def test_axisangcenhel_roundtrip():
     x = h.rot(axis, ang, cen, hel)
     axis2, ang2, cen2, hel2 = h.axis_angle_cen_hel(x)
     cen2[1].backward()
-    # ic(axis0.grad)
+    # ipd.icv(axis0.grad)
     assert np.allclose(axis0.grad.detach(), [0, -1, 0, 0], atol=1e-4)
     assert np.allclose(ang.grad.detach(), [0], atol=1e-4)
     assert np.allclose(cen.grad.detach(), [0, 1, 0, 0], atol=1e-4)
@@ -238,14 +237,14 @@ def test_th_axis_angle_cen_rand():
     cen0 = th.tensor(cen0, requires_grad=True)
     hel0 = th.randn(*shape)
 
-    # ic(axis0.shape)
-    # ic(ang0.shape)
-    # ic(cen0.shape)
-    # ic(hel0.shape)
+    # ipd.icv(axis0.shape)
+    # ipd.icv(ang0.shape)
+    # ipd.icv(cen0.shape)
+    # ipd.icv(hel0.shape)
 
     # rot = h.rot3(axis0, ang0, dim=4)
     rot = h.rot(axis0, ang0, cen0, hel0, dtype=th.float64)
-    # ic(rot.shape)
+    # ipd.icv(rot.shape)
     # assert 0
 
     axis, ang, cen = ipd.homog.axis_ang_cen_of(rot.detach().numpy())
@@ -257,7 +256,7 @@ def test_th_axis_angle_cen_rand():
     cenhel = cen + hel[..., None] * axis
     assert np.allclose(cenhel, cenhat, atol=1e-3)
 
-    # ic(rot.shape)
+    # ipd.icv(rot.shape)
     axis2, ang2, cen2, hel2 = h.axis_angle_cen_hel(rot, flipaxis=False)
     assert np.allclose(axis2.detach(), axis)
     assert np.allclose(ang2.detach(), ang)
@@ -394,11 +393,11 @@ def test_torch_rmsfit(trials=10):
     for _ in range(trials):
         p = h.randpoint(10, std=10)
         q = h.randpoint(10, std=10)
-        # ic(p)
+        # ipd.icv(p)
         rms0 = h.rms(p, q)
         rms, qhat, xpqhat = h.rmsfit(p, q)
         assert rms0 > rms
-        # ic(float(rms0), float(rms))
+        # ipd.icv(float(rms0), float(rms))
         assert np.allclose(h.rms(qhat, q), rms)
         for i in range(10):
             qhat2 = h.xform(h.randsmall(1, 0.01, 0.001), qhat)
@@ -427,8 +426,8 @@ def test_torch_rmsfit_grad():
             points2[:, 0] += shift
             points1[:, 3] = 1
             points2[:, 3] = 1
-            # ic(points1)
-            # ic(points2)
+            # ipd.icv(points1)
+            # ipd.icv(points2)
             assert points2.shape == (npts, 4)
 
             for i in range(nstep):
@@ -440,7 +439,7 @@ def test_torch_rmsfit_grad():
                 rms, qhat, xpqhat = h.rmsfit(p2, q2)
                 rms2 = h.rms(qhat, q)
                 assert th.allclose(qhat, h.xformpts(xpqhat, p), atol=0.0001)
-                # ic(rms, rms2)
+                # ipd.icv(rms, rms2)
                 assert th.allclose(rms, rms2, atol=0.0001)
 
                 rms.backward()
@@ -450,8 +449,8 @@ def test_torch_rmsfit_grad():
                 points2 = points2 - q.grad.detach().numpy() * 10 * float(rms)
 
                 # if not i % 10:
-                #     ic(std, i, float(rms))
-                # ic(th.norm(p.grad), th.norm(q.grad))
+                #     ipd.icv(std, i, float(rms))
+                # ipd.icv(th.norm(p.grad), th.norm(q.grad))
 
             assert rms < 1e-3  # type: ignore
 
@@ -478,7 +477,7 @@ def test_th_axis_angle():  # noqa
     assert np.allclose(hel.detach(), 0)
     ax2, an2, h2 = ipd.homog.axis_angle_hel_of(x.detach())
     assert th.allclose(th.linalg.norm(ax, axis=-1), th.ones_like(ax))
-    ic(ax2, ax)
+    ipd.icv(ax2, ax)
     assert np.allclose(ax2, ax.detach())
     assert np.allclose(an2, an.detach())
     assert np.allclose(h2, hel.detach())
@@ -561,13 +560,13 @@ if __name__ == "__main__":
 #    cen0 = th.tensor(cen0, requires_grad=True)
 #    hel = th.randn(*shape)
 
-#    ic(axis0.shape)
-#    ic(ang0.shape)
-#    ic(cen0.shape)
-#    ic(hel.shape)
+#    ipd.icv(axis0.shape)
+#    ipd.icv(ang0.shape)
+#    ipd.icv(cen0.shape)
+#    ipd.icv(hel.shape)
 
 #    rot =rot(axis0, ang0, cen0, hel)
-#    ic(rot.shape)
+#    ipd.icv(rot.shape)
 #    assert 0
 
 #    axis, ang, cen = ipd.homog.axis_ang_cen_of(rot)
@@ -715,13 +714,13 @@ if __name__ == "__main__":
 #          q = q + delta
 #          q = q + shift
 #          q[:, 3] = 1
-#          # ic(delta)
-#          # ic(q - p)
+#          # ipd.icv(delta)
+#          # ipd.icv(q - p)
 
-#          # ic(p.dtype, q.dtype)
+#          # ipd.icv(p.dtype, q.dtype)
 
 #          rms, qhat, xpq =h.rmsfit(p, q)
-#          # ic(xpq)
+#          # ipd.icv(xpq)
 
 #          assert np.allclose(qhat.detach().numpy(), h.xform(xpq, p).detach().numpy())
 #          assert np.allclose(rms.detach().numpy(),rms(qhat, q).detach().numpy())

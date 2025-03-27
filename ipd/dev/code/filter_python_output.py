@@ -10,7 +10,7 @@ re_end = re.compile(r'(^[A-Za-z0-9.]+Error)(: .*)?')
 re_null = r'a^'  # never matches
 re_presets = dict(ipd_boilerplate=Bunch(
     file=
-    r'ipd/tests/maintest\.py|icecream/icecream.py|/pprint.py|lazy_import.py|<.*>|numexpr/__init__.py|hydra/_internal/defaults_list.py|click/core.py|/typer/main.py',
+    r'ipd/tests/maintest\.py|icecream/icecream.py|/pprint.py|lazy_import.py|<.*>|numexpr/__init__.py|hydra/_internal/defaults_list.py|click/core.py|/typer/main.py|/assertion/rewrite.py',
     func=
     r'<module>|main|call_with_args_from|wrapper|print_table|make_table|import_module|import_optional_dependency|kwcall',
 ))
@@ -25,6 +25,8 @@ def filter_python_output(
     filter_numpy_version_nonsense=True,
     **kw,
 ):
+    kw = ipd.dev.project_local_config('filter_python_output') | kw
+    assert kw['keep_blank_lines']
     # if entrypoint == 'codetool': return text
     if preset and re_file == re_null: re_file = re_presets[preset].file
     if preset and re_func == re_null: re_func = re_presets[preset].func
@@ -38,7 +40,7 @@ def filter_python_output(
         return text
     for line in lines:
         line = _strip_line_extra_whitespace(line)
-        if not line.strip(): continue
+        if not line.strip() and not kw['keep_blank_lines']: continue
         if m := re_block.match(line):
             _finish_block(block, file, func, re_file, re_func, result, skipped)
             file, linene, func, block = *m.groups(), [line]
@@ -73,8 +75,8 @@ def _strip_line_extra_whitespace(line):
     if not line[:60].strip(): return line.strip()
     return line.rstrip()
 
-def _strip_text_extra_whitespace(text):
-    return re.sub(r'\n\n', os.linesep, text, re.MULTILINE)
+# def _strip_text_extra_whitespace(text):
+# return re.sub(r'\n\n', os.linesep, text, re.MULTILINE)
 
 def _filter_numpy_version_nonsense(text):
     text = text.replace(

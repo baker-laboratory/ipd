@@ -1,9 +1,10 @@
 from typing import Sequence, Any
 import numpy as np
+import typing
 import ipd
 from ipd.dev.strings import ascii_chars
 
-T = ipd.basic_typevars('T')
+T = typing.TypeVar('T')
 
 def nth(thing: ipd.Iterable[T], n: int = 0) -> T:
     iterator = iter(thing)
@@ -46,6 +47,19 @@ def reorderer(order: Sequence[int]) -> ipd.Callable[[T], T]:
 
     return reorder_func
 
+def zipenum(*args):
+    for i, z in enumerate(zip(*args)):
+        yield i, *z
+
+def subsetenum(n_or_set):
+    if isinstance(n_or_set, int): n_or_set = range(n_or_set)
+    input_set = set(n_or_set)
+    tot = 0
+    for size in range(len(input_set), 0, -1):
+        for subset in ipd.it.combinations(input_set, size):
+            yield tot, subset
+            tot += 1
+
 def zipmaps(*args: dict[str, T], order='key', intersection=False) -> dict[str, tuple[T, ...]]:
     if not args: raise ValueError('zipmaps requires at lest one argument')
     if intersection: keys = ipd.dev.andreduce(set(map(str, a.keys())) for a in args)
@@ -76,5 +90,5 @@ class UniqueIDs:
         newids = ipd.copy(ids)
         for u in uniq:
             newids[ids == u] = self.idmap[u]
-        # ic(self.idmap)
+        # ipd.icv(self.idmap)
         return newids

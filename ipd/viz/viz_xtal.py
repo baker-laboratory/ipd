@@ -96,15 +96,15 @@ def pymol_viz_SymElem(
 
     mycgo = list()
     mycgo += cgo_cyl(c1, c2, axisrad, col=col)
-    # ic(fansize, ang)
+    # ipd.icv(fansize, ang)
 
     arc = min(np.pi * 2, ang * fancover)
-    # ic(axis)
-    # ic(cen)
-    # ic(fansize)
-    # ic(fanthickness)
-    # ic(fanrefpoint)
-    # ic(fanshift)
+    # ipd.icv(axis)
+    # ipd.icv(cen)
+    # ipd.icv(fansize)
+    # ipd.icv(fanthickness)
+    # ipd.icv(fanrefpoint)
+    # ipd.icv(fanshift)
     mycgo += cgo_fan(axis,
                      cen,
                      fansize,
@@ -201,7 +201,9 @@ def pymol_viz_Xtal(
         xshift2[:3, 3] *= scale
         showcube = toshow.dimension == 3 if showcube is None else showcube
         if showcube:
-            cgo = cgo_cube(ipd.homog.hxform(xshift2, [0, 0, 0]), ipd.homog.hxform(xshift2, [scale, scale, scale]), r=0.03)
+            cgo = cgo_cube(ipd.homog.hxform(xshift2, [0, 0, 0]),
+                           ipd.homog.hxform(xshift2, [scale, scale, scale]),
+                           r=0.03)
             if splitobjs:
                 pymol.cmd.load_cgo(cgo, f"{name}_cube")
         allcgo += cgo
@@ -214,7 +216,7 @@ def pymol_viz_Xtal(
         cgo = list()
         for p in px:
             cgo += cgo_sphere(p, rad=pointradius, col=pointcol)
-        # ic(px.shape)
+        # ipd.icv(px.shape)
         # assert 0
         pymol.cmd.load_cgo(cgo, f"{name}_pts{i}")  # type: ignore
     elif showpoints not in (None, False, 0):
@@ -289,7 +291,7 @@ def xtal_show_points(which, pointscale=1, pointshift=(0, 0, 0), scaleptrad=1, **
         ]),
         # yapf: enable
     ]
-    # ic(ipd.homog.hxform(ipd.hrot([1, -1, 0], 90, np.array([-2.7, 0.7, -1]) / 8), [0, 0, 0.2]))
+    # ipd.icv(ipd.homog.hxform(ipd.hrot([1, -1, 0], 90, np.array([-2.7, 0.7, -1]) / 8), [0, 0, 0.2]))
     # assert 0
     # showpts[3] = ipd.homog.hxform(ipd.htrans([0.2, 0.1, 0.1]), showpts[3])
     for p in showpts:
@@ -299,7 +301,7 @@ def xtal_show_points(which, pointscale=1, pointshift=(0, 0, 0), scaleptrad=1, **
     radius *= pointscale
 
     colors = np.array([[(1, 1, 1)] * 30] * len(showpts))
-    # ic(len(colors[which]))
+    # ipd.icv(len(colors[which]))
     return ipd.homog.hpoint(showpts[which]), radius[which], colors[which]
 
 def get_fanrefpoint(xtal):
@@ -308,5 +310,5 @@ def get_fanrefpoint(xtal):
     if xtal.name == 'P 2 3' : pt= [0, 1, 0, 1]
     if xtal.name == 'I 21 3': pt= ipd.homog.hxform(ipd.hrot([0, 0, 1], -30), [0, 1, 0,1])
     # yapf: enable
-    # ic(pt)
+    # ipd.icv(pt)
     return pt

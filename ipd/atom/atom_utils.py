@@ -1,3 +1,38 @@
+"""
+Module: ipd.atom.atom_utils
+===========================
+
+This module provides utility functions for operating on AtomArray objects,
+including filtering, transformation, and spatial analysis routines. These
+utilities facilitate complex queries such as clash and contact detection,
+making use of the efficient SphereBVH_double algorithm for rapid spatial queries.
+
+Key features:
+  - Filtering of AtomArray objects based on criteria (e.g., element type).
+  - Application of homogeneous transformations to AtomArrays.
+  - Computation of clash and contact metrics between atomic structures.
+  - Integration with SphereBVH_double for performance, which is especially
+    beneficial for large virus capsids or lightly contacting structures.
+
+Usage Examples:
+    >>> from ipd import atom, hnumpy as h
+    >>> # Load an AtomArray from a pdb code (e.g., "1wa3")
+    >>> aa = atom.load("1wa3")
+    >>> # Filter atoms by element (for instance, oxygen 'O')
+    >>> oxygens = atom.select(aa, element="O")
+    >>> np.all(oxygens.element=='O')
+    np.True_
+
+    >>> # Apply a rotation to the AtomArray
+    >>> T = h.rot([1, 0, 0], 90, [0, 0, 0])
+    >>> aa_rotated = h.xform(T, aa)
+    >>> aa_rotated.coord[0] == aa.coord[0]
+    array([ True, False, False])
+
+.. note::
+    Comprehensive tests for these utilities are available in the repository's unit tests.
+"""
+
 import os
 import typing
 import numpy as np
@@ -98,9 +133,9 @@ def atoms_to_seqstr(atoms):
     if len(atoms) == 0: return None
     # protein = np.isin(atoms.res_name, np_amino_acid)
     # nucleic = np.isin(atoms.res_name, np_nucleotide)
-    # ic(atoms[~protein])
+    # ipd.icv(atoms[~protein])
     # assert all(nucleic) or all(protein)
-    # ic(atoms.atom_name[0], atoms.atom_name[0]=='CA')
+    # ipd.icv(atoms.atom_name[0], atoms.atom_name[0]=='CA')
     if atoms.atom_name[0] == 'CA':
         return ''.join(amino_acid_321[x] for x in atoms.res_name), True
     return ''.join(nucleotide_321[x] for x in atoms.res_name), False
@@ -167,7 +202,10 @@ def select(
     bbonly=False,
     chaindict=False,
     het=True,
-    chains=None,
+    element=None,
+    chain_id=None,
+    atom_name=None,
+    res_name=None,
     **kw,
 ) -> 'AtomArray':
     if isinstance(atoms, bs.AtomArrayStack):
@@ -177,8 +215,12 @@ def select(
     if caonly: atoms = atoms[atoms.atom_name == 'CA']
     elif bbonly: atoms = atoms[atoms.atom_nameisin(('CA', 'N', 'C', 'O'))]
     if not het: atoms = atoms[~atoms.hetero]
-    if chains is not None:
-        atoms = atoms[np.isin(atoms.chain_id, chains)]
+    for attr in 'element atom_name res_name chain_id'.split():
+        if (val := locals()[attr]) is not None:
+            if isinstance(val, str):
+                atoms = atoms[getattr(atoms, attr) == val]
+            else:
+                atoms = atoms[np.isin(getattr(atoms, attr), val)]
     if chaindict: atoms = ipd.atom.chain_dict(atoms)
     if chainlist: atoms = ipd.atom.split(atoms)
     ipd.dev.set_metadata(atoms, meta)

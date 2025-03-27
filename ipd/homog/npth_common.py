@@ -1,8 +1,10 @@
 import sys
-
 import ipd
 
 th, xr, np = ipd.lazyimports('torch', 'xarray', 'numpy')
+
+if ipd.not_installed('torch'): Tensor = np.ndarray
+else: Tensor = ipd.Union[np.ndarray, "th.Tensor"]
 
 def splitlastdim(x, i):
     return x[..., :i], x[..., i:]
@@ -28,3 +30,6 @@ def numel(tensor):
 def tensor_summary(tensor, maxnumel=24):
     if numel(tensor) <= maxnumel: return str(tensor)
     return f'{tensor.__class__.__name__}{list(tensor.shape)}'
+
+def all_lte(a, b):
+    return np.all(np.asarray(a) <= np.asarray(b))

@@ -32,12 +32,12 @@ def test_basic_typevars():
     # Test class type variable
     typevars = basic_typevars('C')
     C = TypeVar('C')
-    C = type[C]
-    assert str(typevars) == str(C)
+    # C = type[C]
+    assert str(typevars[0]) == str(C)
 
     # Test callable type variable
     typevars = basic_typevars('F')
-    assert callable(typevars)
+    assert callable(typevars[0])
 
 def test_frames44_instancecheck():
     # Valid 4x4 matrix

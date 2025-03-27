@@ -165,7 +165,7 @@ Traceback (most recent call last):
     sinfo = helper_test_frames(nframes, symid, ideal=False)
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/sheffler/rfd/lib/ipd/ipd/tests/sym/test_sym_detect.py", line 30, in helper_test_frames
-    ic(tol)
+    ipd.icv(tol)
   File "/home/sheffler/sw/MambaForge/envs/rfdsym312/lib/python3.12/site-packages/icecream/icecream.py", line 208, in __call__
     out = self._format(callFrame, *args)
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -247,7 +247,7 @@ Traceback (most recent call last):
     sinfo = helper_test_frames(nframes, symid, ideal=False)
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/sheffler/rfd/lib/ipd/ipd/tests/sym/test_sym_detect.py", line 30, in helper_test_frames
-    ic(tol)
+    ipd.icv(tol)
   __call__=>_format=>_formatArgs=>_constructArgumentOutput=>wrapper=>argumentToString=>pformat=>pformat=>_format=>_repr=>format=>_safe_repr =>
   File "/home/sheffler/rfd/lib/ipd/ipd/dev/tolerances.py", line 52, in __repr__
     ipd.dev.print_table(self.kw)

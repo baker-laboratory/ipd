@@ -1,0 +1,6 @@
+Example Gallery
+===============
+
+This section contains examples demonstrating different functionalities of the `ipd` package.
+Each example is an executable Python script that showcases specific features.
+Click on an example to see the source code and rendered output.

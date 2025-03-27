@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import attrs
 import collections
 import contextlib
 import copy
@@ -7,7 +6,6 @@ import itertools
 import random
 from typing_extensions import TypeVar
 
-from icecream import ic
 import numpy as np
 
 import ipd
@@ -25,41 +23,71 @@ XYZPair = collections.namedtuple('XYZPair', 'xyz pair')
 class XYZPairUnsupportedError(Exception):
     pass
 
-@attrs.define(slots=False)
+@ipd.mutablestruct
 class SymmetryManager(ABC, metaclass=MetaSymManager):
-    """The SymmetryManager class encapsulates symmetry related functionality
-    and parameters.
+    """Abstract base class for managing symmetry operations in the IPD framework.
 
-    It is extensible, allowing for new parameters and functionality to
-    be added outside of the rf codebase. For example, for unbounded
-    symmetries, translations and slide operations can be added without
-    need to change the existing core symmetry code in ipd. With a
-    SymmetryManager holding all relevant parameters, function signatures
-    and other code can be cleaned up, removing up to seven parameters
-    from many functions, and future additional parameters can be added
-    without changing function signatures. Some places in the code now
-    require that a SymmetryManager is present in self.sym, so a sym=None
-    argument has been added to some classes __init__ functions. If no
-    symmetry is specified, a no-op C1SymmetryManager is created via sym
-    = create_sym_manager(). To create a symmetry manager based on config
-    / command line, sym = create_sym_manager(conf) can be called.
-    Symmetry is applied to various subjects via the __call__ operator:
-    xyz = sym(xyz), seq = sym(seq), etc. Any SymmetryManager can also
-    symmetrize arbitrary arrays like seq and the diffusion Indep object.
-    Subclasses of SymmetryManager need only call
-    super().__init__(*a,**kw) and implement the apply_symmetry method.
-    apply_symmetry will be passed the correct slice containing only the
-    coordinates that need to be symmetrized, already converted to the
-    correct shape/dtype/device, along with all relevant parameters in
-    kwargs. The kwargs will already be update based on the rfold and/or
-    diffusion timestep as appropriate. Currently, kwargs provides the
-    following and will also include any additions to sym.yaml. Most of
-    these are also available via self.<whatever>, but extracting them
-    from kwargs by adding a function argument is slightly more correct
-    and more convenient.
+    This class encapsulates symmetry-related parameters and operations, allowing
+    flexible management of transformations applied to molecular structures. It is
+    designed to be extensible so that new symmetry behaviors can be integrated
+    without modifying core logic.
+
+    Key Features:
+        - **Encapsulates symmetry parameters and functionality**
+        - **Simplifies function signatures** by reducing the number of explicit parameters
+        - **Supports unbounded symmetries**, including translations and slides
+        - **Allows future extension** without modifying core function signatures
+        - **Handles symmetry applications via `__call__` operator**
+
+    Some parts of the codebase now expect a `SymmetryManager` instance to be
+    present in `self.sym`. If no symmetry is specified, a no-op
+    `C1SymmetryManager` is created via:
+
+    .. code-block:: python
+
+       sym = create_sym_manager()
+
+    To create a symmetry manager based on configuration or command-line options:
+
+    .. code-block:: python
+
+       sym = create_sym_manager(conf)
+
+    Symmetry is applied to various data types via the `__call__` operator:
+
+    .. code-block:: python
+
+       xyz = sym(xyz)  # Symmetrizes coordinates
+       seq = sym(seq)  # Symmetrizes a sequence
+
+    Any `SymmetryManager` can also symmetrize arbitrary arrays like sequences and diffusion objects.
+
+    **Implementation Details:**
+
+    - Subclasses must implement :meth:`apply_symmetry`, which will be passed a correctly sliced
+      subset of the data, converted to the proper shape, dtype, and device.
+    - The method receives relevant parameters via `kwargs`, pre-updated based on
+      refinement folding (rfold) and/or diffusion timesteps.
+    - Additional parameters from `sym.yaml` are also included in `kwargs`, making it
+      slightly more convenient and correct to extract these values through function
+      arguments rather than instance attributes.
+
+    Attributes:
+        symid (str): The symmetry identifier, e.g., 'C1', 'C2', 'D3', etc.
+        opt (dict): Configuration options controlling symmetry behavior.
+        idx (SymIndex): Indexing structure used for symmetric transformations.
+
+    Example:
+        >>> sym = ipd.sym.create_sym_manager(symid='C3')
+        >>> sym.idx = ipd.sym.SymIndex(3, [(30, 0, 30)])
+        >>> xyz = np.random.rand(10, 3)
+        >>> xyz_sym = sym(xyz)
+
     """
     symid: str
     nsub: int
+    L: int
+    _idx: SymIndex
     kind: str = 'base'
     _frames: ipd.FramesN44 = None
     SymIndexType: type[SymIndex] = SymIndex
@@ -155,6 +183,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         if isinstance(thing, XYZPair):
             xyzadapt, pairadapt = adaptor.adapted
             orig = xyzadapt.adapted
+            assert len(orig) == self.L, f'bad length {len(orig)}, expected {self.L}'
             newxyz, newpair = self.apply_sym_slices_xyzpair(xyzadapt, pairadapt, **kw)
             self.move_unsym_to_match_asu(orig, newxyz)
             if self.symid.startswith('C') and self.opt.center_cyclic:
@@ -183,23 +212,25 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         return self.mark_symmetrical(result)
 
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
+        # assert len(xyz) == self.L, f'bad length {xyz.shape}, expected {self.L}'
         xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)
         if isinstance(xyz, tuple): xyz, pair = xyz
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         if len(xyz) == 1: xyz = xyz[0]
         return xyz if pair is None else XYZPair(xyz, pair)
 
-    def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, **kw):
+    def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, matchpair=False, **kw):
         kw = ipd.dev.Bunch(kw)
-        origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=True, **kw)
-        origpair, pair, kw['Lasu'] = self.to_contiguous(pairadaptor, **kw)
+        origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=matchpair, **kw)
+        origpair, pair, _ = self.to_contiguous(pairadaptor, **kw)
+        assert kw['Lasu'] == self.Nasu, f'bad Lasu {kw["Lasu"]}, expected {self.Nasu}'
         if origxyz.ndim == 2: xyz = xyz[:, None, :]
         pair = pair.squeeze(-1)
-        # ic(xyz.shape, pair.shape)
+        # ipd.icv(xyz.shape, pair.shape)
         xyz, pair = self.apply_symmetry_xyz_maybe_pair(xyz, pair=pair, origxyz=origxyz, **kw)
         xyz, pair = xyz.squeeze(0), pair.squeeze(0).unsqueeze(-1)
         xyzpair_on_subset = len(xyz) != len(origxyz)
-        xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=True, **kw)
+        xyz = self.fill_from_contiguous(xyzadaptor, origxyz, xyz, matchpair=matchpair, **kw)
         pair = self.fill_from_contiguous(pairadaptor, origpair, pair, **kw)
         xyz = self.move_unsym_to_match_asu(origxyz, xyz, move_all_nonprot=False)
         if xyzpair_on_subset:
@@ -231,7 +262,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         if not self.opt.symmetrize_repeats and not self.opt.sympair_enabled:
             return pair
         if kw['sympair_protein_only']:
-            assert len(pair) == self.Lsymprot
+            assert len(pair) == self.Lsymprot, f'bad length {len(pair)}, expected {self.Lsymprot}'
             L, N = self.Lsymprot, self.Lasuprot
         else:
             L, N = self.Nsym, self.Nasu
@@ -247,8 +278,8 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             if self.opt.sympair_method == 'max':
                 grouped[group] = th.maximum(grouped[group], pair[i:i + N, j:j + N])
             elif self.opt.sympair_method == 'mean':
-                # ic(grouped[group].shape)
-                # ic(pair[i:i + N, j:j + N].shape)
+                # ipd.icv(grouped[group].shape)
+                # ipd.icv(pair[i:i + N, j:j + N].shape)
                 grouped[group] += pair[i:i + N, j:j + N] / Nmembers
             else:
                 raise NotImplementedError(f'unknown sympair_method {self.opt.sympair_method}')
@@ -263,7 +294,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
     def apply_symmetry_index(self, idx: T, val: T, isidx, **kw) -> T:
         """handles index data types where values must be reindexed in context of the symmetric object"""
-        ic(self.symid, self.nsub, idx, val, isidx)
+        ipd.icv(self.symid, self.nsub, idx, val, isidx)
         asu = val[self.idx.asu[idx]]
         asuidx = idx[self.idx.asu[idx]]
         asym = val[self.idx.asym[idx]]
@@ -273,13 +304,13 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         for i in range(1, self.nsub):
             new1 = asu.clone()
             new1[:, isidx] = self.idx.idx_asu_to_sub.to(self.device)[i, asu[:, isidx].to(int)].to(asu.dtype)
-            ic(new1)
+            ipd.icv(new1)
             new.append(new1)
             newidx.append(self.idx.idx_asu_to_sub.to(self.device)[i, asuidx])
         new = th.cat(new, 0)
         newidx = th.cat(newidx)
-        assert th.allclose(newidx, idx)
-        ic(new)
+        assert th.allclose(newidx, idx), f'bad newidx {newidx} {idx}'
+        ipd.icv(new)
         assert 0
         return new
 
@@ -299,23 +330,23 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def move_unsym_to_match_asu(self, orig, moved, move_all_nonprot=False):
         if not self.opt.move_unsym_with_asu: return moved
         tomove = self.munsym | (self.mnonprot if move_all_nonprot else False)
-        # ic(move_all_nonprot)
-        # ic(self.munsym)
-        # ic(self.mnonprot)
+        # ipd.icv(move_all_nonprot)
+        # ipd.icv(self.munsym)
+        # ipd.icv(self.mnonprot)
         if not th.sum(tomove): return moved
         origasu = orig[self.masu, 0]
         movedasu = moved[self.masu, 0]
         unsym = orig[tomove]
-        # ic(origasu.shape, movedasu.shape, orig.shape, moved.shape)
+        # ipd.icv(origasu.shape, movedasu.shape, orig.shape, moved.shape)
         if len(unsym) and len(origasu) > 2 and not th.allclose(origasu, movedasu, atol=1e-3):
             rms, _, xfit = ipd.h.rmsfit(origasu, movedasu)
             moved[tomove] = ipd.h.xform(xfit, unsym)
             if rms > 1e-3:
-                ic(orig)
-                ic(moved)
-                ic(rms)
-                ic(th.where(self.idx.unsym)[0])
-                ic(self.idx)
+                ipd.icv(orig)
+                ipd.icv(moved)
+                ipd.icv(rms)
+                ipd.icv(th.where(self.idx.unsym)[0])
+                ipd.icv(self.idx)
                 import sys
                 sys.exit()
                 # ipd.showme(origasu)
@@ -334,17 +365,17 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         ctg = self.idx.contiguous
         if isinstance(adapted, np.ndarray): ctg = ctg.cpu().numpy()
         if thing.kind.shapekind == ShapeKind.SPARSE:
-            assert len(adapted.idx) == len(adapted.val)
+            assert len(adapted.idx) == len(adapted.val), f'bad len {len(adapted.idx)} {len(adapted.val)}'
             return adapted, adapted.val[self.idx.to_contiguous(adapted.idx)], self.Nasu
         elif thing.kind.shapekind == ShapeKind.ONEDIM:
-            assert len(adapted) == self.L
+            assert len(adapted) == self.L, f'bad len {len(adapted)} {self.L}'
             if sympair_protein_only and matchpair:
                 return adapted, adapted[:self.Lsymprot], self.Lsymprot // self.nsub
             return adapted, adapted[ctg], self.Nasu
         elif thing.kind.shapekind == ShapeKind.TWODIM:
             if sympair_protein_only:
                 return adapted, adapted[:self.Lsymprot, :self.Lsymprot], self.Lsymprot // self.nsub
-            assert len(adapted) == self.L
+            assert len(adapted) == self.L, f'bad len {len(adapted)} {self.L}'
             idx = th.cartesian_prod(ctg, ctg)
             shape = (len(ctg), len(ctg), *adapted.shape[2:])
             return adapted, adapted[idx[:, 0], idx[:, 1]].reshape(shape), self.Nasu
@@ -386,7 +417,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         if skip_keys is None: skip_keys = []
         if key in skip_keys: return thing
         if thing is None: return None
-        # ic('extract', type(thing), kw.keys())
+        # ipd.icv('extract', type(thing), kw.keys())
         thing = self.sym_adapt(thing, isasym=False)
         if isinstance(thing.adapted, np.ndarray):
             mask = mask.cpu().numpy()
@@ -399,19 +430,19 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             return thing.reconstruct(thing.adapted[mask], **kw)
         elif thing.kind.shapekind == ShapeKind.TWODIM:
             x = thing.adapted[mask[None] * mask[:, None]]
-            # ic(x.shape, mask.sum(), mask.shape, kw)
+            # ipd.icv(x.shape, mask.sum(), mask.shape, kw)
             return thing.reconstruct(x.reshape(*[mask.sum()] * 2, *x.shape[1:]), **kw)
         elif thing.kind.shapekind == ShapeKind.SPARSE:
-            # ic(mask.shape, mask)
-            # ic(thing.adapted.idx.shape)
-            # ic(thing.adapted.val.shape)
+            # ipd.icv(mask.shape, mask)
+            # ipd.icv(thing.adapted.idx.shape)
+            # ipd.icv(thing.adapted.val.shape)
             v = thing.adapted.val.rename(None)
             is_not_index = v.to(int) != v
-            # ic(is_not_index)
+            # ipd.icv(is_not_index)
             thing.adapted.val[:] = th.where(is_not_index, v, self.idx.idx_sym_to_asym[v.to(int)])
-            # ic(mask.shape, mask)
+            # ipd.icv(mask.shape, mask)
             keep = mask[thing.adapted.idx]
-            # ic(keep.shape, keep)
+            # ipd.icv(keep.shape, keep)
             thing.adapted.idx = thing.adapted.idx[keep]
             thing.adapted.val = thing.adapted.val[keep, ...]
             return thing.reconstruct(thing.adapted)
@@ -461,11 +492,11 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         None."""
         if not self._idx:
             try:
-                # ic(self.opt.L,self.opt.Lasu,self.opt.nsub)
+                # ipd.icv(self.opt.L,self.opt.Lasu,self.opt.nsub)
                 L = self.opt.L or self.opt.Lasu * self.opt.nsub
                 Lasu = self.opt.Lasu or L // self.opt.nsub
                 nsub = self.opt.nsub or L // Lasu
-                # ic(L,Lasu,nsub)
+                # ipd.icv(L,Lasu,nsub)
                 self._idx = self.SymIndexType(nsub, [(L, 0, Lasu * nsub)])
             except (TypeError, AttributeError):
                 return None
@@ -482,9 +513,11 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         elif self.nsub:
             self._idx = self.SymIndexType(self.nsub, idx)
         self._idx.to(self.device)
+        assert self.L == self.idx.L, f'bad L {self.L} {self.idx.L}'
+        assert self.L == len(self.idx.kind), f'bad L {self.L} {len(self.idx.kind)}'
 
     def verify_index(self, thing):
-        assert self._idx
+        assert self._idx, 'SymmetryManager.idx is not set'
 
     def sym_adapt(self, thing, isasym=None) -> 'ipd.sym.sym_adapt.SymAdapt':
         """Return a SymAdapt object with metadata about the symmetry of the
@@ -607,7 +640,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
     @frames.setter
     def frames(self, frames):
-        assert frames.shape[-2:] == (4, 4) and frames.ndim == 3
+        assert frames.shape[-2:] == (4, 4) and frames.ndim == 3, f'bad shape {frames.shape}'
         self._frames = th.as_tensor(frames, device=self.device, dtype=th.float32)
         self.opt.nsub = len(frames)
 
@@ -670,5 +703,5 @@ class C1SymmetryManager(SymmetryManager):
 
 def _sample_range_or_float_value(inp):
     if isinstance(inp, (int, float)): return inp
-    assert len(inp) == 2
+    assert len(inp) == 2, f'bad range {inp}'
     return random.uniform(*inp)

@@ -6,27 +6,59 @@ Context Managers Utility Module
 This module provides a collection of useful and versatile **context managers**
 for handling various runtime behaviors. These include:
 
-- **Redirection of stdout/stderr**
-- **Dynamic class casting**
-- **Automatic file handling**
-- **Temporary working directory changes**
-- **Capturing asserts and exceptions**
-- **Random seed state preservation**
-- **Debugging tools (tracing prints, capturing stdio)**
-- **Suppressing optional imports**
+- **Redirection of stdout/stderr:** Easily capture or redirect print output.
+- **Dynamic class casting:** Temporarily change an object's class.
+- **Automatic file handling:** Open multiple files and ensure proper cleanup.
+- **Temporary working directory changes:** Change directory and automatically revert.
+- **Capturing asserts and exceptions:** Capture exceptions for later inspection.
+- **Random seed state preservation:** Temporarily set a random seed for reproducibility.
+- **Debugging tools:** Trace print statements with stack traces and capture stdio.
+- **Suppressing optional imports:** Cleanly handle optional imports without crashing.
 
 ### **💡 Why Use These Context Managers?**
 Context managers allow you to **manage resources safely and concisely**,
 ensuring proper cleanup regardless of errors. This module provides **custom utilities**
-not found in Python's standard library.
+not found in Python's standard library, which can be extremely useful in testing,
+debugging, and experimental setups.
 
 ---
 
 ## **📌 Usage Examples**
+
 ### **Redirect stdout and stderr**
-```python
-with redirect(stdout=open("output.log", "w")):
-    print("This will be written to output.log")
+>>> with redirect(stdout=open("/tmp/output.log", "w")):
+...    print("This will be written to output.log")
+
+### **Temporarily Change Working Directory**
+>>> import os
+>>> curdir = os.getcwd()
+>>> with cd("/tmp"):
+...     assert os.getcwd().startswith('/tmp')
+>>> curdir == os.getcwd()
+True
+
+### **Capture Standard Output**
+>>> with capture_stdio() as captured:
+...     print("Captured output")
+>>> print("Captured text:", captured.read(), end='')
+Captured text: Captured output
+
+### **Set a Temporary Random Seed**
+>>> import numpy as np
+>>> with temporary_random_seed(42):
+...    print(np.random.rand(3))
+[0.37454012 0.95071431 0.73199394]
+>>> # Outside the context, the previous random state is restored.
+
+### **Capture Assertion Errors**
+>>> with capture_asserts() as errors:
+...     assert False, "This assertion error will be captured"
+>>> print("Captured errors:", errors)
+Captured errors: [AssertionError('This assertion error will be captured')]
+
+### **Suppress Optional Imports**
+>>> with optional_imports():
+...     import some_optional_module  # Will not raise ImportError if module is absent.
 """
 
 import atexit
@@ -49,7 +81,7 @@ def onexit(func, msg=None, **metakw):
     return wrapper
 
 @contextlib.contextmanager
-def cast(cls, self):
+def set_class(cls, self):
     try:
         orig, self.__class__ = self.__class__, cls
         yield self
@@ -112,7 +144,7 @@ def np_compact(precision=4, suppress=True, **kw):
     return np_printopts(precision=precision, suppress=suppress, **kw)
 
 @contextlib.contextmanager
-def catchall():
+def catch_em_all():
     errors = []
     try:
         yield errors
@@ -120,78 +152,6 @@ def catchall():
         errors.append(e)
     finally:
         pass
-
-"""
-===============================
-Context Managers Utility Module
-===============================
-
-This module provides a collection of useful and versatile **context managers**
-for handling various runtime behaviors. These include:
-
-- **Redirection of stdout/stderr:** Easily capture or redirect print output.
-- **Dynamic class casting:** Temporarily change an object's class.
-- **Automatic file handling:** Open multiple files and ensure proper cleanup.
-- **Temporary working directory changes:** Change directory and automatically revert.
-- **Capturing asserts and exceptions:** Capture exceptions for later inspection.
-- **Random seed state preservation:** Temporarily set a random seed for reproducibility.
-- **Debugging tools:** Trace print statements with stack traces and capture stdio.
-- **Suppressing optional imports:** Cleanly handle optional imports without crashing.
-
-### **💡 Why Use These Context Managers?**
-Context managers allow you to **manage resources safely and concisely**,
-ensuring proper cleanup regardless of errors. This module provides **custom utilities**
-not found in Python's standard library, which can be extremely useful in testing,
-debugging, and experimental setups.
-
----
-
-## **📌 Usage Examples**
-
-### **Redirect stdout and stderr**
-```python
-with redirect(stdout=open("output.log", "w")):
-    print("This will be written to output.log")
-```
-
-### **Temporarily Change Working Directory**
-```python
-import os
-print("Current directory:", os.getcwd())
-with cd("/tmp"):
-    print("Inside /tmp:", os.getcwd())
-print("Reverted directory:", os.getcwd())
-```
-
-### **Capture Standard Output**
-```python
-with capture_stdio() as captured:
-    print("Captured output")
-# Use captured.getvalue() to retrieve the captured text.
-print("Captured text:", captured.getvalue())
-```
-
-### **Set a Temporary Random Seed**
-```python
-import numpy as np
-with temporary_random_seed(42):
-    print(np.random.rand(3))
-# Outside the context, the previous random state is restored.
-```
-
-### **Capture Assertion Errors**
-```python
-with capture_asserts() as errors:
-    assert False, "This assertion error will be captured"
-print("Captured errors:", errors)
-```
-
-### **Suppress Optional Imports**
-```python
-with optional_imports():
-    import some_optional_module  # Will not raise ImportError if module is absent.
-```
-"""
 
 @contextlib.contextmanager
 def redirect(stdout=sys.stdout, stderr=sys.stderr):

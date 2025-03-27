@@ -1,6 +1,12 @@
-import ipd
-
-def symmetric_crop(assemb, maxsize=400):
-    ichain = assemb.uniform_random_chain()
-    neighborhood = assemb.get_neighborhood(ichain)
-    assert isinstance(neighborhood, ipd.atom.Assembly)
+def symmetric_crop(datahub_data, maxsize=400):
+    print('example_id', data['example_id'])
+    print('path', data['path'])
+    print('pdb_id', data['pdb_id'])
+    print('assembly_id', data['assembly_id'])
+    print('query_pn_unit_iids', data['query_pn_unit_iids'])
+    print('extra_info', data['extra_info'])
+    print('atom_array', data['atom_array'].coord.shape)
+    print('atom_array_stack', data['atom_array_stack'].coord.shape)
+    print('chain_info', data['chain_info'].keys())
+    print('ligand_info', data['ligand_info'])
+    print('metadata', data['metadata'])

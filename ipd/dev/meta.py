@@ -350,15 +350,15 @@ def param_is_required(param):
         bool: True if the parameter is required, False otherwise.
 
     Example:
-        def my_func(x, y=2, *args, **kwargs): pass
-        params = inspect.signature(my_func).parameters
-        for name, param in params.items():
-            print(name, param_is_required(param))
-        # Output:
-        # x True
-        # y False
-        # args False
-        # kwargs False
+    >>> def my_func(x, y=2, *args, **kwargs): pass
+    >>> params = inspect.signature(my_func).parameters
+    >>> for name, param in params.items():
+    ...     print(name, param_is_required(param))
+    x True
+    y False
+    args False
+    kwargs False
+
     """
     return param.default is param.empty and param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)
 
@@ -377,12 +377,12 @@ def func_params(func, required_only=False):
         dict: A dictionary mapping parameter names to `inspect.Parameter` objects.
 
     Example:
-        def my_func(a, b, c=1): pass
-        print(func_params(my_func))
-        # Output: {'a': <Parameter "a">, 'b': <Parameter "b">, 'c': <Parameter "c=1">}
+    >>> def my_func(a, b, c=1): pass
+    >>> print(func_params(my_func))
+    OrderedDict({'a': <Parameter "a">, 'b': <Parameter "b">, 'c': <Parameter "c=1">})
 
-        print(func_params(my_func, required_only=True))
-        # Output: {'a': <Parameter "a">, 'b': <Parameter "b">}
+    >>> print(func_params(my_func, required_only=True))
+    {'a': <Parameter "a">, 'b': <Parameter "b">}
     """
     signature = inspect.signature(func)
     params = signature.parameters

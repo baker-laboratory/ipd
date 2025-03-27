@@ -1,4 +1,5 @@
 from collections.abc import Mapping, Iterable
+import difflib
 import re
 import sys
 
@@ -22,7 +23,7 @@ def make_table(thing, precision=3, **kw):
         if isinstance(thing, ipd.Bunch): return make_table_bunch(thing, **kw)
         if isinstance(thing, dict): return make_table_dict(thing, **kw)
         if isinstance(thing, (list, tuple)): return make_table_list(thing, **kw)
-        xr = ipd.importornone('xarray')
+        xr = ipd.maybeimport('xarray')
         if xr and isinstance(thing, xr.Dataset): return make_table_dataset(thing, **kw)
         raise TypeError(f'cant make table for {type(thing)}')
     finally:
@@ -135,3 +136,51 @@ def summary(obj) -> str:
         return f'AtomArray({len(obj)})'
     if isinstance(obj, (list, tuple)): return [summary(o) for o in obj]
     return str(obj)
+
+def diff(ref: str, new: str) -> None:
+    # Use difflib to create a unified diff
+    diff = difflib.unified_diff(ref.splitlines(),
+                                new.splitlines(),
+                                fromfile='Original',
+                                tofile='Got',
+                                lineterm='')
+    return ("\n".join(diff))
+
+def compare_multiline_strings(ref, got):
+    """
+    Compare two multi-line strings line by line.
+    For lines that are different, show a character-level diff using SequenceMatcher.
+
+    Parameters:
+        ref (str): The ref multi-line string.
+        got (str): The got multi-line string.
+    """
+    ref_lines = ref.splitlines()
+    got_lines = got.splitlines()
+    total_lines = max(len(ref_lines), len(got_lines))
+
+    for i in range(total_lines):
+        # Retrieve each line or mark as empty if one string is shorter.
+        e_line = ref_lines[i] if i < len(ref_lines) else ""
+        g_line = got_lines[i] if i < len(got_lines) else ""
+
+        # If the lines are exactly equal, print that they match.
+        if e_line == g_line:
+            # print(f"Line {i+1}: OK")
+            pass
+        else:
+            # print(f"Line {i+1}: DIFFERENCE")
+            # Use SequenceMatcher to get a detailed diff.
+            matcher = difflib.SequenceMatcher(None, e_line, g_line)
+            diff_line = []
+            for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+                if tag == 'equal':
+                    diff_line.append(e_line[i1:i2])
+                elif tag == 'insert':
+                    diff_line.append(f"[+{g_line[j1:j2]}+]")
+                elif tag == 'delete':
+                    diff_line.append(f"[-{e_line[i1:i2]}-]")
+                elif tag == 'replace':
+                    diff_line.append(f"[-{e_line[i1:i2]}-]")
+                    diff_line.append(f"[+{g_line[j1:j2]}+]")
+            print(f'{i:3}', "".join(diff_line))

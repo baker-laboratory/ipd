@@ -29,7 +29,7 @@ def set_default_sym_manager(kind):
     """Set the default symmetry manager."""
     global _default_sym_manager
     _default_sym_manager = kind
-    # ic('set_default_sym_manager', kind, _default_sym_manager)
+    # ipd.icv('set_default_sym_manager', kind, _default_sym_manager)
 
 def create_sym_manager(conf=None, extra_params=None, kind=None, device=None, setglobal=True, **kw):
     """Create a symmetry manager based on the configuration.

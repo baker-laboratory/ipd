@@ -22,7 +22,8 @@ from assertpy import assert_that
 
 # set to manually specipy a command for a file
 _overrides = {
-    # 'foo.py': 'PYTHONPATH=.. python foo/bar.py -baz'
+    'noxfile.py': 'nox -- 3.13 all',
+    'pyproject.toml': 'uv run validate-pyproject pyproject.toml',
 }
 
 # set to mannually map a file to another file
@@ -105,26 +106,32 @@ def testfile_of(projects, path, bname, debug=False, **kw) -> str:
     t = f'{root}{pre}tests/{post}test_{bname}'
     return t
 
+# def locate_fname(fname):
+#     'locate file in sys.path'
+#     if os.path.exists(fname): return fname
+#     candidates = [fn for fn in ipd.dev.project_files() if fn.endswith(fname)]
+#     if len(candidates) == 1: return candidates[0]
+#     if len(candidates) == 0: raise FileNotFoundError(f'file {fname} not found in git project')
+#     raise FileNotFoundError(f'file {fname} found ambiguous {candidates} in git project')
+
 def dispatch(
         projects,
         fname,
-        pytest_args='-x --disable-warnings -m "not nondeterministic" --doctest-modules',
+        pytest_args='-x --disable-warnings -m "not nondeterministic" --doctest-modules --durations=7',
         file_mappings=dict(),
         overrides=dict(),
         strict=True,
         pytest=False,
+        python=None,
         **kw,
 ):
     'dispatch command for a given file. see above'
-
+    # fname = locate_fname(fname)
     fname = os.path.relpath(fname)
     module_fname = '' if fname[:5] == 'test_' else fname
     path, bname = os.path.split(fname)
-
     if bname in overrides:
-        oride = overrides[bname]
-        return oride, _post[bname]
-
+        return overrides[bname], _post[bname]
     if bname in file_mappings:
         assert len(file_mappings[bname]) == 1
         fname = file_mappings[bname][0]
@@ -135,12 +142,12 @@ def dispatch(
         path, bname = os.path.split(bname)
 
     if not file_has_main(fname) and not bname.startswith('test_'):
-        testfile = testfile_of(projects, path, bname, **kw)
-        if testfile:
+        if testfile := testfile_of(projects, path, bname, **kw):
             if not os.path.exists(testfile) and fname.endswith('.py'):
                 print('autogen test file', testfile)
                 os.system(f'{sys.executable} -mipd code make_testfile {fname} {testfile}')
                 os.system(f'subl {testfile}')
+                sys.exit()
             fname = testfile
             path, bname = os.path.split(fname)
 
@@ -148,13 +155,15 @@ def dispatch(
         test()
         sys.exit()
 
+    python = python or sys.executable
     pypath = f'PYTHONPATH={":".join(p for p in sys.path if "python3" not in p)}'
     if pytest or (not file_has_main(fname) and bname.startswith('test_')):
-        cmd = f'{pypath} {sys.executable} -m pytest {pytest_args} {module_fname}'
+        if module_fname == fname: fname = ''
+        cmd = f'{pypath} {python} -m pytest {pytest_args} {module_fname} {fname}'
     elif fname.endswith('.py') and bname != 'conftest.py':
-        cmd = f'{pypath} {sys.executable} ' + fname
+        cmd = f'{pypath} {python} ' + fname
     else:
-        cmd = f'{pypath} {sys.executable} -mpytest {pytest_args}'
+        cmd = f'{pypath} {python} -mpytest {pytest_args}'
     return cmd, _post[bname]
 
 def main(projects, quiet=False, filter_build_log=False, **kw):

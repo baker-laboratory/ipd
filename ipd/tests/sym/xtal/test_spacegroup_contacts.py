@@ -13,7 +13,7 @@ def main():
         if sg in covers:
             continue
         covers[sg] = minimal_spacegroup_cover_symelems(sg, maxelems=2)
-        # ic(covers)
+        # ipd.icv(covers)
         ipd.save(covers, "spacegroup_covers_2elem.pickle")
         # minimal_spacegroup_cover_symelems(sg, maxelems=2, noscrew=True, nocompound=True)
 

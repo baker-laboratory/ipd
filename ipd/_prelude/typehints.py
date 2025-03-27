@@ -1,5 +1,7 @@
+import sys
 import abc
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     cast as cast,
@@ -22,41 +24,24 @@ FieldSpec = Union[str, list[str], tuple[str], Callable[..., str], tuple]
 EnumerIter = Iterator[int]
 EnumerListIter = Iterator[list[Any]]
 
-def basic_typevars(which) -> Union[TypeVar, list[Union[TypeVar, ParamSpec]]]:
-    """
-    Generate a set of common type variables used for generic typing.
+T = TypeVar('T')
+R = TypeVar('R')
+C = TypeVar('C')
+if sys.version_info.minor >= 10 or TYPE_CHECKING:
+    P = ParamSpec('P')
+    F = Callable[P, R]
+else:
+    P = TypeVar('P')
+    P.args = list[Any]
+    P.kwargs = KW
+    F = Callable[[Any, ...], R]
 
-    This function creates a dictionary of type variables commonly used for generic typing:
-    - `T`: A generic type variable.
-    - `R`: A return type variable.
-    - `C`: A type variable for class types.
-    - `P`: A parameter specification (if available; falls back to `TypeVar` if `ParamSpec` is not available).
-    - `F`: A callable type with specified parameters (`P`) and a return type (`R`).
-
-    Args:
-        which (Iterable[str]): A list of keys specifying which type variables to return.
-
-    Returns:
-        Generator: A generator yielding the requested type variables in the order specified in `which`.
-
-    Examples:
-        >>> list(basic_typevars(['T', 'R']))
-        [TypeVar('T'), TypeVar('R')]
-        >>> list(basic_typevars(['C']))
-        [<class 'type'>]
-    """
-    typevars = dict(T=TypeVar('T'), R=TypeVar('R'), C=type[TypeVar('C')])
-    try:
-        typevars['P'] = ParamSpec('P')  # type: ignore
-    except ImportError:
-        typevars['P'] = TypeVar('P')  # type: ignore
-        typevars['P'].args = list[Any]  # type: ignore
-        typevars['P'].kwargs = KW  # type: ignore
-    typevars['F'] = Callable[typevars['P'], typevars['R']]  # type: ignore
-    result = [typevars[k] for k in which]  # type: ignore
-    if len(which) == 1:
-        return result[0]
+def basic_typevars(which) -> list[Union[TypeVar, ParamSpec]]:
+    result = [globals()[k] for k in which]
     return result
+
+Vec = Union[np.ndarray, tuple, list]
+Point = Union[np.ndarray, tuple, list]
 
 class Frames44Meta(abc.ABCMeta):
 

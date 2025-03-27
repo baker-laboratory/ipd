@@ -24,7 +24,7 @@ class CliBase:
     def __add_all_cmds__(cls, self: 'CliBase', **kw: KW) -> None:
         cmds = [m for m in cls.__dict__ if callable(getattr(cls, m)) and m[0] != '_']
         for attr in cmds:
-            with ipd.dev.cast(cls, self) as newself:
+            with ipd.dev.set_class(cls, self) as newself:
                 # print('add command', cls, attr)
                 method = getattr(newself, attr)
                 setattr(cls, attr, cls.__app__.command(attr)(method))

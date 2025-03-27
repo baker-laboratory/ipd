@@ -6,6 +6,7 @@ from ipd.homog import hgeom as h
 from ipd.data.tests.numeric import sym_detect_test_frames
 
 TEST_PDBS = [
+    # '6u9d',
     '3sne',
     '1dxh',
     '1n0e',
@@ -62,7 +63,7 @@ def helper_test_frames(frames, symid, tol=None, origin=None, ideal=False, **kw):
     assert sinfo.is_dihedral == (sinfo.symid[0] == 'D')
     if origin is not None:
         if sinfo.is_cyclic:
-            # ic(h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]), tol.line_angle)
+            # ipd.icv(h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]), tol.line_angle)
             assert h.line_angle(h.xform(origin, [0, 0, 1, 0]), sinfo.axis[0]) < tol.line_angle
         elif sinfo.symid == 'D2':
             pass
@@ -78,7 +79,7 @@ def helper_test_frames(frames, symid, tol=None, origin=None, ideal=False, **kw):
                     cn1, cn2 = h.point([[0, 0, 0]]), h.point([[0, 0, 0]])
                     frm = h.xform(h.inv(origin), frames)
                     diff = h.sym_line_line_diff_pa(cn1, ax1, cn2, ax2, lever=50, frames=frm)
-                    ic(ax1, cn1, ax2, cn2, diff)
+                    ipd.icv(ax1, cn1, ax2, cn2, diff)
                     assert np.all(diff / 50 < tol.angle)
 
     return sinfo
@@ -148,6 +149,7 @@ def make_pdb_testfunc(pdbcode, path=''):
             if symid == 'C1': continue
             atoms = ipd.atom.get(pdbcode, assembly=id, het=False, path=path, strict=False)
             sinfo = ipd.sym.detect(atoms, tol=tol, strict=False)
+            # ic(sinfo.order, sinfo.pseudo_order)
             if not isinstance(sinfo, ipd.sym.SymInfo):
                 sids = [si.symid for si in sinfo]
                 assert len(sinfo) == 1, f'mutiple symmetrs detected: {sids}'
@@ -187,7 +189,7 @@ def test_syminfo_from_atomslist():
                              rms_fit=3,
                              nfold=0.2)
     syminfo = ipd.sym.syminfo_from_atomslist(atoms, tol=tol)
-    # ic(syminfo.tol_checks)
+    # ipd.icv(syminfo.tol_checks)
     assert syminfo.symid == 'C3'
 
 @ipd.dev.timed

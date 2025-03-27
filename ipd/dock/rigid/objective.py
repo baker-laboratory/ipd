@@ -8,9 +8,9 @@ def tooclose_clash(bodies, nbrs=None, **kw):
 
 def tooclose_overlap(bodies, nbrs=None, contactfrac=0.1, printme=False, **kw):
     cfrac = bodies.contact_fraction(nbrs)
-    # if printme: ic(cfrac)
+    # if printme: ipd.icv(cfrac)
     maxcfrac = max([np.mean(c) for c in cfrac])
-    # ic(maxcfrac, contactfrac)
+    # ipd.icv(maxcfrac, contactfrac)
     # if maxcfrac > 0.999:
     # ipd.showme(bodies)
     # assert 0
@@ -30,7 +30,7 @@ def tooclose_primary_overlap(bodies, nbrs=None, contactfrac=0.1, nprimary=None, 
                 return True
     cfrac = bodies.contact_fraction(nbrs)
     maxcfrac = max([np.mean(c) for c in cfrac])
-    # ic(maxcfrac, contactfrac)
+    # ipd.icv(maxcfrac, contactfrac)
     return max(False, maxcfrac - contactfrac)
     # return maxcfrac > contactfrac
 
@@ -42,7 +42,7 @@ class RBLatticeOverlapObjective:
     def __call__(self, state, **kw):
         assert isinstance(state, ipd.dev.Bunch)
         assert isinstance(state.scale, (int, float))
-        ic(state.scale)  # type: ignore
+        ipd.icv(state.scale)  # type: ignore
         self.rbojective.bodies[0].set_scale(state.scale)  # type: ignore
         return self.rbojective(state.position, **kw)
 
@@ -116,29 +116,29 @@ class RBOverlapObjective:
                     d = max(0, d - asym.rog() * 3)
                     dists.append(d)
                     f1, f2 = b.contact_fraction(b2, contactdist=self.contactdist)
-                    # if verbose: ic(ib, jb, f1, f2)
+                    # if verbose: ipd.icv(ib, jb, f1, f2)
                     fracs.extend([f1, f2])
                     diff11 = max(0, f1 - self.contactfrac) / (1 - self.contactfrac)
                     diff12 = max(0, self.contactfrac - f1) / self.contactfrac
                     diff21 = max(0, f2 - self.contactfrac) / (1 - self.contactfrac)
                     diff22 = max(0, self.contactfrac - f2) / self.contactfrac
 
-                    # ic(f1, diff11, diff12, f2, diff21, diff22)
+                    # ipd.icv(f1, diff11, diff12, f2, diff21, diff22)
 
                     scores.append((max(diff11, diff12)**2))
                     scores.append((max(diff21, diff22)**2))
                 elif (ib, jb) in self.clashframes:  # type: ignore
                     dists = b.clash_distances(b2, self.clashdist)
                     # if len(dists):
-                    # ic(dists)
+                    # ipd.icv(dists)
                     # assert 0
                     clash += np.sum((self.clashdist - dists)**2)
                     # clash += (self.clashpenalty / 10 * (b.clashes(b2, self.clashdist) / len(b)))**2
 
-        # ic(dists)
-        # ic([int(_) for _ in scores])
-        # ic([int(_ * 100) for _ in fracs])
-        # ic(max(scores), (self.driftpenalty * xdiff)**2)
+        # ipd.icv(dists)
+        # ipd.icv([int(_) for _ in scores])
+        # ipd.icv([int(_ * 100) for _ in fracs])
+        # ipd.icv(max(scores), (self.driftpenalty * xdiff)**2)
 
         # zxang0 = ipd.homog.dihedral([0, 0, 1], [0, 0, 0], [1, 0, 0], self.initialcom)
         # ax1 = ipd.sym.axes(self.sym)[2]
@@ -160,18 +160,18 @@ class RBOverlapObjective:
             # angdiff2 = 10 * angdiff2**2
             angdiffcen = ipd.homog.hnorm(asym.com()) * ipd.hangle(asym.com(), ax1 + ax2)  # type: ignore
 
-        # ic(nf1rot, nf2rot)
-        # ic(abs(zxang0 - zxang))
-        # ic(angdiff)
-        # ic(xdiff, max(scores))
+        # ipd.icv(nf1rot, nf2rot)
+        # ipd.icv(abs(zxang0 - zxang))
+        # ipd.icv(angdiff)
+        # ipd.icv(xdiff, max(scores))
 
         # scores[0] *= 2
         # scores[1] *= 2
         if verbose:
-            # ic(scores)
-            ic(fracs)  # type: ignore
-            # ic((self.driftpenalty * xdiff)**2)
-            # ic((self.angpenalty * 10 * angdiff * ipd.homog.hnorm(ipd.hprojperp([1, 0, 0], asym.com())))**2)
+            # ipd.icv(scores)
+            ipd.icv(fracs)  # type: ignore
+            #  ipd.icv(self.driftpenalty * xdiff)**2)
+            #  ipd.icv(self.angpenalty * 10 * angdiff * ipd.homog.hnorm(ipd.hprojperp([1, 0, 0], asym.com())))**2)
         s = [
             10 * sum(scores),
             (self.spreadpenalty * (max(fracs) - min(fracs)))**2,
@@ -184,5 +184,5 @@ class RBOverlapObjective:
             self.clashpenalty * clash,
             2 * np.sum(np.array(dists)**2),
         ]
-        # ic(s)
+        # ipd.icv(s)
         return np.sum(s)

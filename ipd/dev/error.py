@@ -1,5 +1,4 @@
 import builtins
-import functools
 import traceback
 
 _WARNINGS_ISSUED = set()
@@ -12,7 +11,7 @@ def change_exception(**kw: dict[str, Exception]):
 
     def deco(func):
 
-        @functools.wraps(func)
+        @ipd.wraps(func)
         def wrap(*a, **kw):
             try:
                 return func(*a, **kw)

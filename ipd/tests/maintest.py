@@ -1,3 +1,4 @@
+import copy
 import typing
 import tempfile
 
@@ -23,6 +24,13 @@ class TestConfig(ipd.Bunch):
         self.use_test_classes = self.get('use_test_classes', True)
         self.dryrun = self.get('dryrun', False)
 
+    def detect_fixtures(self, namespace):
+        if not ipd.ismap(namespace): namespace = vars(namespace)
+        for name, obj in namespace.items():
+            if callable(obj) and hasattr(obj, '_pytestfixturefunction'):
+                assert name not in self.fixtures
+                self.fixtures[name] = obj.__wrapped__()
+
 class TestResult(ipd.Bunch):
 
     def __init__(self, *a, **kw):
@@ -43,8 +51,9 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
         print(f'maintest "{namespace["__file__"]}":', flush=True)
     else:
         print(f'maintest "{orig}":', flush=True)
-    ipd.dev.onexit(ipd.dev.global_timer.report, timecut=0.1)
+    ipd.dev.onexit(ipd.dev.global_timer.report, timecut=0.01)
     config = TestConfig(**config, **kw)
+    config.detect_fixtures(namespace)
     ipd.kwcall(config, ipd.dev.filter_namespace_funcs, namespace)
     timed = ipd.dev.timed if config.timed else lambda f: f
     test_suites, test_funcs = [], []
@@ -58,7 +67,8 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = ipd.Path(tmpdir)
         ipd.kwcall(config.fixtures, config.setup)
-        config.fixtures['tmpdir'] = tmpdir
+        config.fixtures['tmpdir'] = str(tmpdir)
+        config.fixtures['tmp_path'] = tmpdir
 
         for name, func in test_funcs:
             _maintest_run_maybe_parametrized_func(name, func, result, config, kw)
@@ -146,7 +156,7 @@ def make_parametrized_tests(namespace: ipd.MutableMapping,
                 name = k[prefix.find('test_'):]
 
                 def testfunc(arg=arg, func=func, processed=processed, kw=kw):
-                    return ipd.kwcall(kw, func, processed)
+                    return ipd.kwcall(kw, func, copy.copy(processed))
 
                 # c = ipd.dev.timed(lambda arg, kw=kw: ipd.kwcall(kw, convert, arg), name=f'{name}_setup')
                 # testfunc = lambda func=func, arg=arg, c=c, kw=kw: ipd.kwcall(kw, func, c(arg))

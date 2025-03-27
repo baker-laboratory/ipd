@@ -183,7 +183,8 @@ class BackendBase:
         print(exc_str)
         print('!' * 80)
         result = f'{"!"*80}\n{exc_str}\nSTACK:\n{traceback.format_exc()}\n{"!"*80}'
-        return fastapi.responses.JSONResponse(content=exc_str, status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return fastapi.responses.JSONResponse(content=exc_str,
+                                              status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     def remove(self, kind, id):
         thing = self.select(kind, id=id, _single=True)
@@ -231,7 +232,7 @@ class BackendBase:
             setattr(thing, attr, body)
         self.session.add(thing)
         self.session.commit()
-        # ic(thing, attr, body, getattr(thing, attr))
+        # ipd.icv(thing, attr, body, getattr(thing, attr))
 
     def select(self, cls, _count: bool = False, _single=False, user=None, _ghost=False, **kw):
         # print('select', cls, kw)
@@ -245,7 +246,9 @@ class BackendBase:
             if v is not None:
                 # print('select where', cls, k, v)
                 statement = statement.where(op(getattr(cls, k), v))
-        if user: statement = statement.where(getattr(cls, 'userid') == self.user(dict(name=user)).id)  # type: ignore
+        if user:
+            statement = statement.where(getattr(cls,
+                                                'userid') == self.user(dict(name=user)).id)  # type: ignore
         if not _ghost: statement = statement.where(getattr(cls, 'ghost') == False)  # noqa
         # print(statement)
         # if statement._get_embedded_bindparams():
@@ -288,7 +291,7 @@ class BackendBase:
             thing = getattr(self, kind)(dict(name=v))
             modeldict[f'{k}id'] = thing.id
             del modeldict[k]
-            # ic(k, v, thing.id)
+            # ipd.icv(k, v, thing.id)
         return modeldict
 
 def fields_uuidstr_to_id(vals):
@@ -338,14 +341,20 @@ def add_basic_backend_model_methods(backendcls):
                 elif kw: return self.select(dbcls, _count=True, **kw)
                 else: return self.select(dbcls, _count=True)
 
-            def single(self, kw=None, request: fastapi.Request = None, response_model=Optional[dbcls]):  # type: ignore
+            def single(self,
+                       kw=None,
+                       request: fastapi.Request = None,
+                       response_model=Optional[dbcls]):  # type: ignore
                 # print('route', name, dbcls, kw, request, flush=True)
                 assert isinstance(self, BackendBase)
                 if request: return self.select(dbcls, _single=True, **request.query_params)  # type: ignore
                 elif kw: return self.select(dbcls, _single=True, **kw)
                 else: return self.select(dbcls, _single=True)
 
-            def multi(self, kw=None, request: fastapi.Request = None, response_model=list[dbcls]):  # type: ignore
+            def multi(self,
+                      kw=None,
+                      request: fastapi.Request = None,
+                      response_model=list[dbcls]):  # type: ignore
                 # print('route', name, dbcls, kw, request, flush=True)
                 # ipd.dev.global_timer.checkpoint('multi')
                 assert isinstance(self, BackendBase)
@@ -433,8 +442,8 @@ def field_is_ref(field):
     return (len(field.metadata) == 2 and isinstance(field.metadata[0], pydantic.BeforeValidator))
 
 def field_is_ref_to_list(field):
-    return (isinstance(field.metadata[1], tuple) and len(field.metadata[1]) == 2 and isinstance(field.metadata[1][1], str)
-            and len(typing.get_args(field.metadata[1][0])))
+    return (isinstance(field.metadata[1], tuple) and len(field.metadata[1]) == 2
+            and isinstance(field.metadata[1][1], str) and len(typing.get_args(field.metadata[1][0])))
 
 def newSQL() -> type[sqlmodel.SQLModel]:
     return type('NewBase', (sqlmodel.SQLModel, ), {}, registry=registry())
@@ -442,7 +451,7 @@ def newSQL() -> type[sqlmodel.SQLModel]:
 def make_backend_models(backendcls, SQL=None, debug=False):
     SQL = SQL or newSQL()
     models = backendcls.__spec_models__
-    # ic(models['method'].model_fields)
+    # ipd.icv(models['method'].model_fields)
     # print('make_backend_models')
     body = {kind: {} for kind in models}
     anno = {kind: {} for kind in models}

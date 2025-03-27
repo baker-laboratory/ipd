@@ -64,10 +64,10 @@ def _compute_symelems(
     t.checkpoint("make_tags")
 
     # idx = np.isclose(ang, np.pi / 2)
-    # ic(axs0[idx])
-    # ic(ang[idx])
-    # ic(cen0[idx])
-    # ic(hel0[idx] / 1.7)
+    # ipd.icv(axs0[idx])
+    # ipd.icv(ang[idx])
+    # ipd.icv(cen0[idx])
+    # ipd.icv(hel0[idx] / 1.7)
     # assert 0
 
     symelems = defaultdict(list)
@@ -83,7 +83,7 @@ def _compute_symelems(
         if np.sum(idx) == 0:
             continue
 
-        # ic(nfold, screw, tag0[idx])
+        # ipd.icv(nfold, screw, tag0[idx])
         t.checkpoint("make_tags")
         nftag = tag0[idx]
         nftag = nftag[np.lexsort(-nftag.T, axis=0)]
@@ -121,7 +121,13 @@ def _compute_symelems(
         for tag in keep:
             try:
                 axs_, cen_, hel_, iframe = tag[:3], tag[3:6], tag[6], int(tag[7])
-                se = SymElem(nfold, axs_, cen_, hel=hel_, lattice=lattice, isunit=True, latticetype=latticetype)
+                se = SymElem(nfold,
+                             axs_,
+                             cen_,
+                             hel=hel_,
+                             lattice=lattice,
+                             isunit=True,
+                             latticetype=latticetype)
                 seenit = symelems[se.label].copy()
                 if screw and se.label[:2] in symelems:
                     seenit += symelems[se.label[:2]]
@@ -243,7 +249,7 @@ def _find_compound_symelems(
             timer.checkpoint("xformed")
             # for eseen in seene1line:
             # if np.isclose(0, line_line_distance_pa(e1.cen, e1.axis, eseen.cen, eseen.axis)):
-            # ic('skip')
+            # ipd.icv('skip')
             # break
             # else:
             # seene1line.append(e1)
@@ -269,7 +275,7 @@ def _find_compound_symelems(
             axis = axis[_inunit(cen)]  # type: ignore
             axis2 = axis2[_inunit(cen)]  # type: ignore
             cen = cen[_inunit(cen)]  # type: ignore
-            # ic(cen)
+            # ipd.icv(cen)
             pick = np.argmin(hnorm(cen - [0.003, 0.002, 0.001, 1]))
             axis = _flipaxs(axis[pick])
             axis2 = _flipaxs(axis2[pick])
@@ -298,14 +304,14 @@ def _find_compound_symelems(
             t = tuple([f"{psym}{nf1}{nf2}", *cen[:3].round(9), *axis[:3].round(9), *axis2[:3].round(9)])
             isects[psym].add(t)
     timer.checkpoint("isects")
-    # ic(isects['T'])
+    # ipd.icv(isects['T'])
     # assert 0
 
     # remove redundant centers
     for psym in isects:
         isects[psym] = list(sorted(isects[psym]))  # type: ignore
         isects[psym] = list({t[1:4]: t for t in isects[psym]}.values())  # type: ignore
-    # ic(isects['D2'])
+    # ipd.icv(isects['D2'])
     # assert 0
     compound = defaultdict(list)
     for psym in isects:
@@ -382,7 +388,7 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
                 if np.isclose(0, np.min(d)):
                     break
             else:
-                # ic(elem)
+                # ipd.icv(elem)
                 hasuniquecen.append(elem)
 
     bestplaced = list()
@@ -403,7 +409,7 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
                     bestiframes, bestelem = iframes, movedelem
             except ComponentIDError as cperr:
                 # if elem.label == 'D2':
-                # ic(cperr.match)
+                # ipd.icv(cperr.match)
                 if len(cperr.match) >= len(bestbadiframes):  # type: ignore
                     if np.max(cperr.match) < np.max(bestbadiframes):  # type: ignore
                         bestbadiframes, bestbadelem = cperr.match, movedelem  # type: ignore
@@ -422,7 +428,7 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
         assert bestelem.isunit
         bestplaced.append(bestelem)
 
-    # ic(bestplaced)
+    # ipd.icv(bestplaced)
     # assert 0
 
     compound_elems = defaultdict(list)
@@ -434,14 +440,14 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
     return compound_elems
 
 # def _to_central_symelem(frames, elem, cen):
-#    ic(elem)
-#    ic(elem.matching_frames(frames))
-#    ic(elem.matching_frames(ipd.sym.xtal.sgframes('I432', cells=2)))
+#    ipd.icv(elem)
+#    ipd.icv(elem.matching_frames(frames))
+#    ipd.icv(elem.matching_frames(ipd.sym.xtal.sgframes('I432', cells=2)))
 #    # ipd.showme(elem, scale=10)
 #    # ipd.showme(elem.operators, scale=10)
 #    # ipd.showme(frames, scale=10)
 #    if not elem.isdihedral: return elem
-#    ic(len(frames))
+#    ipd.icv(len(frames))
 #    for i, f in enumerate(frames):
 #       cen = einsum('ij,j->i', f, elem.cen)
 #       # if not _inunit(cen): continue
@@ -457,12 +463,12 @@ def _pick_bestframe_compound_elems(spacegroup, compound_elems, lattice, frames, 
 #       except AssertionError:
 #          pass
 #       if 48 * 8 > m:
-#          ic(elem)
+#          ipd.icv(elem)
 #          assert 0
 #    assert 0
 #    return
 
-#    # ic(elem)
+#    # ipd.icv(elem)
 #    cens = einsum('fij,j->fi', frames, elem.cen)
 #    ipick = np.argmin(hnorm(cens - cen))
 #    frame = frames[ipick]
@@ -488,14 +494,14 @@ def _symelem_is_same(elem, elem2, frames):
     axis = axis[axok]  # type: ignore
     cen = einsum("fij,j->fi", frames, elem2.cen)
     censame = np.all(np.isclose(cen, elem.cen), axis=1)  # type: ignore
-    # ic(censame.shape)
+    # ipd.icv(censame.shape)
     if any(censame):
         return True
     # if any(censame):
-    # ic(elem.axis, axis[censame])
-    # ic(elem.cen, cen[censame])
-    # ic(elem)
-    # ic(elem2)
+    # ipd.icv(elem.axis, axis[censame])
+    # ipd.icv(elem.cen, cen[censame])
+    # ipd.icv(elem)
+    # ipd.icv(elem2)
     # assert not any(censame)  # should have been filtered out already
 
     d = h_point_line_dist(elem.cen, cen, axis)
@@ -564,8 +570,9 @@ def _shift_to_unitcell(symelems):
             cen = e.cen
             cen[:3] = cen[:3] % 1
             cen[:3][cen[:3] > 0.9999] = 0
-            newelems.append(SymElem(e.nfold, e.axis, cen, hel=e.hel, screw=e.screw, frame=e.frame, isunit=True))
-            # ic(e)
+            newelems.append(SymElem(e.nfold, e.axis, cen, hel=e.hel, screw=e.screw, frame=e.frame,
+                                    isunit=True))
+            # ipd.icv(e)
             # ax = list(sorted(np.abs(e.axis[:3])))
             # if np.allclose(ax, [0, 0, 1]):
         symelems[psym] = newelems
@@ -589,7 +596,7 @@ def _pick_symelemtags(symtags, symelems):
     # for i in [5, 4, 3]:
     #    symtags = symtags[np.argsort(symtags[:, i], kind='stable')]
     # if len(symtags) == 0: return None
-    # # ic(symtags)
+    # # ipd.icv(symtags)
 
     cen = [se.cen[:3] for psym in symelems for se in symelems[psym]]
     if cen and len(symtags):
@@ -600,7 +607,7 @@ def _pick_symelemtags(symtags, symelems):
 
     # d = np.sum(symtags[:, 3:6]**2, axis=1).round(6)
     # symtags = symtags[np.argsort(d, kind='stable')]
-    # # ic(symtags[0])
+    # # ipd.icv(symtags[0])
     # return symtags[0]
 
 def _symelem_remove_ambiguous_syms(symelems):
@@ -649,10 +656,10 @@ def _pick_alternate_elems(sym, lattice, unitelem, frames, frames2):
             iframes = elem.matching_frames(frames)
             # m = np.max(iframes)
             m = tuple(sorted(iframes))
-            # ic(m)
+            # ipd.icv(m)
             if m < best:
-                # ic(iframes)
-                # ic(j, m)
+                # ipd.icv(iframes)
+                # ipd.icv(j, m)
                 best, argbest = m, elem
         except ComponentIDError:
             continue
@@ -674,7 +681,7 @@ def _pick_alternate_elems(sym, lattice, unitelem, frames, frames2):
     #       continue
     #    return elem.tounit(lattice)
     #    # checked_elems.append(elem.tounit(lattice))
-    #    # ic('success')
+    #    # ipd.icv('success')
     #    # break
     # else:
     #    assert 0

@@ -1,5 +1,3 @@
-import functools
-
 import ipd
 
 try:
@@ -10,7 +8,7 @@ except ImportError:
 def pymol_scene(func):
     from ipd.viz.pymol_viz import _showme_state
 
-    @functools.wraps(func)
+    @ipd.wraps(func)
     def wrapper(
         *args,
         name=func.__name__,

@@ -109,17 +109,17 @@ class NeighborhoodSelector:
             # if not self.contact_check(contacts): continue
             if body not in nbrframe:
                 m = body.get_metadata()
-                # ic('newasu', ibod, ifrm, m.bodyid, m.frameid, body.pos[:3, 3])
-                # ic(assembly.bodies[1].pos, assembly.frames[1][1])
+                # ipd.icv('newasu', ibod, ifrm, m.bodyid, m.frameid, body.pos[:3, 3])
+                # ipd.icv(assembly.bodies[1].pos, assembly.frames[1][1])
                 nbrframe[body] = [np.eye(4)]
-            # ic(ibod, ifrm, body in nbrframe)
+            # ipd.icv(ibod, ifrm, body in nbrframe)
             # continue
             newasuframe = nbrframe[body][0]
             oldasuframe = oldframe
             oldsymframe = assembly.frames[ibod][ifrm]
             newsymframe = new_frame(asu, body, newasuframe, oldasuframe, oldsymframe)
             nbrframe[body].append(newsymframe)
-        # ic(list(nbrframe.keys()))
+        # ipd.icv(list(nbrframe.keys()))
         newframes = [np.stack(v) for v in nbrframe.values()]
         assert all(x.ndim == 3 for x in newframes)
         return Assembly(nbrframe.keys(), newframes, _source_assembly=assembly)

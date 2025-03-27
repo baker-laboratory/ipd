@@ -9,14 +9,14 @@ def has_pytest_mark(obj, mark):
         bool: True if the object has the specified mark, False otherwise.
 
     Example:
-        import pytest
+    >>> import pytest
+    >>> @pytest.mark.custom
+    ... def test_example(): pass
 
-        @pytest.mark.custom
-        def test_example():
-            pass
-
-        print(has_pytest_mark(test_example, 'custom'))  # True
-        print(has_pytest_mark(test_example, 'skip'))    # False
+    >>> print(has_pytest_mark(test_example, 'custom'))
+    True
+    >>> print(has_pytest_mark(test_example, 'skip'))
+    False
     """
     return mark in [m.name for m in getattr(obj, 'pytestmark', ())]
 
@@ -30,13 +30,11 @@ def no_pytest_skip(obj):
         bool: True if the object does not have the `skip` mark, False otherwise.
 
     Example:
-        import pytest
-
-        @pytest.mark.skip
-        def test_example():
-            pass
-
-        print(no_pytest_skip(test_example))  # False
+    >>> import pytest
+    >>> @pytest.mark.skip
+    ... def test_example(): pass
+    >>> print(no_pytest_skip(test_example))
+    False
     """
     return not has_pytest_mark(obj, 'skip')
 

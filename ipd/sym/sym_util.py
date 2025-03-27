@@ -12,7 +12,7 @@ def get_sym_frames(symid, opt, cenvec):
     elif symid.lower().startswith('cyclic_vee_'): allframes = cyclic_vee_frames(symid, opt)
     else: allframes = ipd.sym.frames(symid, **opt)
     allframes = th.as_tensor(allframes, dtype=th.float32)
-    # ic(allframes.shape)
+    # ipd.icv(allframes.shape)
     frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
     return allframes, frames
 
@@ -60,7 +60,7 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
 
         for e in range(3):
             loss = lbfgs.step(closure)
-            ic(loss)
+            ipd.icv(loss)
 
         Q0 = Q0.detach()
         T0 = T0.detach()
@@ -174,14 +174,16 @@ def get_sym_frames_from_file(opt):
         rms, _, X = ipd.h.rmsfit((xyz_stack[n] - xyz_stack[0].mean(dim=0)),
                                  (xyz_stack[0] - xyz_stack[0].mean(dim=0)))  # rms, fitxyz, X
         if rms > 2:
-            ic('WARNING: Input PDB contains subunits that have greater than 2A RMSD to main subunit. Consider using a more symmetric input file!'
-               )
+            ipd.icv(
+                'WARNING: Input PDB contains subunits that have greater than 2A RMSD to main subunit. Consider using a more symmetric input file!'
+            )
         xforms.append(X)
     # get reference xform ( in the event of differences in user input )
     asu_xyz = get_coords_stack(open(opt.asu_input_pdb))
     rms, _, X = ipd.h.rmsfit((xyz_stack[0] - xyz_stack[0].mean(dim=0)), (asu_xyz[0] - asu_xyz[0].mean(dim=0)))
     if rms > 2:
-        ic('WARNING: ASU input PDB has greater than 2A RMSD to reference input sym file. Check your inputs!')
+        ipd.icv(
+            'WARNING: ASU input PDB has greater than 2A RMSD to reference input sym file. Check your inputs!')
     xforms = [R @ X for R in xforms]
     xforms = th.stack(xforms)
     subforms, _ = get_nneigh(xforms, min(opt.max_nsub, len(xforms)))

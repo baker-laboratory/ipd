@@ -15,8 +15,8 @@ def asu_com(sym, xyz, Lasu, **kw):
 def sym_com(sym, xyz, Lasu, **kw):
     """Calculate the center of mass of the symmetric unit."""
     com = asu_com(sym, xyz, Lasu, **kw)
-    # ic(xyz.shape)
-    # ic(com.shape)
+    # ipd.icv(xyz.shape)
+    # ipd.icv(com.shape)
     return th.einsum('sij,j->si', sym.full_symmetry, com)
 
 def asu_to_best_frame_if_necessary(sym,
@@ -34,7 +34,7 @@ def asu_to_best_frame_if_necessary(sym,
         if ipd.h.norm(com[0]) < asu_to_best_frame_min_dist_to_origin: return xyz  # type: ignore
         d2 = th.sum((com - sym.asucenvec[:3].to(com.device))**2, dim=1)
         isub = th.argmin(d2)
-        # ic(isub, com[isub], sym.asucenvec)
+        # ipd.icv(isub, com[isub], sym.asucenvec)
         if isub != 0:
             print(f'moving asu to sub {isub} {com[isub]}')
             # ipd.showme(xyz[:,1], delprev=False)
@@ -61,7 +61,7 @@ def set_particle_radius_if_necessary(sym, xyz, Lasu, force_radius=None, fixed=No
     """Set the particle radius if necessary."""
     if force_radius and not fixed:
         if th.any(th.isnan(xyz)): return xyz
-        # ic('set_particle_radius_if_necessary')
+        # ipd.icv('set_particle_radius_if_necessary')
         Natom = min(3, xyz.shape[1])
         assert Lasu
         Lsym = Lasu * sym.nsub
@@ -88,17 +88,17 @@ def set_motif_placement_if_necessary(sym, xyz, fixed=None, **kw):
         # import ipd
         # ipd.showme(gpbb.reshape(-1,3), 'gpbb', spheres=0.3)
         # ipd.showme(bb.reshape(-1,3), 'bb', spheres=0.3)
-        # ic(gpbb.shape)
-        # ic(bb.shape)
+        # ipd.icv(gpbb.shape)
+        # ipd.icv(bb.shape)
         Lasu = len(bb) // sym.nsub
         idx, rms, xform = ipd.fit.qcp_scan_AB(bb, gpbb, Lasu)
-        # ic(idx, rms, R, T)
+        # ipd.icv(idx, rms, R, T)
         # rms2, fit, xform = ipd.wrmsfit(gpbb.reshape(-1, 3), bb[idx].reshape(-1, 3))
         mask = th.logical_or(sym.idx.kind == 1, sym.idx.kind == 12)
         # import ipd
         # x = bb[idx]
         # y = th.einsum('ij,rj->ri', R, gpbb) + T
-        # ic(rms2)
+        # ipd.icv(rms2)
         # ipd.showme(y, sphere=0.5, name='fitcagp', col=(1,0,0))
         # ipd.showme(x, sphere=0.5, name='fitca', col=(1,0.6 ,0))
         # ipd.showme(fit, sphere=0.5, name='fitca', col=(1,1 ,0))
@@ -119,6 +119,6 @@ def set_motif_placement_if_necessary(sym, xyz, fixed=None, **kw):
         # pymol.cmd.delete('_ca*')
         # import ipd
         # ipd.showme(xyz[:,1], name='all', sphere=0.4)
-        # ic(th.abs(x-y))
+        # ipd.icv(th.abs(x-y))
 
     return xyz
