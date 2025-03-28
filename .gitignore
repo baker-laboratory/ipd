@@ -185,3 +185,5 @@ junit*.xml
 /*.tar.gz
 /tmp/
 *.sqlite
+
+_autosummary

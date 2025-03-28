@@ -31,7 +31,7 @@ dependencies = [
     'compact-json',
     'evn',
     'gitpython',
-    'hgeom',
+    'hgeom>=2.0.5',
     'hydra-core',
     'hypothesis',
     'icecream',

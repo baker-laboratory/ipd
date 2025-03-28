@@ -14,7 +14,10 @@ TEST_PDBS = [
     '1a2n',
     '1n0e',
     '1bfr',
-    '1g5q'  #, '3woc', '7abl', '2tbv'
+    '1g5q',
+    '3woc',
+    '7abl',
+    '2tbv'
 ]
 ALLSYMS = ['T', 'O', 'I'] + ['C%i' % i for i in range(2, 13)] + ['D%i' % i for i in range(2, 13)]
 
@@ -52,7 +55,8 @@ def helper_test_frames(frames, symid, tol=None, origin=None, ideal=False, **kw):
     if ideal: tol = ipd.Tolerances(tol, **(ipd.sym.symdetect_ideal_tolerances | kw))
     else: tol = ipd.Tolerances(tol, **(ipd.sym.symdetect_default_tolerances) | kw)
     sinfo = ipd.sym.detect(frames, tol=tol, **kw)
-    # print(sinfo)
+    with ipd.dev.capture_stdio():
+        print(sinfo)
     se = sinfo.symelem
     assert sinfo.symid == symid, f'{symid=}, {sinfo.symid=}'
     assert all(se.hel < tol.helical_shift)
@@ -79,7 +83,7 @@ def helper_test_frames(frames, symid, tol=None, origin=None, ideal=False, **kw):
                     cn1, cn2 = h.point([[0, 0, 0]]), h.point([[0, 0, 0]])
                     frm = h.xform(h.inv(origin), frames)
                     diff = h.sym_line_line_diff_pa(cn1, ax1, cn2, ax2, lever=50, frames=frm)
-                    ipd.icv(ax1, cn1, ax2, cn2, diff)
+                    # ipd.icv(ax1, cn1, ax2, cn2, diff)
                     assert np.all(diff / 50 < tol.angle)
 
     return sinfo
@@ -149,6 +153,8 @@ def make_pdb_testfunc(pdbcode, path=''):
             if symid == 'C1': continue
             atoms = ipd.atom.get(pdbcode, assembly=id, het=False, path=path, strict=False)
             sinfo = ipd.sym.detect(atoms, tol=tol, strict=False)
+            with ipd.dev.capture_stdio():
+                print(sinfo)
             # ic(sinfo.order, sinfo.pseudo_order)
             if not isinstance(sinfo, ipd.sym.SymInfo):
                 sids = [si.symid for si in sinfo]

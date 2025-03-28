@@ -31,6 +31,7 @@ Cumsum Performance Example
 Setup
 
 >>> import numpy as np
+>>> import ipd
 >>> data = np.random.rand(500)
 >>> sums = np.zeros(len(data)+1)
 >>> sums[1:] = np.cumsum(data)  # yes, it's really called that... in torch too.
@@ -100,6 +101,9 @@ arrays produced by
 :py:meth:`ContactMatrixStack.fragment_contact` to search for subsets of subunits that
 all "multibody" contacts by enumerating all subsets of contacting subunits, and taking
 the minimum number of contacts for each fragment pair. See the example below.
+
+
+.. _contact_matrix_overview:
 
 ContactMatrixStack Example
 ---------------------------

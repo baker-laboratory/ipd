@@ -2,6 +2,7 @@ import pytest
 
 pytest.importorskip('fastapi')
 pytest.importorskip('sqlmodel')
+pytest.importorskip('httpx')
 
 import tempfile
 from typing import Optional

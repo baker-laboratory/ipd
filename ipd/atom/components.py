@@ -157,6 +157,12 @@ class Components:
         """
         self.intermediates_.append(intermediate_result)
 
+    def enumerate_intermediates(self):
+        """enumerates i, j, frames, rmsd, seqmatch, idx)"""
+        for i, val in enumerate(self.intermediates_):
+            for tup in val.enumerate():
+                yield i, *tup
+
     def __repr__(self):
         """
         Return a string representation of the object.

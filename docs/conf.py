@@ -12,6 +12,7 @@ release = importlib.metadata.version('ipd')
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
     "sphinx.ext.napoleon",  # Supports Google/NumPy-style docstrings
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
@@ -30,7 +31,7 @@ html_theme_options = {
     "show_nav_level": 3,
 }
 html_static_path = ["_static"]
-autosummary_generate = True
+html_css_files = ['css/custom.css']
 
 sphinx_gallery_conf = {
     "examples_dirs": "examples/gallery",  # Source directory
@@ -39,6 +40,12 @@ sphinx_gallery_conf = {
 
 # extensions.remove("sphinx_gallery.gen_gallery")
 
+autosummary_generate = True
 autodoc_docstring_signature = True
 autodoc_inherit_docstrings = False
 # suppress_warnings = ['autodoc']
+
+intersphinx_mapping = {
+    'biotite': ('https://www.biotite-python.org/latest', None),
+    'numpy': ('https://numpy.org/doc/stable', None)
+}

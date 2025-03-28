@@ -92,13 +92,12 @@ class SymInfo:
     frames: np.ndarray
     symcen: np.ndarray
     symelem: ipd.Bunch
+    component: int = -1
+    components: ipd.atom.Components = None
+    asu_components: ipd.atom.Components = None
 
     guess_symid: str = None
-    order: int = None
-    t_number: int = 1
-    pseudo_order: int = None
     has_translation: bool = None
-    is_multichain: bool = None
     is_point: bool = None
     is_1d: bool = None
     is_2d: bool = None
@@ -120,9 +119,6 @@ class SymInfo:
     stub0: np.ndarray = None
 
     # if is_multichain asu
-    asurms: np.ndarray = None
-    seqmatch: np.ndarray = None
-    asumatch: np.ndarray = None
     asuframes: np.ndarray = ipd.field(lambda: np.eye(4)[None])
     allframes: np.ndarray = None
 
@@ -133,9 +129,29 @@ class SymInfo:
     is_cyclic = property(lambda self: self.symid[0] == 'C')
     is_dihedral = property(lambda self: self.symid[0] == 'D')
     is_cage = property(lambda self: self.symid[0] in 'TIO')
+    order = property(lambda self: len(self.frames))
+    pseudo_order = property(lambda self: self.allframes.size // 16)
+    t_number = property(lambda self: len(self.asuframes))
+    is_multichain = property(lambda self: len(self.asuframes) > 1)
 
     def __post_init__(self):
-        _syminfo_post_init(self)
+        if not self.guess_symid: self.guess_symid = self.symid
+        if self.tolerances:
+            self.tolerances = self.tolerances.copy()
+            self.tol_checks = self.tolerances.check_history()
+        self.allframes = self.frames
+        self.unique_nfold = nf = []
+        if self.order > 1:
+            self.unique_nfold = nf = list(sorted(np.unique(self.nfold)))
+        # self.is_cyclic = len(nf) < 2 and not self.has_translation and not self.symid == 'D2'
+        # self.is_dihedral = len(nf) == 2 and 2 in nf and self.order // nf[1] == 2 or self.symid == 'D2'
+        self.nfaxis = {int(nf): self.axis[self.nfold == nf] for nf in self.unique_nfold}
+        if self.is_point:
+            self.symcen = self.symcen.reshape(4)
+            self.origin, self.toorigin = syminfo_get_origin(self)
+        else:
+            self.symcen = h.point([np.nan, np.nan, np.nan])
+            self.origin = self.toorigin = np.eye(4)
 
     def __getattr__(self, name):
         try:
@@ -155,9 +171,9 @@ symdetect_default_tolerances = dict(
     dot_norm=0.04,
     misc_lineuniq=1,
     nfold=0.3,
-    seqmatch=0.3,
+    seqmatch=0.5,
     matchsize=50,
-    rms_fit=2,
+    rms_fit=4,
     cageang=5e-2,
 )
 symdetect_ideal_tolerances = dict(
@@ -206,7 +222,8 @@ def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw)
     for i, frames, match, rms in components.enumerate('frames seqmatch rmsd'):
         tol.reset()
         syminfo = syminfo_from_frames(frames, tol=tol)
-        syminfo.rms, syminfo.seqmatch = rms, match
+        syminfo.component = i
+        syminfo.components = components
         _syminfo_add_atoms_info(syminfo, atomslist, frames, tol)
         results.append(syminfo)
     return ipd.kwcall(kw, check_sym_combinations, results)
@@ -371,56 +388,45 @@ def syminfo_to_str(sinfo, verbose=True):
         head = dict(symid=sinfo.symid, guess=sinfo.guess_symid, symcen=symcen, origin=sinfo.origin)
         headtable = ipd.dev.make_table(dict(foo=head), key=False, strip=False, **kw)
         setable = ipd.dev.make_table(sinfo.symelem, nohomog=True, **kw)
+        asurms = sinfo.asu_components.rmsd if sinfo.asu_components else -1
+        if asurms != -1: asurms = [float(r.max().round(3)) for r in asurms]
+        asumatch = sinfo.asu_components.seqmatch if sinfo.asu_components else -1
+        if asumatch != -1: asumatch = [float(sm.min().round(3)) for sm in asumatch]
         asutable = ipd.dev.make_table(
-            [[sinfo.t_number, sinfo.asurms, sinfo.asumatch, sinfo.asuframes.shape, sinfo.allframes.shape]],
-            header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'])
-        geomtable = ipd.dev.make_table([[sinfo.has_translation, sinfo.is_point, sinfo.axes_dists]],
-                                       header=['has_translation', 'axes concurrent', 'axes dists'],
-                                       **kw)
+            [[sinfo.t_number, asurms, asumatch, sinfo.asuframes.shape, sinfo.allframes.shape]],
+            header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'],
+            **kw)
+        geomdata = [[
+            sinfo.has_translation,
+            sinfo.is_point,
+            sinfo.axes_dists,
+        ]]
+        geomhead = ['has_translation', 'axes concurrent', 'axes dists']
+        geomtable = ipd.dev.make_table(geomdata, header=geomhead, **kw)
         checktable = ipd.dev.make_table(sinfo.tol_checks, key='Geom Tests')
         tables = [[headtable], [geomtable], [asutable], [setable], [checktable]]
+        rms = sinfo.components.rmsd[sinfo.component].max() if sinfo.components else -1
+        seqmatch = sinfo.components.seqmatch[sinfo.component].min() if sinfo.components else -1
         if sinfo.stub0 is not None:
-            rmstable = ipd.dev.make_table([[sinfo.seqmatch.min(), sinfo.rms.max()]],
-                                          header=['worst seq match', 'worst rms'])
+            rmstable = ipd.dev.make_table([[seqmatch, rms]], header=['worst seq match', 'worst rms'])
             tables.append([rmstable])
         ipd.dev.print_table(tables, header=['SymInfo'])
-    return out.read()
-
-def _syminfo_post_init(sinfo: SymInfo) -> None:
-    if not sinfo.guess_symid: sinfo.guess_symid = sinfo.symid
-    if sinfo.tolerances:
-        sinfo.tolerances = sinfo.tolerances.copy()
-        sinfo.tol_checks = sinfo.tolerances.check_history()
-    sinfo.allframes = sinfo.frames
-    sinfo.order = len(sinfo.frames)
-    sinfo.pseudo_order = len(sinfo.frames) * len(sinfo.asuframes)
-    sinfo.is_multichain = len(sinfo.asuframes) > 1
-    sinfo.unique_nfold = nf = []
-    if sinfo.order > 1:
-        sinfo.unique_nfold = nf = list(sorted(np.unique(sinfo.nfold)))
-    # sinfo.is_cyclic = len(nf) < 2 and not sinfo.has_translation and not sinfo.symid == 'D2'
-    # sinfo.is_dihedral = len(nf) == 2 and 2 in nf and sinfo.order // nf[1] == 2 or sinfo.symid == 'D2'
-    sinfo.nfaxis = {int(nf): sinfo.axis[sinfo.nfold == nf] for nf in sinfo.unique_nfold}
-    if sinfo.is_point:
-        sinfo.symcen = sinfo.symcen.reshape(4)
-        sinfo.origin, sinfo.toorigin = syminfo_get_origin(sinfo)
-    else:
-        sinfo.symcen = h.point([np.nan, np.nan, np.nan])
-        sinfo.origin = sinfo.toorigin = np.eye(4)
+    return out.read().rstrip()
 
 def _syminfo_add_atoms_info(sinfo: SymInfo, atomslist, frames, tol) -> None:
-    if sinfo.is_multichain:
-        assert 0, 'sould now be handled my find_components_by_seqaln_rmsfit'
+    if sinfo.order >= 60:
         asu = ipd.atom.split(atomslist[0])
-        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = ipd.atom.frames_by_seqaln_rmsfit(asu, tol=tol)
-        sinfo.t_number = np.sum(sinfo.asumatch > tol.seqmatch)
+        asuchains = np.unique(atomslist[0].chain_id)
+        sinfo.asu_components = ipd.atom.find_components_by_seqaln_rmsfit(asu, tol=tol)
+        sinfo.asu_components.remove_small_chains(minres=20)
+        assert len(sinfo.asu_components) == 1
+    if sinfo.asu_components:
         sinfo.stub0 = ipd.atom.stub(asu[0])
+        sinfo.asuframes = sinfo.asu_components.frames[0]
         sinfo.asustub = h.xform(sinfo.asuframes, sinfo.stub0)
         sinfo.allstub = h.xform(frames, sinfo.asustub)
         sinfo.allframes = h.xform(sinfo.allstub, h.inv(sinfo.stub0))
     else:
-        sinfo.asuframes, sinfo.asurms, sinfo.asumatch = np.eye(4)[None], np.zeros(1), np.ones(1)
-        sinfo.t_number = 1
         sinfo.stub0 = ipd.atom.stub(atomslist[0])
         sinfo.asustub = sinfo.stub0[None]
         sinfo.allframes = frames[:, None]

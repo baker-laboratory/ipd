@@ -292,7 +292,7 @@ def make_getitem_for_attributes(get=getattr, provide='value') -> 'Any':
 
     return getitem_for_attributes
 
-def generic_enumerate(self, fields: ipd.FieldSpec, order=lambda x: x) -> ipd.EnumerIter:
+def generic_enumerate(self, fields: ipd.FieldSpec = None, order=lambda x: x) -> ipd.EnumerIter:
     """Enhanced `enumerate` method to iterate over multiple attributes at once.
 
     This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the fields is a string containing spaces, it will be split into a list of keys. If the fields is a list of strings, it will return the corresponding attributes as a tuple.
@@ -318,6 +318,7 @@ def generic_enumerate(self, fields: ipd.FieldSpec, order=lambda x: x) -> ipd.Enu
         3 3 8
         4 4 9
     """
+    if fields is None: fields = generic_get_keys(self)
     vals = self[fields]
     try:
         fields = list(zip(*vals))
