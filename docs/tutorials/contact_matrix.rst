@@ -1,6 +1,11 @@
+.. _contact_matrix:
+
 ===========================================================================
 Cumulative sums primer and rapid contact matrix processing
 ===========================================================================
+
+.. contents:: Table of Contents
+   :depth: 3
 
 Cumulative sums, 1D basics
 --------------------------

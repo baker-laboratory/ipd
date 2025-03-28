@@ -1,3 +1,5 @@
+.. _working_with_atoms:
+
 ====================================
 Working with .cif files and atoms
 ====================================

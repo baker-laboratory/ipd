@@ -256,7 +256,7 @@ class TestIterizeableFunction(unittest.TestCase):
 
 def test_subscriptable_for_attributes__getitem__():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
         a, b, c = 6, 7, 8
 
@@ -265,7 +265,7 @@ def test_subscriptable_for_attributes__getitem__():
 
 def test_subscriptable_for_attributes_enumerate():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -277,7 +277,7 @@ def test_subscriptable_for_attributes_enumerate():
 
 def test_subscriptable_for_attributes_enumerate_noarg():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -289,7 +289,7 @@ def test_subscriptable_for_attributes_enumerate_noarg():
 
 def test_subscriptable_for_attributes_groupby():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -306,7 +306,7 @@ def test_subscriptable_for_attributes_groupby():
 
 def test_subscriptable_for_attributes_fzf():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -333,7 +333,7 @@ def test_subscriptable_for_attributes_fzf():
 
 def test_getitem_picklable():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):

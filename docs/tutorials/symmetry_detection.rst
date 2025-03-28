@@ -1,9 +1,41 @@
 .. _understanding_sym_detect:
 
+================================
 Understanding Symmetry Detection
 ================================
 
+.. contents:: Table of Contents
+   :depth: 3
+
 The `ipd.sym.sym_detect` module provides tools to automatically identify symmetry in molecular structures and transformation frames. The symmetry is inferred from spatial transformations between subunits (e.g., protein chains), and classified into cyclic, dihedral, helical, and cage symmetries (T, O, I).
+
+This document explains:
+
+- The `detect()` function
+- The `SymInfo` result class
+- How symmetry elements are extracted from transformation frames
+- How equivalent symmetry axes are identified via `unique_symaxes`
+
+Overview
+--------
+
+Symmetry detection begins with either:
+
+- A **stack of 4×4 transformation matrices** (e.g., from a symmetric assembly)
+- A **list of Biotite AtomArray objects** (e.g., protein chains in a complex)
+
+These are passed to `ipd.sym.detect`:
+
+:py:func:`ipd.sym.sym_detect.detect`
+
+The function delegates to:
+
+- :func:`syminfo_from_frames()` — if given transformations
+- :func:`syminfo_from_atomslist()` — if given atoms
+
+The output is a `SymInfo` object containing all symmetry classification and geometric information.
+
+.. _printed_syminfo:
 
 Usage Example
 -------------
@@ -67,51 +99,6 @@ Usage Example
     │ └─────────────────┴───────────┘                                    │
     └────────────────────────────────────────────────────────────────────┘
 
-
-This document explains:
-
-- The `detect()` function
-- The `SymInfo` result class
-- How symmetry elements are extracted from transformation frames
-- How equivalent symmetry axes are identified via `unique_symaxes`
-
-Overview
---------
-
-Symmetry detection begins with either:
-
-- A **stack of 4×4 transformation matrices** (e.g., from a symmetric assembly)
-- A **list of Biotite AtomArray objects** (e.g., protein chains in a complex)
-
-These are passed to `detect()`:
-
-.. autofunction:: ipd.sym.sym_detect.detect
-
-The function delegates to:
-
-- :func:`syminfo_from_frames()` — if given transformations
-- :func:`syminfo_from_atomslist()` — if given atoms
-
-The output is a `SymInfo` object containing all symmetry classification and geometric information.
-
-The SymInfo Object
-------------------
-
-.. autoclass:: ipd.sym.sym_detect.SymInfo
-    :members:
-    :undoc-members:
-
-Example:
-
-.. doctest::
-
-    >>> import numpy as np
-    >>> from ipd.sym.sym_detect import detect
-    >>> frames = np.eye(4)[None]
-    >>> sinfo = detect(frames)
-    >>> sinfo.symid
-    'C1'
-
 Symmetry Detection Pipeline
 ---------------------------
 
@@ -131,7 +118,7 @@ Symmetry Detection Pipeline
 4. **Axis Deduplication**
    Close or redundant axes are grouped using:
 
-   .. autofunction:: ipd.homog.unique_symaxes
+   :py:func:`ipd.homog.hgeom.unique_symaxes`
 
    This collapses symmetry elements that are equivalent under a tolerance.
 
@@ -145,7 +132,7 @@ Symmetry Detection Pipeline
 Unique Symaxes
 --------------
 
-.. autofunction:: ipd.homog.unique_symaxes
+:py:func:`ipd.homog.hgeom.unique_symaxes`
 
 This function filters a list of axis/center/angle tuples into unique representatives across frames. It considers:
 
@@ -165,24 +152,31 @@ Symmetry from Atoms
 
 If given a list of AtomArrays, `detect()` aligns them using sequence alignment and RMS fitting, then derives symmetry frames. This is managed by:
 
-.. autofunction:: ipd.sym.sym_detect.syminfo_from_atomslist
+:py:func:`ipd.sym.sym_detect.syminfo_from_atomslist`
 
 Internally, this calls:
 
-.. autofunction:: ipd.atom.find_components_by_seqaln_rmsfit
+:py:func:`ipd.atom.find_components_by_seqaln_rmsfit`
 
 Symmetry from Frames
 --------------------
 
 If transformation matrices are already available:
 
-.. autofunction:: ipd.sym.sym_detect.syminfo_from_frames
+:py:func:`ipd.sym.sym_detect.syminfo_from_frames`
 
 Frames are decomposed, and redundant symmetry elements are eliminated via:
 
-.. autofunction:: ipd.sym.sym_detect.symelems_from_frames
+:py:func:`ipd.sym.sym_detect.symelems_from_frames`
 
 This also uses `unique_symaxes` to find canonical axes.
+
+The SymInfo Object
+------------------
+
+:py:func:`ipd.sym.sym_detect.detect` returns a :py:class:`ipd.sym.sym_detect.SymInfo` instance containing all kinds of info about the symetry detection. :ref:`Printing <printed_syminfo>` it will provide a decent summary.
+
+
 
 Advanced Topics
 ---------------
@@ -195,15 +189,12 @@ Advanced Topics
 Related Functions
 -----------------
 
-.. autosummary::
-    :toctree: _autosummary
-
-    ipd.sym.sym_detect.syminfo_from_atomslist
-    ipd.sym.sym_detect.syminfo_from_frames
-    ipd.sym.sym_detect.symelems_from_frames
-    ipd.sym.sym_detect.syminfo_get_origin
-    ipd.sym.sym_detect.syminfo_to_str
-    ipd.sym.sym_detect.check_sym_combinations
+    - :py:func:`ipd.sym.sym_detect.syminfo_from_atomslist`
+    - :py:func:`ipd.sym.sym_detect.syminfo_from_frames`
+    - :py:func:`ipd.sym.sym_detect.symelems_from_frames`
+    - :py:func:`ipd.sym.sym_detect.syminfo_get_origin`
+    - :py:func:`ipd.sym.sym_detect.syminfo_to_str`
+    - :py:func:`ipd.sym.sym_detect.check_sym_combinations`
 
 Conclusion
 ----------

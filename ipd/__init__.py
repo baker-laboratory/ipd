@@ -49,7 +49,12 @@ optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
 capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
 ic, icm, icv = cherry_pick_imports('ipd.dev.debug', 'ic icm icv')
 timed = cherry_pick_import('ipd.dev.instrumentation.timer.timed')
+element_wise_operations = cherry_pick_import('ipd.dev.element_wise.element_wise_operations')
+subscriptable_for_attributes = cherry_pick_import('ipd.dev.decorators.subscriptable_for_attributes')
+iterize_on_first_param = cherry_pick_import('ipd.dev.decorators.iterize_on_first_param')
+
 _global_chrono = None
+
 _checkpoint('ipd prelude imports')
 
 def __getattr__(name):

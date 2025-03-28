@@ -40,13 +40,13 @@ def test_generic_get_items():
     bar = Bar()
     assert ipd.dev.generic_get_items(bar) == [('a', 1)]
 
-@ipd.dev.element_wise_operations
+@ipd.element_wise_operations
 class EwiseDict(dict):
     pass
 
 def test_element_wise_no_args():
 
-    @ipd.dev.element_wise_operations
+    @ipd.element_wise_operations
     class EwiseDictonly(dict):
         pass
 
@@ -58,11 +58,11 @@ def test_element_wise_no_args():
 def test_element_wise_resulttypes():
     with pytest.raises(TypeError):
 
-        @ipd.dev.element_wise_operations(result_types='foo')
+        @ipd.element_wise_operations(result_types='foo')
         class EwiseDictBad(dict):
             pass
 
-    @ipd.dev.element_wise_operations(result_types='np dict')
+    @ipd.element_wise_operations(result_types='np dict')
     class EwiseDictonly(dict):
         pass
 
@@ -83,6 +83,7 @@ def test_element_wise():
     ipd.icv(b.mapwise == [])
     r = b.mapwise.append(1)
     assert all(b.valwise == [1])
+    assert b['a'] == [1]
 
 def test_element_wise_accum():
     b = EwiseDict(zip('abcdefg', (i for i in range(7))))
@@ -150,7 +151,7 @@ def test_element_wise_call_operator():
     d = c.mapwise(np.array, dtype=float)
     assert np.all(b.npwise == d)
 
-@ipd.dev.element_wise_operations
+@ipd.element_wise_operations
 @ipd.mutablestruct
 class Foo:
     a: list
@@ -166,7 +167,7 @@ def test_element_wise_attrs():
     with pytest.raises(ValueError):
         foo.mapwise.append(1, 2, 3, 4)
 
-@ipd.dev.element_wise_operations
+@ipd.element_wise_operations
 @ipd.struct
 class Bar:
     a: list
@@ -209,7 +210,7 @@ class TestElementWiseOperations(unittest.TestCase):
         self.test_container_dict = EwiseDict({'a': [1, 2, 3], 'b': [2, 3, 4], 'c': [3, 4, 5]})
 
         # For testing with objects
-        @ipd.dev.element_wise_operations
+        @ipd.element_wise_operations
         class Metrics(dict):
             pass
 
@@ -368,7 +369,7 @@ class TestElementWiseOperations(unittest.TestCase):
     def test_real_world_scenario(self):
         """Test a realistic scenario with the decorator."""
 
-        @ipd.dev.element_wise_operations
+        @ipd.element_wise_operations
         class ExperimentResults(OrderedDict):
             pass
 

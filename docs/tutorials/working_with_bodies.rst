@@ -1,6 +1,11 @@
+.. _working_with_bodies:
+
 ========================
 Body and SymBody Objects
 ========================
+
+.. contents:: Table of Contents
+   :depth: 3
 
 Overview
 --------

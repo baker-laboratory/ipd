@@ -1,6 +1,11 @@
+.. _processing_assemblies:
+
 ===================================
 Determining Biological Architecture
 ===================================
+
+.. contents:: Table of Contents
+   :depth: 3
 
 The IPD library provides tools to automatically determine the biological organization
 of a molecular assembly. This is done by detecting repeated chains based on both
@@ -84,13 +89,7 @@ Example Usage
 Working with the Components Object
 ----------------------------------
 
-The result from `find_components_by_seqaln_rmsfit()` is a `Components` object:
-
-.. autoclass:: ipd.atom.components.Components
-   :members:
-   :undoc-members:
-
-Each field is a list indexed by component:
+The result from :py:func:`ipd.atom.components.find_components_by_seqaln_rmsfit` is a :py:class:`ipd.atom.components.Components` object. Each field is a list indexed by component:
 
 - ``atoms``: the aligned atom arrays (reference and matched)
 - ``frames``: 4x4 homogeneous transforms from reference to target

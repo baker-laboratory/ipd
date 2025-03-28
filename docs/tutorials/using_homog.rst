@@ -1,12 +1,11 @@
+.. _using_homog:
+
 =========================================================
 Homogeneous Coordinates and ipd.hnumpy / ipd.htorch
 =========================================================
 
 .. contents:: Table of Contents
    :depth: 3
-
-Homogeneous Coordinates in 3D
-=============================
 
 Introduction
 ------------
@@ -35,12 +34,12 @@ A common way to represent an affine transformation in 3D is using a 4x4 matrix t
 
 .. code-block:: text
 
-   +-----------------------------+
+   +------------------------------+
    | R[0,0]  R[0,1]  R[0,2]   Tx  |
    | R[1,0]  R[1,1]  R[1,2]   Ty  |
    | R[2,0]  R[2,1]  R[2,2]   Tz  |
    |   0       0       0      1   |
-   +-----------------------------+
+   +------------------------------+
 
 Where:
 - ``R[:3, :3]`` is the 3x3 rotation matrix.
@@ -95,7 +94,7 @@ For a **vector** ``v = [x, y, z, 0]^T``:
 Notice that for vectors, the translation component is ignored because it is multiplied by 0.
 
 Using hnumpy and htorch
-=========================
+------------------------
 
 There are modules for torch and numpy that mostly behave the same way.
     >>> import numpy as np

@@ -72,7 +72,10 @@ ml = [
 ]
 docs = [
     'sphinx>8;python_version>="3.13"',
-    # 'sphinx-pydata-theme',
+    'sphinx-copybutton',
+    'sphinx-prompt',
+    'sphinxemoji',
+    'sphinx-last-updated-by-git',
     'pydata-sphinx-theme',
     # 'sphinx-rtd-theme',
     'matplotlib',
@@ -83,7 +86,7 @@ docs = [
     'fastapi',
     'sqlalchemy',
     'sqlmodel',
-    # 'uvicorn',
+    'uvicorn>=0.34',
     # 'apidoc',
     # 'bibliography',
     # 'preamble',

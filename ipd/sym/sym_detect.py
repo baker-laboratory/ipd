@@ -54,8 +54,8 @@ def detect(
             return syminfo_from_atomslist(atoms, tol=tol, **kw)
     raise ValueError(f'cant detect symmetry on object {type(thing)} order {order}')
 
-@ipd.dev.subscriptable_for_attributes
-# @ipd.dev.element_wise_operations
+@ipd.subscriptable_for_attributes
+# @ipd.element_wise_operations
 @ipd.struct
 class SymInfo:
     """

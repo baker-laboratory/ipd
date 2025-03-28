@@ -96,8 +96,8 @@ def find_components_by_seqaln_rmsfit(
     # ipd.icv(len(atomslist), len(unfound), idx, ok, kw.keys())
     return find_components_by_seqaln_rmsfit(unfound, finalresult=finalresult, idx=idx[~ok], tol=tol, **kw)
 
-@ipd.dev.subscriptable_for_attributes
-@ipd.dev.element_wise_operations
+@ipd.subscriptable_for_attributes
+@ipd.element_wise_operations
 @ipd.mutablestruct
 class Components:
     """

@@ -16,7 +16,7 @@ h = ipd.hnumpy
 bs = ipd.lazyimport('biotite.structure')
 
 @ipd.dev.holds_metadata
-@ipd.dev.subscriptable_for_attributes
+@ipd.subscriptable_for_attributes
 @dataclass
 class Assembly:
     bodies: list[Body]

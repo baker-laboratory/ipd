@@ -1,3 +1,45 @@
+"""
+Decorators and Utilities for Enhanced Functionality
+=====================================================
+
+This module provides a collection of decorators and helper functions designed to extend the
+behavior of functions and classes. Key features include:
+
+- **Vectorization**: Use :func:`iterize_on_first_param` to automatically vectorize a function
+  over its first parameter.
+- **Random State Preservation**: Use :func:`preserve_random_state` to temporarily set a random seed
+  during a function call.
+- **Enhanced Attribute Access**: The :func:`subscriptable_for_attributes` decorator adds support
+  for subscriptable attribute access, fuzzy matching, enumeration, and grouping.
+- **Safe Caching**: :func:`safe_lru_cache` provides an LRU cache that handles unhashable arguments gracefully.
+- **Utility Functions**: Other helpers (e.g. :func:`generic_get_keys`, :func:`is_iterizeable`)
+  provide common functionality for attribute and iterable handling.
+
+Examples:
+    Vectorizing a function over scalars and iterables::
+
+        >>> @iterize_on_first_param
+        ... def square(x):
+        ...     return x * x
+        >>> square(4)
+        16
+        >>> square([1, 2, 3])
+        [1, 4, 9]
+
+    Making a class subscriptable for attribute access::
+
+        >>> @subscriptable_for_attributes
+        ... class MyClass:
+        ...     def __init__(self):
+        ...         self.a = 1
+        ...         self.b = 2
+        >>> obj = MyClass()
+        >>> obj['a']
+        1
+        >>> obj['a b']
+        (1, 2)
+"""
+
 import contextlib
 import functools
 from pathlib import Path
@@ -7,85 +49,49 @@ import numpy as np
 
 import ipd
 
-def generic_get_keys(obj, exclude: ipd.FieldSpec = ()):
-    if hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
-        return [k for k in obj.keys() if valid_element_name(k, exclude)]
-    elif hasattr(obj, 'items'):
-        return [k for k, v in obj.items() if valid_element_name(k, exclude)]
-    elif isinstance(obj, list):
-        return list(range(len(obj)))
-    else:
-        return [
-            k for k in dir(obj) if valid_element_name_thorough(k, exclude) and not callable(getattr(obj, k))
-        ]
-    raise TypeError(f'dont know how to get elements from {obj}')
+def NoneFunc():
+    """This function does nothing and is used as a default placeholder."""
+    pass
 
-def generic_get_items(obj):
-    if hasattr(obj, 'items'):
-        return [(k, v) for k, v in obj.items() if valid_element_name(k)]
-    elif hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
-        return [(k, getattr(obj, k)) for k in obj.keys() if valid_element_name(k)]
-    elif isinstance(obj, list):
-        return list(enumerate(obj))
-    else:
-        return [(k, getattr(obj, k)) for k in dir(obj)
-                if valid_element_name_thorough(k) and not callable(getattr(obj, k))]
-    raise TypeError(f'dont know how to get elements from {obj}')
+def subscriptable_for_attributes(cls: type[ipd.C]) -> type[ipd.C]:
+    """Class decorator to enable subscriptable attribute access and enumeration.
 
-def valid_element_name(name, exclude=()):
-    return not name[0] == '_' and not name[-1] == '_' and name not in exclude
-
-def valid_element_name_thorough(name, exclude=()):
-    return valid_element_name(name, exclude) and name not in _reserved_element_names
-
-_reserved_element_names = set('mapwise npwise valwise dictwise'.split())
-
-def get_fields(obj, fields: ipd.FieldSpec, exclude: ipd.FieldSpec = ()) -> tuple[Iterable, bool]:
-    """return list of string fields and bool isplural"""
-    if callable(fields): fields = fields(obj)
-    if fields is None: return generic_get_keys(obj, exclude=exclude), True
-    if ' ' in fields: return ipd.cast(str, fields).split(), True
-    if isinstance(fields, str): return [fields], False
-    return fields, True
-
-def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: bool = False) -> bool:
-    """Checks if an object can be treated as an iterable.
-
-    This function determines if `arg` can be iterated over. It considers edge cases such as:
-    - Strings with spaces (if `splitstr` is True) are considered iterable.
-    - Instances of `basetype` are not treated as iterable.
-    - Mappings (like dictionaries) are considered iterable unless `allowmap` is set to False.
+    This decorator adds support for `__getitem__` and `enumerate` methods to a class
+    using `generic_getitem_for_attributes` and `generic_enumerate`.
 
     Args:
-        arg (Any): The object to test for iterability.
-        basetype (type, optional): A type that should not be considered iterable. If a string is passed,
-            it will attempt to match it to the type's `__name__` or `__qualname__`. Defaults to `str`.
-        splitstr (bool, optional): If True, strings containing spaces are considered iterable. Defaults to True.
-        allowmap (bool, optional): If False, mappings (like dictionaries) are not treated as iterable. Defaults to False.
+        cls (type): The class to modify.
 
     Returns:
-        bool: True if `arg` is iterable according to the specified rules, otherwise False.
+        type: The modified class.
 
     Example:
-        is_iterizeable([1, 2, 3])  # True
-        is_iterizeable('hello')  # False
-        is_iterizeable('hello world')  # True (if `splitstr=True`)
-        is_iterizeable({'a': 1})  # False (if `allowmap=False`)
-        is_iterizeable({'a': 1}, allowmap=True)  # True
-    """
-    if isinstance(basetype, str):
-        if basetype == 'notlist': return isinstance(arg, list)
-        elif arg.__class__.__name__ == basetype: basetype = type(arg)
-        elif arg.__class__.__qualname__ == basetype: basetype = type(arg)
-        else: basetype = type(None)
-    if isinstance(arg, str) and ' ' in arg: return True
-    if basetype and isinstance(arg, basetype): return False
-    if not allowmap and isinstance(arg, Mapping): return False
-    if hasattr(arg, '__iter__'): return True
-    return False
+    >>> @subscriptable_for_attributes
+    ... class MyClass:
+    ...     def __init__(self):
+    ...         self.x = 1
+    ...         self.y = 2
+    >>> obj = MyClass()
+    >>> print(obj['x'])
+    1
+    >>> print(obj['x y'])  # (1, 2)
+    (1, 2)
+    >>> for i, x, y in obj.enumerate(['x', 'y']):
+    ...     print(i, x, y)
+    0 1 2
 
-def NoneFunc():
-    pass
+    Raises:
+        TypeError: If the class already defines `__getitem__` or `enumerate`.
+    """
+    for member in 'enumerate fzf groupby'.split():
+        if hasattr(cls, member):
+            raise TypeError(f'class {cls.__name__} already has {member}')
+    cls.__getitem__ = make_getitem_for_attributes(get=getattr)
+    cls.fzf = make_getitem_for_attributes(get=getattr_fzf)
+    cls.enumerate = generic_enumerate
+    cls.groupby = generic_groupby
+    cls.pick = make_getitem_for_attributes(provide='item')
+    return cls
 
 def iterize_on_first_param(
     func0: ipd.F = NoneFunc,
@@ -98,44 +104,42 @@ def iterize_on_first_param(
     allowmap=False,
 ) -> ipd.F:
     """
-    Decorator that vectorizes a function over its first parameter.
+    Decorator to vectorize a function over its first parameter.
 
-    This decorator allows a function to handle both single values and iterables as its
-    first argument. If the first argument is iterable, the function is applied to each
-    element individually, and the results are returned in an appropriate format (list,
-    dictionary, or Bunch).
+    This decorator allows a function to seamlessly handle both scalar and iterable inputs for its first
+    parameter. When the first argument is iterable (and not excluded by type), the function is applied
+    to each element individually. The results are then combined and returned in a format determined by the
+    decorator options.
 
-    If the first argument is not iterable (or is excluded by type), the function behaves
-    normally.
-
-    Args:
-        basetype (type or tuple of types, optional):
-            Type(s) that should be treated as scalar values, even if they are iterable.
-            For example, `basetype=str` ensures strings are treated as single values.
-            Defaults to `str`.
-
-        splitstr (bool, optional):
-            If `True`, strings with spaces are split into lists before processing.
-            Defaults to `True`.
-
-        asdict (bool, optional):
-            If `True`, the results are returned as a dictionary with input values as keys.
-            Defaults to `False`.
-
-        asbunch (bool, optional):
-            If `True`, the results are returned as a `Bunch` object (like a dict but
-            with attribute-style access). If the keys are strings, they are used as
-            attribute names. Defaults to `False`.
-
-        allowmap (bool, optional):
-            If `True`, allows mapping types (like dictionaries) to be processed as
-            iterables, with the function applied to each value. Defaults to `False`.
-
-    Returns:
-        callable: A decorated function that can handle both scalar and iterable inputs
-        for its first parameter.
+    :param func0: The function to decorate. Can be omitted when using decorator syntax with arguments.
+    :param basetype: Type(s) that should be treated as scalar, even if iterable. Defaults to str.
+    :param splitstr: If True, strings containing spaces are split into lists before processing.
+                     Defaults to True.
+    :param asdict: If True, returns results as a dictionary with input values as keys. Defaults to False.
+    :param asbunch: If True, returns results as a Bunch (a dict-like object with attribute access).
+                    Defaults to False.
+    :param asnumpy: If True, returns results as a numpy array. Defaults to False.
+    :param allowmap: If True, allows mapping types (e.g. dict) to be processed iteratively. Defaults to False.
+    :return: A decorated function that can handle both scalar and iterable inputs for its first parameter.
+    :rtype: callable
 
     Examples:
+        Basic usage:
+        >>> @iterize_on_first_param
+        ... def square(x):
+        ...     return x * x
+        >>> square(4)
+        16
+        >>> square([1, 2, 3])
+        [1, 4, 9]
+
+        Using asdict to return results as a dictionary:
+        >>> @iterize_on_first_param(asdict=True, basetype=str)
+        ... def double(x):
+        ...     return x * 2
+        >>> double(['a', 'b'])
+        {'a': 'aa', 'b': 'bb'}
+
         **Basic usage with default behavior**:
 
         >>> @iterize_on_first_param
@@ -226,8 +230,6 @@ def iterize_on_first_param(
 
 iterize_on_first_param_path = iterize_on_first_param(basetype=(str, Path))
 
-import ipd.dev
-
 def preserve_random_state(func0=None, seed0=None):
     """Decorator to preserve the random state during function execution.
 
@@ -259,6 +261,233 @@ def preserve_random_state(func0=None, seed0=None):
         assert seed0 is None
         return deco(func0)
     return deco
+
+def safe_lru_cache(func=None, *, maxsize=128):
+    """
+    A safe LRU cache decorator that handles unhashable arguments gracefully.
+
+    This decorator wraps a function with an LRU cache. If the arguments are hashable, the cached value
+    is returned; if unhashable (raising a TypeError), the function is executed normally without caching.
+
+    :param func: The function to decorate. If omitted, the decorator can be used with arguments.
+    :param maxsize: The maximum size of the cache. Defaults to 128.
+    :return: The decorated function.
+    :rtype: callable
+
+    Examples:
+        Basic usage:
+        >>> @safe_lru_cache(maxsize=32)
+        ... def double(x):
+        ...     return x * 2
+        >>> double(2)
+        4
+        >>> double([1, 2, 3])  # Unhashable input; executes without caching.
+        [1, 2, 3, 1, 2, 3]
+
+        Using without arguments:
+        >>> @safe_lru_cache
+        ... def add(x, y):
+        ...     return x + y
+        >>> add(2, 3)
+        5
+    """
+    if func is not None and callable(func):
+        # Case when used as @safe_lru_cache without parentheses
+        return safe_lru_cache(maxsize=maxsize)(func)
+
+    def decorator(func):
+        cache = functools.lru_cache(maxsize=maxsize)(func)
+
+        @ipd.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                hash(args)
+                frozenset(kwargs.items())
+                return cache(*args, **kwargs)
+            except TypeError:
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+# helper functions
+
+def generic_get_keys(obj, exclude: ipd.FieldSpec = ()):
+    """
+    Retrieve keys or indices from an object.
+
+    This function attempts to extract keys from an object. It checks for a ``keys()`` or ``items()``
+    method, or if the object is a list returns its indices. Otherwise, it returns attribute names
+    that pass the validity checks.
+
+    :param obj: The object from which to extract keys.
+    :param exclude: An iterable of keys to exclude. Defaults to an empty tuple.
+    :return: A list of keys or indices.
+    :rtype: list
+
+    Example:
+        >>> class A:
+        ...     def __init__(self):
+        ...         self.x = 1
+        ...         self._y = 2
+        >>> a = A()
+        >>> generic_get_keys(a)
+        ['x']
+    """
+    if hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
+        return [k for k in obj.keys() if valid_element_name(k, exclude)]
+    elif hasattr(obj, 'items'):
+        return [k for k, v in obj.items() if valid_element_name(k, exclude)]
+    elif isinstance(obj, list):
+        return list(range(len(obj)))
+    else:
+        return [
+            k for k in dir(obj) if valid_element_name_thorough(k, exclude) and not callable(getattr(obj, k))
+        ]
+    raise TypeError(f'dont know how to get elements from {obj}')
+
+def generic_get_items(obj, all=False):
+    """
+    Retrieve key-value pairs from an object.
+
+    This function returns a list of (key, value) pairs from the object. It supports objects that
+    have an ``items()`` or ``keys()`` method, as well as lists (using indices) or attributes.
+
+    :param obj: The object from which to extract items.
+    :return: A list of (key, value) pairs.
+    :rtype: list
+
+    Example:
+        >>> class A:
+        ...     def __init__(self):
+        ...         self.a = 1
+        ...         self.b = 2
+        >>> a = A()
+        >>> generic_get_items(a)
+        [('a', 1), ('b', 2)]
+    """
+    if hasattr(obj, 'items'):
+        return [(k, v) for k, v in obj.items() if all or valid_element_name(k)]
+    elif hasattr(obj, 'keys') and callable(getattr(obj, 'keys')):
+        return [(k, getattr(obj, k)) for k in obj.keys() if all or valid_element_name(k)]
+    elif isinstance(obj, list):
+        return list(enumerate(obj))
+    else:
+        return [(k, getattr(obj, k)) for k in dir(obj)
+                if (all or valid_element_name_thorough(k)) and not callable(getattr(obj, k))]
+    raise TypeError(f'dont know how to get elements from {obj}')
+
+def valid_element_name(name, exclude=()):
+    """
+    Check if a name is valid based on naming conventions.
+
+    A valid name must not start or end with an underscore and must not be in the excluded list.
+
+    :param name: The name to check.
+    :type name: str
+    :param exclude: An iterable of names to exclude.
+    :return: True if the name is valid, otherwise False.
+    :rtype: bool
+
+    Example:
+        >>> valid_element_name("foo")
+        True
+        >>> valid_element_name("_bar")
+        False
+    """
+    return not name[0] == '_' and not name[-1] == '_' and name not in exclude
+
+def valid_element_name_thorough(name, exclude=()):
+    """
+    Thoroughly check if a name is valid by applying additional reserved name rules.
+
+    In addition to the checks performed by :func:`valid_element_name`, this function also ensures
+    that the name is not in a set of reserved element names.
+
+    :param name: The name to check.
+    :type name: str
+    :param exclude: An iterable of names to exclude.
+    :return: True if the name is valid, otherwise False.
+    :rtype: bool
+
+    Example:
+        >>> valid_element_name_thorough("mapwise")
+        False
+    """
+    return valid_element_name(name, exclude) and name not in _reserved_element_names
+
+_reserved_element_names = set('mapwise npwise valwise dictwise'.split())
+
+def get_fields(obj, fields: ipd.FieldSpec, exclude: ipd.FieldSpec = ()) -> tuple[Iterable, bool]:
+    """
+    Determine and return the fields from an object.
+
+    The function returns a tuple containing a list of field names and a boolean indicating whether
+    multiple fields are expected.
+
+    :param obj: The object from which to extract fields.
+    :param fields: A field specification that may be a callable, a string, or an iterable.
+    :param exclude: Fields to exclude from the result. Defaults to an empty tuple.
+    :return: A tuple (fields, is_plural) where fields is a list of field names and is_plural is a bool.
+    :rtype: tuple(list, bool)
+
+    Example:
+        >>> class A:
+        ...     def __init__(self):
+        ...         self.a = 1
+        ...         self.b = 2
+        >>> a = A()
+        >>> get_fields(a, 'a')
+        (['a'], False)
+        >>> get_fields(a, 'a b')
+        (['a', 'b'], True)
+    """
+
+    if callable(fields): fields = fields(obj)
+    if fields is None: return generic_get_keys(obj, exclude=exclude), True
+    if ' ' in fields: return ipd.cast(str, fields).split(), True
+    if isinstance(fields, str): return [fields], False
+    return fields, True
+
+def is_iterizeable(arg, basetype: type = str, splitstr: bool = True, allowmap: bool = False) -> bool:
+    """
+    Determine if an object should be treated as iterable for vectorization purposes.
+
+    This function checks several conditions:
+      - Strings with spaces are considered iterable if `splitstr` is True.
+      - Objects of the type specified by `basetype` are treated as scalars.
+      - Mapping types are not considered iterable unless `allowmap` is True.
+
+    :param arg: The object to test.
+    :param basetype: A type (or tuple of types) that should be considered scalar. Defaults to str.
+    :param splitstr: If True, strings containing spaces are considered iterable. Defaults to True.
+    :param allowmap: If False, mapping types (e.g. dict) are not treated as iterable. Defaults to False.
+    :return: True if the object is considered iterable, False otherwise.
+    :rtype: bool
+
+    Examples:
+        >>> is_iterizeable([1, 2, 3])
+        True
+        >>> is_iterizeable("hello")
+        False
+        >>> is_iterizeable("hello world")
+        True
+        >>> is_iterizeable({'a': 1})
+        False
+        >>> is_iterizeable({'a': 1}, allowmap=True)
+        True
+    """
+    if isinstance(basetype, str):
+        if basetype == 'notlist': return isinstance(arg, list)
+        elif arg.__class__.__name__ == basetype: basetype = type(arg)
+        elif arg.__class__.__qualname__ == basetype: basetype = type(arg)
+        else: basetype = type(None)
+    if isinstance(arg, str) and ' ' in arg: return True
+    if basetype and isinstance(arg, basetype): return False
+    if not allowmap and isinstance(arg, Mapping): return False
+    if hasattr(arg, '__iter__'): return True
+    return False
 
 def make_getitem_for_attributes(get=getattr, provide='value') -> 'Any':
     if provide not in ('value', 'item'):
@@ -293,18 +522,29 @@ def make_getitem_for_attributes(get=getattr, provide='value') -> 'Any':
     return getitem_for_attributes
 
 def generic_enumerate(self, fields: ipd.FieldSpec = None, order=lambda x: x) -> ipd.EnumerIter:
-    """Enhanced `enumerate` method to iterate over multiple attributes at once.
+    """
+    Enhanced enumerate method to iterate over multiple attributes simultaneously.
 
-    This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the fields is a string containing spaces, it will be split into a list of keys. If the fields is a list of strings, it will return the corresponding attributes as a tuple.
+    This method retrieves the specified fields from the object and yields an enumeration of the field values.
+    If the fields are provided as a string with spaces, they will be split into a list of field names.
 
-    Args:
-        fields (list[str] | str): A single attribute name or a list of attribute names.
-
-    Yields:
-        tuple[int, ...]: A tuple containing the index and the attribute values.
+    :param fields: A field specification (string or list of strings) indicating which attributes to enumerate.
+                   If None, all valid attributes are enumerated.
+    :param order: A function to order the enumeration indices and values. Defaults to identity.
+    :return: An iterator yielding tuples containing the index and the corresponding attribute values.
+    :rtype: iterator
 
     Example:
-        >>> @ipd.dev.subscriptable_for_attributes
+        >>> class A:
+        ...     def __init__(self):
+        ...         self.x = [1, 2]
+        ...         self.y = [3, 4]
+        ...     __getitem__ = make_getitem_for_attributes()
+        ...     enumerate = generic_enumerate
+        >>> a = A()
+        >>> list(a.enumerate("x y"))
+        [(0, 1, 3), (1, 2, 4)]
+        >>> @ipd.subscriptable_for_attributes
         ... class MyClass:
         ...     def __init__(self):
         ...         self.x = range(5)
@@ -334,6 +574,29 @@ def generic_groupby(
     fields: ipd.FieldSpec = None,
     convert=None,
 ) -> ipd.EnumerListIter:
+    """
+    Group object attributes by a specified key.
+
+    This method groups attributes based on the values obtained from the `groupby` field specification.
+    Optionally, only a subset of fields may be selected and a conversion function applied to the grouped values.
+
+    :param groupby: A field specification (or callable) to determine group keys.
+    :param fields: A field specification indicating which fields to group. Defaults to None (all keys).
+    :param convert: An optional function to convert the grouped values.
+    :return: An iterator over grouped data. Each iteration yields a group key and the corresponding grouped values.
+    :rtype: iterator
+
+    Example:
+        >>> class A:
+        ...     def __init__(self):
+        ...         self.a = [1, 2, 3, 4]
+        ...         self.group = ['x', 'x', 'y', 'y']
+        ...     __getitem__ = make_getitem_for_attributes()
+        ...     groupby = generic_groupby
+        >>> a = A()
+        >>> list(a.groupby('group', 'a'))
+        [('x', (1, 2)), ('y', (3, 4))]
+    """
     exclude = None
     splat = isinstance(fields, str)
     if callable(groupby):
@@ -356,14 +619,21 @@ def generic_groupby(
 
 def is_fuzzy_match(sub, string):
     """
-    Checks if 'sub' is a subsequence of 'string'.
+    Check if one string is a fuzzy subsequence of another.
 
-    Args:
-      sub: The potential subsequence string.
-      string: The main string.
+    This function checks that the first two characters of `sub` match those of `string`
+    and then verifies that all characters in `sub` appear in order in `string`.
 
-    Returns:
-      True if 'sub' is a subsequence of 'string', False otherwise.
+    :param sub: The subsequence to check.
+    :param string: The string to search within.
+    :return: True if `sub` is a fuzzy match of `string`, False otherwise.
+    :rtype: bool
+
+    Example:
+        >>> is_fuzzy_match("abc", "ab2c3")
+        True
+        >>> is_fuzzy_match("acb", "ab2c3")
+        False
     """
     if sub[:2] != string[:2]: return False
     i, j = 0, 0
@@ -373,94 +643,30 @@ def is_fuzzy_match(sub, string):
     return i == len(sub)
 
 def getattr_fzf(obj, field):
-    """Get attribute values using fuzzy matching.
+    """
+    Retrieve an attribute from an object using fuzzy matching.
 
     This function uses fuzzy matching to find attribute names that are similar to the given field.
-    If multiple matches are found, the values of the first match are returned.
+    If a single match is found, its value is returned. If multiple matches are found, an error is raised.
 
-    Args:
-        obj: The object to search for attributes.
-        field: The field to search for.
-
-    Returns:
-        Any: The attribute value corresponding to the field.
+    :param obj: The object to search.
+    :param field: The field name (or fuzzy substring) to search for.
+    :return: The attribute value corresponding to the matched field.
+    :rtype: Any
+    :raises AttributeError: If no matching attribute is found or if multiple ambiguous matches exist.
 
     Example:
-    >>> @ipd.dev.subscriptable_for_attributes
-    ... class MyClass:
-    ...     def __init__(self):
-    ...         self.abc = 1
-    ...         self.xyz = 2
-    >>> obj = MyClass()
-    >>> obj.fzf('ab')  # Finds 'ab' or similar
-    1
-    >>> obj.fzf('xy')  # Finds 'xy' or similar
-    2
+        >>> class A:
+        ...     def __init__(self):
+        ...         self.abc = 1
+        ...         self.xyz = 2
+        ...     fzf = make_getitem_for_attributes(get=getattr_fzf)
+        >>> a = A()
+        >>> a.fzf('ab')
+        1
     """
     fields = generic_get_keys(obj, exclude=())
     candidates = [f for f in fields if is_fuzzy_match(field, f)]
     if not candidates: raise AttributeError(f'no attribute found for {field}')
     if len(candidates) == 1: return getattr(obj, candidates[0])
     raise AttributeError(f'multiple attributes found for {field}: {candidates}')
-
-def subscriptable_for_attributes(cls: type[ipd.C]) -> type[ipd.C]:
-    """Class decorator to enable subscriptable attribute access and enumeration.
-
-    This decorator adds support for `__getitem__` and `enumerate` methods to a class
-    using `generic_getitem_for_attributes` and `generic_enumerate`.
-
-    Args:
-        cls (type): The class to modify.
-
-    Returns:
-        type: The modified class.
-
-    Example:
-    >>> @subscriptable_for_attributes
-    ... class MyClass:
-    ...     def __init__(self):
-    ...         self.x = 1
-    ...         self.y = 2
-
-    >>> obj = MyClass()
-    >>> print(obj['x'])
-    1
-    >>> print(obj['x y'])  # (1, 2)
-    (1, 2)
-    >>> for i, x, y in obj.enumerate(['x', 'y']):
-    ...     print(i, x, y)
-    0 1 2
-
-    Raises:
-        TypeError: If the class already defines `__getitem__` or `enumerate`.
-    """
-    for member in 'enumerate fzf groupby'.split():
-        if hasattr(cls, member):
-            raise TypeError(f'class {cls.__name__} already has {member}')
-    cls.__getitem__ = make_getitem_for_attributes(get=getattr)
-    cls.fzf = make_getitem_for_attributes(get=getattr_fzf)
-    cls.enumerate = generic_enumerate
-    cls.groupby = generic_groupby
-    cls.pick = make_getitem_for_attributes(provide='item')
-    return cls
-
-def safe_lru_cache(func=None, *, maxsize=128):
-    if func is not None and callable(func):
-        # Case when used as @safe_lru_cache without parentheses
-        return safe_lru_cache(maxsize=maxsize)(func)
-
-    def decorator(func):
-        cache = functools.lru_cache(maxsize=maxsize)(func)
-
-        @ipd.wraps(func)
-        def wrapper(*args, **kwargs):
-            try:
-                hash(args)
-                frozenset(kwargs.items())
-                return cache(*args, **kwargs)
-            except TypeError:
-                return func(*args, **kwargs)
-
-        return wrapper
-
-    return decorator

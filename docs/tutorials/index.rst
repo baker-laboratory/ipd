@@ -10,3 +10,5 @@ Tutorials
    working_with_bodies
    symmetry_detection
    contact_matrix
+   class_decorators
+   function_decorators
