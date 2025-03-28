@@ -275,6 +275,18 @@ def test_subscriptable_for_attributes_enumerate():
     for (i, a, b, c), e, f, g in zip(foo.enumerate('a b c'), range(6), range(1, 7), range(10, 17)):
         assert a == e and b == f and c == g
 
+def test_subscriptable_for_attributes_enumerate_noarg():
+
+    @ipd.dev.subscriptable_for_attributes
+    class Foo:
+
+        def __init__(self):
+            self.a, self.b, self.c = range(6), range(1, 7), range(10, 17)
+
+    foo = Foo()
+    for (i, a, b, c), e, f, g in zip(foo.enumerate(), range(6), range(1, 7), range(10, 17)):
+        assert a == e and b == f and c == g
+
 def test_subscriptable_for_attributes_groupby():
 
     @ipd.dev.subscriptable_for_attributes

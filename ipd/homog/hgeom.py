@@ -1365,6 +1365,10 @@ def intersect_planes(plane1, plane2):
     """
     find the 3D intersection of two planes
 
+    status 0 -> intersection returned
+    status 1 -> disjoint (no intersection)
+    status 2 -> the two planes coincide
+
     Args:
         plane1: shape=(...,4,2)
         plane2: shape=(...,4,2)
@@ -1372,9 +1376,6 @@ def intersect_planes(plane1, plane2):
     Returns:
         rays shape=(...,4,2), status
 
-    status 0 -> intersection returned
-    status 1 -> disjoint (no intersection)
-    status 2 -> the two planes coincide
     """
     if not is_valid_rays(plane1):
         raise ValueError('invalid plane1')

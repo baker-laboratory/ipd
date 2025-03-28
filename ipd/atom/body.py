@@ -242,7 +242,7 @@ class SymBody:
     frames: np.ndarray = ipd.field(lambda: np.eye(4)[None])
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
     bodies = property(lambda self: [self.asu.movedby(self.pos @ f) for f in self.frames])
-    atoms = property(lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.atoms)))
+    atoms = property(lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
     com = property(lambda self: h.xform(self.pos, self.frames, self.asu.com).mean(0))
     centered = property(lambda self: self.movedby(-self.com))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
@@ -398,7 +398,7 @@ class BodyContacts:
     min_contacts = property(lambda self: np.min(self.ranges[:, 1] - self.ranges[:, 0]))
     nuniq1 = property(lambda self: np.unique(self.pairs[:, 0]).size)
     nuniq2 = property(lambda self: np.unique(self.pairs[:, 1]).size)
-    nuniq = property(lambda self: self.nuniq1 + self.nuniq2)
+    nuniq = property(lambda self: np.unique(self.pairs.flat).size)
 
     def __post_init__(self):
         self.body2 = self.body2 or self.symbody1

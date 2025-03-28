@@ -2,7 +2,7 @@ import ipd
 from ipd.tools.ipdtool import IPDTool
 from ipd.tools import run_tests_on_file
 
-class IdeTool(IPDTool):
+class TestTool(IPDTool):
 
     def file(
         self,
@@ -10,5 +10,5 @@ class IdeTool(IPDTool):
         path: str,
         pytest: bool = False,
     ):
-        py = ipd.dev.run('/usr/bin/env python')
+        py = ipd.dev.run('which python')
         run_tests_on_file.main(projects, testfile=path, pytest=pytest, python=py)

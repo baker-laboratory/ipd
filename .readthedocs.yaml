@@ -9,6 +9,12 @@ build:
   os: ubuntu-24.04
   tools:
     python: "3.13"
+  jobs:
+    pre_build:
+      - cd docs
+      - rm -rf _apidoc
+      - sphinx-apidoc --separate --module-first --force -o _apidoc ../ipd ../ipd/cython ../ipd/tests/cuda ../ipd/cuda ../ipd/tests
+
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:

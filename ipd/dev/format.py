@@ -122,6 +122,7 @@ def to_renderable(obj, textmap=None, strip=True, nohomog=False, **kw):
     if isinstance(obj, Table): return obj
     if nohomog and ipd.homog.is_tensor(obj): obj = obj[..., :3]
     s = str(summary(obj))
+    assert "'" not in s
     for pattern, replace in textmap.items():
         if '__REGEX__' in textmap and textmap['__REGEX__']: s = re.sub(pattern, replace, s)
         else: s = s.replace(pattern, str(replace))
@@ -135,7 +136,7 @@ def summary(obj) -> str:
     if (bs := sys.modules.get('biotite.structure')) and isinstance(obj, bs.AtomArray):
         return f'AtomArray({len(obj)})'
     if isinstance(obj, (list, tuple)): return [summary(o) for o in obj]
-    return str(obj)
+    return obj
 
 def diff(ref: str, new: str) -> None:
     # Use difflib to create a unified diff
