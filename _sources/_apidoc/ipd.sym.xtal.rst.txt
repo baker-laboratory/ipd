@@ -1,0 +1,25 @@
+ipd.sym.xtal package
+====================
+
+.. automodule:: ipd.sym.xtal
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.sym.xtal.SymElem
+   ipd.sym.xtal.spacegroup
+   ipd.sym.xtal.spacegroup_contacts
+   ipd.sym.xtal.spacegroup_data
+   ipd.sym.xtal.spacegroup_deriveddata
+   ipd.sym.xtal.spacegroup_frames
+   ipd.sym.xtal.spacegroup_symelems
+   ipd.sym.xtal.spacegroup_util
+   ipd.sym.xtal.xtalcls
+   ipd.sym.xtal.xtalfit
+   ipd.sym.xtal.xtalinfo

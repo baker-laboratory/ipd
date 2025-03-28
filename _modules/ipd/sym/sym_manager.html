@@ -1,0 +1,1231 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.sym.sym_manager &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/sym/sym_manager';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../sym.html" class="nav-link">ipd.sym</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.sym.sym_manager</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.sym.sym_manager</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym.sym_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaSymManager</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;ipd.homog.thgeom&#39;</span><span class="p">)</span>
+<span class="n">th</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;torch&#39;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShapeKind</span><span class="p">,</span> <span class="n">ValueKind</span>
+<span class="c1"># from ipd.sym.sym_adapt import _sym_adapt, SymAdapt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym.sym_index</span><span class="w"> </span><span class="kn">import</span> <span class="n">SymIndex</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="n">XYZPair</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;XYZPair&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz pair&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="XYZPairUnsupportedError">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.XYZPairUnsupportedError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">XYZPairUnsupportedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">mutablestruct</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SymmetryManager</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">MetaSymManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for managing symmetry operations in the IPD framework.</span>
+
+<span class="sd">    This class encapsulates symmetry-related parameters and operations, allowing</span>
+<span class="sd">    flexible management of transformations applied to molecular structures. It is</span>
+<span class="sd">    designed to be extensible so that new symmetry behaviors can be integrated</span>
+<span class="sd">    without modifying core logic.</span>
+
+<span class="sd">    Key Features:</span>
+<span class="sd">        - **Encapsulates symmetry parameters and functionality**</span>
+<span class="sd">        - **Simplifies function signatures** by reducing the number of explicit parameters</span>
+<span class="sd">        - **Supports unbounded symmetries**, including translations and slides</span>
+<span class="sd">        - **Allows future extension** without modifying core function signatures</span>
+<span class="sd">        - **Handles symmetry applications via `__call__` operator**</span>
+
+<span class="sd">    Some parts of the codebase now expect a `SymmetryManager` instance to be</span>
+<span class="sd">    present in `self.sym`. If no symmetry is specified, a no-op</span>
+<span class="sd">    `C1SymmetryManager` is created via:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       sym = create_sym_manager()</span>
+
+<span class="sd">    To create a symmetry manager based on configuration or command-line options:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       sym = create_sym_manager(conf)</span>
+
+<span class="sd">    Symmetry is applied to various data types via the `__call__` operator:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       xyz = sym(xyz)  # Symmetrizes coordinates</span>
+<span class="sd">       seq = sym(seq)  # Symmetrizes a sequence</span>
+
+<span class="sd">    Any `SymmetryManager` can also symmetrize arbitrary arrays like sequences and diffusion objects.</span>
+
+<span class="sd">    **Implementation Details:**</span>
+
+<span class="sd">    - Subclasses must implement :meth:`apply_symmetry`, which will be passed a correctly sliced</span>
+<span class="sd">      subset of the data, converted to the proper shape, dtype, and device.</span>
+<span class="sd">    - The method receives relevant parameters via `kwargs`, pre-updated based on</span>
+<span class="sd">      refinement folding (rfold) and/or diffusion timesteps.</span>
+<span class="sd">    - Additional parameters from `sym.yaml` are also included in `kwargs`, making it</span>
+<span class="sd">      slightly more convenient and correct to extract these values through function</span>
+<span class="sd">      arguments rather than instance attributes.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        symid (str): The symmetry identifier, e.g., &#39;C1&#39;, &#39;C2&#39;, &#39;D3&#39;, etc.</span>
+<span class="sd">        opt (dict): Configuration options controlling symmetry behavior.</span>
+<span class="sd">        idx (SymIndex): Indexing structure used for symmetric transformations.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; sym = ipd.sym.create_sym_manager(symid=&#39;C3&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; sym.idx = ipd.sym.SymIndex(3, [(30, 0, 30)])</span>
+<span class="sd">        &gt;&gt;&gt; xyz = np.random.rand(10, 3)</span>
+<span class="sd">        &gt;&gt;&gt; xyz_sym = sym(xyz)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">symid</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">nsub</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">L</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">_idx</span><span class="p">:</span> <span class="n">SymIndex</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span>
+    <span class="n">_frames</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FramesN44</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">SymIndexType</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SymIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">SymIndex</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">symid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a SymmetryManager.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span> <span class="o">=</span> <span class="n">opt</span>
+        <span class="c1"># self.opt.symid =symid or self.opt.symid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">th</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_init_args</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2global</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xasuinit</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_properties</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SymmetryManager.init">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.init">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.apply_symmetry">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_symmetry">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">:</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All subclasses must implement this method.</span>
+
+<span class="sd">        Calls will recieve only the part of the structure that needs to</span>
+<span class="sd">        be symmetrized, and inputs will always be on the gpu, if cuda is</span>
+<span class="sd">        available</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.setup_for_symmetry">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.setup_for_symmetry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_for_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="o">**</span><span class="n">__</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default implementation no-op.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">thing</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.post_init">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.post_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;idx&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_init_args</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_init_args</span><span class="o">.</span><span class="n">idx</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sym_manager_created</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.add_properties">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.add_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symid</span>
+        <span class="n">locprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">opt</span><span class="o">=</span><span class="p">[</span>
+                <span class="s1">&#39;nsub&#39;</span><span class="p">,</span> <span class="s1">&#39;pseudo_cycle&#39;</span><span class="p">,</span> <span class="s1">&#39;sympair_method&#39;</span><span class="p">,</span> <span class="s1">&#39;fit&#39;</span><span class="p">,</span> <span class="s1">&#39;asu_to_best_frame&#39;</span><span class="p">,</span> <span class="s1">&#39;symmetrize_repeats&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;sym_enabled&#39;</span><span class="p">,</span> <span class="s1">&#39;rfsym_enabled&#39;</span><span class="p">,</span> <span class="s1">&#39;sympair_enabled&#39;</span><span class="p">,</span> <span class="s1">&#39;copy_main_block_template&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;make_ligand_symmetric&#39;</span>
+            <span class="p">],</span>
+            <span class="n">idx</span><span class="o">=</span><span class="p">[</span>
+                <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;Lasuprot&#39;</span><span class="p">,</span> <span class="s1">&#39;Lsymprot&#39;</span><span class="p">,</span> <span class="s1">&#39;masu&#39;</span><span class="p">,</span> <span class="s1">&#39;masym&#39;</span><span class="p">,</span> <span class="s1">&#39;msym&#39;</span><span class="p">,</span> <span class="s1">&#39;munsym&#39;</span><span class="p">,</span> <span class="s1">&#39;mnonprot&#39;</span><span class="p">,</span> <span class="s1">&#39;Nasu&#39;</span><span class="p">,</span> <span class="s1">&#39;Nasym&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Nsym&#39;</span><span class="p">,</span> <span class="s1">&#39;Nunsym&#39;</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">props</span> <span class="ow">in</span> <span class="n">locprops</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">location</span> <span class="o">==</span> <span class="s1">&#39;opt&#39;</span><span class="p">:</span> <span class="k">assert</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span>
+
+                <span class="k">def</span><span class="w"> </span><span class="nf">makeprop</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="n">slf</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">slf</span><span class="p">,</span> <span class="n">loc</span><span class="p">),</span> <span class="n">p</span><span class="p">))</span>
+
+                <span class="n">name</span> <span class="o">=</span> <span class="n">prop</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;masu&#39;</span><span class="p">,</span> <span class="s1">&#39;masym&#39;</span><span class="p">,</span> <span class="s1">&#39;msym&#39;</span><span class="p">,</span> <span class="s1">&#39;munsym&#39;</span><span class="p">,</span> <span class="s1">&#39;mnonprot&#39;</span><span class="p">]:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">makeprop</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">thing</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">isasym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the main entry point for applying symmetry to any object.</span>
+
+<span class="sd">        The object can be a sequence, coordinates, or a pair of</span>
+<span class="sd">        coordinates. The object will be passed to the appropriate method</span>
+<span class="sd">        based on its type and shape. The method will be called with the</span>
+<span class="sd">        object and all relevant symmetry parameters. The method should</span>
+<span class="sd">        return the object with symmetry applied. If the object is a pair</span>
+<span class="sd">        xyz,pair, the method should return a tuple of xyz,pair. If the</span>
+<span class="sd">        object is a &#39;sequence&#39;, the method should return the sequence</span>
+<span class="sd">        with the asu copies to the symmetric subs. &#39;sequence&#39; can be</span>
+<span class="sd">        anything with shape that starts with L</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SCALAR</span> <span class="o">=</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="ow">not</span> <span class="bp">self</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_keys</span><span class="p">,</span> <span class="n">thing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">SCALAR</span><span class="p">)]):</span> <span class="k">return</span> <span class="n">thing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verify_index</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+        <span class="n">adaptor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sym_adapt</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">isasym</span><span class="o">=</span><span class="n">isasym</span><span class="p">)</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">to_bunch</span><span class="p">()</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="n">adaptor</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">XYZPair</span><span class="p">):</span>
+            <span class="n">xyzadapt</span><span class="p">,</span> <span class="n">pairadapt</span> <span class="o">=</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">adapted</span>
+            <span class="n">orig</span> <span class="o">=</span> <span class="n">xyzadapt</span><span class="o">.</span><span class="n">adapted</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span><span class="si">}</span><span class="s1">, expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">newxyz</span><span class="p">,</span> <span class="n">newpair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_sym_slices_xyzpair</span><span class="p">(</span><span class="n">xyzadapt</span><span class="p">,</span> <span class="n">pairadapt</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">move_unsym_to_match_asu</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">newxyz</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symid</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">center_cyclic</span><span class="p">:</span>
+                <span class="n">newxyz</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">kind</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">newxyz</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">kind</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">newxyz</span> <span class="o">=</span> <span class="n">xyzadapt</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">newxyz</span><span class="p">)</span>
+            <span class="n">newpair</span> <span class="o">=</span> <span class="n">pairadapt</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">newpair</span><span class="p">)</span>
+            <span class="n">newxyz</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">set_motif_placement_if_necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newxyz</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="c1"># self.assert_symmetry_correct(newxyz, **kw)</span>
+            <span class="c1"># self.assert_symmetry_correct(newpair, **kw)</span>
+            <span class="k">return</span> <span class="n">XYZPair</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">mark_symmetrical</span><span class="p">(</span><span class="n">newxyz</span><span class="p">,</span> <span class="n">newpair</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">SEQUENCE</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">([</span><span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">adapted</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">MAPPING</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">({</span>
+                    <span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">}))</span>
+        <span class="k">elif</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">SCALAR</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">orig</span>
+        <span class="k">elif</span> <span class="n">th</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">adaptor</span><span class="o">.</span><span class="n">orig</span><span class="p">)</span> <span class="ow">and</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">orig</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_sym_slices</span><span class="p">(</span><span class="n">adaptor</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mark_symmetrical</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SymmetryManager.apply_symmetry_xyz_maybe_pair">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_xyz_maybe_pair">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_symmetry_xyz_maybe_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">origxyz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="c1"># assert len(xyz) == self.L, f&#39;bad length {xyz.shape}, expected {self.L}&#39;</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_symmetry</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="n">pair</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">_strict</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">xyz</span>
+        <span class="k">if</span> <span class="n">origxyz</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">xyz</span> <span class="k">if</span> <span class="n">pair</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">XYZPair</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.apply_sym_slices_xyzpair">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_sym_slices_xyzpair">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_sym_slices_xyzpair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzadaptor</span><span class="p">,</span> <span class="n">pairadaptor</span><span class="p">,</span> <span class="n">matchpair</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">origxyz</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;Lasu&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_contiguous</span><span class="p">(</span><span class="n">xyzadaptor</span><span class="p">,</span> <span class="n">matchpair</span><span class="o">=</span><span class="n">matchpair</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">origpair</span><span class="p">,</span> <span class="n">pair</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_contiguous</span><span class="p">(</span><span class="n">pairadaptor</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;Lasu&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nasu</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad Lasu </span><span class="si">{</span><span class="n">kw</span><span class="p">[</span><span class="s2">&quot;Lasu&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">, expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Nasu</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">origxyz</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">pair</span> <span class="o">=</span> <span class="n">pair</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># ipd.icv(xyz.shape, pair.shape)</span>
+        <span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_symmetry_xyz_maybe_pair</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="n">pair</span><span class="p">,</span> <span class="n">origxyz</span><span class="o">=</span><span class="n">origxyz</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">pair</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xyzpair_on_subset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">origxyz</span><span class="p">)</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_from_contiguous</span><span class="p">(</span><span class="n">xyzadaptor</span><span class="p">,</span> <span class="n">origxyz</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">matchpair</span><span class="o">=</span><span class="n">matchpair</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">pair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_from_contiguous</span><span class="p">(</span><span class="n">pairadaptor</span><span class="p">,</span> <span class="n">origpair</span><span class="p">,</span> <span class="n">pair</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_unsym_to_match_asu</span><span class="p">(</span><span class="n">origxyz</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">move_all_nonprot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xyzpair_on_subset</span><span class="p">:</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">fit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sym_xyzpair</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="n">pair</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.apply_sym_slices">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_sym_slices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_sym_slices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">:</span> <span class="s1">&#39;SymAdapt[T]&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="n">adapted</span><span class="p">,</span> <span class="n">contig</span><span class="p">,</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;Lasu&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_contiguous</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">valuekind</span> <span class="o">==</span> <span class="n">ValueKind</span><span class="o">.</span><span class="n">XYZ</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">ONEDIM</span>
+            <span class="n">contig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_symmetry_xyz_maybe_pair</span><span class="p">(</span><span class="n">contig</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">origxyz</span><span class="o">=</span><span class="n">adapted</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">valuekind</span> <span class="o">==</span> <span class="n">ValueKind</span><span class="o">.</span><span class="n">INDEX</span><span class="p">:</span>
+            <span class="n">contig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_symmetry_index</span><span class="p">(</span><span class="n">adapted</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span> <span class="n">adapted</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="n">adapted</span><span class="o">.</span><span class="n">isidx</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">valuekind</span> <span class="o">==</span> <span class="n">ValueKind</span><span class="o">.</span><span class="n">BASIC</span><span class="p">:</span>
+            <span class="n">contig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_symmetry_scalar</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span><span class="p">,</span> <span class="n">contig</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">valuekind</span> <span class="o">==</span> <span class="n">ValueKind</span><span class="o">.</span><span class="n">PAIR</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">TWODIM</span>
+            <span class="n">contig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_symmetry_pair</span><span class="p">(</span><span class="n">contig</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad kind </span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">contig</span> <span class="o">=</span> <span class="n">contig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_from_contiguous</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">adapted</span><span class="p">,</span> <span class="n">contig</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">valuekind</span> <span class="o">==</span> <span class="n">ValueKind</span><span class="o">.</span><span class="n">XYZ</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_unsym_to_match_asu</span><span class="p">(</span><span class="n">adapted</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.apply_symmetry_pair">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_pair">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_symmetry_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair</span><span class="p">:</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symmetrize_repeats</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">sympair_enabled</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pair</span>
+        <span class="k">if</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;sympair_protein_only&#39;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span><span class="si">}</span><span class="s1">, expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">L</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lasuprot</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">L</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nsym</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nasu</span>
+        <span class="n">symmsub_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symmsub_k</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">find_symmsub_pair</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">symmsub_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">pseudo_cycle</span><span class="p">)</span>
+        <span class="n">grouped</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">th</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="o">*</span><span class="n">pair</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:]],</span> <span class="n">device</span><span class="o">=</span><span class="n">pair</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pair</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">sympair_method</span> <span class="o">==</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">grouped</span> <span class="o">-=</span> <span class="mf">9e9</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">N</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="n">i</span> <span class="o">//</span> <span class="n">N</span><span class="p">,</span> <span class="n">j</span> <span class="o">//</span> <span class="n">N</span><span class="p">]</span>
+            <span class="n">Nmembers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">groups</span> <span class="o">==</span> <span class="n">group</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">group</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">sympair_method</span> <span class="o">==</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span>
+                <span class="n">grouped</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">grouped</span><span class="p">[</span><span class="n">group</span><span class="p">],</span> <span class="n">pair</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">N</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">N</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">sympair_method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+                <span class="c1"># ipd.icv(grouped[group].shape)</span>
+                <span class="c1"># ipd.icv(pair[i:i + N, j:j + N].shape)</span>
+                <span class="n">grouped</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pair</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">N</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">N</span><span class="p">]</span> <span class="o">/</span> <span class="n">Nmembers</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown sympair_method </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">sympair_method</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">N</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">Nmembers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">groups</span> <span class="o">==</span> <span class="n">group</span><span class="p">)</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="n">i</span> <span class="o">//</span> <span class="n">N</span><span class="p">,</span> <span class="n">j</span> <span class="o">//</span> <span class="n">N</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">group</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">pair</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">N</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">grouped</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">pair</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.apply_symmetry_index">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_symmetry_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">isidx</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;handles index data types where values must be reindexed in context of the symmetric object&quot;&quot;&quot;</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">isidx</span><span class="p">)</span>
+        <span class="n">asu</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">asu</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+        <span class="n">asuidx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">asu</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+        <span class="n">asym</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">asym</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+        <span class="n">asymidx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">asym</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">asym</span><span class="p">]</span>
+        <span class="n">newidx</span> <span class="o">=</span> <span class="p">[</span><span class="n">asymidx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span><span class="p">):</span>
+            <span class="n">new1</span> <span class="o">=</span> <span class="n">asu</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+            <span class="n">new1</span><span class="p">[:,</span> <span class="n">isidx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">idx_asu_to_sub</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)[</span><span class="n">i</span><span class="p">,</span> <span class="n">asu</span><span class="p">[:,</span> <span class="n">isidx</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">asu</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">new1</span><span class="p">)</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new1</span><span class="p">)</span>
+            <span class="n">newidx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">idx_asu_to_sub</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)[</span><span class="n">i</span><span class="p">,</span> <span class="n">asuidx</span><span class="p">])</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">newidx</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">newidx</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">th</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">newidx</span><span class="p">,</span> <span class="n">idx</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;bad newidx </span><span class="si">{</span><span class="n">newidx</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.apply_symmetry_scalar">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_scalar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_symmetry_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shapekind</span><span class="p">:</span> <span class="n">ShapeKind</span><span class="p">,</span> <span class="n">contig</span><span class="p">:</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">:</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span>
+        <span class="k">if</span> <span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">ONEDIM</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span><span class="p">):</span>
+                <span class="n">contig</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">N</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">contig</span><span class="p">[:</span><span class="n">N</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">TWODIM</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span><span class="p">):</span>
+                <span class="n">contig</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">N</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="n">N</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">contig</span><span class="p">[:</span><span class="n">N</span><span class="p">,</span> <span class="p">:</span><span class="n">N</span><span class="p">]</span>
+            <span class="c1"># for i in range(1, self.nsub - 1):</span>
+            <span class="c1"># contig[(i + 1) * N:(i + 2) * N, i * N:(i + 1) * N] = contig[N:2 * N, :N]</span>
+            <span class="c1"># contig[i * N:(i + 1) * N, (i + 1) * N:(i + 2) * N] = contig[:N, N:2 * N]</span>
+        <span class="k">return</span> <span class="n">contig</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.move_unsym_to_match_asu">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.move_unsym_to_match_asu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">move_unsym_to_match_asu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">moved</span><span class="p">,</span> <span class="n">move_all_nonprot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">move_unsym_with_asu</span><span class="p">:</span> <span class="k">return</span> <span class="n">moved</span>
+        <span class="n">tomove</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">munsym</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mnonprot</span> <span class="k">if</span> <span class="n">move_all_nonprot</span> <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># ipd.icv(move_all_nonprot)</span>
+        <span class="c1"># ipd.icv(self.munsym)</span>
+        <span class="c1"># ipd.icv(self.mnonprot)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">th</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">tomove</span><span class="p">):</span> <span class="k">return</span> <span class="n">moved</span>
+        <span class="n">origasu</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">masu</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">movedasu</span> <span class="o">=</span> <span class="n">moved</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">masu</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">unsym</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="n">tomove</span><span class="p">]</span>
+        <span class="c1"># ipd.icv(origasu.shape, movedasu.shape, orig.shape, moved.shape)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unsym</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">origasu</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">th</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">origasu</span><span class="p">,</span> <span class="n">movedasu</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>
+            <span class="n">rms</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">xfit</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">rmsfit</span><span class="p">(</span><span class="n">origasu</span><span class="p">,</span> <span class="n">movedasu</span><span class="p">)</span>
+            <span class="n">moved</span><span class="p">[</span><span class="n">tomove</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="n">xfit</span><span class="p">,</span> <span class="n">unsym</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rms</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">moved</span><span class="p">)</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">rms</span><span class="p">)</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">unsym</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">)</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+                <span class="c1"># ipd.showme(origasu)</span>
+                <span class="c1"># ipd.showme(moveasu)</span>
+                <span class="k">assert</span> <span class="n">rms</span> <span class="o">&lt;</span> <span class="mf">1e-3</span>
+        <span class="k">return</span> <span class="n">moved</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.to_contiguous">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.to_contiguous">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_contiguous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">thing</span><span class="p">,</span>
+                      <span class="n">matchpair</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">sympair_protein_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="s1">&#39;th.Tensor&#39;</span><span class="p">,</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">make_contiguous</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">)</span>
+        <span class="n">adapted</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span>
+        <span class="n">ctg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">contiguous</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">adapted</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="n">ctg</span> <span class="o">=</span> <span class="n">ctg</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">SPARSE</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="o">.</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="o">.</span><span class="n">val</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;bad len </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="o">.</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="o">.</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">return</span> <span class="n">adapted</span><span class="p">,</span> <span class="n">adapted</span><span class="o">.</span><span class="n">val</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">to_contiguous</span><span class="p">(</span><span class="n">adapted</span><span class="o">.</span><span class="n">idx</span><span class="p">)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nasu</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">ONEDIM</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad len </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">if</span> <span class="n">sympair_protein_only</span> <span class="ow">and</span> <span class="n">matchpair</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">adapted</span><span class="p">,</span> <span class="n">adapted</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span>
+            <span class="k">return</span> <span class="n">adapted</span><span class="p">,</span> <span class="n">adapted</span><span class="p">[</span><span class="n">ctg</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nasu</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">TWODIM</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sympair_protein_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">adapted</span><span class="p">,</span> <span class="n">adapted</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad len </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">adapted</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cartesian_prod</span><span class="p">(</span><span class="n">ctg</span><span class="p">,</span> <span class="n">ctg</span><span class="p">)</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ctg</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctg</span><span class="p">),</span> <span class="o">*</span><span class="n">adapted</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">return</span> <span class="n">adapted</span><span class="p">,</span> <span class="n">adapted</span><span class="p">[</span><span class="n">idx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nasu</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SymManager.to_contiguous: unknown thing </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.fill_from_contiguous">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.fill_from_contiguous">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fill_from_contiguous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                             <span class="n">thing</span><span class="p">,</span>
+                             <span class="n">orig</span><span class="p">,</span>
+                             <span class="n">contig</span><span class="p">,</span>
+                             <span class="n">matchpair</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">sympair_protein_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">:</span>
+        <span class="n">ctg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">contiguous</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="n">ctg</span> <span class="o">=</span> <span class="n">ctg</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fill_from_contiguous</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">SPARSE</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">val</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">to_contiguous</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">idx</span><span class="p">)]</span> <span class="o">=</span> <span class="n">contig</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">ONEDIM</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sympair_protein_only</span> <span class="ow">and</span> <span class="n">matchpair</span><span class="p">:</span>
+                <span class="n">new</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">]</span> <span class="o">=</span> <span class="n">contig</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new</span><span class="p">[</span><span class="n">ctg</span><span class="p">]</span> <span class="o">=</span> <span class="n">contig</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">TWODIM</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sympair_protein_only</span><span class="p">:</span>
+                <span class="n">new</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Lsymprot</span><span class="p">]</span> <span class="o">=</span> <span class="n">contig</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cartesian_prod</span><span class="p">(</span><span class="n">ctg</span><span class="p">,</span> <span class="n">ctg</span><span class="p">)</span>
+                <span class="n">new</span><span class="p">[</span><span class="n">idx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">contig</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">contig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.extract">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.extract">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the asu from an object.</span>
+
+<span class="sd">        This should basically be the inverse of __call__. residues not</span>
+<span class="sd">        involved with symmetry are included</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">skip_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">skip_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">skip_keys</span><span class="p">:</span> <span class="k">return</span> <span class="n">thing</span>
+        <span class="k">if</span> <span class="n">thing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># ipd.icv(&#39;extract&#39;, type(thing), kw.keys())</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sym_adapt</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">isasym</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">SEQUENCE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">thing</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="p">],</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">MAPPING</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">skip_keys</span><span class="o">=</span><span class="n">skip_keys</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">return</span> <span class="n">thing</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">ONEDIM</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">thing</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">TWODIM</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="p">[</span><span class="n">mask</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">mask</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]]</span>
+            <span class="c1"># ipd.icv(x.shape, mask.sum(), mask.shape, kw)</span>
+            <span class="k">return</span> <span class="n">thing</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">shapekind</span> <span class="o">==</span> <span class="n">ShapeKind</span><span class="o">.</span><span class="n">SPARSE</span><span class="p">:</span>
+            <span class="c1"># ipd.icv(mask.shape, mask)</span>
+            <span class="c1"># ipd.icv(thing.adapted.idx.shape)</span>
+            <span class="c1"># ipd.icv(thing.adapted.val.shape)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">val</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">is_not_index</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">!=</span> <span class="n">v</span>
+            <span class="c1"># ipd.icv(is_not_index)</span>
+            <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">val</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_not_index</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">idx_sym_to_asym</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)])</span>
+            <span class="c1"># ipd.icv(mask.shape, mask)</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[</span><span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">idx</span><span class="p">]</span>
+            <span class="c1"># ipd.icv(keep.shape, keep)</span>
+            <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">idx</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+            <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="o">.</span><span class="n">val</span><span class="p">[</span><span class="n">keep</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">thing</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">adapted</span><span class="p">)</span>
+
+            <span class="c1"># assert len(thing.adapted.idx) == 0, &#39;sparse not implemented yet&#39;</span>
+            <span class="c1"># return thing.orig</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SymManager.extract: unknown thing </span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.asym">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.asym">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">asym</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">masym</span><span class="p">,</span> <span class="n">asym</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.asu">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.asu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">asu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">masu</span><span class="p">,</span> <span class="n">asu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.symdims">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.symdims">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">symdims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;th.Tensor&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to guess which dimensions are symmetrical, could be 1 or 2.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">symdims</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">L</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dasym</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">Nasym</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dasym</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">symdims</span><span class="p">):</span> <span class="n">symdims</span> <span class="o">=</span> <span class="n">dasym</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symdims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span> <span class="n">symdims</span> <span class="o">=</span> <span class="n">symdims</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">symdims</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">natom</span> <span class="o">=</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symdims</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">symdims</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="ow">in</span> <span class="n">natom</span> <span class="ow">and</span> <span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">symdims</span> <span class="o">=</span> <span class="n">symdims</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">symdims</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.mark_symmetrical">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.mark_symmetrical">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mark_symmetrical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">__HAS_BEEN_SYMMETRIZED</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">args</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.is_symmetrical">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.is_symmetrical">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_symmetrical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__HAS_BEEN_SYMMETRIZED&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">th</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">L</span><span class="p">:</span> <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SymIndex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the idx of the symmetry managerm or a simple slice if</span>
+<span class="sd">        None.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># ipd.icv(self.opt.L,self.opt.Lasu,self.opt.nsub)</span>
+                <span class="n">L</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">L</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">Lasu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">nsub</span>
+                <span class="n">Lasu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">Lasu</span> <span class="ow">or</span> <span class="n">L</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">nsub</span>
+                <span class="n">nsub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">nsub</span> <span class="ow">or</span> <span class="n">L</span> <span class="o">//</span> <span class="n">Lasu</span>
+                <span class="c1"># ipd.icv(L,Lasu,nsub)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SymIndexType</span><span class="p">(</span><span class="n">nsub</span><span class="p">,</span> <span class="p">[(</span><span class="n">L</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Lasu</span> <span class="o">*</span> <span class="n">nsub</span><span class="p">)])</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span>
+
+    <span class="nd">@idx</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="n">SymIndex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the idx of the symmetry manager.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_idx</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SymmetryManager.set_idx">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.set_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SymIndexType</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SymIndexType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsub</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad L </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">L</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">kind</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;bad L </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.verify_index">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.verify_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span><span class="p">,</span> <span class="s1">&#39;SymmetryManager.idx is not set&#39;</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.sym_adapt">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.sym_adapt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sym_adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="n">isasym</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ipd.sym.sym_adapt.SymAdapt&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SymAdapt object with metadata about the symmetry of the</span>
+<span class="sd">        thing.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">sym_adapt</span><span class="o">.</span><span class="n">_sym_adapt</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">isasym</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_dummy_sym</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if this is a dummy symmetry manager.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="SymmetryManager.assert_symmetry_correct">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.assert_symmetry_correct">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assert_symmetry_correct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">symcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span> <span class="k">else</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.check">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.check">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assert_symmetry_correct</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.reset">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_keys</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symmsub</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.is_on_symaxis">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.is_on_symaxis">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_on_symaxis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">onaxis</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symid</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">onaxis</span>
+        <span class="n">onanyaxis</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">onanyaxis</span> <span class="o">|=</span> <span class="n">th</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">point_line_dist2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">onanyaxis</span><span class="p">:</span> <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">subsymid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;atom on axes and dont know which subsymid </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">symid</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symid</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+            <span class="k">if</span> <span class="n">axes</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+            <span class="n">onaxis</span> <span class="o">|=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">point_line_dist2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.001</span>
+        <span class="k">return</span> <span class="n">onaxis</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representation of the SymmetryManager.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ipd.sym.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(symid=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symid</span><span class="si">}</span><span class="s1">&quot;, idx=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if symmetry is currently enabled.</span>
+
+<span class="sd">        can be dynamic thru a run</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_dummy_sym</span><span class="p">,</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">sym_enabled</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">_in_rf2aa</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">rfsym_enabled</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">_in_rf2aa</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">rf_asym_only</span><span class="p">,</span>
+        <span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deepcopy the SymmetryManager.&quot;&quot;&quot;</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow checking if a key is in the SymmetryManager.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">symmRs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the symmetry matrices of the current symmsub.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symmRs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">symmsub</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allsymmRs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all symmetry matrices.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symmRs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">full_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_full_symmetry&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_symmetry</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">allsymmRs</span>
+
+<div class="viewcode-block" id="SymmetryManager.place_global_symmetry">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.place_global_symmetry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">place_global_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symcen_samp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_sample_range_or_float_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symcen</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2local</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">trans</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">symcen_samp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2global</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x2local</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x2local</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2global</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allframes</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x2local</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allframes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2global</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xasuinit</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">rot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">asurotzdeg</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">th</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">xasuinit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xasuinit</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">trans</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">asucen</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">xasuinit</span>
+        <span class="k">assert</span> <span class="n">th</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2local</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2global</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymmetryManager.apply_initial_offset">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.apply_initial_offset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_initial_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resym</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">radius</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;sym.radius parameter is opsolete&#39;</span><span class="p">)</span>
+        <span class="c1"># xnew[self.idx.asu] += self.asucenvec.to(dev).to(xnew.dtype) * self.opt.radius</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">debug300</span><span class="p">(</span><span class="s1">&#39;symoffset_begin&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">xnew</span><span class="p">,</span> <span class="n">dev</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">device</span>
+        <span class="k">assert</span> <span class="n">th</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dev</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2local</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2global</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+        <span class="n">xnew</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x2global</span><span class="p">,</span> <span class="n">xnew</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">debug300</span><span class="p">(</span><span class="s1">&#39;symoffset_toglobal&#39;</span><span class="p">,</span> <span class="n">xnew</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">xnew</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xasuinit</span><span class="p">,</span> <span class="n">xnew</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">debug300</span><span class="p">(</span><span class="s1">&#39;symoffset_asuinit&#39;</span><span class="p">,</span> <span class="n">xnew</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">xnew</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x2local</span><span class="p">,</span> <span class="n">xnew</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">debug300</span><span class="p">(</span><span class="s1">&#39;symoffset_tolocal&#39;</span><span class="p">,</span> <span class="n">xnew</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">xnew</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">resym</span> <span class="k">else</span> <span class="n">xnew</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">debug300</span><span class="p">(</span><span class="s1">&#39;symoffset_end&#39;</span><span class="p">,</span> <span class="n">xnew</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xnew</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span>
+
+    <span class="nd">@frames</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frames</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">frames</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad shape </span><span class="si">{</span><span class="n">frames</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">nsub</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SymmetryManager.recenter_by_chain">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager.recenter_by_chain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recenter_by_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">subunit_masks</span><span class="p">:</span>
+            <span class="n">tgtcom</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">xyzcom</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">xyz</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+=</span> <span class="n">tgtcom</span> <span class="o">-</span> <span class="n">xyzcom</span>
+        <span class="k">return</span> <span class="n">xyz</span></div>
+</div>
+
+
+<div class="viewcode-block" id="NullSymIndex">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.NullSymIndex">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NullSymIndex</span><span class="p">(</span><span class="n">SymIndex</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="C1SymmetryManager">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">C1SymmetryManager</span><span class="p">(</span><span class="n">SymmetryManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Basically a null symmetry manager, does not modify anything.&quot;&quot;&quot;</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;C1&#39;</span>
+    <span class="n">SymIndexType</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SymIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">NullSymIndex</span>
+
+<div class="viewcode-block" id="C1SymmetryManager.init">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager.init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a C1SymmetryManager.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">symid</span><span class="p">:</span> <span class="k">assert</span> <span class="n">symid</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;C1&#39;</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">opt</span> <span class="ow">or</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">get_sym_options</span><span class="p">(</span><span class="n">symid</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">nsub</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symmRs</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symmsub</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metasymm</span> <span class="o">=</span> <span class="p">[[</span><span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symmatrix</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">idx</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span></div>
+
+
+<div class="viewcode-block" id="C1SymmetryManager.apply_symmetry">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager.apply_symmetry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;no-op.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">xyz</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">pair</span>
+        <span class="k">return</span> <span class="n">xyz</span> <span class="k">if</span> <span class="n">pair</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">pair</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="C1SymmetryManager.asym">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager.asym">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">asym</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">thing</span></div>
+
+
+<div class="viewcode-block" id="C1SymmetryManager.asu">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager.asu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">asu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">thing</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_dummy_sym</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if this is a dummy symmetry manager.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return False if this is a dummy symmetry manager.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="C1SymmetryManager.copy_without_guideposts">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager.copy_without_guideposts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_without_guideposts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="C1SymmetryManager.copy_with_full_sym">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager.copy_with_full_sym">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_with_full_sym</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="C1SymmetryManager.copy_for_indep">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym_manager.html#ipd.sym.sym_manager.C1SymmetryManager.copy_for_indep">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_for_indep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+</div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sample_range_or_float_value</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span> <span class="k">return</span> <span class="n">inp</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad range </span><span class="si">{</span><span class="n">inp</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="n">inp</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

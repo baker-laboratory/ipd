@@ -1,0 +1,7 @@
+ipd.dev.code.inspect module
+===========================
+
+.. automodule:: ipd.dev.code.inspect
+   :members:
+   :show-inheritance:
+   :undoc-members:

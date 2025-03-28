@@ -1,0 +1,7 @@
+ipd.viz.viz\_helix module
+=========================
+
+.. automodule:: ipd.viz.viz_helix
+   :members:
+   :show-inheritance:
+   :undoc-members:

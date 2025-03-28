@@ -1,0 +1,7 @@
+ipd.sym.xtal.SymElem module
+===========================
+
+.. automodule:: ipd.sym.xtal.SymElem
+   :members:
+   :show-inheritance:
+   :undoc-members:

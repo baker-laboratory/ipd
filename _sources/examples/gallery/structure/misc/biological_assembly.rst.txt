@@ -1,0 +1,2 @@
+Test of sphinx gallery
+=========================

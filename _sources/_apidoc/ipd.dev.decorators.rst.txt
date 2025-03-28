@@ -1,0 +1,7 @@
+ipd.dev.decorators module
+=========================
+
+.. automodule:: ipd.dev.decorators
+   :members:
+   :show-inheritance:
+   :undoc-members:

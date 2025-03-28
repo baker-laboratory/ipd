@@ -1,0 +1,7 @@
+ipd.dev.metadata module
+=======================
+
+.. automodule:: ipd.dev.metadata
+   :members:
+   :show-inheritance:
+   :undoc-members:

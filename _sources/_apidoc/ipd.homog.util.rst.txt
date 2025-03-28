@@ -1,0 +1,7 @@
+ipd.homog.util module
+=====================
+
+.. automodule:: ipd.homog.util
+   :members:
+   :show-inheritance:
+   :undoc-members:

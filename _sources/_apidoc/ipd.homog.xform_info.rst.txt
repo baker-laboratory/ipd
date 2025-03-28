@@ -1,0 +1,7 @@
+ipd.homog.xform\_info module
+============================
+
+.. automodule:: ipd.homog.xform_info
+   :members:
+   :show-inheritance:
+   :undoc-members:

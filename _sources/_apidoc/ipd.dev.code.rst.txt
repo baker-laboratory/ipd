@@ -1,0 +1,19 @@
+ipd.dev.code package
+====================
+
+.. automodule:: ipd.dev.code
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.code.filter_python_output
+   ipd.dev.code.format_code
+   ipd.dev.code.gentest
+   ipd.dev.code.inspect
+   ipd.dev.code.typecheck

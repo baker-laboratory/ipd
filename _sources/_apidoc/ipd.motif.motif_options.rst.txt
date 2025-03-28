@@ -1,0 +1,7 @@
+ipd.motif.motif\_options module
+===============================
+
+.. automodule:: ipd.motif.motif_options
+   :members:
+   :show-inheritance:
+   :undoc-members:

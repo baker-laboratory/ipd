@@ -1,0 +1,16 @@
+ipd.dev.testing package
+=======================
+
+.. automodule:: ipd.dev.testing
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.testing.hypothesis_strats
+   ipd.dev.testing.pytest_util

@@ -1,0 +1,35 @@
+ipd package
+===========
+
+.. automodule:: ipd
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.atom
+   ipd.crud
+   ipd.dev
+   ipd.homog
+   ipd.motif
+   ipd.observer
+   ipd.pdb
+   ipd.protocol
+   ipd.sel
+   ipd.sym
+   ipd.tools
+   ipd.viz
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.bunch
+   ipd.project_config

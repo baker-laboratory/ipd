@@ -1,0 +1,24 @@
+ipd.pdb package
+===============
+
+.. automodule:: ipd.pdb
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.pdb.bbutil
+   ipd.pdb.chemical
+   ipd.pdb.pdbdump
+   ipd.pdb.pdbfetch
+   ipd.pdb.pdbfile
+   ipd.pdb.pdbmeta
+   ipd.pdb.pdbread
+   ipd.pdb.pisces
+   ipd.pdb.readstruct
+   ipd.pdb.viz_pdb

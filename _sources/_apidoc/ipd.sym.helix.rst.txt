@@ -1,0 +1,16 @@
+ipd.sym.helix package
+=====================
+
+.. automodule:: ipd.sym.helix
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.sym.helix.helix
+   ipd.sym.helix.helix_slide

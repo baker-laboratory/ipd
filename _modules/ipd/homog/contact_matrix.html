@@ -1,0 +1,907 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.homog.contact_matrix &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/homog/contact_matrix';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.homog.contact_matrix</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.homog.contact_matrix</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Efficient contact matrix processing for biological structure data.</span>
+
+<span class="sd">This module provides the :class:`ContactMatrixStack`, which enables fast spatial</span>
+<span class="sd">queries over a stack of symmetric residue-residue contact matrices. These matrices</span>
+<span class="sd">are commonly used to represent pairwise atomic or residue interactions across</span>
+<span class="sd">multiple structures (e.g., frames in a trajectory or members of an ensemble).</span>
+
+<span class="sd">Key features</span>
+<span class="sd">------------</span>
+
+<span class="sd">- Efficient prefix-sum accumulation for fast region-based queries</span>
+<span class="sd">- Fragment-based contact extraction with adjustable fragsize size and stride</span>
+<span class="sd">- Subset enumeration and summarization</span>
+<span class="sd">- Optional PyTorch acceleration for GPU computation</span>
+
+<span class="sd">Cumulative sums, 1D basics</span>
+<span class="sd">--------------------------</span>
+
+<span class="sd">ContactMatrixStack uses a precomputed 2D cumsum array for efficient region-based queries. To explain</span>
+<span class="sd">start with the 1D cumsum case. ``DATA`` is a 1D array and ``SUMS`` is the cumulative sum</span>
+<span class="sd">of ``DATA`` (``np.cumsum(DATA)``. If we want the sum of ``DATA[i:j]`` we can compute it as</span>
+<span class="sd">``SUMS[j] - SUMS[i]``.</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    Index:          0     1     2     3     4</span>
+<span class="sd">    DATA:         [ 2 ] [ 7 ] [ 1 ] [ 3 ] [ 5 ]</span>
+<span class="sd">                  \___________________________/</span>
+<span class="sd">    Cumulative</span>
+<span class="sd">    Sum (SUM):   [ 0 ] [ 2 ] [ 9 ] [ 10 ] [ 13 ] [ 18 ]</span>
+<span class="sd">    Index:         ^     ^     ^      ^      ^      ^</span>
+<span class="sd">                   0     1     2      3      4      5</span>
+<span class="sd">                 (think of SUM[4] = sum of DATA[:4])</span>
+
+<span class="sd">To find the sum of ``DATA[lb:ub]``, use ``SUM[ub] - SUM[lb]``. ``SUMS[ub]`` will be the sum of</span>
+<span class="sd">``DATA[:ub]`` and ``SUMS[lb]`` will be the sum of ``DATA[:lb]``. So, ``SUM[ub] - SUM[lb]`` will be</span>
+<span class="sd">the sum of ``DATA[lb:ub]``. The key observation is that ``SUM[ub]`` is the sum of elements ``DATA[0:ub]``, so it “overcounts” all elements up to ``lb``.    Subtracting ``SUM[lb]`` precisely</span>
+<span class="sd">removes that overcount, leaving just the slice from ``lb`` to ``ub``.</span>
+
+<span class="sd">Cumsum Performance Example</span>
+<span class="sd">--------------------------</span>
+<span class="sd">Setup</span>
+
+<span class="sd">&gt;&gt;&gt; import numpy as np</span>
+<span class="sd">&gt;&gt;&gt; data = np.random.rand(500)</span>
+<span class="sd">&gt;&gt;&gt; sums = np.zeros(len(data)+1)</span>
+<span class="sd">&gt;&gt;&gt; sums[1:] = np.cumsum(data)  # yes, it&#39;s really called that... in torch too.</span>
+<span class="sd">&gt;&gt;&gt; slice_sums1 = np.zeros((len(data), len(data)))</span>
+<span class="sd">&gt;&gt;&gt; slice_sums2 = np.zeros((len(data), len(data)))</span>
+<span class="sd">&gt;&gt;&gt; timer = ipd.dev.Timer(&#39;Cumsum Perf Example&#39;)</span>
+
+<span class="sd">Compute all sums the brute force way</span>
+
+<span class="sd">&gt;&gt;&gt; for i in range(len(data)):</span>
+<span class="sd">...     for j in range(i, len(data)):</span>
+<span class="sd">...         slice_sums1[i, j] = data[i:j].sum()</span>
+<span class="sd">&gt;&gt;&gt; _ = timer.checkpoint(&#39;dumb way, summing explicitly like a barbarian&#39;)</span>
+
+<span class="sd">Compute all sums using cumsum</span>
+
+<span class="sd">&gt;&gt;&gt; for i in range(len(data)):</span>
+<span class="sd">...     for j in range(i, len(data)):</span>
+<span class="sd">...         slice_sums2[i, j] = sums[j] - sums[i]</span>
+<span class="sd">&gt;&gt;&gt; _ = timer.checkpoint(&#39;kinda smarter way using cumsum&#39;)</span>
+
+<span class="sd">Compute all sums using cumsum without loops</span>
+
+<span class="sd">&gt;&gt;&gt; slice_sums3 = np.maximum(0, sums[None, :-1] - sums[:-1, None])</span>
+<span class="sd">&gt;&gt;&gt; _ = timer.checkpoint(&#39;big brain way using cumsum and numpy broadcasting&#39;)</span>
+
+<span class="sd">Verify results</span>
+
+<span class="sd">&gt;&gt;&gt; np.allclose(slice_sums1, slice_sums2)</span>
+<span class="sd">True</span>
+<span class="sd">&gt;&gt;&gt; np.allclose(slice_sums1, slice_sums3)</span>
+<span class="sd">True</span>
+<span class="sd">&gt;&gt;&gt; # check runtimes, note how much faster cumsum + broadcasting is</span>
+<span class="sd">&gt;&gt;&gt; timer.report(timecut=0)  # doctest: +SKIP</span>
+<span class="sd">Timer.report: Cumsum Perf Example order=longest: summary: sum</span>
+<span class="sd">   0.19970 * dumb way, summing explicitly like a barbarian</span>
+<span class="sd">   0.03875 * kinda smarter way using cumsum</span>
+<span class="sd">   0.00078 * big brain way using cumsum and numpy broadcasting</span>
+
+<span class="sd">Cumulative sums, 2D</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Note how much faster the cumsum + broadcasting version was for the 1D version, almost 1000x faster.</span>
+<span class="sd">It makes an even bigger difference in the 2D case because the arrays tend to be much larger.</span>
+
+<span class="sd">.. figure:: ../_static/img/cumsum2d.png</span>
+<span class="sd">   :scale: 67 %</span>
+<span class="sd">   :alt: cumsum2d illustration</span>
+
+<span class="sd">   Illustration of data 2D with pink region to be &quot;summed&quot; and 2D cumulative sum array from which four points are needed to computs the &quot;sum:&quot; ``sum = CSUM[ub1,ub2] (red point) + CSUM[lb1,lb2] (green point) - CUSM[ub1,lb2] (blue point) - CSUM[lb1,lb2] (blue point``.</span>
+
+<span class="sd">The method :py:meth:`ContactMatrixStack.fragment_contact` uses this idea to compute the total contacts of all</span>
+<span class="sd">pairs of fragments of a given length using a 2D cumsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to</span>
+<span class="sd">compute every fragment pair, so stride is mainly useful as simple way to reduce redundancy.</span>
+
+<span class="sd">&gt;&gt;&gt; def fragment_contact(self, fragsize, stride=1):</span>
+<span class="sd">...   result = (</span>
+<span class="sd">...     self.cumsum[:, fragsize:         :stride, fragsize:         :stride] -</span>
+<span class="sd">...     self.cumsum[:, fragsize:         :stride,         :-fragsize:stride] -</span>
+<span class="sd">...     self.cumsum[:,         :-fragsize:stride, fragsize:         :stride] +</span>
+<span class="sd">...     self.cumsum[:,         :-fragsize:stride,         :-fragsize:stride] )</span>
+
+<span class="sd">This function retuns an ``S x M x N`` array containing the total contacts for all pairs of fragments for each contact matrix s in the stack: ``fragment1`` starting at m ending at ``m + fragsize``, to fragment2 starting at ``n`` and ending at ``n - fragsize``.</span>
+
+<span class="sd">The method :py:meth:`ContactMatrixStack.topk_fragment_contact_by_subset_summary` uses the</span>
+<span class="sd">arrays produced by</span>
+<span class="sd">:py:meth:`ContactMatrixStack.fragment_contact` to search for subsets of subunits that</span>
+<span class="sd">all &quot;multibody&quot; contacts by enumerating all subsets of contacting subunits, and taking</span>
+<span class="sd">the minimum number of contacts for each fragment pair. See the example below.</span>
+
+<span class="sd">ContactMatrixStack Example</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">Setup, reading in and positioning some data</span>
+
+<span class="sd">&gt;&gt;&gt; top7 = ipd.atom.body_from_file(&#39;1qys&#39;).centered</span>
+<span class="sd">&gt;&gt;&gt; dxh = ipd.atom.symbody_from_file(&#39;1dxh&#39;).centered</span>
+<span class="sd">&gt;&gt;&gt; dxh.contacts(top7).total_contacts  # lots, both are centered</span>
+<span class="sd">3033</span>
+<span class="sd">&gt;&gt;&gt; top7 = top7.slide_into_contact(dxh, [1, 0, 0])  # just touching</span>
+<span class="sd">&gt;&gt;&gt; top7 = top7.movedby([15,0,0]) # now way clashing, but lots of contacts</span>
+<span class="sd">&gt;&gt;&gt; contacts = dxh.contacts(top7, radius=6)</span>
+
+<span class="sd">Get best pair of fragment</span>
+
+<span class="sd">&gt;&gt;&gt; cmat = contacts.contact_matrix_stack()</span>
+<span class="sd">&gt;&gt;&gt; cmat</span>
+<span class="sd">ContactMatrixStack(shape: (4, 92, 335) subs: [ 2  6  8 10])</span>
+<span class="sd">&gt;&gt;&gt; # 4 contact matrices, thus top7 contacts 4 (of 12) subunit in dxh</span>
+<span class="sd">&gt;&gt;&gt; pair_frag_contacts = cmat.fragment_contact(fragsize=20, stride=5)</span>
+<span class="sd">&gt;&gt;&gt; isub, itop7, idxh = np.unravel_index(np.argmax(pair_frag_contacts), pair_frag_contacts.shape)</span>
+<span class="sd">&gt;&gt;&gt; best_ncontact = pair_frag_contacts[isub, itop7, idxh]</span>
+<span class="sd">&gt;&gt;&gt; f&#39;best frag pair is top7 resi {itop7}-{itop7+19} to dxh sub {cmat.subs[isub]} resi {idxh}-{idxh+19}&#39;</span>
+<span class="sd">&#39;best frag pair is top7 resi 4-23 to dxh sub 8 resi 0-19&#39;</span>
+
+<span class="sd">Get fragments pairs with multiple subunit contacts</span>
+
+<span class="sd">&gt;&gt;&gt; args = dict(fragsize=10, stride=4, k=20, summary=np.min)</span>
+<span class="sd">&gt;&gt;&gt; bestfrags = cmat.topk_fragment_contact_by_subset_summary(**args)</span>
+<span class="sd">&gt;&gt;&gt; list(bestfrags.index.keys())</span>
+<span class="sd">[(0, 2), (0,), (1,), (2,), (3,)]</span>
+
+<span class="sd">bestfrags.index and bestfrags.vals are dicts mapping a set of subunits to fragment pairs that have contacts involving all the subunits. The subsets ``(0,), (1,), (2,), (3,)`` contain only one subunit, but there is one subset (0, 2), indicating fragment pairs that contact both subunit 0 and subunit 2.</span>
+
+<span class="sd">&gt;&gt;&gt; f&#39;subunits in 1dxh {[int(cmat.subs[i]) for i in (0, 2)]}&#39;</span>
+<span class="sd">&#39;subunits in 1dxh [2, 8]&#39;</span>
+<span class="sd">&gt;&gt;&gt; bestfrags.index[0, 2].shape, bestfrags.vals[0,2].shape</span>
+<span class="sd">((2, 7), (7,))</span>
+<span class="sd">&gt;&gt;&gt; np.concatenate([bestfrags.index[0, 2].T, bestfrags.vals[0,2][:,None]], axis=1)</span>
+<span class="sd">array([[ 32, 112,  11],</span>
+<span class="sd">       [ 28, 112,   6],</span>
+<span class="sd">       [ 28, 116,   6],</span>
+<span class="sd">       [ 36,   0,   1],</span>
+<span class="sd">       [ 32,   0,   1],</span>
+<span class="sd">       [ 36,   4,   1],</span>
+<span class="sd">       [ 32,   4,   1]], dtype=int32)</span>
+
+<span class="sd">This tells us that top7 resi ``32-51`` has **at least** 11 contacts to *both*</span>
+<span class="sd">1dxh subunit 2 resi ``112-131`` *and* 1dxh subunit 8 resi ``112-131``. Lets get the atoms</span>
+<span class="sd">and see if it&#39;s legit.</span>
+
+<span class="sd">&gt;&gt;&gt; top7frag = top7.positioned_atoms[np.isin(top7.atoms.res_id, range(32, 52))]</span>
+<span class="sd">&gt;&gt;&gt; dxhfrag1 = dxh.bodies[2].positioned_atoms[np.isin(dxh.bodies[2].atoms.res_id, range(112, 132))]</span>
+<span class="sd">&gt;&gt;&gt; dxhfrag2 = dxh.bodies[8].positioned_atoms[np.isin(dxh.bodies[8].atoms.res_id, range(112, 132))]</span>
+<span class="sd">&gt;&gt;&gt; ipd.atom.dump(top7frag, &#39;/tmp/top7frag.cif&#39;)</span>
+<span class="sd">&gt;&gt;&gt; ipd.atom.dump(dxhfrag1, &#39;/tmp/dxhfrag1.cif&#39;)</span>
+<span class="sd">&gt;&gt;&gt; ipd.atom.dump(dxhfrag2, &#39;/tmp/dxhfrag2.cif&#39;)</span>
+<span class="sd">&gt;&gt;&gt; # ipd.showme(top7frag, name=&#39;top7&#39;, force=True)</span>
+<span class="sd">&gt;&gt;&gt; # ipd.showme(dxhfrag1, name=&#39;dxh1&#39;, force=True)</span>
+<span class="sd">&gt;&gt;&gt; # ipd.showme(dxhfrag2, name=&#39;dxh2&#39;, force=True)</span>
+<span class="sd">&gt;&gt;&gt; # ipd.showme(dxh, force=True)</span>
+<span class="sd">&gt;&gt;&gt; # ipd.showme(top7, force=True)</span>
+
+<span class="sd">.. figure:: ../_static/img/contact_matrix_topk_frag__example.png</span>
+<span class="sd">   :alt: Top7 / 1dxh fragment contact example</span>
+
+<span class="sd">   Screenshot from pymol (as launched by ipd.showme). These contacts are&#39;t super good, but this</span>
+<span class="sd">   is a totally arbitrary &quot;dock&quot; of top7 to 1dxh, not a real biological interface. (probably should</span>
+<span class="sd">   have used a real biological interface for this example...) There may also be slightly better</span>
+<span class="sd">   fragments if stride is set to 1.</span>
+
+<span class="sd">Note: :py:func:`ipd.viz.pymol_viz.showme` (just call ipd.showme) is super useful for visualizing all kinds of things, mainly in pymol.</span>
+<span class="sd"> It can show AtomArrays, Bodies, Symbodies, homogeneous transforms, stacks of xyz coords, symmetry</span>
+<span class="sd"> elements, crystal lattices, etc etc. All you need is pymol in your conda environment, and runnable.</span>
+
+<span class="sd">API docs</span>
+<span class="sd">--------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="n">th</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;torch&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContactMatrixStack">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.ContactMatrixStack">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">struct</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContactMatrixStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A stack of contact matrices with efficient region and fragment query operations.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        contacts (np.ndarray): An array of shape (N, L, L) representing N square contact matrices.</span>
+<span class="sd">        subs (np.ndarray): Optional metadata describing subsets (not used internally).</span>
+<span class="sd">        cumsum (np.ndarray): Internal cumulative sum array of shape (N, L+1, L+1).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from ipd.homog import ContactMatrixStack</span>
+<span class="sd">        &gt;&gt;&gt; contacts = np.tril(np.ones((1, 5, 5)))</span>
+<span class="sd">        &gt;&gt;&gt; cms = ContactMatrixStack(contacts)</span>
+<span class="sd">        &gt;&gt;&gt; cms.contacts.shape</span>
+<span class="sd">        (1, 5, 5)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">contacts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">subs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cumsum</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">subs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="c1"># assert self.contacts.shape[2] == self.contacts.shape[1], &#39;contacts must be square&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_cumsum</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ContactMatrixStack.update_cumsum">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.ContactMatrixStack.update_cumsum">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_cumsum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute and store cumulative sums of each contact matrix for fast region queries.</span>
+
+<span class="sd">        This method initializes a zero-padded prefix sum array with shape (N, L+1, L+1),</span>
+<span class="sd">        where N is the number of matrices and L is the matrix size.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">            &gt;&gt;&gt; from ipd.homog import ContactMatrixStack</span>
+<span class="sd">            &gt;&gt;&gt; contacts = np.ones((1, 3, 3))</span>
+<span class="sd">            &gt;&gt;&gt; cms = ContactMatrixStack(contacts)</span>
+<span class="sd">            &gt;&gt;&gt; cms.cumsum[0, 3, 3]</span>
+<span class="sd">            np.float64(9.0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactMatrixStack.ncontact">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.ContactMatrixStack.ncontact">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ncontact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">lb2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ub2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute total contact counts in rectangular subregions for each matrix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            lb (list of ranges): Lower bounds for rows (inclusive).</span>
+<span class="sd">            ub (list of ranges): Upper bounds for rows (exclusive).</span>
+<span class="sd">            lb2 (list of ranges, optional): Lower bounds for columns (defaults to lb).</span>
+<span class="sd">            ub2 (list of ranges, optional): Upper bounds for columns (defaults to ub).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Contact count per region, shape (N, len(lb[0]))</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">            &gt;&gt;&gt; contacts = np.ones((1, 20, 20))</span>
+<span class="sd">            &gt;&gt;&gt; cms = ipd.homog.ContactMatrixStack(contacts)</span>
+<span class="sd">            &gt;&gt;&gt; cms.ncontact(lb=10, ub=12, lb2=1, ub2=6)</span>
+<span class="sd">            np.float64(10.0)</span>
+<span class="sd">            &gt;&gt;&gt; cms.ncontact(lb=[0,3,5], ub=[5,8,10], lb2=[10,13,15], ub2=[15,18,20])</span>
+<span class="sd">            array([25., 25., 25.])</span>
+<span class="sd">            &gt;&gt;&gt; cms.ncontact(lb=[range(2, 8)], ub=[range(10, 16)])</span>
+<span class="sd">            array([[64., 64., 64., 64., 64., 64.]])</span>
+<span class="sd">            &gt;&gt;&gt; contacts = np.ones((3, 20, 20))  # stack of 3 now</span>
+<span class="sd">            &gt;&gt;&gt; cms = ipd.homog.ContactMatrixStack(contacts)</span>
+<span class="sd">            &gt;&gt;&gt; cms.ncontact(lb=[range( 2, 8), range(6)    , range(1, 7)],</span>
+<span class="sd">            ...              ub=[range(10,16), range(10,16), range(9,15)])</span>
+<span class="sd">            array([[ 64.,  64.,  64.,  64.,  64.,  64.],</span>
+<span class="sd">                   [100., 100., 100., 100., 100., 100.],</span>
+<span class="sd">                   [ 64.,  64.,  64.,  64.,  64.,  64.]])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">lb2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">lb2</span> <span class="o">=</span> <span class="n">lb</span>
+        <span class="k">if</span> <span class="n">ub2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">ub2</span> <span class="o">=</span> <span class="n">ub</span>
+        <span class="n">deref1</span><span class="p">,</span> <span class="n">deref2</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">isint</span><span class="p">(</span><span class="n">lb</span><span class="p">):</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">lb2</span><span class="p">,</span> <span class="n">ub2</span><span class="p">,</span> <span class="n">deref1</span> <span class="o">=</span> <span class="p">[</span><span class="n">lb</span><span class="p">],</span> <span class="p">[</span><span class="n">ub</span><span class="p">],</span> <span class="p">[</span><span class="n">lb2</span><span class="p">],</span> <span class="p">[</span><span class="n">ub2</span><span class="p">],</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">isint</span><span class="p">(</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">lb2</span><span class="p">,</span> <span class="n">ub2</span><span class="p">,</span> <span class="n">deref2</span> <span class="o">=</span> <span class="p">[</span><span class="n">lb</span><span class="p">],</span> <span class="p">[</span><span class="n">ub</span><span class="p">],</span> <span class="p">[</span><span class="n">lb2</span><span class="p">],</span> <span class="p">[</span><span class="n">ub2</span><span class="p">],</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">all_lte</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">all_lte</span><span class="p">(</span><span class="n">lb2</span><span class="p">,</span> <span class="n">ub2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;lb must be less than or equal to ub&#39;</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lb</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lb</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">ub2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">lb2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">lb2</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="n">B</span> <span class="o">-</span> <span class="n">C</span> <span class="o">+</span> <span class="n">D</span>
+        <span class="k">if</span> <span class="n">deref2</span><span class="p">:</span> <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">deref1</span><span class="p">:</span> <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ContactMatrixStack.fragment_contact">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact">[docs]</a>
+    <span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">timed</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fragment_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract fragment contact maps using a sliding fragsize.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fragsize (int): Fragment size.</span>
+<span class="sd">            stride (int): Distance between sliding windows.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Lower triangular matrix of shape (N, M, M), where</span>
+<span class="sd">                        M = floor((L - fragsize) / stride) + 1</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">            &gt;&gt;&gt; from ipd.homog import ContactMatrixStack</span>
+<span class="sd">            &gt;&gt;&gt; contacts = np.ones((1, 6, 6))</span>
+<span class="sd">            &gt;&gt;&gt; cms = ContactMatrixStack(contacts)</span>
+<span class="sd">            &gt;&gt;&gt; fc = cms.fragment_contact(fragsize=3, stride=1)</span>
+<span class="sd">            &gt;&gt;&gt; fc.shape</span>
+<span class="sd">            (1, 4, 4)</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            ncontact for detail on how the cumsum calculation works.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">::</span><span class="n">stride</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span> <span class="o">-</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">::</span><span class="n">stride</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="o">-</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span> <span class="o">+</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ContactMatrixStack.topk_fragment_contact_by_subset_summary">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary">[docs]</a>
+    <span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">timed</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">topk_fragment_contact_by_subset_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fragsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute top-k fragment contact values summarized across subsets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fragsize (int): Fragment size.</span>
+<span class="sd">            k (int): Number of top values to return.</span>
+<span class="sd">            summary (Callable): Summary function applied across subset (e.g., np.min).</span>
+<span class="sd">            stride (int): Stride for fragment sampling.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ipd.Bunch: Dictionary-like object with keys `vals` and `index` for each subset.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">            &gt;&gt;&gt; from ipd.homog import ContactMatrixStack</span>
+<span class="sd">            &gt;&gt;&gt; contacts = np.random.rand(3, 50, 50)</span>
+<span class="sd">            &gt;&gt;&gt; cms = ContactMatrixStack(contacts)</span>
+<span class="sd">            &gt;&gt;&gt; result = cms.topk_fragment_contact_by_subset_summary(fragsize=10, k=5, stride=5)</span>
+<span class="sd">            &gt;&gt;&gt; isinstance(result.index, dict)</span>
+<span class="sd">            True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">vals</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span>
+        <span class="n">nwindow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragment_contact</span><span class="p">(</span><span class="n">fragsize</span><span class="p">,</span> <span class="n">stride</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">subsetenum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">sub</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">summary</span><span class="p">(</span><span class="n">nwindow</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">sub</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">((</span><span class="o">-</span><span class="n">vals</span><span class="p">)</span><span class="o">.</span><span class="n">flat</span><span class="p">)[:</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">vals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="o">*</span> <span class="n">stride</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">][:,</span> <span class="n">vals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="n">vals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span>
+                <span class="k">del</span> <span class="n">result</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ContactMatrixStack.fragment_contact_torch">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact_torch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fragment_contact_torch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">):</span>
+        <span class="n">cumsum</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cumsum</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">cumsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">:,</span> <span class="n">fragsize</span><span class="p">:]</span> <span class="o">-</span> <span class="n">cumsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">]</span> <span class="o">-</span>
+                  <span class="n">cumsum</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">:]</span> <span class="o">+</span> <span class="n">cumsum</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactMatrixStack.topk_fragment_contact_by_subset_summary_torch">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary_torch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">topk_fragment_contact_by_subset_summary_torch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fragsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span> <span class="ow">or</span> <span class="n">th</span><span class="o">.</span><span class="n">min</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">vals</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span>
+        <span class="n">nwindow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragment_contact_torch</span><span class="p">(</span><span class="n">fragsize</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">subsetenum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">sub</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">summary</span><span class="p">(</span><span class="n">nwindow</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">sub</span><span class="p">)]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sub</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nwindow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">topk</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">vals</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">k</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">topk</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">vals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">topk</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sub</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of contact matrices.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Number of matrices in the stack.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">            &gt;&gt;&gt; from ipd.homog import ContactMatrixStack</span>
+<span class="sd">            &gt;&gt;&gt; cms = ContactMatrixStack(np.ones((3, 10, 10)))</span>
+<span class="sd">            &gt;&gt;&gt; len(cms)</span>
+<span class="sd">            3</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Human-readable string representation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Summary of matrix shape and optional subsets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ContactMatrixStack(shape: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1"> subs: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subs</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+
+
+<div class="viewcode-block" id="is_contact_matrix">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.is_contact_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_contact_matrix</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if an object is a valid 3D contact matrix stack.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg (Any): Object to check.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if it&#39;s a 3D square matrix with shape (N, L, L).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from ipd.homog import is_contact_matrix</span>
+<span class="sd">        &gt;&gt;&gt; is_contact_matrix(np.random.rand(2, 5, 5))</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="rand_contacts">
+<a class="viewcode-back" href="../../../_apidoc/ipd.homog.contact_matrix.html#ipd.homog.contact_matrix.rand_contacts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rand_contacts</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">cen</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">index_bias</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AI slop, very slow. Create a stack of m random symmetric contact matrices of size n x n.</span>
+
+<span class="sd">    smoothed noise field that biases the contact probability in adjacent cells.</span>
+<span class="sd">    For each off-diagonal cell (i,j), an effective probability is:</span>
+<span class="sd">    p_eff = clip(frac + index_bias * noise[i, j], 0, 1)</span>
+<span class="sd">    where the noise field is generated and smoothed for spatial correlation.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        n (int): Size of each matrix (n x n).</span>
+<span class="sd">        m (int): Number of matrices to generate.</span>
+<span class="sd">        frac (float): Base probability for an off-diagonal contact to be nonzero.</span>
+<span class="sd">        cen (float): Mean of the normal distribution for nonzero contacts.</span>
+<span class="sd">        std (float): Standard deviation of the normal distribution for nonzero contacts.</span>
+<span class="sd">        index_bias (float): A multiplier for a smoothed noise</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: A stack of m symmetric contact matrices with shape (m, n, n).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">matrices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="c1"># Generate a noise field in the range [-0.5, 0.5]</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
+        <span class="c1"># Smooth the noise with a simple averaging of immediate neighbors</span>
+        <span class="n">noise_smoothed</span> <span class="o">=</span> <span class="p">(</span><span class="n">noise</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span>
+                                          <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">/</span> <span class="mf">9.0</span>
+        <span class="c1"># Symmetrize the noise field to ensure the effective probabilities are symmetric</span>
+        <span class="n">noise_sym</span> <span class="o">=</span> <span class="p">(</span><span class="n">noise_smoothed</span> <span class="o">+</span> <span class="n">noise_smoothed</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="c1"># Initialize the matrix for this iteration.</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="c1"># Loop over the upper triangle (excluding the diagonal)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+                <span class="c1"># Compute the effective probability (clip between 0 and 1)</span>
+                <span class="n">effective_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">frac</span> <span class="o">+</span> <span class="n">index_bias</span> <span class="o">*</span> <span class="n">noise_sym</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">effective_prob</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
+                    <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                    <span class="n">mat</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1"># enforce symmetry</span>
+        <span class="c1"># Ensure the diagonal remains 0</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">matrices</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mat</span>
+
+    <span class="k">return</span> <span class="n">matrices</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

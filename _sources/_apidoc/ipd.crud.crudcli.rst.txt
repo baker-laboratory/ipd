@@ -1,0 +1,7 @@
+ipd.crud.crudcli module
+=======================
+
+.. automodule:: ipd.crud.crudcli
+   :members:
+   :show-inheritance:
+   :undoc-members:

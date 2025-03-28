@@ -1,0 +1,689 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.sym.xtal.xtalfit &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/sym/xtal/xtalfit';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../ipd.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../sym.html" class="nav-link">ipd.sym</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.sym.xtal.xtalfit</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.sym.xtal.xtalfit</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ft</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym.xtal.xtalcls</span><span class="w"> </span><span class="kn">import</span> <span class="n">Xtal</span>
+
+<div class="viewcode-block" id="npscorefunc">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalfit.html#ipd.sym.xtal.xtalfit.npscorefunc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">npscorefunc</span><span class="p">(</span><span class="n">xtal</span><span class="p">,</span> <span class="n">scom</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="n">dis2</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">com</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xtal</span><span class="o">.</span><span class="n">symelems</span><span class="p">,</span> <span class="n">scom</span><span class="p">)):</span>
+        <span class="n">newcom</span> <span class="o">=</span> <span class="n">com</span> <span class="o">+</span> <span class="n">state</span><span class="o">.</span><span class="n">cartshift</span>
+        <span class="n">newcen</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">cellsize</span>
+        <span class="n">dis2</span> <span class="o">=</span> <span class="n">dis2</span> <span class="o">+</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpointlinedis</span><span class="p">(</span><span class="n">newcom</span><span class="p">,</span> <span class="n">newcen</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dis2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">err</span></div>
+
+
+<div class="viewcode-block" id="torchscorefunc">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalfit.html#ipd.sym.xtal.xtalfit.torchscorefunc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">torchscorefunc</span><span class="p">(</span><span class="n">xtal</span><span class="p">,</span> <span class="n">scom</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>  <span class="c1"># type: ignore</span>
+    <span class="n">dis2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">grad</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">com</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xtal</span><span class="o">.</span><span class="n">symelems</span><span class="p">,</span> <span class="n">scom</span><span class="p">)):</span>
+        <span class="n">com</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">com</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">grad</span><span class="p">)</span>
+        <span class="n">cen</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">grad</span><span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">grad</span><span class="p">)</span>
+        <span class="n">newcom</span> <span class="o">=</span> <span class="n">com</span> <span class="o">+</span> <span class="n">cartshift</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">newcen</span> <span class="o">=</span> <span class="n">cen</span> <span class="o">*</span> <span class="n">cellsize</span>
+        <span class="n">dis2</span> <span class="o">=</span> <span class="n">dis2</span> <span class="o">+</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">thgeom</span><span class="o">.</span><span class="n">thpoint_line_dist2</span><span class="p">(</span><span class="n">newcom</span><span class="p">,</span> <span class="n">newcen</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dis2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">err</span></div>
+
+
+<div class="viewcode-block" id="fix_coords_to_xtal">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalfit.html#ipd.sym.xtal.xtalfit.fix_coords_to_xtal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_coords_to_xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;I213&quot;</span><span class="p">,</span> <span class="s2">&quot;I 21 3&quot;</span><span class="p">,</span> <span class="s2">&quot;I213_32&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xtalfit_I213</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;xtalfit: can&#39;t handle symmetry </span><span class="si">{</span><span class="n">sym</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="guess_cx_axis">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalfit.html#ipd.sym.xtal.xtalfit.guess_cx_axis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">guess_cx_axis</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">nfold</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nfold</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nfold</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">nfold</span>
+        <span class="n">nfold</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nfold</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ncheck</span> <span class="o">=</span> <span class="n">nfold</span> <span class="k">if</span> <span class="n">nfold</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="c1"># ipd.icv(coords.shape)</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="p">[</span><span class="n">ipd</span><span class="o">.</span><span class="n">hrmsfit</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">idx</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)]])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncheck</span><span class="p">)]</span>
+    <span class="n">rms</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">xform</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fit</span><span class="p">)</span>
+    <span class="n">axis</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">hel</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">axis_angle_cen_hel_of</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">xform</span><span class="p">))</span>
+    <span class="c1"># ipd.icv(hel)</span>
+    <span class="k">return</span> <span class="n">axis</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">cen</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="xtalfit_I213">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalfit.html#ipd.sym.xtal.xtalfit.xtalfit_I213">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xtalfit_I213</span><span class="p">(</span><span class="n">coords</span><span class="p">):</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">coords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">coords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="n">coords0</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">cacoords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="p">:,</span> <span class="nb">min</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">xtal</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">xtal</span><span class="o">.</span><span class="n">xtal</span><span class="p">(</span><span class="s2">&quot;I213_32&quot;</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">guess_cx_axis</span><span class="p">(</span><span class="n">cacoords</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="n">ax2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">guess_cx_axis</span><span class="p">(</span><span class="n">cacoords</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="c1"># ipd.icv(ax3, ax2)</span>
+    <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hdot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ax3</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax3</span> <span class="o">=</span> <span class="o">-</span><span class="n">ax3</span>
+    <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hdot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="o">-</span><span class="n">ax2</span>
+    <span class="n">xalign</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">halign2</span><span class="p">(</span><span class="n">ax3</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># ax2 = ipd.homog.hxform(xalign, ax2)</span>
+    <span class="c1"># ax3 = ipd.homog.hxform(xalign, ax3)</span>
+    <span class="n">cacoords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xalign</span><span class="p">,</span> <span class="n">cacoords</span><span class="p">)</span>
+
+    <span class="n">cen3</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hcom</span><span class="p">(</span><span class="n">cacoords</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">cen2</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hcom</span><span class="p">(</span><span class="n">cacoords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hcom</span><span class="p">(</span><span class="n">cacoords</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># ipd.icv(cen3, cen2)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="c1"># ((cen3[0] + x[0]) - (cen3[1] + x[1]))**2 + ((cen2[0] + x[0]) / 2 - (cen2[1] + x[1]))**2</span>
+        <span class="n">x3f</span> <span class="o">=</span> <span class="n">cen3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y3f</span> <span class="o">=</span> <span class="n">cen3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">x2f</span> <span class="o">=</span> <span class="n">cen2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y2f</span> <span class="o">=</span> <span class="n">cen2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x3f</span> <span class="o">-</span> <span class="n">y3f</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.75</span><span class="o">*</span><span class="n">x2f</span> <span class="o">-</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">y2f</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">scipy.optimize</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># method = &#39;Nelder-Mead&#39;</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;COBYLA&quot;</span>
+    <span class="c1"># method = &#39;Powell&#39;</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">cen3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">cen3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">xdelta</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">htrans</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span> <span class="o">-</span> <span class="n">cen3</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">cen2</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xdelta</span><span class="p">,</span> <span class="n">cen2</span><span class="p">)</span>
+    <span class="n">cen3</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xdelta</span><span class="p">,</span> <span class="n">cen3</span><span class="p">)</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xdelta</span> <span class="o">@</span> <span class="n">xalign</span><span class="p">,</span> <span class="n">coords0</span><span class="p">)</span>
+    <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">cen2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">cen2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">4</span>
+
+    <span class="k">return</span> <span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cell</span></div>
+
+
+<div class="viewcode-block" id="fix_xtal_to_coords">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalfit.html#ipd.sym.xtal.xtalfit.fix_xtal_to_coords">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_xtal_to_coords</span><span class="p">(</span><span class="n">xtal</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">domc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">domin</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">noshift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mcsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="s2">&quot;OK... this is a pretty inefficient way...&quot;</span>
+    <span class="n">coms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hcom</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">cellsize</span> <span class="o">=</span> <span class="n">cellsize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">cellsize</span> <span class="o">=</span> <span class="n">cellsize</span> <span class="k">if</span> <span class="n">cellsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">100.0</span>
+    <span class="c1"># ipd.icv(coms)</span>
+
+    <span class="n">scom</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">xtal</span><span class="o">.</span><span class="n">symelems</span><span class="p">:</span>
+        <span class="n">scom</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">nops</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">operators</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nops</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># ipd.icv(len(scom), n)</span>
+            <span class="n">scom</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coms</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">scom</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">nops</span>
+    <span class="c1"># ipd.icv(scom)</span>
+    <span class="n">elem0</span> <span class="o">=</span> <span class="n">xtal</span><span class="o">.</span><span class="n">symelems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># ipd.icv(scom)</span>
+
+    <span class="k">if</span> <span class="n">noshift</span><span class="p">:</span>
+        <span class="n">cartshift</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hvec</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cartshift</span> <span class="o">=</span> <span class="o">-</span><span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hvec</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpointlineclose</span><span class="p">(</span><span class="n">scom</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">elem0</span><span class="o">.</span><span class="n">cen</span><span class="p">,</span> <span class="n">elem0</span><span class="o">.</span><span class="n">axis</span><span class="p">))</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">domin</span>
+    <span class="k">assert</span> <span class="n">domc</span>
+
+    <span class="k">if</span> <span class="n">domc</span><span class="p">:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span>
+            <span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span>
+            <span class="c1"># cartshift=np.array([0., 0, 0, 0]),</span>
+            <span class="n">cartshift</span><span class="o">=</span><span class="n">cartshift</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">mc</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">MonteCarlo</span><span class="p">(</span><span class="n">ft</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">npscorefunc</span><span class="p">,</span> <span class="n">xtal</span><span class="p">,</span> <span class="n">scom</span><span class="p">),</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mcsteps</span><span class="p">):</span>
+            <span class="c1"># if i % 100 == 199:</span>
+            <span class="c1"># state = mc.beststate</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">cellsize</span> <span class="o">+=</span> <span class="n">step</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">noshift</span><span class="p">:</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">cartshift</span> <span class="o">+=</span> <span class="mf">0.02</span> <span class="o">*</span> <span class="n">step</span> <span class="o">*</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hrandvec</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="n">acccepted</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">try_this</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">acccepted</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">prev</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># print(state.cellsize, ipd.homog.hnorm(state.cartshift), mc.best)</span>
+                <span class="k">pass</span>
+                <span class="c1"># ipd.icv(mc.acceptfrac, step)</span>
+                <span class="c1"># if mc.acceptfrac &gt; 0.25: step *= 1.01</span>
+                <span class="c1"># else: step *= 0.99</span>
+
+        <span class="c1"># print(mc.best)</span>
+        <span class="c1"># print(mc.beststate)</span>
+        <span class="c1"># print(mc.acceptfrac)</span>
+
+        <span class="k">return</span> <span class="n">mc</span><span class="o">.</span><span class="n">beststate</span><span class="o">.</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">mc</span><span class="o">.</span><span class="n">beststate</span><span class="o">.</span><span class="n">cartshift</span>
+        <span class="k">assert</span> <span class="mi">0</span>
+
+        <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">beststate</span>
+
+        <span class="k">return</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">domin</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>  <span class="c1"># type: ignore</span>
+        <span class="c1"># torch.autograd.set_detect_anomaly(True)</span>
+
+        <span class="c1"># check</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">npscorefunc</span><span class="p">(</span><span class="n">xtal</span><span class="p">,</span> <span class="n">scom</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span><span class="o">=</span><span class="n">cartshift</span><span class="p">))</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">torchscorefunc</span><span class="p">(</span><span class="n">xtal</span><span class="p">,</span> <span class="n">scom</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+
+        <span class="n">cellsize</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cartshift</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">cartshift</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">torchscorefunc</span><span class="p">(</span><span class="n">xtal</span><span class="p">,</span> <span class="n">scom</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span><span class="p">)</span>
+            <span class="n">err</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">cellgrad</span> <span class="o">=</span> <span class="n">cellsize</span><span class="o">.</span><span class="n">grad</span>
+            <span class="n">cartshiftgrad</span> <span class="o">=</span> <span class="n">cartshift</span><span class="o">.</span><span class="n">grad</span>
+            <span class="n">mul</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">cellsize</span> <span class="o">=</span> <span class="p">(</span><span class="n">cellsize</span> <span class="o">-</span> <span class="n">mul</span><span class="o">*</span><span class="n">cellgrad</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">cartshift</span> <span class="o">=</span> <span class="p">(</span><span class="n">cartshift</span> <span class="o">-</span> <span class="n">mul</span><span class="o">*</span><span class="n">cartshiftgrad</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>  <span class="c1"># , cellsize, cartshift, cartshiftgrad)  # type: ignore</span>
+        <span class="k">assert</span> <span class="mi">0</span>
+
+        <span class="n">cellsize</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">cartshift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">besterr</span><span class="p">,</span> <span class="n">beststate</span> <span class="o">=</span> <span class="mf">9e9</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="n">lasterr</span><span class="p">,</span> <span class="n">laststate</span> <span class="o">=</span> <span class="mf">9e9</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+            <span class="n">offaxis</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">com</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xtal</span><span class="o">.</span><span class="n">symelems</span><span class="p">,</span> <span class="n">scom</span><span class="p">):</span>
+                <span class="n">offaxis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpointlinedis</span><span class="p">(</span><span class="n">com</span><span class="p">,</span> <span class="n">cellsize</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">offaxis</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">err</span> <span class="o">&lt;</span> <span class="n">besterr</span><span class="p">:</span>
+                <span class="n">besterr</span> <span class="o">=</span> <span class="n">err</span>
+                <span class="n">beststate</span> <span class="o">=</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span>
+            <span class="k">if</span> <span class="n">err</span> <span class="o">-</span> <span class="n">lasterr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">lasterr</span> <span class="o">=</span> <span class="n">err</span>
+                <span class="n">laststate</span> <span class="o">=</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cellsize</span><span class="p">,</span> <span class="n">cartshift</span> <span class="o">=</span> <span class="n">laststate</span>  <span class="c1"># type: ignore</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">step</span> <span class="o">*=</span> <span class="mf">0.99</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">besterr</span><span class="p">,</span> <span class="n">beststate</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">assert</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="analyze_xtal_asu_placement">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalfit.html#ipd.sym.xtal.xtalfit.analyze_xtal_asu_placement">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_xtal_asu_placement</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+
+    <span class="n">xtal</span> <span class="o">=</span> <span class="n">Xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+    <span class="n">cen</span> <span class="o">=</span> <span class="n">xtal</span><span class="o">.</span><span class="n">asucen</span><span class="p">(</span><span class="n">xtalasumethod</span><span class="o">=</span><span class="s2">&quot;closest_to_cen&quot;</span><span class="p">,</span> <span class="n">use_olig_nbrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">cen</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">side</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">samp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span>
+    <span class="n">samp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">samp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># ipd.icv(samp[:10])</span>
+    <span class="n">mindisxtal</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">samp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samp</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="n">ptsym</span> <span class="o">=</span> <span class="n">xtal</span><span class="o">.</span><span class="n">symcoords</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ontop</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># ipd.showme(ptsym * 5)</span>
+        <span class="c1"># assert 0</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span> <span class="o">-</span> <span class="n">ptsym</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># ipd.icv(delta)</span>
+        <span class="c1"># np.fill_diagonal(delta, 9e9)</span>
+        <span class="n">zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.000001</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zero</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">delta</span><span class="p">[</span><span class="n">zero</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9e9</span>
+        <span class="n">mindis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">delta</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mindis</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">:</span>
+            <span class="n">mindisxtal</span><span class="p">[</span><span class="n">mindis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samp</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">xtal</span><span class="o">.</span><span class="n">cellframes</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">mindisxtal</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>  <span class="c1"># type: ignore</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">mindisxtal</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">mindisxtal</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">ptset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pts</span><span class="p">):</span>
+            <span class="c1"># ipd.icv(pt)</span>
+            <span class="n">ptset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">xtal</span><span class="o">.</span><span class="n">coords_to_asucen</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="n">frames</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">)))</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">ptset</span><span class="p">:</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnorm</span><span class="p">(</span><span class="n">pt</span> <span class="o">-</span> <span class="n">cen</span><span class="p">),</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnorm</span><span class="p">(</span><span class="n">pt</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># assert 0</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">mindisxtal</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">mindisxtal</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="n">ptsym</span> <span class="o">=</span> <span class="n">xtal</span><span class="o">.</span><span class="n">symcoords</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ontop</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># ipd.showme(ptsym, name=f&#39;{k}&#39;)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mindisxtal</span><span class="p">[</span><span class="mf">0.288</span><span class="p">]):</span>
+        <span class="n">ptsym</span> <span class="o">=</span> <span class="n">xtal</span><span class="o">.</span><span class="n">symcoords</span><span class="p">(</span><span class="n">v</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ontop</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">showme</span><span class="p">(</span><span class="n">ptsym</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    <span class="c1"># assert 0</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

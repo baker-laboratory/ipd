@@ -1,0 +1,7 @@
+ipd.project\_config module
+==========================
+
+.. automodule:: ipd.project_config
+   :members:
+   :show-inheritance:
+   :undoc-members:

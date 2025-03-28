@@ -1,0 +1,7 @@
+ipd.atom.crops module
+=====================
+
+.. automodule:: ipd.atom.crops
+   :members:
+   :show-inheritance:
+   :undoc-members:

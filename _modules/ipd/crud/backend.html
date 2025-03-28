@@ -1,0 +1,1118 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.crud.backend &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/crud/backend';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.crud.backend</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.crud.backend</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">uuid4</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">fastapi</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pydantic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlmodel.pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">RelationshipInfo</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.crud.frontend</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpecBase</span>
+
+<span class="c1"># profiler= ipd.dev.timed</span>
+<span class="n">profiler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span>
+
+<span class="n">backend_type_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">pydantic</span><span class="o">.</span><span class="n">AnyUrl</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">pydantic</span><span class="o">.</span><span class="n">FilePath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">pydantic</span><span class="o">.</span><span class="n">NewPath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">pydantic</span><span class="o">.</span><span class="n">DirectoryPath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">Props</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="n">Attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span>
+<span class="n">list_default</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">sa_column</span><span class="o">=</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">JSON</span><span class="p">),</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+<span class="n">dict_default</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">sa_column</span><span class="o">=</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">JSON</span><span class="p">),</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+<span class="n">sqlmodel_field_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">Props</span><span class="p">:</span> <span class="n">list_default</span><span class="p">,</span> <span class="n">Attrs</span><span class="p">:</span> <span class="n">dict_default</span><span class="p">}</span>
+<span class="n">pydantic_field_args</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;default default_factory alias alias_priority validation_alias serialization_alias &#39;</span>
+                       <span class="s1">&#39;title field_title_generator description examples exclude discriminator deprecated &#39;</span>
+                       <span class="s1">&#39;json_schema_extra frozen validate_default repr init init_var kw_only&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+<div class="viewcode-block" id="to_sqlalchemy_types">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.to_sqlalchemy_types">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_sqlalchemy_types</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
+    <span class="c1"># if isinstance(thing, pydantic.fields.FieldInfo):</span>
+    <span class="c1">#     print(&#39;anno&#39;, thing.annotation)</span>
+    <span class="c1">#     if thing.annotation in sqlmodel_field_map:</span>
+    <span class="c1">#         return sqlmodel_field_map[thing.thing]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="k">return</span> <span class="p">[</span><span class="n">to_sqlalchemy_types</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="k">return</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">to_sqlalchemy_types</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">if</span> <span class="n">thing</span> <span class="ow">in</span> <span class="n">backend_type_map</span><span class="p">:</span> <span class="k">return</span> <span class="n">backend_type_map</span><span class="p">[</span><span class="n">thing</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">thing</span></div>
+
+
+<div class="viewcode-block" id="allfields">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.allfields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">allfields</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s1">&#39;model_fields&#39;</span><span class="p">):</span>
+            <span class="n">fields</span> <span class="o">|=</span> <span class="n">base</span><span class="o">.</span><span class="n">model_fields</span>
+    <span class="k">return</span> <span class="n">fields</span></div>
+
+
+<div class="viewcode-block" id="copy_model_cls">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.copy_model_cls">[docs]</a>
+<span class="nd">@profiler</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">copy_model_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">clsname</span><span class="p">,</span> <span class="n">renamed_attrs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">]:</span>
+    <span class="n">fields</span><span class="p">,</span> <span class="n">funcs</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">newattr</span><span class="p">)</span> <span class="k">for</span> <span class="n">newattr</span> <span class="ow">in</span> <span class="n">renamed_attrs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">renamed_attrs</span><span class="p">:</span> <span class="n">name</span> <span class="o">=</span> <span class="n">renamed_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">in</span> <span class="n">sqlmodel_field_map</span><span class="p">:</span>
+            <span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">sqlmodel_field_map</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">annotation</span><span class="p">]())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newfield</span> <span class="o">=</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pydantic_field_args</span><span class="p">})</span>
+            <span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">to_sqlalchemy_types</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">annotation</span><span class="p">),</span> <span class="n">newfield</span><span class="p">)</span>
+    <span class="n">newcls</span> <span class="o">=</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="n">clsname</span><span class="p">,</span> <span class="n">__validators__</span><span class="o">=</span><span class="n">funcs</span><span class="p">,</span> <span class="n">__base__</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span>
+    <span class="c1"># newcls.__annotations__ = cls.__annotations__</span>
+    <span class="k">return</span> <span class="n">newcls</span></div>
+
+
+<div class="viewcode-block" id="BackendError">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BackendError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="make_backend_model_base">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.make_backend_model_base">[docs]</a>
+<span class="nd">@profiler</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_backend_model_base</span><span class="p">(</span><span class="n">SQL</span><span class="p">):</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">BackendModelBase</span><span class="p">(</span><span class="n">SQL</span><span class="p">,</span> <span class="n">SpecBase</span><span class="p">):</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">uuid4</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">ghost</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">validated_with_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># print(field.annotation, self[name], type(self[name]))</span>
+                <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">in</span> <span class="p">(</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">]):</span>
+                    <span class="c1"># print(name, self[name])</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">UUID</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bad UUID string &quot;</span><span class="si">{</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+                            <span class="c1"># print(&#39;success&#39;)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">return</span> <span class="n">BackendModelBase</span></div>
+
+
+<div class="viewcode-block" id="process_specs">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.process_specs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_specs</span><span class="p">(</span><span class="n">specs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;exe&#39;</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="c1"># print(k, v.annotation, v.metadata, v)</span>
+            <span class="c1"># print(dir(v))</span>
+    <span class="c1"># assert 0</span>
+    <span class="k">return</span> <span class="n">specs</span></div>
+
+
+<div class="viewcode-block" id="BackendBase">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase">[docs]</a>
+<span class="nd">@profiler</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BackendBase</span><span class="p">:</span>
+    <span class="n">mountpoint</span> <span class="o">=</span> <span class="s1">&#39;ipd&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">models</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SpecBase</span><span class="p">],</span> <span class="n">SQL</span><span class="o">=</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">SQLModel</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__sqlmodel__</span> <span class="o">=</span> <span class="n">SQL</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_BackendModelBase</span> <span class="o">=</span> <span class="n">make_backend_model_base</span><span class="p">(</span><span class="n">SQL</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span><span class="o">.</span><span class="n">modelkind</span><span class="p">():</span> <span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__spec_models__</span> <span class="o">=</span> <span class="n">process_specs</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="n">backend_info</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">crud</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">make_backend_models</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">SQL</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__backend_models__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__remoteprops__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__trimspecs__</span> <span class="o">=</span> <span class="n">backend_info</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__spec_models__</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">mdl</span><span class="o">.</span><span class="n">__spec__</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__backend_models__</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">add_basic_backend_model_methods</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dbcls</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__backend_models__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dbcls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">dbcls</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
+        <span class="n">memkw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">connect_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;check_same_thread&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">poolclass</span><span class="o">=</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">StaticPool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s1">&#39;&lt;memory&gt;&#39;</span><span class="p">:</span> <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s1">&#39;sqlite://&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">memkw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;://&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">engine</span><span class="p">:</span> <span class="n">engine</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;sqlite:///</span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">router</span> <span class="o">=</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">APIRouter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">FastAPI</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_api_route</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__backend_models__</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/api/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/api/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/api/n</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;n</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/api/create/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;create_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/getattr/</span><span class="si">{kind}</span><span class="s1">/</span><span class="si">{id}</span><span class="s1">/</span><span class="si">{attr}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/setattr/</span><span class="si">{kind}</span><span class="s1">/</span><span class="si">{id}</span><span class="s1">/</span><span class="si">{attr}</span><span class="s1">/</span><span class="si">{attrkind}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/setattr/</span><span class="si">{kind}</span><span class="s1">/</span><span class="si">{id}</span><span class="s1">/</span><span class="si">{attr}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/remove/</span><span class="si">{kind}</span><span class="s1">/</span><span class="si">{id}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/remove/</span><span class="si">{kind}</span><span class="s1">/</span><span class="si">{id}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/gitstatus&#39;</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">git_status</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/gitstatus/</span><span class="si">{header}</span><span class="s1">/</span><span class="si">{footer}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">git_status</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_routes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">router</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initdb</span><span class="p">()</span>
+
+        <span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">validation_exception_handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clear_all_data_for_testing_only</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;sqlite:///&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__backend_models__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initdb</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BackendBase.add_defaults">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.add_defaults">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.initdb">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.initdb">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sqlmodel__</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.init_routes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.init_routes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.commit">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.commit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.iserror">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.iserror">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iserror</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">responses</span><span class="o">.</span><span class="n">Response</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thing</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.handle_error">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.handle_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">):</span>
+        <span class="n">exc_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;   &#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;!&#39;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">exc_str</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;!&#39;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;!&quot;</span><span class="o">*</span><span class="mi">80</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">exc_str</span><span class="si">}</span><span class="se">\n</span><span class="s1">STACK:</span><span class="se">\n</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="s2">&quot;!&quot;</span><span class="o">*</span><span class="mi">80</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">responses</span><span class="o">.</span><span class="n">JSONResponse</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">exc_str</span><span class="p">,</span>
+                                              <span class="n">status_code</span><span class="o">=</span><span class="n">fastapi</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.remove">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.remove">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">thing</span><span class="o">.</span><span class="n">ghost</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+        <span class="c1"># print(&#39;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! delete thing&#39;)</span>
+
+<div class="viewcode-block" id="BackendBase.actually_remove">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.actually_remove">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">actually_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">thing</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.getattr">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.getattr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__backend_models__</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">))</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="p">:</span> <span class="k">raise</span> <span class="n">ValueErrors</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;no </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s1"> id </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s1"> found in database&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">thingattr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thingattr</span><span class="p">,</span> <span class="s1">&#39;modelkind&#39;</span><span class="p">):</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sqlmodel__</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;db</span><span class="si">{</span><span class="n">thingattr</span><span class="o">.</span><span class="n">modelkind</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">thingattr</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">satype</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="k">if</span> <span class="n">satype</span> <span class="o">==</span> <span class="s1">&#39;JSON&#39;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thingattr</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">thingattr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">str_to_json</span><span class="p">(</span><span class="n">thingattr</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">thingattr</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.setattr">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.setattr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">Request</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attrkind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__backend_models__</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">))</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="p">:</span> <span class="k">raise</span> <span class="n">ValueErrors</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;no </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s1"> id </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s1"> found in database&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="c1"># body = asyncio.run(request.body()).decode()</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">((</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)):</span>  <span class="c1"># type: ignore</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="n">UUID</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attrkind</span><span class="p">:</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">body</span> <span class="o">==</span> <span class="s1">&#39;[]&#39;</span> <span class="k">else</span> <span class="n">body</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="p">[</span><span class="n">UUID</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">body</span><span class="p">]</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="p">[</span><span class="n">coro</span> <span class="k">for</span> <span class="n">coro</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;i</span><span class="si">{</span><span class="n">attrkind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span> <span class="n">body</span><span class="p">))]</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">thing</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
+                <span class="n">oktypes</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">UUID</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">UUID</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="n">thing</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">in</span> <span class="n">oktypes</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+        <span class="c1"># ipd.icv(thing, attr, body, getattr(thing, attr))</span>
+
+<div class="viewcode-block" id="BackendBase.select">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.select">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">_count</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">_single</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_ghost</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="c1"># print(&#39;select&#39;, cls, kw)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__backend_models__</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span>
+        <span class="n">selection</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">if</span> <span class="n">_count</span> <span class="k">else</span> <span class="bp">cls</span>
+        <span class="n">statement</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;not&#39;</span><span class="p">):</span> <span class="n">k</span><span class="p">,</span> <span class="n">op</span> <span class="o">=</span> <span class="n">k</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="n">operator</span><span class="o">.</span><span class="n">ne</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">v</span> <span class="o">=</span> <span class="n">UUID</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># print(&#39;select where&#39;, cls, k, v)</span>
+                <span class="n">statement</span> <span class="o">=</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">op</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">v</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                                                <span class="s1">&#39;userid&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">user</span><span class="p">))</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_ghost</span><span class="p">:</span> <span class="n">statement</span> <span class="o">=</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;ghost&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># noqa</span>
+        <span class="c1"># print(statement)</span>
+        <span class="c1"># if statement._get_embedded_bindparams():</span>
+        <span class="c1"># print({p.key: p.value for p in statement._get_embedded_bindparams()})</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_count</span><span class="p">:</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">one</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="n">_single</span><span class="p">:</span> <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.fix_date">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.fix_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fix_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;datecreated&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">datecreated</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">datecreated</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">datecreated</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;enddate&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">enddate</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">enddate</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">enddate</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.validate_and_add_to_db">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.validate_and_add_to_db">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_and_add_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fix_date</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">validated_with_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="BackendBase.fields_name_to_id">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.BackendBase.fields_name_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fields_name_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbcls</span><span class="p">:</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">modeldict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">modeldict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="k">return</span> <span class="n">modeldict</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modeldict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span> <span class="ow">or</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">):</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dbcls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="c1"># if ipd.dev.touuid(v): continue</span>
+            <span class="c1"># if ipd.dev.todatetime(v): continue</span>
+            <span class="n">anno</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">dbcls</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">[</span><span class="n">k</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__forward_arg__</span>
+            <span class="n">kind</span> <span class="o">=</span> <span class="n">anno</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">thing</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">)(</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">v</span><span class="p">))</span>
+            <span class="n">modeldict</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">del</span> <span class="n">modeldict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="c1"># ipd.icv(k, v, thing.id)</span>
+        <span class="k">return</span> <span class="n">modeldict</span></div>
+</div>
+
+
+<div class="viewcode-block" id="fields_uuidstr_to_id">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.fields_uuidstr_to_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fields_uuidstr_to_id</span><span class="p">(</span><span class="n">vals</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="k">return</span> <span class="n">vals</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vals</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">uid</span> <span class="o">:=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">touuid</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span>
+            <span class="k">del</span> <span class="n">vals</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">vals</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uid</span>
+    <span class="k">return</span> <span class="n">vals</span></div>
+
+
+<div class="viewcode-block" id="add_basic_backend_model_methods">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.add_basic_backend_model_methods">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_basic_backend_model_methods</span><span class="p">(</span><span class="n">backendcls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Autogen getter methods.</span>
+
+<span class="sd">    Yes, this is better than lots of boilerplate functions that must be</span>
+<span class="sd">    kept in sync. Any name or name suffixed with &#39;s&#39; that is in</span>
+<span class="sd">    clientmodels, above, will get /name from the server and turn the</span>
+<span class="sd">    result(s) into the appropriate client model type, list of such types</span>
+<span class="sd">    for plural, or None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">_name</span><span class="p">,</span> <span class="n">_dbcls</span> <span class="ow">in</span> <span class="n">backendcls</span><span class="o">.</span><span class="n">__backend_models__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">make_basic_backend_model_methods_closure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_name</span><span class="p">,</span> <span class="n">dbcls</span><span class="o">=</span><span class="n">_dbcls</span><span class="p">):</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+                <span class="c1"># model = dbcls.parse_obj(model)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">fields_uuidstr_to_id</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields_name_to_id</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="n">model</span> <span class="o">=</span> <span class="n">dbcls</span><span class="p">(</span><span class="o">**</span><span class="n">model</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_and_add_to_db</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dbcls</span><span class="o">.</span><span class="n">__sibling_models__</span><span class="p">:</span>
+                        <span class="n">kw</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">id</span>
+                        <span class="k">del</span> <span class="n">kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">dbcls</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="n">newid</span> <span class="o">=</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;create_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)(</span><span class="n">model</span><span class="p">))</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iserror</span><span class="p">(</span><span class="n">newid</span><span class="p">):</span> <span class="k">return</span> <span class="n">newid</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;i</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)(</span><span class="n">newid</span><span class="p">,</span> <span class="n">_ghost</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">Request</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="nb">int</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+                <span class="c1"># print(&#39;route&#39;, name, dbcls, kw, request, flush=True)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">request</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">_count</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">elif</span> <span class="n">kw</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">_count</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">_count</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="n">kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">request</span><span class="p">:</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">Request</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">response_model</span><span class="o">=</span><span class="n">Optional</span><span class="p">[</span><span class="n">dbcls</span><span class="p">]):</span>  <span class="c1"># type: ignore</span>
+                <span class="c1"># print(&#39;route&#39;, name, dbcls, kw, request, flush=True)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">request</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">_single</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">elif</span> <span class="n">kw</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">_single</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">request</span><span class="p">:</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">Request</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">response_model</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="n">dbcls</span><span class="p">]):</span>  <span class="c1"># type: ignore</span>
+                <span class="c1"># print(&#39;route&#39;, name, dbcls, kw, request, flush=True)</span>
+                <span class="c1"># ipd.dev.global_timer.checkpoint(&#39;multi&#39;)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">request</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="o">**</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="k">return</span> <span class="p">[</span><span class="n">single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">n</span><span class="p">))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">kw</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">kw</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">bcount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">bmulti</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="n">multi</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">dbcls</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">bsingle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="n">single</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dbcls</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">singleid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">dbcls</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BackendBase</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">id</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">_single</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">create</span><span class="p">,</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s1">&#39;i</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">singleid</span><span class="p">,</span>
+                <span class="n">_name</span><span class="p">:</span> <span class="n">single</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">:</span> <span class="n">multi</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;n</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;b</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">bsingle</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;b</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">:</span> <span class="n">bmulti</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;bn</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">:</span> <span class="n">bcount</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;new</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">new</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="c1"># return multi, single, singleid, count, create, new, bcount, bmulti, bsingle</span>
+
+        <span class="n">create</span><span class="p">,</span> <span class="n">funcs</span> <span class="o">=</span> <span class="n">make_basic_backend_model_methods_closure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">funcs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">fn</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">backendcls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="c1"># setattr(backendcls, attr, fn)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">backendcls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">profiler</span><span class="p">(</span><span class="n">fn</span><span class="p">))</span>
+
+        <span class="c1"># funcs = make_basic_backend_model_methods_closure()</span>
+        <span class="c1"># multi, single, singleid, count, create, new, bcount, bmulti, bsingle = funcs</span>
+        <span class="c1"># singleid.__qualname__ = f&#39;{backendcls.__name__}.i{_name}&#39;</span>
+        <span class="c1"># single.__qualname__ = f&#39;{backendcls.__name__}.{_name}&#39;</span>
+        <span class="c1"># multi.__qualname__ = f&#39;{backendcls.__name__}.{_name}s&#39;</span>
+        <span class="c1"># count.__qualname__ = f&#39;{backendcls.__name__}.n{_name}s&#39;</span>
+        <span class="c1"># bsingle.__qualname__ = f&#39;{backendcls.__name__}.b{_name}&#39;</span>
+        <span class="c1"># bmulti.__qualname__ = f&#39;{backendcls.__name__}.b{_name}s&#39;</span>
+        <span class="c1"># bcount.__qualname__ = f&#39;{backendcls.__name__}.bn{_name}s&#39;</span>
+        <span class="c1"># new.__qualname__ = f&#39;{backendcls.__name__}.new{_name}&#39;</span>
+        <span class="n">create</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">backendcls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.create_</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="c1"># setattr(backendcls, f&#39;i{_name}&#39;, singleid)</span>
+        <span class="c1"># setattr(backendcls, _name, single)</span>
+        <span class="c1"># setattr(backendcls, f&#39;{_name}s&#39;, multi)</span>
+        <span class="c1"># setattr(backendcls, f&#39;n{_name}s&#39;, count)</span>
+        <span class="c1"># setattr(backendcls, f&#39;b{_name}&#39;, bsingle)</span>
+        <span class="c1"># setattr(backendcls, f&#39;b{_name}s&#39;, bmulti)</span>
+        <span class="c1"># setattr(backendcls, f&#39;bn{_name}s&#39;, bcount)</span>
+        <span class="c1"># setattr(backendcls, f&#39;new{_name}&#39;, new)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">backendcls</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;create_</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">backendcls</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;create_</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">create</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_list_T">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.check_list_T">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_list_T</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">specbyname</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">rmfields</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">annotation</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+    <span class="c1"># print(kind, attr, args)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">specbyname</span> <span class="ow">or</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">refname</span><span class="p">,</span> <span class="n">link</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span> <span class="n">refname</span><span class="p">,</span> <span class="n">link</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;DEFAULT&#39;</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">refname</span><span class="p">,</span> <span class="n">link</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;DEFAULT&#39;</span>  <span class="c1"># type: ignore</span>
+        <span class="c1"># print(kind, attr, link, annotation)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">refname</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">refname</span> <span class="o">=</span> <span class="n">refname</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">links</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">spec</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">refname</span><span class="p">])),</span> <span class="n">link</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">kind</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">refname</span><span class="p">))</span>
+        <span class="n">rmfields</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="field_is_ref">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.field_is_ref">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">field_is_ref</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">BeforeValidator</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="field_is_ref_to_list">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.field_is_ref_to_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">field_is_ref_to_list</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span></div>
+
+
+<div class="viewcode-block" id="newSQL">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.newSQL">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">newSQL</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">SQLModel</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;NewBase&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">SQLModel</span><span class="p">,</span> <span class="p">),</span> <span class="p">{},</span> <span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="make_backend_models">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.backend.html#ipd.crud.backend.make_backend_models">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_backend_models</span><span class="p">(</span><span class="n">backendcls</span><span class="p">,</span> <span class="n">SQL</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">SQL</span> <span class="o">=</span> <span class="n">SQL</span> <span class="ow">or</span> <span class="n">newSQL</span><span class="p">()</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="n">backendcls</span><span class="o">.</span><span class="n">__spec_models__</span>
+    <span class="c1"># ipd.icv(models[&#39;method&#39;].model_fields)</span>
+    <span class="c1"># print(&#39;make_backend_models&#39;)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
+    <span class="n">anno</span> <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
+    <span class="n">rmfields</span> <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
+    <span class="n">keepattrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
+    <span class="n">links</span><span class="p">,</span> <span class="n">linktables</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">),</span> <span class="p">{}</span>
+    <span class="n">annospec</span> <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">get_all_annotations</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">specbyname</span> <span class="o">=</span> <span class="p">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="bp">cls</span> <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+    <span class="n">dbclsname</span> <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="s1">&#39;DB&#39;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">dbclsname</span> <span class="o">|=</span> <span class="p">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="s1">&#39;DB&#39;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+    <span class="n">specns</span> <span class="o">=</span> <span class="p">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="bp">cls</span> <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+    <span class="n">renamed_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">assert</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">spec</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="c1"># print(&#39;make_backend_models&#39;, kind, spec.__name__)</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="s1">&#39;props&#39;</span><span class="p">):</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="s1">&#39;props&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_default</span><span class="p">()</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="s1">&#39;props&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Props</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="s1">&#39;attrs&#39;</span><span class="p">):</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="s1">&#39;attrs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_default</span><span class="p">()</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="s1">&#39;attrs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Attrs</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span>
+            <span class="k">elif</span> <span class="n">field</span><span class="o">.</span><span class="n">metadata</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;UNIQUE&#39;</span><span class="p">]:</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="k">elif</span> <span class="n">field_is_ref</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+                <span class="c1"># ModelRefs id</span>
+                <span class="c1"># assert attr.endswith(&#39;id&#39;), f&#39;{spec.__name__} single ModelRef attr &quot;{attr}&quot; doesnt end wtih id&#39;</span>
+                <span class="k">if</span> <span class="n">field_is_ref_to_list</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+                    <span class="n">meta</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">],</span> <span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="c1"># print(&#39;Ref list&#39;, kind, attr, meta)</span>
+                    <span class="n">check_list_T</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">specbyname</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">rmfields</span><span class="p">)</span>
+                    <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">):</span>
+                    <span class="n">renamed_attrs</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">id&#39;</span>
+                    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">renamed_attrs</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">])</span>
+                    <span class="n">attr</span> <span class="o">=</span> <span class="n">renamed_attrs</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span>
+                <span class="n">refname</span><span class="p">,</span> <span class="n">refattr</span><span class="p">,</span> <span class="n">tagged</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">refname</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="c1"># refname, refattr, tagged = refname[0], f&#39;{refattr}{refname[1]}&#39;, True</span>
+                    <span class="n">refname</span><span class="p">,</span> <span class="n">refattr</span><span class="p">,</span> <span class="n">tagged</span> <span class="o">=</span> <span class="n">refname</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">refname</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">refname</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">refname</span> <span class="o">=</span> <span class="n">refname</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="n">refname</span> <span class="o">=</span> <span class="n">dbclsname</span><span class="p">[</span><span class="n">refname</span><span class="p">]</span>
+                <span class="n">optional</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">kw</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">dbclsname</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="o">==</span> <span class="n">refname</span><span class="p">:</span>
+                    <span class="n">kw</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sa_relationship_kwargs&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">remote_side</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dbclsname</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="si">}</span><span class="s1">.id&#39;</span><span class="p">)}</span>
+                <span class="k">elif</span> <span class="n">tagged</span><span class="p">:</span>
+                    <span class="n">kw</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sa_relationship_kwargs&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
+                <span class="n">reffield</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">refattr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="n">idfield</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">foreign_key</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">refname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">.id&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">optional</span><span class="p">:</span>
+                    <span class="n">idfield</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">foreign_key</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">refname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">.id&#39;</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">idfield</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span> <span class="k">if</span> <span class="n">optional</span> <span class="k">else</span> <span class="n">UUID</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">reffield</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">refname</span><span class="p">]</span> <span class="k">if</span> <span class="n">optional</span> <span class="k">else</span> <span class="n">refname</span>
+
+                <span class="c1"># print(attr)</span>
+                <span class="c1"># spec.__annotations__[attr] = UUID</span>
+                <span class="c1"># spec.__annotations__[attr[-2:]] = Optional[refname]</span>
+                <span class="c1"># spec.model_fields[attr] = pydantic.Field(annotation=UUID)</span>
+                <span class="c1"># spec.model_fields[attr[-2:]] = pydantic.Field(annotation=Optional[refname], default=None)</span>
+
+                <span class="c1"># if attr == &#39;pollid&#39;:</span>
+                <span class="c1"># print(kind, attr, anno[kind][attr], &#39;foreign_key&#39;, refname.lower() + &#39;.id&#39;)</span>
+                <span class="c1"># print(kind, attr[:-2], anno[kind][attr[:-2]], &#39;Rel. backpop&#39;, refattr)</span>
+                <span class="n">refkind</span> <span class="o">=</span> <span class="n">refname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;DB&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">refspec</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="n">refkind</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">refattr</span> <span class="ow">in</span> <span class="n">refspec</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
+                    <span class="c1"># print(&#39;    refattr&#39;, refkind, refattr, dbclsname[kind])</span>
+                    <span class="n">refmeta</span> <span class="o">=</span> <span class="n">refspec</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">refattr</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">refmeta</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">refmeta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">spec</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+                        <span class="n">err</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1"> linked </span><span class="si">{</span><span class="n">refkind</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">refattr</span><span class="si">}</span><span class="s1"> must be list[&quot;</span><span class="si">{</span><span class="n">refspec</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&quot;]&#39;</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+                <span class="c1"># print(refkind, refattr, list[dbclsname[kind]], &#39;Rel. backpop&#39;, attr[:-2])</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">refkind</span><span class="p">][</span><span class="n">refattr</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="n">attr</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">refkind</span><span class="p">][</span><span class="n">refattr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">dbclsname</span><span class="p">[</span><span class="n">kind</span><span class="p">]]</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s1">&#39;__origin__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">__origin__</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>  <span class="c1"># noqa</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_default</span><span class="p">()</span>
+                <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s1">&#39;__origin__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">__origin__</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>  <span class="c1"># noqa</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_list_T</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">specbyname</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">rmfields</span><span class="p">):</span>
+                    <span class="n">keepattrs</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+                    <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_default</span><span class="p">()</span>
+                    <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span>
+
+    <span class="c1"># create many to many relations</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="n">link</span><span class="p">),</span> <span class="n">ends</span> <span class="ow">in</span> <span class="n">links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ends</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">kind</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">refname</span> <span class="o">=</span> <span class="n">ends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">refcls</span> <span class="o">=</span> <span class="n">specbyname</span><span class="p">[</span><span class="n">refname</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">refcls</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">link</span> <span class="o">!=</span> <span class="s1">&#39;DEFAULT&#39;</span><span class="p">:</span>
+                <span class="n">ends</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">refcls</span><span class="o">.</span><span class="n">modelkind</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">link</span><span class="si">}{</span><span class="n">kind</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="n">models</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ends</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">refcls</span><span class="o">.</span><span class="n">modelkind</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="n">models</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ends</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;links of order != 2 not supported, </span><span class="si">{</span><span class="n">pair</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">ends</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">linkname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">pair</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Spec&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}{</span><span class="n">link</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s1">Link&#39;</span>
+        <span class="p">(</span><span class="n">kind1</span><span class="p">,</span> <span class="n">attr1</span><span class="p">,</span> <span class="n">refname1</span><span class="p">),</span> <span class="p">(</span><span class="n">kind2</span><span class="p">,</span> <span class="n">attr2</span><span class="p">,</span> <span class="n">refname2</span><span class="p">)</span> <span class="o">=</span> <span class="n">ends</span>
+        <span class="k">assert</span> <span class="n">refname1</span> <span class="ow">in</span> <span class="n">pair</span> <span class="ow">and</span> <span class="n">refname2</span> <span class="ow">in</span> <span class="n">pair</span>
+        <span class="n">linkbody</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attr1</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">:</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;db</span><span class="si">{</span><span class="n">kind1</span><span class="si">}</span><span class="s1">.id&#39;</span><span class="p">),</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attr2</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">:</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;db</span><span class="si">{</span><span class="n">kind2</span><span class="si">}</span><span class="s1">.id&#39;</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">linkanno</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attr1</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attr2</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">]}</span>
+        <span class="n">linkbody</span><span class="p">[</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">linkanno</span>
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;=================================== link =======================================&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="n">link</span><span class="p">,</span> <span class="n">ends</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">linkbody</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">kind1</span><span class="p">,</span> <span class="n">kind2</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">linkcls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">linkname</span><span class="p">,</span> <span class="p">(</span><span class="n">SQL</span><span class="p">,</span> <span class="p">),</span> <span class="n">linkbody</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">linktables</span><span class="p">[</span><span class="n">linkname</span><span class="p">]</span> <span class="o">=</span> <span class="n">linkcls</span>
+        <span class="n">kinds</span><span class="p">,</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">refnames</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ends</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">refname</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">kinds</span><span class="p">,</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">refnames</span><span class="p">)):</span>
+            <span class="n">otherkind</span><span class="p">,</span> <span class="n">otherattr</span> <span class="o">=</span> <span class="n">kinds</span><span class="p">[</span><span class="ow">not</span> <span class="n">i</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="ow">not</span> <span class="n">i</span><span class="p">]</span>
+            <span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="n">otherattr</span><span class="p">,</span> <span class="n">link_model</span><span class="o">=</span><span class="n">linkcls</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;sa_relationship_kwargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">primaryjoin</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dbclsname</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="si">}</span><span class="s1">.id==</span><span class="si">{</span><span class="n">linkname</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">,</span>
+                    <span class="n">secondaryjoin</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dbclsname</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="si">}</span><span class="s1">.id==</span><span class="si">{</span><span class="n">linkname</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">otherattr</span><span class="si">}</span><span class="s1">id&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">dbclsname</span><span class="p">[</span><span class="n">otherkind</span><span class="p">]]</span>
+            <span class="n">rmfields</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="c1"># print(f&#39;{kind} {attr} : {anno[kind][attr]} = Relationship({kw})&#39;)</span>
+
+    <span class="c1"># build the models</span>
+    <span class="n">backend_models</span><span class="p">,</span> <span class="n">trimspecs</span><span class="p">,</span> <span class="n">remote_props</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="s1">&#39;__layer__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">member</span><span class="o">.</span><span class="n">__layer__</span> <span class="o">==</span> <span class="s1">&#39;backend&#39;</span><span class="p">:</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">member</span><span class="o">.</span><span class="n">__wrapped__</span>
+                <span class="nb">delattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">trimspec</span> <span class="o">=</span> <span class="n">copy_model_cls</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">Trim&#39;</span><span class="p">,</span> <span class="n">renamed_attrs</span><span class="o">=</span><span class="n">renamed_attrs</span><span class="p">[</span><span class="n">kind</span><span class="p">])</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">model_fields</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">])</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span> <span class="o">-</span> <span class="p">{</span><span class="s1">&#39;ispublic&#39;</span><span class="p">,</span> <span class="s1">&#39;ghost&#39;</span><span class="p">,</span> <span class="s1">&#39;datecreated&#39;</span><span class="p">,</span> <span class="s1">&#39;telemetry&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">rmfields</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">keepattrs</span><span class="p">[</span><span class="n">kind</span><span class="p">]:</span> <span class="k">continue</span>
+            <span class="c1"># if attr[0] == &#39;_&#39;: continue</span>
+            <span class="c1"># print(kind, &#39;remove&#39;, attr)</span>
+            <span class="n">ano</span> <span class="o">=</span> <span class="n">trimspec</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">ano</span> <span class="o">=</span> <span class="n">ano</span> <span class="ow">or</span> <span class="n">trimspec</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">ano</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ano</span><span class="p">,</span> <span class="s1">&#39;__origin__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ano</span> <span class="o">==</span> <span class="nb">list</span> <span class="ow">or</span> <span class="n">ano</span> <span class="o">==</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span> <span class="ow">and</span> <span class="n">attr</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>  <span class="c1"># noqa</span>
+                <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">trimspec</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span> <span class="k">del</span> <span class="n">trimspec</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">trimspec</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span> <span class="nb">delattr</span><span class="p">(</span><span class="n">trimspec</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">trimspec</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">:</span> <span class="k">del</span> <span class="n">trimspec</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+        <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_sqlalchemy_types</span><span class="p">(</span><span class="n">anno</span><span class="p">[</span><span class="n">kind</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">dbclsname</span><span class="p">[</span><span class="n">kind</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">][</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">trimspec</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;      &#39;</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;    * &#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)[:</span><span class="mi">51</span><span class="p">]</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># print(&#39;   &#39;, [k for k in trimspec.__dict__.keys() if not k[0] == &#39;_&#39;], flush=True)</span>
+        <span class="n">dbcls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">dbclsname</span><span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="p">(</span><span class="n">backendcls</span><span class="o">.</span><span class="n">_BackendModelBase</span><span class="p">,</span> <span class="n">trimspec</span><span class="p">),</span> <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dbcls</span><span class="o">.</span><span class="n">__spec__</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">__backend_model__</span> <span class="o">=</span> <span class="n">dbcls</span>
+        <span class="n">dbcls</span><span class="o">.</span><span class="n">__sibling_models__</span> <span class="o">=</span> <span class="n">backend_models</span>
+        <span class="n">backend_models</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="o">=</span> <span class="n">dbcls</span>
+        <span class="n">trimspecs</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="o">=</span> <span class="n">trimspec</span>
+        <span class="n">remote_props</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">body</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">RelationshipInfo</span><span class="p">)}</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">backendcls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">],</span> <span class="n">dbcls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">dbcls</span><span class="p">)</span>
+
+    <span class="c1"># update namespace of @backend_method functions</span>
+    <span class="k">for</span> <span class="n">dbcls</span> <span class="ow">in</span> <span class="n">backend_models</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">dbcls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="s1">&#39;__layer__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">member</span><span class="o">.</span><span class="n">__layer__</span> <span class="o">==</span> <span class="s1">&#39;backend&#39;</span><span class="p">:</span>
+                <span class="n">member</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">backendcls</span><span class="o">.</span><span class="vm">__module__</span>
+                <span class="k">for</span> <span class="n">dbcls2</span> <span class="ow">in</span> <span class="n">backend_models</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="n">member</span><span class="o">.</span><span class="vm">__globals__</span><span class="p">[</span><span class="n">dbcls2</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">dbcls2</span>
+                    <span class="k">assert</span> <span class="n">dbcls2</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dbcls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="vm">__globals__</span>
+
+    <span class="k">return</span> <span class="n">backend_models</span><span class="p">,</span> <span class="n">remote_props</span><span class="p">,</span> <span class="n">trimspecs</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

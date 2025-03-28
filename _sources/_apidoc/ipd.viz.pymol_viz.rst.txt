@@ -1,0 +1,7 @@
+ipd.viz.pymol\_viz module
+=========================
+
+.. automodule:: ipd.viz.pymol_viz
+   :members:
+   :show-inheritance:
+   :undoc-members:

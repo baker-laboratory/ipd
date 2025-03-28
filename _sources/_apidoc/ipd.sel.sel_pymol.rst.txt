@@ -1,0 +1,7 @@
+ipd.sel.sel\_pymol module
+=========================
+
+.. automodule:: ipd.sel.sel_pymol
+   :members:
+   :show-inheritance:
+   :undoc-members:

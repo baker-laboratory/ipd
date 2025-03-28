@@ -1,0 +1,7 @@
+ipd.sym.xtal.xtalfit module
+===========================
+
+.. automodule:: ipd.sym.xtal.xtalfit
+   :members:
+   :show-inheritance:
+   :undoc-members:

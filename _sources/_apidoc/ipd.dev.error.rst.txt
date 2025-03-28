@@ -1,0 +1,7 @@
+ipd.dev.error module
+====================
+
+.. automodule:: ipd.dev.error
+   :members:
+   :show-inheritance:
+   :undoc-members:

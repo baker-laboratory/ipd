@@ -1,0 +1,7 @@
+ipd.homog.hgeom module
+======================
+
+.. automodule:: ipd.homog.hgeom
+   :members:
+   :show-inheritance:
+   :undoc-members:

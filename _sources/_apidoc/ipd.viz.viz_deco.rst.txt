@@ -1,0 +1,7 @@
+ipd.viz.viz\_deco module
+========================
+
+.. automodule:: ipd.viz.viz_deco
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.dev.iterables module
+========================
+
+.. automodule:: ipd.dev.iterables
+   :members:
+   :show-inheritance:
+   :undoc-members:

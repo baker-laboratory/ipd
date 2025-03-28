@@ -1,0 +1,7 @@
+ipd.viz.viz\_assembly module
+============================
+
+.. automodule:: ipd.viz.viz_assembly
+   :members:
+   :show-inheritance:
+   :undoc-members:

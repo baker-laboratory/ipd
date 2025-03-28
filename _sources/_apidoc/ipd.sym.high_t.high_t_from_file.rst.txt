@@ -1,0 +1,7 @@
+ipd.sym.high\_t.high\_t\_from\_file module
+==========================================
+
+.. automodule:: ipd.sym.high_t.high_t_from_file
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.dev.code.format\_code module
+================================
+
+.. automodule:: ipd.dev.code.format_code
+   :members:
+   :show-inheritance:
+   :undoc-members:

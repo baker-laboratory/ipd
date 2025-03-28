@@ -1,0 +1,42 @@
+ipd.sym package
+===============
+
+.. automodule:: ipd.sym
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.sym.helix
+   ipd.sym.high_t
+   ipd.sym.xtal
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.sym.guess_symmetry
+   ipd.sym.ipd_sym_manager
+   ipd.sym.permutations
+   ipd.sym.sym
+   ipd.sym.sym_adapt
+   ipd.sym.sym_builder
+   ipd.sym.sym_check
+   ipd.sym.sym_color
+   ipd.sym.sym_detect
+   ipd.sym.sym_factory
+   ipd.sym.sym_fitting
+   ipd.sym.sym_index
+   ipd.sym.sym_kind
+   ipd.sym.sym_manager
+   ipd.sym.sym_options
+   ipd.sym.sym_slice
+   ipd.sym.sym_util
+   ipd.sym.symframes

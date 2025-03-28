@@ -1,0 +1,7 @@
+ipd.sym.guess\_symmetry module
+==============================
+
+.. automodule:: ipd.sym.guess_symmetry
+   :members:
+   :show-inheritance:
+   :undoc-members:

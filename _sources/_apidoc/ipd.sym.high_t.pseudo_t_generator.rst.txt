@@ -1,0 +1,7 @@
+ipd.sym.high\_t.pseudo\_t\_generator module
+===========================================
+
+.. automodule:: ipd.sym.high_t.pseudo_t_generator
+   :members:
+   :show-inheritance:
+   :undoc-members:

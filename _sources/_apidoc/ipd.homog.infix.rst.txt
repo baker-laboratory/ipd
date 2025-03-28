@@ -1,0 +1,7 @@
+ipd.homog.infix module
+======================
+
+.. automodule:: ipd.homog.infix
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.motif.motif\_factory module
+===============================
+
+.. automodule:: ipd.motif.motif_factory
+   :members:
+   :show-inheritance:
+   :undoc-members:

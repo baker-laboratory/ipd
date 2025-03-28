@@ -1,0 +1,15 @@
+ipd.dev.cli package
+===================
+
+.. automodule:: ipd.dev.cli
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.cli.clibase

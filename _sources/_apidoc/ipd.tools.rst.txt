@@ -1,0 +1,23 @@
+ipd.tools package
+=================
+
+.. automodule:: ipd.tools
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.tools.citool
+   ipd.tools.codetool
+   ipd.tools.conda
+   ipd.tools.idetool
+   ipd.tools.ipdtool
+   ipd.tools.pkgtool
+   ipd.tools.run_tests_on_file
+   ipd.tools.symtool
+   ipd.tools.tool_util

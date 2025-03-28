@@ -1,0 +1,7 @@
+ipd.dev.tolerances module
+=========================
+
+.. automodule:: ipd.dev.tolerances
+   :members:
+   :show-inheritance:
+   :undoc-members:

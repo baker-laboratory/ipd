@@ -1,0 +1,6 @@
+﻿ipd.sym.sym\_detect.syminfo\_from\_atomslist
+============================================
+
+.. currentmodule:: ipd.sym.sym_detect
+
+.. autofunction:: syminfo_from_atomslist

@@ -1,0 +1,7 @@
+ipd.dev.code.filter\_python\_output module
+==========================================
+
+.. automodule:: ipd.dev.code.filter_python_output
+   :members:
+   :show-inheritance:
+   :undoc-members:

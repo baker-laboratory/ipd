@@ -1,0 +1,7 @@
+ipd.observer.observer module
+============================
+
+.. automodule:: ipd.observer.observer
+   :members:
+   :show-inheritance:
+   :undoc-members:

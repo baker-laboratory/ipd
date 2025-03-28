@@ -1,0 +1,7 @@
+ipd.sym.sym\_factory module
+===========================
+
+.. automodule:: ipd.sym.sym_factory
+   :members:
+   :show-inheritance:
+   :undoc-members:

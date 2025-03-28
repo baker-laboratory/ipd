@@ -1,0 +1,17 @@
+ipd.motif package
+=================
+
+.. automodule:: ipd.motif
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.motif.motif_factory
+   ipd.motif.motif_manager
+   ipd.motif.motif_options

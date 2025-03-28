@@ -1,0 +1,7 @@
+ipd.pdb.pdbfetch module
+=======================
+
+.. automodule:: ipd.pdb.pdbfetch
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,6 @@
+﻿ipd.sym.sym\_detect.syminfo\_get\_origin
+========================================
+
+.. currentmodule:: ipd.sym.sym_detect
+
+.. autofunction:: syminfo_get_origin

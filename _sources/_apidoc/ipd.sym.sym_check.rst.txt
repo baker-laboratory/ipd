@@ -1,0 +1,7 @@
+ipd.sym.sym\_check module
+=========================
+
+.. automodule:: ipd.sym.sym_check
+   :members:
+   :show-inheritance:
+   :undoc-members:

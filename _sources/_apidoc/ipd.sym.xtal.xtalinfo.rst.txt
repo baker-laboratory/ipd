@@ -1,0 +1,7 @@
+ipd.sym.xtal.xtalinfo module
+============================
+
+.. automodule:: ipd.sym.xtal.xtalinfo
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.dev.element\_wise module
+============================
+
+.. automodule:: ipd.dev.element_wise
+   :members:
+   :show-inheritance:
+   :undoc-members:

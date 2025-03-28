@@ -1,0 +1,7 @@
+ipd.dev.strings module
+======================
+
+.. automodule:: ipd.dev.strings
+   :members:
+   :show-inheritance:
+   :undoc-members:

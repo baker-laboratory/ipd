@@ -1,0 +1,7 @@
+ipd.crud.server module
+======================
+
+.. automodule:: ipd.crud.server
+   :members:
+   :show-inheritance:
+   :undoc-members:

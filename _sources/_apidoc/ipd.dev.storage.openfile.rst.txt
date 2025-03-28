@@ -1,0 +1,7 @@
+ipd.dev.storage.openfile module
+===============================
+
+.. automodule:: ipd.dev.storage.openfile
+   :members:
+   :show-inheritance:
+   :undoc-members:

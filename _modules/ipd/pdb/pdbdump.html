@@ -1,0 +1,736 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.pdb.pdbdump &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/pdb/pdbdump';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.pdb.pdbdump</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.pdb.pdbdump</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="n">all_pymol_chains</span> <span class="o">=</span> <span class="s2">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz&quot;</span> <span class="o">*</span> <span class="mi">100</span>
+
+<div class="viewcode-block" id="dumpstruct">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.dumpstruct">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dumpstruct</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">pdb</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">finfo</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">fname_extensions</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+    <span class="c1"># save</span>
+    <span class="k">if</span> <span class="n">finfo</span><span class="o">.</span><span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.pdb&quot;</span><span class="p">:</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">dumppdb</span><span class="p">(</span><span class="n">finfo</span><span class="o">.</span><span class="n">uncomp</span><span class="p">,</span> <span class="n">pdb</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">finfo</span><span class="o">.</span><span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.cif&quot;</span><span class="p">:</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">dumpcif</span><span class="p">(</span><span class="n">finfo</span><span class="o">.</span><span class="n">uncomp</span><span class="p">,</span> <span class="n">pdb</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dumpstruct doesn&#39;t know what to do with </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># compress</span>
+    <span class="k">if</span> <span class="n">finfo</span><span class="o">.</span><span class="n">compression</span> <span class="o">==</span> <span class="s2">&quot;.gz&quot;</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gzip -f </span><span class="si">{</span><span class="n">finfo</span><span class="o">.</span><span class="n">uncomp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">finfo</span><span class="o">.</span><span class="n">compression</span> <span class="o">==</span> <span class="s2">&quot;.xz&quot;</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;xz -f </span><span class="si">{</span><span class="n">finfo</span><span class="o">.</span><span class="n">uncomp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pdb_format_atom_df">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.pdb_format_atom_df">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pdb_format_atom_df</span><span class="p">(</span>
+    <span class="n">ai</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ri</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ch</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="n">rn</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;res&quot;</span><span class="p">,</span>
+    <span class="n">an</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;CA&quot;</span><span class="p">,</span>
+    <span class="n">bfac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">mdl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">elem</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">return</span> <span class="n">pdb_format_atom</span><span class="p">(</span>
+        <span class="n">ia</span><span class="o">=</span><span class="n">ai</span><span class="p">,</span>
+        <span class="n">ir</span><span class="o">=</span><span class="n">ri</span><span class="p">,</span>
+        <span class="n">c</span><span class="o">=</span><span class="n">ch</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>
+        <span class="n">rn</span><span class="o">=</span><span class="n">rn</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>
+        <span class="n">an</span><span class="o">=</span><span class="n">an</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">bfac</span><span class="p">,</span>
+        <span class="n">elem</span><span class="o">=</span><span class="n">elem</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>  <span class="c1"># type: ignore</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pdb_format_atom">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.pdb_format_atom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pdb_format_atom</span><span class="p">(</span>
+    <span class="n">ia</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">an</span><span class="o">=</span><span class="s2">&quot;CA&quot;</span><span class="p">,</span>
+    <span class="n">idx</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+    <span class="n">rn</span><span class="o">=</span><span class="s2">&quot;ALA&quot;</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="n">ir</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">insert</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">occ</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">elem</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+    <span class="n">xyz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">het</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">xform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">xyz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">rn</span> <span class="ow">in</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">aa1</span><span class="p">:</span>
+        <span class="n">rn</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">aa123</span><span class="p">[</span><span class="n">rn</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">all_pymol_chains</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">xform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">xform</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">format_str</span> <span class="o">=</span> <span class="n">_pdb_atom_record_format</span>
+    <span class="k">if</span> <span class="n">het</span><span class="p">:</span>
+        <span class="n">format_str</span> <span class="o">=</span> <span class="n">format_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ATOM  &quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ia</span> <span class="o">&gt;=</span> <span class="mi">100000</span><span class="p">:</span>
+        <span class="n">format_str</span> <span class="o">=</span> <span class="n">format_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ATOM  </span><span class="si">{ia:5d}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;ATOM </span><span class="si">{ia:6d}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ir</span> <span class="o">&gt;=</span> <span class="mi">10000</span><span class="p">:</span>
+        <span class="n">format_str</span> <span class="o">=</span> <span class="n">format_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{ir:4d}{insert:1s}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{ir:5d}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span></div>
+
+
+<span class="n">_dumppdb_seenit</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="dumppdb">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.dumppdb">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dumppdb</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="s2">&quot;ipd.pdb&quot;</span><span class="p">,</span> <span class="n">stuff</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">namereset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">addtimestamp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">_dumppdb_seenit</span>
+    <span class="k">if</span> <span class="n">stuff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;param &quot;stuff&quot; must be specified&#39;</span><span class="p">)</span>
+    <span class="n">stuff</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">check_torch_to_numpy</span><span class="p">(</span><span class="n">stuff</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">addtimestamp</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">datetimetag</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;.pdb.gz&quot;</span><span class="p">))</span> <span class="ow">or</span> <span class="n">out</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%04i</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">namereset</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">_dumppdb_seenit</span><span class="p">[</span><span class="n">out</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%04i</span><span class="s2">&quot;</span><span class="p">):</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;_</span><span class="si">%04i</span><span class="s2">.pdb&quot;</span>
+            <span class="n">_dumppdb_seenit</span><span class="p">[</span><span class="n">out</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">%</span> <span class="n">_dumppdb_seenit</span><span class="p">[</span><span class="n">out</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">stuff</span><span class="p">,</span> <span class="s2">&quot;dumppdb&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">stuff</span><span class="o">.</span><span class="n">dumppdb</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">stuff</span><span class="p">,</span> <span class="s2">&quot;dump_pdb&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">stuff</span><span class="o">.</span><span class="n">dump_pdb</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">dump_pdb_from_points</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">stuff</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dump_pdb_nchain_nres_natom">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump_pdb_nchain_nres_natom</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[],</span> <span class="n">nchain</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nres</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nresatom</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">shape</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># if nresatom == -1: nresatom = 1</span>
+        <span class="k">if</span> <span class="n">nchain</span> <span class="o">==</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">nresatom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">nresatom</span><span class="p">,</span> <span class="n">nresatom</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nchain</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">nchain</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">nres</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nres</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">nresatom</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">nresatom</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">nchain</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nres</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">nchain</span><span class="p">,</span> <span class="n">nres</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">nchain</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nresatom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">nchain</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nresatom</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nres</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nresatom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nres</span><span class="p">,</span> <span class="n">nresatom</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nchain</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">nchain</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">nchain</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nres</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nres</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">nres</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nresatom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">nresatom</span><span class="p">,</span> <span class="n">nresatom</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">nchain</span><span class="p">,</span> <span class="n">nres</span><span class="p">,</span> <span class="n">nresatom</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bad shape for dumppdb coords </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="dump_pdb_from_points">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.dump_pdb_from_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump_pdb_from_points</span><span class="p">(</span>
+    <span class="n">fname</span><span class="p">,</span>
+    <span class="n">pts</span><span class="p">,</span>
+    <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">anames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;CA&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="s2">&quot;CB&quot;</span><span class="p">],</span>
+    <span class="n">resnames</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">nchain</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nres</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nresatom</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">frames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dumppdbscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">spacegroup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">cellgeom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">skipval</span><span class="o">=</span><span class="mf">9999.999</span><span class="p">,</span>
+    <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
+    <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">chainstarts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">chainstarts</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]))</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+    <span class="c1"># ipd.icv(pts.shape)</span>
+    <span class="k">if</span> <span class="n">frames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">pts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">mask</span> <span class="o">==</span> <span class="s1">&#39;nan0&#39;</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">((</span><span class="n">pts</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pts</span><span class="p">)))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bad shape for points </span><span class="si">{</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">dump_pdb_nchain_nres_natom</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">nchain</span><span class="p">,</span> <span class="n">nres</span><span class="p">,</span> <span class="n">nresatom</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">nresatom</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">nres</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">pts</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>  <span class="c1"># assume nres not natom</span>
+            <span class="n">nresatom</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nresatom</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">nchain</span><span class="p">,</span> <span class="n">nres</span><span class="p">,</span> <span class="n">nresatom</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">anames</span> <span class="o">=</span> <span class="n">anames</span><span class="p">[:</span><span class="n">nresatom</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">resnames</span><span class="p">:</span>
+        <span class="n">resnames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ALA&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">nres</span>
+    <span class="k">if</span> <span class="n">nres</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nres</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">resnames</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">resnames</span><span class="p">)</span> <span class="o">==</span> <span class="n">nres</span>
+
+    <span class="k">if</span> <span class="n">spacegroup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cellgeom</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">full_cellgeom</span><span class="p">(</span><span class="n">spacegroup</span><span class="p">,</span> <span class="n">cellgeom</span><span class="p">)</span>
+        <span class="c1"># ipd.icv(cellgeom)</span>
+        <span class="n">sgpdb</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">sg_pymol_name</span><span class="p">(</span><span class="n">spacegroup</span><span class="p">)</span>
+        <span class="n">cryst1</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">cryst1_pattern_full</span> <span class="o">%</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">dumppdbscale</span> <span class="o">*</span> <span class="n">cellgeom</span><span class="p">[:</span><span class="mi">3</span><span class="p">]),</span> <span class="o">*</span><span class="n">cellgeom</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">sgpdb</span><span class="p">)</span>
+        <span class="n">header</span> <span class="o">+=</span> <span class="n">cryst1</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.999</span><span class="p">,</span> <span class="mf">9999.999</span><span class="p">)</span>
+    <span class="n">atomconut</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">filemode</span> <span class="o">=</span> <span class="n">filemode</span> <span class="ow">or</span> <span class="s2">&quot;w&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">filemode</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">))</span> <span class="k">else</span> <span class="n">fname</span>
+    <span class="c1"># with open(fname, filemode) as out:</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="c1"># for ic1, f in enumerate(pts):</span>
+    <span class="n">chain</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">chain</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">chain</span>
+    <span class="k">for</span> <span class="n">ichain</span><span class="p">,</span> <span class="n">chainpts</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pts</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ires</span><span class="p">,</span> <span class="n">respts</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chainpts</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ires</span> <span class="ow">in</span> <span class="n">chainstarts</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">chain</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="c1"># ipd.icv(&#39;newchain&#39;, ires, chain)</span>
+            <span class="k">for</span> <span class="n">iatom</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">respts</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">anames</span><span class="p">)]):</span>
+                <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">skipval</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">mask</span><span class="p">[</span><span class="n">ichain</span><span class="p">,</span> <span class="n">ires</span><span class="p">,</span> <span class="n">iatom</span><span class="p">]:</span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span>
+                        <span class="n">ia</span><span class="o">=</span><span class="n">atomconut</span><span class="p">,</span>
+                        <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                        <span class="n">ir</span><span class="o">=</span><span class="n">ires</span><span class="p">,</span>
+                        <span class="n">rn</span><span class="o">=</span><span class="n">resnames</span><span class="p">[</span><span class="n">ires</span><span class="p">],</span>
+                        <span class="n">an</span><span class="o">=</span><span class="n">anames</span><span class="p">[</span><span class="n">iatom</span><span class="p">],</span>
+                        <span class="n">c</span><span class="o">=</span><span class="n">chain</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                    <span class="n">atomconut</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="dump_pdb_from_ncac_points">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.dump_pdb_from_ncac_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump_pdb_from_ncac_points</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">nchain</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pts</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="c1"># print(pts.shape)</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nchain</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># print(pts.shape)</span>
+    <span class="c1"># assert 0</span>
+    <span class="c1"># if len(pts) &gt; 1:</span>
+    <span class="c1"># print(pts.shape)</span>
+    <span class="c1"># assert 0</span>
+    <span class="n">ia</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ichain</span><span class="p">,</span> <span class="n">chainpts</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pts</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chainpts</span><span class="p">):</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span><span class="n">ia</span> <span class="o">+</span> <span class="mi">0</span><span class="p">,</span> <span class="n">an</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ir</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                                    <span class="n">c</span><span class="o">=</span><span class="n">ichain</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span><span class="n">ia</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">an</span><span class="o">=</span><span class="s2">&quot;CA&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ir</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                                    <span class="n">c</span><span class="o">=</span><span class="n">ichain</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span><span class="n">ia</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">an</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ir</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                                    <span class="n">c</span><span class="o">=</span><span class="n">ichain</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="n">ia</span> <span class="o">+=</span> <span class="mi">3</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">c</span><span class="p">)</span></div>
+
+
+    <span class="c1"># assert 0</span>
+
+<div class="viewcode-block" id="dump_pdb_from_ncaco_points">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.dump_pdb_from_ncaco_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump_pdb_from_ncaco_points</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">nchain</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pts</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="c1"># print(pts.shape)</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nchain</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+    <span class="c1"># print(pts.shape)</span>
+    <span class="c1"># assert 0</span>
+    <span class="c1"># if len(pts) &gt; 1:</span>
+    <span class="c1"># print(pts.shape)</span>
+    <span class="c1"># assert 0</span>
+    <span class="n">ia</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ichain</span><span class="p">,</span> <span class="n">pc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pts</span><span class="p">):</span>
+            <span class="n">chain</span> <span class="o">=</span> <span class="n">all_pymol_chains</span><span class="p">[</span><span class="n">ichain</span><span class="p">]</span>
+            <span class="c1"># print(ichain, pc.shape, chain)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pc</span><span class="p">):</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span><span class="n">ia</span> <span class="o">+</span> <span class="mi">0</span><span class="p">,</span> <span class="n">rn</span><span class="o">=</span><span class="s2">&quot;GLY&quot;</span><span class="p">,</span> <span class="n">an</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ir</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">chain</span><span class="p">)</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span><span class="n">ia</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rn</span><span class="o">=</span><span class="s2">&quot;GLY&quot;</span><span class="p">,</span> <span class="n">an</span><span class="o">=</span><span class="s2">&quot;CA&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ir</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">chain</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span><span class="n">ia</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rn</span><span class="o">=</span><span class="s2">&quot;GLY&quot;</span><span class="p">,</span> <span class="n">an</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ir</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">chain</span><span class="p">)</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">pdb_format_atom</span><span class="p">(</span><span class="n">ia</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">rn</span><span class="o">=</span><span class="s2">&quot;GLY&quot;</span><span class="p">,</span> <span class="n">an</span><span class="o">=</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ir</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">chain</span><span class="p">)</span>
+                <span class="n">ia</span> <span class="o">+=</span> <span class="mi">4</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
+
+
+    <span class="c1"># assert 0</span>
+
+<span class="n">_pdb_atom_record_format</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ATOM  </span><span class="si">{ia:5d}</span><span class="s2"> </span><span class="si">{an:^4}{idx:^1}{rn:3s}</span><span class="s2"> </span><span class="si">{c:1}{ir:4d}{insert:1s}</span><span class="s2">   &quot;</span>
+                           <span class="s2">&quot;</span><span class="si">{x:8.3f}{y:8.3f}{z:8.3f}{occ:6.2f}{b:6.2f}</span><span class="s2">           </span><span class="si">{elem:1s}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="aname_to_elem">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbdump.html#ipd.pdb.pdbdump.aname_to_elem">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">aname_to_elem</span><span class="p">(</span><span class="n">aname</span><span class="p">):</span>
+    <span class="s2">&quot;return based on first occurance of element letter&quot;</span>
+    <span class="n">aname</span> <span class="o">=</span> <span class="n">aname</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="n">elems</span> <span class="o">=</span> <span class="s2">&quot;COHNS&quot;</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">aname</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">]</span>
+    <span class="n">poselem</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">p</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">elems</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">poselem</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

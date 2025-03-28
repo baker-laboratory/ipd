@@ -1,0 +1,7 @@
+ipd.dev.state.contextual\_state module
+======================================
+
+.. automodule:: ipd.dev.state.contextual_state
+   :members:
+   :show-inheritance:
+   :undoc-members:

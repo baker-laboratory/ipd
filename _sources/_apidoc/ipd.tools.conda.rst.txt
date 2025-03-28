@@ -1,0 +1,7 @@
+ipd.tools.conda module
+======================
+
+.. automodule:: ipd.tools.conda
+   :members:
+   :show-inheritance:
+   :undoc-members:

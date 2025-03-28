@@ -1,0 +1,7 @@
+ipd.viz.viz\_body module
+========================
+
+.. automodule:: ipd.viz.viz_body
+   :members:
+   :show-inheritance:
+   :undoc-members:

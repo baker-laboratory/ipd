@@ -1,0 +1,7 @@
+ipd.pdb.readstruct module
+=========================
+
+.. automodule:: ipd.pdb.readstruct
+   :members:
+   :show-inheritance:
+   :undoc-members:

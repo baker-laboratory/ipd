@@ -1,0 +1,19 @@
+ipd.atom package
+================
+
+.. automodule:: ipd.atom
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.atom.assembly
+   ipd.atom.atom_utils
+   ipd.atom.body
+   ipd.atom.components
+   ipd.atom.crops

@@ -1,0 +1,7 @@
+ipd.dev.instrumentation.timer module
+====================================
+
+.. automodule:: ipd.dev.instrumentation.timer
+   :members:
+   :show-inheritance:
+   :undoc-members:

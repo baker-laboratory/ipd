@@ -1,0 +1,7 @@
+ipd.viz.viz\_atoms module
+=========================
+
+.. automodule:: ipd.viz.viz_atoms
+   :members:
+   :show-inheritance:
+   :undoc-members:

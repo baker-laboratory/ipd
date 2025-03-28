@@ -1,0 +1,7 @@
+ipd.atom.assembly module
+========================
+
+.. automodule:: ipd.atom.assembly
+   :members:
+   :show-inheritance:
+   :undoc-members:

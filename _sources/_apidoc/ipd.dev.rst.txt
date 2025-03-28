@@ -1,0 +1,46 @@
+ipd.dev package
+===============
+
+.. automodule:: ipd.dev
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.cli
+   ipd.dev.code
+   ipd.dev.instrumentation
+   ipd.dev.qt
+   ipd.dev.state
+   ipd.dev.storage
+   ipd.dev.testing
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.contexts
+   ipd.dev.debug
+   ipd.dev.decorators
+   ipd.dev.element_wise
+   ipd.dev.error
+   ipd.dev.files
+   ipd.dev.format
+   ipd.dev.functional
+   ipd.dev.iterables
+   ipd.dev.meta
+   ipd.dev.metadata
+   ipd.dev.misc
+   ipd.dev.objinfo
+   ipd.dev.safe_eval
+   ipd.dev.serialization
+   ipd.dev.shell
+   ipd.dev.strings
+   ipd.dev.tolerances

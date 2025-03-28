@@ -1,0 +1,922 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.atom.body &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/atom/body';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.atom.body</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.atom.body</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module: ipd.atom.body</span>
+<span class="sd">=====================</span>
+
+<span class="sd">This module defines the Body class that represents a collection of atoms organized</span>
+<span class="sd">as a coherent structure. It provides methods for spatial operations such as clash</span>
+<span class="sd">and contact detection and supports transformation operations through homogeneous</span>
+<span class="sd">transforms (using the ipd.homog.hgeom module).</span>
+
+<span class="sd">Key features:</span>
+<span class="sd">  - Construction of Body objects from PDB files using helper functions (e.g., body_from_file).</span>
+<span class="sd">  - Efficient clash detection and contact checks between bodies and AtomArrays.</span>
+<span class="sd">  - Application of 4x4 homogeneous transformations to manipulate the spatial arrangement.</span>
+<span class="sd">  - Utilization of the highly efficient SphereBVH_double from hgeom, which can</span>
+<span class="sd">    deliver hundreds of times speedup for large, lightly contacting structures (e.g., virus capsids).</span>
+
+<span class="sd">Usage Examples:</span>
+<span class="sd">    &gt;&gt;&gt; from ipd import atom, hnumpy as h</span>
+<span class="sd">    &gt;&gt;&gt; # Create a Body from a PDB code using a helper function</span>
+<span class="sd">    &gt;&gt;&gt; b = atom.body_from_file(&#39;1byf&#39;).centered</span>
+<span class="sd">    &gt;&gt;&gt; # Apply a translation to the Body</span>
+<span class="sd">    &gt;&gt;&gt; T = h.trans([5, 0, 0])</span>
+<span class="sd">    &gt;&gt;&gt; b2 = h.xform(T, b)</span>
+<span class="sd">    &gt;&gt;&gt; # Check for a clash between the original and transformed bodies</span>
+<span class="sd">    &gt;&gt;&gt; b.hasclash(b2)</span>
+<span class="sd">    True</span>
+
+<span class="sd">Additional Examples:</span>
+<span class="sd">    &gt;&gt;&gt; # Apply a combined rotation and translation</span>
+<span class="sd">    &gt;&gt;&gt; T1 = h.trans([1, 2, 3])</span>
+<span class="sd">    &gt;&gt;&gt; T2 = h.rot([0, 0, 1], 45, [0, 0, 0])</span>
+<span class="sd">    &gt;&gt;&gt; b_transformed = h.xform(T1, T2, b)</span>
+<span class="sd">    &gt;&gt;&gt; contacts_new = b_transformed.contacts(b)</span>
+<span class="sd">    &gt;&gt;&gt; contacts_new.nuniq &gt; 10</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &gt;&gt;&gt; # Create another Body with a different pdb code and check for clashes</span>
+<span class="sd">    &gt;&gt;&gt; b3 = atom.body_from_file(&#39;1ql2&#39;).centered</span>
+<span class="sd">    &gt;&gt;&gt; b3.hasclash(b)</span>
+<span class="sd">    True</span>
+
+<span class="sd">.. note::</span>
+<span class="sd">    The SphereBVH_double bounding volume hierarchy used here is extremely efficient</span>
+<span class="sd">    for large symmetrical structures and is far superior in performance compared to more</span>
+<span class="sd">    traditional methods.</span>
+
+<span class="sd">.. seealso::</span>
+<span class="sd">    ipd.atom.components and ipd.atom.atom_utils for further atom-level operations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd.homog.hgeom</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">h</span>
+
+<span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">hgeom</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">hg</span>
+
+<span class="n">hg</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">maybeimport</span><span class="p">(</span><span class="s1">&#39;hgeom&#39;</span><span class="p">)</span>
+<span class="n">bs</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;biotite.structure&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="body_from_file">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.body_from_file">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">ft</span><span class="o">.</span><span class="n">lru_cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">body_from_file</span><span class="p">(</span>
+    <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">assembly</span><span class="o">=</span><span class="s1">&#39;largest&#39;</span><span class="p">,</span>
+    <span class="n">min_chain_atoms</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Body&#39;</span><span class="p">:</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">()</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">readatoms</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">assembly</span><span class="o">=</span><span class="n">assembly</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">addreduce</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;read atoms&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Body</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="symbody_from_file">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.symbody_from_file">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">ft</span><span class="o">.</span><span class="n">lru_cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">symbody_from_file</span><span class="p">(</span>
+    <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">assembly</span><span class="o">=</span><span class="s1">&#39;largest&#39;</span><span class="p">,</span>
+    <span class="n">components</span><span class="o">=</span><span class="s1">&#39;onlyone&#39;</span><span class="p">,</span>
+    <span class="n">min_chain_atoms</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">use_cif_xforms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;SymBody&#39;</span><span class="p">:</span>
+    <span class="n">atomslist</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">readatoms</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">chainlist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">assembly</span><span class="o">=</span><span class="n">assembly</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atomslist</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="n">asmx</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">atomslist</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">assembly_xforms</span>
+
+    <span class="k">if</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">use_cif_xforms</span> <span class="ow">and</span> <span class="s1">&#39;assembly_xforms&#39;</span> <span class="ow">in</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">atomslist</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">ic</span><span class="p">(</span><span class="n">asmx</span><span class="o">.</span><span class="n">_chainasu</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">find_components_by_seqaln_rmsfit</span><span class="p">(</span><span class="n">atomslist</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">process_components</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="c1"># ipd.icv(comp.frames[0][3], comp.frames[1][3])</span>
+        <span class="c1"># ipd.showme(h.xform(comp.frames[0],h.trans([1,3,10])) , xyzscale=4, weight=4,name=&#39;baz&#39;)</span>
+        <span class="c1"># ipd.showme(h.xform(comp.frames[1][0::2],h.trans([1,3,10])) , xyzscale=4, weight=4,name=&#39;bar&#39;)</span>
+        <span class="c1"># ipd.showme(h.xform(comp.frames[1][1::2],h.trans([1,3,10])) , xyzscale=4, weight=4,name=&#39;foo&#39;)</span>
+
+    <span class="k">if</span> <span class="n">components</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;merge&#39;</span><span class="p">,</span> <span class="s1">&#39;merge_unsafe&#39;</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">comp</span><span class="o">.</span><span class="n">frames</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">components</span> <span class="o">==</span> <span class="s1">&#39;merge&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">ipd</span><span class="o">.</span><span class="n">it</span><span class="o">.</span><span class="n">pairwise</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">frames</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">SymBody</span><span class="p">(</span><span class="n">Body</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">addreduce</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">atoms</span><span class="p">)),</span> <span class="n">comp</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">components</span> <span class="o">==</span> <span class="s1">&#39;onlyone&#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">which</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">components</span> <span class="o">==</span> <span class="s1">&#39;largest_monomer&#39;</span><span class="p">:</span>
+        <span class="n">which</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">components</span> <span class="o">==</span> <span class="s1">&#39;largest_assembly&#39;</span><span class="p">:</span>
+        <span class="n">which</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">comp</span><span class="p">[</span><span class="s1">&#39;atoms frames&#39;</span><span class="p">])])</span>
+    <span class="k">elif</span> <span class="n">components</span> <span class="o">==</span> <span class="s1">&#39;most_symmetric&#39;</span><span class="p">:</span>
+        <span class="n">which</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="mf">9e9</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">comp</span><span class="p">[</span><span class="s1">&#39;atoms frames&#39;</span><span class="p">])])</span>
+    <span class="k">elif</span> <span class="n">components</span> <span class="o">==</span> <span class="s1">&#39;most_symmetric&#39;</span><span class="p">:</span>
+        <span class="n">which</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="mf">9e9</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">comp</span><span class="p">[</span><span class="s1">&#39;atoms frames&#39;</span><span class="p">])])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown component handling method &quot;</span><span class="si">{</span><span class="n">components</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+    <span class="n">asu</span> <span class="o">=</span> <span class="n">Body</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">which</span><span class="p">])</span>
+    <span class="n">asu</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">pdbcode</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
+    <span class="k">return</span> <span class="n">SymBody</span><span class="p">(</span><span class="n">asu</span><span class="p">,</span> <span class="n">comp</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">which</span><span class="p">],</span> <span class="n">_atomslist</span><span class="o">=</span><span class="n">atomslist</span><span class="p">,</span> <span class="n">_assembly_xforms</span><span class="o">=</span><span class="n">asmx</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Body">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">holds_metadata</span>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">mutablestruct</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Body</span><span class="p">:</span>
+    <span class="n">atoms</span><span class="p">:</span> <span class="s1">&#39;AtomArray&#39;</span>
+    <span class="n">pos</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">rescen</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_atombvh</span><span class="p">:</span> <span class="s1">&#39;hg.SphereBVH_double&#39;</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_resbvh</span><span class="p">:</span> <span class="s1">&#39;hg.SphereBVH_double&#39;</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">hydro</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">hetero</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">water</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># seq: str = &#39;&#39;</span>
+    <span class="n">nres</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">))</span>
+    <span class="n">natom</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span>
+    <span class="n">positioned_atoms</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span>
+    <span class="n">com</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">bs</span><span class="o">.</span><span class="n">mass_center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)))</span>
+    <span class="n">rg</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">radius_of_gyration</span><span class="p">(</span><span class="bp">self</span><span class="p">[:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">com</span><span class="p">))</span>
+    <span class="n">centered</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">movedby</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">com</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hetero</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">hetero</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">element</span> <span class="o">!=</span> <span class="s1">&#39;H&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">water</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_name</span> <span class="o">!=</span> <span class="s1">&#39;HOH&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rescen</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">apply_residue_wise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atombvh</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">SphereBVH_double</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resbvh</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">SphereBVH_double</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rescen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asu</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="c1"># self.seq = ipd.atom.atoms_to_seqstr(self.atoms)</span>
+        <span class="k">assert</span> <span class="n">h</span><span class="o">.</span><span class="n">valid44</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">atoms</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_pos_otherpos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">SymBody</span><span class="p">):</span> <span class="n">kw</span><span class="o">.</span><span class="n">otherpos</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">pos</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">kw</span><span class="o">.</span><span class="n">otherpos</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">kw</span>
+
+<div class="viewcode-block" id="Body.isclose">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.isclose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isclose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">atoms</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Body.hasclash">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.hasclash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hasclash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_bvh_binary_operation</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">bvh_isect</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Body.nclash">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.nclash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nclash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_bvh_binary_operation</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">bvh_count_pairs</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Body.contacts">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.contacts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BodyContacts&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SymBody</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Body.slide_into_contact">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.slide_into_contact">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slide_into_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">along</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Vec</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Body&#39;</span><span class="p">:</span>
+        <span class="n">kwpos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pos_otherpos</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">_bvh_binary_operation</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">bvh_slide_vec</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">dirn</span><span class="o">=</span><span class="n">along</span><span class="p">,</span> <span class="o">**</span><span class="n">kwpos</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">movedby</span><span class="p">((</span><span class="n">delta</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">radius</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">along</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Body.slide_into_contact_rand">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.slide_into_contact_rand">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slide_into_contact_rand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;tuple[Body,np.ndarray]&#39;</span><span class="p">:</span>
+        <span class="n">along</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">rand_unit</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slide_into_contact</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">along</span><span class="o">=</span><span class="n">along</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">along</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coord</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Body.movedby">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.movedby">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">movedby</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xform</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">movedto</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="n">moveby</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Body.movedto">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.movedto">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">movedto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xform</span><span class="p">,</span> <span class="n">moveby</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">xform</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xform</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xform</span><span class="o">.</span><span class="n">size</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span> <span class="n">xform</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">trans</span><span class="p">(</span><span class="n">xform</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">moveby</span><span class="p">:</span> <span class="n">xform</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xformx</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">xform</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+
+<div class="viewcode-block" id="Body.atomsel">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.atomsel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atomsel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">positioned_atoms</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">slices</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">xformpts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">slices</span><span class="p">)])</span>
+
+    <span class="c1"># def __getattr__(self, name):</span>
+    <span class="c1">#     if name == &#39;atoms&#39;:</span>
+    <span class="c1">#         raise AttributeError</span>
+    <span class="c1">#     try:</span>
+    <span class="c1">#         return getattr(self.atoms, name)</span>
+    <span class="c1">#     except AttributeError:</span>
+    <span class="c1">#         raise AttributeError(f&#39;Body (nor AtomArray) has no attribute: {name}&#39;)</span>
+
+<div class="viewcode-block" id="Body.summary">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nhet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">hetero</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Body(atom: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="si">}</span><span class="s1"> res: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resbvh</span><span class="p">)</span><span class="si">}</span><span class="s1"> net: </span><span class="si">{</span><span class="n">nhet</span><span class="si">}</span><span class="s1"> pos: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+
+
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">summary</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span><span class="p">}</span>
+        <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;rescen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescen</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">make_table</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">capture_stdio</span><span class="p">()</span> <span class="k">as</span> <span class="n">printed</span><span class="p">:</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">print_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">printed</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;NOTE: this hash ignores body position!!&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Body.clone">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.Body.clone">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="SymBody">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">holds_metadata</span>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">mutablestruct</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SymBody</span><span class="p">:</span>
+    <span class="n">asu</span><span class="p">:</span> <span class="n">Body</span>
+    <span class="n">frames</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)[</span><span class="kc">None</span><span class="p">])</span>
+    <span class="n">pos</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">bodies</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">movedby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">@</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">])</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atoms</span><span class="p">)))</span>
+    <span class="n">com</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">com</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">centered</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">movedby</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">com</span><span class="p">))</span>
+    <span class="n">rg</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">radius_of_gyration</span><span class="p">(</span><span class="bp">self</span><span class="p">[:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">com</span><span class="p">))</span>
+    <span class="n">natoms</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">h</span><span class="o">.</span><span class="n">valid44</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atombvh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">_atombvh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resbvh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">_resbvh</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SymBody.isclose">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.isclose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isclose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">asu</span><span class="p">)</span> <span class="ow">and</span> <span class="n">h</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_pos_otherpos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">]</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">pos</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">SymBody</span><span class="p">):</span>
+            <span class="n">kw</span><span class="o">.</span><span class="n">otherpos</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kw</span><span class="o">.</span><span class="n">otherpos</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">pos</span>
+        <span class="k">return</span> <span class="n">kw</span>
+
+<div class="viewcode-block" id="SymBody.hasclash">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.hasclash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hasclash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Body|SymBody|None&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">kw</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pos_otherpos</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_bvh_binary_operation</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">bvh_isect_vec</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymBody.nclash">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.nclash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nclash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">kw</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pos_otherpos</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_bvh_binary_operation</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">bvh_count_pairs_vec</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymBody.contacts">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.contacts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BodyContacts&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span> <span class="n">exclude</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude</span><span class="p">]</span>
+        <span class="n">kw</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pos_otherpos</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_bvh_binary_operation</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">bvh_collect_pairs_vec</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BodyContacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span> <span class="ow">or</span> <span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymBody.slide_into_contact">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.slide_into_contact">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slide_into_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">along</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;SymBody&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">SymBody</span><span class="p">,</span> <span class="n">Body</span><span class="o">.</span><span class="n">slide_into_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">radius</span><span class="p">))</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="SymBody.slide_into_contact_rand">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.slide_into_contact_rand">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slide_into_contact_rand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;tuple[SymBody,np.ndarray]&#39;</span><span class="p">:</span>
+        <span class="n">along</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">rand_unit</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slide_into_contact</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">along</span><span class="o">=</span><span class="n">along</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">along</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coord</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SymBody.movedby">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.movedby">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">movedby</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xform</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">movedto</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="n">moveby</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymBody.movedto">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.movedto">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">movedto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xform</span><span class="p">,</span> <span class="n">moveby</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">xform</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xform</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xform</span><span class="o">.</span><span class="n">size</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span> <span class="n">xform</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">trans</span><span class="p">(</span><span class="n">xform</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">moveby</span><span class="p">:</span> <span class="n">xform</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xformx</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">xform</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+
+<div class="viewcode-block" id="SymBody.natomsel">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.natomsel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">natomsel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atomsel</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SymBody.atomsel">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.atomsel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atomsel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atomsel</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">slices</span><span class="p">):</span>
+        <span class="n">first</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span> <span class="o">=</span> <span class="n">slices</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">first</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rest</span><span class="p">:</span> <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">xformpts</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="p">[</span><span class="n">rest</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">xformpts</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="p">[:])</span>
+
+    <span class="c1"># def __getattr__(self, name):</span>
+    <span class="c1">#     if name == &#39;asu&#39;: raise AttributeError</span>
+    <span class="c1">#     try:</span>
+    <span class="c1">#         return getattr(self.asu, name)</span>
+    <span class="c1">#     except AttributeError:</span>
+    <span class="c1">#         raise AttributeError(f&#39;SymBody (nor Body nor AtomArray) has no attribute: {name}&#39;)</span>
+
+<div class="viewcode-block" id="SymBody.summary">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
+        <span class="n">nhet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">hetero</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;SymBody(atom: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="si">}</span><span class="s1"> res: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">_resbvh</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="si">}</span><span class="s1"> net: </span><span class="si">{</span><span class="n">nhet</span><span class="si">}</span><span class="s1"> pos: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s1"> frams: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+
+
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">summary</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">capture_stdio</span><span class="p">()</span> <span class="k">as</span> <span class="n">printed</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SymBody:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Frames:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">printed</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">asu</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;NOTE: this hash ignores asu frames/position!!&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SymBody.clone">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.SymBody.clone">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_bvh_binary_operation</span><span class="p">(</span>
+    <span class="n">op</span><span class="p">,</span>
+    <span class="n">this</span><span class="p">,</span>
+    <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">bvh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">otherbvh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">otherpos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">residue_wise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;bool|int|float|np.ndarray|tuple[np.ndarray, np.ndarray]&#39;</span><span class="p">:</span>
+    <span class="n">other</span> <span class="o">=</span> <span class="n">other</span> <span class="ow">or</span> <span class="n">this</span>
+    <span class="n">bvh</span> <span class="o">=</span> <span class="n">bvh</span> <span class="ow">or</span> <span class="n">this</span><span class="o">.</span><span class="n">_resbvh</span> <span class="k">if</span> <span class="n">residue_wise</span> <span class="k">else</span> <span class="n">this</span><span class="o">.</span><span class="n">_atombvh</span>
+    <span class="n">otherbvh</span> <span class="o">=</span> <span class="n">otherbvh</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">_resbvh</span> <span class="k">if</span> <span class="n">residue_wise</span> <span class="k">else</span> <span class="n">other</span><span class="o">.</span><span class="n">_atombvh</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">pos</span> <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pos</span>
+    <span class="n">otherpos</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">pos</span> <span class="k">if</span> <span class="n">otherpos</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">otherpos</span>
+    <span class="n">npos</span><span class="p">,</span> <span class="n">nother</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_vec&#39;</span><span class="p">):</span>
+        <span class="n">pos</span><span class="p">,</span> <span class="n">otherpos</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">otherpos</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">npos</span><span class="p">,</span> <span class="n">nother</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherpos</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">nother</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">otherpos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">otherpos</span><span class="p">,</span> <span class="p">(</span><span class="n">npos</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># ipd.icv(op, pos.shape, otherpos.shape)</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">otherpos</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">bvh</span><span class="p">,</span> <span class="n">otherbvh</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">otherpos</span><span class="p">,</span> <span class="o">*</span><span class="n">extra</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_vec&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">val</span><span class="p">,</span> <span class="n">ranges</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">val</span><span class="p">,</span> <span class="n">ranges</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">npos</span><span class="p">,</span> <span class="n">nother</span><span class="p">,</span> <span class="o">*</span><span class="n">ranges</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">npos</span><span class="p">,</span> <span class="n">nother</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="BodyContacts">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.BodyContacts">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dc</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BodyContacts</span><span class="p">:</span>
+    <span class="n">symbody1</span><span class="p">:</span> <span class="n">SymBody</span>
+    <span class="n">body2</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Body</span><span class="p">,</span> <span class="n">SymBody</span><span class="p">]</span>
+    <span class="n">pairs</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">NDArray_N2_int32</span>
+    <span class="n">ranges</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">NDArray_MN2_int32</span>
+    <span class="n">exclude</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">total_contacts</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">))</span>
+    <span class="n">max_contacts</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">mean_contacts</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">min_contacts</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">nuniq1</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">nuniq2</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">nuniq</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">body2</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbody1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bodies2</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">body2</span><span class="p">)]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body2</span><span class="p">,</span> <span class="n">Body</span><span class="p">)</span> <span class="k">else</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body2</span><span class="o">.</span><span class="n">bodies</span><span class="p">)</span>
+        <span class="n">isub1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sub1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbody1</span><span class="o">.</span><span class="n">bodies</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">isub2</span><span class="p">,</span> <span class="n">sub2</span> <span class="ow">in</span> <span class="n">bodies2</span><span class="p">:</span>
+                <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[</span><span class="n">isub1</span><span class="p">,</span> <span class="n">isub2</span><span class="p">]</span>
+                <span class="n">iatom1</span><span class="p">,</span> <span class="n">iatom2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">[</span><span class="n">lb</span><span class="p">:</span><span class="n">ub</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+                <span class="k">yield</span> <span class="n">isub1</span><span class="p">,</span> <span class="n">isub2</span><span class="p">,</span> <span class="n">sub1</span><span class="p">,</span> <span class="n">sub2</span><span class="p">,</span> <span class="n">iatom1</span><span class="p">,</span> <span class="n">iatom2</span>
+            <span class="n">isub1</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="BodyContacts.contact_matrix_stack">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.body.html#ipd.atom.body.BodyContacts.contact_matrix_stack">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contact_matrix_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tokens2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tokens1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">tokens1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbody1</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span>
+        <span class="k">if</span> <span class="n">tokens2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">tokens2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">body2</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span>
+        <span class="n">tokens1</span><span class="p">,</span> <span class="n">tokens2</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tokens1</span><span class="p">),</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tokens2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body2</span><span class="p">,</span> <span class="n">Body</span><span class="p">)</span>
+        <span class="n">mn1</span><span class="p">,</span> <span class="n">mx1</span><span class="p">,</span> <span class="n">mn2</span><span class="p">,</span> <span class="n">mx2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">tokens1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">tokens1</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">tokens2</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">tokens2</span><span class="p">)</span>
+        <span class="n">mats</span><span class="p">,</span> <span class="n">subs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">isub1</span><span class="p">,</span> <span class="n">isub2</span><span class="p">,</span> <span class="n">sub1</span><span class="p">,</span> <span class="n">sub2</span><span class="p">,</span> <span class="n">iatom1</span><span class="p">,</span> <span class="n">iatom2</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">iatom1</span><span class="p">):</span> <span class="k">continue</span>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mx1</span> <span class="o">-</span> <span class="n">mn1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mx2</span> <span class="o">-</span> <span class="n">mn2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">lev1</span><span class="p">,</span> <span class="n">lev2</span> <span class="o">=</span> <span class="n">tokens1</span><span class="p">[</span><span class="n">iatom1</span><span class="p">],</span> <span class="n">tokens2</span><span class="p">[</span><span class="n">iatom2</span><span class="p">]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="p">(</span><span class="n">lev1</span> <span class="o">-</span> <span class="n">mn1</span><span class="p">,</span> <span class="n">lev2</span> <span class="o">-</span> <span class="n">mn2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">mats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c1"># so asu is first</span>
+            <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">isub1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">ContactMatrixStack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">mats</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">subs</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;SymContacts(ranges: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1"> pairs: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+ipd.sym.xtal.spacegroup\_deriveddata module
+===========================================
+
+.. automodule:: ipd.sym.xtal.spacegroup_deriveddata
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.tools.citool module
+=======================
+
+.. automodule:: ipd.tools.citool
+   :members:
+   :show-inheritance:
+   :undoc-members:

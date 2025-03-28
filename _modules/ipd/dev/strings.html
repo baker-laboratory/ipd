@@ -1,0 +1,608 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.dev.strings &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/dev/strings';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.dev.strings</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.dev.strings</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">difflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_close_matches</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<div class="viewcode-block" id="get_all_annotations">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.get_all_annotations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_annotations</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all annotations from a class and its base classes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cls: The class to retrieve annotations from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary containing the combined annotations.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; class Base:</span>
+<span class="sd">        ...     a: int</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; class Child(Base):</span>
+<span class="sd">        ...     b: str</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; get_all_annotations(Child)</span>
+<span class="sd">        {&#39;a&#39;: &lt;class &#39;int&#39;&gt;, &#39;b&#39;: &lt;class &#39;str&#39;&gt;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">annotations</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">annotations</span> <span class="o">|=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">return</span> <span class="n">annotations</span></div>
+
+
+<div class="viewcode-block" id="eval_fstring">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.eval_fstring">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">eval_fstring</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate an f-string template within a given namespace.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        template (str): The f-string template.</span>
+<span class="sd">        namespace (dict): The namespace to use for evaluation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The evaluated f-string result.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; eval_fstring(&#39;{x + y}&#39;, {&#39;x&#39;: 2, &#39;y&#39;: 3})</span>
+<span class="sd">        &#39;5&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;f&quot;&quot;&quot;</span><span class="si">{</span><span class="n">template</span><span class="si">}</span><span class="s1">&quot;&quot;&quot;&#39;</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span></div>
+
+    <span class="c1"># return ipd.dev.safe_eval(f&#39;f&quot;&quot;&quot;{template}&quot;&quot;&quot;&#39;, namespace)</span>
+
+<div class="viewcode-block" id="printed_string">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.printed_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">printed_string</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">rich</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capture the printed output of an object as a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        thing: The object to print.</span>
+<span class="sd">        rich (bool): Whether to use rich formatting (if available).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The printed output as a string.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; printed_string(&#39;hello&#39;)</span>
+<span class="sd">        &#39;hello\\n&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">rich</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">rich</span><span class="w"> </span><span class="kn">import</span> <span class="nb">print</span>
+    <span class="k">with</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">capture_stdio</span><span class="p">()</span> <span class="k">as</span> <span class="n">printed</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">printed</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="strip_duplicate_spaces">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.strip_duplicate_spaces">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">strip_duplicate_spaces</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove duplicate spaces from a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        s (str): The input string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The string with duplicate spaces removed.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; strip_duplicate_spaces(&#39;hello  world&#39;)</span>
+<span class="sd">        &#39;hello world&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="s1">&#39;  &#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="tobytes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.tobytes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tobytes</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a string to bytes if it&#39;s not already bytes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        s (str | bytes): The input string or bytes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bytes: The byte representation of the input.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; tobytes(&#39;hello&#39;)</span>
+<span class="sd">        b&#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; tobytes(b&#39;hello&#39;)</span>
+<span class="sd">        b&#39;hello&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="tostr">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.tostr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tostr</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert bytes to a string if it&#39;s not already a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        s (str | bytes): The input string or bytes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The string representation of the input.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; tostr(b&#39;hello&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; tostr(&#39;hello&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="toname">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.toname">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">toname</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate if a string is a valid name (no special characters).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val (str): The input string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str | None: The input string if it&#39;s valid, otherwise None.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; toname(&#39;hello&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; toname(&#39;hello#&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;.*[%^&amp;*#$].*&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="toidentifier">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.toidentifier">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">toidentifier</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate if a string is a valid Python identifier.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val (str): The input string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str | None: The input string if it&#39;s a valid identifier, otherwise None.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; toidentifier(&#39;valid_name&#39;)</span>
+<span class="sd">        &#39;valid_name&#39;</span>
+<span class="sd">        &gt;&gt;&gt; toidentifier(&#39;123invalid&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="find_close_argnames">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.strings.html#ipd.dev.strings.find_close_argnames">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_close_argnames</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">string_list</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">0.6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find close matches to a given word from a list of strings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        word (str): The word to find close matches for.</span>
+<span class="sd">        string_list (list of str): A list of strings to search within.</span>
+<span class="sd">        n (int): The maximum number of close matches to return.</span>
+<span class="sd">        cutoff (float): The minimum similarity score (0-1) for a string to be considered a match.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of close matches.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; find_close_argnames(&#39;apple&#39;, [&#39;apple&#39;, &#39;ape&#39;, &#39;apply&#39;, &#39;banana&#39;], n=2)</span>
+<span class="sd">        [&#39;apple&#39;, &#39;apply&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="n">get_close_matches</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">string_list</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">))</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">//</span> <span class="mi">5</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span></div>
+
+
+<span class="n">ascii_chars</span> <span class="o">=</span> <span class="s2">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz0123456789&quot;</span>
+<span class="n">ascii_chars</span> <span class="o">+=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">65</span><span class="p">)])</span>
+<span class="n">ascii_chars</span> <span class="o">+=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">91</span><span class="p">,</span> <span class="mi">97</span><span class="p">)])</span>
+<span class="n">ascii_chars</span> <span class="o">+=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">127</span><span class="p">)])</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

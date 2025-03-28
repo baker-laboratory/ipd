@@ -1,0 +1,7 @@
+ipd.pdb.pdbdump module
+======================
+
+.. automodule:: ipd.pdb.pdbdump
+   :members:
+   :show-inheritance:
+   :undoc-members:

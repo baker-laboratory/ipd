@@ -1,0 +1,17 @@
+ipd.dev.storage package
+=======================
+
+.. automodule:: ipd.dev.storage
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.storage.filefetch
+   ipd.dev.storage.openfile
+   ipd.dev.storage.package_storage

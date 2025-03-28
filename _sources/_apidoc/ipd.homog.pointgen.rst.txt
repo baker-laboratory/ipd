@@ -1,0 +1,7 @@
+ipd.homog.pointgen module
+=========================
+
+.. automodule:: ipd.homog.pointgen
+   :members:
+   :show-inheritance:
+   :undoc-members:

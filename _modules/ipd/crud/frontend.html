@@ -1,0 +1,1079 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.crud.frontend &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/crud/frontend';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.crud.frontend</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.crud.frontend</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">fastapi</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pydantic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.dev</span><span class="w"> </span><span class="kn">import</span> <span class="n">str_to_json</span><span class="p">,</span> <span class="n">tojson</span>
+
+<span class="c1"># profiler = ipd.dev.timed</span>
+<span class="n">profiler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span>
+<span class="n">tojson</span> <span class="o">=</span> <span class="n">profiler</span><span class="p">(</span><span class="n">tojson</span><span class="p">)</span>
+<span class="n">str_to_json</span> <span class="o">=</span> <span class="n">profiler</span><span class="p">(</span><span class="n">str_to_json</span><span class="p">)</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClientError">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClientError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_label_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_label</span><span class="o">.</span><span class="n">default</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_label&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;name&#39;</span>
+
+<span class="n">_CLIENT</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="set_client">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.set_client">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_client</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="s1">&#39;ClientBase&#39;</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">_CLIENT</span>
+    <span class="n">_CLIENT</span> <span class="o">=</span> <span class="n">client</span></div>
+
+
+<span class="n">_ModelRefType</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+
+<div class="viewcode-block" id="ModelRef">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ModelRef">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelRef</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+        <span class="n">outerns</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="o">.</span><span class="n">f_globals</span>  <span class="c1"># type: ignore</span>
+        <span class="n">validator</span> <span class="o">=</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">BeforeValidator</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">outerns</span><span class="o">=</span><span class="n">outerns</span><span class="p">:</span> <span class="n">process_modelref</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">outerns</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span> <span class="n">T</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">classname_or_str</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="o">*</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">classname_or_str</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="n">_ModelRefType</span><span class="p">,</span> <span class="n">validator</span><span class="p">],</span> <span class="n">T</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="process_modelref">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.process_modelref">[docs]</a>
+<span class="nd">@profiler</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_modelref</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="n">_ModelRefType</span><span class="p">,</span> <span class="n">valinfo</span><span class="p">,</span> <span class="n">spec_namespace</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;int id is wrong, use uuid now&#39;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># type: ignore</span>
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">specname</span> <span class="o">=</span> <span class="n">valinfo</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">specname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">):</span> <span class="n">specname</span> <span class="o">+=</span> <span class="s1">&#39;Spec&#39;</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="n">spec_namespace</span><span class="p">[</span><span class="n">specname</span><span class="p">]</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">valinfo</span><span class="o">.</span><span class="n">field_name</span><span class="p">]</span>
+    <span class="n">typehint</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">annotation</span>
+    <span class="k">assert</span> <span class="n">typehint</span> <span class="o">==</span> <span class="n">_ModelRefType</span><span class="p">,</span> <span class="s1">&#39;typehint == _ModelRefType&#39;</span>
+    <span class="n">refcls</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">refcls</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">refcls</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">):</span> <span class="n">refcls</span> <span class="o">+=</span> <span class="s1">&#39;Spec&#39;</span>
+        <span class="n">refcls</span> <span class="o">=</span> <span class="n">spec_namespace</span><span class="p">[</span><span class="n">refcls</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_CLIENT</span><span class="p">:</span>
+        <span class="c1"># print(val, valinfo)</span>
+        <span class="n">refclsname</span> <span class="o">=</span> <span class="n">refcls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ref</span> <span class="o">:=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_CLIENT</span><span class="p">,</span> <span class="n">refclsname</span><span class="p">)(</span><span class="o">**</span><span class="p">{</span><span class="n">_label_field</span><span class="p">(</span><span class="n">refcls</span><span class="p">):</span> <span class="n">val</span><span class="p">},</span> <span class="n">_ghost</span><span class="o">=</span><span class="kc">True</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown </span><span class="si">{</span><span class="n">refcls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s1"> named &quot;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">id</span>
+    <span class="c1"># print(cls, refcls, val)</span>
+    <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="Unique">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.Unique">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Unique</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="s1">&#39;UNIQUE&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="layerof">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.layerof">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">layerof</span><span class="p">(</span><span class="n">modelcls</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">modelcls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="s1">&#39;spec&#39;</span>
+    <span class="k">if</span> <span class="n">modelcls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;DB&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="s1">&#39;backend&#39;</span>
+    <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="s1">&#39;frontend&#39;</span></div>
+
+
+<div class="viewcode-block" id="SpecBase">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpecBase</span><span class="p">(</span><span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">)</span>
+    <span class="n">ghost</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">datecreated</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+    <span class="n">_errors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">layerof</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layer</span> <span class="o">==</span> <span class="s1">&#39;spec&#39;</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">__spec__</span> <span class="o">=</span> <span class="bp">cls</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">specbase</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__spec__</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">)]</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">__spec__</span> <span class="o">=</span> <span class="n">specbase</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">specbase</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__spec__</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">layer</span> <span class="o">==</span> <span class="s1">&#39;backend&#39;</span><span class="p">:</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">__spec__</span><span class="o">.</span><span class="n">__backend__</span> <span class="o">=</span> <span class="bp">cls</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">__spec__</span><span class="o">.</span><span class="n">__frontend__</span> <span class="o">=</span> <span class="bp">cls</span>
+
+<div class="viewcode-block" id="SpecBase.validate_base">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.validate_base">[docs]</a>
+    <span class="nd">@pydantic</span><span class="o">.</span><span class="n">model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;before&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_base</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vals</span><span class="p">):</span>
+        <span class="c1"># if isinstance(vals, uuid.UUID): vals = dict(id=vals)</span>
+        <span class="c1"># if issubclass(cls, SpecBase) and isinstance(vals, pydantic.BaseModel):</span>
+        <span class="c1"># vals = vals.to_spec()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span> <span class="k">assert</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">toname</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span> <span class="sa">f</span><span class="s1">&#39;name is bad identifier </span><span class="si">{</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">vals</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__heash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+
+<div class="viewcode-block" id="SpecBase.to_spec">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.to_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;SpecBase&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SpecBase</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">dump</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dump</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;id&#39;</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">):</span>
+                <span class="k">del</span> <span class="n">dump</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">dump</span><span class="p">[</span><span class="n">k</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;need to implement id mapping and field stripping&#39;</span><span class="p">)</span></div>
+
+        <span class="c1"># return self.__spec__(**dump)</span>
+
+<div class="viewcode-block" id="SpecBase.from_spec">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.from_spec">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_spec</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="n">dump</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;need to implement id mapping and field stripping&#39;</span><span class="p">)</span></div>
+
+        <span class="c1"># return cls(**dump)</span>
+
+<div class="viewcode-block" id="SpecBase.modelkind">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.modelkind">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modelkind</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;DB&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;DB&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SpecBase.modellayer">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.modellayer">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modellayer</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">layerof</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_copy_with_newid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;SpecBase&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()})</span>
+
+<div class="viewcode-block" id="SpecBase.errors">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.errors">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_errors&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpecBase.info">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.info">[docs]</a>
+    <span class="nd">@profiler</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">recurse</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">showfields</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span>
+        <span class="n">recursefields</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span>
+        <span class="n">hidefields</span><span class="o">=</span><span class="s1">&#39;datecreated ghost gpus protocols path version kind required guaranteed results&#39;</span><span class="p">,</span>
+        <span class="n">seenit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">shorten</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">recurse</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">showall</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">showfields</span>
+        <span class="n">recurseall</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">recursefields</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recursefields</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">recursefields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">recursefields</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hidefields</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">hidefields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hidefields</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">seenit</span> <span class="o">=</span> <span class="n">seenit</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="c1"># if self.id in seenit: return {}</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__remote_props__&#39;</span><span class="p">):</span> <span class="n">fields</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__remote_props__</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">sfields</span> <span class="o">=</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">showall</span> <span class="k">else</span> <span class="n">fields</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">showfields</span><span class="p">)</span>
+        <span class="n">rfields</span> <span class="o">=</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">recurseall</span> <span class="k">else</span> <span class="n">fields</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">recursefields</span><span class="p">)</span>
+        <span class="c1"># print(&#39;INFO&#39;, self.__class__.__name__, recurseall, showall, len(fields), len(sfields), len(rfields))</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">recurse</span><span class="o">=</span><span class="n">recurse</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                  <span class="n">showfields</span><span class="o">=</span><span class="n">showfields</span><span class="p">,</span>
+                  <span class="n">recursefields</span><span class="o">=</span><span class="n">recursefields</span><span class="p">,</span>
+                  <span class="n">hidefields</span><span class="o">=</span><span class="n">hidefields</span><span class="p">,</span>
+                  <span class="n">seenit</span><span class="o">=</span><span class="n">seenit</span> <span class="o">|</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">},</span>
+                  <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelkind</span><span class="p">(),</span>
+                  <span class="n">shorten</span><span class="o">=</span><span class="n">shorten</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sfields</span> <span class="o">-</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">}</span> <span class="o">-</span> <span class="n">hidefields</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">):</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">and</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rfields</span> <span class="o">-</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">}</span> <span class="o">-</span> <span class="n">hidefields</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">):</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">and</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">rfields</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">):</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="c1"># print(attr, d[attr])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prop</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;info&#39;</span><span class="p">):</span> <span class="n">d</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prop</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shorten</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span> <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span> <span class="k">continue</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">del</span> <span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span> <span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+                        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+        <span class="c1"># d = {self.__class__.__name__: d}</span>
+
+        <span class="k">return</span> <span class="n">d</span></div>
+
+
+<div class="viewcode-block" id="SpecBase.str_compact">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.str_compact">[docs]</a>
+    <span class="nd">@profiler</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">str_compact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linelen</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">strip_labels</span><span class="o">=</span><span class="s1">&#39;invars outvars name&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">compact_json</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">compact_json</span><span class="o">.</span><span class="n">Formatter</span><span class="p">()</span>
+        <span class="n">formatter</span><span class="o">.</span><span class="n">indent_spaces</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">formatter</span><span class="o">.</span><span class="n">max_inline_complexity</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">formatter</span><span class="o">.</span><span class="n">max_inline_length</span> <span class="o">=</span> <span class="n">linelen</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="c1"># rich.print(val)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">strip_labels</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">: &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">text</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">compact</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">linelen</span><span class="p">:</span> <span class="n">compact</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span> <span class="n">compact</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    &#39;</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+        <span class="n">compact</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">compact</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">compact</span></div>
+
+
+<div class="viewcode-block" id="SpecBase.print_compact">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.SpecBase.print_compact">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_compact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">str_compact</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="UploadOnMutateList">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.UploadOnMutateList">[docs]</a>
+<span class="nd">@profiler</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UploadOnMutateList</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Instrumented</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">attrkind</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrkind</span> <span class="o">=</span> <span class="n">thing</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">attrkind</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__on_change__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thing</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrkind</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_client_models">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.make_client_models">[docs]</a>
+<span class="nd">@profiler</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_client_models</span><span class="p">(</span><span class="n">clientcls</span><span class="p">,</span> <span class="n">trimspecs</span><span class="p">,</span> <span class="n">remote_props</span><span class="p">):</span>
+    <span class="n">spec_models</span> <span class="o">=</span> <span class="n">clientcls</span><span class="o">.</span><span class="n">__spec_models__</span>
+    <span class="n">backend_models</span> <span class="o">=</span> <span class="n">clientcls</span><span class="o">.</span><span class="n">__backend_models__</span>
+    <span class="n">client_models</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">spec_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">trimspec</span> <span class="o">=</span> <span class="n">trimspecs</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span>
+        <span class="n">clsdb</span> <span class="o">=</span> <span class="n">backend_models</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span>
+        <span class="n">clsname</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">body</span><span class="p">,</span> <span class="n">props</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">:</span> <span class="p">{}},</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">remote_props</span><span class="p">[</span><span class="n">kind</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">clsdb</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
+                <span class="n">proptype</span> <span class="o">=</span> <span class="n">clsdb</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">annotation</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">proptype</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">clsdb</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">:</span>
+                <span class="n">proptype</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">clsdb</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">[</span><span class="n">attr</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">proptype</span><span class="p">,</span> <span class="s1">&#39;__origin__&#39;</span><span class="p">):</span>
+                <span class="n">propkind</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">proptype</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">proptype</span><span class="p">,</span> <span class="s1">&#39;__forward_arg__&#39;</span><span class="p">):</span>
+                <span class="n">propkind</span> <span class="o">=</span> <span class="n">proptype</span><span class="o">.</span><span class="n">__forward_arg__</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">propkind</span> <span class="o">=</span> <span class="n">proptype</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">propkind</span><span class="p">,</span> <span class="s1">&#39;__forward_arg__&#39;</span><span class="p">):</span>
+                <span class="n">propkind</span> <span class="o">=</span> <span class="n">propkind</span><span class="o">.</span><span class="n">__forward_arg__</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">propkind</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">propkind</span> <span class="o">=</span> <span class="n">propkind</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="n">props</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">propkind</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;DB&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="s1">&#39;__layer__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">member</span><span class="o">.</span><span class="n">__layer__</span> <span class="o">==</span> <span class="s1">&#39;client&#39;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">member</span><span class="p">)</span>
+                <span class="n">body</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">member</span>  <span class="c1"># type: ignore</span>
+                <span class="nb">delattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">):</span>
+                <span class="n">optional</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">body</span><span class="p">[</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="k">if</span> <span class="n">optional</span> <span class="k">else</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
+                <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">trimspec</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">trimspec</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+        <span class="n">clcls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">clsname</span><span class="p">,</span> <span class="p">(</span><span class="n">ClientModelBase</span><span class="p">,</span> <span class="n">trimspec</span><span class="p">),</span> <span class="n">body</span><span class="p">,</span> <span class="n">remote_props</span><span class="o">=</span><span class="n">props</span><span class="p">)</span>
+        <span class="c1"># for k, v in clcls.model_fields.items():</span>
+        <span class="c1"># print(clsname, k, v.annotation)</span>
+        <span class="n">clcls</span><span class="o">.</span><span class="n">__spec__</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="n">clcls</span><span class="o">.</span><span class="n">__backend_model__</span> <span class="o">=</span> <span class="n">clsdb</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">__frontend_model__</span> <span class="o">=</span> <span class="n">clcls</span>
+        <span class="n">clsdb</span><span class="o">.</span><span class="n">__frontend_model__</span> <span class="o">=</span> <span class="n">clcls</span>
+        <span class="n">client_models</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="o">=</span> <span class="n">clcls</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">clientcls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">],</span> <span class="n">clcls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">clcls</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">client_models</span></div>
+
+
+<div class="viewcode-block" id="ClientModelBase">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientModelBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClientModelBase</span><span class="p">(</span><span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">_client</span><span class="p">:</span> <span class="s1">&#39;ClientBase&#39;</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">__sibling_models__</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;ClientModelBase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@profiler</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">remote_props</span><span class="o">=</span><span class="p">(),</span> <span class="n">siblings</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">remote_props</span><span class="p">:</span> <span class="k">return</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__remote_props__</span> <span class="o">=</span> <span class="n">remote_props</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__sibling_models__</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">modelkind</span><span class="p">()]</span> <span class="o">=</span> <span class="bp">cls</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">kind</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__remote_props__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">make_client_remote_model_property_closure</span><span class="p">(</span><span class="n">_cls</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_attr</span><span class="o">=</span><span class="n">attr</span><span class="p">,</span> <span class="n">_kind</span><span class="o">=</span><span class="n">kind</span><span class="p">):</span>
+                <span class="c1"># print(&#39;client prop&#39;, cls.__name__, attr, kind)</span>
+
+                <span class="k">def</span><span class="w"> </span><span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">getattr</span><span class="p">(</span><span class="n">_cls</span><span class="o">.</span><span class="n">modelkind</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_attr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                    <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">val</span>
+                        <span class="c1"># raise AttributeError(f&#39;kind {_cls.modelkind()} id {self.id} attr {_attr} is None&#39;)</span>
+                    <span class="k">elif</span> <span class="n">_kind</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sibling_models__</span><span class="p">:</span>
+                        <span class="n">attrcls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sibling_models__</span><span class="p">[</span><span class="n">_kind</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown type </span><span class="si">{</span><span class="n">_kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">attrcls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">val</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="n">UploadOnMutateList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_attr</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">attrkind</span><span class="o">=</span><span class="n">_kind</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">attrcls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">,</span> <span class="o">**</span><span class="n">val</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">getter</span>
+
+            <span class="n">getter</span> <span class="o">=</span> <span class="n">make_client_remote_model_property_closure</span><span class="p">()</span>
+            <span class="n">getter</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">property</span><span class="p">(</span><span class="n">getter</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">client</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s1">&#39;noop, as validation should have happened at Spec stage&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@profiler</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;cant set id via client&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span><span class="p">:</span>
+            <span class="n">attrkind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remote_props__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remote_props__</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">attrkind</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">attrkind</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">result</span><span class="p">,</span> <span class="n">result</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remote_props__</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="client_obj_representer">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.client_obj_representer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">client_obj_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_scalar</span><span class="p">(</span><span class="s1">&#39;!Pydantic&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="client_obj_constructor">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.client_obj_constructor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">client_obj_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_scalar</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<span class="n">yaml</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">ClientModelBase</span><span class="p">,</span> <span class="n">client_obj_representer</span><span class="p">)</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="s1">&#39;!Pydantic&#39;</span><span class="p">,</span> <span class="n">client_obj_constructor</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClientBase">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase">[docs]</a>
+<span class="nd">@profiler</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClientBase</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Backend</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__backend_models__</span> <span class="o">=</span> <span class="n">Backend</span><span class="o">.</span><span class="n">__backend_models__</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__spec_models__</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">mdl</span><span class="o">.</span><span class="n">__spec__</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__backend_models__</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__client_models__</span> <span class="o">=</span> <span class="n">make_client_models</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Backend</span><span class="o">.</span><span class="n">__trimspecs__</span><span class="p">,</span> <span class="n">Backend</span><span class="o">.</span><span class="n">__remoteprops__</span><span class="p">)</span>
+        <span class="n">add_basic_client_model_methods</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server_addr_or_testclient</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server_addr_or_testclient</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">testclient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_addr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">server_addr_or_testclient</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server_addr_or_testclient</span><span class="p">,</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">testclient</span><span class="o">.</span><span class="n">TestClient</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">testclient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_addr</span> <span class="o">=</span> <span class="n">server_addr_or_testclient</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">set_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClientBase.getattr">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.getattr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/getattr/</span><span class="si">{</span><span class="n">thing</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># ipd.icv(self, thing, attr, result)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.setattr">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.setattr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">attrkind</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">thingtype</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">attrkind</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/setattr/</span><span class="si">{</span><span class="n">thingtype</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">attrkind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/setattr/</span><span class="si">{</span><span class="n">thingtype</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.preprocess_get">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.preprocess_get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preprocess_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">kw</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.get">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_get</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&amp;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">?</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">url</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">testclient</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">testclient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/api</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_addr</span><span class="si">}</span><span class="s1">/api</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="s1">&#39;reason&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;???&#39;</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="n">ClientError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;GET failed URL: &quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">    RESPONSE: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="se">\n</span><span class="s1">    &#39;</span>
+                              <span class="sa">f</span><span class="s1">&#39;REASON:   </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="se">\n</span><span class="s1">    CONTENT:  </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">str_to_json</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.post">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.post">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&amp;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">?</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">url</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">tojson</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">testclient</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;/api</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">testclient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_addr</span><span class="si">}</span><span class="s1">/api</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="c1"># ipd.icv(response)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">body</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">2048</span><span class="p">:</span> <span class="n">body</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">body</span><span class="p">[:</span><span class="mi">1024</span><span class="p">]</span><span class="si">}</span><span class="s1"> ... </span><span class="si">{</span><span class="n">body</span><span class="p">[</span><span class="o">-</span><span class="mi">1024</span><span class="p">:]</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="s1">&#39;reason&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;???&#39;</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="n">ClientError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;POST failed &quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">    BODY:     </span><span class="si">{</span><span class="n">body</span><span class="si">}</span><span class="se">\n</span><span class="s1">    &#39;</span>
+                              <span class="sa">f</span><span class="s1">&#39;RESPONSE: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="se">\n</span><span class="s1">    REASON:   </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="se">\n</span><span class="s1">    &#39;</span>
+                              <span class="sa">f</span><span class="s1">&#39;CONTENT:  </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">str_to_json</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">((</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)):</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.remove">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.remove">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">SpecBase</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;cant remove type </span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">thingname</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Spec&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/remove/</span><span class="si">{</span><span class="n">thingname</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.upload">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.upload">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="n">_dispatch_on_type</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modelkind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">modelkind</span> <span class="o">=</span> <span class="n">modelkind</span> <span class="ow">or</span> <span class="n">thing</span><span class="o">.</span><span class="n">modelkind</span><span class="p">()</span>
+        <span class="n">remote</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">SpecBase</span><span class="p">):</span>
+            <span class="n">thing</span><span class="p">,</span> <span class="n">remote</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_spec</span><span class="p">(</span><span class="n">modelkind</span><span class="p">,</span> <span class="o">**</span><span class="n">thing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">thing</span><span class="o">.</span><span class="n">errors</span><span class="p">():</span> <span class="k">return</span> <span class="n">err</span>
+        <span class="k">if</span> <span class="n">_dispatch_on_type</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;upload_</span><span class="si">{</span><span class="n">modelkind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;upload_</span><span class="si">{</span><span class="n">modelkind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)(</span><span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="c1"># thing = thing.to_spec()</span>
+        <span class="c1"># if thing._errors: return thing._errors</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/create/</span><span class="si">{</span><span class="n">modelkind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">newthing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">modelkind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">newthing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__client_models__</span><span class="p">[</span><span class="n">modelkind</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">newthing</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">remote</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">newthing</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">thing</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">newthing</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.getorupload_by_name">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.getorupload_by_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getorupload_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="n">modelkind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">modelkind</span> <span class="o">=</span> <span class="n">modelkind</span> <span class="ow">or</span> <span class="n">thing</span><span class="o">.</span><span class="n">modelkind</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">:</span>
+            <span class="c1"># ipd.icv(thing)</span>
+            <span class="k">if</span> <span class="n">existing</span> <span class="o">:=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">modelkind</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">)(</span><span class="n">name</span><span class="o">=</span><span class="n">thing</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]):</span>
+                <span class="c1"># ipd.icv(len(existing))</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">existing</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="k">return</span> <span class="n">existing</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">modelkind</span><span class="o">=</span><span class="n">modelkind</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientBase.make_spec">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.ClientBase.make_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelkind</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__spec_models__</span><span class="p">[</span><span class="n">modelkind</span><span class="p">]</span>
+        <span class="n">remoteprops</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__client_models__</span><span class="p">[</span><span class="n">modelkind</span><span class="p">]</span><span class="o">.</span><span class="n">__remote_props__</span><span class="p">)</span>
+        <span class="n">remote</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">remoteprops</span><span class="p">)}</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">))</span> <span class="o">-</span> <span class="n">remoteprops</span><span class="p">}</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="n">remoteprops</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">remote</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ClientModelBase</span><span class="p">):</span>
+                <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># type: ignore</span>
+                <span class="k">del</span> <span class="n">remote</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="c1"># ipd.icv(cls, args, remote, extra)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__spec__</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">),</span> <span class="n">remote</span><span class="p">,</span> <span class="n">extra</span></div>
+</div>
+
+
+<div class="viewcode-block" id="add_basic_client_model_methods">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.add_basic_client_model_methods">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_basic_client_model_methods</span><span class="p">(</span><span class="n">clientcls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic interface for accessing models from the server.</span>
+
+<span class="sd">    Any name or name suffixed with &#39;s&#39; that is in frontend_model, above,</span>
+<span class="sd">    will get /name from the server and turn the result(s) into the</span>
+<span class="sd">    appropriate client model type, list of such types for plural, or</span>
+<span class="sd">    None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">_name</span><span class="p">,</span> <span class="n">_cls</span> <span class="ow">in</span> <span class="n">clientcls</span><span class="o">.</span><span class="n">__client_models__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">make_basic_client_model_methods_closure</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="n">_cls</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">_name</span><span class="p">):</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">cls</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="c1"># return self.upload(kw, modelkind=cls.modelkind())</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">modelkind</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">modelkind</span><span class="p">())</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/n</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">cls</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">result</span><span class="p">)</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">singleornone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="bp">cls</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">ClientError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;singleornone </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="si">}</span><span class="s1">&gt;1 rslts </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">kw</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="bp">cls</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">if</span> <span class="n">_names</span><span class="p">:</span> <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">n</span><span class="p">))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">_names</span><span class="p">]</span>
+                <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)]</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">getornew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">cls</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">if</span> <span class="n">thing</span> <span class="o">:=</span> <span class="n">singleornone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">assert</span> <span class="n">thing</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span>
+                    <span class="k">return</span> <span class="n">thing</span>
+                <span class="k">return</span> <span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">_name</span><span class="p">:</span> <span class="n">single</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">ornone&#39;</span><span class="p">:</span> <span class="n">singleornone</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">:</span> <span class="n">multi</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;n</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;new</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">new</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;getornew</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">getornew</span>
+            <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">make_basic_client_model_methods_closure</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">fn</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">clientcls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">clientcls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">profiler</span><span class="p">(</span><span class="n">fn</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="model_method">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.model_method">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_method</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
+
+    <span class="nd">@ipd</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="si">}</span><span class="s1"> only valid in </span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s1"> model, not </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">modellayer</span><span class="p">()</span> <span class="o">==</span> <span class="n">layer</span><span class="p">,</span> <span class="n">err</span>
+        <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">__layer__</span> <span class="o">=</span> <span class="n">layer</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<div class="viewcode-block" id="spec_method">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.spec_method">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">spec_method</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">model_method</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;spec&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="client_method">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.client_method">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">client_method</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">model_method</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;client&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="backend_method">
+<a class="viewcode-back" href="../../../_apidoc/ipd.crud.frontend.html#ipd.crud.frontend.backend_method">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">backend_method</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">model_method</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;backend&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

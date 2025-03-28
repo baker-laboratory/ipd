@@ -1,0 +1,7 @@
+ipd.dev.functional module
+=========================
+
+.. automodule:: ipd.dev.functional
+   :members:
+   :show-inheritance:
+   :undoc-members:

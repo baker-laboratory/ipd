@@ -1,0 +1,7 @@
+ipd.dev.testing.hypothesis\_strats module
+=========================================
+
+.. automodule:: ipd.dev.testing.hypothesis_strats
+   :members:
+   :show-inheritance:
+   :undoc-members:

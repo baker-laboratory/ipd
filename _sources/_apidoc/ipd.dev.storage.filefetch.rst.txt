@@ -1,0 +1,7 @@
+ipd.dev.storage.filefetch module
+================================
+
+.. automodule:: ipd.dev.storage.filefetch
+   :members:
+   :show-inheritance:
+   :undoc-members:

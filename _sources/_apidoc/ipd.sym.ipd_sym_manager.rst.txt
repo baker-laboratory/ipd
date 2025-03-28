@@ -1,0 +1,7 @@
+ipd.sym.ipd\_sym\_manager module
+================================
+
+.. automodule:: ipd.sym.ipd_sym_manager
+   :members:
+   :show-inheritance:
+   :undoc-members:

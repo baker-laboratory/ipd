@@ -1,0 +1,7 @@
+ipd.sym.high\_t.pseudo\_t module
+================================
+
+.. automodule:: ipd.sym.high_t.pseudo_t
+   :members:
+   :show-inheritance:
+   :undoc-members:

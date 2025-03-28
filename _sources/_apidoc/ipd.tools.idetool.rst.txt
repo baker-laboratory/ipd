@@ -1,0 +1,7 @@
+ipd.tools.idetool module
+========================
+
+.. automodule:: ipd.tools.idetool
+   :members:
+   :show-inheritance:
+   :undoc-members:

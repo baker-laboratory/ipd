@@ -1,0 +1,1071 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.pdb.pdbfile &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/pdb/pdbfile';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.pdb.pdbfile</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.pdb.pdbfile</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">difflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceMatcher</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="n">_default_tol</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">rms</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">translation</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="n">seqmatch</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PDBFile">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PDBFile</span><span class="p">:</span>
+    <span class="c1"># @timed</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">df</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="n">original_contents</span><span class="p">,</span>
+        <span class="n">renumber_by_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">renumber_from_0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">removehet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">original_contents</span><span class="p">,</span> <span class="n">renumber_by_model</span><span class="p">,</span> <span class="n">renumber_from_0</span><span class="p">,</span> <span class="n">removehet</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="c1"># @timed</span>
+<div class="viewcode-block" id="PDBFile.init">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">df</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="n">original_contents</span><span class="p">,</span>
+        <span class="n">renumber_by_model</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">renumber_from_0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">removehet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_contents</span> <span class="o">=</span> <span class="n">original_contents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resl</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">resl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cryst1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellgeom</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">cryst1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cryst1</span><span class="p">:</span>
+            <span class="c1"># cut off at 66 chars, avoid end of line nsub or whatever it is</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cryst1</span><span class="p">[:</span><span class="mi">66</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cellgeom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">7</span><span class="p">:])</span>
+        <span class="c1"># ipd.icv(self.cryst1)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="k">if</span> <span class="n">renumber_by_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">renumber_by_model</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">renumber_from_0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">renumber_from_0</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">removehet</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removehet</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chainseq</span> <span class="o">=</span> <span class="n">_atomrecords_to_chainseq</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seqhet</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chainseq</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqhet</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="c1"># ipd.icv(self.seq)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nres</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nreshet</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seqhet</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nchain</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chainseq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">fname</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aamask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atommask</span><span class="p">(</span><span class="s2">&quot;CA&quot;</span><span class="p">,</span> <span class="n">aaonly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mmcif_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.copy">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PDBFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_contents</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.set_cif_info">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.set_cif_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_cif_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cifdict</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mmcif_info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cifdict</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="s2">&quot;allow dot access for fields of self.df from self&quot;</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;df&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span>
+        <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PDBFile.renumber_by_model">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.renumber_by_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">renumber_by_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ri_per_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">ai_per_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ai</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ai</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">():</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelidx</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">mdl</span> <span class="o">==</span> <span class="n">m</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="n">ri_per_model</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ai</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="n">ai_per_model</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.natom">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.natom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">natom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.getres">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.getres">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getres</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ri</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span> <span class="o">==</span> <span class="n">ri</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.xyz">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.xyz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">,</span> <span class="n">ia</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getres</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ia</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">ia</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">ia</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">ia</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ia</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">ia</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ia</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">an</span> <span class="o">==</span> <span class="n">ia</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">an</span> <span class="o">==</span> <span class="n">ia</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">an</span> <span class="o">==</span> <span class="n">ia</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">ia</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.renumber_from_0">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.renumber_from_0">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">renumber_from_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unique_chains</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">het</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">het</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">unique_chains</span><span class="p">:</span>
+            <span class="n">chmap</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">all_pymol_chains</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()]))):</span>
+                <span class="n">chmap</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">encode</span><span class="p">()]</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">chmap</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">maxres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">resdelta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">chmap</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">*</span> <span class="n">maxres</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;ri&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span> <span class="o">+</span> <span class="n">resdelta</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">ri</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ri</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ri</span><span class="p">))}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;ri&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">ri</span><span class="p">]</span> <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;ri&quot;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.removehet">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.removehet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">removehet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">het</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+    <span class="c1"># @timed</span>
+<div class="viewcode-block" id="PDBFile.subset">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.subset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">het</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">removeres</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">atomnames</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">chains</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">modelidx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">removeatoms</span><span class="o">=</span><span class="p">[],</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+        <span class="k">if</span> <span class="n">chain</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">chain</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chainseq</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">chain</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span> <span class="o">==</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">chain</span><span class="p">)]</span>
+            <span class="c1"># have no idea why, but dataframe gets corrupted  without this</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">het</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">het</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">het</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">het</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">removeres</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">removeres</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+                <span class="n">removeres</span> <span class="o">=</span> <span class="p">[</span><span class="n">removeres</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">removeres</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">rn</span> <span class="o">!=</span> <span class="n">res</span><span class="p">]</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">atomnames</span><span class="p">:</span>
+            <span class="n">atomnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atomnames</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">an</span><span class="p">,</span> <span class="n">atomnames</span><span class="p">)]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">chains</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chains</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">chains</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">chains</span><span class="p">]</span>
+            <span class="n">chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="p">,</span> <span class="n">chains</span><span class="p">)]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">mdl</span> <span class="o">==</span> <span class="n">model</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">modelidx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">mdl</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">()[</span><span class="n">modelidx</span><span class="p">]]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">removeatoms</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">ai</span><span class="p">,</span> <span class="n">removeatoms</span><span class="p">)</span>
+            <span class="c1"># ipd.icv(df.loc[idx].an)</span>
+            <span class="c1"># ipd.icv(df.loc[idx].ri)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># assert len(df) &gt; 0</span>
+
+        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span>
+                <span class="n">original_contents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">original_contents</span><span class="p">,</span>
+                <span class="n">renumber_by_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">original_contents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">original_contents</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.isonlyaa">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.isonlyaa">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isonlyaa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">het</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.isonlyhet">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.isonlyhet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isonlyhet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">het</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.models">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.models">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">mdl</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.modelidx">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.modelidx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modelidx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">models</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">m</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.dump_pdb">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.dump_pdb">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dump_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">filemode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">filemode</span> <span class="o">=</span> <span class="n">filemode</span> <span class="ow">or</span> <span class="s2">&quot;w&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">filemode</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">))</span> <span class="k">else</span> <span class="n">fname</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cryst1</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cryst1</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">pdbdump</span><span class="o">.</span><span class="n">pdb_format_atom_df</span><span class="p">(</span><span class="o">**</span><span class="n">row</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;TER</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="n">dump</span> <span class="o">=</span> <span class="n">dump_pdb</span>
+
+    <span class="c1"># @timed</span>
+<div class="viewcode-block" id="PDBFile.atommask">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.atommask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atommask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atomname</span><span class="p">,</span> <span class="n">aaonly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">splitchains</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">splitchains</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atomname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">atommask</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atomname</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">an</span> <span class="o">=</span> <span class="n">atomname</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atomname</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">atomname</span>
+        <span class="n">an</span> <span class="o">=</span> <span class="n">an</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="c1"># ipd.icv(self.df.iloc[0])</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">ri</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;ri&quot;</span><span class="p">,</span> <span class="s2">&quot;ch&quot;</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">an</span> <span class="o">==</span> <span class="n">an</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="s1">&#39;warning duplicate atom&#39;</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">an</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="c1"># assert np.sum(g.an == an) &lt;= 1</span>
+            <span class="c1"># assert np.sum(g.an == an) &lt;= np.sum(g.an == b&#39;CA&#39;) # e.g. O in HOH</span>
+            <span class="n">hasatom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">an</span> <span class="o">==</span> <span class="n">an</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hasatom</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">aaonly</span><span class="p">:</span>
+            <span class="n">aaonly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aamask</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[</span><span class="n">aaonly</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">mask</span></div>
+
+
+    <span class="c1"># @timed</span>
+<div class="viewcode-block" id="PDBFile.atomcoords">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.atomcoords">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atomcoords</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">atomname</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;CA&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="s2">&quot;CB&quot;</span><span class="p">],</span>
+        <span class="n">aaonly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">splitchains</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">nomask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">removeempty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">splitchains</span><span class="p">:</span>
+            <span class="n">chains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splitchains</span><span class="p">(</span><span class="n">aaonly</span><span class="o">=</span><span class="n">aaonly</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">removeempty</span><span class="p">:</span>
+                <span class="n">chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chains</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">atomcoords</span><span class="p">(</span><span class="n">atomname</span><span class="p">,</span> <span class="n">aaonly</span><span class="p">,</span> <span class="n">nomask</span><span class="o">=</span><span class="n">nomask</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">atomname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">atomname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">pdb</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pdb</span><span class="o">.</span><span class="n">isonlyaa</span><span class="p">():</span>
+            <span class="n">pdb</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">het</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atomname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+            <span class="n">coords</span><span class="p">,</span> <span class="n">masks</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pdb</span><span class="o">.</span><span class="n">atomcoords</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">aaonly</span><span class="p">,</span> <span class="n">nomask</span><span class="o">=</span><span class="n">nomask</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                                  <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atomname</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+            <span class="c1"># ipd.icv(len(coords))</span>
+            <span class="c1"># ipd.icv([len(_) for _ in coords])</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># ipd.icv(coords.shape)</span>
+            <span class="n">masks</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">nomask</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">masks</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">return</span> <span class="n">coords</span><span class="p">,</span> <span class="n">masks</span>
+
+        <span class="n">an</span> <span class="o">=</span> <span class="n">atomname</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atomname</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">atomname</span>
+        <span class="n">an</span> <span class="o">=</span> <span class="n">an</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">an</span> <span class="o">==</span> <span class="n">an</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span> <span class="o">!=</span> <span class="n">i</span><span class="p">]</span>
+                    <span class="k">break</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="n">nomask</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">xyz</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atommask</span><span class="p">(</span><span class="n">an</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">mask</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="mf">9e9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="n">coords</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyz</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">coords</span>
+
+        <span class="k">return</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.camask">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.camask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">camask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aaonly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atommask</span><span class="p">(</span><span class="s2">&quot;ca&quot;</span><span class="p">,</span> <span class="n">aaonly</span><span class="o">=</span><span class="n">aaonly</span><span class="p">)</span></div>
+
+        <span class="c1"># return np.array([np.any(g.an == b&#39;CA&#39;) for i, g in self.df.groupby(self.df.ri)])</span>
+
+<div class="viewcode-block" id="PDBFile.cbmask">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.cbmask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cbmask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aaonly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atommask</span><span class="p">(</span><span class="s2">&quot;cb&quot;</span><span class="p">,</span> <span class="n">aaonly</span><span class="o">=</span><span class="n">aaonly</span><span class="p">)</span></div>
+
+        <span class="c1"># mask = list()</span>
+        <span class="c1"># for i, (ri, g) in enumerate(self.df.groupby(self.df.ri)):</span>
+        <span class="c1">#    assert np.sum(g.an == b&#39;CB&#39;) &lt;= 1</span>
+        <span class="c1">#    assert np.sum(g.an == b&#39;CB&#39;) &lt;= np.sum(g.an == b&#39;CA&#39;)</span>
+        <span class="c1">#    hascb = np.sum(g.an == b&#39;CB&#39;) &gt; 0</span>
+        <span class="c1">#    mask.append(hascb)</span>
+        <span class="c1"># mask = np.array(mask)</span>
+        <span class="c1"># if aaonly:</span>
+        <span class="c1">#    aaonly = self.aamask</span>
+        <span class="c1">#    # ipd.icv(aaonly)</span>
+        <span class="c1">#    mask = mask[aaonly]</span>
+        <span class="c1"># return mask</span>
+
+<div class="viewcode-block" id="PDBFile.bb">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.bb">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">crd</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomcoords</span><span class="p">(</span><span class="s2">&quot;n ca c o cb&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crd</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">crd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">crd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">crd</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.ca">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.ca">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ca</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">crd</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomcoords</span><span class="p">(</span><span class="s2">&quot;ca&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crd</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">crd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">crd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">crd</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.ncac">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.ncac">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ncac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">crd</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomcoords</span><span class="p">(</span><span class="s2">&quot;n ca c&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crd</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">crd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">crd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">crd</span></div>
+
+        <span class="c1"># pdb = self.subset(het=False, atomnames=[&#39;N&#39;, &#39;CA&#39;, &#39;C&#39;])</span>
+        <span class="c1"># xyz = np.stack([pdb.df[&#39;x&#39;], pdb.df[&#39;y&#39;], pdb.df[&#39;z&#39;]]).T.reshape(-1, 3, 3)</span>
+        <span class="c1"># return xyz</span>
+
+<div class="viewcode-block" id="PDBFile.ncaco">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.ncaco">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ncaco</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">crd</span><span class="p">,</span> <span class="n">_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomcoords</span><span class="p">(</span><span class="s2">&quot;n ca c o&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crd</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">crd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">crd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">crd</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mf">9e9</span><span class="p">):</span>
+            <span class="n">crd</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">add_bb_o_guess</span><span class="p">(</span><span class="n">crd</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">crd</span></div>
+
+        <span class="c1"># pdb = self.subset(het=False, atomnames=[&#39;N&#39;, &#39;CA&#39;, &#39;C&#39;, &#39;O&#39;])</span>
+        <span class="c1"># xyz = np.stack([pdb.df[&#39;x&#39;], pdb.df[&#39;y&#39;], pdb.df[&#39;z&#39;]])</span>
+        <span class="c1"># xyz = xyz.T.reshape(-1, 4, 3)</span>
+        <span class="c1"># return xyz</span>
+
+<div class="viewcode-block" id="PDBFile.sequence">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.sequence">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.chain">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.chain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ires</span><span class="p">):</span>
+        <span class="n">ires</span> <span class="o">=</span> <span class="n">ires</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chainseq</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">ires</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+                <span class="n">ires</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.num_chains">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.num_chains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chainseq</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.splitchains">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.splitchains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">splitchains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aaonly</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">chain</span><span class="o">=</span><span class="n">ch</span><span class="p">,</span> <span class="n">het</span><span class="o">=</span><span class="kc">False</span> <span class="k">if</span> <span class="n">aaonly</span> <span class="k">else</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">chains</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.guess_nfold">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.guess_nfold">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guess_nfold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">isonlyaa</span><span class="p">()</span>
+        <span class="c1"># chains = self.splitchains()</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span><span class="p">()</span>
+        <span class="c1"># ipd.icv(seq)</span>
+        <span class="k">for</span> <span class="n">nfold</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">%</span> <span class="n">nfold</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">nres</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">//</span> <span class="n">nfold</span>
+            <span class="n">nfoldmatch</span> <span class="o">=</span> <span class="p">[</span><span class="n">seq</span><span class="p">[:</span><span class="n">nres</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq</span><span class="p">[</span><span class="n">ir</span><span class="p">:</span><span class="n">ir</span> <span class="o">+</span> <span class="n">nres</span><span class="p">]</span> <span class="k">for</span> <span class="n">ir</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nres</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">nres</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">nfoldmatch</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">nfold</span>
+        <span class="k">assert</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;nfold 1 should have matched&quot;</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.assign_chains_sym">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.assign_chains_sym">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_chains_sym</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nfold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess_nfold</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nfold</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="n">nres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nres</span> <span class="o">//</span> <span class="n">nfold</span>  <span class="c1"># type: ignore</span>
+        <span class="k">assert</span> <span class="n">nres</span> <span class="o">*</span> <span class="n">nfold</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nres</span>  <span class="c1"># type: ignore</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ri</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ich</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nfold</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="k">for</span> <span class="n">ires</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nres</span> <span class="o">*</span> <span class="n">ich</span><span class="p">,</span> <span class="n">nres</span> <span class="o">*</span> <span class="p">(</span><span class="n">ich</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ri</span> <span class="o">==</span> <span class="n">res</span><span class="p">[</span><span class="n">ires</span><span class="p">],</span> <span class="s2">&quot;ch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ABCDEFGHIJ&quot;</span><span class="p">[</span><span class="n">ich</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">nfold</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.xformed">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.xformed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">xformed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xform</span><span class="p">,</span> <span class="n">chainA_contacts_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">contact_distance</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">startchain</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xform</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">crd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span>
+            <span class="n">crd2</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="n">crd</span><span class="p">)</span>
+            <span class="n">pdb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">pdb</span><span class="o">.</span><span class="n">coords</span> <span class="o">=</span> <span class="n">crd2</span>
+            <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">ich</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chains</span><span class="p">):</span>
+                <span class="n">newch</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">all_pymol_chains</span><span class="p">[</span><span class="n">startchain</span> <span class="o">+</span> <span class="n">ich</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+                <span class="n">pdb</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">pdb</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span> <span class="o">==</span> <span class="n">ch</span><span class="p">,</span> <span class="s2">&quot;ch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newch</span>
+            <span class="k">return</span> <span class="n">pdb</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+            <span class="k">assert</span> <span class="n">xform</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span>
+            <span class="n">xforms</span> <span class="o">=</span> <span class="n">xform</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">isident</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">isident</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">isident</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="n">xforms</span><span class="p">[</span><span class="n">isident</span><span class="p">]</span> <span class="o">=</span> <span class="n">xforms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">xforms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="p">)))</span>
+            <span class="n">chainpdbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splitchains</span><span class="p">()</span>
+            <span class="n">keeppdbs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">chainA_contacts_only</span><span class="p">:</span>
+                <span class="n">chaincoords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ca</span><span class="p">(</span><span class="n">splitchains</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">chainbodies</span> <span class="o">=</span> <span class="p">[</span><span class="n">ipd</span><span class="o">.</span><span class="n">RigidBody</span><span class="p">(</span><span class="n">crd</span><span class="p">)</span> <span class="k">for</span> <span class="n">crd</span> <span class="ow">in</span> <span class="n">chaincoords</span><span class="p">]</span>
+                <span class="n">body</span> <span class="o">=</span> <span class="n">chainbodies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">imodel</span><span class="p">,</span> <span class="n">xform</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xform</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">ich</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chains</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">chainA_contacts_only</span><span class="p">:</span>
+                        <span class="n">isect</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">chainbodies</span><span class="p">[</span><span class="n">ich</span><span class="p">],</span> <span class="n">xforms</span><span class="p">[</span><span class="n">imodel</span><span class="p">],</span>
+                                                <span class="n">mindis</span><span class="o">=</span><span class="n">contact_distance</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">isect</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                    <span class="n">newch</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">all_pymol_chains</span><span class="p">[</span><span class="n">startchain</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">keeppdbs</span><span class="p">)]</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+                    <span class="c1"># ipd.icv(imodel, ich, ch, newch)</span>
+                    <span class="n">xpdb</span> <span class="o">=</span> <span class="n">chainpdbs</span><span class="p">[</span><span class="n">ich</span><span class="p">]</span><span class="o">.</span><span class="n">xformed</span><span class="p">(</span><span class="n">xform</span><span class="p">)</span>
+                    <span class="c1"># xpdb.df.loc[xpdb.df.ch == ch, &#39;ch&#39;] = newch</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">xpdb</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+                    <span class="n">xpdb</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span> <span class="o">=</span> <span class="n">newch</span>
+                    <span class="n">xpdb</span><span class="o">.</span><span class="n">camask</span><span class="p">()</span>
+                    <span class="n">keeppdbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xpdb</span><span class="p">)</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pdb</span><span class="o">.</span><span class="n">df</span> <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">keeppdbs</span><span class="p">])</span>
+            <span class="n">newpdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">original_contents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">original_contents</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">newpdb</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">crd</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">z</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">crd</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">writeable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">crd</span>
+
+    <span class="nd">@coords</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PDBFile.sym_chain_groups">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.sym_chain_groups">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sym_chain_groups</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span> <span class="n">tolerances</span><span class="o">=</span><span class="n">_default_tol</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="n">pdb</span><span class="o">.</span><span class="n">assign_chains_sym</span><span class="p">()</span>
+        <span class="n">chains</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">splitchains</span><span class="p">()</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">seenit</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ichain</span><span class="p">,</span> <span class="n">ch0</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chains</span><span class="p">):</span>
+            <span class="n">seq1</span> <span class="o">=</span> <span class="n">ch0</span><span class="o">.</span><span class="n">sequence</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">jchain</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ichain</span><span class="p">):</span>
+                <span class="n">seq2</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="n">jchain</span><span class="p">]</span><span class="o">.</span><span class="n">sequence</span><span class="p">()</span>
+                <span class="n">matcher</span> <span class="o">=</span> <span class="n">SequenceMatcher</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">seq1</span><span class="p">,</span> <span class="n">seq2</span><span class="p">)</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">matcher</span><span class="o">.</span><span class="n">find_longest_match</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq1</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq2</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">tolerances</span><span class="o">.</span><span class="n">seqmatch</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">match</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq1</span> <span class="o">+</span> <span class="n">seq2</span><span class="p">):</span>
+                    <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ichain</span><span class="p">,</span> <span class="n">jchain</span><span class="p">,</span> <span class="n">match</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seenit</span><span class="o">.</span><span class="n">intersection</span><span class="p">([</span><span class="n">ichain</span><span class="p">,</span> <span class="n">jchain</span><span class="p">])):</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;looks like more than 2fold symmetry, not yet supported&quot;</span><span class="p">)</span>
+                    <span class="n">seenit</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">ichain</span><span class="p">,</span> <span class="n">jchain</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No symmetrical chains found by longest common substring </span><span class="si">{</span><span class="n">tolerances</span><span class="o">.</span><span class="n">seqmatch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">chains</span><span class="p">,</span> <span class="n">groups</span></div>
+
+
+<div class="viewcode-block" id="PDBFile.syminfo">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.PDBFile.syminfo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">syminfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerances</span><span class="o">=</span><span class="n">_default_tol</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">chains</span><span class="p">,</span> <span class="n">cgroups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sym_chain_groups</span><span class="p">(</span><span class="n">tolerances</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">chaingroup</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cgroups</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ichain</span><span class="p">,</span> <span class="n">jchain</span><span class="p">,</span> <span class="n">seqmatch</span> <span class="o">=</span> <span class="n">chaingroup</span>
+        <span class="n">ca0</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="n">ichain</span><span class="p">]</span><span class="o">.</span><span class="n">ca</span><span class="p">()[</span><span class="n">seqmatch</span><span class="o">.</span><span class="n">a</span><span class="p">:</span><span class="n">seqmatch</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">seqmatch</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+        <span class="n">ca1</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="n">jchain</span><span class="p">]</span><span class="o">.</span><span class="n">ca</span><span class="p">()[</span><span class="n">seqmatch</span><span class="o">.</span><span class="n">b</span><span class="p">:</span><span class="n">seqmatch</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span> <span class="n">seqmatch</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+        <span class="n">rms</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">xrmsfit</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">hrmsfit</span><span class="p">(</span><span class="n">ca0</span><span class="p">,</span> <span class="n">ca1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rms</span> <span class="o">&gt;</span> <span class="n">tolerances</span><span class="o">.</span><span class="n">rms</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;rmsd </span><span class="si">{</span><span class="n">rms</span><span class="si">:</span><span class="s2">5.3f</span><span class="si">}</span><span class="s2"> between detected symmetric chains is above rms tolerance </span><span class="si">{</span><span class="n">tolerances</span><span class="o">.</span><span class="n">rms</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">hel</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">haxis_angle_cen_hel_of</span><span class="p">(</span><span class="n">xrmsfit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hel</span> <span class="o">&gt;</span> <span class="n">tolerances</span><span class="o">.</span><span class="n">translation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;translation along symaxis of </span><span class="si">{</span><span class="n">hel</span><span class="si">:</span><span class="s1">5.3f</span><span class="si">}</span><span class="s1"> between &quot;symmetric&quot;&#39;</span>
+                             <span class="s2">&quot; chains is above translation tolerance </span><span class="si">{tolerances.translation}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">nfold</span><span class="p">,</span> <span class="n">ang</span> <span class="o">=</span> <span class="n">_get_nfold_angle</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">tolerances</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">nfold</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nfold </span><span class="si">{</span><span class="n">nfold</span><span class="si">}</span><span class="s2"> not supported yet&quot;</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span>
+            <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+            <span class="n">angle</span><span class="o">=</span><span class="n">ang</span><span class="p">,</span>
+            <span class="n">center</span><span class="o">=</span><span class="n">cen</span><span class="p">,</span>
+            <span class="n">hel</span><span class="o">=</span><span class="n">hel</span><span class="p">,</span>
+            <span class="n">nfold</span><span class="o">=</span><span class="n">nfold</span><span class="p">,</span>
+            <span class="n">chaingroups</span><span class="o">=</span><span class="n">cgroups</span><span class="p">,</span>
+            <span class="n">chains</span><span class="o">=</span><span class="n">chains</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_atomrecords_to_chainseq</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ignoremissing</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="n">prevri</span> <span class="o">=</span> <span class="mi">123456789</span>
+    <span class="n">prevhet</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
+        <span class="n">ri</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">ri</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ri</span> <span class="o">==</span> <span class="n">prevri</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">rn</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">rn</span> <span class="o">=</span> <span class="n">rn</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rn</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="k">else</span> <span class="n">rn</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="k">else</span> <span class="n">ch</span>
+        <span class="n">het</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">het</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ignoremissing</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">het</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">prevhet</span><span class="p">:</span>
+            <span class="c1"># mark missing sequence residues if not HET</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">prevri</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ri</span><span class="p">):</span>
+                <span class="n">seq</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="n">prevri</span> <span class="o">=</span> <span class="n">ri</span>
+        <span class="n">prevhet</span> <span class="o">=</span> <span class="n">het</span>
+        <span class="k">if</span> <span class="n">het</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rn</span> <span class="o">==</span> <span class="s2">&quot;HOH&quot;</span><span class="p">:</span>
+                <span class="n">seq</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">seq</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">aa321</span><span class="p">[</span><span class="n">rn</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">seq</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seq</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+<div class="viewcode-block" id="join">
+<a class="viewcode-back" href="../../../_apidoc/ipd.pdb.pdbfile.html#ipd.pdb.pdbfile.join">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="n">pdbfiles</span><span class="p">,</span> <span class="n">chains</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+    <span class="n">chains</span> <span class="o">=</span> <span class="n">chains</span> <span class="ow">or</span> <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">all_pymol_chains</span>
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">df</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pdbfiles</span><span class="p">]</span>
+    <span class="n">ichain</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dfs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">ch</span> <span class="o">==</span> <span class="n">c</span><span class="p">,</span> <span class="s2">&quot;ch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="n">ichain</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+            <span class="n">ichain</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">pdbfiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">original_contents</span><span class="o">=</span><span class="n">pdbfiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">original_contents</span><span class="p">)</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_nfold_angle</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">tolerances</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">nfold</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+        <span class="n">angnf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">nfold</span>
+        <span class="k">if</span> <span class="n">angnf</span> <span class="o">-</span> <span class="n">tolerances</span><span class="o">.</span><span class="n">angle</span> <span class="o">&lt;</span> <span class="n">ang</span> <span class="o">&lt;</span> <span class="n">angnf</span> <span class="o">+</span> <span class="n">tolerances</span><span class="o">.</span><span class="n">angle</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">nfold</span><span class="p">,</span> <span class="n">ang</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Angle </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span><span class="si">}</span><span class="s2"> deviates from any nfold in </span><span class="si">{</span><span class="n">candidates</span><span class="si">}</span><span class="s2"> by more than </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">tolerances</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span><span class="si">}</span><span class="s2"> degrees&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.viz.pymol_cgo &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/viz/pymol_cgo';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.viz.pymol_cgo</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.viz.pymol_cgo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pymol</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pymol</span><span class="w"> </span><span class="kn">import</span> <span class="n">cgo</span><span class="p">,</span> <span class="n">cmd</span>  <span class="c1"># type: ignore</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="n">_numcom</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">_numvec</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">_numray</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">_numline</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">_numseg</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="showcom">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showcom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showcom</span><span class="p">(</span><span class="n">sel</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">_numcom</span>
+    <span class="n">cen</span> <span class="o">=</span> <span class="n">com</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Center of mass: &quot;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">SPHERE</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">]</span>  <span class="c1"># white sphere with 3A radius</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="s2">&quot;com</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numcom</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">_numcom</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="cgo_sphere">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_sphere">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_sphere</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="n">cen</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">cen</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="c1"># white sphere with 3A radius</span>
+    <span class="c1"># ipd.icv(col)</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="p">[</span><span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span> <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>  <span class="c1"># type: ignore</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cen</span><span class="p">:</span>
+        <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">cgo</span><span class="o">.</span><span class="n">SPHERE</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">rad</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">mycgo</span></div>
+
+
+<div class="viewcode-block" id="showsphere">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showsphere">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showsphere</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lbl</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">_numvec</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;sphere</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numvec</span>
+        <span class="n">_numvec</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="n">cgo_sphere</span><span class="p">(</span><span class="n">cen</span><span class="o">=</span><span class="n">cen</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">rad</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="cgo_vecfrompoint">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_vecfrompoint">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_vecfrompoint</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="n">OBJ</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">BEGIN</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">LINES</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">END</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">OBJ</span></div>
+
+
+<div class="viewcode-block" id="showvecfrompoint">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showvecfrompoint">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showvecfrompoint</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lbl</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">_numray</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;ray</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numray</span>
+        <span class="n">_numray</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="n">cgo_vecfrompoints</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># pymol.cmd.load_cgo([cgo.COLOR, col[0],col[1],col[2],</span>
+    <span class="c1">#             cgo.SPHERE,   cen[0],       cen[1],       cen[2],    0.08,</span>
+    <span class="c1">#             cgo.CYLINDER, cen[0],       cen[1],       cen[2],</span>
+    <span class="c1">#                       cen[0] +axis[0], cen[1] +axis[1], cen[2] +axis[2], 0.02,</span>
+    <span class="c1">#               col[0],col[1],col[2],col[0],col[1],col[2],], lbl)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="cgo_segment">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_segment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_segment</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="n">OBJ</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">BEGIN</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">LINES</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">c1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">c1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">c1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">c2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">c2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">c2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">END</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">]</span>
+    <span class="c1"># pymol.cmd.load_cgo([cgo.COLOR, col[0],col[1],col[2],</span>
+    <span class="c1">#             cgo.CYLINDER, c1[0],     c1[1],     c1[2],</span>
+    <span class="c1">#                           c2[0],     c2[1],     c2[2], 0.02,</span>
+    <span class="c1">#               col[0],col[1],col[2],col[0],col[1],col[2],], lbl)</span>
+    <span class="k">return</span> <span class="n">OBJ</span></div>
+
+
+<div class="viewcode-block" id="showsegment">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showsegment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showsegment</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lbl</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">_numseg</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;seg</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numseg</span>
+        <span class="n">_numseg</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">cgo_segment</span><span class="p">(</span><span class="n">c1</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">),</span> <span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># pymol.cmd.load_cgo([cgo.COLOR, col[0],col[1],col[2],</span>
+    <span class="c1">#             cgo.CYLINDER, c1[0],     c1[1],     c1[2],</span>
+    <span class="c1">#                           c2[0],     c2[1],     c2[2], 0.02,</span>
+    <span class="c1">#               col[0],col[1],col[2],col[0],col[1],col[2],], lbl)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="cgo_cyl">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_cyl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_cyl</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">rad</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">col2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">col2</span> <span class="o">=</span> <span class="n">col2</span> <span class="ow">or</span> <span class="n">col</span>
+    <span class="k">return</span> <span class="p">[</span>  <span class="c1"># cgo.COLOR, col[0],col[1],col[2],</span>
+        <span class="mf">9.0</span><span class="p">,</span>  <span class="c1">#        cgo.CYLINDER,</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">c1</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">c1</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">c1</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">c2</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">c2</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">c2</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+        <span class="n">rad</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">col2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">col2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">col2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="showcyl">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showcyl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showcyl</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">rad</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">col2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lbl</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">_numseg</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;seg</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numseg</span>
+        <span class="n">_numseg</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">c1</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">rad</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">col2</span><span class="o">=</span><span class="n">col2</span><span class="p">),</span> <span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="showline">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showline">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showline</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">oneside</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lbl</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">_numline</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;line</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numline</span>
+        <span class="n">_numline</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">OBJ</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">BEGIN</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">LINES</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">oneside</span> <span class="k">else</span> <span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">oneside</span> <span class="k">else</span> <span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="n">oneside</span> <span class="k">else</span> <span class="n">cenc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">END</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">]</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">OBJ</span><span class="p">,</span> <span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="cgo_lineabs">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_lineabs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_lineabs</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">BEGIN</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">LINES</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">END</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="showlineabs">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showlineabs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showlineabs</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lbl</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">_numline</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;line</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numline</span>
+        <span class="n">_numline</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="n">cgo_lineabs</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="cgo_fan">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_fan">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_fan</span><span class="p">(</span>
+    <span class="n">axis</span><span class="p">,</span>
+    <span class="n">cen</span><span class="p">,</span>
+    <span class="n">rad</span><span class="p">,</span>
+    <span class="n">arc</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">col2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">startpoint</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">thickness</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">showstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">randspread</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">fanshift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">ntri</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">arc</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">arc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">arc</span><span class="p">)</span>
+    <span class="n">col2</span> <span class="o">=</span> <span class="n">col2</span> <span class="ow">or</span> <span class="n">col</span>
+    <span class="n">rot</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hrot</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">arc</span> <span class="o">/</span> <span class="p">(</span><span class="n">ntri</span><span class="o">+</span><span class="mi">0</span><span class="p">),</span> <span class="n">cen</span><span class="p">)</span>
+
+    <span class="c1"># ipd.icv(startpoint - cen)</span>
+    <span class="n">dirn</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hprojperp</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">startpoint</span> <span class="o">-</span> <span class="n">cen</span><span class="p">)</span>
+    <span class="n">dirn</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnormalized</span><span class="p">(</span><span class="n">dirn</span><span class="p">)</span>
+    <span class="n">cen</span> <span class="o">=</span> <span class="n">cen</span> <span class="o">+</span> <span class="n">fanshift</span><span class="o">*</span><span class="n">axis</span>
+    <span class="n">pt1</span> <span class="o">=</span> <span class="n">cen</span> <span class="o">+</span> <span class="n">dirn</span><span class="o">*</span><span class="n">rad</span>  <span class="c1"># - thickness * axis * 0.5</span>
+
+    <span class="n">shift</span> <span class="o">=</span> <span class="n">randspread</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">axis</span>
+    <span class="n">cen</span> <span class="o">+=</span> <span class="n">shift</span>
+    <span class="n">pt1</span> <span class="o">+=</span> <span class="n">shift</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># obj += cgo_sphere(startpoint, 0.1)</span>
+    <span class="c1"># obj += cgo_sphere(pt1, 0.1, col)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ntri</span><span class="p">):</span>
+        <span class="c1"># yapf: disable</span>
+        <span class="n">pt2</span> <span class="o">=</span> <span class="n">rot</span> <span class="o">@</span> <span class="n">pt1</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pt2</span> <span class="o">+=</span> <span class="n">thickness</span><span class="o">*</span> <span class="n">axis</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pt2</span> <span class="o">-=</span> <span class="n">thickness</span><span class="o">*</span> <span class="n">axis</span>
+        <span class="n">obj</span> <span class="o">+=</span> <span class="p">[</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">BEGIN</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">TRIANGLES</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>    <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">ALPHA</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">,</span>  <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="n">cen</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cen</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cen</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">,</span>  <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="n">pt1</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt1</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pt1</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">,</span>  <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="n">pt2</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt2</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pt2</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+             <span class="n">cgo</span><span class="o">.</span><span class="n">END</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+          <span class="p">]</span>
+
+
+
+        <span class="n">pt1</span> <span class="o">=</span> <span class="n">pt2</span>
+
+        <span class="c1"># yapf: enable</span>
+    <span class="k">return</span> <span class="n">obj</span></div>
+
+
+<div class="viewcode-block" id="showfan">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showfan">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showfan</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">rad</span><span class="p">,</span> <span class="n">arc</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lbl</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lbl</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">_numseg</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;seg</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_numseg</span>
+        <span class="n">_numseg</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">cgo_fan</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">cen</span><span class="o">=</span><span class="n">cen</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">rad</span><span class="p">,</span> <span class="n">arc</span><span class="o">=</span><span class="n">arc</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">lbl</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="showaxes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showaxes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showaxes</span><span class="p">():</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">BEGIN</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">LINES</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">20.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">20.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="mi">00</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">cgo</span><span class="o">.</span><span class="n">END</span>  <span class="c1"># type: ignore</span>
+    <span class="p">]</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;axes&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="cgo_cyl_arrow">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_cyl_arrow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_cyl_arrow</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">col2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arrowlen</span><span class="o">=</span><span class="mf">4.0</span><span class="p">):</span>
+    <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">c1</span><span class="p">),</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">col2</span><span class="p">:</span>
+        <span class="n">col2</span> <span class="o">=</span> <span class="n">col</span>
+    <span class="n">CGO</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># c1.round0()</span>
+    <span class="c1"># c2.round0()</span>
+    <span class="n">CGO</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">col2</span><span class="o">=</span><span class="n">col2</span><span class="p">))</span>
+    <span class="n">dirn</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnormalized</span><span class="p">(</span><span class="n">c2</span> <span class="o">-</span> <span class="n">c1</span><span class="p">)</span>
+    <span class="n">perp</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnormalized</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">hprojperp</span><span class="p">(</span><span class="n">dirn</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.2340790923</span><span class="p">,</span> <span class="mf">0.96794275</span><span class="p">,</span> <span class="mf">0.52037438472304783</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">arrowlen</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">arrow1</span> <span class="o">=</span> <span class="n">c2</span> <span class="o">-</span> <span class="n">dirn</span><span class="o">*</span><span class="n">arrowlen</span> <span class="o">+</span> <span class="n">perp</span><span class="o">*</span><span class="mf">2.0</span>
+        <span class="n">arrow2</span> <span class="o">=</span> <span class="n">c2</span> <span class="o">-</span> <span class="n">dirn</span><span class="o">*</span><span class="n">arrowlen</span> <span class="o">-</span> <span class="n">perp</span><span class="o">*</span><span class="mf">2.0</span>
+        <span class="c1"># -dirn to shift to sphere surf</span>
+        <span class="n">CGO</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">c2</span> <span class="o">-</span> <span class="n">dirn</span><span class="o">*</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">arrow1</span> <span class="o">-</span> <span class="n">dirn</span><span class="o">*</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col2</span><span class="p">))</span>
+        <span class="c1"># -dirn to shift to sphere surf</span>
+        <span class="n">CGO</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">c2</span> <span class="o">-</span> <span class="n">dirn</span><span class="o">*</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">arrow2</span> <span class="o">-</span> <span class="n">dirn</span><span class="o">*</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">CGO</span></div>
+
+
+<div class="viewcode-block" id="showcube">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showcube">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showcube</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;CUBE&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="n">cgo_cube</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="s2">&quot;CUBE&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="showcell">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.showcell">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showcell</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;CELL&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="n">cgo_cell</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="s2">&quot;CELL&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="cgo_cell">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_cell">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_cell</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.03</span><span class="p">):</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">lattice</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">lattice</span> <span class="o">=</span> <span class="n">lattice</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">]</span>
+
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">cgo</span><span class="o">.</span><span class="n">CYLINDER</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">r</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="mi">1</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+    <span class="p">]</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">mycgo</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">mycgo</span></div>
+
+
+<div class="viewcode-block" id="cgo_cube">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_cgo.html#ipd.viz.pymol_cgo.cgo_cube">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_cube</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">],</span> <span class="n">ub</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">xform</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="p">[</span><span class="n">lb</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="p">[</span><span class="n">ub</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+    <span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">lb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xform</span><span class="p">,</span> <span class="p">[</span><span class="n">ub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lb</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+    <span class="p">]</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">cgo</span><span class="o">.</span><span class="n">CYLINDER</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">r</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="mi">1</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+    <span class="p">]</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">mycgo</span><span class="p">))</span>
+
+    <span class="c1"># yapf: disable</span>
+    <span class="c1">#   l=10#*sqrt(3)</span>
+    <span class="c1">#   m=-l</span>
+    <span class="c1">#   mycgo += [</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, l, 0, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, l, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, 0, l, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, m, 0, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, m, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, 0, m, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, l, l, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, l, l, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, l, 0, l, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, m, l, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, m, l, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, m, 0, l, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, m, m, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, m, m, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, m, 0, m, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, l, m, 0, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, 0, l, m, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#      cgo.CYLINDER, 0,0,0, l, 0, m, r, 1, 1, 1, 1, 1, 1,</span>
+    <span class="c1">#</span>
+    <span class="c1">#   ]</span>
+    <span class="c1"># yapf: enable</span>
+    <span class="k">return</span> <span class="n">mycgo</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

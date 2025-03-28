@@ -1,0 +1,912 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.dev.decorators &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/dev/decorators';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.dev.decorators</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.dev.decorators</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<div class="viewcode-block" id="generic_get_keys">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.generic_get_keys">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generic_get_keys</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FieldSpec</span> <span class="o">=</span> <span class="p">()):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;keys&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;keys&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">valid_element_name</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;items&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">valid_element_name</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">if</span> <span class="n">valid_element_name_thorough</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+        <span class="p">]</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dont know how to get elements from </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="generic_get_items">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.generic_get_items">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generic_get_items</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;items&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">valid_element_name</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;keys&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;keys&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">valid_element_name</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">valid_element_name_thorough</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">))]</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dont know how to get elements from </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="valid_element_name">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.valid_element_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_element_name</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span></div>
+
+
+<div class="viewcode-block" id="valid_element_name_thorough">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.valid_element_name_thorough">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_element_name_thorough</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
+    <span class="k">return</span> <span class="n">valid_element_name</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_reserved_element_names</span></div>
+
+
+<span class="n">_reserved_element_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="s1">&#39;mapwise npwise valwise dictwise&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+<div class="viewcode-block" id="get_fields">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.get_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_fields</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FieldSpec</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FieldSpec</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return list of string fields and bool isplural&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">generic_get_keys</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">),</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span> <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="k">return</span> <span class="p">[</span><span class="n">fields</span><span class="p">],</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">fields</span><span class="p">,</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="is_iterizeable">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.is_iterizeable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_iterizeable</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">basetype</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">splitstr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">allowmap</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if an object can be treated as an iterable.</span>
+
+<span class="sd">    This function determines if `arg` can be iterated over. It considers edge cases such as:</span>
+<span class="sd">    - Strings with spaces (if `splitstr` is True) are considered iterable.</span>
+<span class="sd">    - Instances of `basetype` are not treated as iterable.</span>
+<span class="sd">    - Mappings (like dictionaries) are considered iterable unless `allowmap` is set to False.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg (Any): The object to test for iterability.</span>
+<span class="sd">        basetype (type, optional): A type that should not be considered iterable. If a string is passed,</span>
+<span class="sd">            it will attempt to match it to the type&#39;s `__name__` or `__qualname__`. Defaults to `str`.</span>
+<span class="sd">        splitstr (bool, optional): If True, strings containing spaces are considered iterable. Defaults to True.</span>
+<span class="sd">        allowmap (bool, optional): If False, mappings (like dictionaries) are not treated as iterable. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if `arg` is iterable according to the specified rules, otherwise False.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        is_iterizeable([1, 2, 3])  # True</span>
+<span class="sd">        is_iterizeable(&#39;hello&#39;)  # False</span>
+<span class="sd">        is_iterizeable(&#39;hello world&#39;)  # True (if `splitstr=True`)</span>
+<span class="sd">        is_iterizeable({&#39;a&#39;: 1})  # False (if `allowmap=False`)</span>
+<span class="sd">        is_iterizeable({&#39;a&#39;: 1}, allowmap=True)  # True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basetype</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">basetype</span> <span class="o">==</span> <span class="s1">&#39;notlist&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">basetype</span><span class="p">:</span> <span class="n">basetype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">==</span> <span class="n">basetype</span><span class="p">:</span> <span class="n">basetype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">basetype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">:</span> <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">basetype</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">basetype</span><span class="p">):</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allowmap</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="NoneFunc">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.NoneFunc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">NoneFunc</span><span class="p">():</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="iterize_on_first_param">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.iterize_on_first_param">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iterize_on_first_param</span><span class="p">(</span>
+    <span class="n">func0</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="n">NoneFunc</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">basetype</span><span class="p">:</span> <span class="s1">&#39;str|type|tuple[type,...]&#39;</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">splitstr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">asdict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">asbunch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">asnumpy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">allowmap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ipd</span><span class="o">.</span><span class="n">F</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator that vectorizes a function over its first parameter.</span>
+
+<span class="sd">    This decorator allows a function to handle both single values and iterables as its</span>
+<span class="sd">    first argument. If the first argument is iterable, the function is applied to each</span>
+<span class="sd">    element individually, and the results are returned in an appropriate format (list,</span>
+<span class="sd">    dictionary, or Bunch).</span>
+
+<span class="sd">    If the first argument is not iterable (or is excluded by type), the function behaves</span>
+<span class="sd">    normally.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        basetype (type or tuple of types, optional):</span>
+<span class="sd">            Type(s) that should be treated as scalar values, even if they are iterable.</span>
+<span class="sd">            For example, `basetype=str` ensures strings are treated as single values.</span>
+<span class="sd">            Defaults to `str`.</span>
+
+<span class="sd">        splitstr (bool, optional):</span>
+<span class="sd">            If `True`, strings with spaces are split into lists before processing.</span>
+<span class="sd">            Defaults to `True`.</span>
+
+<span class="sd">        asdict (bool, optional):</span>
+<span class="sd">            If `True`, the results are returned as a dictionary with input values as keys.</span>
+<span class="sd">            Defaults to `False`.</span>
+
+<span class="sd">        asbunch (bool, optional):</span>
+<span class="sd">            If `True`, the results are returned as a `Bunch` object (like a dict but</span>
+<span class="sd">            with attribute-style access). If the keys are strings, they are used as</span>
+<span class="sd">            attribute names. Defaults to `False`.</span>
+
+<span class="sd">        allowmap (bool, optional):</span>
+<span class="sd">            If `True`, allows mapping types (like dictionaries) to be processed as</span>
+<span class="sd">            iterables, with the function applied to each value. Defaults to `False`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        callable: A decorated function that can handle both scalar and iterable inputs</span>
+<span class="sd">        for its first parameter.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        **Basic usage with default behavior**:</span>
+
+<span class="sd">        &gt;&gt;&gt; @iterize_on_first_param</span>
+<span class="sd">        ... def square(x):</span>
+<span class="sd">        ...     return x * x</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; square(5)</span>
+<span class="sd">        25</span>
+<span class="sd">        &gt;&gt;&gt; square([1, 2, 3])</span>
+<span class="sd">        [1, 4, 9]</span>
+
+<span class="sd">        **Using `basetype` to prevent iteration over strings**:</span>
+
+<span class="sd">        &gt;&gt;&gt; @iterize_on_first_param(basetype=str)</span>
+<span class="sd">        ... def process(item):</span>
+<span class="sd">        ...     return len(item)</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; process(&quot;hello&quot;)  # Treated as scalar despite being iterable</span>
+<span class="sd">        5</span>
+<span class="sd">        &gt;&gt;&gt; process([&quot;hello&quot;, &quot;world&quot;])</span>
+<span class="sd">        [5, 5]</span>
+
+<span class="sd">        **Using `asdict` to return results as a dictionary**:</span>
+
+<span class="sd">        &gt;&gt;&gt; @iterize_on_first_param(asdict=True)</span>
+<span class="sd">        ... def double(x):</span>
+<span class="sd">        ...     return x * 2</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; double([1, 2, 3])</span>
+<span class="sd">        {1: 2, 2: 4, 3: 6}</span>
+
+<span class="sd">        **Using `asbunch` to return results as a Bunch**:</span>
+
+<span class="sd">        &gt;&gt;&gt; @iterize_on_first_param(asbunch=True)</span>
+<span class="sd">        ... def triple(x):</span>
+<span class="sd">        ...     return x * 3</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; result = triple([&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">        &gt;&gt;&gt; result.a</span>
+<span class="sd">        &#39;aaa&#39;</span>
+<span class="sd">        &gt;&gt;&gt; result.b</span>
+<span class="sd">        &#39;bbb&#39;</span>
+
+<span class="sd">        **Using `allowmap` to enable mapping support**:</span>
+
+<span class="sd">        &gt;&gt;&gt; @iterize_on_first_param(allowmap=True)</span>
+<span class="sd">        ... def negate(x):</span>
+<span class="sd">        ...     return -x</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; negate({&quot;a&quot;: 1, &quot;b&quot;: 2})</span>
+<span class="sd">        {&#39;a&#39;: -1, &#39;b&#39;: -2}</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        - The decorator can be applied with or without parentheses.</span>
+<span class="sd">        - If `asdict` and `asbunch` are both `True`, `asbunch` takes precedence.</span>
+<span class="sd">        - If `allowmap` is `True`, the decorator will apply the function to the values</span>
+<span class="sd">          of the mapping and return a new mapping.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">deco</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ipd</span><span class="o">.</span><span class="n">F</span><span class="p">:</span>
+
+        <span class="nd">@ipd</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">arg0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">is_iterizeable</span><span class="p">(</span><span class="n">arg0</span><span class="p">,</span> <span class="n">basetype</span><span class="o">=</span><span class="n">basetype</span><span class="p">,</span> <span class="n">splitstr</span><span class="o">=</span><span class="n">splitstr</span><span class="p">,</span> <span class="n">allowmap</span><span class="o">=</span><span class="n">allowmap</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">splitstr</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg0</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">arg0</span><span class="p">:</span>
+                    <span class="n">arg0</span> <span class="o">=</span> <span class="n">arg0</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">allowmap</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg0</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arg0</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="k">elif</span> <span class="n">asdict</span> <span class="ow">or</span> <span class="n">asbunch</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">a0</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">a0</span> <span class="ow">in</span> <span class="n">arg0</span><span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">a0</span> <span class="ow">in</span> <span class="n">arg0</span><span class="p">]</span>
+                    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                        <span class="n">resutn</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">arg0</span><span class="p">)(</span><span class="n">result</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">asbunch</span> <span class="ow">and</span> <span class="n">result</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">first</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">asnumpy</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">arg0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">if</span> <span class="n">func0</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneFunc</span><span class="p">:</span>  <span class="c1"># handle case with no call/args</span>
+        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">deco</span><span class="p">(</span><span class="n">func0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">deco</span></div>
+
+
+<span class="n">iterize_on_first_param_path</span> <span class="o">=</span> <span class="n">iterize_on_first_param</span><span class="p">(</span><span class="n">basetype</span><span class="o">=</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">))</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd.dev</span>
+
+<div class="viewcode-block" id="preserve_random_state">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.preserve_random_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preserve_random_state</span><span class="p">(</span><span class="n">func0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to preserve the random state during function execution.</span>
+
+<span class="sd">    This decorator sets a temporary random seed during the execution of the decorated function.</span>
+<span class="sd">    If a `seed` is passed as a keyword argument to the function, it will override the default seed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func0 (callable, optional): The function to decorate. If provided, the decorator can be used without parentheses.</span>
+<span class="sd">        seed0 (int, optional): The default random seed to use if not overridden by a `seed` keyword argument.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        callable: The decorated function.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: If `func0` is provided but is not callable or if `seed0` is not None when `func0` is used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">deco</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+
+        <span class="nd">@ipd</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">temporary_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span> <span class="n">seed0</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">if</span> <span class="n">func0</span><span class="p">:</span>  <span class="c1"># handle case with no call/args</span>
+        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">seed0</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">deco</span><span class="p">(</span><span class="n">func0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">deco</span></div>
+
+
+<div class="viewcode-block" id="make_getitem_for_attributes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.make_getitem_for_attributes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_getitem_for_attributes</span><span class="p">(</span><span class="n">get</span><span class="o">=</span><span class="nb">getattr</span><span class="p">,</span> <span class="n">provide</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Any&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">provide</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;provide must be &#39;value&#39; or &#39;item&#39;, not </span><span class="si">{</span><span class="n">provide</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">getitem_for_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FieldSpec</span><span class="p">,</span> <span class="n">get</span><span class="o">=</span><span class="n">get</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Any&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enhanced `__getitem__` method to support attribute access with multiple keys.</span>
+
+<span class="sd">    If the field is a string containing spaces, it will be split into a list of keys.</span>
+<span class="sd">    If the field is a list of strings, it will return the corresponding attributes as a tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field (list[str] | str): A single attribute name or a list of attribute names.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Any: The attribute value(s) corresponding to the field(s).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; obj = MyClass()</span>
+<span class="sd">        &gt;&gt;&gt; value = obj[&#39;x&#39;]  # Single field</span>
+<span class="sd">        &gt;&gt;&gt; values = obj[&#39;x y z&#39;]  # Multiple keys as a string</span>
+<span class="sd">        &gt;&gt;&gt; values = obj[[&#39;x&#39;, &#39;y&#39;, &#39;z&#39;]]  # Multiple keys as a list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="n">field</span><span class="p">,</span> <span class="n">plural</span> <span class="o">=</span> <span class="n">get_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">provide</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">plural</span><span class="p">:</span> <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">field</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">provide</span> <span class="o">==</span> <span class="s1">&#39;item&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">plural</span><span class="p">:</span> <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">field</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">getitem_for_attributes</span></div>
+
+
+<div class="viewcode-block" id="generic_enumerate">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.generic_enumerate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generic_enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FieldSpec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ipd</span><span class="o">.</span><span class="n">EnumerIter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enhanced `enumerate` method to iterate over multiple attributes at once.</span>
+
+<span class="sd">    This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the fields is a string containing spaces, it will be split into a list of keys. If the fields is a list of strings, it will return the corresponding attributes as a tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fields (list[str] | str): A single attribute name or a list of attribute names.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        tuple[int, ...]: A tuple containing the index and the attribute values.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; @ipd.dev.subscriptable_for_attributes</span>
+<span class="sd">        ... class MyClass:</span>
+<span class="sd">        ...     def __init__(self):</span>
+<span class="sd">        ...         self.x = range(5)</span>
+<span class="sd">        ...         self.y = range(5, 10)</span>
+<span class="sd">        &gt;&gt;&gt; obj = MyClass()</span>
+<span class="sd">        &gt;&gt;&gt; for i, x, y in obj.enumerate(&#39;x y&#39;):</span>
+<span class="sd">        ...     print(i, x, y)</span>
+<span class="sd">        0 0 5</span>
+<span class="sd">        1 1 6</span>
+<span class="sd">        2 2 7</span>
+<span class="sd">        3 3 8</span>
+<span class="sd">        4 4 9</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">generic_get_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">fields</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">vals</span><span class="p">]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">order</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="n">order</span><span class="p">(</span><span class="n">fields</span><span class="p">)):</span>
+        <span class="k">yield</span> <span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="n">vals</span></div>
+
+
+<div class="viewcode-block" id="generic_groupby">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.generic_groupby">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generic_groupby</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">groupby</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FieldSpec</span><span class="p">,</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">FieldSpec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">convert</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ipd</span><span class="o">.</span><span class="n">EnumerListIter</span><span class="p">:</span>
+    <span class="n">exclude</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">splat</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">groupby</span><span class="p">):</span>
+        <span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">groupby</span><span class="p">,</span> <span class="n">plural</span> <span class="o">=</span> <span class="n">get_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupby</span><span class="p">)</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="n">groupby</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plural</span><span class="p">:</span> <span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">groupby</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">groupby</span><span class="p">]</span>
+    <span class="n">fields</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">fields</span><span class="p">]</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">groupby</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">)):</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">convert</span><span class="p">:</span> <span class="n">vals</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">convert</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">splat</span><span class="p">:</span> <span class="k">yield</span> <span class="n">group</span><span class="p">,</span> <span class="o">*</span><span class="n">vals</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">yield</span> <span class="n">group</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">vals</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="is_fuzzy_match">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.is_fuzzy_match">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_fuzzy_match</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if &#39;sub&#39; is a subsequence of &#39;string&#39;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      sub: The potential subsequence string.</span>
+<span class="sd">      string: The main string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      True if &#39;sub&#39; is a subsequence of &#39;string&#39;, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sub</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">string</span><span class="p">[:</span><span class="mi">2</span><span class="p">]:</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sub</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">string</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getattr_fzf">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.getattr_fzf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getattr_fzf</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get attribute values using fuzzy matching.</span>
+
+<span class="sd">    This function uses fuzzy matching to find attribute names that are similar to the given field.</span>
+<span class="sd">    If multiple matches are found, the values of the first match are returned.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: The object to search for attributes.</span>
+<span class="sd">        field: The field to search for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Any: The attribute value corresponding to the field.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">    &gt;&gt;&gt; @ipd.dev.subscriptable_for_attributes</span>
+<span class="sd">    ... class MyClass:</span>
+<span class="sd">    ...     def __init__(self):</span>
+<span class="sd">    ...         self.abc = 1</span>
+<span class="sd">    ...         self.xyz = 2</span>
+<span class="sd">    &gt;&gt;&gt; obj = MyClass()</span>
+<span class="sd">    &gt;&gt;&gt; obj.fzf(&#39;ab&#39;)  # Finds &#39;ab&#39; or similar</span>
+<span class="sd">    1</span>
+<span class="sd">    &gt;&gt;&gt; obj.fzf(&#39;xy&#39;)  # Finds &#39;xy&#39; or similar</span>
+<span class="sd">    2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">generic_get_keys</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">())</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">is_fuzzy_match</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">f</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;no attribute found for </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;multiple attributes found for </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">candidates</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="subscriptable_for_attributes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.subscriptable_for_attributes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">subscriptable_for_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ipd</span><span class="o">.</span><span class="n">C</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ipd</span><span class="o">.</span><span class="n">C</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class decorator to enable subscriptable attribute access and enumeration.</span>
+
+<span class="sd">    This decorator adds support for `__getitem__` and `enumerate` methods to a class</span>
+<span class="sd">    using `generic_getitem_for_attributes` and `generic_enumerate`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cls (type): The class to modify.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        type: The modified class.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">    &gt;&gt;&gt; @subscriptable_for_attributes</span>
+<span class="sd">    ... class MyClass:</span>
+<span class="sd">    ...     def __init__(self):</span>
+<span class="sd">    ...         self.x = 1</span>
+<span class="sd">    ...         self.y = 2</span>
+
+<span class="sd">    &gt;&gt;&gt; obj = MyClass()</span>
+<span class="sd">    &gt;&gt;&gt; print(obj[&#39;x&#39;])</span>
+<span class="sd">    1</span>
+<span class="sd">    &gt;&gt;&gt; print(obj[&#39;x y&#39;])  # (1, 2)</span>
+<span class="sd">    (1, 2)</span>
+<span class="sd">    &gt;&gt;&gt; for i, x, y in obj.enumerate([&#39;x&#39;, &#39;y&#39;]):</span>
+<span class="sd">    ...     print(i, x, y)</span>
+<span class="sd">    0 1 2</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: If the class already defines `__getitem__` or `enumerate`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="s1">&#39;enumerate fzf groupby&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">member</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;class </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> already has </span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="fm">__getitem__</span> <span class="o">=</span> <span class="n">make_getitem_for_attributes</span><span class="p">(</span><span class="n">get</span><span class="o">=</span><span class="nb">getattr</span><span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">fzf</span> <span class="o">=</span> <span class="n">make_getitem_for_attributes</span><span class="p">(</span><span class="n">get</span><span class="o">=</span><span class="n">getattr_fzf</span><span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">enumerate</span> <span class="o">=</span> <span class="n">generic_enumerate</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">generic_groupby</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">pick</span> <span class="o">=</span> <span class="n">make_getitem_for_attributes</span><span class="p">(</span><span class="n">provide</span><span class="o">=</span><span class="s1">&#39;item&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span></div>
+
+
+<div class="viewcode-block" id="safe_lru_cache">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.decorators.html#ipd.dev.decorators.safe_lru_cache">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_lru_cache</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="c1"># Case when used as @safe_lru_cache without parentheses</span>
+        <span class="k">return</span> <span class="n">safe_lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">maxsize</span><span class="p">)(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">maxsize</span><span class="p">)(</span><span class="n">func</span><span class="p">)</span>
+
+        <span class="nd">@ipd</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">hash</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+                <span class="nb">frozenset</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+                <span class="k">return</span> <span class="n">cache</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

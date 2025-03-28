@@ -1,0 +1,7 @@
+ipd.dev.serialization module
+============================
+
+.. automodule:: ipd.dev.serialization
+   :members:
+   :show-inheritance:
+   :undoc-members:

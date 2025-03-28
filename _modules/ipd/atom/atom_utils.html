@@ -1,0 +1,770 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.atom.atom_utils &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/atom/atom_utils';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.atom.atom_utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.atom.atom_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module: ipd.atom.atom_utils</span>
+<span class="sd">===========================</span>
+
+<span class="sd">This module provides utility functions for operating on AtomArray objects,</span>
+<span class="sd">including filtering, transformation, and spatial analysis routines. These</span>
+<span class="sd">utilities facilitate complex queries such as clash and contact detection,</span>
+<span class="sd">making use of the efficient SphereBVH_double algorithm for rapid spatial queries.</span>
+
+<span class="sd">Key features:</span>
+<span class="sd">  - Filtering of AtomArray objects based on criteria (e.g., element type).</span>
+<span class="sd">  - Application of homogeneous transformations to AtomArrays.</span>
+<span class="sd">  - Computation of clash and contact metrics between atomic structures.</span>
+<span class="sd">  - Integration with SphereBVH_double for performance, which is especially</span>
+<span class="sd">    beneficial for large virus capsids or lightly contacting structures.</span>
+
+<span class="sd">Usage Examples:</span>
+<span class="sd">    &gt;&gt;&gt; from ipd import atom, hnumpy as h</span>
+<span class="sd">    &gt;&gt;&gt; # Load an AtomArray from a pdb code (e.g., &quot;1wa3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; aa = atom.load(&quot;1wa3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; # Filter atoms by element (for instance, oxygen &#39;O&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; oxygens = atom.select(aa, element=&quot;O&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; np.all(oxygens.element==&#39;O&#39;)</span>
+<span class="sd">    np.True_</span>
+
+<span class="sd">    &gt;&gt;&gt; # Apply a rotation to the AtomArray</span>
+<span class="sd">    &gt;&gt;&gt; T = h.rot([1, 0, 0], 90, [0, 0, 0])</span>
+<span class="sd">    &gt;&gt;&gt; aa_rotated = h.xform(T, aa)</span>
+<span class="sd">    &gt;&gt;&gt; aa_rotated.coord[0] == aa.coord[0]</span>
+<span class="sd">    array([ True, False, False])</span>
+
+<span class="sd">.. note::</span>
+<span class="sd">    Comprehensive tests for these utilities are available in the repository&#39;s unit tests.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;biotite.structure&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.pdb.readstruct</span><span class="w"> </span><span class="kn">import</span> <span class="n">readatoms</span> <span class="k">as</span> <span class="n">load</span><span class="p">,</span> <span class="n">dump</span> <span class="k">as</span> <span class="n">dump</span>
+
+<div class="viewcode-block" id="get">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.get">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">pdbcode</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">path</span><span class="p">:</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pdbcode</span><span class="si">}</span><span class="s1">.bcif.gz&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">package_testcif_path</span><span class="p">(</span><span class="n">pdbcode</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdbcode</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad pdbcode </span><span class="si">{</span><span class="n">pdbcode</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_atomarray">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_atomarray">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_atomarray</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_atomarraystack">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_atomarraystack">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_atomarraystack</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArrayStack</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_atoms">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_atoms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">is_atomarray</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_atomarraystack</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="split">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.split">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bychain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nasu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_chain_atoms</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s1">&#39;AtomArray&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">nasu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">order</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">%</span> <span class="n">nasu</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad nasu for leno</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">nasu</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">//</span> <span class="n">nasu</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">order</span> <span class="ow">and</span> <span class="n">bychain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bychain</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">is_atomarray</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">order</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">bychain</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">%</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad order for leno</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">nasu</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">//</span> <span class="n">order</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">nasu</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">nasu</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">bychain</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">order</span><span class="p">:</span>
+            <span class="n">split</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain_dict</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">min_chain_atoms</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">merge_chains</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">split</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">min_chain_atoms</span><span class="p">:</span>
+                    <span class="n">merge_chains</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">split</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">split</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bad split args </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">=}</span><span class="s1"> </span><span class="si">{</span><span class="n">order</span><span class="si">=}</span><span class="s1"> </span><span class="si">{</span><span class="n">bychain</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="merge_chains">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.merge_chains">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_chains</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atoms1</span><span class="o">.</span><span class="n">chain_id</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad chain_id </span><span class="si">{</span><span class="n">atoms1</span><span class="o">.</span><span class="n">chain_id</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms1</span><span class="p">):</span> <span class="n">atoms2</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">atoms1</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">atoms1</span> <span class="o">+=</span> <span class="n">atoms2</span></div>
+
+
+<div class="viewcode-block" id="split_chains">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.split_chains">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_chains</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">split</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bychain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="chain_dict">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">chain_dict</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Group an AtomArray by chain_id and return a dictionary.&quot;&quot;&quot;</span>
+    <span class="n">chain_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>  <span class="c1"># Get unique chain IDs</span>
+    <span class="n">chain_groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">chain</span><span class="p">:</span> <span class="n">atoms</span><span class="p">[</span><span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain</span><span class="p">]</span> <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">chain_ids</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">chain_groups</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_seq">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.to_seq">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">timed</span>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">iterize_on_first_param</span><span class="p">(</span><span class="n">basetype</span><span class="o">=</span><span class="s1">&#39;AtomArray&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_seq</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">pick_longest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Sequence&#39;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.sequence</span>
+    <span class="c1"># atoms = atoms[~atoms.hetero &amp; np.isin(atoms.atom_name, np.array([&#39;CA&#39;, &#39;P&#39;], dtype=&#39;&gt;U5&#39;))]</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">],</span>
+                                                    <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;&gt;U5&#39;</span><span class="p">))),</span> <span class="sa">f</span><span class="s1">&#39;bad atom names </span><span class="si">{</span><span class="n">atoms</span><span class="o">.</span><span class="n">atom_name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">seqs</span><span class="p">,</span> <span class="n">isprot</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">catoms</span> <span class="ow">in</span> <span class="n">split_chains</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+        <span class="n">seq</span><span class="p">,</span> <span class="n">_isprot</span> <span class="o">=</span> <span class="n">atoms_to_seqstr</span><span class="p">(</span><span class="n">catoms</span><span class="p">)</span>
+        <span class="n">isprot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_isprot</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">isprot</span><span class="p">:</span> <span class="n">seqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">biotite</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">ProteinSequence</span><span class="p">(</span><span class="n">seq</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">seqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">biotite</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">NucleotideSequence</span><span class="p">(</span><span class="n">seq</span><span class="p">))</span>
+    <span class="n">lens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">seqs</span><span class="p">)))</span>
+    <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lens</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">lens</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pick_longest</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">lens</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">seqs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">starts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">stops</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">isprot</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">seqs</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">,</span> <span class="n">isprot</span></div>
+
+    <span class="c1"># try:</span>
+    <span class="c1">#     biotite_seq = bs.to_sequence(atoms, allow_hetero=True)  # oddly slow</span>
+    <span class="c1">#     if concat: return ipd.dev.addreduce(biotite_seq[0])</span>
+    <span class="c1">#     return biotite_seq[0]</span>
+    <span class="c1"># except (IndexError, bs.BadStructureError):</span>
+    <span class="c1">#     return None</span>
+
+<div class="viewcode-block" id="atoms_to_seqstr">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.atoms_to_seqstr">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">timed</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">atoms_to_seqstr</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+    <span class="c1"># atoms = atoms[~atoms.hetero &amp; np.isin(atoms.atom_name, np.array([&#39;CA&#39;, &#39;P&#39;], dtype=&#39;&gt;U5&#39;))]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># protein = np.isin(atoms.res_name, np_amino_acid)</span>
+    <span class="c1"># nucleic = np.isin(atoms.res_name, np_nucleotide)</span>
+    <span class="c1"># ipd.icv(atoms[~protein])</span>
+    <span class="c1"># assert all(nucleic) or all(protein)</span>
+    <span class="c1"># ipd.icv(atoms.atom_name[0], atoms.atom_name[0]==&#39;CA&#39;)</span>
+    <span class="k">if</span> <span class="n">atoms</span><span class="o">.</span><span class="n">atom_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">amino_acid_321</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="o">.</span><span class="n">res_name</span><span class="p">),</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nucleotide_321</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="o">.</span><span class="n">res_name</span><span class="p">),</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="seqalign">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.seqalign">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">timed</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">seqalign</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atoms1</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">],</span>
+                                                  <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;&gt;U5&#39;</span><span class="p">))),</span> <span class="sa">f</span><span class="s1">&#39;bad atom names </span><span class="si">{</span><span class="n">atoms1</span><span class="o">.</span><span class="n">atom_name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atoms2</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">],</span>
+                                                  <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;&gt;U5&#39;</span><span class="p">))),</span> <span class="sa">f</span><span class="s1">&#39;bad atom names </span><span class="si">{</span><span class="n">atoms2</span><span class="o">.</span><span class="n">atom_name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.sequence.align</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">align</span>
+    <span class="n">seq1</span><span class="p">,</span> <span class="n">start1</span><span class="p">,</span> <span class="n">stop1</span><span class="p">,</span> <span class="n">isprot1</span> <span class="o">=</span> <span class="n">to_seq</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">pick_longest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">seq2</span><span class="p">,</span> <span class="n">start2</span><span class="p">,</span> <span class="n">stop2</span><span class="p">,</span> <span class="n">isprot2</span> <span class="o">=</span> <span class="n">to_seq</span><span class="p">(</span><span class="n">atoms2</span><span class="p">,</span> <span class="n">pick_longest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">isprot1</span> <span class="o">==</span> <span class="n">isprot2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad seqalign </span><span class="si">{</span><span class="n">isprot1</span><span class="si">=}</span><span class="s1"> </span><span class="si">{</span><span class="n">isprot2</span><span class="si">=}</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">seq1</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">seq2</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">isprot1</span><span class="p">:</span> <span class="n">matrix</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">SubstitutionMatrix</span><span class="o">.</span><span class="n">std_protein_matrix</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">matrix</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">SubstitutionMatrix</span><span class="o">.</span><span class="n">std_nucleic_matrix</span><span class="p">()</span>
+    <span class="c1"># matrix = align.SubstitutionMatrix(matrix.get_alphabet1(), matrix.get_alphabet2(), &#39;IDENTITY&#39;)</span>
+    <span class="n">aln</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">align_optimal</span><span class="p">(</span>
+        <span class="n">seq1</span><span class="p">,</span>
+        <span class="n">seq2</span><span class="p">,</span>
+        <span class="n">matrix</span><span class="p">,</span>
+        <span class="n">gap_penalty</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">terminal_penalty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">max_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">aln</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">aln</span> <span class="o">:=</span> <span class="n">aln</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="sa">f</span><span class="s1">&#39;bad seqalign </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">aln</span><span class="p">)</span><span class="si">=}</span><span class="s1"> </span><span class="si">{</span><span class="n">aln</span><span class="si">=}</span><span class="s1">&#39;</span>
+    <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">aln</span><span class="o">.</span><span class="n">sequences</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">aln</span><span class="o">.</span><span class="n">trace</span><span class="p">[(</span><span class="n">aln</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">aln</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)]</span>
+    <span class="n">matchfrac</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">aln</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">matchfrac</span></div>
+
+
+<div class="viewcode-block" id="chain_ranges">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_ranges">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">iterize_on_first_param</span><span class="p">(</span><span class="n">basetype</span><span class="o">=</span><span class="s1">&#39;AtomArray&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chain_ranges</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+    <span class="k">assert</span> <span class="n">is_atomarray</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">breaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bs</span><span class="o">.</span><span class="n">get_chain_starts</span><span class="p">(</span><span class="n">atoms</span><span class="p">))))</span>
+    <span class="n">breaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">chain_ranges_from_breaks</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">breaks</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="chain_ranges_from_breaks">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_ranges_from_breaks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">chain_ranges_from_breaks</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">breaks</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">breaks</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="n">start</span><span class="p">]</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="n">breaks</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">stop</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;bad stop </span><span class="si">{</span><span class="n">stop</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="chain_id_ranges">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_id_ranges">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">iterize_on_first_param</span><span class="p">(</span><span class="n">basetype</span><span class="o">=</span><span class="s1">&#39;AtomArray&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chain_id_ranges</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+    <span class="k">assert</span> <span class="n">is_atomarray</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;bad atoms </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">=}</span><span class="s1"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">=}</span><span class="s1">&#39;</span>
+    <span class="n">breaks</span><span class="p">,</span> <span class="n">breaks0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bs</span><span class="o">.</span><span class="n">get_chain_starts</span><span class="p">(</span><span class="n">atoms</span><span class="p">))))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">breaks</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">!=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="n">breaks</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]]:</span>
+            <span class="n">breaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">breaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">chain_ranges_from_breaks</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">breaks</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="select">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.select">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span>
+    <span class="n">atoms</span><span class="p">:</span> <span class="s1">&#39;AtomsArray&#39;</span><span class="p">,</span>
+    <span class="n">chainlist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">caonly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">bbonly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">chaindict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">het</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">element</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">atom_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">res_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AtomArray&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bs</span><span class="o">.</span><span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;bad select </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">=}</span><span class="s1"> </span><span class="si">{</span><span class="n">atoms</span><span class="si">=}</span><span class="s1">&#39;</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">caonly</span><span class="p">:</span> <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="n">atoms</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">bbonly</span><span class="p">:</span> <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="n">atoms</span><span class="o">.</span><span class="n">atom_nameisin</span><span class="p">((</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">het</span><span class="p">:</span> <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="o">~</span><span class="n">atoms</span><span class="o">.</span><span class="n">hetero</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="s1">&#39;element atom_name res_name chain_id&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">val</span> <span class="o">:=</span> <span class="nb">locals</span><span class="p">()[</span><span class="n">attr</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">==</span> <span class="n">val</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="n">val</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">chaindict</span><span class="p">:</span> <span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">chain_dict</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chainlist</span><span class="p">:</span> <span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">set_metadata</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+<div class="viewcode-block" id="pick_representative_chains">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.pick_representative_chains">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pick_representative_chains</span><span class="p">(</span><span class="n">atomslist</span><span class="p">):</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">atomslist</span><span class="p">:</span>
+        <span class="n">crange</span> <span class="o">=</span> <span class="n">chain_ranges</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">crange</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">crange</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">crange</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="n">crange</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">crange</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="n">chains</span></div>
+
+
+<div class="viewcode-block" id="is_protein">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_protein">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">iterize_on_first_param</span><span class="p">(</span><span class="n">basetype</span><span class="o">=</span><span class="s1">&#39;AtomArray&#39;</span><span class="p">,</span> <span class="n">asnumpy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_protein</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">strict_protein_or_nucleic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if an atomic structure is a protein.</span>
+
+<span class="sd">    This function checks if an atomic structure is a protein by comparing the</span>
+<span class="sd">    fraction of CA atoms to the total number of atoms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atoms (bs.AtomArray):</span>
+<span class="sd">            Atomic structure object containing atom name data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool:</span>
+<span class="sd">            True if the structure is a protein, False otherwise.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import ipd</span>
+<span class="sd">        &gt;&gt;&gt; atoms = ipd.atom.get(&#39;1qys&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(is_protein(atoms))</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="n">strict_protein_or_nucleic</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="n">frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">bs</span><span class="o">.</span><span class="n">get_residue_count</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">frac</span> <span class="o">&gt;</span> <span class="mf">0.9</span></div>
+
+
+<div class="viewcode-block" id="join">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.atom_utils.html#ipd.atom.atom_utils.join">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="n">atomslist</span><span class="p">,</span> <span class="n">one_letter_chain</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">formt</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;0</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atomslist</span><span class="p">)))</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atomslist</span><span class="p">):</span>
+        <span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">:{</span><span class="n">formt</span><span class="si">}}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span>
+    <span class="k">if</span> <span class="n">one_letter_chain</span><span class="p">:</span>
+        <span class="n">unique_ids</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">UniqueIDs</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atomslist</span><span class="p">):</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">=</span> <span class="n">unique_ids</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">addreduce</span><span class="p">(</span><span class="n">atomslist</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">atomslist</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atomslist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;bad join </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">chain_id</span><span class="p">))</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atomslist</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atomslist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">chain_id</span><span class="p">))</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bs</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;bad join </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">=}</span><span class="s1"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">=}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+<span class="n">amino_acid_321</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;ALA&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ARG&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ASN&#39;</span><span class="p">:</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ASP&#39;</span><span class="p">:</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CYS&#39;</span><span class="p">:</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GLU&#39;</span><span class="p">:</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GLN&#39;</span><span class="p">:</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GLY&#39;</span><span class="p">:</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;HIS&#39;</span><span class="p">:</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ILE&#39;</span><span class="p">:</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LEU&#39;</span><span class="p">:</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LYS&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MET&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PHE&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PRO&#39;</span><span class="p">:</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SER&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;THR&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="s1">&#39;W&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SEC&#39;</span><span class="p">:</span> <span class="s1">&#39;U&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PYL&#39;</span><span class="p">:</span> <span class="s1">&#39;O&#39;</span>  <span class="c1"># Selenocysteine and Pyrrolysine (rare)</span>
+<span class="p">}</span>
+<span class="n">nucleotide_321</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># RNA nucleotides</span>
+    <span class="s1">&#39;ADE&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CYT&#39;</span><span class="p">:</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GUA&#39;</span><span class="p">:</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;URA&#39;</span><span class="p">:</span> <span class="s1">&#39;U&#39;</span><span class="p">,</span>
+    <span class="c1"># DNA nucleotides</span>
+    <span class="s1">&#39;DA&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DC&#39;</span><span class="p">:</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DG&#39;</span><span class="p">:</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DT&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span>
+<span class="p">}</span>
+<span class="n">np_amino_acid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">amino_acid_321</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;&gt;U5&#39;</span><span class="p">)</span>
+<span class="n">np_nucleotide</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nucleotide_321</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;&gt;U5&#39;</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

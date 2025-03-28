@@ -1,0 +1,7 @@
+ipd.homog.contact\_matrix module
+================================
+
+.. automodule:: ipd.homog.contact_matrix
+   :members:
+   :show-inheritance:
+   :undoc-members:

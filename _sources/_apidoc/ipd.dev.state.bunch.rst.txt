@@ -1,0 +1,7 @@
+ipd.dev.state.bunch module
+==========================
+
+.. automodule:: ipd.dev.state.bunch
+   :members:
+   :show-inheritance:
+   :undoc-members:

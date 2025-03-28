@@ -1,0 +1,7 @@
+ipd.viz.plot module
+===================
+
+.. automodule:: ipd.viz.plot
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.dev.storage.package\_storage module
+=======================================
+
+.. automodule:: ipd.dev.storage.package_storage
+   :members:
+   :show-inheritance:
+   :undoc-members:

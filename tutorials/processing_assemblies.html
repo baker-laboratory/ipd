@@ -1,0 +1,977 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Determining Biological Architecture &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/processing_assemblies';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Body and SymBody Objects" href="working_with_bodies.html" />
+    <link rel="prev" title="Working with .cif files and atoms" href="working_with_atoms.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="using_homog.html">Homogeneous Coordinates and ipd.hnumpy / ipd.htorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_with_atoms.html">Working with .cif files and atoms</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Determining Biological Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_with_bodies.html">Body and SymBody Objects</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="symmetry_detection.html">Understanding Symmetry Detection</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/ipd.sym.sym_detect.syminfo_from_atomslist.html">ipd.sym.sym_detect.syminfo_from_atomslist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/ipd.sym.sym_detect.syminfo_from_frames.html">ipd.sym.sym_detect.syminfo_from_frames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/ipd.sym.sym_detect.symelems_from_frames.html">ipd.sym.sym_detect.symelems_from_frames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/ipd.sym.sym_detect.syminfo_get_origin.html">ipd.sym.sym_detect.syminfo_get_origin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/ipd.sym.sym_detect.syminfo_to_str.html">ipd.sym.sym_detect.syminfo_to_str</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/ipd.sym.sym_detect.check_sym_combinations.html">ipd.sym.sym_detect.check_sym_combinations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="contact_matrix.html">Cumulative sums primer and rapid contact matrix processing</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Determining Biological Architecture</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="determining-biological-architecture">
+<h1>Determining Biological Architecture<a class="headerlink" href="#determining-biological-architecture" title="Link to this heading">#</a></h1>
+<p>The IPD library provides tools to automatically determine the biological organization
+of a molecular assembly. This is done by detecting repeated chains based on both
+sequence identity and structural alignment. The centerpiece of this process is the function:</p>
+<p><strong>``find_components_by_seqaln_rmsfit()``</strong></p>
+<p>This function analyzes a list of chains or subunits to determine how many <em>unique components</em> exist based on biological similarity, and it determines the homogeneous transforms that relate each similar subunit to a chosen reference. This allows for handling pseudo symmetrical configurations to some degree, depending on sequence matching and rmsd tolerance. In many cases, you can adjust these until you get the correct unique components. For example, a T4 icosahedral cage may initially result in multiple components depending on differences in the asymmetric unit or other factors. By carefully setting tolerances, you shold be able to get a system with one unique component and 60*4 = 240 frames.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Uses <strong>sequence alignment</strong> (via Biotite) to find chains with matching sequences</p></li>
+<li><p>Uses <strong>least-squares RMSD fitting</strong> to determine the transformation that maps one chain onto another</p></li>
+<li><p>Operates recursively: once a matching group is found, unmatched chains are re-evaluated</p></li>
+<li><p>Returns a <cite>Components</cite> object containing atoms, frames, RMSDs, sequence matches, and metadata</p></li>
+</ul>
+</section>
+<section id="api-find-components-by-seqaln-rmsfit">
+<h2>API: <code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit</span></code><a class="headerlink" href="#api-find-components-by-seqaln-rmsfit" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.atom.find_components_by_seqaln_rmsfit">
+<span class="sig-prename descclassname"><span class="pre">ipd.atom.</span></span><span class="sig-name descname"><span class="pre">find_components_by_seqaln_rmsfit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atomslist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalresult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxsub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ipd/atom/components.html#find_components_by_seqaln_rmsfit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.find_components_by_seqaln_rmsfit" title="Link to this definition">#</a></dt>
+<dd><p>Find frames by sequence alignment and RMS fitting.</p>
+<p>This function aligns pairs of atomic structures based on their sequence
+similarity and calculates the RMSD (Root Mean Square Deviation) between
+them. It stores the aligned frames and matching sequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atomslist</strong> (<em>list</em><em>[</em><em>bs.AtomArray</em><em>]</em>) – List of atomic structures to align.</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for RMSD and sequence match. Defaults to 0.7.</p></li>
+<li><p><strong>finalresult</strong> (<a class="reference internal" href="#ipd.atom.components.Components" title="ipd.atom.components.Components"><em>Components</em></a><em>, </em><em>optional</em>) – Existing finalresult object to append to. Defaults to None.</p></li>
+<li><p><strong>idx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Indices of atoms to align. Defaults to None.</p></li>
+<li><p><strong>maxsub</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of subunits to align. Defaults to 60.</p></li>
+<li><p><strong>**kw</strong> – Additional keyword arguments for alignment.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Result object containing aligned frames and statistics.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ipd.atom.components.Components" title="ipd.atom.components.Components">Components</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="recursive-matching-process">
+<h2>Recursive Matching Process<a class="headerlink" href="#recursive-matching-process" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Input: a list of chains or chain-like AtomArrays</p></li>
+<li><p>Select a representative chain as reference</p></li>
+<li><p>For each other chain:
+- Align sequences
+- If a sufficient sequence match is found, compute RMSD alignment
+- Store the transformation frame, RMSD value, and sequence match score</p></li>
+<li><p>Accept matches where:
+- RMSD &lt; <cite>tol.rms_fit</cite>
+- sequence match &gt; <cite>tol.seqmatch</cite></p></li>
+<li><p>Remaining unmatched chains are recursively processed as a new group</p></li>
+</ol>
+</section>
+<section id="sequence-matching">
+<h2>Sequence Matching<a class="headerlink" href="#sequence-matching" title="Link to this heading">#</a></h2>
+<p>Biological similarity is first established by aligning the amino acid or nucleotide sequences
+of each chain against the reference chain. The function uses Biotite’s
+<a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.sequence.align.align_optimal.html#biotite.sequence.align.align_optimal" title="(in Biotite v1.2.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">align_optimal()</span></code></a> function with a standard substitution matrix.</p>
+</section>
+<section id="rms-fitting">
+<h2>RMS Fitting<a class="headerlink" href="#rms-fitting" title="Link to this heading">#</a></h2>
+<p>If sequence alignment is successful, 3D coordinates for the matching residues are extracted,
+and a rigid transformation is computed using least-squares fitting (via <cite>hrmsfit</cite>) to minimize RMSD.
+Only matches below the specified RMSD threshold are accepted as symmetric subunits.</p>
+<p>The result is a frame (4×4 transform matrix) that maps the reference structure to the matched structure.</p>
+</section>
+<section id="example-usage">
+<h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h2>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load the largest biological assembly of a PDB file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chains</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;1g5q&quot;</span><span class="p">,</span> <span class="n">assembly</span><span class="o">=</span><span class="s2">&quot;largest&quot;</span><span class="p">,</span> <span class="n">het</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chainlist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">find_components_by_seqaln_rmsfit</span><span class="p">(</span><span class="n">chains</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span><span class="o">.</span><span class="n">seqmatch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.95</span>
+<span class="go">array([ True,  True,  True,  True,  True,  True,  True,  True,  True,</span>
+<span class="go">        True,  True,  True])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span><span class="o">.</span><span class="n">rmsd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span>
+<span class="go">array([ True,  True,  True,  True,  True,  True,  True,  True,  True,</span>
+<span class="go">        True,  True,  True])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The returned Components object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+<span class="go">Components:</span>
+<span class="go">  atoms: [...]</span>
+<span class="go">  frames: [...]</span>
+<span class="go">  seqmatch: [...]</span>
+<span class="go">  rmsd: [...]</span>
+<span class="go">  idx: [...]</span>
+<span class="go">  source_: &lt;class &#39;list&#39;&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="working-with-the-components-object">
+<h2>Working with the Components Object<a class="headerlink" href="#working-with-the-components-object" title="Link to this heading">#</a></h2>
+<p>The result from <cite>find_components_by_seqaln_rmsfit()</cite> is a <cite>Components</cite> object:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.atom.components.Components">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.atom.components.</span></span><span class="sig-name descname"><span class="pre">Components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms:</span> <span class="pre">list[bs.AtomArray]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames:</span> <span class="pre">list[~numpy.ndarray]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seqmatch:</span> <span class="pre">list[float]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmsd:</span> <span class="pre">list[float]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx:</span> <span class="pre">list[list[int]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_:</span> <span class="pre">list[bs.AtomArray]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediates_:</span> <span class="pre">list[dict]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerances_:</span> <span class="pre">~ipd.dev.tolerances.Tolerances</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ipd/atom/components.html#Components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.components.Components" title="Link to this definition">#</a></dt>
+<dd><p>Result container for frame searching and alignment.</p>
+<p>This class stores the aligned frames, RMSD values, and sequence matches
+resulting from the frame search operation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.atoms">
+<span class="sig-name descname"><span class="pre">atoms</span></span><a class="headerlink" href="#ipd.atom.components.Components.atoms" title="Link to this definition">#</a></dt>
+<dd><p>List of aligned atomic structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[bs.AtomArray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.frames">
+<span class="sig-name descname"><span class="pre">frames</span></span><a class="headerlink" href="#ipd.atom.components.Components.frames" title="Link to this definition">#</a></dt>
+<dd><p>List of 4x4 transformation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[np.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.seqmatch">
+<span class="sig-name descname"><span class="pre">seqmatch</span></span><a class="headerlink" href="#ipd.atom.components.Components.seqmatch" title="Link to this definition">#</a></dt>
+<dd><p>List of sequence match fractions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.rmsd">
+<span class="sig-name descname"><span class="pre">rmsd</span></span><a class="headerlink" href="#ipd.atom.components.Components.rmsd" title="Link to this definition">#</a></dt>
+<dd><p>List of RMSD values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.idx">
+<span class="sig-name descname"><span class="pre">idx</span></span><a class="headerlink" href="#ipd.atom.components.Components.idx" title="Link to this definition">#</a></dt>
+<dd><p>List of aligned indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.source_">
+<span class="sig-name descname"><span class="pre">source_</span></span><a class="headerlink" href="#ipd.atom.components.Components.source_" title="Link to this definition">#</a></dt>
+<dd><p>Source atomic structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[bs.AtomArray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.tolerances_">
+<span class="sig-name descname"><span class="pre">tolerances_</span></span><a class="headerlink" href="#ipd.atom.components.Components.tolerances_" title="Link to this definition">#</a></dt>
+<dd><p>Tolerance parameters for alignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ipd.Tolerances</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">atom_frame_match_rms_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ipd/atom/components.html#Components.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.components.Components.add" title="Link to this definition">#</a></dt>
+<dd><p>Add aligned frames and statistics to the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**atom_frame_match_rms_idx</strong> – Dictionary of frames, RMSD values, sequence matches, and indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.add_intermediate_result">
+<span class="sig-name descname"><span class="pre">add_intermediate_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intermediate_result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ipd/atom/components.html#Components.add_intermediate_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.components.Components.add_intermediate_result" title="Link to this definition">#</a></dt>
+<dd><p>Add intermediate results to the final result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intermediate_result</strong> (<a class="reference internal" href="#ipd.atom.components.Components" title="ipd.atom.components.Components"><em>Components</em></a>) – Intermediate result object to append to the final result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">atoms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bs.AtomArray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.enumerate">
+<span class="sig-name descname"><span class="pre">enumerate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">fields:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">list[str]</span> <span class="pre">|</span> <span class="pre">tuple[str]</span> <span class="pre">|</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">str]</span> <span class="pre">|</span> <span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">order=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ipd.atom.components.Components.enumerate" title="Link to this definition">#</a></dt>
+<dd><p>Enhanced <cite>enumerate</cite> method to iterate over multiple attributes at once.</p>
+<p>This method allows enumeration over multiple attributes simultaneously, returning an index and the corresponding attribute values. If the fields is a string containing spaces, it will be split into a list of keys. If the fields is a list of strings, it will return the corresponding attributes as a tuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fields</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em>) – A single attribute name or a list of attribute names.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple[int, …]</em> – A tuple containing the index and the attribute values.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">subscriptable_for_attributes</span>
+<span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">enumerate</span><span class="p">(</span><span class="s1">&#39;x y&#39;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">0 0 5</span>
+<span class="go">1 1 6</span>
+<span class="go">2 2 7</span>
+<span class="go">3 3 8</span>
+<span class="go">4 4 9</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.enumerate_intermediates">
+<span class="sig-name descname"><span class="pre">enumerate_intermediates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ipd/atom/components.html#Components.enumerate_intermediates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.components.Components.enumerate_intermediates" title="Link to this definition">#</a></dt>
+<dd><p>enumerates i, j, frames, rmsd, seqmatch, idx)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">frames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.fzf">
+<span class="sig-name descname"><span class="pre">fzf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">field:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">list[str]</span> <span class="pre">|</span> <span class="pre">tuple[str]</span> <span class="pre">|</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">str]</span> <span class="pre">|</span> <span class="pre">tuple,</span> <span class="pre">get=&lt;function</span> <span class="pre">getattr_fzf&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#ipd.atom.components.Components.fzf" title="Link to this definition">#</a></dt>
+<dd><p>Enhanced <cite>__getitem__</cite> method to support attribute access with multiple keys.</p>
+<p>If the field is a string containing spaces, it will be split into a list of keys.
+If the field is a list of strings, it will return the corresponding attributes as a tuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em>) – A single attribute name or a list of attribute names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The attribute value(s) corresponding to the field(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">value</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>  <span class="c1"># Single field</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;x y z&#39;</span><span class="p">]</span>  <span class="c1"># Multiple keys as a string</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]]</span>  <span class="c1"># Multiple keys as a list</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.groupby">
+<span class="sig-name descname"><span class="pre">groupby</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groupby</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ipd.atom.components.Components.groupby" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.intermediates_">
+<span class="sig-name descname"><span class="pre">intermediates_</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ipd.atom.components.Components.intermediates_" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.mapwise">
+<span class="sig-name descname"><span class="pre">mapwise</span></span><a class="headerlink" href="#ipd.atom.components.Components.mapwise" title="Link to this definition">#</a></dt>
+<dd><p>Descriptor that creates and caches an ElementWiseDispatcher.</p>
+<p>When accessed from an instance, returns a dispatcher that applies
+operations element-wise and collects results using the specified
+accumulator.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.npwise">
+<span class="sig-name descname"><span class="pre">npwise</span></span><a class="headerlink" href="#ipd.atom.components.Components.npwise" title="Link to this definition">#</a></dt>
+<dd><p>Descriptor that creates and caches an ElementWiseDispatcher.</p>
+<p>When accessed from an instance, returns a dispatcher that applies
+operations element-wise and collects results using the specified
+accumulator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.pick">
+<span class="sig-name descname"><span class="pre">pick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">field:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">list[str]</span> <span class="pre">|</span> <span class="pre">tuple[str]</span> <span class="pre">|</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">str]</span> <span class="pre">|</span> <span class="pre">tuple,</span> <span class="pre">get=&lt;built-in</span> <span class="pre">function</span> <span class="pre">getattr&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#ipd.atom.components.Components.pick" title="Link to this definition">#</a></dt>
+<dd><p>Enhanced <cite>__getitem__</cite> method to support attribute access with multiple keys.</p>
+<p>If the field is a string containing spaces, it will be split into a list of keys.
+If the field is a list of strings, it will return the corresponding attributes as a tuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em>) – A single attribute name or a list of attribute names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The attribute value(s) corresponding to the field(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">value</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>  <span class="c1"># Single field</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;x y z&#39;</span><span class="p">]</span>  <span class="c1"># Multiple keys as a string</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]]</span>  <span class="c1"># Multiple keys as a list</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.remove_small_chains">
+<span class="sig-name descname"><span class="pre">remove_small_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minatom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ipd/atom/components.html#Components.remove_small_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.components.Components.remove_small_chains" title="Link to this definition">#</a></dt>
+<dd><p>Remove small chains from the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>minatom</strong> (<em>int</em>) – Minimum number of atoms in a chain. Defaults to 40.</p></li>
+<li><p><strong>minres</strong> (<em>int</em>) – Minimum number of residues in a chain. Defaults to 3.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">rmsd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">seqmatch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">source_</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bs.AtomArray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id5" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">tolerances_</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../_apidoc/ipd.dev.tolerances.html#ipd.dev.tolerances.Tolerances" title="ipd.dev.tolerances.Tolerances"><span class="pre">Tolerances</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id6" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.atom.components.Components.valwise">
+<span class="sig-name descname"><span class="pre">valwise</span></span><a class="headerlink" href="#ipd.atom.components.Components.valwise" title="Link to this definition">#</a></dt>
+<dd><p>Descriptor that creates and caches an ElementWiseDispatcher.</p>
+<p>When accessed from an instance, returns a dispatcher that applies
+operations element-wise and collects results using the specified
+accumulator.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Each field is a list indexed by component:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">atoms</span></code>: the aligned atom arrays (reference and matched)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frames</span></code>: 4x4 homogeneous transforms from reference to target</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seqmatch</span></code>: sequence match fractions (0 to 1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmsd</span></code>: root mean square deviations between matched coordinates</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idx</span></code>: matched indices used during alignment</p></li>
+</ul>
+<p>You can remove short or partial chains with:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span><span class="o">.</span><span class="n">remove_small_chains</span><span class="p">(</span><span class="n">minatom</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="stubs-and-frame-estimation">
+<h2>Stubs and Frame Estimation<a class="headerlink" href="#stubs-and-frame-estimation" title="Link to this heading">#</a></h2>
+<p>If you only have a single chain and wish to extract a reference frame,
+you can use the <code class="docutils literal notranslate"><span class="pre">stub()</span></code> function to compute a local frame from its CA atoms:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.atom.stub">
+<span class="sig-prename descclassname"><span class="pre">ipd.atom.</span></span><span class="sig-name descname"><span class="pre">stub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ipd/atom/components.html#stub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.stub" title="Link to this definition">#</a></dt>
+<dd><p>Compute the frame based on the mass center and SVD decomposition of CA atoms.</p>
+<p>This function computes the transformation frame of an atomic structure
+by aligning its CA atom coordinates to the center of mass using Singular
+Value Decomposition (SVD).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atoms</strong> (<em>bs.AtomArray</em>) – Atomic structure object containing coordinate and atom name data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>4x4 homogeneous transformation matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;1qys&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+<span class="go">[[ 0.91638034  0.33895946 -0.21296376  4.20984915]</span>
+<span class="go"> [ 0.06904252  0.39019742  0.91813894  5.34146775]</span>
+<span class="go"> [ 0.39430978 -0.85606802  0.33416662 11.52761865]</span>
+<span class="go"> [ 0.          0.          0.          1.        ]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;1qys&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">stub</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="related-utilities">
+<h2>Related Utilities<a class="headerlink" href="#related-utilities" title="Link to this heading">#</a></h2>
+<p>The alignment process uses:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">atom.seqalign()</span></code> for sequence matching</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hrmsfit()</span></code> from <cite>ipd.homog</cite> for structural fitting</p></li>
+</ul>
+<p>If Biotite or your PDB files are unavailable, make sure you’ve downloaded the required files using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">download_test_pdbs</span><span class="p">([</span><span class="s2">&quot;1g5q&quot;</span><span class="p">,</span> <span class="s2">&quot;1dxh&quot;</span><span class="p">,</span> <span class="s2">&quot;1qys&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>This system allows you to automatically extract structural symmetry relationships
+within molecular assemblies and to build compact representations of those symmetries
+for further use in modeling, visualization, or symmetry-aware computations.</p>
+<p><code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit</span></code> powers the construction of the <cite>SymBody</cite> class
+and other higher-level structures in IPD.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="working_with_atoms.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Working with .cif files and atoms</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="working_with_bodies.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Body and SymBody Objects</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-find-components-by-seqaln-rmsfit">API: <code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.find_components_by_seqaln_rmsfit"><code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recursive-matching-process">Recursive Matching Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sequence-matching">Sequence Matching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rms-fitting">RMS Fitting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage">Example Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-the-components-object">Working with the Components Object</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components"><code class="docutils literal notranslate"><span class="pre">Components</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.atoms"><code class="docutils literal notranslate"><span class="pre">Components.atoms</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.frames"><code class="docutils literal notranslate"><span class="pre">Components.frames</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.seqmatch"><code class="docutils literal notranslate"><span class="pre">Components.seqmatch</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.rmsd"><code class="docutils literal notranslate"><span class="pre">Components.rmsd</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.idx"><code class="docutils literal notranslate"><span class="pre">Components.idx</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.source_"><code class="docutils literal notranslate"><span class="pre">Components.source_</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.tolerances_"><code class="docutils literal notranslate"><span class="pre">Components.tolerances_</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.add"><code class="docutils literal notranslate"><span class="pre">Components.add()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.add_intermediate_result"><code class="docutils literal notranslate"><span class="pre">Components.add_intermediate_result()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">Components.atoms</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.enumerate"><code class="docutils literal notranslate"><span class="pre">Components.enumerate()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.enumerate_intermediates"><code class="docutils literal notranslate"><span class="pre">Components.enumerate_intermediates()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">Components.frames</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.fzf"><code class="docutils literal notranslate"><span class="pre">Components.fzf()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.groupby"><code class="docutils literal notranslate"><span class="pre">Components.groupby()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">Components.idx</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.intermediates_"><code class="docutils literal notranslate"><span class="pre">Components.intermediates_</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.mapwise"><code class="docutils literal notranslate"><span class="pre">Components.mapwise</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.npwise"><code class="docutils literal notranslate"><span class="pre">Components.npwise</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.pick"><code class="docutils literal notranslate"><span class="pre">Components.pick()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.remove_small_chains"><code class="docutils literal notranslate"><span class="pre">Components.remove_small_chains()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">Components.rmsd</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">Components.seqmatch</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">Components.source_</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><code class="docutils literal notranslate"><span class="pre">Components.tolerances_</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.components.Components.valwise"><code class="docutils literal notranslate"><span class="pre">Components.valwise</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stubs-and-frame-estimation">Stubs and Frame Estimation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.stub"><code class="docutils literal notranslate"><span class="pre">stub()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-utilities">Related Utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/tutorials/processing_assemblies.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

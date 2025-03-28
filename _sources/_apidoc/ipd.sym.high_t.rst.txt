@@ -1,0 +1,17 @@
+ipd.sym.high\_t package
+=======================
+
+.. automodule:: ipd.sym.high_t
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.sym.high_t.high_t_from_file
+   ipd.sym.high_t.pseudo_t
+   ipd.sym.high_t.pseudo_t_generator

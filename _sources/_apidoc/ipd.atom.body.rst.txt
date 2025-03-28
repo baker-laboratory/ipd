@@ -1,0 +1,7 @@
+ipd.atom.body module
+====================
+
+.. automodule:: ipd.atom.body
+   :members:
+   :show-inheritance:
+   :undoc-members:

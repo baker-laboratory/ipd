@@ -1,0 +1,6 @@
+﻿ipd.sym.sym\_detect.syminfo\_to\_str
+====================================
+
+.. currentmodule:: ipd.sym.sym_detect
+
+.. autofunction:: syminfo_to_str

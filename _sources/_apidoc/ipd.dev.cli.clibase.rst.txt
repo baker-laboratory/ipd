@@ -1,0 +1,7 @@
+ipd.dev.cli.clibase module
+==========================
+
+.. automodule:: ipd.dev.cli.clibase
+   :members:
+   :show-inheritance:
+   :undoc-members:

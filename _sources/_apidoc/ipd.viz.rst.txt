@@ -1,0 +1,27 @@
+ipd.viz package
+===============
+
+.. automodule:: ipd.viz
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.viz.plot
+   ipd.viz.primitives
+   ipd.viz.pymol_cgo
+   ipd.viz.pymol_pose
+   ipd.viz.pymol_viz
+   ipd.viz.viz_assembly
+   ipd.viz.viz_atoms
+   ipd.viz.viz_body
+   ipd.viz.viz_bond
+   ipd.viz.viz_deco
+   ipd.viz.viz_helix
+   ipd.viz.viz_rigidbody
+   ipd.viz.viz_xtal

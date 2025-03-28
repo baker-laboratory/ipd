@@ -1,0 +1,7 @@
+ipd.viz.pymol\_cgo module
+=========================
+
+.. automodule:: ipd.viz.pymol_cgo
+   :members:
+   :show-inheritance:
+   :undoc-members:

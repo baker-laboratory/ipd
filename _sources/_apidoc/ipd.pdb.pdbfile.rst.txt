@@ -1,0 +1,7 @@
+ipd.pdb.pdbfile module
+======================
+
+.. automodule:: ipd.pdb.pdbfile
+   :members:
+   :show-inheritance:
+   :undoc-members:

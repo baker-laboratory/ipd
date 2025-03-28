@@ -1,0 +1,6 @@
+﻿ipd.sym.sym\_detect.check\_sym\_combinations
+============================================
+
+.. currentmodule:: ipd.sym.sym_detect
+
+.. autofunction:: check_sym_combinations

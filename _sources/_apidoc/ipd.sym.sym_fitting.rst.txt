@@ -1,0 +1,7 @@
+ipd.sym.sym\_fitting module
+===========================
+
+.. automodule:: ipd.sym.sym_fitting
+   :members:
+   :show-inheritance:
+   :undoc-members:

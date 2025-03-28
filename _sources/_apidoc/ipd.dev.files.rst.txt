@@ -1,0 +1,7 @@
+ipd.dev.files module
+====================
+
+.. automodule:: ipd.dev.files
+   :members:
+   :show-inheritance:
+   :undoc-members:

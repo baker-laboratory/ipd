@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.sym.xtal.xtalcls &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/sym/xtal/xtalcls';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../ipd.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../sym.html" class="nav-link">ipd.sym</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.sym.xtal.xtalcls</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.sym.xtal.xtalcls</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym.xtal.xtalinfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">_xtal_asucens</span>
+
+<span class="n">cryst1_pattern</span> <span class="o">=</span> <span class="s2">&quot;CRYST1 </span><span class="si">%8.3f</span><span class="s2"> </span><span class="si">%8.3f</span><span class="s2"> </span><span class="si">%8.3f</span><span class="s2">  90.00  90.00  90.00 </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">cryst1_pattern_full</span> <span class="o">=</span> <span class="s2">&quot;CRYST1 </span><span class="si">%8.3f</span><span class="s2"> </span><span class="si">%8.3f</span><span class="s2"> </span><span class="si">%8.3f%7.2f%7.2f%7.2f</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="c1"># CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 I 21 3</span>
+<span class="c1"># CRYST1  139.291  139.291  139.291  90.00  90.00  90.00 I 21 3</span>
+
+<span class="n">_xtal_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="xtal">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.xtal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">_xtal_cache</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_xtal_cache</span><span class="p">:</span>
+        <span class="n">_xtal_cache</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">xtal</span><span class="o">.</span><span class="n">Xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_xtal_cache</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Xtal">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Xtal</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xtal&quot;</span><span class="p">,</span> <span class="n">symelems</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symelems</span> <span class="o">=</span> <span class="n">symelems</span>
+        <span class="k">if</span> <span class="n">symelems</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">xtal</span><span class="o">.</span><span class="n">xtalinfo</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;dimension&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="mi">3</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">symelems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">symelems</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">dimension</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">spacegroup</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">nsub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_frames</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="c1"># self.symelems_to_unitcell()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nprimaryframes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_frames</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Xtal.cellframes">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.cellframes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cellframes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cellsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">cells</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">asucen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">xtalrad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ontop</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">funcbegin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;radius&quot;</span> <span class="ow">in</span> <span class="n">kw</span><span class="p">:</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">WARNME</span><span class="p">(</span><span class="s2">&quot;ipd.sym.xtal.Xtal.cellframes: radius not valid arg&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;maxdist&quot;</span> <span class="ow">in</span> <span class="n">kw</span><span class="p">:</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">WARNME</span><span class="p">(</span><span class="s2">&quot;ipd.sym.xtal.Xtal.cellframes: maxdist not valid arg&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">_scaled_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ontop</span> <span class="o">==</span> <span class="s2">&quot;primary&quot;</span><span class="p">:</span>
+                <span class="n">ontop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ontop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ontop</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">frames</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">put_frames_on_top</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">ontop</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">frames</span>
+        <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">ub</span> <span class="o">=</span> <span class="n">cells</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="n">ub</span> <span class="o">-</span> <span class="n">cells</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="n">cells</span>  <span class="c1"># type: ignore</span>
+            <span class="n">cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cells</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cells</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bad cells </span><span class="si">{</span><span class="n">cells</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">cells</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="n">cells</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">xcellshift</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">htrans</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">xcellshift</span><span class="p">,</span> <span class="n">frames</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">_scaled_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">frames</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">frames</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">xtalrad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">xtalrad</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">xtalrad</span> <span class="o">=</span> <span class="n">xtalrad</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cellsize</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">asucen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">asucen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asucen</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">center</span> <span class="o">=</span> <span class="n">asucen</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">asucen</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="c1"># if xtalrad is None: xtalrad = 0.5 * cellsize # ???</span>
+            <span class="n">center</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+            <span class="n">asucen</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">asucen</span><span class="p">)</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">asucen</span><span class="p">)</span>
+            <span class="n">dis</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnorm</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span>
+            <span class="c1"># ipd.icv(dis.shape)</span>
+            <span class="c1"># ipd.icv(xtalrad)</span>
+            <span class="c1"># ipd.icv(center)</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">frames</span><span class="p">[</span><span class="n">dis</span> <span class="o">&lt;=</span> <span class="n">xtalrad</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">ontop</span> <span class="o">==</span> <span class="s2">&quot;primary&quot;</span><span class="p">:</span>
+            <span class="n">ontop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ontop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ontop</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">put_frames_on_top</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">ontop</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnuique</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">frames</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Xtal.fit_coords">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.fit_coords">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">xtal</span><span class="o">.</span><span class="n">xtalfit</span><span class="o">.</span><span class="n">fix_coords_to_xtal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Xtal.fit_xtal_to_coords">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.fit_xtal_to_coords">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_xtal_to_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">xtal</span><span class="o">.</span><span class="n">xtalfit</span><span class="o">.</span><span class="n">fix_xtal_to_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Xtal.coords_to_asucen">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.coords_to_asucen">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coords_to_asucen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asucen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">coords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">asucen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">asucen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asucen</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">frames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellframes</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="n">cells</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">coordcen</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hcom</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+        <span class="n">cens</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">coordcen</span><span class="p">)</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnorm2</span><span class="p">(</span><span class="n">asucen</span> <span class="o">-</span> <span class="n">cens</span><span class="p">)</span>
+        <span class="n">bestframe</span> <span class="o">=</span> <span class="n">frames</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dist</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">bestframe</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Xtal.symelems_to_unitcell">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.symelems_to_unitcell">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">symelems_to_unitcell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">cen</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="Xtal.primary_frames">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.primary_frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">primary_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">contacting_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="s2">&quot;frames generated by the primary sym elems&quot;</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">funcbegin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+        <span class="c1"># ipd.icv(self.name)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">operators</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="k">if</span> <span class="n">contacting_only</span> <span class="k">else</span> <span class="n">s</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">frames</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+        <span class="n">scaleframes</span> <span class="o">=</span> <span class="n">_scaled_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">frames</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scaleframes</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Xtal.asucen">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.asucen">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">asucen</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cellsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">use_olig_nbrs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">olig_nbr_wt</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+        <span class="n">xtalasumethod</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="s2">&quot;should be a point roughly in the center of the primary sym elems&quot;</span>
+
+        <span class="k">if</span> <span class="n">xtalasumethod</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;method&quot;</span> <span class="ow">in</span> <span class="n">kw</span><span class="p">:</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">WARNME</span><span class="p">(</span><span class="s1">&#39;DEPRICATION WARNING Xtal.asucen &quot;method&quot; arg replaced by &quot;xtalasumethod&quot;&#39;</span><span class="p">)</span>
+                <span class="n">xtalasumethod</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s2">&quot;method&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xtalasumethod</span> <span class="o">=</span> <span class="s2">&quot;stored&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">_xtal_asucens</span> <span class="k">else</span> <span class="s2">&quot;closest_approach&quot;</span>
+
+        <span class="k">if</span> <span class="n">xtalasumethod</span> <span class="o">==</span> <span class="s2">&quot;stored&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">_xtal_asucens</span><span class="p">:</span>
+                <span class="n">cen</span> <span class="o">=</span> <span class="n">_xtal_asucens</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span> <span class="ow">in</span> <span class="n">_xtal_asucens</span><span class="p">:</span>
+                <span class="n">cen</span> <span class="o">=</span> <span class="n">_xtal_asucens</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;no stored asucen info for &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; or &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="n">cen</span> <span class="o">=</span> <span class="n">_scaled_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">cen</span><span class="p">)</span>
+            <span class="c1"># ipd.icv(cen)</span>
+            <span class="k">return</span> <span class="n">cen</span>
+        <span class="k">elif</span> <span class="n">xtalasumethod</span> <span class="o">==</span> <span class="s2">&quot;closest_to_cen&quot;</span><span class="p">:</span>
+            <span class="n">elems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symelems</span>
+            <span class="c1"># ipd.icv([e.cen for e in elems])</span>
+            <span class="n">cen0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">cen</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="c1"># ipd.icv(cen0)</span>
+            <span class="c1"># assert 0</span>
+        <span class="k">elif</span> <span class="n">xtalasumethod</span> <span class="o">==</span> <span class="s2">&quot;closest_approach&quot;</span><span class="p">:</span>
+            <span class="n">cens</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i1</span><span class="p">,</span> <span class="n">elem1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+                <span class="n">p1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">elem1</span><span class="o">.</span><span class="n">cen</span><span class="p">,</span> <span class="n">elem1</span><span class="o">.</span><span class="n">axis</span>
+                <span class="k">for</span> <span class="n">i2</span><span class="p">,</span> <span class="n">elem2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+                    <span class="k">if</span> <span class="n">i2</span> <span class="o">&lt;=</span> <span class="n">i1</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">p2</span><span class="p">,</span> <span class="n">ax2</span> <span class="o">=</span> <span class="n">elem2</span><span class="o">.</span><span class="n">cen</span><span class="p">,</span> <span class="n">elem2</span><span class="o">.</span><span class="n">axis</span>
+                    <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">hparallel</span><span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">):</span>
+                        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">elem1</span><span class="o">.</span><span class="n">cen</span><span class="p">,</span> <span class="n">elem2</span><span class="o">.</span><span class="n">cen</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">line_line_closest_points_pa</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">ax1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span>
+                    <span class="n">cens</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">cen0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cens</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown asucen xtalasumethod </span><span class="si">{</span><span class="n">xtalasumethod</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use_olig_nbrs</span><span class="p">:</span>
+            <span class="n">opcens</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">cen0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+            <span class="n">cen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">opcens</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># this is arbitrary</span>
+            <span class="n">cen</span> <span class="o">=</span> <span class="n">olig_nbr_wt</span><span class="o">*</span><span class="n">cen</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">olig_nbr_wt</span><span class="p">)</span> <span class="o">*</span> <span class="n">cen0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cen</span> <span class="o">=</span> <span class="n">cen0</span>
+        <span class="k">return</span> <span class="n">_scaled_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">cen</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Xtal.compute_frames">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.compute_frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This should be depricated, only needed for 2d stuff currently.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">frames</span>  <span class="c1"># type: ignore</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">genframes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellframes</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ontop</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coverelems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_cover_symelems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genframes</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unitelems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_unit_symelems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genframes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">genframes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_candidate_frames</span><span class="p">(</span><span class="n">bound</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>  <span class="c1"># expensive-ish</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coverelems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_cover_symelems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genframes</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">genframes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unitelems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverelems</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nsub</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">nsub</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsub</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">nsub</span>
+                    <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;nsub for &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; should be </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">nsub</span><span class="si">}</span><span class="s1">, not </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nsub</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="Xtal.symcoords">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.symcoords">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">symcoords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asymcoords</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">asymcoords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">asymcoords</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">center</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hcom</span><span class="p">(</span><span class="n">asymcoords</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">cells</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellframes</span><span class="p">(</span><span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="n">cells</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">center</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">asymcoords</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">coords</span></div>
+
+
+<div class="viewcode-block" id="Xtal.cryst1">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.cryst1">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cryst1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;LAYER </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cellsize</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)):</span>  <span class="c1"># type: ignore</span>
+            <span class="n">cellsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cellsize</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cryst1_pattern</span> <span class="o">%</span> <span class="p">(</span><span class="o">*</span><span class="n">cellsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cryst1_pattern_full</span> <span class="o">%</span> <span class="p">(</span><span class="o">*</span><span class="n">cellsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacegroup</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bad cellsize </span><span class="si">{</span><span class="n">cellsize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Xtal.dump_pdb">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.dump_pdb">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dump_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">asymcoords</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">cryst1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cryst1</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">asymcoords</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">asymcoords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asucen</span><span class="p">(</span><span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">asymcoords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">asymcoords</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nchain</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nchain&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">natom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nchain</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">asymcoords</span> <span class="o">=</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nchain</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">natom</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">dumppdb</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">asymcoords</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">cryst1</span><span class="p">,</span> <span class="n">nchain</span><span class="o">=</span><span class="n">nchain</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">asymcoords</span> <span class="o">=</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asymcoords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symcoords</span><span class="p">(</span><span class="n">asymcoords</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">asymcoords</span><span class="p">)</span>
+
+            <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">dump_pdb_from_points</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nunit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Xtal.central_symelems">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.central_symelems">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">central_symelems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;WARNING central_symelems is buggy, axis direction wrong!?!&quot;</span>
+        <span class="c1"># assert 0</span>
+        <span class="c1"># _targets = {&#39;I 41 3 2&#39;: [0.3, 0.4, 0.5]}</span>
+        <span class="c1"># if target is None:</span>
+        <span class="c1"># if self.spacegroup in _targets:</span>
+        <span class="c1"># target = _targets[self.spacegroup]</span>
+        <span class="c1"># else:</span>
+        <span class="c1"># target = [0.3, 0.4, 0.5]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">cenelems</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="n">interp_xtal_cell_list</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">elems</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverelems</span><span class="p">:</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="mf">9e9</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">cellshift</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
+                <span class="n">xcellshift</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">htrans</span><span class="p">(</span><span class="n">cellshift</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">:</span>
+                    <span class="n">elem</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">xformed</span><span class="p">(</span><span class="n">xcellshift</span><span class="p">)</span>
+                    <span class="c1"># ipd.icv(i, j, elem.cen)</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnorm</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">cen</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="n">best</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">elem</span>
+            <span class="n">cenelems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">cenelems</span></div>
+
+
+<div class="viewcode-block" id="Xtal.frames">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">xtalrad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">funcbegin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">xtalrad</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_frames</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellframes</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="n">cells</span><span class="p">,</span> <span class="n">xtalrad</span><span class="o">=</span><span class="n">xtalrad</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">funcbegin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">frames</span></div>
+
+
+<div class="viewcode-block" id="Xtal.generate_candidate_frames">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.generate_candidate_frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_candidate_frames</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">depth</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">bound</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">genradius</span><span class="o">=</span><span class="mf">9e9</span><span class="p">,</span>
+        <span class="n">trials</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span>
+        <span class="c1"># cache=True,</span>
+        <span class="c1"># cache=&#39;nosave&#39;,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">cachefile</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">package_data_path</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;xtal/lots_of_frames_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">.npy&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">generators</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">operators</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hgeom</span><span class="o">.</span><span class="n">expand_xforms_rand</span><span class="p">(</span><span class="n">generators</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">genradius</span><span class="p">,</span> <span class="n">trials</span><span class="o">=</span><span class="n">trials</span><span class="p">)</span>
+            <span class="n">testpoint</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">]</span>
+            <span class="n">cens</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">testpoint</span><span class="p">)</span>
+            <span class="n">inboundslow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cens</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">bound</span> <span class="o">-</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">inboundshigh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cens</span> <span class="o">&lt;=</span> <span class="n">bound</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">inbounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">inboundslow</span><span class="p">,</span> <span class="n">inboundshigh</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">inbounds</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10000</span>
+            <span class="c1"># if self.dimension == 3 and cache and cache != &quot;nosave&quot;:</span>
+            <span class="c1"># np.save(cachefile, x)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;should only be called for 2D stuff&#39;</span>
+        <span class="k">return</span> <span class="n">x</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="Xtal.generate_unit_frames">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.generate_unit_frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_unit_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">testpoint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">bbox</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+        <span class="n">testpoint</span> <span class="o">=</span> <span class="n">testpoint</span> <span class="k">if</span> <span class="n">testpoint</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">]</span>
+        <span class="n">cens</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">testpoint</span><span class="p">)</span>
+        <span class="n">inboundslow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cens</span> <span class="o">&gt;=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inboundshigh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cens</span> <span class="o">&lt;=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inbounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">inboundslow</span><span class="p">,</span> <span class="n">inboundshigh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">candidates</span><span class="p">[</span><span class="n">inbounds</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Xtal.generate_unit_symelems">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.generate_unit_symelems">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_unit_symelems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidates</span><span class="p">):</span>
+        <span class="n">unitelems</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">symelem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="n">elems</span> <span class="o">=</span> <span class="n">symelem</span><span class="o">.</span><span class="n">xformed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitframes</span><span class="p">):</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="n">unitelems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elems</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">unitelems</span></div>
+
+
+<div class="viewcode-block" id="Xtal.generate_cover_symelems">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.Xtal.generate_cover_symelems">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_cover_symelems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">bbox</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">coverelems</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span> <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">symelem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symelems</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="n">testpoint</span> <span class="o">=</span> <span class="n">symelem</span><span class="o">.</span><span class="n">cen</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">cens</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">testpoint</span><span class="p">)</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">candidates</span>
+            <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">inboundslow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cens</span> <span class="o">&gt;=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">inboundshigh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cens</span> <span class="o">&lt;=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">inbounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">inboundslow</span><span class="p">,</span> <span class="n">inboundshigh</span><span class="p">)</span>
+                <span class="n">frames</span> <span class="o">=</span> <span class="n">candidates</span><span class="p">[</span><span class="n">inbounds</span><span class="p">]</span>
+            <span class="n">elems</span> <span class="o">=</span> <span class="n">symelem</span><span class="o">.</span><span class="n">xformed</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+            <span class="c1"># ipd.icv(len(elems))</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">elems</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">elems</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="n">frames</span><span class="p">):</span>
+                <span class="c1"># assert np.allclose(np.eye(4), e.origin)</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="n">coverelems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elems</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">coverelems</span></div>
+</div>
+
+
+<div class="viewcode-block" id="interp_xtal_cell_list">
+<a class="viewcode-back" href="../../../../_apidoc/ipd.sym.xtal.xtalcls.html#ipd.sym.xtal.xtalcls.interp_xtal_cell_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interp_xtal_cell_list</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)[</span><span class="kc">None</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="n">cells</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="n">ub</span> <span class="o">-</span> <span class="n">cells</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="n">cells</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cells</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cells</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bad cells </span><span class="si">{</span><span class="n">cells</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cells</span></div>
+
+
+<span class="n">_warn_asucen_xtalasumethod</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_scaled_frames</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">frames</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)):</span>  <span class="c1"># type: ignore</span>
+        <span class="n">cellsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cellsize</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cellsize</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="mi">90</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">hscaled</span><span class="p">(</span><span class="n">cellsize</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">frames</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

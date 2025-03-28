@@ -1,0 +1,7 @@
+ipd.sym.sym\_index module
+=========================
+
+.. automodule:: ipd.sym.sym_index
+   :members:
+   :show-inheritance:
+   :undoc-members:

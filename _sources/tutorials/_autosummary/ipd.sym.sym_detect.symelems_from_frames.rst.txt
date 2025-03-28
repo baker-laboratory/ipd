@@ -1,0 +1,6 @@
+﻿ipd.sym.sym\_detect.symelems\_from\_frames
+==========================================
+
+.. currentmodule:: ipd.sym.sym_detect
+
+.. autofunction:: symelems_from_frames

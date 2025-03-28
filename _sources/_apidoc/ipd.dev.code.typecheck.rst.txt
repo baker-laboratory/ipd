@@ -1,0 +1,7 @@
+ipd.dev.code.typecheck module
+=============================
+
+.. automodule:: ipd.dev.code.typecheck
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.dev.debug module
+====================
+
+.. automodule:: ipd.dev.debug
+   :members:
+   :show-inheritance:
+   :undoc-members:

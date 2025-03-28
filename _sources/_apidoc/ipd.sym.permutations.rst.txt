@@ -1,0 +1,7 @@
+ipd.sym.permutations module
+===========================
+
+.. automodule:: ipd.sym.permutations
+   :members:
+   :show-inheritance:
+   :undoc-members:

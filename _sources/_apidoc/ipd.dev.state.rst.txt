@@ -1,0 +1,17 @@
+ipd.dev.state package
+=====================
+
+.. automodule:: ipd.dev.state
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.state.bunch
+   ipd.dev.state.contextual_state
+   ipd.dev.state.toggle

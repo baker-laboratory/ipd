@@ -1,0 +1,7 @@
+ipd.pdb.pisces module
+=====================
+
+.. automodule:: ipd.pdb.pisces
+   :members:
+   :show-inheritance:
+   :undoc-members:

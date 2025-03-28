@@ -1,0 +1,7 @@
+ipd.tools.pkgtool module
+========================
+
+.. automodule:: ipd.tools.pkgtool
+   :members:
+   :show-inheritance:
+   :undoc-members:

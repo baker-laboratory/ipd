@@ -1,0 +1,7 @@
+ipd.sym.sym\_color module
+=========================
+
+.. automodule:: ipd.sym.sym_color
+   :members:
+   :show-inheritance:
+   :undoc-members:

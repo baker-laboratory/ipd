@@ -1,0 +1,7 @@
+ipd.motif.motif\_manager module
+===============================
+
+.. automodule:: ipd.motif.motif_manager
+   :members:
+   :show-inheritance:
+   :undoc-members:

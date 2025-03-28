@@ -1,0 +1,7 @@
+ipd.dev.objinfo module
+======================
+
+.. automodule:: ipd.dev.objinfo
+   :members:
+   :show-inheritance:
+   :undoc-members:

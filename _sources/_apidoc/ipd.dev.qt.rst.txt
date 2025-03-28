@@ -1,0 +1,15 @@
+ipd.dev.qt package
+==================
+
+.. automodule:: ipd.dev.qt
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.qt.context_menu

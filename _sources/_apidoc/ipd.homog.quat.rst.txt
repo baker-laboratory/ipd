@@ -1,0 +1,7 @@
+ipd.homog.quat module
+=====================
+
+.. automodule:: ipd.homog.quat
+   :members:
+   :show-inheritance:
+   :undoc-members:

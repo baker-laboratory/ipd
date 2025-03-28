@@ -1,0 +1,7 @@
+ipd.dev.format module
+=====================
+
+.. automodule:: ipd.dev.format
+   :members:
+   :show-inheritance:
+   :undoc-members:

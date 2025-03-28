@@ -1,0 +1,697 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.atom.components &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/atom/components';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.atom.components</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.atom.components</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module: ipd.atom.components</span>
+<span class="sd">===========================</span>
+
+<span class="sd">This module defines unique building blocks for higher-level constructs such as</span>
+<span class="sd">Body and SymBody.</span>
+
+<span class="sd">Key features:</span>
+
+<span class="sd">Usage Examples:</span>
+<span class="sd">    &gt;&gt;&gt; from ipd import atom</span>
+<span class="sd">    &gt;&gt;&gt; # Load an AtomArray and inspect an atom&#39;s component</span>
+<span class="sd">    &gt;&gt;&gt; atoms = atom.load(&quot;1hv4&quot;)</span>
+
+<span class="sd">.. note::</span>
+<span class="sd">    For more advanced atom-level operations, refer to ipd.atom.atom_utils.</span>
+
+
+
+<span class="sd">Dependencies:</span>
+<span class="sd">    - numpy</span>
+<span class="sd">    - biotite</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;biotite.structure&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="find_components_by_seqaln_rmsfit">
+<a class="viewcode-back" href="../../../tutorials/symmetry_detection.html#ipd.atom.components.find_components_by_seqaln_rmsfit">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">timed</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_components_by_seqaln_rmsfit</span><span class="p">(</span>
+    <span class="n">atomslist</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">finalresult</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">maxsub</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find frames by sequence alignment and RMS fitting.</span>
+
+<span class="sd">    This function aligns pairs of atomic structures based on their sequence</span>
+<span class="sd">    similarity and calculates the RMSD (Root Mean Square Deviation) between</span>
+<span class="sd">    them. It stores the aligned frames and matching sequences.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atomslist (list[bs.AtomArray]):</span>
+<span class="sd">            List of atomic structures to align.</span>
+<span class="sd">        tol (float, optional):</span>
+<span class="sd">            Tolerance for RMSD and sequence match. Defaults to 0.7.</span>
+<span class="sd">        finalresult (Components, optional):</span>
+<span class="sd">            Existing finalresult object to append to. Defaults to None.</span>
+<span class="sd">        idx (list[int], optional):</span>
+<span class="sd">            Indices of atoms to align. Defaults to None.</span>
+<span class="sd">        maxsub (int, optional):</span>
+<span class="sd">            Maximum number of subunits to align. Defaults to 60.</span>
+<span class="sd">        **kw:</span>
+<span class="sd">            Additional keyword arguments for alignment.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Components:</span>
+<span class="sd">            Result object containing aligned frames and statistics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tol</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Tolerances</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">finalresult</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atomslist</span><span class="p">,</span> <span class="n">bs</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">):</span>
+            <span class="n">atomslist</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">kwcall</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">split_chains</span><span class="p">,</span> <span class="n">atomslist</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atomslist</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">maxsub</span><span class="p">:</span>
+            <span class="n">atomslist</span> <span class="o">=</span> <span class="p">[</span><span class="n">ipd</span><span class="o">.</span><span class="n">kwcall</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">split_chains</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">atomslist</span><span class="p">]</span>
+            <span class="n">atomslist</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">addreduce</span><span class="p">(</span><span class="n">atomslist</span><span class="p">)</span>
+        <span class="n">atomslist</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atomslist</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atomslist</span><span class="p">))</span>
+        <span class="n">finalresult</span> <span class="o">=</span> <span class="n">Components</span><span class="p">(</span><span class="n">source_</span><span class="o">=</span><span class="n">atomslist</span><span class="p">,</span> <span class="n">tolerances_</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+        <span class="c1"># atomslist = ipd.atom.pick_representative_chains(atomslist)</span>
+        <span class="c1"># atomslist = [atoms[np.isin(atoms.atom_name,[&#39;CA&#39;, &#39;P&#39;])] for atoms in atomslist]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)],</span> <span class="n">rmsd</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">seqmatch</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">idx</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># for i, atoms_i in enumerate(atomslist):</span>
+    <span class="c1"># no good, fails on various inputsi</span>
+    <span class="c1"># a, x, m1, m2 = bs.superimpose_homologs(atomslist[0], atoms_i)</span>
+
+    <span class="n">ca</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[(</span><span class="n">a</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">a</span><span class="o">.</span><span class="n">hetero</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atomslist</span><span class="p">]</span>
+    <span class="n">aligned_on_protein</span> <span class="o">=</span> <span class="n">accumulate_seqalign_rmsfit</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">mapwise</span><span class="o">.</span><span class="n">append</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">aligned_on_protein</span><span class="p">:</span>
+        <span class="n">phos</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atomslist</span><span class="p">]</span>
+        <span class="n">aligned_on_nucleic</span> <span class="o">=</span> <span class="n">accumulate_seqalign_rmsfit</span><span class="p">(</span><span class="n">phos</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">mapwise</span><span class="o">.</span><span class="n">append</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">npwise</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">atomslist</span><span class="p">))</span>
+    <span class="n">finalresult</span><span class="o">.</span><span class="n">add_intermediate_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mapwise</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+
+    <span class="n">ok</span> <span class="o">=</span> <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">rmsd</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="o">.</span><span class="n">rms_fit</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">seqmatch</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="o">.</span><span class="n">seqmatch</span><span class="p">)</span>
+    <span class="c1"># ipd.icv(results.rmsd,results.seqmatch)</span>
+    <span class="n">finalresult</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atomslist</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">results</span><span class="o">.</span><span class="n">mapwise</span><span class="p">[</span><span class="n">ok</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">ok</span><span class="p">):</span> <span class="k">return</span> <span class="n">finalresult</span>
+    <span class="n">unfound</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atomslist</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+    <span class="c1"># ipd.icv(len(atomslist), len(unfound), idx, ok, kw.keys())</span>
+    <span class="k">return</span> <span class="n">find_components_by_seqaln_rmsfit</span><span class="p">(</span><span class="n">unfound</span><span class="p">,</span> <span class="n">finalresult</span><span class="o">=</span><span class="n">finalresult</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">[</span><span class="o">~</span><span class="n">ok</span><span class="p">],</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Components">
+<a class="viewcode-back" href="../../../tutorials/processing_assemblies.html#ipd.atom.components.Components">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">subscriptable_for_attributes</span>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">element_wise_operations</span>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">mutablestruct</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Components</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Result container for frame searching and alignment.</span>
+
+<span class="sd">    This class stores the aligned frames, RMSD values, and sequence matches</span>
+<span class="sd">    resulting from the frame search operation.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        atoms (list[bs.AtomArray]):</span>
+<span class="sd">            List of aligned atomic structures.</span>
+<span class="sd">        frames (list[np.ndarray]):</span>
+<span class="sd">            List of 4x4 transformation matrices.</span>
+<span class="sd">        seqmatch (list[float]):</span>
+<span class="sd">            List of sequence match fractions.</span>
+<span class="sd">        rmsd (list[float]):</span>
+<span class="sd">            List of RMSD values.</span>
+<span class="sd">        idx (list[list[int]]):</span>
+<span class="sd">            List of aligned indices.</span>
+<span class="sd">        source_ (list[bs.AtomArray]):</span>
+<span class="sd">            Source atomic structures.</span>
+<span class="sd">        tolerances_ (ipd.Tolerances):</span>
+<span class="sd">            Tolerance parameters for alignment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s1">&#39;bs.AtomArray&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">seqmatch</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">rmsd</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">idx</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">source_</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s1">&#39;bs.AtomArray&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">intermediates_</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">tolerances_</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Tolerances</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Components.add">
+<a class="viewcode-back" href="../../../tutorials/processing_assemblies.html#ipd.atom.components.Components.add">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">atom_frame_match_rms_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add aligned frames and statistics to the result.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            **atom_frame_match_rms_idx:</span>
+<span class="sd">                Dictionary of frames, RMSD values, sequence matches, and indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapwise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_frame_match_rms_idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">order</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">))))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">reorder</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">reorderer</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+            <span class="n">reorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqmatch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Components.add_intermediate_result">
+<a class="viewcode-back" href="../../../tutorials/processing_assemblies.html#ipd.atom.components.Components.add_intermediate_result">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_intermediate_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intermediate_result</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add intermediate results to the final result.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            intermediate_result (Components):</span>
+<span class="sd">                Intermediate result object to append to the final result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intermediates_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intermediate_result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Components.enumerate_intermediates">
+<a class="viewcode-back" href="../../../tutorials/processing_assemblies.html#ipd.atom.components.Components.enumerate_intermediates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enumerate_intermediates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;enumerates i, j, frames, rmsd, seqmatch, idx)&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediates_</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="n">tup</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string representation of the object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">capture_stdio</span><span class="p">()</span> <span class="k">as</span> <span class="n">printed</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">np_compact</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Components:&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  atoms:&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  frames:&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">])</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  seqmatch:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqmatch</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  rmsd:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  idx:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  source_:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_</span><span class="p">))</span>
+                <span class="c1"># print(self.tolerances_)</span>
+        <span class="k">return</span> <span class="n">printed</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Components.remove_small_chains">
+<a class="viewcode-back" href="../../../tutorials/processing_assemblies.html#ipd.atom.components.Components.remove_small_chains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_small_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minatom</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">minres</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove small chains from the result.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            minatom (int): Minimum number of atoms in a chain. Defaults to 40.</span>
+<span class="sd">            minres (int): Minimum number of residues in a chain. Defaults to 3.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">toremove</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">minatom</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">res_id</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">minres</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">toremove</span><span class="p">):</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqmatch</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+        <span class="s1">&#39;just to make type checker happy&#39;</span></div>
+
+
+<div class="viewcode-block" id="stub">
+<a class="viewcode-back" href="../../../tutorials/processing_assemblies.html#ipd.atom.components.stub">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stub</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the frame based on the mass center and SVD decomposition of CA atoms.</span>
+
+<span class="sd">    This function computes the transformation frame of an atomic structure</span>
+<span class="sd">    by aligning its CA atom coordinates to the center of mass using Singular</span>
+<span class="sd">    Value Decomposition (SVD).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atoms (bs.AtomArray):</span>
+<span class="sd">            Atomic structure object containing coordinate and atom name data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray:</span>
+<span class="sd">            4x4 homogeneous transformation matrix.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import ipd</span>
+<span class="sd">        &gt;&gt;&gt; atoms = ipd.atom.get(&#39;1qys&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; frame = stub(atoms)</span>
+<span class="sd">        &gt;&gt;&gt; print(frame)</span>
+<span class="sd">        [[ 0.91638034  0.33895946 -0.21296376  4.20984915]</span>
+<span class="sd">         [ 0.06904252  0.39019742  0.91813894  5.34146775]</span>
+<span class="sd">         [ 0.39430978 -0.85606802  0.33416662 11.52761865]</span>
+<span class="sd">         [ 0.          0.          0.          1.        ]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cen</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">mass_center</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">Components</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">atoms</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">cen</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hframe</span><span class="p">(</span><span class="o">*</span><span class="n">Components</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cen</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="accumulate_seqalign_rmsfit">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.components.html#ipd.atom.components.accumulate_seqalign_rmsfit">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">timed</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">accumulate_seqalign_rmsfit</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">,</span> <span class="n">min_align_points</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">bb</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">min_align_points</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">is_protein</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">is_protein</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bb_i_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bb</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_protein</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">is_protein</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>  <span class="c1"># dont match protein with nucleic</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">matchfrac</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">seqalign</span><span class="p">(</span><span class="n">bb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bb_i_</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">bb_i_</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">bb</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">match</span><span class="p">,</span> <span class="n">matchfrac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bb</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_align_points</span><span class="p">:</span>
+            <span class="n">accumulator</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="mf">9e9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xyz1</span> <span class="o">=</span> <span class="n">bb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">match</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span>
+            <span class="n">xyz2</span> <span class="o">=</span> <span class="n">bb_i_</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">match</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">global_timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">()</span>
+            <span class="n">rms</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">xfit</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hrmsfit</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">xyz2</span><span class="p">)</span>
+            <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">global_timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;hrmsfit&#39;</span><span class="p">)</span>
+            <span class="n">accumulator</span><span class="p">(</span><span class="n">xfit</span><span class="p">,</span> <span class="n">rms</span><span class="p">,</span> <span class="n">matchfrac</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="process_components">
+<a class="viewcode-back" href="../../../_apidoc/ipd.atom.components.html#ipd.atom.components.process_components">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_components</span><span class="p">(</span>
+    <span class="n">components</span><span class="p">:</span> <span class="n">Components</span><span class="p">,</span>
+    <span class="n">pickchain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;largest&#39;</span><span class="p">,</span>
+    <span class="n">merge_chains</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">min_chain_atoms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">frames</span> <span class="ow">in</span> <span class="n">components</span><span class="o">.</span><span class="n">enumerate</span><span class="p">(</span><span class="s1">&#39;atoms frames&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="nb">reversed</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_chain_atoms</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">components</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">frames</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="n">components</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">atoms</span>
+                <span class="n">components</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">components</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

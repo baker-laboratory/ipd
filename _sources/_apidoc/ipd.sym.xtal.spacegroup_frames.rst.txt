@@ -1,0 +1,7 @@
+ipd.sym.xtal.spacegroup\_frames module
+======================================
+
+.. automodule:: ipd.sym.xtal.spacegroup_frames
+   :members:
+   :show-inheritance:
+   :undoc-members:

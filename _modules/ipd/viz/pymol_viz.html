@@ -1,0 +1,1321 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.viz.pymol_viz &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/viz/pymol_viz';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.viz.pymol_viz</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.viz.pymol_viz</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">singledispatch</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.viz.viz_deco</span><span class="w"> </span><span class="kn">import</span> <span class="n">pymol_scene</span>
+
+<span class="n">pymol</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;pymol&#39;</span><span class="p">)</span>
+<span class="n">cgo</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;pymol.cgo&#39;</span><span class="p">)</span>
+<span class="n">cmd</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">lazyimport</span><span class="p">(</span><span class="s1">&#39;pymol.cmd&#39;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pymol</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pymol</span><span class="w"> </span><span class="kn">import</span> <span class="n">cgo</span><span class="p">,</span> <span class="n">cmd</span>  <span class="c1"># type: ignore</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog</span><span class="w"> </span><span class="kn">import</span> <span class="n">RelXformInfo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd.viz.primitives</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">prim</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.viz.pymol_cgo</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># from ipd.sym.xtal.spacegroup_util import tounitcellpts</span>
+
+<span class="n">_showme_state</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span>
+    <span class="n">launched</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">seenit</span><span class="o">=</span><span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">_nsymops</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_lazy_enrollees</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="lazy_register">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.lazy_register">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lazy_register</span><span class="p">(</span><span class="n">typename</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">deco</span><span class="p">(</span><span class="n">registeration_func</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">_lazy_enrollees</span>
+        <span class="n">_lazy_enrollees</span><span class="p">[</span><span class="n">typename</span><span class="p">]</span> <span class="o">=</span> <span class="n">registeration_func</span>
+
+    <span class="k">return</span> <span class="n">deco</span></div>
+
+
+<div class="viewcode-block" id="pymol_load">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.pymol_load">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pymol_load</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Thing&#39;</span><span class="p">,</span>
+    <span class="c1"># state=_showme_state,</span>
+    <span class="c1"># name=None,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;pymol_load: don&#39;t know how to show &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">toshow</span><span class="p">)))</span></div>
+
+
+<span class="nd">@pymol_load</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+<span class="nd">@pymol_load</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">prim</span><span class="o">.</span><span class="n">Cylinder</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span>
+    <span class="n">addtocgo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">make_cgo_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="n">cgo_cyl</span><span class="p">(</span><span class="n">toshow</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">toshow</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">toshow</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">toshow</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">addtocgo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="s2">&quot;cyl</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="o">.</span><span class="n">_nsymops</span><span class="p">)</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">addtocgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mycgo</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">make_cgo_only</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mycgo</span>
+
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="s2">&quot;cyl</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="o">.</span><span class="n">_nsymops</span><span class="p">)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="nd">@pymol_load</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">RelXformInfo</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xrel&quot;</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;bycx&quot;</span><span class="p">,</span>
+    <span class="n">showframes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">center</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="n">scalefans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fixedfansize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">expand</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">fuzz</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">make_cgo_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">cyc_ang_match_tol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">axislen</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">usefitaxis</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">axisrad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">helicalrad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">addtocgo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">_nsymops</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>
+
+    <span class="n">ang</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">ang</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
+        <span class="n">ang</span> <span class="o">/=</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s2">&quot;bycx&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">cyc_ang_match_tol</span><span class="p">):</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">cyc_ang_match_tol</span><span class="p">):</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">cyc_ang_match_tol</span><span class="p">):</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">cyc_ang_match_tol</span><span class="p">):</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">cyc_ang_match_tol</span><span class="p">):</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">col</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span>
+        <span class="c1"># col = (1, 1, 1)</span>
+    <span class="c1"># cen = (toshow.framecen - center) * expand + center</span>
+    <span class="n">cen</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">framecen</span>
+
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">showframes</span><span class="p">:</span>
+        <span class="n">pymol_visualize_xforms</span><span class="p">(</span><span class="n">toshow</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">addtocgo</span><span class="o">=</span><span class="n">mycgo</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="n">cen1</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">cen2</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">cenaxis</span> <span class="k">if</span> <span class="n">usefitaxis</span> <span class="k">else</span> <span class="n">toshow</span><span class="o">.</span><span class="n">axs</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">toshow</span><span class="o">.</span><span class="n">ang</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+        <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen1</span><span class="p">,</span> <span class="n">cen2</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_sphere</span><span class="p">(</span><span class="n">cen</span><span class="o">=</span><span class="p">(</span><span class="n">cen1</span><span class="o">+</span><span class="n">cen2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">cen</span> <span class="o">+</span> <span class="n">axis</span><span class="o">*</span><span class="n">axislen</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">c2</span> <span class="o">=</span> <span class="n">cen</span> <span class="o">-</span> <span class="n">axis</span><span class="o">*</span><span class="n">axislen</span><span class="o">/</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="s2">&quot;isect_sphere&quot;</span> <span class="ow">in</span> <span class="n">toshow</span><span class="p">:</span>
+            <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_sphere</span><span class="p">(</span><span class="n">toshow</span><span class="o">.</span><span class="n">closest_to_cen</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_sphere</span><span class="p">(</span><span class="n">toshow</span><span class="o">.</span><span class="n">isect_sphere</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_fan</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">toshow</span><span class="o">.</span><span class="n">isect_sphere</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">arc</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">c1</span> <span class="o">=</span> <span class="n">cen</span>
+            <span class="n">c2</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">isect_sphere</span>
+
+        <span class="n">helicalrad</span> <span class="o">=</span> <span class="n">helicalrad</span> <span class="ow">or</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">axisrad</span>
+
+        <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_cyl</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">axisrad</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen</span> <span class="o">+</span> <span class="n">axis</span> <span class="o">*</span> <span class="n">toshow</span><span class="o">.</span><span class="n">hel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cen</span> <span class="o">-</span> <span class="n">axis</span> <span class="o">*</span> <span class="n">toshow</span><span class="o">.</span><span class="n">hel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">helicalrad</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">shift</span> <span class="o">=</span> <span class="n">fuzz</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_fan</span><span class="p">(</span>
+            <span class="n">axis</span><span class="p">,</span>
+            <span class="n">cen</span> <span class="o">+</span> <span class="n">axis</span><span class="o">*</span><span class="n">shift</span><span class="p">,</span>
+            <span class="n">fixedfansize</span> <span class="k">if</span> <span class="n">fixedfansize</span> <span class="k">else</span> <span class="n">toshow</span><span class="o">.</span><span class="n">rad</span> <span class="o">*</span> <span class="n">scalefans</span><span class="p">,</span>
+            <span class="n">arc</span><span class="o">=</span><span class="n">ang</span><span class="p">,</span>
+            <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+            <span class="n">startpoint</span><span class="o">=</span><span class="n">cen1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">addtocgo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="s2">&quot;symops</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="o">.</span><span class="n">_nsymops</span><span class="p">)</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">addtocgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mycgo</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">make_cgo_only</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mycgo</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="nd">@pymol_load</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;stuff_in_dict&quot;</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="s2">&quot;pose&quot;</span> <span class="ow">in</span> <span class="n">toshow</span><span class="p">:</span>
+        <span class="n">pymol_load</span><span class="p">(</span><span class="n">toshow</span><span class="p">[</span><span class="s2">&quot;pose&quot;</span><span class="p">],</span> <span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">pymol_xform</span><span class="p">(</span><span class="n">toshow</span><span class="p">[</span><span class="s2">&quot;position&quot;</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;last_obj&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mycgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">toshow</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">pymol_load</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">addtocgo</span><span class="o">=</span><span class="n">mycgo</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="pymol_viz_list">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.pymol_viz_list">[docs]</a>
+<span class="nd">@pymol_load</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pymol_viz_list</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span>
+    <span class="n">topcolors</span><span class="o">=</span><span class="p">[],</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">kw</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">iscgo</span><span class="p">(</span><span class="n">toshow</span><span class="p">):</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;_</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">name</span> <span class="o">+=</span> <span class="n">toshow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;_</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_view</span><span class="p">()</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;suspend_updates&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">get_different_colors</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">topcolors</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s2">&quot;colorseed&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">topcolors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">colors</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">topcolors</span> <span class="o">+</span> <span class="n">colors</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">toshow</span><span class="p">):</span>
+        <span class="n">pymol_load</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">addtocgo</span><span class="o">=</span><span class="n">mycgo</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set_view</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;list&quot;</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">mycgo</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;suspend_updates&quot;</span><span class="p">,</span> <span class="s2">&quot;off&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="pymol_load_npndarray">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.pymol_load_npndarray">[docs]</a>
+<span class="nd">@pymol_load</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pymol_load_npndarray</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># showaxes()</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">assert</span> <span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="s2">&quot;linestrip ncac ncacoh line xform point vec&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;linestrip&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">show_ndarray_line_strip</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;ncac&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">show_ndarray_n_ca_c</span><span class="p">(</span><span class="n">toshow</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:],</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;ncacoh&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">show_array_ncacoh</span><span class="p">(</span><span class="n">toshow</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:],</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;line&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">show_ndarray_lines</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;xform&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pymol_visualize_xforms</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;point&quot;</span><span class="p">,</span> <span class="s2">&quot;vec&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">show_ndarray_point_or_vec</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]:</span>
+        <span class="k">return</span> <span class="n">show_ndarray_n_ca_c</span><span class="p">(</span><span class="n">toshow</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:],</span> <span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">show_ndarray_lines</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pymol_visualize_xforms</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">show_ndarray_point_or_vec</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">toshow</span><span class="p">),</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cant understand np.ndarray type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span><span class="si">}</span><span class="s2"> shape </span><span class="si">{</span><span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>  <span class="c1"># type: ignore</span>
+
+<div class="viewcode-block" id="pymol_load_Tensor">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.pymol_load_Tensor">[docs]</a>
+    <span class="nd">@pymol_load</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pymol_load_Tensor</span><span class="p">(</span>
+        <span class="n">toshow</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">a</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">np_array</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="c1"># ipd.icv(&#39;showme torch.Tensor&#39;, np_array.shape)</span>
+        <span class="n">pymol_load_npndarray</span><span class="p">(</span><span class="n">np_array</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="n">_nxforms</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="get_different_colors">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.get_different_colors">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_different_colors</span><span class="p">(</span><span class="n">ncol</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">colorseed</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ncol</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">colorseed</span><span class="p">)</span>
+    <span class="n">maxmincoldis</span><span class="p">,</span> <span class="n">best</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">niter</span><span class="p">):</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">ncol</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="c1"># ipd.icv(np.max(colors[:, ], axis=1))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span>
+            <span class="p">:,</span>
+        <span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+            <span class="n">colors0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">ncol</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">colors0</span><span class="p">[</span>
+                <span class="p">:,</span>
+            <span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">:</span>
+                <span class="n">colors</span> <span class="o">=</span> <span class="n">colors0</span>
+        <span class="c1"># ipd.icv(colors.shape)</span>
+        <span class="n">cdis2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">colors</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">cdis2</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cdis2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">maxmincoldis</span><span class="p">:</span>
+            <span class="n">maxmincoldis</span><span class="p">,</span> <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cdis2</span><span class="p">),</span> <span class="n">colors</span>
+
+    <span class="n">best</span> <span class="o">=</span> <span class="n">best</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">best</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))]</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># ipd.icv(np.argsort(-np.min(best**2, axis=1)))</span>
+    <span class="c1"># ipd.icv(best)</span>
+    <span class="c1"># assert 0</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
+    <span class="c1"># paranoid sanity cheeck</span>
+    <span class="n">newrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">rs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">newrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">newrs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="n">rs</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">newrs</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">best</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+
+    <span class="c1"># if not &#39;seenit&#39; in _showme_state:</span>
+    <span class="c1"># _showme_state[&#39;seenit&#39;] = defaultdict(int)</span>
+    <span class="c1"># if name in _showme_state[&#39;seenit&#39;]:</span>
+    <span class="c1"># _showme_state[&#39;seenit&#39;][name] += 1</span>
+    <span class="c1"># return name + &#39;_%i&#39; % _showme_state[&#39;seenit&#39;]</span>
+    <span class="c1"># return name</span>
+
+<div class="viewcode-block" id="pymol_visualize_xforms">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.pymol_visualize_xforms">[docs]</a>
+<span class="nd">@pymol_scene</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pymol_visualize_xforms</span><span class="p">(</span>
+        <span class="n">xforms</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xforms&quot;</span><span class="p">,</span>
+        <span class="n">randpos</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">xyzlen</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span> <span class="o">/</span> <span class="mi">5</span><span class="p">],</span>
+        <span class="n">xyzscale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">spheres</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">center_weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rays</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">framecolors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">perturb</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">addtocgo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">colorset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">lattice</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+        <span class="n">showneg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">kw</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">perturb</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="n">xyzlen</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span> <span class="o">*</span> <span class="n">xyzscale</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">xyzlen</span><span class="p">]</span>
+    <span class="c1"># origlen = xforms.shape[0] if xforms.ndim &gt; 3 else 1</span>
+    <span class="n">xforms</span> <span class="o">=</span> <span class="n">xforms</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">_nxforms</span>
+    <span class="n">_nxforms</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">xforms</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="n">xforms</span> <span class="o">=</span> <span class="n">xforms</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="c1"># name = get_cgo_name(name)</span>
+
+    <span class="k">if</span> <span class="n">framecolors</span> <span class="o">==</span> <span class="s2">&quot;rand&quot;</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">get_different_colors</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xforms</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s2">&quot;colorseed&quot;</span><span class="p">))</span>
+
+    <span class="c1"># mycgo = [cgo.BEGIN]</span>
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">c0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">xyzlen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">xyzlen</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">z0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xyzlen</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">randpos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">rand_xform</span><span class="p">()</span>
+        <span class="n">rr</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">*=</span> <span class="n">randpos</span>
+        <span class="n">c0</span> <span class="o">=</span> <span class="n">rr</span> <span class="o">@</span> <span class="n">c0</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">rr</span> <span class="o">@</span> <span class="n">x0</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">rr</span> <span class="o">@</span> <span class="n">y0</span>
+        <span class="n">z0</span> <span class="o">=</span> <span class="n">rr</span> <span class="o">@</span> <span class="n">z0</span>
+
+    <span class="n">colorsets</span> <span class="o">=</span> <span class="n">colorset</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colorset</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">colorsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">colorset</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">xform</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xforms</span><span class="p">):</span>
+        <span class="n">xform</span> <span class="o">=</span> <span class="n">xform</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">xform</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">colorset</span> <span class="o">=</span> <span class="n">colorsets</span><span class="p">[</span><span class="n">ix</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colorsets</span><span class="p">)]</span>  <span class="c1"># type: ignore</span>
+        <span class="c1"># ipd.icv(colorset)</span>
+        <span class="n">cen</span> <span class="o">=</span> <span class="n">xform</span> <span class="o">@</span> <span class="n">c0</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">xform</span> <span class="o">@</span> <span class="n">x0</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">xform</span> <span class="o">@</span> <span class="n">y0</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">xform</span> <span class="o">@</span> <span class="n">z0</span>
+        <span class="k">if</span> <span class="n">bounds</span><span class="p">:</span>
+            <span class="n">bcen</span> <span class="o">=</span> <span class="n">tounitcellpts</span><span class="p">(</span><span class="n">lattice</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span> <span class="n">cen</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">bcen</span> <span class="o">&lt;</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.0001</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">bcen</span> <span class="o">&gt;</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">):</span>
+                <span class="k">continue</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">framecolors</span> <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">colors</span><span class="p">[</span><span class="n">ix</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">colorset</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">col1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="k">elif</span> <span class="n">colorset</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">col1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="k">elif</span> <span class="n">colorset</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">col1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="k">elif</span> <span class="n">colorset</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">col1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="k">elif</span> <span class="n">colorset</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">col1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+            <span class="n">col4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+
+        <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">col1</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">col2</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">col3</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">showneg</span><span class="p">:</span>
+            <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="o">-</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">col1</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+            <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="o">-</span><span class="n">y</span><span class="p">,</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">col2</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+            <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="o">-</span><span class="n">z</span><span class="p">,</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">col3</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">spheres</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># and ix % origlen == 0:</span>
+            <span class="n">mycgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_sphere</span><span class="p">(</span><span class="n">cen</span><span class="p">,</span> <span class="n">spheres</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col4</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="n">col1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_sphere</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">center_weight</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col1</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">rays</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xforms</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">center</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="n">col1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">xform</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xforms</span><span class="p">):</span>
+            <span class="n">mycgo</span> <span class="o">+=</span> <span class="n">cgo_cyl</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">xform</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">rays</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">cgo</span><span class="o">=</span><span class="n">mycgo</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="show_ndarray_lines">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.show_ndarray_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_ndarray_lines</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">bothsides</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">spheres</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">cyl</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">addtocgo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;ndarray_lines&quot;</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;_</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s2">&quot;rand&quot;</span><span class="p">:</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">get_different_colors</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">toshow</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s2">&quot;colorseed&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>  <span class="c1"># type: ignore</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">toshow</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">cgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ray</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">toshow</span><span class="p">):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">col</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cyl</span><span class="p">:</span>
+            <span class="n">cgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_cyl</span><span class="p">(</span><span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rad</span><span class="o">=</span><span class="n">cyl</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">color</span><span class="p">),</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_lineabs</span><span class="p">(</span><span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">col</span><span class="o">=</span><span class="n">color</span><span class="p">),</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">spheres</span><span class="p">:</span>
+            <span class="n">cgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_sphere</span><span class="p">(</span><span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">col</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">spheres</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">bothsides</span><span class="p">:</span>
+                <span class="n">cgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo_sphere</span><span class="p">(</span><span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ray</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">col</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">spheres</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">addtocgo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">cgo</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">%i</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">i</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">addtocgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgo</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cgo_frame_points">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.cgo_frame_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cgo_frame_points</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">showpts</span><span class="p">,</span> <span class="n">scaleptrad</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">cgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">showpts</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">cgo</span> <span class="o">+=</span> <span class="n">cgo_sphere</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">p</span><span class="p">),</span> <span class="n">rad</span><span class="o">=</span><span class="n">scale</span> <span class="o">*</span> <span class="n">scaleptrad</span> <span class="o">*</span> <span class="n">r</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cgo</span></div>
+
+
+<div class="viewcode-block" id="show_ndarray_line_strip">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.show_ndarray_line_strip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_ndarray_line_strip</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">stateno</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">breaks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">breaks_groups</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">whitetopn</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">addtocgo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># v = pymol.cmd.get_view()</span>
+    <span class="c1"># print(&#39;!!!!!!!!!!!!!!!!!!!!!!!!&#39;, state)</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;_</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;seenit&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s2">&quot;rand&quot;</span><span class="p">:</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">get_different_colors</span><span class="p">(</span><span class="n">breaks</span> <span class="o">//</span> <span class="n">breaks_groups</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s2">&quot;colorseed&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">breaks</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">breaks</span>
+    <span class="n">col</span><span class="p">[:</span><span class="n">whitetopn</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">*</span> <span class="n">whitetopn</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># print(&#39;-&#39; * 10)</span>
+    <span class="c1"># print(col)</span>
+    <span class="c1"># print(&#39;-&#39; * 10)</span>
+
+    <span class="n">mycgo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="n">toshow</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">toshow</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span>
+    <span class="n">toshow</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span> <span class="o">//</span> <span class="n">breaks</span>
+    <span class="n">nextra</span><span class="p">,</span> <span class="n">nheader</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">3</span>
+    <span class="n">cgoary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="o">+</span><span class="n">nextra</span><span class="p">)</span> <span class="o">*</span> <span class="n">breaks</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># print(f&#39;len cgoary {len(cgoary)} {breaks*n} breaks {breaks}&#39;)</span>
+    <span class="n">cgoary</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">BEGIN</span>
+    <span class="n">cgoary</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">LINE_STRIP</span>
+    <span class="n">cgoary</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">breaks</span><span class="p">):</span>
+        <span class="n">lb0</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="n">nextra</span><span class="p">)</span> <span class="o">+</span> <span class="n">nheader</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="n">ub0</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="n">nextra</span><span class="p">)</span> <span class="o">+</span> <span class="n">nheader</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">-</span> <span class="n">nextra</span>
+        <span class="n">lb1</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span>
+        <span class="n">ub1</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span>
+        <span class="n">cgoary</span><span class="p">[</span><span class="n">lb0</span> <span class="o">-</span> <span class="mi">5</span><span class="p">:</span><span class="n">lb0</span> <span class="o">-</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span>
+        <span class="n">cgoary</span><span class="p">[</span><span class="n">lb0</span> <span class="o">-</span> <span class="mi">4</span><span class="p">:</span><span class="n">lb0</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span><span class="p">[</span><span class="n">i</span> <span class="o">//</span> <span class="n">breaks_groups</span><span class="p">]</span>
+        <span class="n">cgoary</span><span class="p">[</span><span class="n">lb0</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">lb0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span>
+        <span class="n">cgoary</span><span class="p">[</span><span class="n">lb0</span><span class="p">:</span><span class="n">ub0</span><span class="p">]</span> <span class="o">=</span> <span class="n">toshow</span><span class="p">[</span><span class="n">lb1</span><span class="p">:</span><span class="n">ub1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># color block gaps</span>
+        <span class="n">cgoary</span><span class="p">[</span><span class="n">ub0</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">ub0</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cgo</span><span class="o">.</span><span class="n">VERTEX</span>
+        <span class="n">cgoary</span><span class="p">[</span><span class="n">ub0</span> <span class="o">+</span> <span class="mi">4</span><span class="p">:</span><span class="n">ub0</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="n">toshow</span><span class="p">[</span><span class="n">ub1</span> <span class="o">-</span> <span class="mi">4</span><span class="p">:</span><span class="n">ub1</span><span class="p">]</span>
+        <span class="n">ub1</span> <span class="o">=</span> <span class="n">ub1</span> <span class="k">if</span> <span class="n">ub1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">cgoary</span><span class="p">[</span><span class="n">ub0</span> <span class="o">+</span> <span class="mi">8</span><span class="p">:</span><span class="n">ub0</span> <span class="o">+</span> <span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="n">toshow</span><span class="p">[</span><span class="n">ub1</span><span class="p">:</span><span class="n">ub1</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span>
+    <span class="n">cgoary</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgo</span><span class="o">.</span><span class="n">END</span>  <span class="c1"># overrwites last VERTEX op</span>
+
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;cgo_line_width&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">addtocgo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load_cgo</span><span class="p">(</span><span class="n">cgoary</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">addtocgo</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cgoary</span><span class="p">)</span></div>
+
+
+    <span class="c1"># print(stateno, flush=True)</span>
+    <span class="c1"># pymol.cmd.load_cgo(cgoary, name, state=stateno)</span>
+    <span class="c1"># pymol.cmd.set_view(v)</span>
+
+<div class="viewcode-block" id="generate_rainbow_gradient">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.generate_rainbow_gradient">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_rainbow_gradient</span><span class="p">(</span><span class="n">n_values</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1"># Define the key colors of the rainbow</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Red</span>
+        <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Orange</span>
+        <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Yellow</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Green</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>  <span class="c1"># Blue</span>
+        <span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">130</span><span class="p">),</span>  <span class="c1"># Indigo</span>
+        <span class="p">(</span><span class="mi">148</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">211</span><span class="p">)</span>  <span class="c1"># Violet</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Create an array for the gradient</span>
+    <span class="n">gradient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_values</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="c1"># Generate the gradient by interpolating between each pair of colors</span>
+    <span class="n">num_colors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+    <span class="n">steps_per_color</span> <span class="o">=</span> <span class="n">n_values</span> <span class="o">//</span> <span class="p">(</span><span class="n">num_colors</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_colors</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">start_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">end_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps_per_color</span><span class="p">):</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">j</span> <span class="o">/</span> <span class="n">steps_per_color</span>
+            <span class="n">gradient</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">steps_per_color</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">start_color</span> <span class="o">+</span> <span class="n">t</span><span class="o">*</span><span class="n">end_color</span>
+
+    <span class="c1"># Manually set the last segment to the final color to ensure we cover all colors</span>
+    <span class="n">gradient</span><span class="p">[</span><span class="o">-</span><span class="n">steps_per_color</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">steps_per_color</span><span class="p">)</span>
+
+    <span class="c1"># Convert the gradient to a list of RGB tuples</span>
+    <span class="n">gradient_rgb</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">gradient</span><span class="p">]</span>
+
+    <span class="c1"># Convert to numpy array</span>
+    <span class="n">rainbow_gradient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gradient_rgb</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rainbow_gradient</span></div>
+
+
+<span class="c1"># RAINBOW = generate_rainbow_gradient(100)</span>
+
+<div class="viewcode-block" id="show_ndarray_point_or_vec">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.show_ndarray_point_or_vec">[docs]</a>
+<span class="nd">@pymol_scene</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_ndarray_point_or_vec</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">sphere</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">chainbow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">kw</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">th</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">toshow</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">toshow</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span>
+    <span class="c1"># if isinstance(col, typing.Hashable) and col in get_color_dict():</span>
+    <span class="c1"># col = get_color_dict()[col]</span>
+    <span class="c1"># if col is None:</span>
+    <span class="c1"># col = get_different_colors(len(toshow), **kw.only(&quot;colorseed&quot;))</span>
+    <span class="k">if</span> <span class="n">toshow</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="p">[[</span><span class="n">toshow</span><span class="p">]]</span>
+    <span class="k">elif</span> <span class="n">toshow</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">toshow</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">toshow</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">toshow</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;vec&quot;</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hvec</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;point&quot;</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span>
+    <span class="n">toshow</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scale</span>
+    <span class="n">cgo</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">get_different_colors</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">toshow</span><span class="p">))</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">col</span>
+    <span class="k">for</span> <span class="n">ichain</span><span class="p">,</span> <span class="n">xyz</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">toshow</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">toshow</span><span class="p">):</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">ichain</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p_or_v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">chainbow</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">RAINBOW</span><span class="p">[(</span><span class="nb">len</span><span class="p">(</span><span class="n">RAINBOW</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">)]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">p_or_v</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.999</span><span class="p">:</span>
+                <span class="n">cgo</span> <span class="o">+=</span> <span class="n">cgo_sphere</span><span class="p">(</span><span class="n">p_or_v</span><span class="p">,</span> <span class="n">sphere</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">p_or_v</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">:</span>
+                <span class="c1"># cgo += cgo_vecfrompoint(p_or_v * 20, p_or_v, col=color)</span>
+                <span class="n">cgo</span> <span class="o">+=</span> <span class="n">cgo_vecfrompoint</span><span class="p">(</span><span class="n">p_or_v</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">col</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">cgo</span><span class="o">=</span><span class="n">cgo</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="show_array_ncacoh">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.show_array_ncacoh">[docs]</a>
+<span class="nd">@pymol_scene</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_array_ncacoh</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">tmpdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.pdb&quot;</span>  <span class="c1"># type: ignore</span>
+    <span class="k">assert</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span>
+    <span class="c1"># ipd.icv(toshow.shape)</span>
+
+    <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">dump_pdb_from_points</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">toshow</span><span class="p">,</span> <span class="n">anames</span><span class="o">=</span><span class="s1">&#39;N CA C O H&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="s1">&#39;car&#39;</span><span class="p">)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;sti&#39;</span><span class="p">,</span> <span class="s1">&#39;name N+CA+C&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">pymol_object</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="show_ndarray_n_ca_c">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.show_ndarray_n_ca_c">[docs]</a>
+<span class="nd">@pymol_scene</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_ndarray_n_ca_c</span><span class="p">(</span>
+    <span class="n">toshow</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">tmpdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.pdb&quot;</span>  <span class="c1"># type: ignore</span>
+    <span class="k">assert</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">toshow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">toshow</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">toshow</span><span class="p">)</span>
+    <span class="c1"># ipd.icv(toshow.shape)</span>
+
+    <span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">dumppdb</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">toshow</span><span class="p">)</span>
+
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="s1">&#39;car&#39;</span><span class="p">)</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;sti&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> and name N+CA+C&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">pymol_object</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="iscgo">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.iscgo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iscgo</span><span class="p">(</span><span class="n">maybecgo</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">maybecgo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="showme_pymol">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.showme_pymol">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showme_pymol</span><span class="p">(</span>
+    <span class="n">thing</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;noname&quot;</span><span class="p">,</span>
+    <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">vizfresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">png</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pngi</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">pngturn</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ray</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">one_png_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="k">if</span> <span class="s1">&#39;pymol&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;pymol package not available&#39;</span><span class="p">)</span>
+
+    <span class="c1"># if name != &#39;noname&#39;: ipd.icv(&#39;SHOWME&#39;, name)</span>
+    <span class="k">global</span> <span class="n">_showme_state</span>
+
+    <span class="k">if</span> <span class="s2">&quot;PYTEST_CURRENT_TEST&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">headless</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NOT RUNNING PYMOL IN UNIT TEST&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">pymol</span><span class="o">.</span><span class="n">pymol_argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pymol&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">headless</span><span class="p">:</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">pymol_argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pymol&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_showme_state</span><span class="p">[</span><span class="s2">&quot;launched&quot;</span><span class="p">]:</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">finish_launching</span><span class="p">()</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;max_threads&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="c1"># pymol.cmd.viewport(400, 720)</span>
+        <span class="c1"># v = list(cmd.get_view())</span>
+        <span class="c1"># v[15] *= 2</span>
+        <span class="c1"># cmd.set_view(v)</span>
+        <span class="c1"># print(repr(v))</span>
+        <span class="c1"># assert 0</span>
+        <span class="n">_showme_state</span><span class="p">[</span><span class="s2">&quot;launched&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># cmd.turn(&#39;x&#39;, -90)</span>
+        <span class="c1"># cmd.turn(&#39;y&#39;, 100)</span>
+
+    <span class="c1"># print(&#39;############## showme_pymol&#39;, type(thing), &#39;##############&#39;)</span>
+
+    <span class="k">if</span> <span class="n">vizfresh</span><span class="p">:</span>
+        <span class="c1"># cmd.disable(&#39;all&#39;)</span>
+        <span class="n">clear_pymol</span><span class="p">()</span>
+
+    <span class="c1"># pymol.cmd.full_screen(&#39;on&#39;)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pymol_load</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">_showme_state</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="c1"># # pymol.cmd.set(&#39;internal_gui_width&#39;, &#39;20&#39;)</span>
+
+    <span class="k">if</span> <span class="n">png</span><span class="p">:</span>
+        <span class="n">pngfile</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">png</span><span class="si">}</span><span class="s2">)</span><span class="si">{</span><span class="n">pngi</span><span class="si">:</span><span class="s2">06</span><span class="si">}</span><span class="s2">.png&quot;</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ray_opaque_background&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">png</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">png</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">turn</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">pngturn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ray</span><span class="p">:</span>
+            <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">ray</span><span class="p">()</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="s2">&quot;PNG&quot;</span><span class="p">,</span> <span class="n">pngfile</span><span class="p">)</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">png</span><span class="p">(</span><span class="n">pngfile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">one_png_only</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+        <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">block</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="clear_pymol">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.clear_pymol">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_pymol</span><span class="p">():</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;not axes&quot;</span><span class="p">)</span></div>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+<div class="viewcode-block" id="showme">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.showme">[docs]</a>
+<span class="nd">@ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">preserve_random_state</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">showme</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;pymol&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">_lazy_enrollees</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">)()</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">frame</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">code_context</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="n">argsn</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="n">string</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">argsn</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span> <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">names</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">if</span> <span class="s2">&quot;pymol&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span> <span class="n">how</span> <span class="o">=</span> <span class="s2">&quot;pdb&quot;</span>
+    <span class="k">if</span> <span class="n">how</span> <span class="o">==</span> <span class="s2">&quot;pymol&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">showme_pymol</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;showme how=&quot;</span><span class="si">%s</span><span class="s1">&quot; not implemented&#39;</span> <span class="o">%</span> <span class="n">how</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>  <span class="c1"># type: ignore</span></div>
+
+
+<span class="n">_atom_record_format</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ATOM  </span><span class="si">{atomi:5d}</span><span class="s2"> </span><span class="si">{atomn:^4}{idx:^1}{resn:3s}</span><span class="s2"> </span><span class="si">{chain:1}{resi:4d}{insert:1s}</span><span class="s2">   &quot;</span>
+                       <span class="s2">&quot;</span><span class="si">{x:8.3f}{y:8.3f}{z:8.3f}{occ:6.2f}{b:6.2f}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="format_atom">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.format_atom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_atom</span><span class="p">(</span>
+    <span class="n">atomi</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">atomn</span><span class="o">=</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span>
+    <span class="n">idx</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+    <span class="n">resn</span><span class="o">=</span><span class="s2">&quot;ALA&quot;</span><span class="p">,</span>
+    <span class="n">chain</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="n">resi</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">insert</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">occ</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">return</span> <span class="n">_atom_record_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="pymol_xform">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.pymol_xform">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pymol_xform</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">xform</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_object_list</span><span class="p">()</span>
+    <span class="n">pymol</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">transform_object</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">xform</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="get_palette">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.get_palette">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_palette</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+
+    <span class="n">palette</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">cmd</span><span class="o">.</span><span class="n">get_color_indices</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">blacklist</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">rgb</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">get_color_tuple</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">palette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">palette</span> <span class="o">=</span> <span class="n">kind</span>  <span class="c1"># pass through for convenience</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown palette kind </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">palette</span></div>
+
+
+<div class="viewcode-block" id="get_color_dict">
+<a class="viewcode-back" href="../../../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.get_color_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_color_dict</span><span class="p">():</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">cmd</span><span class="o">.</span><span class="n">get_color_tuple</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">cmd</span><span class="o">.</span><span class="n">get_color_indices</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">colors</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

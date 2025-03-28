@@ -1,0 +1,7 @@
+ipd.sym.helix.helix\_slide module
+=================================
+
+.. automodule:: ipd.sym.helix.helix_slide
+   :members:
+   :show-inheritance:
+   :undoc-members:

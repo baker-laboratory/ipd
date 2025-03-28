@@ -1,0 +1,7 @@
+ipd.viz.viz\_rigidbody module
+=============================
+
+.. automodule:: ipd.viz.viz_rigidbody
+   :members:
+   :show-inheritance:
+   :undoc-members:

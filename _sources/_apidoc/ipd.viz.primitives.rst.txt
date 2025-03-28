@@ -1,0 +1,7 @@
+ipd.viz.primitives module
+=========================
+
+.. automodule:: ipd.viz.primitives
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ipd.crud.backend module
+=======================
+
+.. automodule:: ipd.crud.backend
+   :members:
+   :show-inheritance:
+   :undoc-members:

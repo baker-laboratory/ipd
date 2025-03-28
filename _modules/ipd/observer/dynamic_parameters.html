@@ -1,0 +1,1059 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.observer.dynamic_parameters &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/observer/dynamic_parameters';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.observer.dynamic_parameters</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.observer.dynamic_parameters</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">======================================================</span>
+<span class="sd">This file defines a DynamicParameter management system</span>
+<span class="sd">======================================================</span>
+
+<span class="sd">The DynamicParameters class allows parameter values to change through a run based on the design number, diffusion T number, and iterative simulator block number. Boolean parameters can be set by specifying particular iterations, or a range of values. Numerical parameters can be set by specifying example values for particular iterations, then 1D or 2D spline smoothing is used to get the value for intermediate iterations. Parameters are accessed by attribute, e.g. by accessing symopts.fit, you will get a true/false value depending on where you are in the run. Behavior is specified in config or command line, with no extra logic needed in the code that accesses the parameter. For example, ``sym.fit=&#39;rfold:[7,13,27,35]&#39;`` will set fit to true on blocks 7, 13, 27 and 35, ``sym.fit=&#39;diffuse:[[12,27]]&#39;`` will set sym.fit to true on diffusion steps 12 thru 27 inclusive, ``sym.fit=&#39;rfold:[[0,0.5]]*diffuse:[[0,10]]&#39;`` will set fit to true for the first half of the rosettafold blocks when the diffusion step is 10 or less. DynamicParameters implements a Mapping, so it can be used for kwargs like so, foo(a,b,**symopts).</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+
+<span class="sd">A central DynamicParameter manager class creates and contains all parameters and is</span>
+<span class="sd">created for a run with 10 designs, 50 diffusion steps, and 40 total rfold steps like so</span>
+
+<span class="sd">    &gt;&gt;&gt; params = DynamicParameters(ndesign=10, ndiffuse=50, nrfold=40)</span>
+
+<span class="sd">New parameters are created with factory member functions of DynamicParameter</span>
+<span class="sd">with a specified name and will depend on any combination of the current design,</span>
+<span class="sd">diffusion, and/or rfold step. For example:</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_false_on_steps(name=&#39;done_on_first_3_steps&#39;, diffuse=[0, 1, 2])</span>
+
+<span class="sd">and then accessed like this from anywhere using the DynamicParameter object</span>
+
+<span class="sd">    &gt;&gt;&gt; StepObserver().set_nstep(diffuse=50) # system will call this automatically</span>
+<span class="sd">    &gt;&gt;&gt; StepObserver().set_step(diffuse=50) # system will call this automatically</span>
+<span class="sd">    &gt;&gt;&gt; params.done_on_first_3_steps</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; StepObserver().set_step(diffuse=48) # system will call this automatically</span>
+<span class="sd">    &gt;&gt;&gt; params.done_on_first_3_steps</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; StepObserver().set_step(diffuse=47) # system will call this automatically</span>
+<span class="sd">    &gt;&gt;&gt; params.done_on_first_3_steps</span>
+<span class="sd">    True</span>
+
+<span class="sd">The factory functions newparam_false_on_steps and newparam_false_on_steps create new</span>
+<span class="sd">boolean parameters that are true/false for specified steps in the protocol</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_on_steps(&#39;name1&#39;, diffuse=[1, 3])</span>
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_on_steps(&#39;name2&#39;, diffuse=[-1, -3])</span>
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_on_steps(&#39;name3&#39;, diffuse=[-1, -3])</span>
+<span class="sd">    &gt;&gt;&gt; params.newparam_false_on_steps(&#39;name4&#39;, design=1, rfold=[1, 3])</span>
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_on_steps(&#39;name5&#39;, design=1, rfold=_NotIn(1, 3))</span>
+
+<span class="sd">floats can be used as a fraction</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_on_steps(&#39;name6&#39;, diffuse=[0.33])</span>
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_on_steps(&#39;name7&#39;, diffuse=[0.01, -0.33])</span>
+
+<span class="sd">The factory functions newparam_true_in_range, newparam_false_in_range create new</span>
+<span class="sd">boolean parameters based on ranges of steps. The range is inclusive. Floats can be</span>
+<span class="sd">used to specify, for example, true when the fraction of steps done is between 0.3 and 0.8</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_in_range(&#39;name8&#39;, diffuse=(0.3, 0.8))</span>
+
+<span class="sd">or explicit step numbers can be used for ex: the first 5 steps</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_true_in_range(&#39;name9&#39;, rfold=[(0, 4)])</span>
+<span class="sd">    &gt;&gt;&gt; StepObserver().set_step(rfold=2)</span>
+<span class="sd">    &gt;&gt;&gt; params.name9</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; StepObserver().set_step(rfold=5)</span>
+<span class="sd">    &gt;&gt;&gt; params.name9</span>
+<span class="sd">    False</span>
+
+<span class="sd">multiple ranges can be specified</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_false_in_range(&#39;name10&#39;, rfold=[(0, 2), (4, 5)])</span>
+
+<span class="sd">python range objects can also be used, eg the first 10 odd steps</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_false_in_range(&#39;name11&#39;, rfold=range(1, 20, 2))</span>
+
+<span class="sd">Floating point parameters can be created with newparam_spline_1d and newparam_spline_2d</span>
+<span class="sd">with two points, basically linear interp. (Do we need integer valued parameters? What</span>
+<span class="sd">would be a good way to specify those? I&#39;m kinda planning to round spline values for int</span>
+<span class="sd">params that need to vary, but I dunno if that will be a good approach)</span>
+
+<span class="sd">this example has values n+1, where n is the step number and N is total steps</span>
+
+<span class="sd">    &gt;&gt;&gt; N = 7</span>
+<span class="sd">    &gt;&gt;&gt; params.newparam_spline_1d(&#39;name12&#39;, diffuse=[(0, 1), (1, N + 1)])</span>
+
+<span class="sd">with 3 points, a quadratic fit</span>
+<span class="sd">this example has values (n+1)**2, where n is the step number and N is total steps</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_spline_1d(&#39;name13&#39;, rfold=[(0, 0), (0.5, 4**2), (1, 8**2)])</span>
+
+<span class="sd">with 4 or more points, cubic spline fit</span>
+<span class="sd">this example has values (n+1)**3, where n is the step number and N is total steps</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_spline_1d(&#39;name14&#39;, design=[(0, 0), (0.25, 2**3), (0.5, 4**3), (1, 8**3)])</span>
+
+<span class="sd">can also do fancy 2D triangulation-based interploation to vary rfold params</span>
+<span class="sd">over the course of an individual diffusion trajectory</span>
+<span class="sd">values are specified as triples of (diffuse_step, rfold_step, value)</span>
+<span class="sd">there must be at least 3, and anything outside their convex hull will</span>
+<span class="sd">have&gt;&gt;&gt;  an undefined value, so the points must cover the unit square [0-1,0-1]</span>
+<span class="sd">(you&#39;ll get an informative error). I think it&#39;s probably best to always give values</span>
+<span class="sd">for the four corners exactly</span>
+
+<span class="sd">    &gt;&gt;&gt; params.newparam_spline_2d(&#39;twod&#39;, diffuse_rfold=[</span>
+<span class="sd">    ...     (0.0, 0.0, 0),</span>
+<span class="sd">    ...     (0.0, 1.0, 50),</span>
+<span class="sd">    ...     (1.0, 0.0, 50),</span>
+<span class="sd">    ...     (1.0, 1.0, 100),</span>
+<span class="sd">    ... ])</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.observer.observer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observer</span>
+
+<span class="n">Step</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Step&#39;</span><span class="p">,</span> <span class="s1">&#39;design diffuse rfold&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StepObserver">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.StepObserver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StepObserver</span><span class="p">(</span><span class="n">Observer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Can be used to track the progress of a run, design step, diffusion step</span>
+<span class="sd">    and rfold block step.&quot;&quot;&quot;</span>
+    <span class="n">_subject</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># initialize once</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_subject</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_subject</span><span class="o">.</span><span class="n">observers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_subject</span><span class="o">.</span><span class="n">_nstep</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># if not cls._subject._nstep and conf:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_subject</span>
+
+<div class="viewcode-block" id="StepObserver.set_config">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.StepObserver.set_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_subject</span><span class="o">.</span><span class="n">set_nstep</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+            <span class="n">design</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">num_designs</span><span class="p">,</span>
+            <span class="n">diffuse</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">diffuser</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+            <span class="n">rfold</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_observer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an observer to the list of observers.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">observer</span><span class="o">.</span><span class="n">_subject</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="p">:</span>
+            <span class="n">observer</span><span class="o">.</span><span class="n">_set_nstep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">design</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StepObserver.set_nstep">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.StepObserver.set_nstep">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_nstep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># ipd.icv(&#39;set_nstep&#39;, design, diffuse, rfold)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">observer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="n">observer</span><span class="o">.</span><span class="n">_set_nstep</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StepObserver.set_step">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.StepObserver.set_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># ipd.icv(&#39;set_step&#39;, design, diffuse, rfold)</span>
+        <span class="k">if</span> <span class="n">diffuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">diffuse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span> <span class="o">-</span> <span class="n">diffuse</span>
+        <span class="k">for</span> <span class="n">observer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="n">observer</span><span class="o">.</span><span class="n">_set_step</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StepObserver.rfold_begin">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.StepObserver.rfold_begin">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rfold_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">observer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="n">observer</span><span class="o">.</span><span class="n">_rfold_begin</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="StepObserver.rfold_end">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.StepObserver.rfold_end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rfold_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">observer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="n">observer</span><span class="o">.</span><span class="n">_rfold_end</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="StepObserver.rfold_iter_begin">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.StepObserver.rfold_iter_begin">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rfold_iter_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="c1"># ipd.icv(&#39;rfold_iter_begin&#39;, tag)</span>
+        <span class="k">for</span> <span class="n">observer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="n">observer</span><span class="o">.</span><span class="n">_rfold_iter_begin</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="DynamicParameters">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicParameters</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A central class that manages all dynamic parameters for a run.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndesign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ndiffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nrfold</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">_testing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span><span class="n">ndesign</span><span class="p">,</span> <span class="n">ndiffuse</span><span class="p">,</span> <span class="n">nrfold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rfold_tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strict</span> <span class="o">=</span> <span class="p">(</span><span class="n">ndesign</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ndiffuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nrfold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parsed_params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_testing</span><span class="p">:</span> <span class="n">StepObserver</span><span class="p">()</span><span class="o">.</span><span class="n">_add_observer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sanity_check</span><span class="p">()</span>
+
+    <span class="c1">################## factory funcs for the various dynparam types #####################</span>
+<div class="viewcode-block" id="DynamicParameters.copy">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.parse_dynamic_param">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.parse_dynamic_param">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_dynamic_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;spline&#39;</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newparam_constant</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;spline&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;rfold:&#39;</span><span class="p">,</span> <span class="s1">&#39;diffuse:&#39;</span><span class="p">,</span> <span class="s1">&#39;design:&#39;</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parsed_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+                    <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">a</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                        <span class="n">a</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">safe_eval</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">levels</span> <span class="o">=</span> <span class="n">a</span> <span class="k">if</span> <span class="n">a</span> <span class="k">else</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                    <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">safe_eval</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">newparam_true_in_range</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+                                                <span class="o">**</span><span class="n">args</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">newparam_true_on_steps</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+                                                <span class="o">**</span><span class="n">args</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bad dynam param string &quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bad dynam param string &quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.newparam_true_on_steps">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_on_steps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newparam_true_on_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_TrueOnIters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">,</span> <span class="n">levels</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.newparam_false_on_steps">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_on_steps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newparam_false_on_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_Not</span><span class="p">(</span><span class="n">_TrueOnIters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">,</span> <span class="n">levels</span><span class="p">)),</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.newparam_true_in_range">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_in_range">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newparam_true_in_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">design</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">design</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">design</span> <span class="o">=</span> <span class="n">_ranges_to_sets</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">design</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">diffuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">diffuse</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">diffuse</span> <span class="o">=</span> <span class="n">_ranges_to_sets</span><span class="p">(</span><span class="n">diffuse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rfold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfold</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">rfold</span> <span class="o">=</span> <span class="n">_ranges_to_sets</span><span class="p">(</span><span class="n">rfold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span><span class="p">)</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="n">_TrueOnIters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.newparam_false_in_range">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_in_range">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newparam_false_in_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newparam_true_in_range</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_Not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.newparam_spline_1d">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_1d">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newparam_spline_1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_Spline1D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.newparam_spline_2d">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_2d">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newparam_spline_2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">diffuse_rfold</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_Spline2D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diffuse_rfold</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.newparam_constant">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.newparam_constant">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newparam_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+
+    <span class="c1">######################################################################################</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sanity_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># print(id(self), self._step, flush=True)</span>
+        <span class="k">assert</span> <span class="s1">&#39;design&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+        <span class="k">assert</span> <span class="s1">&#39;diffuse&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+        <span class="k">assert</span> <span class="s1">&#39;rfold&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+        <span class="k">assert</span> <span class="s1">&#39;tag&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">design</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="s1">&#39;pytest&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">design</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">design</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">design</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">diffuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">diffuse</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">rfold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">assert</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">rfold</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">DynamicParam</span><span class="p">):</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">_sanity_check</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DynamicParameter names cant start with &quot;_&quot; </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;newparam&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DynamicParameter names cant start with &quot;newparam&quot; </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DynamicParameter called &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; already exists&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_param</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynamicParameters.has">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.has">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="s1">&#39;like contains, except returns false for None values&#39;</span>
+        <span class="k">return</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DynamicParameters.istrue">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.istrue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">istrue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;_params&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>  <span class="c1"># and self._params[k] is not None</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;_params&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">DynamicParam</span><span class="p">)</span> <span class="k">else</span> <span class="n">param</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> object has no attribute </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;_params&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">DynamicParam</span><span class="p">)</span> <span class="k">else</span> <span class="n">param</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> object has no key </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="s1">&#39;_params&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cant overwrite attribute </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="s1">&#39;_params&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cant overwrite key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_nstep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parsed_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_dynamic_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">design</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">design</span> <span class="k">if</span> <span class="n">design</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">design</span>
+        <span class="n">diffuse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span> <span class="k">if</span> <span class="n">diffuse</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">diffuse</span>
+        <span class="n">rfold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span> <span class="k">if</span> <span class="n">rfold</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">rfold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sanity_check</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="mf">9e9</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="mf">9e9</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="mf">9e9</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_step</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sanity_check</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="mf">9e9</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="mf">9e9</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="mf">9e9</span><span class="p">):</span>
+        <span class="n">design</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">design</span> <span class="k">if</span> <span class="n">design</span> <span class="o">==</span> <span class="mf">9e9</span> <span class="k">else</span> <span class="n">design</span>
+        <span class="n">diffuse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">diffuse</span> <span class="k">if</span> <span class="n">diffuse</span> <span class="o">==</span> <span class="mf">9e9</span> <span class="k">else</span> <span class="n">diffuse</span>
+        <span class="n">rfold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">rfold</span> <span class="k">if</span> <span class="n">rfold</span> <span class="o">==</span> <span class="mf">9e9</span> <span class="k">else</span> <span class="n">rfold</span>
+        <span class="k">if</span> <span class="n">design</span> <span class="ow">and</span> <span class="n">design</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">design</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">design</span>
+        <span class="k">if</span> <span class="n">diffuse</span> <span class="ow">and</span> <span class="n">diffuse</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">diffuse</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span>
+        <span class="k">if</span> <span class="n">rfold</span> <span class="ow">and</span> <span class="n">rfold</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">rfold</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span>
+        <span class="k">return</span> <span class="n">Step</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rfold_iter_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>  <span class="c1"># sourcery skip: class-extract-method</span>
+        <span class="c1"># assert tag not in self._rfold_tags, f&#39;iter recorded twice! {self._step} {tag}&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rfold_tags</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">rfold</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">rfold</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">rfold</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">design</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sanity_check</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rfold_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">design</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">diffuse</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sanity_check</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rfold_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">design</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">diffuse</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rfold_tags</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sanity_check</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_in_rf2aa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">rfold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_</span><span class="si">:</span><span class="s1">02</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynamicParameters.to_bunch">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParameters.to_bunch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_bunch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+    <span class="c1"># @property</span>
+    <span class="c1"># def progress(self):</span>
+    <span class="c1"># return [s / max(1, ts - 1) for s, ts in zip(self._step, self._nstep)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">design</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">design</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">diffuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">diffuse</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rfold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="o">.</span><span class="n">rfold</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mxlen</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DynamicParameters</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">                  _nstep=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">notset</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">notset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;   </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">&quot;.&quot;</span><span class="o">*</span><span class="p">(</span><span class="n">mxlen</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">notset</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;Parameters that are None:</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;   &#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">notset</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span><span class="p">:</span> <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ranges_to_sets</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">thing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">):</span> <span class="n">thing</span> <span class="o">=</span> <span class="p">[</span><span class="n">thing</span><span class="p">]</span>
+    <span class="n">thing</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">thing</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">range</span><span class="p">):</span> <span class="k">continue</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+            <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.001</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">n</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thing</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_as_set</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">thing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">thing</span>
+    <span class="n">invert</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">_NotIn</span><span class="p">):</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">vals</span>
+        <span class="k">assert</span> <span class="n">thing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;_Not(None) no make sense... excludues everything&#39;</span>
+        <span class="n">invert</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="p">{</span><span class="n">thing</span><span class="p">}</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">):</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="p">{</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">}</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># process neg vals from end</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="nb">range</span><span class="p">):</span> <span class="n">thing</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="c1"># thing = [list(x) if isinstance(x,range) else x for x in thing]</span>
+    <span class="n">thing</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">}</span>  <span class="c1"># type: ignore</span>
+    <span class="n">thing</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">}</span>
+    <span class="n">thing</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span> <span class="o">+</span> <span class="n">n</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">}</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">invert</span><span class="p">:</span> <span class="n">thing</span> <span class="o">=</span> <span class="p">{</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="n">_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">thing</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">thing</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_NotIn</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">vals</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span>
+
+<div class="viewcode-block" id="DynamicParam">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParam">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicParam</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parameter that can change values through a process.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
+
+<div class="viewcode-block" id="DynamicParam.attach_manager">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParam.attach_manager">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">attach_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parent&#39;</span><span class="p">):</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parent&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">progress</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+<div class="viewcode-block" id="DynamicParam.value">
+<a class="viewcode-back" href="../../../_apidoc/ipd.observer.dynamic_parameters.html#ipd.observer.dynamic_parameters.DynamicParam.value">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sanity_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Not</span><span class="p">(</span><span class="n">DynamicParam</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">manager</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_TrueOnIters</span><span class="p">(</span><span class="n">DynamicParam</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+        <span class="n">ndesign</span><span class="p">,</span> <span class="n">ndiffuse</span><span class="p">,</span> <span class="n">nrfold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">_nstep</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">design_steps</span> <span class="o">=</span> <span class="n">_as_set</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">ndesign</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_steps</span> <span class="o">=</span> <span class="n">_as_set</span><span class="p">(</span><span class="n">diffuse</span><span class="p">,</span> <span class="n">ndiffuse</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfold_steps</span> <span class="o">=</span> <span class="n">_as_set</span><span class="p">(</span><span class="n">rfold</span><span class="p">,</span> <span class="n">nrfold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">levels</span> <span class="o">=</span> <span class="n">levels</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">design_step</span><span class="p">,</span> <span class="n">diffuse_step</span><span class="p">,</span> <span class="n">rfold_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">_step</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">design_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># assert design_step is not None, &#39;DynamicParam missing _step info&#39;</span>
+            <span class="k">if</span> <span class="n">design_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">design_step</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">design_steps</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">design_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># assert diffuse_step is not None, &#39;DynamicParam missing _step info&#39;</span>
+            <span class="k">if</span> <span class="n">diffuse_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">diffuse_step</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_steps</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">diffuse_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfold_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># assert rfold_step is not None, &#39;DynamicParam missing _step info&#39;</span>
+            <span class="k">if</span> <span class="n">rfold_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rfold_step</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfold_steps</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">rfold_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span> <span class="o">==</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s1">&#39; levels = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">design_steps</span><span class="p">:</span> <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39; design:  </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">design_steps</span><span class="p">)</span><span class="si">}{</span><span class="n">extra</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_steps</span><span class="p">:</span> <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39; diffuse: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diffuse_steps</span><span class="p">)</span><span class="si">}{</span><span class="n">extra</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfold_steps</span><span class="p">:</span> <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39; rfold:   </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rfold_steps</span><span class="p">)</span><span class="si">}{</span><span class="n">extra</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Spline1D</span><span class="p">(</span><span class="n">DynamicParam</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">rfold</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">importorskip</span><span class="p">(</span><span class="s1">&#39;scipy&#39;</span><span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">CubicSpline</span>  <span class="c1"># type: ignore</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">1</span> <span class="o">!=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">design</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">diffuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;add_spline_1d requires exactly one of design, diffuse, or rfold &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">which</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;design&#39;</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">design</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">diffuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">which</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;diffuse&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">rfold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">which</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;rfold&#39;</span><span class="p">,</span> <span class="n">rfold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span>  <span class="c1"># type: ignore</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="o">-</span><span class="mf">0.001</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">1.001</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;interpolation points </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1"> must be 0 &lt;= x &lt;= 1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spline</span> <span class="o">=</span> <span class="n">CubicSpline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="n">design_step</span><span class="p">,</span> <span class="n">diffuse_step</span><span class="p">,</span> <span class="n">rfold_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">_step</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s1">&#39;design&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpvals</span><span class="p">[</span><span class="n">design_step</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s1">&#39;diffuse&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpvals</span><span class="p">[</span><span class="n">diffuse_step</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s1">&#39;rfold&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpvals</span><span class="p">[</span><span class="n">rfold_step</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">which</span> <span class="ow">in</span> <span class="s1">&#39;design diffuse rfold&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Spline2D</span><span class="p">(</span><span class="n">DynamicParam</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">,</span> <span class="n">diffuse_rfold</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">importorskip</span><span class="p">(</span><span class="s1">&#39;scipy&#39;</span><span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">CloughTocher2DInterpolator</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">QhullError</span>  <span class="c1"># type: ignore</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">diffuse_rfold</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;need at least 3 points to interpolate from&#39;</span><span class="p">)</span>
+        <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="o">-</span><span class="mf">0.001</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">1.001</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;interpolation points </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1"> must be 0 &lt;= x &lt;= 1&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="o">-</span><span class="mf">0.001</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">,</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="mf">1.001</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;interpolation points </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1"> must be 0 &lt;= y &lt;= 1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interp</span> <span class="o">=</span> <span class="n">CloughTocher2DInterpolator</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">manager</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">diffuse</span><span class="p">),</span>
+                             <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">manager</span><span class="o">.</span><span class="n">_nstep</span><span class="o">.</span><span class="n">rfold</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interpvals</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">QhullError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">convex hull of interpolation points doesnt cover the unit square&#39;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">INTERP POINTS&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">diffuse_rfold</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">80</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">diffuse_step</span><span class="p">,</span> <span class="n">rfold_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">_step</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpvals</span><span class="p">[</span><span class="n">diffuse_step</span><span class="p">,</span> <span class="n">rfold_step</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.tools.run_tests_on_file &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/tools/run_tests_on_file';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.tools.run_tests_on_file</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.tools.run_tests_on_file</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">usage: python run_tests_on_file.py [project name(s)] [file.py]</span>
+
+<span class="sd">This script exists for easy editor integration with python test files. Dispatch:</span>
+
+<span class="sd">1. If the file has a main block, run it with python</span>
+<span class="sd">2. If the file is a test_* file without a main block, run it with pytest</span>
+<span class="sd">3. If the file is not a test_* file and does not have a main block, look for a test_* file in tests with the same path. for example rf_diffusion/foo/bar.py will look for rf_diffusion/tests/foo/test_bar.py</span>
+<span class="sd">4. If none of the above, or no file specified, run pytest</span>
+
+<span class="sd">_overrides can be set to manually specipy a command for a file</span>
+<span class="sd">_file_mappings can be set to mannually map a file to another file</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">perf_counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">assertpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_that</span>
+
+<span class="c1"># set to manually specipy a command for a file</span>
+<span class="n">_overrides</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;noxfile.py&#39;</span><span class="p">:</span> <span class="s1">&#39;nox -- 3.13 all&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pyproject.toml&#39;</span><span class="p">:</span> <span class="s1">&#39;uv run validate-pyproject pyproject.toml&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># set to mannually map a file to another file</span>
+<span class="n">_file_mappings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pymol_selection_algebra.lark&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ipd/tests/sel/test_sel_pymol.py&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="c1"># postprocess command</span>
+<span class="n">_post</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_args">
+<a class="viewcode-back" href="../../../_apidoc/ipd.tools.run_tests_on_file.html#ipd.tools.run_tests_on_file.get_args">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_args</span><span class="p">(</span><span class="n">sysargv</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;get command line arguments&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;projects&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;testfile&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--pytest&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--filter_build_log&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">sysargv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span></div>
+
+
+<div class="viewcode-block" id="file_has_main">
+<a class="viewcode-back" href="../../../_apidoc/ipd.tools.run_tests_on_file.html#ipd.tools.run_tests_on_file.file_has_main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">file_has_main</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="s1">&#39;check if file has a main block&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;if __name__ == &#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;{# in template #}&#39;</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="test">
+<a class="viewcode-back" href="../../../_apidoc/ipd.tools.run_tests_on_file.html#ipd.tools.run_tests_on_file.test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">():</span>
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">],</span> <span class="s1">&#39;/a/b/c/d/foo/e/f/g&#39;</span><span class="p">,</span> <span class="s1">&#39;h.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;/a/b/c/d/foo/tests/e/f/g/test_h.py&#39;</span><span class="p">)</span>
+
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">],</span> <span class="s1">&#39;a/b/c/d/foo/e/f/g&#39;</span><span class="p">,</span> <span class="s1">&#39;h.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;a/b/c/d/foo/tests/e/f/g/test_h.py&#39;</span><span class="p">)</span>
+
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">],</span> <span class="s1">&#39;/a/foo/b/bar/c/baz/d&#39;</span><span class="p">,</span> <span class="s1">&#39;file.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;/a/foo/b/bar/c/baz/tests/d/test_file.py&#39;</span><span class="p">)</span>
+
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">],</span> <span class="s1">&#39;a/foo/b/bar/c&#39;</span><span class="p">,</span> <span class="s1">&#39;file.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;a/foo/b/bar/tests/c/test_file.py&#39;</span><span class="p">)</span>
+
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">],</span> <span class="s1">&#39;a/foo/b&#39;</span><span class="p">,</span> <span class="s1">&#39;file.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;a/foo/tests/b/test_file.py&#39;</span><span class="p">)</span>
+
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">],</span> <span class="s1">&#39;foo/foo&#39;</span><span class="p">,</span> <span class="s1">&#39;file.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;foo/foo/tests/test_file.py&#39;</span><span class="p">)</span>
+
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">],</span> <span class="s1">&#39;a/b/c&#39;</span><span class="p">,</span> <span class="s1">&#39;file.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;tests/a/b/c/test_file.py&#39;</span><span class="p">)</span>
+
+    <span class="n">tfile</span> <span class="o">=</span> <span class="n">testfile_of</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;file.py&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_that</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_equal_to</span><span class="p">(</span><span class="s1">&#39;tests//test_file.py&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="s1">&#39;tests pass&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rindex">
+<a class="viewcode-back" href="../../../_apidoc/ipd.tools.run_tests_on_file.html#ipd.tools.run_tests_on_file.rindex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rindex</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">-</span> <span class="n">lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="testfile_of">
+<a class="viewcode-back" href="../../../_apidoc/ipd.tools.run_tests_on_file.html#ipd.tools.run_tests_on_file.testfile_of">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">testfile_of</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">bname</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="s1">&#39;find testfile for a given file&#39;</span>
+    <span class="k">if</span> <span class="n">bname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="k">if</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">spath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rindex</span><span class="p">(</span><span class="n">spath</span><span class="p">,</span> <span class="n">proj</span><span class="p">)</span> <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">)</span>
+    <span class="c1"># assert i &gt;= 0, f&#39;no {&#39; or &#39;.join(projects)} dir in {path}&#39;</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pre</span><span class="p">,</span> <span class="n">post</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">proj</span> <span class="o">=</span> <span class="n">spath</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># print(spath[:i + 1], spath[i + 1:])</span>
+        <span class="n">pre</span><span class="p">,</span> <span class="n">post</span> <span class="o">=</span> <span class="n">spath</span><span class="p">[:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">spath</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">pre</span><span class="p">)</span><span class="si">}</span><span class="s1">/&#39;</span> <span class="k">if</span> <span class="n">pre</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">post</span><span class="p">)</span><span class="si">}</span><span class="s1">/&#39;</span> <span class="k">if</span> <span class="n">post</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="c1"># print(pre, post)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">root</span><span class="si">}{</span><span class="n">pre</span><span class="si">}</span><span class="s1">tests/</span><span class="si">{</span><span class="n">post</span><span class="si">}</span><span class="s1">test_</span><span class="si">{</span><span class="n">bname</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">t</span></div>
+
+
+<span class="c1"># def locate_fname(fname):</span>
+<span class="c1">#     &#39;locate file in sys.path&#39;</span>
+<span class="c1">#     if os.path.exists(fname): return fname</span>
+<span class="c1">#     candidates = [fn for fn in ipd.dev.project_files() if fn.endswith(fname)]</span>
+<span class="c1">#     if len(candidates) == 1: return candidates[0]</span>
+<span class="c1">#     if len(candidates) == 0: raise FileNotFoundError(f&#39;file {fname} not found in git project&#39;)</span>
+<span class="c1">#     raise FileNotFoundError(f&#39;file {fname} found ambiguous {candidates} in git project&#39;)</span>
+
+<div class="viewcode-block" id="dispatch">
+<a class="viewcode-back" href="../../../_apidoc/ipd.tools.run_tests_on_file.html#ipd.tools.run_tests_on_file.dispatch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span>
+        <span class="n">projects</span><span class="p">,</span>
+        <span class="n">fname</span><span class="p">,</span>
+        <span class="n">pytest_args</span><span class="o">=</span><span class="s1">&#39;-x --disable-warnings -m &quot;not nondeterministic&quot; --doctest-modules --durations=7&#39;</span><span class="p">,</span>
+        <span class="n">file_mappings</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+        <span class="n">overrides</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+        <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">pytest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">python</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="s1">&#39;dispatch command for a given file. see above&#39;</span>
+    <span class="c1"># fname = locate_fname(fname)</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">module_fname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">fname</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;test_&#39;</span> <span class="k">else</span> <span class="n">fname</span>
+    <span class="n">path</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bname</span> <span class="ow">in</span> <span class="n">overrides</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">overrides</span><span class="p">[</span><span class="n">bname</span><span class="p">],</span> <span class="n">_post</span><span class="p">[</span><span class="n">bname</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">bname</span> <span class="ow">in</span> <span class="n">file_mappings</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_mappings</span><span class="p">[</span><span class="n">bname</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">file_mappings</span><span class="p">[</span><span class="n">bname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">path</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">strict</span> <span class="ow">and</span> <span class="n">bname</span> <span class="ow">in</span> <span class="n">file_mappings</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_mappings</span><span class="p">[</span><span class="n">bname</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">bname</span> <span class="o">=</span> <span class="n">file_mappings</span><span class="p">[</span><span class="n">bname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">path</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bname</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_has_main</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">bname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;test_&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">testfile</span> <span class="o">:=</span> <span class="n">testfile_of</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">bname</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">testfile</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;autogen test file&#39;</span><span class="p">,</span> <span class="n">testfile</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="si">}</span><span class="s1"> -mipd code make_testfile </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">testfile</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;subl </span><span class="si">{</span><span class="n">testfile</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">testfile</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bname</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">):</span>
+        <span class="n">test</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="n">python</span> <span class="o">=</span> <span class="n">python</span> <span class="ow">or</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
+    <span class="n">pypath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;PYTHONPATH=</span><span class="si">{</span><span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="s2">&quot;python3&quot;</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.rst&#39;</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pypath</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">python</span><span class="si">}</span><span class="s1"> -m doctest </span><span class="si">{</span><span class="n">module_fname</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">elif</span> <span class="n">pytest</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">file_has_main</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;test_&#39;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">module_fname</span> <span class="o">==</span> <span class="n">fname</span><span class="p">:</span> <span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pypath</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">python</span><span class="si">}</span><span class="s1"> -m pytest </span><span class="si">{</span><span class="n">pytest_args</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">module_fname</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bname</span> <span class="o">!=</span> <span class="s1">&#39;conftest.py&#39;</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pypath</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">python</span><span class="si">}</span><span class="s1"> &#39;</span> <span class="o">+</span> <span class="n">fname</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pypath</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">python</span><span class="si">}</span><span class="s1"> -mpytest </span><span class="si">{</span><span class="n">pytest_args</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">_post</span><span class="p">[</span><span class="n">bname</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../_apidoc/ipd.tools.run_tests_on_file.html#ipd.tools.run_tests_on_file.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_build_log</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">cmd</span><span class="p">,</span> <span class="n">post</span> <span class="o">=</span> <span class="n">dispatch</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;testfile&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="k">if</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;testfile&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="si">}</span><span class="s1"> -mpytest&#39;</span><span class="p">,</span>
+                                                                                 <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;call:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cwd:&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cmd:&#39;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; run_tests_on_file.py running cmd in cwd &quot;</span><span class="si">:</span><span class="s1">=^69</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span>
+    <span class="k">if</span> <span class="n">filter_build_log</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;sublime_build.log&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="sa">f</span><span class="s2">&quot; run_tests_on_file.py done, time </span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">7.3f</span><span class="si">}</span><span class="s2"> &quot;</span><span class="si">:</span><span class="s1">=^69</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">file_mappings</span><span class="o">=</span><span class="n">_file_mappings</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="n">_overrides</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

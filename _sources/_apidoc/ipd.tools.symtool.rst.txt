@@ -1,0 +1,7 @@
+ipd.tools.symtool module
+========================
+
+.. automodule:: ipd.tools.symtool
+   :members:
+   :show-inheritance:
+   :undoc-members:

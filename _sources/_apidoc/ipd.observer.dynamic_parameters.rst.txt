@@ -1,0 +1,7 @@
+ipd.observer.dynamic\_parameters module
+=======================================
+
+.. automodule:: ipd.observer.dynamic_parameters
+   :members:
+   :show-inheritance:
+   :undoc-members:

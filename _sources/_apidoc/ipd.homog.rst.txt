@@ -1,0 +1,24 @@
+ipd.homog package
+=================
+
+.. automodule:: ipd.homog
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.homog.contact_matrix
+   ipd.homog.hgeom
+   ipd.homog.infix
+   ipd.homog.npth_common
+   ipd.homog.pointgen
+   ipd.homog.quat
+   ipd.homog.thgeom
+   ipd.homog.util
+   ipd.homog.viz
+   ipd.homog.xform_info

@@ -1,0 +1,7 @@
+ipd.dev.state.toggle module
+===========================
+
+.. automodule:: ipd.dev.state.toggle
+   :members:
+   :show-inheritance:
+   :undoc-members:

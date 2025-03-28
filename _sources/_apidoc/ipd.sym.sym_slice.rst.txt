@@ -1,0 +1,7 @@
+ipd.sym.sym\_slice module
+=========================
+
+.. automodule:: ipd.sym.sym_slice
+   :members:
+   :show-inheritance:
+   :undoc-members:

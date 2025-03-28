@@ -1,0 +1,7 @@
+ipd.dev.qt.context\_menu module
+===============================
+
+.. automodule:: ipd.dev.qt.context_menu
+   :members:
+   :show-inheritance:
+   :undoc-members:

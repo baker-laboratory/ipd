@@ -1,0 +1,7 @@
+ipd.viz.viz\_xtal module
+========================
+
+.. automodule:: ipd.viz.viz_xtal
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,16 @@
+ipd.dev.instrumentation package
+===============================
+
+.. automodule:: ipd.dev.instrumentation
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.dev.instrumentation.containers
+   ipd.dev.instrumentation.timer

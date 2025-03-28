@@ -1,0 +1,7 @@
+ipd.sym.symframes module
+========================
+
+.. automodule:: ipd.sym.symframes
+   :members:
+   :show-inheritance:
+   :undoc-members:

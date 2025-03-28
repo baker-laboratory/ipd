@@ -1,0 +1,7 @@
+ipd.atom.atom\_utils module
+===========================
+
+.. automodule:: ipd.atom.atom_utils
+   :members:
+   :show-inheritance:
+   :undoc-members:

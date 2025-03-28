@@ -1,0 +1,708 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.dev.misc &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/dev/misc';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.dev.misc</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.dev.misc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+
+<div class="viewcode-block" id="Missing">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.Missing">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">total_ordering</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Missing</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;NA&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<span class="n">NA</span> <span class="o">=</span> <span class="n">Missing</span><span class="p">()</span>
+
+<div class="viewcode-block" id="classname_or_str">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.classname_or_str">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">classname_or_str</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">T</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">T</span><span class="o">.</span><span class="vm">__name__</span></div>
+
+
+<div class="viewcode-block" id="ishex">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.ishex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ishex</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="keyexists">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.keyexists">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keyexists</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="k">return</span> <span class="p">[</span><span class="n">keyexists</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">thing</span> <span class="ow">and</span> <span class="n">thing</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="attrexists">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.attrexists">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">attrexists</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="k">return</span> <span class="p">[</span><span class="n">attrexists</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="arraystr">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.arraystr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">arraystr</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;np.&quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.,&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="printheader">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.printheader">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">printheader</span><span class="p">(</span><span class="o">*</span><span class="n">strs</span><span class="p">,</span> <span class="n">char</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">printme</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">padstart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strs</span><span class="p">)</span>
+    <span class="n">padstart</span> <span class="o">=</span> <span class="n">padstart</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span> <span class="o">*</span> <span class="n">frac</span><span class="p">)</span>
+    <span class="n">padend</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">padstart</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">padstart</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">char</span><span class="o">*</span><span class="n">padend</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">printme</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="n">flush</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span></div>
+
+
+<div class="viewcode-block" id="check_torch_to_numpy">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.check_torch_to_numpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_torch_to_numpy</span><span class="p">(</span><span class="n">stuff</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s2">&quot;torch&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">stuff</span><span class="p">):</span>
+            <span class="n">stuff</span> <span class="o">=</span> <span class="n">stuff</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">stuff</span></div>
+
+
+<div class="viewcode-block" id="Tee">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.Tee">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tee</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fd1</span><span class="p">,</span> <span class="n">fd2</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fd1</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="n">fd1</span>
+            <span class="n">fd1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fd1</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd1</span> <span class="o">=</span> <span class="n">fd1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd2</span> <span class="o">=</span> <span class="n">fd2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">with_stderr</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># def __del__(self):</span>
+    <span class="c1">#     if self.fd1 != sys.stdout and self.fd1 != sys.stderr:</span>
+    <span class="c1">#         self.fd1.close()</span>
+    <span class="c1">#     if self.fd2 != sys.stdout and self.fd2 != sys.stderr:</span>
+    <span class="c1">#         self.fd2.close()</span>
+
+<div class="viewcode-block" id="Tee.write">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.Tee.write">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd2</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Tee.flush">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.Tee.flush">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd1</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd2</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+</div>
+
+
+<div class="viewcode-block" id="stdout_tee">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.stdout_tee">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stdout_tee</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">with_stderr</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!!!!!! stdout_tee&quot;</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;with_stderr:&quot;</span><span class="p">,</span> <span class="n">with_stderr</span><span class="p">)</span>
+    <span class="n">tee</span> <span class="o">=</span> <span class="n">Tee</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">tee</span>
+    <span class="k">if</span> <span class="n">with_stderr</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">Tee</span><span class="p">(</span><span class="n">tee</span><span class="o">.</span><span class="n">fd1</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">with_stderr</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="stdout_untee">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.stdout_untee">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stdout_untee</span><span class="p">():</span>
+    <span class="n">tee</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="n">tee</span><span class="o">.</span><span class="n">fd1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">tee</span><span class="o">.</span><span class="n">fd2</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">tee</span><span class="o">.</span><span class="n">with_stderr</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">fd2</span>  <span class="c1"># type: ignore</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!!!!!! stdout_untee&quot;</span><span class="p">,</span> <span class="n">tee</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="Flusher">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.Flusher">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Flusher</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">out</span>
+
+<div class="viewcode-block" id="Flusher.write">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.Flusher.write">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Flusher.close">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.Flusher.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+<div class="viewcode-block" id="todatetime">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.todatetime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">todatetime</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span> <span class="k">return</span> <span class="n">val</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="touuid">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.touuid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">touuid</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span> <span class="k">return</span> <span class="n">val</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="datetimetag">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.datetimetag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">datetimetag</span><span class="p">():</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="datetag">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.datetag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">datetag</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">sep</span> <span class="o">==</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;y%Ym%md</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;%Y</span><span class="si">{</span><span class="n">sep</span><span class="si">}</span><span class="s2">%m</span><span class="si">{</span><span class="n">sep</span><span class="si">}</span><span class="s2">%d&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="seconds_between_datetimetags">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.seconds_between_datetimetags">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">seconds_between_datetimetags</span><span class="p">(</span><span class="n">tag1</span><span class="p">,</span> <span class="n">tag2</span><span class="p">):</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">datetime_from_tag</span><span class="p">(</span><span class="n">tag1</span><span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">datetime_from_tag</span><span class="p">(</span><span class="n">tag2</span><span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span>
+    <span class="k">return</span> <span class="n">duration</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="datetime_from_tag">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.datetime_from_tag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">datetime_from_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">vals</span><span class="p">))</span>
+    <span class="c1"># if this code is actually in service after 2099...</span>
+    <span class="c1"># this failing assertion will be the least of our troubles</span>
+    <span class="c1"># even worse if it&#39;s before I was born....(WHS)</span>
+    <span class="k">assert</span> <span class="mi">1979</span> <span class="o">&lt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2100</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">12</span>  <span class="c1"># months</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">31</span>  <span class="c1"># days</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">60</span>  <span class="c1"># hour</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">60</span>  <span class="c1"># minute</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">60</span>  <span class="c1"># second</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="generic_equals">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.generic_equals">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generic_equals</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">that</span><span class="p">,</span> <span class="n">checktypes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;generic_equals on types&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">this</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">that</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">checktypes</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">this</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="n">that</span><span class="p">):</span>  <span class="c1"># noqa</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>  <span class="c1"># don&#39;t want to iter over strs</span>
+        <span class="k">return</span> <span class="n">this</span> <span class="o">==</span> <span class="n">that</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">that</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">this</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">that</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">generic_equals</span><span class="p">(</span><span class="n">this</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">that</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">checktypes</span><span class="p">,</span> <span class="n">debug</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">generic_equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">checktypes</span><span class="p">,</span> <span class="n">debug</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">that</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">that</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="s2">&quot;equal_to&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">equal_to</span><span class="p">(</span><span class="n">that</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!!!!!!!!!&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">this</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">this</span> <span class="o">!=</span> <span class="n">that</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">that</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">this</span> <span class="o">==</span> <span class="n">that</span></div>
+
+
+<div class="viewcode-block" id="UnhashableSet">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.UnhashableSet">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnhashableSet</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stuff</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stuff</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">thing</span> <span class="ow">in</span> <span class="n">stuff</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">thing</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stuff</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stuff</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">strict</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;UnhashableSet duplicate members </span><span class="si">{</span><span class="n">thing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UnhashableSet.difference">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.UnhashableSet.difference">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">b</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="UnhashableSet.intersection">
+<a class="viewcode-back" href="../../../_apidoc/ipd.dev.misc.html#ipd.dev.misc.UnhashableSet.intersection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intersection</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">b</span><span class="p">]</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">b</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stuff</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">match1</span><span class="p">,</span> <span class="n">match2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="n">m</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">match1</span> <span class="o">=</span> <span class="n">match1</span> <span class="ow">and</span> <span class="n">m</span>
+        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="n">m</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">match2</span> <span class="o">=</span> <span class="n">match2</span> <span class="ow">and</span> <span class="n">m</span>
+        <span class="k">return</span> <span class="n">match1</span> <span class="ow">and</span> <span class="n">match2</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

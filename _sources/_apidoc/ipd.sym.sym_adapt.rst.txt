@@ -1,0 +1,7 @@
+ipd.sym.sym\_adapt module
+=========================
+
+.. automodule:: ipd.sym.sym_adapt
+   :members:
+   :show-inheritance:
+   :undoc-members:

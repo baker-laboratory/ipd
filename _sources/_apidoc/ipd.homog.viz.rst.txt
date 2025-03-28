@@ -1,0 +1,7 @@
+ipd.homog.viz module
+====================
+
+.. automodule:: ipd.homog.viz
+   :members:
+   :show-inheritance:
+   :undoc-members:

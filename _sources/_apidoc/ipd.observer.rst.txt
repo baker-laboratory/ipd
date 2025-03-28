@@ -1,0 +1,16 @@
+ipd.observer package
+====================
+
+.. automodule:: ipd.observer
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ipd.observer.dynamic_parameters
+   ipd.observer.observer

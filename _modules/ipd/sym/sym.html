@@ -1,0 +1,1302 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ipd.sym.sym &#8212; IPD 0.3.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=29d04658"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ipd/sym/sym';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ipd.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../sym.html" class="nav-link">ipd.sym</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.sym.sym</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ipd.sym.sym</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.dev</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bunch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog.hgeom</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym.symframes</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># from ipd.sym.asufit import *</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym.xtal.xtalcls</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipd.sym.xtal.xtalinfo</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># from ipd.viz import showme</span>
+
+<div class="viewcode-block" id="frames">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.frames">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">frames</span><span class="p">(</span>
+    <span class="n">sym</span><span class="p">,</span>
+    <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">axis0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">bbsym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">asym_of</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">asym_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">sortframes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">com</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ontop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">sgonly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">torch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">helix_radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">helix_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">helix_shift</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate symmetrical coordinate frames axis aligns Cx or bbaxis or axis0</span>
+<span class="sd">    to this bbsym removes redundant building block frames, e.g. TET with c3 bbs</span>
+<span class="sd">    has 4 frames asym_of removes redundant frames wrt a point group, e.g. turn</span>
+<span class="sd">    TET into C3 and get asym unit of that C3.&quot;&quot;&quot;</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">funcbegin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sym</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sym</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;C1&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">map_sym_abbreviation</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="n">okexe</span> <span class="o">=</span> <span class="p">(</span><span class="ne">SystemExit</span><span class="p">,</span> <span class="p">)</span> <span class="k">if</span> <span class="n">sgonly</span> <span class="k">else</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="n">okexe</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">xtal</span><span class="o">.</span><span class="n">sgframes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">ontop</span><span class="o">=</span><span class="n">ontop</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">is_known_xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span><span class="o">.</span><span class="n">frames</span><span class="p">(</span><span class="n">ontop</span><span class="o">=</span><span class="n">ontop</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">sym</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">):</span>
+            <span class="n">helix_nfold</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">sym</span> <span class="o">==</span> <span class="s1">&#39;h&#39;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">sym</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">return</span> <span class="n">helix_frames</span><span class="p">(</span><span class="n">helix_radius</span><span class="p">,</span> <span class="n">helix_angle</span><span class="p">,</span> <span class="n">helix_shift</span><span class="p">,</span> <span class="n">helix_nfold</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">sym_frames</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown symmetry </span><span class="si">{</span><span class="n">sym</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s2">&quot;frames gen&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">asym_of</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">asym_of</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+        <span class="n">dupaxis</span> <span class="o">=</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">asym_of</span><span class="p">)</span>
+        <span class="n">dupnfold</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">asym_of</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">arbitrary_step_vector</span> <span class="o">=</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">arbitrary_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.0002</span><span class="p">,</span> <span class="mf">0.0003</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">symx</span> <span class="o">=</span> <span class="n">hrot</span><span class="p">(</span><span class="n">dupaxis</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">asym_index</span> <span class="o">/</span> <span class="n">dupnfold</span><span class="p">)</span>
+        <span class="n">arbitrary_step_vector</span> <span class="o">=</span> <span class="n">hxformvec</span><span class="p">(</span><span class="n">symx</span><span class="p">,</span> <span class="n">arbitrary_step_vector</span><span class="p">)</span>
+        <span class="n">arbitrary_delta</span> <span class="o">=</span> <span class="n">hxformvec</span><span class="p">(</span><span class="n">symx</span><span class="p">,</span> <span class="n">arbitrary_delta</span><span class="p">)</span>
+        <span class="n">angs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dupnfold</span><span class="p">)</span> <span class="o">/</span> <span class="n">dupnfold</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">dups</span> <span class="o">=</span> <span class="n">hrot</span><span class="p">(</span><span class="n">dupaxis</span><span class="p">,</span> <span class="n">angs</span><span class="p">)</span>  <span class="c1"># .reshape(-1, 4, 4)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">dups</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">f</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">hdot</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">dupaxis</span> <span class="o">+</span> <span class="n">arbitrary_delta</span><span class="p">)</span>
+        <span class="n">tgtdir</span> <span class="o">=</span> <span class="n">hcross</span><span class="p">(</span><span class="n">arbitrary_step_vector</span><span class="p">,</span> <span class="n">dupaxis</span><span class="p">)</span>
+        <span class="n">dot</span> <span class="o">=</span> <span class="n">hdot</span><span class="p">(</span><span class="n">tgtdir</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">dot</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">order</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">/</span> <span class="n">dupnfold</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">order</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s2">&quot;frames asym_of&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bbsym</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">asym_of</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">bbsym</span> <span class="o">==</span> <span class="n">asym_of</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">bbsym</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bad bblock sym </span><span class="si">{</span><span class="n">bbsym</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">bbnfold</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bbsym</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="c1"># bbaxes = axes(sym, bbnfold, all=True)</span>
+        <span class="n">bbaxes</span> <span class="o">=</span> <span class="n">symaxes_all</span><span class="p">[</span><span class="n">sym</span><span class="p">][</span><span class="n">bbnfold</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">partial_ok</span> <span class="o">=</span> <span class="n">asym_of</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">remove_if_same_axis</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">bbaxes</span><span class="p">,</span> <span class="n">partial_ok</span><span class="o">=</span><span class="n">partial_ok</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s2">&quot;frames bbsym&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># assert 0, &#39;doesnt work right with cyclic...&#39;</span>
+        <span class="k">if</span> <span class="n">axis0</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">startax</span> <span class="o">=</span> <span class="n">axis0</span>
+        <span class="k">elif</span> <span class="n">sym</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">):</span>
+            <span class="n">startax</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hvec</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">bbsym</span><span class="p">:</span>
+            <span class="n">startax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">bbnfold</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">asym_of</span><span class="p">:</span>
+            <span class="n">startax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">asym_of</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dont know what to align to axis=</span><span class="si">{</span><span class="n">axis</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># print(startax)</span>
+        <span class="c1"># print(axis)</span>
+        <span class="c1"># ipd.showme(f)</span>
+        <span class="n">xaln</span> <span class="o">=</span> <span class="n">halign</span><span class="p">(</span><span class="n">startax</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+        <span class="c1"># f = f @ ipd.homog.hrot([0, 1, 0], 90) @ ipd.homog.hinv(f)</span>
+        <span class="c1"># f = ipd.homog.hinv(f) @ ipd.homog.hrot([0, 1, 0], 90) @ f</span>
+        <span class="c1"># f = ipd.homog.hrot([0, 1, 0], 90) @ f @ ipd.homog.hrot([0, 1, 0], -90)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hinv</span><span class="p">(</span><span class="n">xaln</span><span class="p">)</span> <span class="o">@</span> <span class="n">f</span> <span class="o">@</span> <span class="n">xaln</span>
+        <span class="c1"># ipd.showme(f)</span>
+        <span class="c1"># assert 0, &#39;this is bugged?&#39;</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s2">&quot;frames axis&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sortframes</span><span class="p">:</span>
+        <span class="n">csym</span> <span class="o">=</span> <span class="n">bbsym</span> <span class="ow">or</span> <span class="n">asym_of</span>
+        <span class="k">if</span> <span class="n">csym</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">axis</span> <span class="o">=</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">csym</span><span class="p">)</span>
+            <span class="c1"># order = np.argsort(-hdot(axis, hdot(f, axes(sym, csym))))</span>
+            <span class="c1"># com = None</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">csym</span><span class="p">)</span> <span class="k">if</span> <span class="n">com</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">com</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">hdot</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">hxformvec</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ref</span><span class="p">)))</span>
+            <span class="c1"># print(f.shape, order)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+            <span class="c1"># print(order)</span>
+            <span class="c1"># assert 0</span>
+
+        <span class="k">if</span> <span class="n">ontop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">put_frames_on_top</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ontop</span><span class="p">)</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s2">&quot;frames sortframes&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">torch</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">th</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="put_frames_on_top">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.put_frames_on_top">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">put_frames_on_top</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">ontop</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allowcellshift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">funcbegin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># ipd.icv(allowcellshift, cellsize)</span>
+    <span class="n">frames2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ontop</span>
+    <span class="n">celldeltas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">allowcellshift</span><span class="p">:</span>
+        <span class="n">celldeltas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">cellsize</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hdiff</span><span class="p">(</span><span class="n">ontop</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">frames2</span><span class="p">))</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">diff</span> <span class="o">&lt;</span> <span class="mf">0.0001</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+        <span class="c1"># ipd.icv(w, ontop.shape)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ontop</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+        <span class="k">del</span> <span class="n">frames2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># f*ck this code right in the ear</span>
+    <span class="c1"># for f0 in ontop:</span>
+    <span class="c1">#    for i, x in enumerate(frames2):</span>
+    <span class="c1">#       if ipd.homog.hdiff(f0, x) &lt; 0.0001: break</span>
+    <span class="c1">#       match = False</span>
+    <span class="c1">#       for delta in celldeltas:</span>
+    <span class="c1">#          tmp = x.copy()</span>
+    <span class="c1">#          tmp[:3, 3] += delta</span>
+    <span class="c1">#          if ipd.homog.hdiff(f0, tmp) &lt; 0.0001:</span>
+    <span class="c1">#             match = True</span>
+    <span class="c1">#       if match: break</span>
+    <span class="c1">#    else:</span>
+    <span class="c1">#       if strict:</span>
+    <span class="c1">#          ipd.showme(ipd.hscaled(1, frames), name=&#39;frames&#39;)</span>
+    <span class="c1">#          ipd.showme(ipd.hscaled(1, ontop), name=&#39;ontop&#39;)</span>
+    <span class="c1">#          raise ValueError(f&#39;ontop frame not found: {f0}&#39;)</span>
+    <span class="c1">#       else:</span>
+    <span class="c1">#          i = None</span>
+    <span class="c1">#    if i is not None:</span>
+    <span class="c1">#       del frames2[i]</span>
+
+    <span class="c1"># assert ipd.homog.hnuique(np.stack(frames2))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">ontop</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ontop</span><span class="p">)</span> <span class="o">+</span> <span class="n">frames2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnuique</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span></div>
+
+
+<div class="viewcode-block" id="helix_frames">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.helix_frames">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">helix_frames</span><span class="p">(</span><span class="n">helix_radius</span><span class="p">,</span> <span class="n">helix_angle</span><span class="p">,</span> <span class="n">helix_shift</span><span class="p">,</span> <span class="n">helix_nfold</span><span class="p">):</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">helix_angle</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">hel</span><span class="o">=</span><span class="n">helix_shift</span><span class="p">)</span>
+    <span class="n">xglobal</span> <span class="o">=</span> <span class="n">frames</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;c</span><span class="si">{</span><span class="n">helix_nfold</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">hframes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">unit</span><span class="p">,</span> <span class="n">hinv</span><span class="p">(</span><span class="n">unit</span><span class="p">)])</span>
+    <span class="n">xasu</span> <span class="o">=</span> <span class="n">htrans</span><span class="p">(</span><span class="n">helix_radius</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hxform</span><span class="p">(</span><span class="n">xglobal</span><span class="p">,</span> <span class="n">hframes</span><span class="p">,</span> <span class="n">xasu</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.make">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">frames</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="makepts">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.makepts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">makepts</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxformpts</span><span class="p">(</span><span class="n">frames</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="makex">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.makex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">makex</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxformx</span><span class="p">(</span><span class="n">frames</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="map_sym_abbreviation">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.map_sym_abbreviation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_sym_abbreviation</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="o">==</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;icos&quot;</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="o">==</span> <span class="s2">&quot;O&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;oct&quot;</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;tet&quot;</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="ow">in</span> <span class="s2">&quot;I32 I53 I52&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="k">return</span> <span class="s2">&quot;icos&quot;</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="ow">in</span> <span class="s2">&quot;O32 O42 O43&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="k">return</span> <span class="s2">&quot;oct&quot;</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="o">==</span> <span class="s2">&quot;T32&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;tet&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;c</span><span class="si">{</span><span class="n">sym</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">sym</span></div>
+
+
+<div class="viewcode-block" id="symaxis_angle">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.symaxis_angle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symaxis_angle</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">nf1</span><span class="p">,</span> <span class="n">nf2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">nf1</span><span class="p">),</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">nf2</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="symaxis_radbias">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.symaxis_radbias">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symaxis_radbias</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">nf1</span><span class="p">,</span> <span class="n">nf2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">nf1</span><span class="p">),</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">nf2</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="min_symaxis_angle">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.min_symaxis_angle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">min_symaxis_angle</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="n">symaxes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+    <span class="n">minaxsang</span> <span class="o">=</span> <span class="mf">9e9</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">iax</span> <span class="ow">in</span> <span class="n">symaxes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">jax</span> <span class="ow">in</span> <span class="n">symaxes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">minaxsang</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">minaxsang</span><span class="p">,</span> <span class="n">line_angle</span><span class="p">(</span><span class="n">iax</span><span class="p">,</span> <span class="n">jax</span><span class="p">))</span>
+                <span class="c1"># print(i, j, line_angle_degrees(iax, jax))</span>
+    <span class="k">return</span> <span class="n">minaxsang</span></div>
+
+
+<div class="viewcode-block" id="axes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.axes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">nfold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">closest_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">sym_name_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="s1">&#39;tet&#39;</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="s1">&#39;oct&#39;</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="s1">&#39;icos&#39;</span><span class="p">,</span> <span class="n">i32</span><span class="o">=</span><span class="s1">&#39;icos&#39;</span><span class="p">,</span> <span class="n">i53</span><span class="o">=</span><span class="s1">&#39;icos&#39;</span><span class="p">,</span> <span class="n">i52</span><span class="o">=</span><span class="s1">&#39;icos&#39;</span><span class="p">,</span> <span class="n">i532</span><span class="o">=</span><span class="s1">&#39;icos&#39;</span><span class="p">)</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">sym_name_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">sym</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">is_known_xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
+                <span class="n">elems</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">unitelems</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">elems</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">symelems</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">cen</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">hscaled</span><span class="p">(</span><span class="n">cellsize</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">cen</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="n">elems</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sym</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;icos&quot;</span><span class="p">,</span> <span class="s2">&quot;oct&quot;</span><span class="p">,</span> <span class="s2">&quot;tet&quot;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">sym</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="n">nfold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">nfold</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sym</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">sym</span> <span class="o">=</span> <span class="n">sym</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
+                <span class="n">axes</span> <span class="o">=</span> <span class="n">symaxes_all</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">closest_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">axes</span> <span class="o">=</span> <span class="n">symaxes_all</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hvec</span><span class="p">(</span><span class="n">closest_to</span><span class="p">))))]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axes</span> <span class="o">=</span> <span class="n">symaxes</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">nfold</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nfold</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">assert</span> <span class="n">nfold</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+                    <span class="n">nfold</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nfold</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">nfold</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">axes</span>
+
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown symmetry </span><span class="si">{</span><span class="n">sym</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="symelem_associations">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.symelem_associations">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">symelem_associations</span><span class="p">(</span><span class="n">sym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symelems</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">symelems</span><span class="p">:</span>
+        <span class="n">symelems</span> <span class="o">=</span> <span class="n">axes</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+    <span class="n">assoc</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">symelems</span><span class="p">:</span>
+        <span class="n">nbrs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">nfold</span><span class="p">):</span>
+            <span class="n">nbrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">assoc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span><span class="n">nbrs</span><span class="o">=</span><span class="n">nbrs</span><span class="p">,</span> <span class="n">symelem</span><span class="o">=</span><span class="n">s</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">assoc</span></div>
+
+
+<div class="viewcode-block" id="remove_if_same_axis">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.remove_if_same_axis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_if_same_axis</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">bbaxes</span><span class="p">,</span> <span class="n">onesided</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">partial_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">onesided</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">hxformvec</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">bbaxes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dots</span> <span class="o">=</span> <span class="n">hdot</span><span class="p">(</span><span class="n">bbaxes</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">outerprod</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">uniq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">whichaxis</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dot</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dots</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="mf">0.99999</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dot</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.00001</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dots</span><span class="p">[:</span><span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">],</span> <span class="n">dot</span><span class="p">[</span><span class="n">w</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)):</span>
+            <span class="n">whichaxis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">uniq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">whichaxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">whichaxis</span><span class="p">)</span>
+    <span class="c1"># should be same num of bblocks on axis, (1 or 2)</span>
+    <span class="n">whichpartial</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bbaxes</span><span class="p">)):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">whichaxis</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>
+        <span class="c1"># print(i, n)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">partial_ok</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">whichaxis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">whichaxis</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">uniq</span><span class="p">[</span><span class="n">a</span><span class="p">]],</span> <span class="o">-</span><span class="n">axes</span><span class="p">[</span><span class="n">uniq</span><span class="p">[</span><span class="n">b</span><span class="p">]],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">partial_ok</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="mi">0</span>
+
+    <span class="n">uniq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">uniq</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">frames</span><span class="p">[</span><span class="n">uniq</span><span class="p">]</span></div>
+
+
+<span class="n">_ambiguous_axes</span> <span class="o">=</span> <span class="n">Bunch</span><span class="p">(</span><span class="n">tet</span><span class="o">=</span><span class="p">[],</span> <span class="nb">oct</span><span class="o">=</span><span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)],</span> <span class="n">icos</span><span class="o">=</span><span class="p">[],</span> <span class="n">d2</span><span class="o">=</span><span class="p">[],</span> <span class="n">_strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+<div class="viewcode-block" id="ambiguous_axes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.ambiguous_axes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ambiguous_axes</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_ambiguous_axes</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span></div>
+
+
+<span class="n">_</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="n">tetrahedral_axes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="s2">&quot;3b&quot;</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>  <span class="c1"># other c3</span>
+<span class="p">}</span>
+<span class="n">octahedral_axes</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="mi">3</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="mi">4</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])}</span>
+<span class="n">icosahedral_axes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.35682209</span><span class="p">,</span> <span class="mf">0.93417236</span><span class="p">]),</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mf">0.525731</span><span class="p">,</span> <span class="mf">0.000000</span><span class="p">,</span> <span class="mf">0.850651</span><span class="p">]),</span>
+<span class="p">}</span>
+
+<span class="n">tetrahedral_axes_all</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">2</span><span class="p">:</span>
+    <span class="n">hnormalized</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="c1"># [_, 0, 0],</span>
+        <span class="c1"># [0, _, 0],</span>
+        <span class="c1"># [0, 0, _],</span>
+    <span class="p">]),</span>
+    <span class="mi">3</span><span class="p">:</span>
+    <span class="n">hnormalized</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">],</span>
+        <span class="c1"># [_, _, _],</span>
+        <span class="c1"># [_, 1, 1],</span>
+        <span class="c1"># [1, 1, _],</span>
+        <span class="c1"># [1, _, 1],</span>
+    <span class="p">]),</span>
+    <span class="s2">&quot;3b&quot;</span><span class="p">:</span>
+    <span class="n">hnormalized</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+<span class="p">}</span>
+<span class="n">octahedral_axes_all</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">2</span><span class="p">:</span>
+    <span class="n">hnormalized</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="c1"># [1, _, 0],</span>
+        <span class="c1"># [0, 1, _],</span>
+        <span class="c1"># [1, 0, _],</span>
+        <span class="c1"># [_, _, 0],</span>
+        <span class="c1"># [0, _, _],</span>
+        <span class="c1"># [_, 0, _],</span>
+    <span class="p">]),</span>
+    <span class="mi">3</span><span class="p">:</span>
+    <span class="n">hnormalized</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">],</span>
+        <span class="c1"># [_, 1, _],</span>
+        <span class="c1"># [_, _, 1],</span>
+        <span class="c1"># [1, _, _],</span>
+        <span class="c1"># [_, _, _],</span>
+    <span class="p">]),</span>
+    <span class="mi">4</span><span class="p">:</span>
+    <span class="n">hnormalized</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="c1"># [_, 0, 0],</span>
+        <span class="c1"># [0, _, 0],</span>
+        <span class="c1"># [0, 0, _],</span>
+    <span class="p">]),</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_icosahedral_axes_all</span><span class="p">():</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">icosahedral_frames</span> <span class="o">@</span> <span class="n">icosahedral_axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">icosahedral_frames</span> <span class="o">@</span> <span class="n">icosahedral_axes</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">a5</span> <span class="o">=</span> <span class="n">icosahedral_frames</span> <span class="o">@</span> <span class="n">icosahedral_axes</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
+    <span class="c1"># six decimals enough to account for numerical errors</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">a2</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">a3</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">a5</span> <span class="o">=</span> <span class="n">a5</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">a5</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">a2</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a2</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.999</span><span class="p">)])</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a3</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.999</span><span class="p">)])</span>
+    <span class="n">a5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">a5</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a5</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.999</span><span class="p">)])</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">a2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">15</span>  <span class="c1"># 30</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>  <span class="c1"># 20</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">a5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>  <span class="c1"># 12</span>
+    <span class="n">icosahedral_axes_all</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">(</span><span class="n">a2</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">(</span><span class="n">a3</span><span class="p">),</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">(</span><span class="n">a5</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">icosahedral_axes_all</span>
+
+<span class="n">icosahedral_axes_all</span> <span class="o">=</span> <span class="n">_icosahedral_axes_all</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_axes</span><span class="p">(</span><span class="n">nfold</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">nfold</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_frames</span><span class="p">(</span><span class="n">nfold</span><span class="p">):</span>
+    <span class="n">cx</span> <span class="o">=</span> <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">nfold</span><span class="p">)</span>
+    <span class="n">c2</span> <span class="o">=</span> <span class="n">hrot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nfold</span><span class="p">):</span>
+        <span class="n">rot2</span> <span class="o">=</span> <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ix</span> <span class="o">/</span> <span class="n">nfold</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">rot1</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">c2</span><span class="p">][</span><span class="n">i2</span><span class="p">]</span>
+            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rot1</span> <span class="o">@</span> <span class="n">rot2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_axes_all</span><span class="p">(</span><span class="n">nfold</span><span class="p">):</span>
+    <span class="n">ang</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">nfold</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">_d_frames</span><span class="p">(</span><span class="n">nfold</span><span class="p">)</span>
+    <span class="n">a2A</span> <span class="o">=</span> <span class="n">frames</span> <span class="o">@</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">anA</span> <span class="o">=</span> <span class="n">frames</span> <span class="o">@</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">nfold</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">a2A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">a2A</span><span class="p">,</span> <span class="n">frames</span> <span class="o">@</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+    <span class="c1"># six decimals enough to account for numerical errors</span>
+    <span class="n">a2B</span> <span class="o">=</span> <span class="n">a2A</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">a2A</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">anB</span> <span class="o">=</span> <span class="n">anA</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">anA</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">a2B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">a2B</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">a2B</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a2B</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.999</span><span class="p">)])</span>
+    <span class="n">an</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">anB</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">anB</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.999</span><span class="p">)])</span>
+
+    <span class="c1"># if nfold == 4:</span>
+    <span class="c1">#     print(np.around(a2A, decimals=3))</span>
+    <span class="c1">#     print()</span>
+    <span class="c1">#     print(np.around(a2B, decimals=3))</span>
+    <span class="c1">#     print()</span>
+    <span class="c1">#     print(np.around(a2, decimals=3))</span>
+    <span class="c1">#     print()</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">an</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nfold </span><span class="si">{</span><span class="n">nfold</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">a2</span><span class="p">)</span> <span class="o">==</span> <span class="n">nfold</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nfold </span><span class="si">{</span><span class="n">nfold</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">axes_all</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">(</span><span class="n">a2</span><span class="p">),</span>
+        <span class="n">nfold</span><span class="p">:</span> <span class="n">hnormalized</span><span class="p">(</span><span class="n">an</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">axes_all</span>
+
+<span class="n">symaxes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">tet</span><span class="o">=</span><span class="n">tetrahedral_axes</span><span class="p">,</span>
+    <span class="nb">oct</span><span class="o">=</span><span class="n">octahedral_axes</span><span class="p">,</span>
+    <span class="n">icos</span><span class="o">=</span><span class="n">icosahedral_axes</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">symaxes_all</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">tet</span><span class="o">=</span><span class="n">tetrahedral_axes_all</span><span class="p">,</span>
+    <span class="nb">oct</span><span class="o">=</span><span class="n">octahedral_axes_all</span><span class="p">,</span>
+    <span class="n">icos</span><span class="o">=</span><span class="n">icosahedral_axes_all</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tetrahedral_angles</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span> <span class="n">angle</span><span class="p">(</span>
+        <span class="n">tetrahedral_axes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="n">tetrahedral_axes</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;3b&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+<span class="n">octahedral_angles</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span> <span class="n">angle</span><span class="p">(</span>
+        <span class="n">octahedral_axes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="n">octahedral_axes</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+<span class="n">icosahedral_angles</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span> <span class="n">angle</span><span class="p">(</span>
+        <span class="n">icosahedral_axes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="n">icosahedral_axes</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+<span class="n">nfold_axis_angles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">tet</span><span class="o">=</span><span class="n">tetrahedral_angles</span><span class="p">,</span>
+    <span class="nb">oct</span><span class="o">=</span><span class="n">octahedral_angles</span><span class="p">,</span>
+    <span class="n">icos</span><span class="o">=</span><span class="n">icosahedral_angles</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">sym_point_angles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">tet</span><span class="o">=</span><span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="nb">oct</span><span class="o">=</span><span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">icos</span><span class="o">=</span><span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">/</span> <span class="mi">5</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">d3</span><span class="o">=</span><span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">sym_frames</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">tet</span><span class="o">=</span><span class="n">tetrahedral_frames</span><span class="p">,</span>
+    <span class="nb">oct</span><span class="o">=</span><span class="n">octahedral_frames</span><span class="p">,</span>
+    <span class="n">icos</span><span class="o">=</span><span class="n">icosahedral_frames</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">minsymang</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">tet</span><span class="o">=</span><span class="n">angle</span><span class="p">(</span><span class="n">tetrahedral_axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">tetrahedral_axes</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nb">oct</span><span class="o">=</span><span class="n">angle</span><span class="p">(</span><span class="n">octahedral_axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">octahedral_axes</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">icos</span><span class="o">=</span><span class="n">angle</span><span class="p">(</span><span class="n">icosahedral_axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">icosahedral_axes</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">d2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">for</span> <span class="n">icyc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">33</span><span class="p">):</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="s2">&quot;d</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">icyc</span>
+    <span class="n">symaxes</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">_d_axes</span><span class="p">(</span><span class="n">icyc</span><span class="p">)</span>
+    <span class="n">sym_frames</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">_d_frames</span><span class="p">(</span><span class="n">icyc</span><span class="p">)</span>
+    <span class="n">ceil</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">icyc</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">sym_point_angles</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="n">icyc</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">j</span> <span class="o">/</span> <span class="n">icyc</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ceil</span><span class="p">)],</span>
+    <span class="p">}</span>
+    <span class="n">minsymang</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">icyc</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">symaxes_all</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">_d_axes_all</span><span class="p">(</span><span class="n">icyc</span><span class="p">)</span>
+    <span class="n">_ambiguous_axes</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span> <span class="k">if</span> <span class="n">icyc</span> <span class="o">%</span> <span class="mi">2</span> <span class="k">else</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="n">icyc</span><span class="p">)]</span>
+
+<span class="n">sym_frames</span><span class="p">[</span><span class="s2">&quot;d2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+    <span class="n">hrot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
+    <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
+    <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">symaxes</span><span class="p">[</span><span class="s2">&quot;d2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="s2">&quot;2b&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="s2">&quot;2c&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+<span class="p">}</span>
+<span class="n">symaxes_all</span><span class="p">[</span><span class="s2">&quot;d2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="p">])</span>
+<span class="p">}</span>
+
+<span class="n">sym_point_angles</span><span class="p">[</span><span class="s2">&quot;d2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]}</span>
+
+<div class="viewcode-block" id="sym_nfold_map">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.sym_nfold_map">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sym_nfold_map</span><span class="p">(</span><span class="n">nfold</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nfold</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">nfold</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">nfold</span></div>
+
+
+<div class="viewcode-block" id="get_syminfo">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.get_syminfo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_syminfo</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ambig</span> <span class="o">=</span> <span class="n">ambiguous_axes</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+        <span class="n">nfoldmap</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">sym_nfold_map</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">symaxes</span><span class="p">[</span><span class="n">sym</span><span class="p">]}</span>
+        <span class="k">assert</span> <span class="n">sym_frames</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Bunch</span><span class="p">(</span>
+            <span class="n">frames</span><span class="o">=</span><span class="n">sym_frames</span><span class="p">[</span><span class="n">sym</span><span class="p">],</span>
+            <span class="n">axes</span><span class="o">=</span><span class="n">symaxes</span><span class="p">[</span><span class="n">sym</span><span class="p">],</span>
+            <span class="n">axesall</span><span class="o">=</span><span class="n">symaxes_all</span><span class="p">[</span><span class="n">sym</span><span class="p">],</span>
+            <span class="n">point_angles</span><span class="o">=</span><span class="n">sym_point_angles</span><span class="p">[</span><span class="n">sym</span><span class="p">],</span>
+            <span class="n">ambiguous_axes</span><span class="o">=</span><span class="n">ambig</span><span class="p">,</span>
+            <span class="n">nfoldmap</span><span class="o">=</span><span class="n">nfoldmap</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># raise ValueError(f&#39;sim.py: dont know symmetry &quot;{sym}&quot;&#39;)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sym.py: dont know symmetry &quot;</span><span class="si">{</span><span class="n">sym</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span></div>
+
+
+<span class="n">_sym_permute_axes_choices</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">d2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>  <span class="c1">#           x y z</span>
+        <span class="n">hrot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">90</span><span class="p">),</span>  <span class="c1"># x z y</span>
+        <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">90</span><span class="p">),</span>  <span class="c1"># y z x</span>
+        <span class="n">hrot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">90</span><span class="p">)</span> <span class="o">@</span> <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">90</span><span class="p">),</span>  <span class="c1"># y x z</span>
+        <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">90</span><span class="p">),</span>  <span class="c1"># z y x</span>
+        <span class="n">hrot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">90</span><span class="p">)</span> <span class="o">@</span> <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">90</span><span class="p">),</span>  <span class="c1"># z y x</span>
+    <span class="p">]),</span>
+    <span class="n">d3</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+        <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">180</span><span class="p">),</span>
+    <span class="p">]),</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="sym_permute_axes_choices">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.sym_permute_axes_choices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sym_permute_axes_choices</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">_sym_permute_axes_choices</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_sym_permute_axes_choices</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span></div>
+
+
+<span class="k">for</span> <span class="n">icyc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">33</span><span class="p">):</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="s2">&quot;c</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">icyc</span>
+    <span class="n">symaxes</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">icyc</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])}</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">icyc</span><span class="p">)</span> <span class="o">/</span> <span class="n">icyc</span>
+    <span class="c1"># print(angles * 180 / np.pi)</span>
+    <span class="n">sym_frames</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">hrot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">angles</span><span class="p">)</span>
+    <span class="n">sym_point_angles</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># type: ignore</span>
+        <span class="n">icyc</span><span class="p">:</span> <span class="p">[</span><span class="n">angles</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">minsymang</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">icyc</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">symaxes_all</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="n">symaxes</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span>
+    <span class="n">_ambiguous_axes</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<div class="viewcode-block" id="is_closed">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.is_closed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_closed</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">sym</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">sym</span> <span class="ow">in</span> <span class="s2">&quot;I O T ICOS OCT TET&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="symunit_bounds">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.symunit_bounds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symunit_bounds</span><span class="p">(</span><span class="n">cagesym</span><span class="p">,</span> <span class="n">cycsym</span><span class="p">):</span>
+    <span class="n">flb</span><span class="p">,</span> <span class="n">fub</span><span class="p">,</span> <span class="n">fnum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">cagesym</span> <span class="o">==</span> <span class="s2">&quot;tet&quot;</span> <span class="ow">and</span> <span class="n">cycsym</span> <span class="o">==</span> <span class="s2">&quot;c3&quot;</span><span class="p">:</span>
+        <span class="n">fub</span><span class="p">,</span> <span class="n">fnum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">flb</span><span class="p">,</span> <span class="n">fub</span><span class="p">,</span> <span class="n">fnum</span></div>
+
+
+<div class="viewcode-block" id="coords_to_asucen">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.coords_to_asucen">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coords_to_asucen</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">is_known_xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">coords_to_asucen</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="primary_frames">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.primary_frames">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">primary_frames</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">is_known_xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">primary_frames</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="ndim">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.ndim">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ndim</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">xtal</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span><span class="o">.</span><span class="n">dimension</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="numpy_or_torch_array">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.numpy_or_torch_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">numpy_or_torch_array</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">example</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s2">&quot;torch&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">example</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">source</span><span class="p">)</span></div>
+
+
+<span class="n">CoordRMS</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;CorodRMS&quot;</span><span class="p">,</span> <span class="s2">&quot;coords rms&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="average_aligned_coords">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.average_aligned_coords">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">average_aligned_coords</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">nsub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">repeatfirst</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">orig</span> <span class="o">=</span> <span class="n">coords</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hpoint</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nsub</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nsub</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">coords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nsub</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">nsub</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">nsub</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+
+    <span class="n">fits</span> <span class="o">=</span> <span class="p">[</span><span class="n">ipd</span><span class="o">.</span><span class="n">hrmsfit</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>  <span class="c1"># type: ignore</span>
+    <span class="n">rms</span><span class="p">,</span> <span class="n">crds</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fits</span><span class="p">)</span>
+    <span class="n">crds</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">repeatfirst</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">crds</span><span class="p">)</span>
+    <span class="n">crd</span> <span class="o">=</span> <span class="n">numpy_or_torch_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">crds</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">orig</span><span class="p">)</span>
+    <span class="n">rms</span> <span class="o">=</span> <span class="n">numpy_or_torch_array</span><span class="p">(</span><span class="n">rms</span><span class="p">,</span> <span class="n">orig</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">CoordRMS</span><span class="p">(</span><span class="n">crd</span><span class="p">,</span> <span class="n">rms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="subframes">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.subframes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">subframes</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">bbsym</span><span class="p">,</span> <span class="n">asym</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">frames</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">subframes</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">frames</span><span class="p">(</span><span class="n">bbsym</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hxform</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hcom</span><span class="p">(</span><span class="n">asym</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">frames</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">subframes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># relframes = frames[1:, None] @ ipd.homog.hinv(frames[None, :-1])</span>
+    <span class="n">relframes</span> <span class="o">=</span> <span class="n">frames</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">@</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hinv</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">relframes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">axs</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">cen</span><span class="p">,</span> <span class="n">hel</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">axis_angle_cen_hel_of</span><span class="p">(</span><span class="n">relframes</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)):</span>
+        <span class="n">axdist</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">h_point_line_dist</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">cen</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>  <span class="c1"># type: ignore</span>
+        <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">axdist</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># what about multiple nfold axes???\</span>
+    <span class="c1"># can distinguish by axis direction?</span>
+    <span class="k">assert</span> <span class="mi">0</span>
+
+    <span class="n">helok</span> <span class="o">=</span> <span class="n">hel</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="c1"># priax =</span>
+    <span class="c1"># closest axis</span>
+
+    <span class="n">axisdist</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">hprojperp</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">cen</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">ipd</span><span class="o">.</span><span class="n">icv</span><span class="p">(</span><span class="n">axisdist</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+<span class="c1"># computed in ipd.sym.asufit.compute_canonical_asucen</span>
+<span class="n">_canon_asucen</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">c2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">c3</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.15470054</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">c4</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.41421357</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">c5</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.70130162</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">c6</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.00000000</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">c7</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.3047649</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">c8</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.61312595</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">c9</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.92380443</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="n">d2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.70690629</span><span class="p">,</span> <span class="mf">0.7075665</span><span class="p">,</span> <span class="mf">0.70730722</span><span class="p">]),</span>
+    <span class="n">d3</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.10486311e-04</span><span class="p">,</span> <span class="mf">1.15470043e+00</span><span class="p">,</span> <span class="mf">8.16910008e-01</span><span class="p">]),</span>
+    <span class="n">d4</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.30706011</span><span class="p">,</span> <span class="mf">0.54147883</span><span class="p">,</span> <span class="mf">0.84079882</span><span class="p">]),</span>
+    <span class="n">d5</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.00216512</span><span class="p">,</span> <span class="mf">1.37480626</span><span class="p">,</span> <span class="mf">0.85245505</span><span class="p">]),</span>
+    <span class="n">d6</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.51697002</span><span class="p">,</span> <span class="mf">1.93266443</span><span class="p">,</span> <span class="mf">0.8560035</span><span class="p">]),</span>
+    <span class="n">tet</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">9.47438171e-05</span><span class="p">,</span> <span class="mf">1.00242090e+00</span><span class="p">,</span> <span class="mf">1.61772847e+00</span><span class="p">]),</span>
+    <span class="nb">oct</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.67599002</span><span class="p">,</span> <span class="mf">1.2421906</span><span class="p">,</span> <span class="mf">2.28592391</span><span class="p">]),</span>
+    <span class="n">icos</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.13567793</span><span class="p">,</span> <span class="mf">1.28546351</span><span class="p">,</span> <span class="mf">3.95738551</span><span class="p">]),</span>
+    <span class="n">i2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="n">i3</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.93</span><span class="p">]),</span>
+    <span class="n">i5</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.52</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">]),</span>
+    <span class="n">i32</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">5.85725386</span><span class="p">]),</span>
+    <span class="c1"># i32=np.array([1.13567793, 1.28546351, 3.95738551]),</span>
+    <span class="n">i52</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.13567793</span><span class="p">,</span> <span class="mf">1.28546351</span><span class="p">,</span> <span class="mf">3.95738551</span><span class="p">]),</span>
+    <span class="n">i53</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.13567793</span><span class="p">,</span> <span class="mf">1.28546351</span><span class="p">,</span> <span class="mf">3.95738551</span><span class="p">]),</span>
+    <span class="n">i532</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.13567793</span><span class="p">,</span> <span class="mf">1.28546351</span><span class="p">,</span> <span class="mf">3.95738551</span><span class="p">]),</span>
+    <span class="n">icos4</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">5.85725386</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="n">_canon_asucen</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">hnormalized</span><span class="p">(</span><span class="n">_canon_asucen</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_canon_asucen</span><span class="p">}</span>
+<span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span> <span class="o">+</span> <span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i532&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.2</span>
+<span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span> <span class="o">+</span> <span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i532&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.2</span>
+<span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i5&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i5&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span> <span class="o">+</span> <span class="n">_canon_asucen</span><span class="p">[</span><span class="s1">&#39;i532&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.2</span>
+
+<div class="viewcode-block" id="canonical_asu_center">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.canonical_asu_center">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">canonical_asu_center</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">map_sym_abbreviation</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">sym</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cuda</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">th</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">_canon_asucen</span><span class="p">[</span><span class="n">sym</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_canon_asucen</span><span class="p">[</span><span class="n">sym</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cuda</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">th</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">compute_canonical_asucen</span><span class="p">(</span><span class="n">sym</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">compute_canonical_asucen</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span></div>
+
+        <span class="c1"># except KeyError as e:</span>
+        <span class="c1">#     raise ValueError(f&#39;canonical_asu_center: unknown sym {sym}&#39;) from e</span>
+
+<div class="viewcode-block" id="compute_canonical_asucen">
+<a class="viewcode-back" href="../../../_apidoc/ipd.sym.sym.html#ipd.sym.sym.compute_canonical_asucen">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_canonical_asucen</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">neighbors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">th</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">ipd.homog.thgeom</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">h</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">map_sym_abbreviation</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">frames</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">randunit</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">5e5</span><span class="p">))</span>
+    <span class="n">symx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">symx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">mind2</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">neighbors</span><span class="p">:</span>
+        <span class="c1"># ipd.icv(d2.shape)  # type: ignore</span>
+        <span class="n">sort</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">sort</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span> <span class="o">-</span> <span class="n">sort</span><span class="p">[</span><span class="n">neighbors</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">mind2</span>
+
+    <span class="n">ibest</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">ibest</span><span class="p">]</span>
+    <span class="n">dbest</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mind2</span><span class="p">[</span><span class="n">ibest</span><span class="p">])</span>
+    <span class="n">symbest</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">best</span><span class="p">)</span>
+    <span class="n">aln</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">symbest</span> <span class="o">*</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">symbest</span><span class="p">[</span><span class="n">th</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">aln</span><span class="p">)]</span> <span class="o">/</span> <span class="n">dbest</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">sym</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">):</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">h</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">best</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">best</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+
+<span class="n">magic_angle_DTOI</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">Bunch</span><span class="p">(</span>
+    <span class="n">D</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="n">T</span><span class="o">=</span><span class="mf">0.955316621</span><span class="p">,</span>
+    <span class="n">O</span><span class="o">=</span><span class="mf">0.615479714</span><span class="p">,</span>
+    <span class="n">I</span><span class="o">=</span><span class="mf">0.364863837</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

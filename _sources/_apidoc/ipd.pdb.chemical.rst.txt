@@ -1,0 +1,7 @@
+ipd.pdb.chemical module
+=======================
+
+.. automodule:: ipd.pdb.chemical
+   :members:
+   :show-inheritance:
+   :undoc-members:

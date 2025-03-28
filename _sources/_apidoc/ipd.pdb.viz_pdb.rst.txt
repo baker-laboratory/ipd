@@ -1,0 +1,7 @@
+ipd.pdb.viz\_pdb module
+=======================
+
+.. automodule:: ipd.pdb.viz_pdb
+   :members:
+   :show-inheritance:
+   :undoc-members:
