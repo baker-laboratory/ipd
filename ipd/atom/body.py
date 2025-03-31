@@ -1,9 +1,5 @@
 """
-Module: ipd.atom.body
-=====================
-
-This module defines the Body class that represents a collection of atoms organized
-as a coherent structure. It provides methods for spatial operations such as clash
+Provides Body classes holding AtomArrays augmented with performance enhancements and extra structural information. It provides methods for spatial operations such as clash
 and contact detection and supports transformation operations through homogeneous
 transforms (using the ipd.homog.hgeom module).
 

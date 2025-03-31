@@ -29,10 +29,10 @@ The benefit of this somewhat complicated laziness is that both Body and SymBody 
 Note: some of the below is AI slop. It is tested for correctness, but may not be the best informative...
 
 Body Examples
-=============
+----------------
 
 Creating a Body
----------------
+^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> import ipd
@@ -41,7 +41,7 @@ Creating a Body
     True
 
 Centering a Body
-----------------
+^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> centered = body.centered
@@ -50,16 +50,16 @@ Centering a Body
     True
 
 Transforming a Body
--------------------
+^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> from ipd.homog import hgeom as h
     >>> moved = body.movedby(h.trans([5, 0, 0]))
-    >>> np.allclose(moved.pos[:3, 3], [5, 0, 0], atol=1e-3)
+    >>> np.allclose(moved.pos[:3, 3], [5, 0, 0], atol=1e^3)
     True
 
 Accessing Positioned Atoms
----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> pa = body.positioned_atoms
@@ -67,7 +67,7 @@ Accessing Positioned Atoms
     True
 
 Detecting Clashes
------------------
+^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> b1 = body.centered
@@ -76,7 +76,7 @@ Detecting Clashes
     True
 
 Counting Clashes
-----------------
+^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> n = b1.nclash(b2, radius=2)
@@ -84,7 +84,7 @@ Counting Clashes
     True
 
 Getting Atom Coordinates via Slicing
-------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> coords = b1[:5]
@@ -92,7 +92,7 @@ Getting Atom Coordinates via Slicing
     True
 
 Sliding Into Contact
---------------------
+^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> b3 = b1.slide_into_contact(b2, [1,0,0], radius=3)
@@ -103,7 +103,7 @@ Sliding Into Contact
     False
 
 Analyzing Contacts
-------------------
+^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> contacts = b3.contacts(b2, radius=5)
@@ -113,7 +113,7 @@ Analyzing Contacts
     True
 
 Iterating Over Contacts
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> for isub1, isub2, sub1, sub2, idx1, idx2 in contacts:
@@ -122,10 +122,10 @@ Iterating Over Contacts
     True
 
 SymBody Examples
-================
+--------------------------
 
 Creating a SymBody
-------------------
+^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> sym = ipd.atom.symbody_from_file("1dxh", components="largest_assembly")
@@ -133,7 +133,7 @@ Creating a SymBody
     True
 
 Centering a SymBody
--------------------
+^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> sym_centered = sym.centered
@@ -141,15 +141,15 @@ Centering a SymBody
     True
 
 Transforming a SymBody
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> moved_sym = sym.movedby(h.trans([3, 0, 0]))
-    >>> np.allclose(moved_sym.pos[:3, 3], [3, 0, 0], atol=1e-3)
+    >>> np.allclose(moved_sym.pos[:3, 3], [3, 0, 0], atol=1e^3)
     True
 
 Self Clash Detection
---------------------
+^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> matrix = sym.hasclash(sym)
@@ -159,7 +159,7 @@ Self Clash Detection
     True
 
 Counting SymBody Clashes
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> moved2 = sym.movedby([4 * sym.rg, 0, 0])
@@ -170,7 +170,7 @@ Counting SymBody Clashes
     True
 
 SymBody Contacts
-----------------
+^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> contact4 = sym.contacts(sym2, radius=4)
@@ -178,7 +178,7 @@ SymBody Contacts
     True
 
 Sliding a SymBody into Contact
-------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> slid = sym.slide_into_contact(sym2, along=[1, 0, 0], radius=2)
@@ -188,7 +188,7 @@ Sliding a SymBody into Contact
     np.True_
 
 Accessing SymBody Subunit Coordinates
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> coords = sym[0][:5]
@@ -196,10 +196,10 @@ Accessing SymBody Subunit Coordinates
     True
 
 BodyContacts Summary
-====================
+----------------------------
 
 Inspecting Contact Properties
------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. doctest::
 
     >>> bc = sym.contacts(sym2, radius=4)
@@ -215,5 +215,5 @@ Inspecting Contact Properties
     np.True_
 
 Building a Contact Matrix Stack
--------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     see :ref:`contact_matrix_overview`

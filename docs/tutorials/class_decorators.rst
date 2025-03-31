@@ -24,7 +24,8 @@ Using the ``@element_wise_operations`` decorator, you can attach special descrip
 Core Concepts
 -------------
 
-### The ``ElementWise`` Descriptor
+The ``ElementWise`` Descriptor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``ElementWise`` descriptor is added to a class by the ``@element_wise_operations`` decorator. When accessed from an instance (e.g. ``obj.mapwise``), it returns an ``ElementWiseDispatcher`` configured with different accumulator type. The accululator type determines the return type of elemwise operations.
 
@@ -199,8 +200,7 @@ you can access its attributes using a string key. Multiple keys separated by spa
 
 .. code-block:: python
 
-    >>> from decorators import subscriptable_for_attributes
-    >>> @subscriptable_for_attributes
+    >>> @ipd.subscriptable_for_attributes
     ... class Person:
     ...     def __init__(self, name, age):
     ...         self.name = name
@@ -220,8 +220,7 @@ This method uses a fuzzy matching algorithm to locate attributes based on partia
 
 .. code-block:: python
 
-    >>> from decorators import subscriptable_for_attributes
-    >>> @subscriptable_for_attributes
+    >>> @ipd.subscriptable_for_attributes
     ... class City:
     ...     def __init__(self):
     ...         self.london = "London"
@@ -247,8 +246,7 @@ attribute values.
 
 .. code-block:: python
 
-    >>> from decorators import subscriptable_for_attributes
-    >>> @subscriptable_for_attributes
+    >>> @ipd.subscriptable_for_attributes
     ... class Data:
     ...     def __init__(self):
     ...         self.x = [10, 20, 30]
@@ -264,18 +262,15 @@ This is useful when your class stores parallel lists and you want to group them 
 
 .. code-block:: python
 
-    >>> from decorators import subscriptable_for_attributes
-    >>> @subscriptable_for_attributes
+    >>> @ipd.subscriptable_for_attributes
     ... class GroupData:
     ...     def __init__(self):
     ...         self.value = [1, 2, 3, 4]
     ...         self.label = ['A', 'A', 'B', 'B']
     >>> gd = GroupData()
     >>> # Group by the 'label' attribute, returning the 'value' for each group.
-    >>> groups = list(gd.groupby('label', 'value'))
-    >>> # The order of groups may vary; doctest checks content regardless of order.
-    >>> sorted(groups, key=lambda t: t[0])
-    [('A', {'value': (1, 2)}), ('B', {'value': (3, 4)})]
+    >>> list(gd.groupby('label', 'value'))
+    [('A', (1, 2)), ('B', (3, 4))]
 
 Pick Method for Key-Value Pairs
 --------------------------------
@@ -284,8 +279,7 @@ object containing selected attributes as key-value pairs.
 
 .. code-block:: python
 
-    >>> from decorators import subscriptable_for_attributes
-    >>> @subscriptable_for_attributes
+    >>> @ipd.subscriptable_for_attributes
     ... class Attributes:
     ...     def __init__(self):
     ...         self.x = 100

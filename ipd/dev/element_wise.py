@@ -177,7 +177,8 @@ class ElementWiseDispatcher:
         result = self.__getattr__(func)(*a, **kw)
         for k, v in ipd.dev.generic_get_items(self._parent, all=True):
             if k[0] == '_' or k[-1] == '_':
-                setattr(result, k, v)
+                with ipd.cl.suppress(AttributeError):
+                    setattr(result, k, v)
         return result
 
     def contains(self, other):
@@ -246,7 +247,10 @@ class NumpyAccumulator(ListAccumulator):
     """
 
     def result(self):
-        return np.array(self.value)
+        try:
+            return np.array(self.value)
+        except ValueError:
+            return np.array(self.value, dtype=object)
 
 def generic_negate(thing):
     if isinstance(thing, np.ndarray): return -thing

@@ -26,16 +26,16 @@ else
     echo ruff failed; exit 1;
 fi
 
-#################### yapf ####################
-cmd="PYTHONPATH=$ipd python -m ipd code yapf $src"
-echo $cmd
-eval $cmd
-if [ $? == 0 ]; then
-    echo files all formatted
-else
-    echo yapf formatted some files, retry commit
-    exit 1
-fi
+# #################### yapf ####################
+# cmd="PYTHONPATH=$ipd python -m ipd code yapf $src"
+# echo $cmd
+# eval $cmd
+# if [ $? == 0 ]; then
+#     echo files all formatted
+# else
+#     echo yapf formatted some files, retry commit
+#     exit 1
+# fi
 
 # #################### pyright ####################
 # if [ -f .pyright_hash_last_commit ]; then

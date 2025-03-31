@@ -381,7 +381,7 @@ def syminfo_to_str(sinfo, verbose=True):
     """returns text tables with the data in this SymInfo"""
     textmap = {'nfold': 'C', '__REGEX__': False}  # , '[': '', ']': '
     # kw = dict(justify='right', title_justify='right', caption_justify='right', textmap=textmap)
-    kw = dict(textmap=textmap)
+    kw = dict(textmap=textmap, expand=True)
     if sinfo.symid == 'C1': return 'SymInfo(C1)'
     with ipd.dev.capture_stdio() as out:
         symcen = '\n'.join(f'{x:7.3f}' for x in sinfo.symcen.reshape(4)[:3])
@@ -396,11 +396,7 @@ def syminfo_to_str(sinfo, verbose=True):
             [[sinfo.t_number, asurms, asumatch, sinfo.asuframes.shape, sinfo.allframes.shape]],
             header=['T', 'asu rms', 'asu seq match', 'asu frames', 'all frames'],
             **kw)
-        geomdata = [[
-            sinfo.has_translation,
-            sinfo.is_point,
-            sinfo.axes_dists,
-        ]]
+        geomdata = [[sinfo.has_translation, sinfo.is_point, sinfo.axes_dists]]
         geomhead = ['has_translation', 'axes concurrent', 'axes dists']
         geomtable = ipd.dev.make_table(geomdata, header=geomhead, **kw)
         checktable = ipd.dev.make_table(sinfo.tol_checks, key='Geom Tests')
@@ -408,7 +404,8 @@ def syminfo_to_str(sinfo, verbose=True):
         rms = sinfo.components.rmsd[sinfo.component].max() if sinfo.components else -1
         seqmatch = sinfo.components.seqmatch[sinfo.component].min() if sinfo.components else -1
         if sinfo.stub0 is not None:
-            rmstable = ipd.dev.make_table([[seqmatch, rms]], header=['worst seq match', 'worst rms'])
+            rmstable = ipd.dev.make_table([[seqmatch, rms]],
+                                          header=['worst seq match', 'worst rms'])
             tables.append([rmstable])
         ipd.dev.print_table(tables, header=['SymInfo'])
     return out.read().rstrip()

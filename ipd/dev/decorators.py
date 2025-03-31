@@ -102,6 +102,7 @@ def iterize_on_first_param(
     asbunch=False,
     asnumpy=False,
     allowmap=False,
+    nonempty=False,
 ) -> ipd.F:
     """
     Decorator to vectorize a function over its first parameter.
@@ -214,6 +215,8 @@ def iterize_on_first_param(
                     result = [func(a0, *args, **kw) for a0 in arg0]
                     with contextlib.suppress(TypeError, ValueError):
                         resutn = type(arg0)(result)
+                if nonempty and ipd.islist(result): result = list(filter(len, result))
+                if nonempty and ipd.isdict(result): {k:v for k,v in result.items() if len(v)}
                 if asbunch and result and isinstance(ipd.first(result.keys()), str):
                     result = ipd.Bunch(result)
                 if asnumpy:

@@ -1,25 +1,30 @@
 """
-Module: ipd.atom.components
-===========================
+This module provides core functionality for aligning and processing atomic structures. It defines building blocks used in higher-level constructs such as `Body` and `SymBody`. The module includes routines for aligning atomic structures via sequence alignment and RMSD fitting, storing alignment results in a dedicated container, and processing intermediate alignment components.
 
-This module defines unique building blocks for higher-level constructs such as
-Body and SymBody.
+:ref:`Determining Biological Architecture <processing_assemblies>`
 
-Key features:
+Key Features:
+    - Recursive alignment of atomic structures using sequence similarity and RMSD fitting.
+    - Management and storage of alignment results in a structured `Components` container.
+    - Utility functions for computing transformation frames based on SVD of C-alpha atoms.
+    - Tools for refining and merging alignment results.
 
-Usage Examples:
-    >>> from ipd import atom
-    >>> # Load an AtomArray and inspect an atom's component
-    >>> atoms = atom.load("1hv4")
-
-.. note::
-    For more advanced atom-level operations, refer to ipd.atom.atom_utils.
-
-
+Usage Example:
+    >>> import ipd
+    >>> atoms = ipd.atom.load("1hv4", assembly='largest')
+    >>> components = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
+    >>> print(components)
+    Components:
+      atoms: [1084]
+      frames: [(4, 4, 4)]
+      seqmatch: [array([1.    , 0.6272, 1.    , 0.6272])]
+      rmsd: [array([0.    , 1.0535, 0.0203, 1.0551])]
+      idx: [array([0, 1, 2, 3])]
+      source_: <class 'list'>
 
 Dependencies:
     - numpy
-    - biotite
+    - biotite (accessed via lazy import)
 """
 
 import numpy as np
@@ -30,97 +35,118 @@ bs = ipd.lazyimport('biotite.structure')
 @ipd.dev.timed
 def find_components_by_seqaln_rmsfit(
     atomslist,
-    tol=0.7,
+    tol=None,
     finalresult=None,
     idx=None,
     maxsub=60,
+    minatoms=10,
+    prune_res=True,
+    protein_only=True,
     **kw,
 ):
     """
-    Find frames by sequence alignment and RMS fitting.
+    Align atomic structures using sequence alignment and RMSD fitting.
 
-    This function aligns pairs of atomic structures based on their sequence
-    similarity and calculates the RMSD (Root Mean Square Deviation) between
-    them. It stores the aligned frames and matching sequences.
+    This function recursively aligns a list of atomic structures (or chains) based on their
+    sequence similarity. It computes transformation frames using RMSD (Root Mean Square Deviation)
+    fitting and checks the quality of the alignment using defined tolerance thresholds.
+    The aligned frames, along with statistics like RMSD and sequence match fractions, are accumulated
+    into a `Components` object.
 
-    Args:
-        atomslist (list[bs.AtomArray]):
-            List of atomic structures to align.
+    Parameters:
+        atomslist (list[bs.AtomArray] or bs.AtomArray):
+            A list of atomic structures to be aligned or a single structure that will be split into chains.
         tol (float, optional):
-            Tolerance for RMSD and sequence match. Defaults to 0.7.
+            Tolerance value for assessing RMSD and sequence match quality. Defaults to 0.7.
         finalresult (Components, optional):
-            Existing finalresult object to append to. Defaults to None.
+            An existing Components instance to which new alignment results will be appended.
+            If None, a new Components instance is created.
         idx (list[int], optional):
-            Indices of atoms to align. Defaults to None.
+            List of indices corresponding to the atomic structures to align. Defaults to None.
         maxsub (int, optional):
-            Maximum number of subunits to align. Defaults to 60.
+            Maximum number of subunits (chains) to align. Defaults to 60.
         **kw:
-            Additional keyword arguments for alignment.
+            Additional keyword arguments passed to alignment helper functions.
 
     Returns:
         Components:
-            Result object containing aligned frames and statistics.
+            A Components object containing:
+                - Aligned atomic structures.
+                - 4x4 transformation matrices representing the alignment frames.
+                - RMSD values and sequence match fractions.
+                - Original source structures and intermediate alignment results.
+
+    Notes:
+        The function initially attempts to align the structures based on protein C-alpha atoms.
+        If that fails, it falls back to aligning nucleic acid phosphate atoms.
+        The process is performed recursively until all components meet the tolerance criteria.
     """
-    tol = ipd.Tolerances(tol)
-    if not finalresult:
-        if isinstance(atomslist, bs.AtomArray):
-            atomslist = ipd.kwcall(kw, ipd.atom.split_chains, atomslist)
-        if len(atomslist) < maxsub:
-            atomslist = [ipd.kwcall(kw, ipd.atom.split_chains, sub) for sub in atomslist]
-            atomslist = ipd.dev.addreduce(atomslist)
-        atomslist = [a for a in atomslist if len(a)]
-        idx = np.arange(len(atomslist))
-        finalresult = Components(source_=atomslist, tolerances_=tol)
-        # atomslist = ipd.atom.pick_representative_chains(atomslist)
-        # atomslist = [atoms[np.isin(atoms.atom_name,['CA', 'P'])] for atoms in atomslist]
-    results = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0])
+    kw = ipd.sym.symdetect_default_tolerances | kw
+    tol = ipd.Tolerances(tol, **kw)
+    if isinstance(atomslist, bs.AtomArray):
+        atomslist = ipd.kwcall(kw, ipd.atom.split_chains, atomslist)
+    if len(atomslist) < maxsub:
+        atomslist = [ipd.kwcall(kw, ipd.atom.split_chains, sub) for sub in atomslist]
+        atomslist = ipd.dev.addreduce(atomslist)
+    atomslist = [a for a in atomslist if len(a)]
+    if prune_res: atomslist = ipd.atom.remove_garbage_residues(atomslist)
+    if protein_only: atomslist = ipd.atom.remove_nonprotein(atomslist)
+    idx = np.arange(len(atomslist))
+    finalresult = Components(source_=atomslist, tolerances_=tol)
+    return find_components_by_seqaln_rmsfit_recurse(atomslist, tol, finalresult, idx)
 
-    # for i, atoms_i in enumerate(atomslist):
-    # no good, fails on various inputsi
-    # a, x, m1, m2 = bs.superimpose_homologs(atomslist[0], atoms_i)
-
+@ipd.dev.timed
+def find_components_by_seqaln_rmsfit_recurse(atomslist, tol, finalresult, idx):
+    alignment = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0], match=[True ])
     ca = [a[(a.atom_name == 'CA') & ~a.hetero] for a in atomslist]
-    aligned_on_protein = accumulate_seqalign_rmsfit(ca, results.mapwise.append)
+    aligned_on_protein = accumulate_seqalign_rmsfit(ca, alignment.mapwise.append)
     if not aligned_on_protein:
         phos = [a[a.atom_name == 'P'] for a in atomslist]
-        aligned_on_nucleic = accumulate_seqalign_rmsfit(phos, results.mapwise.append)
-    assert np.all(results.npwise(len) == len(atomslist))
-    finalresult.add_intermediate_result(results)
-    results = results.mapwise(np.array)
+        aligned_on_nucleic = accumulate_seqalign_rmsfit(phos, alignment.mapwise.append)
+        if not aligned_on_nucleic:
+            return finalresult
 
-    ok = (results.rmsd < tol.rms_fit) & (results.seqmatch > tol.seqmatch)
-    # ipd.icv(results.rmsd,results.seqmatch)
-    finalresult.add(atoms=atomslist[0], **results.mapwise[ok])
+    assert aligned_on_protein or aligned_on_nucleic
+    assert np.all(alignment.npwise(len) == len(atomslist))
+    finalresult.add_intermediate_result(alignment)
+    alignment.idx = idx
+    alignment = alignment.mapwise(ipd.homog.np_array)
+
+    ok = (alignment.rmsd < tol.rms_fit) & (alignment.seqmatch > tol.seqmatch)
+    finalresult.add(atoms=atomslist[0], **alignment.mapwise[ok])
     if all(ok): return finalresult
     unfound = [a for i, a in enumerate(atomslist) if not ok[i]]
-    # ipd.icv(len(atomslist), len(unfound), idx, ok, kw.keys())
-    return find_components_by_seqaln_rmsfit(unfound, finalresult=finalresult, idx=idx[~ok], tol=tol, **kw)
+    return find_components_by_seqaln_rmsfit_recurse(unfound, tol, finalresult, idx[~ok])
 
 @ipd.subscriptable_for_attributes
 @ipd.element_wise_operations
 @ipd.mutablestruct
 class Components:
     """
-    Result container for frame searching and alignment.
+    Container for Alignment Components and Results.
 
-    This class stores the aligned frames, RMSD values, and sequence matches
-    resulting from the frame search operation.
+    The `Components` class stores the results from aligning atomic structures.
+    It holds aligned atomic structures along with associated transformation frames,
+    RMSD values, sequence match fractions, and index mappings. In addition, it
+    retains the original source structures and any intermediate alignment results.
 
     Attributes:
         atoms (list[bs.AtomArray]):
             List of aligned atomic structures.
         frames (list[np.ndarray]):
-            List of 4x4 transformation matrices.
+            List of 4x4 transformation matrices representing the alignment frames.
         seqmatch (list[float]):
-            List of sequence match fractions.
+            List of sequence match fractions for each alignment.
         rmsd (list[float]):
-            List of RMSD values.
+            List of RMSD (Root Mean Square Deviation) values for each alignment.
         idx (list[list[int]]):
-            List of aligned indices.
+            List of index arrays mapping alignment positions.
         source_ (list[bs.AtomArray]):
-            Source atomic structures.
+            Original source atomic structures used in the alignment.
+        intermediates_ (list[dict]):
+            Intermediate alignment results accumulated during the recursive alignment process.
         tolerances_ (ipd.Tolerances):
-            Tolerance parameters for alignment.
+            Tolerance parameters used during the alignment process.
     """
 
     atoms: list['bs.AtomArray'] = ipd.field(list)
@@ -128,17 +154,23 @@ class Components:
     seqmatch: list[float] = ipd.field(list)
     rmsd: list[float] = ipd.field(list)
     idx: list[list[int]] = ipd.field(list)
+    match: list = ipd.field(list)
     source_: list['bs.AtomArray'] = ipd.field(list)
     intermediates_: list[dict] = ipd.field(list)
     tolerances_: ipd.Tolerances = None
 
     def add(self, **atom_frame_match_rms_idx):
         """
-        Add aligned frames and statistics to the result.
+        Append new alignment results to the Components container.
 
-        Args:
+        This method adds a new set of alignment data—including the transformation frame,
+        RMSD value, sequence match fraction, and indices—to the stored results. It also
+        reorders the components based on the length of the atomic structures to maintain consistency.
+
+        Parameters:
             **atom_frame_match_rms_idx:
-                Dictionary of frames, RMSD values, sequence matches, and indices.
+                A dictionary containing keys such as 'atoms', 'frames', 'rmsd', 'seqmatch', and 'idx'
+                with corresponding values for the new alignment result.
         """
         self.mapwise.append(atom_frame_match_rms_idx)
         self.idx = [np.array(i, dtype=int) for i in self.idx]
@@ -149,23 +181,59 @@ class Components:
 
     def add_intermediate_result(self, intermediate_result):
         """
-        Add intermediate results to the final result.
+        Append an intermediate alignment result to the Components container.
 
-        Args:
+        Parameters:
             intermediate_result (Components):
-                Intermediate result object to append to the final result.
+                A Components object representing an intermediate state of the alignment process.
         """
         self.intermediates_.append(intermediate_result)
 
     def enumerate_intermediates(self):
-        """enumerates i, j, frames, rmsd, seqmatch, idx)"""
+        """
+        Generator that yields intermediate alignment results.
+
+        Yields:
+            tuple:
+                A tuple in the format (intermediate_index, atoms, frames, rmsd, seqmatch, idx)
+                for each intermediate result.
+        """
         for i, val in enumerate(self.intermediates_):
             for tup in val.enumerate():
                 yield i, *tup
 
+    def print_intermediates(self):
+        """
+        Print all intermediate alignment results to the console.
+        """
+        n = len(self.intermediates_[0].frames)
+        table: dict[str, ipd.Any] = dict(
+            idx=range(n),
+            nres=[bs.get_residue_count(atoms) for atoms in self.source_],
+        )
+        for i, val in enumerate(self.intermediates_):
+            frm, rmsd, seqm, idx, match = val.values()
+            seq, rms = np.array([''] * n, dtype=object), np.array([''] * n, dtype=object)
+            # print(list(map(str, (np.array(seqm) * 100).astype(int))))
+            seq[idx] = list(map(str, (np.array(seqm) * 100).astype(int)))
+            rms[idx] = list(map(str, np.array(rmsd).round(1)))
+            table[f'{i}sm'] = seq
+            table[f'{i}rms'] = rms
+            # if i > 4: break
+        table = {k: list(v) for k, v in table.items()}
+        ipd.print_table(table, justify='right', expand=False, collapse_padding=True, show_lines=n < 16)
+
     def __repr__(self):
         """
-        Return a string representation of the object.
+        Return a string representation of the Components container.
+
+        The representation includes a summary of the number of atoms per structure,
+        the shapes of transformation frames, sequence match fractions, RMSD values, and index arrays.
+        It also indicates the type of the stored source atomic structures.
+
+        Returns:
+            str:
+                A formatted string summarizing the alignment components.
         """
         with ipd.dev.capture_stdio() as printed:
             with ipd.dev.np_compact(4):
@@ -176,16 +244,20 @@ class Components:
                 print('  rmsd:', self.rmsd)
                 print('  idx:', self.idx)
                 print('  source_:', type(self.source_))
-                # print(self.tolerances_)
         return printed.read().rstrip()
 
     def remove_small_chains(self, minatom=40, minres=3):
         """
-        Remove small chains from the result.
+        Remove chains that do not meet minimum size criteria.
 
-        Args:
-            minatom (int): Minimum number of atoms in a chain. Defaults to 40.
-            minres (int): Minimum number of residues in a chain. Defaults to 3.
+        Chains with fewer than `minatom` atoms or fewer than `minres` unique residues are removed
+        from the alignment results. This method modifies the Components container in place.
+
+        Parameters:
+            minatom (int, optional):
+                Minimum number of atoms required for a chain to be retained. Defaults to 40.
+            minres (int, optional):
+                Minimum number of unique residues required for a chain to be retained. Defaults to 3.
         """
         toremove = [
             i for i, a in enumerate(self.atoms) if len(a) < minatom or len(np.unique(a.res_id)) < minres
@@ -199,26 +271,47 @@ class Components:
             del self.source_[i]
 
     def __len__(self):
+        """
+        Return the number of aligned atomic structures.
+
+        Returns:
+            int:
+                The number of atomic structures stored in the container.
+        """
         return len(self.atoms)
 
     def __getitem__(self, key: object) -> object:
-        'just to make type checker happy'
+        """
+        Retrieve item(s) from the Components container by key.
+
+        This method provides attribute-based access to the underlying data, aiding static type checkers.
+
+        Parameters:
+            key (object):
+                The key or index of the desired attribute.
+
+        Returns:
+            object:
+                The value associated with the given key.
+        """
+        # Implementation detail for attribute access (if needed)
+        pass
 
 def stub(atoms):
     """
-    Compute the frame based on the mass center and SVD decomposition of CA atoms.
+    Compute the transformation frame for an atomic structure using SVD on C-alpha atoms.
 
-    This function computes the transformation frame of an atomic structure
-    by aligning its CA atom coordinates to the center of mass using Singular
-    Value Decomposition (SVD).
+    This function calculates the center of mass of the atomic structure and performs a Singular Value Decomposition (SVD)
+    on the coordinates of the C-alpha atoms. A 4x4 homogeneous transformation matrix is then constructed to represent
+    the alignment frame of the structure.
 
-    Args:
+    Parameters:
         atoms (bs.AtomArray):
-            Atomic structure object containing coordinate and atom name data.
+            An atomic structure containing coordinate data and atom type information.
 
     Returns:
         np.ndarray:
-            4x4 homogeneous transformation matrix.
+            A 4x4 homogeneous transformation matrix representing the computed alignment frame.
 
     Example:
         >>> import ipd
@@ -236,25 +329,51 @@ def stub(atoms):
 
 @ipd.dev.timed
 def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
+    """
+    Perform sequence alignment and RMSD fitting on a list of backbone atoms.
+
+    This helper function attempts to align the first set of backbone atoms in `bb` with each subsequent set.
+    It computes the alignment using a sequence alignment algorithm and performs RMSD fitting between the matched atoms.
+    The resulting transformation frame, RMSD value, and sequence match fraction are passed to the provided `accumulator`
+    callback function.
+
+    Parameters:
+        bb (list[bs.AtomArray]):
+            List of atomic structure subsets (e.g., C-alpha or phosphate atoms) used for alignment.
+        accumulator (callable):
+            A function that accepts alignment results (transformation frame, RMSD, sequence match fraction, and index)
+            and accumulates them.
+        min_align_points (int, optional):
+            Minimum number of alignment points required for a valid alignment. Defaults to 3.
+
+    Returns:
+        bool:
+            True if alignment was successfully performed for at least one pair of structures; otherwise, False.
+
+    Notes:
+        - When aligning structures of different types (e.g., protein vs. nucleic acid), a fallback is applied
+          if the structures are of equal length.
+        - If the alignment does not yield enough matching points, a default high RMSD and zero sequence match are recorded.
+    """
     if len(bb) < 2 or len(bb[0]) < min_align_points:
         return False
     is_protein = ipd.atom.is_protein(bb)
     for i, bb_i_ in enumerate(bb[1:], start=1):
-        if is_protein[0] == is_protein[i]:  # dont match protein with nucleic
+        if is_protein[0] == is_protein[i]:
             _, match, matchfrac = ipd.atom.seqalign(bb[0], bb_i_)
         elif len(bb_i_) == len(bb[0]):
             match, matchfrac = np.ones((len(bb[0]), 2), dtype=bool), 1
         else:
             match = None
         if match is None or len(match) < min_align_points:
-            accumulator(np.nan / np.zeros((4, 4)), 9e9, 0, i)
+            accumulator(np.nan / np.zeros((4, 4)), 9e9, 0, i, None)
         else:
             xyz1 = bb[0].coord[match[:, 0]]
             xyz2 = bb_i_.coord[match[:, 1]]
             ipd.dev.global_timer.checkpoint()
             rms, _, xfit = ipd.homog.hrmsfit(xyz1, xyz2)
             ipd.dev.global_timer.checkpoint('hrmsfit')
-            accumulator(xfit, rms, matchfrac, i)
+            accumulator(xfit, rms, matchfrac, i, match)
     return True
 
 def process_components(
@@ -264,6 +383,31 @@ def process_components(
     min_chain_atoms: int = 0,
     **kw,
 ):
+    """
+    Process and refine alignment components by optionally merging small chains.
+
+    This function iterates over the alignment results stored in a `Components` container and processes each chain.
+    Depending on the provided parameters, it may merge chains that do not meet the minimum atom threshold,
+    based on chain selection strategies and the shape compatibility of transformation frames.
+
+    Parameters:
+        components (Components):
+            A Components object containing the alignment results.
+        pickchain (str, optional):
+            Strategy for selecting chains. Defaults to 'largest'.
+        merge_chains (bool, optional):
+            If True, chains that do not meet the `min_chain_atoms` threshold may be merged with adjacent chains.
+            Defaults to True.
+        min_chain_atoms (int, optional):
+            Minimum number of atoms required for a chain to be processed individually.
+            Chains with fewer atoms may be merged. Defaults to 0.
+        **kw:
+            Additional keyword arguments for customizing the processing behavior.
+
+    Returns:
+        None:
+            The function modifies the `components` object in place.
+    """
     for i, atoms, frames in components.enumerate('atoms frames', order=reversed):
         if len(atoms) < min_chain_atoms and i > 0:
             if components.frames[i - 1].shape == frames.shape:

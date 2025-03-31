@@ -51,7 +51,7 @@ def maintest(namespace, config=ipd.Bunch(), **kw):
         print(f'maintest "{namespace["__file__"]}":', flush=True)
     else:
         print(f'maintest "{orig}":', flush=True)
-    ipd.dev.onexit(ipd.dev.global_timer.report, timecut=0.01)
+    ipd.dev.onexit(ipd.dev.global_timer.report, timecut=0.01, spacer=1)
     config = TestConfig(**config, **kw)
     config.detect_fixtures(namespace)
     ipd.kwcall(config, ipd.dev.filter_namespace_funcs, namespace)

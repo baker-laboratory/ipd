@@ -120,6 +120,13 @@ class TestIterizeOnFirstParam(unittest.TestCase):
 
         self.get_length = get_length
 
+        # Decorator with basetype=str
+        @ipd.dev.iterize_on_first_param(basetype=str, nonempty=True)
+        def remove_first(x):
+            return x[1:] if x else ''
+
+        self.remove_first = remove_first
+
         # Using the pre-configured path decorator
         @ipd.dev.iterize_on_first_param_path
         def process_path(path):
@@ -222,6 +229,12 @@ class TestIterizeOnFirstParam(unittest.TestCase):
         result = self.square({1, 2, 3})
         assert set(result) == {1, 4, 9}
         assert len(result) == 3
+
+    def test_remove_first_nonempty(self):
+        """Test with a non-empty iterable."""
+        assert self.remove_first(self.string) == "ello"
+        assert self.remove_first(self.string_list) == ["ello", "orld"]
+        assert self.remove_first(self.string_list + ['a', '']) == ["ello", "orld"]
 
 class TestIterizeableFunction(unittest.TestCase):
     """Test suite for the ipd.dev.is_iterizeable helper function."""

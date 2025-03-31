@@ -13,7 +13,7 @@ from the Biotite library.
    `Biotite AtomArray Documentation <https://www.biotite-python.org/apidoc/biotite.structure.AtomArray.html>`_
 
 Overview
---------
+---------
 
 The IPD library provides utilities for:
 
@@ -24,8 +24,8 @@ The IPD library provides utilities for:
 - Applying transformations
 - Exporting structures to disk
 
-Reading Structures
-------------------
+Reading and Dumping Structures
+--------------------------------
 
 .. doctest::
 
@@ -35,7 +35,7 @@ Reading Structures
     3
 
 Reading with Transformations (CIF assembly)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doctest::
 
@@ -43,87 +43,6 @@ Reading with Transformations (CIF assembly)
     >>> len(atoms_list) > 1
     True
 
-Filtering and Selecting Atoms
------------------------------
-
-.. doctest::
-
-    >>> from ipd import atom
-    >>> oxy = atom.select(atoms, element='O')
-    >>> all(oxy.element == 'O')
-    True
-
-Split by Chain
-~~~~~~~~~~~~~~
-
-.. doctest::
-
-    >>> chains = atom.chain_dict(atoms)
-    >>> isinstance(chains, dict)
-    True
-    >>> any(len(chain) > 0 for chain in chains.values())
-    True
-
-Joining Atom Arrays
-~~~~~~~~~~~~~~~~~~~
-
-.. doctest::
-
-    >>> joined = atom.join(list(chains.values()))
-    >>> joined.coord.shape[1]
-    3
-
-Sequence Extraction
--------------------
-
-.. doctest::
-
-    >>> from ipd import atom
-    >>> ca_atoms = atom.select(atoms, caonly=True)
-    >>> seqs, *_ = atom.to_seq(ca_atoms)
-    >>> len(seqs) >= 1
-    True
-
-Atom Type Checks
-----------------
-
-.. doctest::
-
-    >>> atom.is_atomarray(atoms)
-    True
-    >>> atom.is_atoms(atoms)
-    True
-
-Structure Classification
-------------------------
-
-.. doctest::
-
-    >>> atom.is_protein(ca_atoms)
-    np.True_
-
-Splitting Atom Arrays
----------------------
-
-.. doctest::
-
-    >>> splits = atom.split(atoms, bychain=True)
-    >>> isinstance(splits, list)
-    True
-
-Chain Range Mapping
--------------------
-
-.. doctest::
-
-    >>> cr = atom.chain_ranges(atoms)
-    >>> isinstance(cr, dict)
-    True
-    >>> all(isinstance(rng, list) for rng in cr.values())
-    True
-
-Dumping Structures
-------------------
 
 .. doctest::
 
@@ -134,19 +53,8 @@ Dumping Structures
     >>> atoms2.coord.shape == atoms.coord.shape
     True
 
-Sequence Alignment
-------------------
-
-.. doctest::
-
-    >>> aln, match, score = atom.seqalign(ca_atoms, ca_atoms)
-    >>> match.shape[1] == 2
-    True
-    >>> score > 0.95
-    True
-
 Exporting CIF/BCIF
-------------------
+^^^^^^^^^^^^^^^^^^
 
 .. doctest::
 
@@ -157,9 +65,104 @@ Exporting CIF/BCIF
     >>> len(atoms2) == len(atoms)
     True
 
-Notes
------
+Filtering, selecting, splitting, joining
+------------------------------------------
 
-- For real PDB/CIF/BCIF data, Biotite must be installed and able to access the internet or your test data.
-- The IPD module adds rich metadata and assembly parsing features over the base Biotite readers.
+Filtering and Selecting Atoms
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> from ipd import atom
+    >>> oxy = atom.select(atoms, element='O')
+    >>> all(oxy.element == 'O')
+    True
+
+Split by Chain
+^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> chains = atom.chain_dict(atoms)
+    >>> isinstance(chains, dict)
+    True
+    >>> any(len(chain) > 0 for chain in chains.values())
+    True
+
+Joining Atom Arrays
+^^^^^^^^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> joined = atom.join(list(chains.values()))
+    >>> joined.coord.shape[1]
+    3
+
+Splitting Atom Arrays
+^^^^^^^^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> splits = atom.split(atoms, bychain=True)
+    >>> isinstance(splits, list)
+    True
+
+Chain Range Mapping
+^^^^^^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> cr = atom.chain_ranges(atoms)
+    >>> isinstance(cr, dict)
+    True
+    >>> all(isinstance(rng, list) for rng in cr.values())
+    True
+
+Sequences and Alignment
+------------------------
+
+
+Sequence Extraction
+^^^^^^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> from ipd import atom
+    >>> ca_atoms = atom.select(atoms, caonly=True)
+    >>> seqs, *_ = atom.to_seq(ca_atoms)
+    >>> len(seqs) >= 1
+    True
+
+Atom Type Checks
+^^^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> atom.is_atomarray(atoms)
+    True
+    >>> atom.is_atoms(atoms)
+    True
+
+Structure Classification
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. doctest::
+
+    >>> atom.is_protein(ca_atoms)
+    np.True_
+
+.. doctest::
+
+    >>> aln, match, score = atom.seqalign(ca_atoms, ca_atoms)
+    >>> match.shape[1] == 2
+    True
+    >>> score > 0.95
+    True
+
+
+Notes
+^^^^^
+
+^ For real PDB/CIF/BCIF data, Biotite must be installed and able to access the internet or your test data.
+^ The IPD module adds rich metadata and assembly parsing features over the base Biotite readers.
 

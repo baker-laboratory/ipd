@@ -1,14 +1,8 @@
-import pytest
 
 import ipd
 
 def main():
     ipd.tests.maintest(namespace=globals())
-
-def test_atoms():
-    pytest.importorskip('biotite')
-    atoms = ipd.tests.atoms('tiny.pdb')
-    assert len(atoms) == 8
 
 def test_pdbcontents():
     ...

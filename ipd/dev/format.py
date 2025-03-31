@@ -15,8 +15,9 @@ console = Console()
 def print(*args, **kw):
     rich.print(*args, **kw)
 
-def make_table(thing, precision=3, **kw):
+def make_table(thing, precision=3, expand=False, **kw):
     kw['precision'] = precision
+    kw['expand'] = expand
     with ipd.dev.np_printopts(precision=precision, suppress=True):
         if ipd.homog.is_tensor(thing): return make_table_list(thing, **kw)
         if isinstance(thing, ipd.Bunch): return make_table_bunch(thing, **kw)

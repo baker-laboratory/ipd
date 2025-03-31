@@ -32,7 +32,7 @@ def timed_import_module(name):
     import ipd
     ipd.dev.global_timer.checkpoint(interject=True)
     mod = import_module(name)
-    ipd.dev.global_timer.checkpoint(f'import {name}')
+    ipd.dev.global_timer.checkpoint(f'LAZY import {name}')
     return mod
 
 def lazyimport(name: str,
