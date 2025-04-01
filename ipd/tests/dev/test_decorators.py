@@ -302,7 +302,6 @@ def test_subscriptable_for_attributes_enumerate_noarg():
 
 def test_subscriptable_for_attributes_groupby():
 
-    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):

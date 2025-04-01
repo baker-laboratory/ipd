@@ -286,15 +286,15 @@ Examples:
     >>> a1 = h.vec([1, 0, 0])
     >>> a2 = h.vec([0, 1, 0])
     >>> b1 = h.vec([0, 1, 0])
-    >>> b2 = h.vec([^1, 0, 0])
+    >>> b2 = h.vec([-1, 0, 0])
     >>> T_align2 = h.align2(a1, a2, b1, b2)
     >>> np.allclose(h.xform(T_align2, a1), b1)
     True
     >>> np.allclose(h.xform(T_align2, a2), b2)
     True
 
-13. Point^to^Line Distance (h.point_line_dist)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13. Point-to-Line Distance (h.point_line_dist)
+----------------------------------------------
 Computes the distance from a point to a line (defined by a point and a direction).
 
 Example:

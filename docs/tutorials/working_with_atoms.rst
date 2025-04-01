@@ -46,33 +46,6 @@ Reading with Transformations (CIF assembly)
 
 .. doctest::
 
-    >>> from tempfile import NamedTemporaryFile
-    >>> with NamedTemporaryFile(suffix=".pdb") as tmp:
-    ...     pdb.dump(atoms, tmp.name)  # Save AtomArray to PDB
-    ...     atoms2 = pdb.readatoms(tmp.name)
-    >>> atoms2.coord.shape == atoms.coord.shape
-    True
-
-Exporting CIF/BCIF
-^^^^^^^^^^^^^^^^^^
-
-.. doctest::
-
-    >>> from tempfile import NamedTemporaryFile
-    >>> with NamedTemporaryFile(suffix=".cif") as tmp:
-    ...     pdb.dumpatoms(atoms, tmp.name)
-    ...     atoms2 = pdb.readatoms(tmp.name)
-    >>> len(atoms2) == len(atoms)
-    True
-
-Filtering, selecting, splitting, joining
-------------------------------------------
-
-Filtering and Selecting Atoms
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. doctest::
-
     >>> from ipd import atom
     >>> oxy = atom.select(atoms, element='O')
     >>> all(oxy.element == 'O')

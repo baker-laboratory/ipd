@@ -39,7 +39,7 @@ Setup
 >>> import ipd
 >>> data = np.random.rand(500)
 >>> sums = np.zeros(len(data)+1)
->>> sums[1:] = ipd.partialsum(data)  # yes, it's really called that... in torch too.
+>>> sums[1:] = ipd.partialsum(data)
 >>> slice_sums1 = np.zeros((len(data), len(data)))
 >>> slice_sums2 = np.zeros((len(data), len(data)))
 >>> timer = ipd.dev.Timer('Cumsum Perf Example')
@@ -83,7 +83,7 @@ Note how much faster the partialsum + broadcasting version was for the 1D versio
 It makes an even bigger difference in the 2D case because the arrays tend to be much larger.
 
 .. figure:: ../_static/img/partialsum2d.png
-   :alt: partialsum2d illustration
+   :alt: partialsum2d illustration 
 
    Illustration of data 2D with pink region to be "summed" and 2D cumulative sum array from which four points are needed to computs the "sum:" ``sum = CSUM[ub1,ub2] (red point) + CSUM[lb1,lb2] (green point) - CUSM[ub1,lb2] (blue point) - CSUM[lb1,lb2] (blue point``.
 

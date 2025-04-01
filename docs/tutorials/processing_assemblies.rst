@@ -43,7 +43,6 @@ Recursive Matching Process
 5. Remaining unmatched chains are recursively processed as a new group
 
 Sequence Matching
-^^^^^^^^^^^^^^^^^^^
 
 Biological similarity is first established by aligning the amino acid or nucleotide sequences
 of each chain against the reference chain. The function uses Biotite's
