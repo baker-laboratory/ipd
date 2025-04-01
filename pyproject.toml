@@ -23,7 +23,7 @@ allow-direct-references = true
 
 [project]
 name = 'ipd'
-version = '0.3.7'
+version = '0.3.8'
 requires-python = '>=3.9' # for woodys old pipeline stuff
 dependencies = [
     'assertpy',
