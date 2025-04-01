@@ -314,13 +314,25 @@ def test_bunch_zip_order():
     assert tuple(zipped.keys()) == ('c', 'b', 'a')
 
 def test_search_basic_match():
-    data = Bunch({'name': 'Alice', 'age': 30, 'location': 'New York'})
-    result = data.search('name')
+    data = {'name': 'Alice', 'age': 30, 'location': 'New York'}
+    result = ipd.bunch.search(data, 'name', fuzzy=0)
     assert result == {'name': 'Alice'}
 
 def test_search_nested_match():
     data = {'person': {'name': 'Bob', 'details': {'age': 25, 'location_name': 'Los Angeles'}}}
     result = ipd.bunch.search(data, 'name')
+    ipd.icv(result)
+    assert result == {'person.name': 'Bob', 'person.details.location_name': 'Los Angeles'}
+
+def test_search_bunch():
+    data = Bunch({'person': {'name': 'Bob', 'details': {'age': 25, 'location_name': 'Los Angeles'}}})
+    result = ipd.bunch.search(data, 'name')
+    ipd.icv(result)
+    assert result == {'person.name': 'Bob', 'person.details.location_name': 'Los Angeles'}
+
+def test_bunch_search_bunch():
+    data = Bunch({'person': {'name': 'Bob', 'details': {'age': 25, 'location_name': 'Los Angeles'}}})
+    result = data._search('name')
     ipd.icv(result)
     assert result == {'person.name': 'Bob', 'person.details.location_name': 'Los Angeles'}
 

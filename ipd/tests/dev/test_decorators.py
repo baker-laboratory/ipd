@@ -120,6 +120,13 @@ class TestIterizeOnFirstParam(unittest.TestCase):
 
         self.get_length = get_length
 
+        # Decorator with basetype=str
+        @ipd.dev.iterize_on_first_param(basetype=str, nonempty=True)
+        def remove_first(x):
+            return x[1:] if x else ''
+
+        self.remove_first = remove_first
+
         # Using the pre-configured path decorator
         @ipd.dev.iterize_on_first_param_path
         def process_path(path):
@@ -163,8 +170,8 @@ class TestIterizeOnFirstParam(unittest.TestCase):
 
     def test_tuple_input(self):
         """Test with a tuple input for the first parameter."""
-        assert self.square(self.tuple_data) == [16, 25, 36]
-        assert self.multiply(self.tuple_data, 3) == [12, 15, 18]
+        assert self.square(self.tuple_data) == (16, 25, 36)
+        assert self.multiply(self.tuple_data, 3) == (12, 15, 18)
 
     def test_empty_iterable(self):
         """Test with an empty iterable."""
@@ -173,8 +180,8 @@ class TestIterizeOnFirstParam(unittest.TestCase):
 
     def test_custom_iterable(self):
         """Test with a custom iterable type."""
-        assert self.square(self.custom_iterable) == [1, 4, 9]
-        assert self.multiply(self.custom_iterable, 5) == [5, 10, 15]
+        assert self.square(self.custom_iterable) == CustomIterable(items=[1, 4, 9])
+        assert self.multiply(self.custom_iterable, 5) == CustomIterable(items=[5, 10, 15])
 
     def test_basetype_exclusion(self):
         """Test that basetyped objects are treated as scalars."""
@@ -223,6 +230,12 @@ class TestIterizeOnFirstParam(unittest.TestCase):
         assert set(result) == {1, 4, 9}
         assert len(result) == 3
 
+    def test_remove_first_nonempty(self):
+        """Test with a non-empty iterable."""
+        assert self.remove_first(self.string) == "ello"
+        assert self.remove_first(self.string_list) == ["ello", "orld"]
+        assert self.remove_first(self.string_list + ['a', '']) == ["ello", "orld"]
+
 class TestIterizeableFunction(unittest.TestCase):
     """Test suite for the ipd.dev.is_iterizeable helper function."""
 
@@ -256,7 +269,7 @@ class TestIterizeableFunction(unittest.TestCase):
 
 def test_subscriptable_for_attributes__getitem__():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
         a, b, c = 6, 7, 8
 
@@ -265,7 +278,7 @@ def test_subscriptable_for_attributes__getitem__():
 
 def test_subscriptable_for_attributes_enumerate():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -277,7 +290,7 @@ def test_subscriptable_for_attributes_enumerate():
 
 def test_subscriptable_for_attributes_enumerate_noarg():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -289,7 +302,7 @@ def test_subscriptable_for_attributes_enumerate_noarg():
 
 def test_subscriptable_for_attributes_groupby():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -306,7 +319,7 @@ def test_subscriptable_for_attributes_groupby():
 
 def test_subscriptable_for_attributes_fzf():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):
@@ -333,7 +346,7 @@ def test_subscriptable_for_attributes_fzf():
 
 def test_getitem_picklable():
 
-    @ipd.dev.subscriptable_for_attributes
+    @ipd.subscriptable_for_attributes
     class Foo:
 
         def __init__(self):

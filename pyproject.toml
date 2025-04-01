@@ -23,7 +23,7 @@ allow-direct-references = true
 
 [project]
 name = 'ipd'
-version = '0.3.7'
+version = '0.3.8'
 requires-python = '>=3.9' # for woodys old pipeline stuff
 dependencies = [
     'assertpy',
@@ -41,6 +41,7 @@ dependencies = [
     'opt_einsum',
     # 'pandas',
     'pydantic',
+    'rapidfuzz',
     'requests',
     'requests_cache',
     'rich',
@@ -67,23 +68,30 @@ tools = [
 ml = [
     'torch',
     'pandas',
-    'biotite',
+    'biotite>1.1; python_version>="3.10"',
+    'biotite; python_version<"3.10"',
     'Bio',
 ]
 docs = [
     'sphinx>8;python_version>="3.13"',
-    # 'sphinx-pydata-theme',
+    'sphinx-copybutton',
+    'sphinx-prompt',
+    'sphinxemoji',
+    'sphinx-last-updated-by-git',
     'pydata-sphinx-theme',
-    # 'sphinx-rtd-theme',
     'matplotlib',
     # 'pybtex',
     'sphinx_gallery',
     'standard-imghdr',
-    'torch',
     'fastapi',
     'sqlalchemy',
     'sqlmodel',
-    # 'uvicorn',
+    'uvicorn>=0.34',
+    'biotite>1.1; python_version>="3.10"',
+    'biotite; python_version<"3.10"',
+    'torch',
+    'Bio',
+    'pandas',
     # 'apidoc',
     # 'bibliography',
     # 'preamble',
@@ -112,7 +120,8 @@ dev = [
 ]
 all = [
     'Bio',
-    'biotite',
+    'biotite>1.1; python_version>="3.10"',
+    'biotite; python_version<"3.10"',
     'debugpy',
     'fastapi',
     'gitpython',
@@ -156,7 +165,7 @@ markers = [
 [tool.yapf]
 based_on_style = 'pep8'
 indent_width = 4
-column_limit = 111
+column_limit = 100
 blank_line_before_nested_class_or_def = true
 blank_lines_around_top_level_definition = 1
 arithmetic_precedence_indication = true
@@ -206,7 +215,7 @@ lint.ignore = [
 
 ]
 lint.dummy-variable-rgx = '^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?)|ic)$'
-line-length = 113
+line-length = 100
 target-version = 'py39'
 format.quote-style = 'single'
 format.indent-style = 'space'

@@ -680,7 +680,7 @@ def intersect_planes(p1, n1, p2, n2):
     ])
     perminv = th.empty_like(perm)
     perminv[perm] = th.arange(len(perm))
-    breaks = np.cumsum([0, sum(sel[0]), sum(sel[1]), sum(sel[2])])
+    breaks = ipd.partialsum([0, sum(sel[0]), sum(sel[1]), sum(sel[2])])
     n1 = n1[perm]
     n2 = n2[perm]
     d1 = d1[perm]

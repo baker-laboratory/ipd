@@ -163,7 +163,7 @@ def dump_pdb_from_points(
 ):
     chainstarts = [0]
     if isinstance(pts, list):
-        chainstarts += list(np.cumsum([len(p) for p in pts[:-1]]))
+        chainstarts += list(ipd.partialsum([len(p) for p in pts[:-1]]))
         pts = np.concatenate(pts)
     pts = np.asarray(pts)
     # ipd.icv(pts.shape)

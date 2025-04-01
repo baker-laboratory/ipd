@@ -187,3 +187,4 @@ junit*.xml
 *.sqlite
 
 _autosummary
+_apidoc

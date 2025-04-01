@@ -6,7 +6,8 @@ IPD Documentation
    :caption: Contents:
 
    tutorials/index
-   _apidoc/modules
    examples/index
    dev_guide/index
 
+   modules
+   _apidoc/modules

@@ -15,10 +15,10 @@ console = Console()
 def print(*args, **kw):
     rich.print(*args, **kw)
 
-def make_table(thing, precision=3, **kw):
-    npopt = np.get_printoptions()
-    np.set_printoptions(precision=precision, suppress=True)
-    try:
+def make_table(thing, precision=3, expand=False, **kw):
+    kw['precision'] = precision
+    kw['expand'] = expand
+    with ipd.dev.np_printopts(precision=precision, suppress=True):
         if ipd.homog.is_tensor(thing): return make_table_list(thing, **kw)
         if isinstance(thing, ipd.Bunch): return make_table_bunch(thing, **kw)
         if isinstance(thing, dict): return make_table_dict(thing, **kw)
@@ -26,8 +26,6 @@ def make_table(thing, precision=3, **kw):
         xr = ipd.maybeimport('xarray')
         if xr and isinstance(thing, xr.Dataset): return make_table_dataset(thing, **kw)
         raise TypeError(f'cant make table for {type(thing)}')
-    finally:
-        np.set_printoptions(npopt['precision'], suppress=npopt['suppress'])
 
 def print_table(table, **kw):
     if not isinstance(table, Table):
@@ -114,9 +112,9 @@ def make_table_dataset(dataset, title=None, **kw):
             table.add_row(*row)
     return table
 
-def to_renderable(obj, textmap=None, strip=True, nohomog=False, **kw):
+def to_renderable(obj, textmap=None, strip=True, nohomog=False, precision=3, **kw):
     textmap = textmap or {}
-    if isinstance(obj, float): return f'{obj:7.3f}'
+    if isinstance(obj, float): return f'{obj:7.{precision}f}'
     if isinstance(obj, bool): return str(obj)
     if isinstance(obj, int): return f'{obj:4}'
     if isinstance(obj, Table): return obj
@@ -134,7 +132,7 @@ def summary(obj) -> str:
     if hasattr(obj, 'summary'): return obj.summary()
     if ipd.homog.is_tensor(obj): return ipd.homog.tensor_summary(obj)
     if (bs := sys.modules.get('biotite.structure')) and isinstance(obj, bs.AtomArray):
-        return f'AtomArray({len(obj)})'
+        return f'AtomArray(len: {len(obj)}, cen: {ipd.atom.com(obj).round(3)})'
     if isinstance(obj, (list, tuple)): return [summary(o) for o in obj]
     return obj
 

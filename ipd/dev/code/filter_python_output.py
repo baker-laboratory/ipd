@@ -26,7 +26,6 @@ def filter_python_output(
     **kw,
 ):
     kw = ipd.dev.project_local_config('filter_python_output') | kw
-    assert kw['keep_blank_lines']
     # if entrypoint == 'codetool': return text
     if preset and re_file == re_null: re_file = re_presets[preset].file
     if preset and re_func == re_null: re_func = re_presets[preset].func

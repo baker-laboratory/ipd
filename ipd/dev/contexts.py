@@ -47,7 +47,8 @@ Captured text: Captured output
 >>> import numpy as np
 >>> with temporary_random_seed(42):
 ...    print(np.random.rand(3))
-[0.37454012 0.95071431 0.73199394]
+[0.37454 0.95071 0.73199]
+
 >>> # Outside the context, the previous random state is restored.
 
 ### **Capture Assertion Errors**
@@ -257,3 +258,35 @@ def optional_imports():
         contextlib.suppress(ImportError)
     """
     return contextlib.suppress(ImportError)
+
+_original_print = print
+_current_indent = 0
+
+def indented_print(*args, **kwargs):
+    """
+    A replacement for the print function that adds indentation.
+    """
+    sep = kwargs.get('sep', ' ')
+    indent_str = ' ' * _current_indent
+    content = sep.join(str(arg) for arg in args)
+    indented_content = indent_str + content.replace('\n', '\n' + indent_str)
+    _original_print(indented_content, **kwargs)
+
+@contextlib.contextmanager
+def indent(spaces):
+    """
+    A context manager that indents all print statements within its scope.
+
+    Args:
+        spaces (int): The number of spaces to add to the current indentation level.
+    """
+    global _current_indent
+    if sys.modules['builtins'].print is _original_print:
+        sys.modules['builtins'].print = indented_print
+    _current_indent += spaces
+    try:
+        yield
+    finally:
+        _current_indent -= spaces
+        if _current_indent == 0:
+            sys.modules['builtins'].print = _original_print

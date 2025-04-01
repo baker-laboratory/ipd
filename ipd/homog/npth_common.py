@@ -33,3 +33,9 @@ def tensor_summary(tensor, maxnumel=24):
 
 def all_lte(a, b):
     return np.all(np.asarray(a) <= np.asarray(b))
+
+def np_array(val):
+    try:
+        return np.asarray(val)
+    except ValueError:
+        return np.asarray(val, dtype=object)

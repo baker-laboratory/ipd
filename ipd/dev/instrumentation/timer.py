@@ -130,8 +130,12 @@ class Timer:
         self,
         order="longest",
         summary="sum",
-        timecut: float = 0,
+        timecut: float = 0.001,
+        finish=True,
+        **kw,
     ):
+        if finish: self.checkpoint('pre-report')
+        if len(self.checkpoints) <= 5: timecut = 0
         if not callable(summary):
             if summary not in _summary_types:
                 raise ValueError("unknown summary type: " + str(summary))
@@ -153,15 +157,15 @@ class Timer:
         precision="10.5f",
         printme=True,
         scale=1.0,
-        timecut=0.001,
         file=None,
         pattern="",
+        spacer=0,
+        **kw,
     ):
-        if len(self.checkpoints) <= 1: timecut = 0
-        namelen = min(namelen, max(len(n.rstrip("$")) for n in self.checkpoints) if self.checkpoints else 0)
+        namelens = [len(n.rstrip("$")) for n in self.checkpoints]
+        namelen = min(namelen, max(namelens) if self.checkpoints else 0)
         lines = [f"Timer.report: {self.name} order={order}: summary: {summary}"]
-        times = self.report_dict(order=order, summary=summary, timecut=timecut)
-
+        times = self.report_dict(order=order, summary=summary, **kw)
         if not times: times["total$$$$"] = time.perf_counter() - self._start
         for checkpoint, t in times.items():
             if not checkpoint.count(pattern): continue
@@ -170,12 +174,15 @@ class Timer:
             lines.append(f'{t*scale:{precision}} {a} {cpstr:<{namelen}}')
             if scale == 1000: lines[-1] += "ms"
         r = os.linesep.join(lines)
-        if printme:
-            if file is None:
-                print(r, flush=True)
-            else:
-                with open(file, "w") as out:
-                    out.write(r + os.linesep)
+        if printme and file is None:
+            for i in range(spacer):
+                print()
+            print(r, flush=True)
+            for i in range(spacer):
+                print()
+        elif printme:
+            with open(file, "w") as out:
+                out.write(r + os.linesep)
         return r
 
     @property

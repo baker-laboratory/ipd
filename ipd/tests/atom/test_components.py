@@ -6,10 +6,23 @@ h = ipd.hnumpy
 
 pytest.importorskip('biotite')
 
-# import ipd.atom.atom_geom
+COMPONENTS_TEST_PDBS = [
+    '6u9d',
+]
 
 def main():
     ipd.tests.maintest(namespace=globals())
+
+def test_components_detection_6u9d():
+    atoms = ipd.atom.load('6u9d', assembly='1')[0]
+    atoms = ipd.atom.centered(atoms, primary_only=True)
+    comp = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
+    assert len(comp.frames[0]) == 8
+    assert len(comp.frames[1]) == 8
+    # ipd.showme(comp.frames[0], 'frames_comp0', xyzlen=[11,11,11], weight=15)
+    # ipd.showme(comp.frames[1], 'frames_comp1', xyzlen=[1e1,11,11], weight=15)
+    # ipd.showme(atoms, name='original', xyzlen=[11,11,11], weight=15)
+    # assert h.allclose(comp.frames[0], comp.frames[1])
 
 def test_seqaln_rmsfit_1dxh():
     atoms = ipd.atom.get('1dxh', assembly='largest', het=False, chainlist=True)
@@ -48,7 +61,7 @@ def test_seqaln_rmsfit_multicomp_substruct():
     assert np.allclose(1, found.seqmatch[1])
 
 def test_stub():
-    atoms = ipd.tests.top7
+    atoms = ipd.atom.load('1qys')
     stub = ipd.atom.stub(atoms)
     assert ipd.homog.hvalid44(stub)
 

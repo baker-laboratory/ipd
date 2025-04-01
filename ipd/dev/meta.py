@@ -116,9 +116,9 @@ def picklocals(name, idx=None):
 
     """
     if sys.version_info.minor < 12:
-        val = inspect.currentframe().f_back.f_back.f_back.f_locals[name]  # type: ignore
+        val = inspect.currentframe().f_back.f_back.f_back.f_back.f_locals[name]  # type: ignore
     else:
-        val = inspect.currentframe().f_back.f_back.f_locals[name]  # type: ignore
+        val = inspect.currentframe().f_back.f_back.f_back.f_locals[name]  # type: ignore
     if idx is None:
         return val
     return val[idx]

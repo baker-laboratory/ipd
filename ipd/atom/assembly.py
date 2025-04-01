@@ -16,7 +16,7 @@ h = ipd.hnumpy
 bs = ipd.lazyimport('biotite.structure')
 
 @ipd.dev.holds_metadata
-@ipd.dev.subscriptable_for_attributes
+@ipd.subscriptable_for_attributes
 @dataclass
 class Assembly:
     bodies: list[Body]
@@ -68,7 +68,7 @@ def assembly_from_file(
     atomslist = ipd.pdb.readatoms(fname, chainlist=True, assembly=assembly, **kw)
     assert isinstance(atomslist, list)
     components = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, **kw)
-    ipd.atom.process_components(components, **kw)
+    ipd.atom.merge_small_components(components, **kw)
     bodies = to_bodies(components.atoms, **kw)
     # print([b.summary() for b in bodies])
     return Assembly(bodies, components.frames, _atomslist=atomslist)

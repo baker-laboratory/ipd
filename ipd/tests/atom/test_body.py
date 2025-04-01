@@ -154,7 +154,7 @@ def helper_test_symbody_contact_scan(symbody):
     topk = contactmat.topk_fragment_contact_by_subset_summary(fragsize=21, k=13, stride=7)
     assert topk.index.keys() == topk.vals.keys()
     for subs, idx in topk.index.items():
-        ic(subs, idx[:4], topk.vals[subs][:4])
+        print(subs, idx[:,:4], topk.vals[subs][:4])
 
 ipd.tests.make_parametrized_tests(
     globals(),

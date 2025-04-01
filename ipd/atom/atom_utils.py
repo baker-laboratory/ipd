@@ -34,13 +34,13 @@ Usage Examples:
 """
 
 import os
+import numpy.typing as npt
 import typing
 import numpy as np
 import ipd
 
 if typing.TYPE_CHECKING:
     from biotite.structure import AtomArray
-    from biotite.sequence import Sequence
 
 bs = ipd.lazyimport('biotite.structure')
 
@@ -103,7 +103,7 @@ def chain_dict(atoms):
 
 @ipd.dev.timed
 @ipd.dev.iterize_on_first_param(basetype='AtomArray')
-def to_seq(atoms, pick_longest=False) -> 'Sequence':
+def to_seq(atoms, pick_longest=False) -> tuple:
     import biotite.sequence
     # atoms = atoms[~atoms.hetero & np.isin(atoms.atom_name, np.array(['CA', 'P'], dtype='>U5'))]
     assert np.all(np.isin(atoms.atom_name, np.array(['CA', 'P'],
@@ -114,8 +114,9 @@ def to_seq(atoms, pick_longest=False) -> 'Sequence':
         isprot.append(_isprot)
         if isprot: seqs.append(biotite.sequence.ProteinSequence(seq))
         else: seqs.append(biotite.sequence.NucleotideSequence(seq))
-    lens = np.array(list(map(len, seqs)))
-    starts, stops = np.cumsum([0] + lens), np.cumsum(lens + [0])
+    lens = list(map(len, seqs))
+    starts, stops = ipd.partialsum([0] + lens), ipd.partialsum(lens + [0])
+    lens = np.array(lens)
     if pick_longest:
         i = np.argmax(lens)
         return seqs[i], starts[i], stops[i], isprot[i]
@@ -236,7 +237,7 @@ def pick_representative_chains(atomslist):
     return chains
 
 @ipd.dev.iterize_on_first_param(basetype='AtomArray', asnumpy=True)
-def is_protein(atoms, strict_protein_or_nucleic=False) -> bool:
+def is_protein(atoms, strict_protein_or_nucleic=False) -> npt.NDArray[np.bool_]:
     """
     Check if an atomic structure is a protein.
 
@@ -278,6 +279,55 @@ def join(atomslist, one_letter_chain=True):
     assert isinstance(atoms, bs.AtomArray), f'bad join {type(atoms)=} {len(atoms)=}'
     return atoms
 
+@ipd.iterize_on_first_param(basetype='AtomArray', nonempty=True)
+def remove_garbage_residues(atoms, garbage_res=()):
+    garbage_res = garbage_res or garbage_residues
+    return atoms[np.isin(atoms.res_name, garbage_res, invert=True)]
+
+@ipd.iterize_on_first_param(basetype='AtomArray', nonempty=True)
+def remove_nan_atoms(atoms):
+    return atoms[~np.any(np.isnan(atoms.coord), axis=1)]
+
+@ipd.iterize_on_first_param(basetype='AtomArray', nonempty=True)
+def remove_nonprotein(atoms):
+    return atoms[np.isin(atoms.res_name, list(amino_acid_321.keys()))]
+
+@ipd.iterize_on_first_param(basetype='AtomArray', nonempty=True)
+def primary_polymer_atoms(atoms):
+    idx = (atoms.atom_name == 'CA') & (np.isin(atoms.res_name, np_amino_acid))
+    idx |= (atoms.atom_name == 'P') & (np.isin(atoms.res_name, np_nucleotide))
+    assert np.sum(idx)
+    return atoms[idx]
+
+@ipd.iterize_on_first_param(basetype='AtomArray')
+def com(atoms):
+    return bs.mass_center(atoms)
+
+@ipd.iterize_on_first_param(basetype='AtomArray')
+def centered(atoms, primary_only=True, ignore_nan=True, ignore_garbage=True):
+    ref = atoms = atoms.copy()
+    if primary_only: ref = primary_polymer_atoms(ref)
+    if ignore_nan: ref = remove_nan_atoms(ref)
+    if ignore_garbage: ref = remove_garbage_residues(ref)
+    if len(ref) == 0:
+        raise ValueError("No primary atoms found after filtering.")
+    ic(ref.coord)
+    cen = bs.mass_center(ref)
+    atoms.coord -= cen
+    return atoms
+
+@ipd.iterize_on_first_param(basetype='AtomArray')
+def info(atoms, wrap_ctx):
+    if wrap_ctx.firstcall:
+        print(f'ipd.atom.info: {wrap_ctx.input_type()}')
+        wrap_ctx.firstcall = False
+    nchain = len(np.unique(atoms.chain_id))
+    if nchain > 1:
+        wrap_ctx.print(f'atoms {atoms.shape=}')
+        wrap_ctx.print('atoms chain_dict', chain_dict(atoms))
+    else:
+        wrap_ctx.print(f'atoms {atoms.shape} chain {atoms.chain_id[0]}')
+
 amino_acid_321 = {
     'ALA': 'A',
     'ARG': 'R',
@@ -316,3 +366,6 @@ nucleotide_321 = {
 }
 np_amino_acid = np.array(list(amino_acid_321.keys()), dtype='>U5')
 np_nucleotide = np.array(list(nucleotide_321.keys()), dtype='>U5')
+peptide_backbone_atoms = ["N", "CA", "C"]
+phosphate_backbone_atoms = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+garbage_residues = 'GOL EDO MPD BME PEG DMS TPP MG'.split()

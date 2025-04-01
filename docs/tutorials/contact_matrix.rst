@@ -1,13 +1,18 @@
+.. _contact_matrix:
+
 ===========================================================================
 Cumulative sums primer and rapid contact matrix processing
 ===========================================================================
 
+.. contents:: Table of Contents
+   :depth: 3
+
 Cumulative sums, 1D basics
 --------------------------
 
-ContactMatrixStack uses a precomputed 2D cumsum array for efficient region-based queries. To explain
-start with the 1D cumsum case. ``DATA`` is a 1D array and ``SUMS`` is the cumulative sum
-of ``DATA`` (``np.cumsum(DATA)``. If we want the sum of ``DATA[i:j]`` we can compute it as
+ContactMatrixStack uses a precomputed 2D partialsum array for efficient region-based queries. To explain
+start with the 1D partialsum case. ``DATA`` is a 1D array and ``SUMS`` is the cumulative sum
+of ``DATA`` (``ipd.partialsum(DATA)``. If we want the sum of ``DATA[i:j]`` we can compute it as
 ``SUMS[j] - SUMS[i]``.
 
 .. code-block:: python
@@ -34,7 +39,7 @@ Setup
 >>> import ipd
 >>> data = np.random.rand(500)
 >>> sums = np.zeros(len(data)+1)
->>> sums[1:] = np.cumsum(data)  # yes, it's really called that... in torch too.
+>>> sums[1:] = ipd.partialsum(data)
 >>> slice_sums1 = np.zeros((len(data), len(data)))
 >>> slice_sums2 = np.zeros((len(data), len(data)))
 >>> timer = ipd.dev.Timer('Cumsum Perf Example')
@@ -46,17 +51,17 @@ Compute all sums the brute force way
 ...         slice_sums1[i, j] = data[i:j].sum()
 >>> _ = timer.checkpoint('dumb way, summing explicitly like a barbarian')
 
-Compute all sums using cumsum
+Compute all sums using partialsum
 
 >>> for i in range(len(data)):
 ...     for j in range(i, len(data)):
 ...         slice_sums2[i, j] = sums[j] - sums[i]
->>> _ = timer.checkpoint('kinda smarter way using cumsum')
+>>> _ = timer.checkpoint('kinda smarter way using partialsum')
 
-Compute all sums using cumsum without loops
+Compute all sums using partialsum without loops
 
 >>> slice_sums3 = np.maximum(0, sums[None, :-1] - sums[:-1, None])
->>> _ = timer.checkpoint('big brain way using cumsum and numpy broadcasting')
+>>> _ = timer.checkpoint('big brain way using partialsum and numpy broadcasting')
 
 Verify results
 
@@ -64,35 +69,34 @@ Verify results
 True
 >>> np.allclose(slice_sums1, slice_sums3)
 True
->>> # check runtimes, note how much faster cumsum + broadcasting is
+>>> # check runtimes, note how much faster partialsum + broadcasting is
 >>> timer.report(timecut=0)  # doctest: +SKIP
 Timer.report: Cumsum Perf Example order=longest: summary: sum
    0.19970 * dumb way, summing explicitly like a barbarian
-   0.03875 * kinda smarter way using cumsum
-   0.00078 * big brain way using cumsum and numpy broadcasting
+   0.03875 * kinda smarter way using partialsum
+   0.00078 * big brain way using partialsum and numpy broadcasting
 
 Cumulative sums, 2D
 -------------------
 
-Note how much faster the cumsum + broadcasting version was for the 1D version, almost 1000x faster.
+Note how much faster the partialsum + broadcasting version was for the 1D version, almost 1000x faster.
 It makes an even bigger difference in the 2D case because the arrays tend to be much larger.
 
-.. figure:: ../_static/img/cumsum2d.png
-   :scale: 67 %
-   :alt: cumsum2d illustration
+.. figure:: ../_static/img/partialsum2d.png
+   :alt: partialsum2d illustration 
 
    Illustration of data 2D with pink region to be "summed" and 2D cumulative sum array from which four points are needed to computs the "sum:" ``sum = CSUM[ub1,ub2] (red point) + CSUM[lb1,lb2] (green point) - CUSM[ub1,lb2] (blue point) - CSUM[lb1,lb2] (blue point``.
 
 The method :py:meth:`ContactMatrixStack.fragment_contact` uses this idea to compute the total contacts of all
-pairs of fragments of a given length using a 2D cumsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
+pairs of fragments of a given length using a 2D partialsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
 compute every fragment pair, so stride is mainly useful as simple way to reduce redundancy.
 
 >>> def fragment_contact(self, fragsize, stride=1):
 ...   result = (
-...     self.cumsum[:, fragsize:         :stride, fragsize:         :stride] -
-...     self.cumsum[:, fragsize:         :stride,         :-fragsize:stride] -
-...     self.cumsum[:,         :-fragsize:stride, fragsize:         :stride] +
-...     self.cumsum[:,         :-fragsize:stride,         :-fragsize:stride] )
+...     self.partialsum[:, fragsize:         :stride, fragsize:         :stride] -
+...     self.partialsum[:, fragsize:         :stride,         :-fragsize:stride] -
+...     self.partialsum[:,         :-fragsize:stride, fragsize:         :stride] +
+...     self.partialsum[:,         :-fragsize:stride,         :-fragsize:stride] )
 
 This function retuns an ``S x M x N`` array containing the total contacts for all pairs of fragments for each contact matrix s in the stack: ``fragment1`` starting at m ending at ``m + fragsize``, to fragment2 starting at ``n`` and ending at ``n - fragsize``.
 

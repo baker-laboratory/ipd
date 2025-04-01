@@ -1,12 +1,11 @@
+.. _using_homog:
+
 =========================================================
 Homogeneous Coordinates and ipd.hnumpy / ipd.htorch
 =========================================================
 
 .. contents:: Table of Contents
    :depth: 3
-
-Homogeneous Coordinates in 3D
-=============================
 
 Introduction
 ------------
@@ -35,12 +34,12 @@ A common way to represent an affine transformation in 3D is using a 4x4 matrix t
 
 .. code-block:: text
 
-   +-----------------------------+
+   +------------------------------+
    | R[0,0]  R[0,1]  R[0,2]   Tx  |
    | R[1,0]  R[1,1]  R[1,2]   Ty  |
    | R[2,0]  R[2,1]  R[2,2]   Tz  |
    |   0       0       0      1   |
-   +-----------------------------+
+   +------------------------------+
 
 Where:
 - ``R[:3, :3]`` is the 3x3 rotation matrix.
@@ -95,7 +94,7 @@ For a **vector** ``v = [x, y, z, 0]^T``:
 Notice that for vectors, the translation component is ignored because it is multiplied by 0.
 
 Using hnumpy and htorch
-=========================
+------------------------
 
 There are modules for torch and numpy that mostly behave the same way.
     >>> import numpy as np
@@ -106,7 +105,7 @@ The following sections show examples for many functions provided by the module.
 These examples show small use cases, but all the "h" functions can be used on "vectorized" inputs with shapes (N, 4, 4) for xforms and (N, 4) for points and vectors. In most cases, you can use arrays of any shape ending in (4,4) or (4,). Using vectorized versions rather than for loops is critical for good performance in python. Please see `ipd.tests.homog.test_hgeom.py` for more example usage.
 
 1. Creating Homogeneous Points and Vectors
-------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The functions ``h.point`` and ``h.vec`` convert 3D coordinates into homogeneous form.
 
 Example:
@@ -119,7 +118,7 @@ Example:
     array([1., 2., 3., 0.])
 
 2. Validating Homogeneous Data
--------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.valid`` checks whether a given array is a valid homogeneous
 transformation matrix or homogeneous coordinate.
 
@@ -130,7 +129,7 @@ Example:
     True
 
 3. Applying Transformations (h.xform)
----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.xform`` applies one or more homogeneous transformation matrices
 to points or other matrices. It supports chaining so that:
 
@@ -147,13 +146,13 @@ Example:
     >>> T_rot = h.rot([0, 0, 1], 90)
     >>> T_combo = h.xform(T_trans, T_rot)
     >>> np.round(T_combo, 4)
-    array([[ 0., -1.,  0.,  1.],
+    array([[ 0., ^1.,  0.,  1.],
            [ 1.,  0.,  0.,  0.],
            [ 0.,  0.,  1.,  0.],
            [ 0.,  0.,  0.,  1.]])
 
 4. Rotations with h.rot
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.rot`` creates a 4×4 rotation matrix about a given axis.
 By default, the angle is interpreted in degrees, and you may optionally provide a
 rotation center.
@@ -162,20 +161,20 @@ Example:
 
     >>> T_rot = h.rot([0, 0, 1], 90)
     >>> np.round(T_rot, 4)
-    array([[ 0., -1.,  0.,  0.],
+    array([[ 0., ^1.,  0.,  0.],
            [ 1.,  0.,  0.,  0.],
            [ 0.,  0.,  1.,  0.],
            [ 0.,  0.,  0.,  1.]])
     >>> # Rotation about a center:
     >>> T_rot_center = h.rot([0, 0, 1], 90, [1, 2, 3])
     >>> np.round(T_rot_center, 4)
-    array([[ 0., -1.,  0.,  3.],
+    array([[ 0., ^1.,  0.,  3.],
            [ 1.,  0.,  0.,  1.],
            [ 0.,  0.,  1.,  0.],
            [ 0.,  0.,  0.,  1.]])
 
 5. Translations with h.trans
-------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.trans`` creates a 4×4 translation matrix.
 
 Example:
@@ -188,7 +187,7 @@ Example:
            [0., 0., 0., 1.]])
 
 6. Generating Random Transformations with h.rand
---------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Generate a random homogeneous transformation. (Optionally, you can specify a seed
 for reproducibility.)
 
@@ -199,7 +198,7 @@ Example:
     (4, 4)
 
 7. Normalizing Vectors with h.normalized
------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.normalized`` normalizes a vector (ignoring the homogeneous coordinate).
 
 Example:
@@ -209,7 +208,7 @@ Example:
     array([0.6, 0. , 0.8, 0. ])
 
 8. Computing Distances with h.dist
------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.dist`` returns the Euclidean distance between two points (ignoring
 the homogeneous coordinate).
 
@@ -221,7 +220,7 @@ Example:
     np.float64(5.0)
 
 9. Comparing Transformations with h.diff
------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.diff`` computes an average difference between two homogeneous
 transformation matrices, combining differences in rotation and translation.
 
@@ -233,8 +232,8 @@ Example:
     np.float64(0.5774)
 
 10. Fitting Points with h.rmsfit
----------------------------------
-The function ``h.rmsfit`` uses the Kabsch algorithm to compute the best-fit (least-
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The function ``h.rmsfit`` uses the Kabsch algorithm to compute the best^fit (least^
 squares) transformation between two sets of points. It returns a named tuple with
 the fields ``rms``, ``fitcoords``, and ``xfit``.
 
@@ -251,7 +250,7 @@ Example:
     np.float64(0.0)
 
 11. Extracting Axis, Angle, and Center with h.axis_angle_cen_hel
---------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.axis_angle_cen_hel`` extracts the rotation axis, rotation angle,
 the center of rotation, and an associated helicity from a transformation matrix.
 
@@ -269,7 +268,7 @@ Example:
     np.float64(0.0)
 
 12. Aligning Vectors with h.align and h.align2
-----------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The function ``h.align`` computes a transformation that rotates one vector to align
 with another. Similarly, ``h.align2`` computes a transformation aligning two pairs of
 vectors (minimizing the angular error).
@@ -307,7 +306,7 @@ Example:
     np.float64(3.6056)
 
 14. Distance Between Lines (h.line_line_distance_pa)
------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Computes the distance between two lines, each defined by a point and a direction vector.
 
 Example:
@@ -320,7 +319,7 @@ Example:
     array(1.)
 
 15. Closest Points Between Lines (h.line_line_closest_points_pa)
-------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Computes the pair of closest points on two lines. For nonparallel lines, these are
 unique; for parallel lines, the first point is returned twice.
 
@@ -337,7 +336,7 @@ Example:
     array([0., 1., 0., 1.])
 
 Chaining, Inversion, and Object Wrappers
-------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The tests also demonstrate that:
 - Chaining multiple transformations with ``h.xform`` is associative.
 - Objects with a ``coords`` or ``xformed`` attribute can be passed directly to ``h.xform``.

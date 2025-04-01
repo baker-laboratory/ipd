@@ -1,9 +1,5 @@
 """
-Module: ipd.atom.body
-=====================
-
-This module defines the Body class that represents a collection of atoms organized
-as a coherent structure. It provides methods for spatial operations such as clash
+Provides Body classes holding AtomArrays augmented with performance enhancements and extra structural information. It provides methods for spatial operations such as clash
 and contact detection and supports transformation operations through homogeneous
 transforms (using the ipd.homog.hgeom module).
 
@@ -93,7 +89,7 @@ def symbody_from_file(
         assert 0
     else:
         comp = ipd.atom.find_components_by_seqaln_rmsfit(atomslist, **kw)
-        ipd.atom.process_components(comp, **kw)
+        ipd.atom.merge_small_components(comp, **kw)
         # ipd.icv(comp.frames[0][3], comp.frames[1][3])
         # ipd.showme(h.xform(comp.frames[0],h.trans([1,3,10])) , xyzscale=4, weight=4,name='baz')
         # ipd.showme(h.xform(comp.frames[1][0::2],h.trans([1,3,10])) , xyzscale=4, weight=4,name='bar')
@@ -250,11 +246,18 @@ class SymBody:
 
     def __post_init__(self):
         assert h.valid44(self.frames)
+        if isinstance(self.asu, bs.AtomArray):
+            self.asu = Body(self.asu)
         self._atombvh = self.asu._atombvh
         self._resbvh = self.asu._resbvh
 
     def __len__(self):
         return len(self.frames)
+
+    def subs(self, without=()):
+        """Return the indices of the subunits that are included in this SymBody."""
+        if not isinstance(without, ipd.Iterable): without = [without]
+        return [i for i in range(len(self.frames)) if i not in without]
 
     def isclose(self, other):
         return self.asu.isclose(other.asu) and h.allclose(self.frames, other.frames)
@@ -284,6 +287,17 @@ class SymBody:
         result = _bvh_binary_operation(hg.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
         p, r = ipd.cast(tuple[np.ndarray, np.ndarray], result)
         return BodyContacts(self, other or self, p, r, exclude)
+
+    def subunit_contacts(self, subunit=0, radius=5):
+        subs = list(range(len(self)))
+        subs.remove(subunit)
+        asu = self.bodies[subunit]
+        return self.contacts(asu, exclude=subunit, radius=radius)
+
+    def subunit_contact_matrix(self, subunit=0, radius=5):
+        contactlist = self.subunit_contacts(subunit, radius=radius)
+        contactmat = contactlist.contact_matrix_stack(self.asu.atoms.res_id)
+        return contactmat
 
     def slide_into_contact(self, other, along=(1, 0, 0), radius=3.0) -> 'SymBody':
         return ipd.cast(SymBody, Body.slide_into_contact(self, other, along, radius))  # type: ignore
@@ -337,7 +351,7 @@ class SymBody:
     def __str__(self):
         with ipd.dev.capture_stdio() as printed:
             print(f'SymBody:\n{self.asu}')
-            print(f'Frames:\n{self.frames}')
+            print(f'Frames:\n{self.frames.shape}')
         return printed.read()
 
     def __eq__(self, other):
@@ -387,7 +401,7 @@ def _bvh_binary_operation(
 
 @ipd.dc.dataclass
 class BodyContacts:
-    symbody1: SymBody
+    symbody: SymBody
     body2: ipd.Union[Body, SymBody]
     pairs: ipd.NDArray_N2_int32
     ranges: ipd.NDArray_MN2_int32
@@ -401,7 +415,8 @@ class BodyContacts:
     nuniq = property(lambda self: np.unique(self.pairs.flat).size)
 
     def __post_init__(self):
-        self.body2 = self.body2 or self.symbody1
+        self.subs = self.symbody.subs(without=self.exclude)
+        self.body2 = self.body2 or self.symbody
 
     def __len__(self):
         return len(self.pairs)
@@ -409,7 +424,7 @@ class BodyContacts:
     def __iter__(self):
         bodies2 = [(0, self.body2)] if isinstance(self.body2, Body) else enumerate(self.body2.bodies)
         isub1 = 0
-        for i, sub1 in enumerate(self.symbody1.bodies):
+        for i, sub1 in enumerate(self.symbody.bodies):
             if i in self.exclude: continue
             for isub2, sub2 in bodies2:
                 lb, ub = self.ranges[isub1, isub2]
@@ -418,7 +433,7 @@ class BodyContacts:
             isub1 += 1
 
     def contact_matrix_stack(self, tokens1=None, tokens2=None):
-        if tokens1 is None: tokens1 = self.symbody1.asu.atoms.res_id
+        if tokens1 is None: tokens1 = self.symbody.asu.atoms.res_id
         if tokens2 is None: tokens2 = self.body2.asu.atoms.res_id
         tokens1, tokens2 = ipd.cast(np.ndarray, tokens1), ipd.cast(np.ndarray, tokens2)
         assert isinstance(self.body2, Body)
@@ -426,12 +441,15 @@ class BodyContacts:
         mats, subs = [], []
         for isub1, isub2, sub1, sub2, iatom1, iatom2 in self:
             if not len(iatom1): continue
+            assert isub2 == 0
             mat = np.zeros((mx1 - mn1 + 1, mx2 - mn2 + 1), dtype=np.int32)
             lev1, lev2 = tokens1[iatom1], tokens2[iatom2]
             np.add.at(mat, (lev1 - mn1, lev2 - mn2), 1)
             mats.append(mat.T)  # so asu is first
-            subs.append(isub1)
-        return ipd.homog.ContactMatrixStack(np.stack(mats), np.stack(subs))
+            subs.append(self.subs[isub1])
+        isub0 = self.exclude[0] if len(self.exclude) == 1 else None
+        return ipd.homog.ContactMatrixStack(np.stack(mats), np.stack(subs), isub0=isub0)
 
     def __repr__(self):
-        return f'SymContacts(ranges: {self.ranges.shape} pairs: {self.pairs.shape})'
+        return f'SymContacts(subs: {self.exclude} vs {self.subs} ranges: {self.ranges.shape[:2]} pairs: {self.pairs.shape[0]})'
+

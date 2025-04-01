@@ -25,7 +25,8 @@ def test_summary_numpy():
 def test_summary_atomarray():
     pytest.importorskip('biotite')
     atoms = ipd.atom.get('1qys')
-    assert ipd.dev.summary(atoms) == "AtomArray(692)"
+    print(ipd.dev.summary(atoms) )
+    assert ipd.dev.summary(atoms) == "AtomArray(len: 692, cen: [ 4.21   5.341 11.528])"
 
 # def test_print_table_bunch():
 # ipd.dev.print_table_bunch(bunch)

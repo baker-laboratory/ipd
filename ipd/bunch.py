@@ -2,6 +2,7 @@ import contextlib
 import hashlib
 import os
 import shutil
+from rapidfuzz import fuzz
 from pathlib import Path
 from typing import Generic, TypeVar, Mapping, Iterable
 from ipd.dev.element_wise import element_wise_operations
@@ -16,18 +17,24 @@ __all__ = ('Bunch', 'bunchify', 'unbunchify', 'make_autosave_hierarchy', 'unmake
 
 T = TypeVar('T')
 
-def search(haystack, needle, path='', seenit=None):
+def strmatch(a, b, fuzzy=.2, partial='auto'):
+    if not fuzzy: return a in b
+    func = fuzz.ratio
+    if partial is True or (partial=='auto' and max(len(a), len(b)) > 10): func = fuzz.partial_ratio
+    return func(a, b) >= 1-frac
+
+def search(haystack, needle, fuzzy=0, partial='auto', path='', seenit=None, matcher=fuzz.partial_ratio):
     seenit = seenit or set()
     found = {}
     if id(haystack) in seenit: return found
     seenit.add(id(haystack))
     items = enumerate(haystack)
     if isinstance(haystack, Mapping):
-        found |= {f'{path}{k}': v for k, v in haystack.items() if needle in k}
+        found |= {f'{path}{k}': v for k, v in haystack.items() if strmatch(needle, k, fuzzy, partial)}
         items = haystack.items()
     for k, v in items:
         if isinstance(v, (Mapping, Iterable)):
-            found |= search(v, needle, f"{path}{k}.", seenit)
+            found |= search(v, needle, fuzzy, partial, f"{path}{k}.", seenit, matcher)
     return found
 
 @subscriptable_for_attributes
@@ -38,6 +45,7 @@ class Bunch(dict, Generic[T]):
 
     keys must be strings. Can autosync with a .yaml file on disk. supports parent-child relationships. has considerable runtime overhead compared to a normal dict, so dont use in place of one. can
     """
+    _search = search
 
     def __init__(
         self,
@@ -201,10 +209,9 @@ class Bunch(dict, Generic[T]):
 
     def __getattr__(self, k: str) -> T:
         self._autoreload_check()
-        if k == "_special":
-            raise ValueError("_special is a reseved name for Bunch")
-        if k == "__deepcopy__":
-            return None
+        if k == '_special': raise ValueError("_special is a reseved name for Bunch")
+        if k == '__deepcopy__': return None
+        if k == '__origin__': return None
         if self.__dict__['_special']["strict_lookup"] and k not in self:
             if self.__dict__['_special']['default']:
                 self[k] = new = self.default(k)
@@ -361,6 +368,7 @@ class Bunch(dict, Generic[T]):
             w = int(min(40, max(len(str(k)) for k in self)))
             for k, v in self.items():
                 s += f'  {k:{f"{w}"}} = {ipd.dev.summary(v)}{os.linesep}\n'
+            s = s.rstrip()
             s += ")"
         return s
 
