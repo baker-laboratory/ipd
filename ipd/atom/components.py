@@ -271,31 +271,7 @@ class Components:
             del self.source_[i]
 
     def __len__(self):
-        """
-        Return the number of aligned atomic structures.
-
-        Returns:
-            int:
-                The number of atomic structures stored in the container.
-        """
         return len(self.atoms)
-
-    def __getitem__(self, key: object) -> object:
-        """
-        Retrieve item(s) from the Components container by key.
-
-        This method provides attribute-based access to the underlying data, aiding static type checkers.
-
-        Parameters:
-            key (object):
-                The key or index of the desired attribute.
-
-        Returns:
-            object:
-                The value associated with the given key.
-        """
-        # Implementation detail for attribute access (if needed)
-        pass
 
 def stub(atoms):
     """
@@ -318,10 +294,10 @@ def stub(atoms):
         >>> atoms = ipd.atom.get('1qys')
         >>> frame = stub(atoms)
         >>> print(frame)
-        [[ 0.91638034  0.33895946 -0.21296376  4.20984915]
-         [ 0.06904252  0.39019742  0.91813894  5.34146775]
-         [ 0.39430978 -0.85606802  0.33416662 11.52761865]
-         [ 0.          0.          0.          1.        ]]
+        [[ 0.91638  0.33896 -0.21296  4.20985]
+         [ 0.06904  0.3902   0.91814  5.34147]
+         [ 0.39431 -0.85607  0.33417 11.52762]
+         [ 0.       0.       0.       1.     ]]
     """
     cen = bs.mass_center(atoms)
     _, sigma, Components = np.linalg.svd(atoms.coord[atoms.atom_name == 'CA'] - cen)
@@ -376,7 +352,7 @@ def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
             accumulator(xfit, rms, matchfrac, i, match)
     return True
 
-def process_components(
+def merge_small_components(
     components: Components,
     pickchain: str = 'largest',
     merge_chains: bool = True,

@@ -17,9 +17,9 @@ Key features
 Cumulative sums, 1D basics
 --------------------------
 
-ContactMatrixStack uses a precomputed 2D cumsum array for efficient region-based queries. To explain
-start with the 1D cumsum case. ``DATA`` is a 1D array and ``SUMS`` is the cumulative sum
-of ``DATA`` (``np.cumsum(DATA)``. If we want the sum of ``DATA[i:j]`` we can compute it as
+ContactMatrixStack uses a precomputed 2D partialsum array for efficient region-based queries. To explain
+start with the 1D partialsum case. ``DATA`` is a 1D array and ``SUMS`` is the cumulative sum
+of ``DATA`` (``ipd.partialsum(DATA)``. If we want the sum of ``DATA[i:j]`` we can compute it as
 ``SUMS[j] - SUMS[i]``.
 
 .. code-block:: python
@@ -45,7 +45,7 @@ Setup
 >>> import numpy as np
 >>> data = np.random.rand(500)
 >>> sums = np.zeros(len(data)+1)
->>> sums[1:] = np.cumsum(data)  # yes, it's really called that... in torch too.
+>>> sums[1:] = ipd.partialsum(data)  # yes, it's really called that... in torch too.
 >>> slice_sums1 = np.zeros((len(data), len(data)))
 >>> slice_sums2 = np.zeros((len(data), len(data)))
 >>> timer = ipd.dev.Timer('Cumsum Perf Example')
@@ -57,17 +57,17 @@ Compute all sums the brute force way
 ...         slice_sums1[i, j] = data[i:j].sum()
 >>> _ = timer.checkpoint('dumb way, summing explicitly like a barbarian')
 
-Compute all sums using cumsum
+Compute all sums using partialsum
 
 >>> for i in range(len(data)):
 ...     for j in range(i, len(data)):
 ...         slice_sums2[i, j] = sums[j] - sums[i]
->>> _ = timer.checkpoint('kinda smarter way using cumsum')
+>>> _ = timer.checkpoint('kinda smarter way using partialsum')
 
-Compute all sums using cumsum without loops
+Compute all sums using partialsum without loops
 
 >>> slice_sums3 = np.maximum(0, sums[None, :-1] - sums[:-1, None])
->>> _ = timer.checkpoint('big brain way using cumsum and numpy broadcasting')
+>>> _ = timer.checkpoint('big brain way using partialsum and numpy broadcasting')
 
 Verify results
 
@@ -75,35 +75,34 @@ Verify results
 True
 >>> np.allclose(slice_sums1, slice_sums3)
 True
->>> # check runtimes, note how much faster cumsum + broadcasting is
+>>> # check runtimes, note how much faster partialsum + broadcasting is
 >>> timer.report(timecut=0)  # doctest: +SKIP
 Timer.report: Cumsum Perf Example order=longest: summary: sum
    0.19970 * dumb way, summing explicitly like a barbarian
-   0.03875 * kinda smarter way using cumsum
-   0.00078 * big brain way using cumsum and numpy broadcasting
+   0.03875 * kinda smarter way using partialsum
+   0.00078 * big brain way using partialsum and numpy broadcasting
 
 Cumulative sums, 2D
 -------------------
 
-Note how much faster the cumsum + broadcasting version was for the 1D version, almost 1000x faster.
+Note how much faster the partialsum + broadcasting version was for the 1D version, almost 1000x faster.
 It makes an even bigger difference in the 2D case because the arrays tend to be much larger.
 
-.. figure:: ../_static/img/cumsum2d.png
-   :scale: 67 %
-   :alt: cumsum2d illustration
+.. figure:: ../_static/img/partialsum2d.png
+   :alt: partialsum2d illustration
 
    Illustration of data 2D with pink region to be "summed" and 2D cumulative sum array from which four points are needed to computs the "sum:" ``sum = CSUM[ub1,ub2] (red point) + CSUM[lb1,lb2] (green point) - CUSM[ub1,lb2] (blue point) - CSUM[lb1,lb2] (blue point``.
 
 The method :py:meth:`ContactMatrixStack.fragment_contact` uses this idea to compute the total contacts of all
-pairs of fragments of a given length using a 2D cumsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
+pairs of fragments of a given length using a 2D partialsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
 compute every fragment pair, so stride is mainly useful as simple way to reduce redundancy.
 
 >>> def fragment_contact(self, fragsize, stride=1):
 ...   result = (
-...     self.cumsum[:, fragsize:         :stride, fragsize:         :stride] -
-...     self.cumsum[:, fragsize:         :stride,         :-fragsize:stride] -
-...     self.cumsum[:,         :-fragsize:stride, fragsize:         :stride] +
-...     self.cumsum[:,         :-fragsize:stride,         :-fragsize:stride] )
+...     self.partialsum[:, fragsize:         :stride, fragsize:         :stride] -
+...     self.partialsum[:, fragsize:         :stride,         :-fragsize:stride] -
+...     self.partialsum[:,         :-fragsize:stride, fragsize:         :stride] +
+...     self.partialsum[:,         :-fragsize:stride,         :-fragsize:stride] )
 
 This function retuns an ``S x M x N`` array containing the total contacts for all pairs of fragments for each contact matrix s in the stack: ``fragment1`` starting at m ending at ``m + fragsize``, to fragment2 starting at ``n`` and ending at ``n - fragsize``.
 
@@ -205,7 +204,7 @@ class ContactMatrixStack:
     Attributes:
         contacts (np.ndarray): An array of shape (N, L, L) representing N square contact matrices.
         subs (np.ndarray): Optional metadata describing subsets (not used internally).
-        cumsum (np.ndarray): Internal cumulative sum array of shape (N, L+1, L+1).
+        partialsum (np.ndarray): Internal cumulative sum array of shape (N, L+1, L+1).
 
     Example:
         >>> import numpy as np
@@ -217,17 +216,19 @@ class ContactMatrixStack:
     """
 
     contacts: np.ndarray
-    subs: np.ndarray = None
-    cumsum: np.ndarray = ipd.field(lambda: np.empty(0))
+    subs: ipd.Optional[np.ndarray] = None
+    isub0: ipd.Optional[int] = None
+    partialsum: np.ndarray = ipd.field(lambda: np.empty(0))
 
     def __post_init__(self):
         if len(self.contacts.shape) == 2: self.contacts = self.contacts[None]
         if self.subs is None: self.subs = np.arange(len(self.contacts))
+        assert len(self.subs) == len(self.contacts)
         assert len(self.contacts.shape) == 3
         # assert self.contacts.shape[2] == self.contacts.shape[1], 'contacts must be square'
-        self.update_cumsum()
+        self.update_partialsum()
 
-    def update_cumsum(self):
+    def update_partialsum(self):
         """
         Compute and store cumulative sums of each contact matrix for fast region queries.
 
@@ -239,12 +240,12 @@ class ContactMatrixStack:
             >>> from ipd.homog import ContactMatrixStack
             >>> contacts = np.ones((1, 3, 3))
             >>> cms = ContactMatrixStack(contacts)
-            >>> cms.cumsum[0, 3, 3]
+            >>> cms.partialsum[0, 3, 3]
             np.float64(9.0)
         """
         shape = self.contacts.shape
-        self.cumsum = np.zeros((shape[0], shape[1] + 1, shape[2] + 1), dtype=self.contacts.dtype)
-        self.cumsum[:, 1:, 1:] = np.cumsum(np.cumsum(self.contacts, axis=1), axis=2)
+        self.partialsum = np.zeros((shape[0], shape[1] + 1, shape[2] + 1), dtype=self.contacts.dtype)
+        self.partialsum[:, 1:, 1:] = ipd.partialsum(ipd.partialsum(self.contacts, axis=1), axis=2)
 
     def ncontact(self, lb, ub, lb2=None, ub2=None):
         r"""
@@ -286,10 +287,10 @@ class ContactMatrixStack:
             raise ValueError('lb must be less than or equal to ub')
         idx = np.tile(np.arange(len(lb)), len(lb[0])).reshape(len(lb), len(lb[0]))
         A, B, C, D = (
-            self.cumsum[idx, ub, ub2],
-            self.cumsum[idx, ub, lb2],
-            self.cumsum[idx, lb, ub2],
-            self.cumsum[idx, lb, lb2],
+            self.partialsum[idx, ub, ub2],
+            self.partialsum[idx, ub, lb2],
+            self.partialsum[idx, lb, ub2],
+            self.partialsum[idx, lb, lb2],
         )
         result = A - B - C + D
         if deref2: result = result[0]
@@ -319,12 +320,13 @@ class ContactMatrixStack:
             (1, 4, 4)
 
         .. seealso::
-            ncontact for detail on how the cumsum calculation works.
+            ncontact for detail on how the partialsum calculation works.
         """
-        result = (self.cumsum[:, fragsize::stride, fragsize::stride] -
-                  self.cumsum[:, fragsize::stride, :-fragsize:stride] -
-                  self.cumsum[:, :-fragsize:stride, fragsize::stride] +
-                  self.cumsum[:, :-fragsize:stride, :-fragsize:stride])
+        fsz, s = fragsize, stride
+        result = (self.partialsum[:, fsz::s, fsz::s] -
+                  self.partialsum[:, fsz::s, :-fsz:s] -
+                  self.partialsum[:, :-fsz:s, fsz::s] +
+                  self.partialsum[:, :-fsz:s, :-fsz:s])
         return result
 
     @ipd.dev.timed
@@ -350,26 +352,27 @@ class ContactMatrixStack:
             >>> isinstance(result.index, dict)
             True
         """
-        result = ipd.Bunch(index=dict(), vals=dict())
-        nwindow = self.fragment_contact(fragsize, stride)
-        for i, sub in ipd.dev.subsetenum(range(len(self))):
-            if not sub: continue
-            vals = summary(nwindow[list(sub)], axis=0)
-            idx = np.argsort((-vals).flat)[:k]
-            idx = np.unravel_index(idx, vals.shape)
-            result.vals[sub] = vals[idx]
-            result.index[sub] = np.array(idx, dtype=np.int32) * stride
-            result.index[sub] = result.index[sub][:, vals[idx] > 0]
-            result.vals[sub] = result.vals[sub][vals[idx] > 0]
-            if result.index[sub].size == 0:
-                del result.index[sub]
-                del result.vals[sub]
+        result = ipd.Bunch(index=dict(), vals=dict(), _orig_isub0=self.isub0, _orig_subnum=self.subs)
+        # ncontact[id_nbr,inbr,iasu] for all pairs of frags between neighbor id_nbr and asu
+        ncontact = self.fragment_contact(fragsize, stride)
+        for i, subset in ipd.dev.subsetenum(range(len(self))): # loop over all neighbor combos
+            if not subset: continue # skip the empty subset
+            vals = summary(ncontact[list(subset)], axis=0) # worst value for all subset neighbors
+            idx = np.argsort((-vals).flat)[:k] # sort so indices of best vals are first
+            idx = np.unravel_index(idx, vals.shape) # get he unflattened indices
+            result.vals[subset] = vals[idx] # the values for the best indices
+            result.index[subset] = np.array(idx, dtype=np.int32) * stride # undo the stride
+            result.index[subset] = result.index[subset][:, vals[idx] > 0] # remove zero vals
+            result.vals[subset] = result.vals[subset][vals[idx] > 0] # remove zero vals
+            if result.index[subset].size == 0:
+                del result.index[subset] # if all values are 0, remove subset from consideration
+                del result.vals[subset]
         return result
 
     def fragment_contact_torch(self, fragsize):
-        cumsum = th.tensor(self.cumsum, device='cuda')
-        result = (cumsum[:, fragsize:, fragsize:] - cumsum[:, fragsize:, :-fragsize] -
-                  cumsum[:, :-fragsize, fragsize:] + cumsum[:, :-fragsize, :-fragsize])
+        partialsum = th.tensor(self.partialsum, device='cuda')
+        result = (partialsum[:, fragsize:, fragsize:] - partialsum[:, fragsize:, :-fragsize] -
+                  partialsum[:, :-fragsize, fragsize:] + partialsum[:, :-fragsize, :-fragsize])
         return th.tril(result)
 
     def topk_fragment_contact_by_subset_summary_torch(self, fragsize=20, k=13, summary=None):

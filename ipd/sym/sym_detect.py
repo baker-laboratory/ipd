@@ -319,7 +319,7 @@ def symelems_from_frames(frames, **kw):
         >>> frames = ipd.sym.frames('c2')
         >>> elements = symelems_from_frames(frames)
         >>> elements
-        Bunch(nfold=[2], axis=[[0. 0. 1. 0.]], ang=[3.14159265], cen=[[0. 0. 0. 1.]], hel=[0.])
+        Bunch(nfold=[2], axis=[[0. 0. 1. 0.]], ang=[3.14159], cen=[[0. 0. 0. 1.]], hel=[0.])
     """
     h, npth = ipd.homog.get_tensor_libraries_for(frames)
     tol = kw['tol'] = ipd.Tolerances(**(symdetect_default_tolerances | kw))

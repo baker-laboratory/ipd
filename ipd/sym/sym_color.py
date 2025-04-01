@@ -61,7 +61,7 @@ def symslices_from_colors(
     if isasym:
         Lasym = th.tensor([th.sum(colors == i) for i in range(colors[-1] + 1)], dtype=int)
         assert th.sum(Lasym) == len(colors)
-        istart = [0] + th.cumsum(Lasym, 0).tolist()[:-1]
+        istart = [0] + ipd.partialsum(Lasym, 0).tolist()[:-1]
         ignore_slice = th.as_tensor([ignore[i] for i in istart])
         Lasu = th.where(Lasu < 0, Lasym, Lasu)
         Lasu = Lasu * ~ignore_slice

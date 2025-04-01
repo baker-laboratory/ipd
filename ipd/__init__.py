@@ -14,10 +14,10 @@ import dataclasses as dc  # noqa
 import functools as ft  # noqa
 import itertools as it  # noqa
 import contextlib as cl  # noqa
-
 import numpy as np  # noqa
 
-np.partialsum = np.cumsum
+np.set_printoptions(suppress=True, precision=5)
+partialsum = getattr(np, 'cu' + 'msum')
 
 from pathlib import Path as Path
 from copy import copy as copy, deepcopy as deepcopy
@@ -43,7 +43,6 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 projdir = os.path.realpath(os.path.dirname(__file__))
 from ipd._prelude.version import __version__ as __version__
 from ipd._prelude.wraps import wraps as wraps
-from ipd._prelude.chrono import Chrono as Chrono, chrono as chrono, checkpoint as checkpoint
 from ipd._prelude.import_util import (
     is_installed as is_installed,
     not_installed as not_installed,
@@ -92,6 +91,7 @@ from ipd._prelude.typehints import (
     NDArray_MN2_int32 as NDArray_MN2_int32,
     NDArray_N2_int32 as NDArray_N2_int32,
 )
+from ipd._prelude.chrono import Chrono as Chrono, chrono as chrono, checkpoint as checkpoint
 
 optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
 capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
@@ -143,6 +143,7 @@ if typing.TYPE_CHECKING:
     from ipd import protocol
     from ipd import sel
     from ipd import sym
+    from ipd import ml
     from ipd import motif
     from ipd import atom
     from ipd import tools
@@ -157,6 +158,7 @@ else:
     h = lazyimport('ipd.homog.thgeom')
     hnumpy = lazyimport('ipd.homog.hgeom')
     htorch = lazyimport('ipd.homog.thgeom')
+    ml = lazyimport('ipd.ml')
     motif = lazyimport('ipd.motif')
     pdb = lazyimport('ipd.pdb')
     protocol = lazyimport('ipd.protocol')

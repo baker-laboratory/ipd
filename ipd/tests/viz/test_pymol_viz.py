@@ -21,9 +21,9 @@ def test_line_strips(headless=True):
     # pytest.importorskip('pymol')
     coord = np.ones((100, 4))
     for i in range(10):
-        coord[i * 10:(i+1) * 10, 0] = 10*i + np.cumsum(np.random.rand(10))
-        coord[i * 10:(i+1) * 10, 1] = np.cumsum(np.random.rand(10))
-        coord[i * 10:(i+1) * 10, 2] = np.cumsum(np.random.rand(10))
+        coord[i * 10:(i+1) * 10, 0] = 10*i + ipd.partialsum(np.random.rand(10))
+        coord[i * 10:(i+1) * 10, 1] = ipd.partialsum(np.random.rand(10))
+        coord[i * 10:(i+1) * 10, 2] = ipd.partialsum(np.random.rand(10))
     ipd.viz.showme(coord, islinestrip=True, headless=headless, breaks=10)
 
 @pytest.mark.skip

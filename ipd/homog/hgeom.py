@@ -45,8 +45,8 @@ Additional Examples with Bodies and AtomArrays:
     >>> # Using AtomArrays and Bodies (assume these helper functions exist)
     >>> from ipd import atom, hnumpy as h
     >>> from ipd.atom import body
-    >> > a = body . body_from_file('1A0J') . centered
-    >> > b = body . body_from_file('1A0J') . centered
+    >>> a = body . body_from_file('1A0J') . centered
+    >>> b = body . body_from_file('1A0J') . centered
     >>> # Apply a random rotation to the Body
     >>> T_random = h.rand()
     >>> b_rotated = h.xform(T_random, b)
@@ -264,8 +264,8 @@ def hdist(x, y):
         float: Euclidean distance.
 
     Example:
-        >> > x = hpoint([1, 1, 3])
-        >> > y = hpoint([2, 1, 3])
+        >>> x = hpoint([1, 1, 3])
+        >>> y = hpoint([2, 1, 3])
         >>> hdist(x, y)
         np.float64(1.0)
 
@@ -291,12 +291,11 @@ def hdiff(x, y, lever=10.0):
         float: Average difference between matrices.
 
     Example:
-        >> > x = hrot([1, 0, 0], [1  , 2  ])
-        >> > y = hrot([1, 0, 0], [1.1, 2.1])
+        >>> x = hrot([1, 0, 0], [1  , 2  ])
+        >>> y = hrot([1, 0, 0], [1.1, 2.1])
         >>> hdiff(x, y)
-        array([[0.66638892, 6.96916305],
-               [5.79954045, 0.66638892]])
-
+        array([[0.66639, 6.96916],
+               [5.79954, 0.66639]])
     """
 
     shape1 = x . shape [: - 2]
@@ -406,10 +405,10 @@ def invxform(x, stuff, **kw):
 
     Example:
         >>> x = htrans([1, 0, 0])
-        >> > vec = np . array([[1, 2, 3, 0]])
-        >> > pt  = np . array([[1, 2, 3, 1]])
-        >> > newpt  = invxform(x, pt )
-        >> > newvec = invxform(x, vec)
+        >>> vec = np . array([[1, 2, 3, 0]])
+        >>> pt  = np . array([[1, 2, 3, 1]])
+        >>> newpt  = invxform(x, pt )
+        >>> newvec = invxform(x, vec)
         >>> print(newpt, newvec)
         [[0. 2. 3. 1.]] [[1. 2. 3. 0.]]
     """
@@ -469,8 +468,8 @@ def product(*factors, **kw):
         np.ndarray: Resulting transformation matrix.
 
     Example:
-        >> > x = np . eye(4)
-        >> > y = np . eye(4)
+        >>> x = np . eye(4)
+        >>> y = np . eye(4)
         >>> product(x, y)
         array([[1., 0., 0., 0.],
                [0., 1., 0., 0.],
@@ -855,8 +854,8 @@ def hinv(xforms):
         >>> inv = hinv(x)
         >>> print(inv)
         [[ 1.  0.  0. -1.]
-         [0. 1. 0. - 2.]
-         [0. 0. 1. - 3.]
+         [ 0.  1.  0. -2.]
+         [ 0.  0.  1. -3.]
          [ 0.  0.  0.  1.]]
     """
     return np.linalg.inv(xforms)

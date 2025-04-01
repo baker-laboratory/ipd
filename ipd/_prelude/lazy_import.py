@@ -81,11 +81,11 @@ class _LazyModule(ModuleType):
         """Import the module _lazymodule_import_now."""
         try:
             return timed_import_module(self._lazymodule_name)
-        except ImportError:
+        except ImportError as e:
             if 'doctest' in sys.modules: return FalseModule(self._lazymodule_name)
             ci = self._lazymodule_callerinfo
             callinfo = f'\n  File "{ci.filename}", line {ci.lineno}\n    {ci.code}'
-            raise LazyImportError(callinfo)
+            raise e
 
     def _try_mamba_install(self):
         mamba = sys.executable.replace('/bin/python', '')

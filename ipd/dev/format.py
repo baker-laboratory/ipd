@@ -132,7 +132,7 @@ def summary(obj) -> str:
     if hasattr(obj, 'summary'): return obj.summary()
     if ipd.homog.is_tensor(obj): return ipd.homog.tensor_summary(obj)
     if (bs := sys.modules.get('biotite.structure')) and isinstance(obj, bs.AtomArray):
-        return f'AtomArray({len(obj)})'
+        return f'AtomArray(len: {len(obj)}, cen: {ipd.atom.com(obj).round(3)})'
     if isinstance(obj, (list, tuple)): return [summary(o) for o in obj]
     return obj
 

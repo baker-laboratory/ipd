@@ -13,7 +13,7 @@ def main():
 def test_broken_package():
     if 'doctest' not in sys.modules:
         borked = lazyimport('ipd.data.tests.broken_py_file')
-        with pytest.raises(ipd.LazyImportError) as e:
+        with pytest.raises(ModuleNotFoundError) as e:
             borked.foo
 
 def test_maybeimport():

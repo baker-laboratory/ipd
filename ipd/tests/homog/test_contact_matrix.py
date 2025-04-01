@@ -22,25 +22,25 @@ def main():
         check_xfail=False,
     )
 
-def matrix_cumsum(cumsum, lb, ub, lb2, ub2):
+def matrix_partialsum(partialsum, lb, ub, lb2, ub2):
     A, B, C, D = (
-        cumsum[:, ub, ub2],
-        cumsum[:, ub, lb2],
-        cumsum[:, lb, ub2],
-        cumsum[:, lb, lb2],
+        partialsum[:, ub, ub2],
+        partialsum[:, ub, lb2],
+        partialsum[:, lb, ub2],
+        partialsum[:, lb, lb2],
     )
     return A - B - C + D
 
-def test_contacts_cumsum():
+def test_contacts_partialsum():
     # contacts = ipd.homog.rand_contacts(20, m=1, frac=0.3, cen=5.0, std=4.0, index_bias=0.5)
     contacts = np.random.rand(3, 20, 20)
     contacts += contacts.swapaxes(1, 2)
     mat = ipd.homog.ContactMatrixStack(contacts)
-    assert np.allclose(mat.contacts[:, :4, :4].sum((1, 2)), mat.cumsum[:, 4, 4])
-    assert np.allclose(mat.contacts[:, :8, :12].sum((1, 2)), mat.cumsum[:, 8, 12])
+    assert np.allclose(mat.contacts[:, :4, :4].sum((1, 2)), mat.partialsum[:, 4, 4])
+    assert np.allclose(mat.contacts[:, :8, :12].sum((1, 2)), mat.partialsum[:, 8, 12])
 
     lb, ub, lb2, ub2 = 1, 7, 8, 14
-    test = matrix_cumsum(mat.cumsum, lb, ub, lb2, ub2)
+    test = matrix_partialsum(mat.partialsum, lb, ub, lb2, ub2)
     ref = mat.contacts[:, lb:ub, lb2:ub2].sum(axis=(1, 2))
     assert np.allclose(test, ref)
 

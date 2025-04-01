@@ -41,6 +41,7 @@ dependencies = [
     'opt_einsum',
     # 'pandas',
     'pydantic',
+    'rapidfuzz',
     'requests',
     'requests_cache',
     'rich',

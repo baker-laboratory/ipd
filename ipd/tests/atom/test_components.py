@@ -17,7 +17,6 @@ def test_components_detection_6u9d():
     atoms = ipd.atom.load('6u9d', assembly='1')[0]
     atoms = ipd.atom.centered(atoms, primary_only=True)
     comp = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
-    ic(comp)
     assert len(comp.frames[0]) == 8
     assert len(comp.frames[1]) == 8
     # ipd.showme(comp.frames[0], 'frames_comp0', xyzlen=[11,11,11], weight=15)

@@ -170,8 +170,8 @@ class TestIterizeOnFirstParam(unittest.TestCase):
 
     def test_tuple_input(self):
         """Test with a tuple input for the first parameter."""
-        assert self.square(self.tuple_data) == [16, 25, 36]
-        assert self.multiply(self.tuple_data, 3) == [12, 15, 18]
+        assert self.square(self.tuple_data) == (16, 25, 36)
+        assert self.multiply(self.tuple_data, 3) == (12, 15, 18)
 
     def test_empty_iterable(self):
         """Test with an empty iterable."""
@@ -180,8 +180,8 @@ class TestIterizeOnFirstParam(unittest.TestCase):
 
     def test_custom_iterable(self):
         """Test with a custom iterable type."""
-        assert self.square(self.custom_iterable) == [1, 4, 9]
-        assert self.multiply(self.custom_iterable, 5) == [5, 10, 15]
+        assert self.square(self.custom_iterable) == CustomIterable(items=[1, 4, 9])
+        assert self.multiply(self.custom_iterable, 5) == CustomIterable(items=[5, 10, 15])
 
     def test_basetype_exclusion(self):
         """Test that basetyped objects are treated as scalars."""

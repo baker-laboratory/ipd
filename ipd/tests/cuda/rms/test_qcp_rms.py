@@ -198,7 +198,7 @@ def test_qcp_regions_simple_Nseg():
     # pts2[:, :3] -= pts2[:, :3].mean(axis=0).reshape(1, 3)
     for i in range(100):
         sizes = _random_int_partition(N, 10)
-        offsets = np.cumsum([0] + sizes[:-1]).reshape(1, len(sizes))
+        offsets = ipd.partialsum([0] + sizes[:-1]).reshape(1, len(sizes))
         rms = _rms.qcp_rms_regions_f4i4(pts1, pts2, sizes, offsets)
         assert rms.shape == (len(offsets), )
         assert np.allclose(rms, rmsref, atol=1e-4)
@@ -206,7 +206,7 @@ def test_qcp_regions_simple_Nseg():
 def compute_rms_offsets_brute(pts1, pts2, sizes, offsets, junct=0):
     rms = np.empty(len(offsets))
 
-    offsets2 = np.cumsum([0] + list(sizes[:-1]))
+    offsets2 = ipd.partialsum([0] + list(sizes[:-1]))
     crd2 = list()
     for s, o in zip(sizes, offsets2):
         if junct == 0 or 2 * junct >= s:

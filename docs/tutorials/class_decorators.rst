@@ -11,7 +11,7 @@ Class Decorators Tutorial
 Element-wise Operations
 ========================
 
-The :py:mod:`ipd.dev.element_wise` module provides tools to apply operations element-by-element across a structured container such as a ``dict`` or :py:mod:`ipd.preludu_.struct` (convenience wrapper around dataclass) or dataclass. Can be used on any class that holds a fairly homogeneous collection of elements in all non-private attributes. Attributes that end with _ will be ignored my element_wise.
+The :py:mod:`ipd.dev.element_wise` module provides tools to apply operations element-by-element across a structured container such as a ``dict`` or :py:mod:`ipd.prelude_.struct` (convenience wrapper around dataclass) or dataclass. Can be used on any class that holds a fairly homogeneous collection of elements in all non-private attributes. Attributes that end with _ will be ignored my element_wise.
 
 Using the ``@element_wise_operations`` decorator, you can attach special descriptors (e.g., ``.mapwise``, ``.valwise``, ``.npwise``, ``.dictwise``) to a class. These descriptors provide access to an ``ElementWiseDispatcher``, which handles fancy element-wise behavior like:
 

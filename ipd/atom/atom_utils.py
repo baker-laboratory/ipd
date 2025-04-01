@@ -115,7 +115,7 @@ def to_seq(atoms, pick_longest=False) -> tuple:
         if isprot: seqs.append(biotite.sequence.ProteinSequence(seq))
         else: seqs.append(biotite.sequence.NucleotideSequence(seq))
     lens = list(map(len, seqs))
-    starts, stops = np.cumsum([0] + lens), np.cumsum(lens + [0])
+    starts, stops = ipd.partialsum([0] + lens), ipd.partialsum(lens + [0])
     lens = np.array(lens)
     if pick_longest:
         i = np.argmax(lens)
@@ -300,6 +300,10 @@ def primary_polymer_atoms(atoms):
     return atoms[idx]
 
 @ipd.iterize_on_first_param(basetype='AtomArray')
+def com(atoms):
+    return bs.mass_center(atoms)
+
+@ipd.iterize_on_first_param(basetype='AtomArray')
 def centered(atoms, primary_only=True, ignore_nan=True, ignore_garbage=True):
     ref = atoms = atoms.copy()
     if primary_only: ref = primary_polymer_atoms(ref)
@@ -311,6 +315,18 @@ def centered(atoms, primary_only=True, ignore_nan=True, ignore_garbage=True):
     cen = bs.mass_center(ref)
     atoms.coord -= cen
     return atoms
+
+@ipd.iterize_on_first_param(basetype='AtomArray')
+def info(atoms, wrap_ctx):
+    if wrap_ctx.firstcall:
+        print(f'ipd.atom.info: {wrap_ctx.input_type()}')
+        wrap_ctx.firstcall = False
+    nchain = len(np.unique(atoms.chain_id))
+    if nchain > 1:
+        wrap_ctx.print(f'atoms {atoms.shape=}')
+        wrap_ctx.print('atoms chain_dict', chain_dict(atoms))
+    else:
+        wrap_ctx.print(f'atoms {atoms.shape} chain {atoms.chain_id[0]}')
 
 amino_acid_321 = {
     'ALA': 'A',

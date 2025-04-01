@@ -49,6 +49,26 @@ import numpy as np
 
 import ipd
 
+class WrapCtx:
+
+    def __init__(self, *a, **kw):
+        self.callstack = []
+        self.firstcall = True
+
+    def pre_call(self, **kw):
+        self.callstack.append(kw)
+
+    def post_call(self, **kw):
+        self.callstack.pop()
+        self.firstcall = False
+
+    def print(self,  *a, **kw):
+        with ipd.dev.indent(4 * len(self.callstack)):
+            print(*a, **kw)
+
+    def input_type(self):
+        return f"{type(self.callstack[-1]['arg0']).__name__}[{self.callstack[-1]['basetype']}]"
+
 def NoneFunc():
     """This function does nothing and is used as a default placeholder."""
     pass
@@ -103,6 +123,7 @@ def iterize_on_first_param(
     asnumpy=False,
     allowmap=False,
     nonempty=False,
+    pass_wrap_ctx=False,
 ) -> ipd.F:
     """
     Decorator to vectorize a function over its first parameter.
@@ -203,26 +224,33 @@ def iterize_on_first_param(
     def deco(func: ipd.F) -> ipd.F:
 
         @ipd.wraps(func)
-        def wrapper(arg0, *args, **kw):
+        def wrapper(arg0, *args, wrap_ctx=None, **kw):
+            if pass_wrap_ctx:
+                kw['wrap_ctx'] = wrap_ctx or WrapCtx()
+                kw['wrap_ctx'].pre_call(**vars())
             if is_iterizeable(arg0, basetype=basetype, splitstr=splitstr, allowmap=allowmap):
                 if splitstr and isinstance(arg0, str) and ' ' in arg0:
                     arg0 = arg0.split()
                 if allowmap and isinstance(arg0, Mapping):
-                    result = {k: func(v, *args, **kw) for k, v in arg0.items()}
+                    result = {k: ipd.kwcall(kw, func, v, *args) for k, v in arg0.items()}
                 elif asdict or asbunch:
-                    result = {a0: func(a0, *args, **kw) for a0 in arg0}
+                    result = {a0: ipd.kwcall(kw, func, a0, *args) for a0 in arg0}
                 else:
-                    result = [func(a0, *args, **kw) for a0 in arg0]
+                    result = [ipd.kwcall(kw, func, a0, *args) for a0 in arg0]
                     with contextlib.suppress(TypeError, ValueError):
-                        resutn = type(arg0)(result)
+                        result = type(arg0)(result)
+                if pass_wrap_ctx: kw['wrap_ctx'].firstcall = False
                 if nonempty and ipd.islist(result): result = list(filter(len, result))
-                if nonempty and ipd.isdict(result): {k:v for k,v in result.items() if len(v)}
+                if nonempty and ipd.isdict(result): {k: v for k, v in result.items() if len(v)}
                 if asbunch and result and isinstance(ipd.first(result.keys()), str):
                     result = ipd.Bunch(result)
                 if asnumpy:
                     result = np.array(result)
                 return result
-            return func(arg0, *args, **kw)
+            if pass_wrap_ctx:
+                kw['wrap_ctx'].post_call(**vars())
+            result = ipd.kwcall(kw, func, arg0, *args)
+            return result
 
         return wrapper
 

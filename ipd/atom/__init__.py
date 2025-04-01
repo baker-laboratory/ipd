@@ -14,8 +14,15 @@ Modules:
 
 Usage Example:
     >>> atoms = ipd.atom.load('1dxh', assembly='largest', het=False, chainlist=True)
-    >>> components = atom.find_components_by_seqaln_rmsfit(atoms)
+    >>> components = ipd.atom.find_components_by_seqaln_rmsfit(atoms)
     >>> print(components)
+    Components:
+      atoms: [2669]
+      frames: [(12, 4, 4)]
+      seqmatch: [array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])]
+      rmsd: [array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])]
+      idx: [array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])]
+      source_: <class 'list'>
 
 Dependencies:
     - numpy

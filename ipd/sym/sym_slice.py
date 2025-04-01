@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
-from ipd import lazyimport
+import ipd
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import torch as th
 else:
-    th = lazyimport('torch')
+    th = ipd.lazyimport('torch')
 
 @dataclass
 class SymSlice:
@@ -67,7 +67,7 @@ class SymSlice:
         # ipd.icv(self.Lasu, self.mask.sum(), nsub)
         # assert self.Lasu
         if self.Lasu == 0: self.asuend, self.symend = 0, 0
-        else: self.asuend = int(th.where(th.cumsum(self.mask, 0) == self.Lasu)[0][0]) + 1
+        else: self.asuend = int(th.where(ipd.partialsum(self.mask, 0) == self.Lasu)[0][0]) + 1
         self.symend = self.beg + self.Lasu * nsub
         self.Lsym = self.Lasu * nsub
         self.asu = self.mask.clone()
