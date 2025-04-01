@@ -1,0 +1,759 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Body and SymBody Objects &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/working_with_bodies';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Understanding Symmetry Detection" href="symmetry_detection.html" />
+    <link rel="prev" title="Determining Biological Architecture" href="processing_assemblies.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="using_homog.html">Homogeneous Coordinates and ipd.hnumpy / ipd.htorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_with_atoms.html">Working with .cif files and atoms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing_assemblies.html">Determining Biological Architecture</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Body and SymBody Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="symmetry_detection.html">Understanding Symmetry Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact_matrix.html">Cumulative sums primer and rapid contact matrix processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_decorators.html">Class Decorators Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_decorators.html">Function Decorator Tutorial</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Body and SymBody Objects</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="body-and-symbody-objects">
+<span id="working-with-bodies"></span><h1><a class="toc-backref" href="#id1" role="doc-backlink">Body and SymBody Objects</a><a class="headerlink" href="#body-and-symbody-objects" title="Link to this heading">#</a></h1>
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#body-and-symbody-objects" id="id1">Body and SymBody Objects</a></p>
+<ul>
+<li><p><a class="reference internal" href="#overview" id="id2">Overview</a></p></li>
+<li><p><a class="reference internal" href="#body-examples" id="id3">Body Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#creating-a-body" id="id4">Creating a Body</a></p></li>
+<li><p><a class="reference internal" href="#centering-a-body" id="id5">Centering a Body</a></p></li>
+<li><p><a class="reference internal" href="#transforming-a-body" id="id6">Transforming a Body</a></p></li>
+<li><p><a class="reference internal" href="#accessing-positioned-atoms" id="id7">Accessing Positioned Atoms</a></p></li>
+<li><p><a class="reference internal" href="#detecting-clashes" id="id8">Detecting Clashes</a></p></li>
+<li><p><a class="reference internal" href="#counting-clashes" id="id9">Counting Clashes</a></p></li>
+<li><p><a class="reference internal" href="#getting-atom-coordinates-via-slicing" id="id10">Getting Atom Coordinates via Slicing</a></p></li>
+<li><p><a class="reference internal" href="#sliding-into-contact" id="id11">Sliding Into Contact</a></p></li>
+<li><p><a class="reference internal" href="#analyzing-contacts" id="id12">Analyzing Contacts</a></p></li>
+<li><p><a class="reference internal" href="#iterating-over-contacts" id="id13">Iterating Over Contacts</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#symbody-examples" id="id14">SymBody Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#creating-a-symbody" id="id15">Creating a SymBody</a></p></li>
+<li><p><a class="reference internal" href="#centering-a-symbody" id="id16">Centering a SymBody</a></p></li>
+<li><p><a class="reference internal" href="#transforming-a-symbody" id="id17">Transforming a SymBody</a></p></li>
+<li><p><a class="reference internal" href="#self-clash-detection" id="id18">Self Clash Detection</a></p></li>
+<li><p><a class="reference internal" href="#counting-symbody-clashes" id="id19">Counting SymBody Clashes</a></p></li>
+<li><p><a class="reference internal" href="#symbody-contacts" id="id20">SymBody Contacts</a></p></li>
+<li><p><a class="reference internal" href="#sliding-a-symbody-into-contact" id="id21">Sliding a SymBody into Contact</a></p></li>
+<li><p><a class="reference internal" href="#accessing-symbody-subunit-coordinates" id="id22">Accessing SymBody Subunit Coordinates</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#bodycontacts-summary" id="id23">BodyContacts Summary</a></p>
+<ul>
+<li><p><a class="reference internal" href="#inspecting-contact-properties" id="id24">Inspecting Contact Properties</a></p></li>
+<li><p><a class="reference internal" href="#building-a-contact-matrix-stack" id="id25">Building a Contact Matrix Stack</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">ipd.atom.body</span></code> module defines the <cite>Body</cite> and <cite>SymBody</cite> classes for representing and manipulating structured collections of atoms. These classes support:</p>
+<ul class="simple">
+<li><p>Spatial transformation using 4×4 homogeneous matrices</p></li>
+<li><p>Efficient clash detection and contact analysis</p></li>
+<li><p>Subunit assembly through <cite>SymBody</cite></p></li>
+<li><p>Utilities like <cite>.movedby()</cite>, <cite>.hasclash()</cite>, <cite>.contacts()</cite>, and slicing</p></li>
+</ul>
+<p>Body and SymBody objects are lazy, in that they don’t change the AtomArray or BVH data structuers when moved. Instead, a body has a <code class="docutils literal notranslate"><span class="pre">self.pos</span></code> attribute which is homogeneous transform from its initial position. Repositioned atoms can be produced with the property <code class="docutils literal notranslate"><span class="pre">self.positioned_atoms</span></code>, which returns <code class="docutils literal notranslate"><span class="pre">h.xform(self.pos,</span> <span class="pre">self.atoms)</span></code>. All functions behave as though the coordinates have actually been transformed, so you can safely think of the atoms represented by a Body or SymBody as actually moving around.</p>
+<p>A SymBody holds a Body in self.asu, a position in self.asu, and a set of symmetric frames in self.frames. The position of the asu is changed via updates to self.asu.pos, and the global position of the particle is set by self.pos. The positioned_atoms of a symbody are also obtained via the property <code class="docutils literal notranslate"><span class="pre">self.positioned_atoms</span></code>. For a SymBody, these positioned atoms are produced by an opration like the following. Note that while these transforms are associative, it it often helpful to read them from right to left… self.asu.pos moves the asu atoms, then all are xformed by self.frames, then the whole particle is moved by self.pos. (Note: the actual implementation goes left to right, which is usually more efficient, as the rightmost object tends to be large)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">h</span><span class="o">.</span><span class="n">xform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asu</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The benefit of this somewhat complicated laziness is that both Body and SymBody can be freely copied around with operations like .movedby and .slide_into_contact without trouble. You can make thousands of them, or have symbodies with thousands of frames, without causing any trouble. The hasclash, nchash, contacts and slide operations are also very fast, typically you can do many thousands of these operations per second.</p>
+<p>Note: some of the below is AI slop. It is tested for correctness, but may not be the best informative…</p>
+</section>
+<section id="body-examples">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Body Examples</a><a class="headerlink" href="#body-examples" title="Link to this heading">#</a></h2>
+<section id="creating-a-body">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Creating a Body</a><a class="headerlink" href="#creating-a-body" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">body_from_file</span><span class="p">(</span><span class="s2">&quot;1qys&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span><span class="o">.</span><span class="n">natom</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="centering-a-body">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Centering a Body</a><a class="headerlink" href="#centering-a-body" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">centered</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">centered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">centered</span><span class="o">.</span><span class="n">com</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="transforming-a-body">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Transforming a Body</a><a class="headerlink" href="#transforming-a-body" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog</span><span class="w"> </span><span class="kn">import</span> <span class="n">hgeom</span> <span class="k">as</span> <span class="n">h</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">moved</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">movedby</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">trans</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">moved</span><span class="o">.</span><span class="n">pos</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="accessing-positioned-atoms">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Accessing Positioned Atoms</a><a class="headerlink" href="#accessing-positioned-atoms" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pa</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">positioned_atoms</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">pa</span><span class="p">,</span> <span class="s2">&quot;coord&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="detecting-clashes">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Detecting Clashes</a><a class="headerlink" href="#detecting-clashes" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b1</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">centered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b2</span> <span class="o">=</span> <span class="n">b1</span><span class="o">.</span><span class="n">movedby</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">trans</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b1</span><span class="o">.</span><span class="n">hasclash</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="counting-clashes">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Counting Clashes</a><a class="headerlink" href="#counting-clashes" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">b1</span><span class="o">.</span><span class="n">nclash</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-atom-coordinates-via-slicing">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Getting Atom Coordinates via Slicing</a><a class="headerlink" href="#getting-atom-coordinates-via-slicing" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">coords</span> <span class="o">=</span> <span class="n">b1</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">5</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="sliding-into-contact">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Sliding Into Contact</a><a class="headerlink" href="#sliding-into-contact" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b3</span> <span class="o">=</span> <span class="n">b1</span><span class="o">.</span><span class="n">slide_into_contact</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b3</span><span class="o">.</span><span class="n">hasclash</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b3</span> <span class="o">=</span> <span class="n">b3</span><span class="o">.</span><span class="n">movedby</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b3</span><span class="o">.</span><span class="n">hasclash</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</section>
+<section id="analyzing-contacts">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Analyzing Contacts</a><a class="headerlink" href="#analyzing-contacts" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">b3</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span><span class="o">.</span><span class="n">total_contacts</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span><span class="o">.</span><span class="n">nuniq1</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="iterating-over-contacts">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Iterating Over Contacts</a><a class="headerlink" href="#iterating-over-contacts" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">isub1</span><span class="p">,</span> <span class="n">isub2</span><span class="p">,</span> <span class="n">sub1</span><span class="p">,</span> <span class="n">sub2</span><span class="p">,</span> <span class="n">idx1</span><span class="p">,</span> <span class="n">idx2</span> <span class="ow">in</span> <span class="n">contacts</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">break</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="symbody-examples">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">SymBody Examples</a><a class="headerlink" href="#symbody-examples" title="Link to this heading">#</a></h2>
+<section id="creating-a-symbody">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Creating a SymBody</a><a class="headerlink" href="#creating-a-symbody" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sym</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">symbody_from_file</span><span class="p">(</span><span class="s2">&quot;1dxh&quot;</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="s2">&quot;largest_assembly&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="centering-a-symbody">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Centering a SymBody</a><a class="headerlink" href="#centering-a-symbody" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sym_centered</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">centered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">sym_centered</span><span class="o">.</span><span class="n">com</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="transforming-a-symbody">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Transforming a SymBody</a><a class="headerlink" href="#transforming-a-symbody" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">moved_sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">movedby</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">trans</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">moved_sym</span><span class="o">.</span><span class="n">pos</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="self-clash-detection">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Self Clash Detection</a><a class="headerlink" href="#self-clash-detection" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hasclash</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="counting-symbody-clashes">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Counting SymBody Clashes</a><a class="headerlink" href="#counting-symbody-clashes" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">moved2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">movedby</span><span class="p">([</span><span class="mi">4</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">rg</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">hasclash</span><span class="p">(</span><span class="n">moved2</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span>
+<span class="go">np.True_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sym2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">movedto</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="mf">2.3</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">rg</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">nclash</span><span class="p">(</span><span class="n">sym2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="symbody-contacts">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">SymBody Contacts</a><a class="headerlink" href="#symbody-contacts" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">contact4</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">sym2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">contact4</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="sliding-a-symbody-into-contact">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Sliding a SymBody into Contact</a><a class="headerlink" href="#sliding-a-symbody-into-contact" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">slid</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">slide_into_contact</span><span class="p">(</span><span class="n">sym2</span><span class="p">,</span> <span class="n">along</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">slid</span><span class="o">.</span><span class="n">hasclash</span><span class="p">(</span><span class="n">sym2</span><span class="p">))</span>
+<span class="go">np.False_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">slid</span><span class="o">.</span><span class="n">hasclash</span><span class="p">(</span><span class="n">sym2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="go">np.True_</span>
+</pre></div>
+</div>
+</section>
+<section id="accessing-symbody-subunit-coordinates">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Accessing SymBody Subunit Coordinates</a><a class="headerlink" href="#accessing-symbody-subunit-coordinates" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">coords</span> <span class="o">=</span> <span class="n">sym</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">5</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="bodycontacts-summary">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">BodyContacts Summary</a><a class="headerlink" href="#bodycontacts-summary" title="Link to this heading">#</a></h2>
+<section id="inspecting-contact-properties">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Inspecting Contact Properties</a><a class="headerlink" href="#inspecting-contact-properties" title="Link to this heading">#</a></h3>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bc</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">sym2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bc</span>
+<span class="go">SymContacts(ranges: (12, 12, 2) pairs: (1660, 2))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bc</span><span class="o">.</span><span class="n">nuniq</span>  <span class="c1"># num unique atoms making contacts</span>
+<span class="go">155</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">bc</span><span class="o">.</span><span class="n">total_contacts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">bc</span><span class="o">.</span><span class="n">mean_contacts</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bc</span><span class="o">.</span><span class="n">min_contacts</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+<span class="go">np.True_</span>
+</pre></div>
+</div>
+</section>
+<section id="building-a-contact-matrix-stack">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Building a Contact Matrix Stack</a><a class="headerlink" href="#building-a-contact-matrix-stack" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>see <a class="reference internal" href="contact_matrix.html#contact-matrix-overview"><span class="std std-ref">ContactMatrixStack Example</span></a></p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="processing_assemblies.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Determining Biological Architecture</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="symmetry_detection.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Understanding Symmetry Detection</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#body-examples">Body Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-body">Creating a Body</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#centering-a-body">Centering a Body</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transforming-a-body">Transforming a Body</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-positioned-atoms">Accessing Positioned Atoms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#detecting-clashes">Detecting Clashes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#counting-clashes">Counting Clashes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-atom-coordinates-via-slicing">Getting Atom Coordinates via Slicing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sliding-into-contact">Sliding Into Contact</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analyzing-contacts">Analyzing Contacts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterating-over-contacts">Iterating Over Contacts</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#symbody-examples">SymBody Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-symbody">Creating a SymBody</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#centering-a-symbody">Centering a SymBody</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transforming-a-symbody">Transforming a SymBody</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-clash-detection">Self Clash Detection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#counting-symbody-clashes">Counting SymBody Clashes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#symbody-contacts">SymBody Contacts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sliding-a-symbody-into-contact">Sliding a SymBody into Contact</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-symbody-subunit-coordinates">Accessing SymBody Subunit Coordinates</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bodycontacts-summary">BodyContacts Summary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-contact-properties">Inspecting Contact Properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-a-contact-matrix-stack">Building a Contact Matrix Stack</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/tutorials/working_with_bodies.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

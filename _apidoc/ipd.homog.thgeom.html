@@ -1,0 +1,1109 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ipd.homog.thgeom module &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_apidoc/ipd.homog.thgeom';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ipd.homog.util module" href="ipd.homog.util.html" />
+    <link rel="prev" title="ipd.homog.quat module" href="ipd.homog.quat.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ipd.html">ipd package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.atom.html">ipd.atom package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html">ipd.atom.assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.atom_utils.html">ipd.atom.atom_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html">ipd.atom.body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html">ipd.atom.components module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.crops.html">ipd.atom.crops module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.crud.html">ipd.crud package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.backend.html">ipd.crud.backend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.crudcli.html">ipd.crud.crudcli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.frontend.html">ipd.crud.frontend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.server.html">ipd.crud.server module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.dev.html">ipd.dev package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.cli.html">ipd.dev.cli package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.code.html">ipd.dev.code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.instrumentation.html">ipd.dev.instrumentation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.qt.html">ipd.dev.qt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.state.html">ipd.dev.state package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.storage.html">ipd.dev.storage package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.testing.html">ipd.dev.testing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.contexts.html">ipd.dev.contexts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.debug.html">ipd.dev.debug module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.decorators.html">ipd.dev.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.element_wise.html">ipd.dev.element_wise module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.error.html">ipd.dev.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.files.html">ipd.dev.files module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.format.html">ipd.dev.format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.functional.html">ipd.dev.functional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.iterables.html">ipd.dev.iterables module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.meta.html">ipd.dev.meta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.metadata.html">ipd.dev.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.misc.html">ipd.dev.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.objinfo.html">ipd.dev.objinfo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.safe_eval.html">ipd.dev.safe_eval module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.serialization.html">ipd.dev.serialization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.shell.html">ipd.dev.shell module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.strings.html">ipd.dev.strings module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.tolerances.html">ipd.dev.tolerances module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ipd.homog.html">ipd.homog package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.contact_matrix.html">ipd.homog.contact_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.hgeom.html">ipd.homog.hgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.infix.html">ipd.homog.infix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.npth_common.html">ipd.homog.npth_common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.pointgen.html">ipd.homog.pointgen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.quat.html">ipd.homog.quat module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">ipd.homog.thgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.util.html">ipd.homog.util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.viz.html">ipd.homog.viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.xform_info.html">ipd.homog.xform_info module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.ml.html">ipd.ml package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.ml.datahub_util.html">ipd.ml.datahub_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.motif.html">ipd.motif package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_factory.html">ipd.motif.motif_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_manager.html">ipd.motif.motif_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_options.html">ipd.motif.motif_options module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.observer.html">ipd.observer package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.dynamic_parameters.html">ipd.observer.dynamic_parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.observer.html">ipd.observer.observer module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.pdb.html">ipd.pdb package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.bbutil.html">ipd.pdb.bbutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.chemical.html">ipd.pdb.chemical module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbdump.html">ipd.pdb.pdbdump module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfetch.html">ipd.pdb.pdbfetch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfile.html">ipd.pdb.pdbfile module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbmeta.html">ipd.pdb.pdbmeta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbread.html">ipd.pdb.pdbread module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pisces.html">ipd.pdb.pisces module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.readstruct.html">ipd.pdb.readstruct module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.viz_pdb.html">ipd.pdb.viz_pdb module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.protocol.html">ipd.protocol package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.protocol.sieve.html">ipd.protocol.sieve module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sel.html">ipd.sel package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sel.sel_pymol.html">ipd.sel.sel_pymol module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sym.html">ipd.sym package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.helix.html">ipd.sym.helix package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.high_t.html">ipd.sym.high_t package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.xtal.html">ipd.sym.xtal package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.guess_symmetry.html">ipd.sym.guess_symmetry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.ipd_sym_manager.html">ipd.sym.ipd_sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.permutations.html">ipd.sym.permutations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym.html">ipd.sym.sym module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_adapt.html">ipd.sym.sym_adapt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_builder.html">ipd.sym.sym_builder module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_check.html">ipd.sym.sym_check module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_color.html">ipd.sym.sym_color module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_detect.html">ipd.sym.sym_detect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_factory.html">ipd.sym.sym_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_fitting.html">ipd.sym.sym_fitting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_index.html">ipd.sym.sym_index module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_kind.html">ipd.sym.sym_kind module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_manager.html">ipd.sym.sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_options.html">ipd.sym.sym_options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_slice.html">ipd.sym.sym_slice module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_util.html">ipd.sym.sym_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.symframes.html">ipd.sym.symframes module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.tools.html">ipd.tools package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.citool.html">ipd.tools.citool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.codetool.html">ipd.tools.codetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.conda.html">ipd.tools.conda module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.idetool.html">ipd.tools.idetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.ipdtool.html">ipd.tools.ipdtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.pkgtool.html">ipd.tools.pkgtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.run_tests_on_file.html">ipd.tools.run_tests_on_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.symtool.html">ipd.tools.symtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.tool_util.html">ipd.tools.tool_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.viz.html">ipd.viz package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.plot.html">ipd.viz.plot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.primitives.html">ipd.viz.primitives module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_cgo.html">ipd.viz.pymol_cgo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_pose.html">ipd.viz.pymol_pose module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_viz.html">ipd.viz.pymol_viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_assembly.html">ipd.viz.viz_assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_atoms.html">ipd.viz.viz_atoms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_body.html">ipd.viz.viz_body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_bond.html">ipd.viz.viz_bond module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_deco.html">ipd.viz.viz_deco module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_helix.html">ipd.viz.viz_helix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_rigidbody.html">ipd.viz.viz_rigidbody module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_xtal.html">ipd.viz.viz_xtal module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.bunch.html">ipd.bunch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.project_config.html">ipd.project_config module</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.html" class="nav-link">ipd package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.homog.html" class="nav-link">ipd.homog package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.homog.thgeom module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ipd.homog.thgeom">
+<span id="ipd-homog-thgeom-module"></span><h1>ipd.homog.thgeom module<a class="headerlink" href="#module-ipd.homog.thgeom" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.Q2R">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">Q2R</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L787-L790"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.Q2R" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.Qs2Rs">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">Qs2Rs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Qs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(3,</span> <span class="pre">3)</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L764-L780"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.Qs2Rs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.allclose">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">allclose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tensors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L37-L38"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.allclose" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.angle">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xforms</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L602-L606"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.angle" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.as_tensor">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">as_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L26-L28"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.as_tensor" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.as_tensors">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">as_tensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tensors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L30-L32"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.as_tensors" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.axis">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L571-L600"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.axis" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.axis_ang_cen_magic_points_torch">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">axis_ang_cen_magic_points_torch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L726-L727"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.axis_ang_cen_magic_points_torch" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.axis_angle">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">axis_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xforms</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L568-L569"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.axis_angle" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.axis_angle_cen">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">axis_angle_cen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident_match_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flipaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L147-L185"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.axis_angle_cen" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.axis_angle_cen_hel">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">axis_angle_cen_hel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xforms</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L555-L558"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.axis_angle_cen_hel" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.axis_angle_hel">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">axis_angle_hel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xforms</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L550-L553"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.axis_angle_hel" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.cart">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">cart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L337-L338"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.cart" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.cart3">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">cart3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L340-L341"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.cart3" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.choose_axis_flip">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">choose_axis_flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L131-L145"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.choose_axis_flip" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.close">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tensors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L34-L35"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.close" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.com">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">com</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L96-L102"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.com" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.com_flat">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">com_flat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closefrac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L89-L94"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.com_flat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.construct">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">construct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L54-L67"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.construct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.cross">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L743-L744"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.cross" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.diff">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lever</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L729-L741"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.diff" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.dot">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outerprod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L620-L626"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.dot" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.flip_negative_rotation_axis">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">flip_negative_rotation_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">an</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L560-L566"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.flip_negative_rotation_axis" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.frame">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L746-L762"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.frame" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.get_dtype_dev">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">get_dtype_dev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L12-L24"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.get_dtype_dev" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.homog">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">homog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L351-L364"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.homog" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.intersect_planes">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">intersect_planes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L637-L716"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.intersect_planes" title="Link to this definition">#</a></dt>
+<dd><dl>
+<dt>intersect_Planes: find e 3D intersection of two planes</dt><dd><p>Input:  two planes represented (point, normal) as (p1,n1), (p2,n2)
+Output: L = e intersection line (when it exists)
+Return: rays shape=(…,4,2), status</p>
+<blockquote>
+<div><p>0 = intersection returned
+1 = disjoint (no intersection)
+2 = e two planes coincide</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.inv">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L887-L888"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.inv" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.is_broadcastable">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">is_broadcastable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape2</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L718-L724"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.is_broadcastable" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.is_valid_quat_rot">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">is_valid_quat_rot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quat</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L320-L322"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.is_valid_quat_rot" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.joinlastdim">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">joinlastdim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L920-L921"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.joinlastdim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.line_angle">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">line_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L608-L612"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.line_angle" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.mean_along">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">mean_along</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vecs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">along</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L78-L87"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.mean_along" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.norm">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L542-L544"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.norm" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.norm2">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">norm2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L546-L548"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.norm2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.normQ">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">normQ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L783-L785"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.normQ" title="Link to this definition">#</a></dt>
+<dd><p>Normalize a quaternions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.normalized">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">normalized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L531-L540"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.normalized" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.normvec">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">normvec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L528-L529"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.normvec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.ori">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">ori</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L343-L346"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.ori" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.ori3">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">ori3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L348-L349"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.ori3" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.point">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L503-L510"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.point" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.point_in_plane">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">point_in_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L628-L630"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.point_in_plane" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.point_line_dist2">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">point_line_dist2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L614-L618"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.point_line_dist2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.point_line_dist_pa">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">point_line_dist_pa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L923-L924"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.point_line_dist_pa" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.product">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">xforms</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L445-L449"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.product" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.proj">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">proj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L121-L124"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.proj" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.projperp">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">projperp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L126-L129"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.projperp" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.quat_to_upper_half">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">quat_to_upper_half</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quat</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L324-L335"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.quat_to_upper_half" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.quat_to_xform">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">quat_to_xform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quat</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L366-L369"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.quat_to_xform" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rand">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cart_cen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cart_sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L262-L272"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rand" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rand_xform">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rand_xform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cart_cen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cart_sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L262-L272"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rand_xform" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.randpoint">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">randpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L227-L232"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.randpoint" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.randsmall">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">randsmall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cart_sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot_sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L249-L260"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.randsmall" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.randtrans">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">randtrans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot_sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L276-L277"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.randtrans" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.randunit">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">randunit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L243-L247"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.randunit" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.randvec">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">randvec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L234-L241"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.randvec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.ray_in_plane">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">ray_in_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n1</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L632-L635"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.ray_in_plane" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.remove_diagonal_elements">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">remove_diagonal_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L893-L897"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.remove_diagonal_elements" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rms">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L423-L425"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rms" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rmsfit">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rmsfit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mobile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L459-L495"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rmsfit" title="Link to this definition">#</a></dt>
+<dd><p>Use kabsch method to get rmsd fit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rog">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aboutaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L110-L119"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rog" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rog_flat">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rog_flat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L104-L108"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rog_flat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rot">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L187-L225"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rot" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rot3">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rot3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(3,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L371-L421"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rot3" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.rot_to_quat">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">rot_to_quat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xform</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L279-L316"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.rot_to_quat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.tocuda">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">tocuda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L890-L891"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.tocuda" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.toint">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">toint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L899-L900"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.toint" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.torch_min">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">torch_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_search_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'strong_wolfe'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L40-L52"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.torch_min" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.trans">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L69-L76"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.trans" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.uniqlastdim">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">uniqlastdim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L902-L911"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.uniqlastdim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.unique_symaxes">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">unique_symaxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L913-L918"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.unique_symaxes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.valid">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stuff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isxform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L855-L866"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.valid" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.valid44">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">valid44</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">improper_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L873-L885"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.valid44" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.valid_norm">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">valid_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L868-L871"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.valid_norm" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.vec">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L512-L526"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.vec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.xform">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">xform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stuff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L427-L429"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.xform" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.xform_impl">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">xform_impl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stuff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">homogout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isvec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L433-L443"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.xform_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.xform_to_quat">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">xform_to_quat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xform</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L279-L316"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.xform_to_quat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.xformpts">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">xformpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stuff</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L453-L454"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.xformpts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.thgeom.xformvec">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.thgeom.</span></span><span class="sig-name descname"><span class="pre">xformvec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stuff</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/thgeom.py#L456-L457"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.thgeom.xformvec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ipd.homog.quat.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ipd.homog.quat module</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ipd.homog.util.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ipd.homog.util module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.Q2R"><code class="docutils literal notranslate"><span class="pre">Q2R()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.Qs2Rs"><code class="docutils literal notranslate"><span class="pre">Qs2Rs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.allclose"><code class="docutils literal notranslate"><span class="pre">allclose()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.angle"><code class="docutils literal notranslate"><span class="pre">angle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.as_tensor"><code class="docutils literal notranslate"><span class="pre">as_tensor()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.as_tensors"><code class="docutils literal notranslate"><span class="pre">as_tensors()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.axis"><code class="docutils literal notranslate"><span class="pre">axis()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.axis_ang_cen_magic_points_torch"><code class="docutils literal notranslate"><span class="pre">axis_ang_cen_magic_points_torch()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.axis_angle"><code class="docutils literal notranslate"><span class="pre">axis_angle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.axis_angle_cen"><code class="docutils literal notranslate"><span class="pre">axis_angle_cen()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.axis_angle_cen_hel"><code class="docutils literal notranslate"><span class="pre">axis_angle_cen_hel()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.axis_angle_hel"><code class="docutils literal notranslate"><span class="pre">axis_angle_hel()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.cart"><code class="docutils literal notranslate"><span class="pre">cart()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.cart3"><code class="docutils literal notranslate"><span class="pre">cart3()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.choose_axis_flip"><code class="docutils literal notranslate"><span class="pre">choose_axis_flip()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.com"><code class="docutils literal notranslate"><span class="pre">com()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.com_flat"><code class="docutils literal notranslate"><span class="pre">com_flat()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.construct"><code class="docutils literal notranslate"><span class="pre">construct()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.cross"><code class="docutils literal notranslate"><span class="pre">cross()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.diff"><code class="docutils literal notranslate"><span class="pre">diff()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.dot"><code class="docutils literal notranslate"><span class="pre">dot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.flip_negative_rotation_axis"><code class="docutils literal notranslate"><span class="pre">flip_negative_rotation_axis()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.frame"><code class="docutils literal notranslate"><span class="pre">frame()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.get_dtype_dev"><code class="docutils literal notranslate"><span class="pre">get_dtype_dev()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.homog"><code class="docutils literal notranslate"><span class="pre">homog()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.intersect_planes"><code class="docutils literal notranslate"><span class="pre">intersect_planes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.inv"><code class="docutils literal notranslate"><span class="pre">inv()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.is_broadcastable"><code class="docutils literal notranslate"><span class="pre">is_broadcastable()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.is_valid_quat_rot"><code class="docutils literal notranslate"><span class="pre">is_valid_quat_rot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.joinlastdim"><code class="docutils literal notranslate"><span class="pre">joinlastdim()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.line_angle"><code class="docutils literal notranslate"><span class="pre">line_angle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.mean_along"><code class="docutils literal notranslate"><span class="pre">mean_along()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.norm"><code class="docutils literal notranslate"><span class="pre">norm()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.norm2"><code class="docutils literal notranslate"><span class="pre">norm2()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.normQ"><code class="docutils literal notranslate"><span class="pre">normQ()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.normalized"><code class="docutils literal notranslate"><span class="pre">normalized()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.normvec"><code class="docutils literal notranslate"><span class="pre">normvec()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.ori"><code class="docutils literal notranslate"><span class="pre">ori()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.ori3"><code class="docutils literal notranslate"><span class="pre">ori3()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.point"><code class="docutils literal notranslate"><span class="pre">point()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.point_in_plane"><code class="docutils literal notranslate"><span class="pre">point_in_plane()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.point_line_dist2"><code class="docutils literal notranslate"><span class="pre">point_line_dist2()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.point_line_dist_pa"><code class="docutils literal notranslate"><span class="pre">point_line_dist_pa()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.product"><code class="docutils literal notranslate"><span class="pre">product()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.proj"><code class="docutils literal notranslate"><span class="pre">proj()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.projperp"><code class="docutils literal notranslate"><span class="pre">projperp()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.quat_to_upper_half"><code class="docutils literal notranslate"><span class="pre">quat_to_upper_half()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.quat_to_xform"><code class="docutils literal notranslate"><span class="pre">quat_to_xform()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rand"><code class="docutils literal notranslate"><span class="pre">rand()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rand_xform"><code class="docutils literal notranslate"><span class="pre">rand_xform()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.randpoint"><code class="docutils literal notranslate"><span class="pre">randpoint()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.randsmall"><code class="docutils literal notranslate"><span class="pre">randsmall()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.randtrans"><code class="docutils literal notranslate"><span class="pre">randtrans()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.randunit"><code class="docutils literal notranslate"><span class="pre">randunit()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.randvec"><code class="docutils literal notranslate"><span class="pre">randvec()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.ray_in_plane"><code class="docutils literal notranslate"><span class="pre">ray_in_plane()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.remove_diagonal_elements"><code class="docutils literal notranslate"><span class="pre">remove_diagonal_elements()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rms"><code class="docutils literal notranslate"><span class="pre">rms()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rmsfit"><code class="docutils literal notranslate"><span class="pre">rmsfit()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rog"><code class="docutils literal notranslate"><span class="pre">rog()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rog_flat"><code class="docutils literal notranslate"><span class="pre">rog_flat()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rot"><code class="docutils literal notranslate"><span class="pre">rot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rot3"><code class="docutils literal notranslate"><span class="pre">rot3()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.rot_to_quat"><code class="docutils literal notranslate"><span class="pre">rot_to_quat()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.tocuda"><code class="docutils literal notranslate"><span class="pre">tocuda()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.toint"><code class="docutils literal notranslate"><span class="pre">toint()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.torch_min"><code class="docutils literal notranslate"><span class="pre">torch_min()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.trans"><code class="docutils literal notranslate"><span class="pre">trans()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.uniqlastdim"><code class="docutils literal notranslate"><span class="pre">uniqlastdim()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.unique_symaxes"><code class="docutils literal notranslate"><span class="pre">unique_symaxes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.valid"><code class="docutils literal notranslate"><span class="pre">valid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.valid44"><code class="docutils literal notranslate"><span class="pre">valid44()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.valid_norm"><code class="docutils literal notranslate"><span class="pre">valid_norm()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.vec"><code class="docutils literal notranslate"><span class="pre">vec()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.xform"><code class="docutils literal notranslate"><span class="pre">xform()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.xform_impl"><code class="docutils literal notranslate"><span class="pre">xform_impl()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.xform_to_quat"><code class="docutils literal notranslate"><span class="pre">xform_to_quat()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.xformpts"><code class="docutils literal notranslate"><span class="pre">xformpts()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.thgeom.xformvec"><code class="docutils literal notranslate"><span class="pre">xformvec()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

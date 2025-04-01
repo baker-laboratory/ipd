@@ -1,0 +1,1083 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ipd.sym.sym_manager module &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_apidoc/ipd.sym.sym_manager';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ipd.sym.sym_options module" href="ipd.sym.sym_options.html" />
+    <link rel="prev" title="ipd.sym.sym_kind module" href="ipd.sym.sym_kind.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ipd.html">ipd package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.atom.html">ipd.atom package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html">ipd.atom.assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.atom_utils.html">ipd.atom.atom_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html">ipd.atom.body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html">ipd.atom.components module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.crops.html">ipd.atom.crops module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.crud.html">ipd.crud package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.backend.html">ipd.crud.backend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.crudcli.html">ipd.crud.crudcli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.frontend.html">ipd.crud.frontend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.server.html">ipd.crud.server module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.dev.html">ipd.dev package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.cli.html">ipd.dev.cli package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.code.html">ipd.dev.code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.instrumentation.html">ipd.dev.instrumentation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.qt.html">ipd.dev.qt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.state.html">ipd.dev.state package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.storage.html">ipd.dev.storage package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.testing.html">ipd.dev.testing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.contexts.html">ipd.dev.contexts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.debug.html">ipd.dev.debug module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.decorators.html">ipd.dev.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.element_wise.html">ipd.dev.element_wise module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.error.html">ipd.dev.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.files.html">ipd.dev.files module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.format.html">ipd.dev.format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.functional.html">ipd.dev.functional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.iterables.html">ipd.dev.iterables module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.meta.html">ipd.dev.meta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.metadata.html">ipd.dev.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.misc.html">ipd.dev.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.objinfo.html">ipd.dev.objinfo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.safe_eval.html">ipd.dev.safe_eval module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.serialization.html">ipd.dev.serialization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.shell.html">ipd.dev.shell module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.strings.html">ipd.dev.strings module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.tolerances.html">ipd.dev.tolerances module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.homog.html">ipd.homog package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.contact_matrix.html">ipd.homog.contact_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.hgeom.html">ipd.homog.hgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.infix.html">ipd.homog.infix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.npth_common.html">ipd.homog.npth_common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.pointgen.html">ipd.homog.pointgen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.quat.html">ipd.homog.quat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.thgeom.html">ipd.homog.thgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.util.html">ipd.homog.util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.viz.html">ipd.homog.viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.xform_info.html">ipd.homog.xform_info module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.ml.html">ipd.ml package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.ml.datahub_util.html">ipd.ml.datahub_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.motif.html">ipd.motif package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_factory.html">ipd.motif.motif_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_manager.html">ipd.motif.motif_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_options.html">ipd.motif.motif_options module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.observer.html">ipd.observer package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.dynamic_parameters.html">ipd.observer.dynamic_parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.observer.html">ipd.observer.observer module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.pdb.html">ipd.pdb package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.bbutil.html">ipd.pdb.bbutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.chemical.html">ipd.pdb.chemical module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbdump.html">ipd.pdb.pdbdump module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfetch.html">ipd.pdb.pdbfetch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfile.html">ipd.pdb.pdbfile module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbmeta.html">ipd.pdb.pdbmeta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbread.html">ipd.pdb.pdbread module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pisces.html">ipd.pdb.pisces module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.readstruct.html">ipd.pdb.readstruct module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.viz_pdb.html">ipd.pdb.viz_pdb module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.protocol.html">ipd.protocol package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.protocol.sieve.html">ipd.protocol.sieve module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sel.html">ipd.sel package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sel.sel_pymol.html">ipd.sel.sel_pymol module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ipd.sym.html">ipd.sym package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.helix.html">ipd.sym.helix package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.high_t.html">ipd.sym.high_t package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.xtal.html">ipd.sym.xtal package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.guess_symmetry.html">ipd.sym.guess_symmetry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.ipd_sym_manager.html">ipd.sym.ipd_sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.permutations.html">ipd.sym.permutations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym.html">ipd.sym.sym module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_adapt.html">ipd.sym.sym_adapt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_builder.html">ipd.sym.sym_builder module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_check.html">ipd.sym.sym_check module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_color.html">ipd.sym.sym_color module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_detect.html">ipd.sym.sym_detect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_factory.html">ipd.sym.sym_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_fitting.html">ipd.sym.sym_fitting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_index.html">ipd.sym.sym_index module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_kind.html">ipd.sym.sym_kind module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">ipd.sym.sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_options.html">ipd.sym.sym_options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_slice.html">ipd.sym.sym_slice module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_util.html">ipd.sym.sym_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.symframes.html">ipd.sym.symframes module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.tools.html">ipd.tools package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.citool.html">ipd.tools.citool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.codetool.html">ipd.tools.codetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.conda.html">ipd.tools.conda module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.idetool.html">ipd.tools.idetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.ipdtool.html">ipd.tools.ipdtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.pkgtool.html">ipd.tools.pkgtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.run_tests_on_file.html">ipd.tools.run_tests_on_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.symtool.html">ipd.tools.symtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.tool_util.html">ipd.tools.tool_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.viz.html">ipd.viz package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.plot.html">ipd.viz.plot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.primitives.html">ipd.viz.primitives module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_cgo.html">ipd.viz.pymol_cgo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_pose.html">ipd.viz.pymol_pose module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_viz.html">ipd.viz.pymol_viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_assembly.html">ipd.viz.viz_assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_atoms.html">ipd.viz.viz_atoms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_body.html">ipd.viz.viz_body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_bond.html">ipd.viz.viz_bond module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_deco.html">ipd.viz.viz_deco module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_helix.html">ipd.viz.viz_helix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_rigidbody.html">ipd.viz.viz_rigidbody module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_xtal.html">ipd.viz.viz_xtal module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.bunch.html">ipd.bunch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.project_config.html">ipd.project_config module</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.html" class="nav-link">ipd package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.sym.html" class="nav-link">ipd.sym package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.sym.sym_manager module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ipd.sym.sym_manager">
+<span id="ipd-sym-sym-manager-module"></span><h1>ipd.sym.sym_manager module<a class="headerlink" href="#module-ipd.sym.sym_manager" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_manager.</span></span><span class="sig-name descname"><span class="pre">C1SymmetryManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L658-L702"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymmetryManager</span></code></a></p>
+<p>Basically a null symmetry manager, does not modify anything.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.SymIndexType">
+<span class="sig-name descname"><span class="pre">SymIndexType</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L655-L656"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.SymIndexType" title="Link to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="#ipd.sym.sym_manager.NullSymIndex" title="ipd.sym.sym_manager.NullSymIndex"><code class="xref py py-class docutils literal notranslate"><span class="pre">NullSymIndex</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.apply_symmetry">
+<span class="sig-name descname"><span class="pre">apply_symmetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L675-L678"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.apply_symmetry" title="Link to this definition">#</a></dt>
+<dd><p>no-op.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.asu">
+<span class="sig-name descname"><span class="pre">asu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L683-L684"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.asu" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.asym">
+<span class="sig-name descname"><span class="pre">asym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L680-L681"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.asym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.copy_for_indep">
+<span class="sig-name descname"><span class="pre">copy_for_indep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L701-L702"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.copy_for_indep" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.copy_with_full_sym">
+<span class="sig-name descname"><span class="pre">copy_with_full_sym</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L698-L699"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.copy_with_full_sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.copy_without_guideposts">
+<span class="sig-name descname"><span class="pre">copy_without_guideposts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L695-L696"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.copy_without_guideposts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L663-L673"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.init" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.is_dummy_sym">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_dummy_sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L658-L702"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.is_dummy_sym" title="Link to this definition">#</a></dt>
+<dd><p>Return True if this is a dummy symmetry manager.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.C1SymmetryManager.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C1'</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L658-L702"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.C1SymmetryManager.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.NullSymIndex">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_manager.</span></span><span class="sig-name descname"><span class="pre">NullSymIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L655-L656"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.NullSymIndex" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ipd.sym.sym_index.html#ipd.sym.sym_index.SymIndex" title="ipd.sym.sym_index.SymIndex"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymIndex</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_manager.</span></span><span class="sig-name descname"><span class="pre">SymmetryManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for managing symmetry operations in the IPD framework.</p>
+<p>This class encapsulates symmetry-related parameters and operations, allowing
+flexible management of transformations applied to molecular structures. It is
+designed to be extensible so that new symmetry behaviors can be integrated
+without modifying core logic.</p>
+<dl class="simple">
+<dt>Key Features:</dt><dd><ul class="simple">
+<li><p><strong>Encapsulates symmetry parameters and functionality</strong></p></li>
+<li><p><strong>Simplifies function signatures</strong> by reducing the number of explicit parameters</p></li>
+<li><p><strong>Supports unbounded symmetries</strong>, including translations and slides</p></li>
+<li><p><strong>Allows future extension</strong> without modifying core function signatures</p></li>
+<li><p><strong>Handles symmetry applications via `__call__` operator</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>Some parts of the codebase now expect a <cite>SymmetryManager</cite> instance to be
+present in <cite>self.sym</cite>. If no symmetry is specified, a no-op
+<cite>C1SymmetryManager</cite> is created via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sym</span> <span class="o">=</span> <span class="n">create_sym_manager</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To create a symmetry manager based on configuration or command-line options:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sym</span> <span class="o">=</span> <span class="n">create_sym_manager</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Symmetry is applied to various data types via the <cite>__call__</cite> operator:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xyz</span> <span class="o">=</span> <span class="n">sym</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>  <span class="c1"># Symmetrizes coordinates</span>
+<span class="n">seq</span> <span class="o">=</span> <span class="n">sym</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>  <span class="c1"># Symmetrizes a sequence</span>
+</pre></div>
+</div>
+<p>Any <cite>SymmetryManager</cite> can also symmetrize arbitrary arrays like sequences and diffusion objects.</p>
+<p><strong>Implementation Details:</strong></p>
+<ul class="simple">
+<li><p>Subclasses must implement <a class="reference internal" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry" title="ipd.sym.sym_manager.SymmetryManager.apply_symmetry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply_symmetry()</span></code></a>, which will be passed a correctly sliced
+subset of the data, converted to the proper shape, dtype, and device.</p></li>
+<li><p>The method receives relevant parameters via <cite>kwargs</cite>, pre-updated based on
+refinement folding (rfold) and/or diffusion timesteps.</p></li>
+<li><p>Additional parameters from <cite>sym.yaml</cite> are also included in <cite>kwargs</cite>, making it
+slightly more convenient and correct to extract these values through function
+arguments rather than instance attributes.</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.symid">
+<span class="sig-name descname"><span class="pre">symid</span></span><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.symid" title="Link to this definition">#</a></dt>
+<dd><p>The symmetry identifier, e.g., ‘C1’, ‘C2’, ‘D3’, etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.opt">
+<span class="sig-name descname"><span class="pre">opt</span></span><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.opt" title="Link to this definition">#</a></dt>
+<dd><p>Configuration options controlling symmetry behavior.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.idx">
+<span class="sig-name descname"><span class="pre">idx</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.idx" title="Link to this definition">#</a></dt>
+<dd><p>Indexing structure used for symmetric transformations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ipd.sym.sym_index.html#ipd.sym.sym_index.SymIndex" title="ipd.sym.sym_index.SymIndex">SymIndex</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sym</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">create_sym_manager</span><span class="p">(</span><span class="n">symid</span><span class="o">=</span><span class="s1">&#39;C3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sym</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">SymIndex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">[(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xyz_sym</span> <span class="o">=</span> <span class="n">sym</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.L">
+<span class="sig-name descname"><span class="pre">L</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.L" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.SymIndexType">
+<span class="sig-name descname"><span class="pre">SymIndexType</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L12-L327"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.SymIndexType" title="Link to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="ipd.sym.sym_index.html#ipd.sym.sym_index.SymIndex" title="ipd.sym.sym_index.SymIndex"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymIndex</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.add_properties">
+<span class="sig-name descname"><span class="pre">add_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L132-L155"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.add_properties" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.allsymmRs">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">allsymmRs</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.allsymmRs" title="Link to this definition">#</a></dt>
+<dd><p>Return all symmetry matrices.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_initial_offset">
+<span class="sig-name descname"><span class="pre">apply_initial_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L621-L635"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_initial_offset" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_sym_slices">
+<span class="sig-name descname"><span class="pre">apply_sym_slices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ipd.sym.sym_adapt.html#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><span class="pre">SymAdapt</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L241-L259"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_sym_slices" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_sym_slices_xyzpair">
+<span class="sig-name descname"><span class="pre">apply_sym_slices_xyzpair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzadaptor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pairadaptor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matchpair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L222-L239"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_sym_slices_xyzpair" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_symmetry">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">apply_symmetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L114-L122"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry" title="Link to this definition">#</a></dt>
+<dd><p>All subclasses must implement this method.</p>
+<p>Calls will recieve only the part of the structure that needs to
+be symmetrized, and inputs will always be on the gpu, if cuda is
+available</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_symmetry_index">
+<span class="sig-name descname"><span class="pre">apply_symmetry_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isidx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L295-L315"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_index" title="Link to this definition">#</a></dt>
+<dd><p>handles index data types where values must be reindexed in context of the symmetric object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_symmetry_pair">
+<span class="sig-name descname"><span class="pre">apply_symmetry_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L261-L293"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_pair" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_symmetry_scalar">
+<span class="sig-name descname"><span class="pre">apply_symmetry_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shapekind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.ShapeKind" title="ipd.sym.sym_kind.ShapeKind"><span class="pre">ShapeKind</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">contig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L317-L328"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_scalar" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.apply_symmetry_xyz_maybe_pair">
+<span class="sig-name descname"><span class="pre">apply_symmetry_xyz_maybe_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origxyz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L214-L220"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_xyz_maybe_pair" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.assert_symmetry_correct">
+<span class="sig-name descname"><span class="pre">assert_symmetry_correct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L532-L534"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.assert_symmetry_correct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.asu">
+<span class="sig-name descname"><span class="pre">asu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L458-L459"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.asu" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.asym">
+<span class="sig-name descname"><span class="pre">asym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L455-L456"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.asym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L536-L541"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.check" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L411-L453"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.extract" title="Link to this definition">#</a></dt>
+<dd><p>Extract the asu from an object.</p>
+<p>This should basically be the inverse of __call__. residues not
+involved with symmetry are included</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.fill_from_contiguous">
+<span class="sig-name descname"><span class="pre">fill_from_contiguous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matchpair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sympair_protein_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L384-L409"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.fill_from_contiguous" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.frames">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">frames</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.frames" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.full_symmetry">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">full_symmetry</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.full_symmetry" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_index.html#ipd.sym.sym_index.SymIndex" title="ipd.sym.sym_index.SymIndex"><span class="pre">SymIndex</span></a></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Return the idx of the symmetry managerm or a simple slice if
+None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.init">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L110-L112"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.init" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.is_dummy_sym">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_dummy_sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.is_dummy_sym" title="Link to this definition">#</a></dt>
+<dd><p>Return True if this is a dummy symmetry manager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.is_on_symaxis">
+<span class="sig-name descname"><span class="pre">is_on_symaxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L548-L565"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.is_on_symaxis" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.is_symmetrical">
+<span class="sig-name descname"><span class="pre">is_symmetrical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L480-L487"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.is_symmetrical" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'base'</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.mark_symmetrical">
+<span class="sig-name descname"><span class="pre">mark_symmetrical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L474-L478"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.mark_symmetrical" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.move_unsym_to_match_asu">
+<span class="sig-name descname"><span class="pre">move_unsym_to_match_asu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moved</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move_all_nonprot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L330-L355"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.move_unsym_to_match_asu" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.nsub">
+<span class="sig-name descname"><span class="pre">nsub</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.nsub" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.place_global_symmetry">
+<span class="sig-name descname"><span class="pre">place_global_symmetry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L611-L619"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.place_global_symmetry" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.post_init">
+<span class="sig-name descname"><span class="pre">post_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L128-L130"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.post_init" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.recenter_by_chain">
+<span class="sig-name descname"><span class="pre">recenter_by_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L647-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.recenter_by_chain" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L543-L546"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.reset" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.set_idx">
+<span class="sig-name descname"><span class="pre">set_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L510-L517"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.set_idx" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.setup_for_symmetry">
+<span class="sig-name descname"><span class="pre">setup_for_symmetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">__</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L124-L126"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.setup_for_symmetry" title="Link to this definition">#</a></dt>
+<dd><p>Default implementation no-op.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.sym_adapt">
+<span class="sig-name descname"><span class="pre">sym_adapt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="ipd.sym.sym_adapt.html#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><span class="pre">SymAdapt</span></a></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L522-L525"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.sym_adapt" title="Link to this definition">#</a></dt>
+<dd><p>Return a SymAdapt object with metadata about the symmetry of the
+thing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.symdims">
+<span class="sig-name descname"><span class="pre">symdims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L461-L472"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.symdims" title="Link to this definition">#</a></dt>
+<dd><p>Try to guess which dimensions are symmetrical, could be 1 or 2.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">symid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.symmRs">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">symmRs</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L26-L653"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.symmRs" title="Link to this definition">#</a></dt>
+<dd><p>Return the symmetry matrices of the current symmsub.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.to_contiguous">
+<span class="sig-name descname"><span class="pre">to_contiguous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matchpair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sympair_protein_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L357-L382"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.to_contiguous" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.SymmetryManager.verify_index">
+<span class="sig-name descname"><span class="pre">verify_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L519-L520"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.SymmetryManager.verify_index" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.XYZPair">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_manager.</span></span><span class="sig-name descname"><span class="pre">XYZPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.XYZPair" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.XYZPair.pair">
+<span class="sig-name descname"><span class="pre">pair</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.XYZPair.pair" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.XYZPair.xyz">
+<span class="sig-name descname"><span class="pre">xyz</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.XYZPair.xyz" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ipd.sym.sym_manager.XYZPairUnsupportedError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_manager.</span></span><span class="sig-name descname"><span class="pre">XYZPairUnsupportedError</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_manager.py#L23-L24"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_manager.XYZPairUnsupportedError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ipd.sym.sym_kind.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ipd.sym.sym_kind module</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ipd.sym.sym_options.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ipd.sym.sym_options module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.SymIndexType"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.SymIndexType</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.apply_symmetry"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.apply_symmetry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.asu"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.asu()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.asym"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.asym()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.copy_for_indep"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.copy_for_indep()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.copy_with_full_sym"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.copy_with_full_sym()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.copy_without_guideposts"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.copy_without_guideposts()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.init"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.is_dummy_sym"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.is_dummy_sym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.C1SymmetryManager.kind"><code class="docutils literal notranslate"><span class="pre">C1SymmetryManager.kind</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.NullSymIndex"><code class="docutils literal notranslate"><span class="pre">NullSymIndex</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager"><code class="docutils literal notranslate"><span class="pre">SymmetryManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.symid"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.symid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.opt"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.opt</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.idx"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.idx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.L"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.L</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.SymIndexType"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.SymIndexType</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.add_properties"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.add_properties()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.allsymmRs"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.allsymmRs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_initial_offset"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_initial_offset()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_sym_slices"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_sym_slices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_sym_slices_xyzpair"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_sym_slices_xyzpair()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_symmetry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_index"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_symmetry_index()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_pair"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_symmetry_pair()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_scalar"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_symmetry_scalar()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.apply_symmetry_xyz_maybe_pair"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.apply_symmetry_xyz_maybe_pair()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.assert_symmetry_correct"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.assert_symmetry_correct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.asu"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.asu()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.asym"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.asym()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.check"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.check()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.extract"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.extract()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.fill_from_contiguous"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.fill_from_contiguous()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.frames"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.frames</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.full_symmetry"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.full_symmetry</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.idx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.init"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.is_dummy_sym"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.is_dummy_sym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.is_on_symaxis"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.is_on_symaxis()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.is_symmetrical"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.is_symmetrical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.kind"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.mark_symmetrical"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.mark_symmetrical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.move_unsym_to_match_asu"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.move_unsym_to_match_asu()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.nsub"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.nsub</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.place_global_symmetry"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.place_global_symmetry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.post_init"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.post_init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.recenter_by_chain"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.recenter_by_chain()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.reset"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.reset()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.set_idx"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.set_idx()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.setup_for_symmetry"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.setup_for_symmetry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.sym_adapt"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.sym_adapt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.symdims"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.symdims()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.symid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.symmRs"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.symmRs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.to_contiguous"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.to_contiguous()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.SymmetryManager.verify_index"><code class="docutils literal notranslate"><span class="pre">SymmetryManager.verify_index()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.XYZPair"><code class="docutils literal notranslate"><span class="pre">XYZPair</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.XYZPair.pair"><code class="docutils literal notranslate"><span class="pre">XYZPair.pair</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.XYZPair.xyz"><code class="docutils literal notranslate"><span class="pre">XYZPair.xyz</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_manager.XYZPairUnsupportedError"><code class="docutils literal notranslate"><span class="pre">XYZPairUnsupportedError</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

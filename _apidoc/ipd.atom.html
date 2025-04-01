@@ -1,0 +1,852 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ipd.atom package &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_apidoc/ipd.atom';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ipd.atom.assembly module" href="ipd.atom.assembly.html" />
+    <link rel="prev" title="ipd package" href="ipd.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ipd.html">ipd package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">ipd.atom package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html">ipd.atom.assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.atom_utils.html">ipd.atom.atom_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html">ipd.atom.body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html">ipd.atom.components module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.crops.html">ipd.atom.crops module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.crud.html">ipd.crud package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.backend.html">ipd.crud.backend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.crudcli.html">ipd.crud.crudcli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.frontend.html">ipd.crud.frontend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.server.html">ipd.crud.server module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.dev.html">ipd.dev package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.cli.html">ipd.dev.cli package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.code.html">ipd.dev.code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.instrumentation.html">ipd.dev.instrumentation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.qt.html">ipd.dev.qt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.state.html">ipd.dev.state package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.storage.html">ipd.dev.storage package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.testing.html">ipd.dev.testing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.contexts.html">ipd.dev.contexts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.debug.html">ipd.dev.debug module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.decorators.html">ipd.dev.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.element_wise.html">ipd.dev.element_wise module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.error.html">ipd.dev.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.files.html">ipd.dev.files module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.format.html">ipd.dev.format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.functional.html">ipd.dev.functional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.iterables.html">ipd.dev.iterables module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.meta.html">ipd.dev.meta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.metadata.html">ipd.dev.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.misc.html">ipd.dev.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.objinfo.html">ipd.dev.objinfo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.safe_eval.html">ipd.dev.safe_eval module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.serialization.html">ipd.dev.serialization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.shell.html">ipd.dev.shell module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.strings.html">ipd.dev.strings module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.tolerances.html">ipd.dev.tolerances module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.homog.html">ipd.homog package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.contact_matrix.html">ipd.homog.contact_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.hgeom.html">ipd.homog.hgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.infix.html">ipd.homog.infix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.npth_common.html">ipd.homog.npth_common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.pointgen.html">ipd.homog.pointgen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.quat.html">ipd.homog.quat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.thgeom.html">ipd.homog.thgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.util.html">ipd.homog.util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.viz.html">ipd.homog.viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.xform_info.html">ipd.homog.xform_info module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.ml.html">ipd.ml package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.ml.datahub_util.html">ipd.ml.datahub_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.motif.html">ipd.motif package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_factory.html">ipd.motif.motif_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_manager.html">ipd.motif.motif_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_options.html">ipd.motif.motif_options module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.observer.html">ipd.observer package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.dynamic_parameters.html">ipd.observer.dynamic_parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.observer.html">ipd.observer.observer module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.pdb.html">ipd.pdb package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.bbutil.html">ipd.pdb.bbutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.chemical.html">ipd.pdb.chemical module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbdump.html">ipd.pdb.pdbdump module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfetch.html">ipd.pdb.pdbfetch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfile.html">ipd.pdb.pdbfile module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbmeta.html">ipd.pdb.pdbmeta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbread.html">ipd.pdb.pdbread module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pisces.html">ipd.pdb.pisces module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.readstruct.html">ipd.pdb.readstruct module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.viz_pdb.html">ipd.pdb.viz_pdb module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.protocol.html">ipd.protocol package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.protocol.sieve.html">ipd.protocol.sieve module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sel.html">ipd.sel package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sel.sel_pymol.html">ipd.sel.sel_pymol module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sym.html">ipd.sym package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.helix.html">ipd.sym.helix package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.high_t.html">ipd.sym.high_t package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.xtal.html">ipd.sym.xtal package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.guess_symmetry.html">ipd.sym.guess_symmetry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.ipd_sym_manager.html">ipd.sym.ipd_sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.permutations.html">ipd.sym.permutations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym.html">ipd.sym.sym module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_adapt.html">ipd.sym.sym_adapt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_builder.html">ipd.sym.sym_builder module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_check.html">ipd.sym.sym_check module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_color.html">ipd.sym.sym_color module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_detect.html">ipd.sym.sym_detect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_factory.html">ipd.sym.sym_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_fitting.html">ipd.sym.sym_fitting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_index.html">ipd.sym.sym_index module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_kind.html">ipd.sym.sym_kind module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_manager.html">ipd.sym.sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_options.html">ipd.sym.sym_options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_slice.html">ipd.sym.sym_slice module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_util.html">ipd.sym.sym_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.symframes.html">ipd.sym.symframes module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.tools.html">ipd.tools package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.citool.html">ipd.tools.citool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.codetool.html">ipd.tools.codetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.conda.html">ipd.tools.conda module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.idetool.html">ipd.tools.idetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.ipdtool.html">ipd.tools.ipdtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.pkgtool.html">ipd.tools.pkgtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.run_tests_on_file.html">ipd.tools.run_tests_on_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.symtool.html">ipd.tools.symtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.tool_util.html">ipd.tools.tool_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.viz.html">ipd.viz package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.plot.html">ipd.viz.plot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.primitives.html">ipd.viz.primitives module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_cgo.html">ipd.viz.pymol_cgo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_pose.html">ipd.viz.pymol_pose module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_viz.html">ipd.viz.pymol_viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_assembly.html">ipd.viz.viz_assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_atoms.html">ipd.viz.viz_atoms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_body.html">ipd.viz.viz_body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_bond.html">ipd.viz.viz_bond module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_deco.html">ipd.viz.viz_deco module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_helix.html">ipd.viz.viz_helix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_rigidbody.html">ipd.viz.viz_rigidbody module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_xtal.html">ipd.viz.viz_xtal module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.bunch.html">ipd.bunch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.project_config.html">ipd.project_config module</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.html" class="nav-link">ipd package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.atom package</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ipd.atom">
+<span id="ipd-atom-package"></span><h1>ipd.atom package<a class="headerlink" href="#module-ipd.atom" title="Link to this heading">#</a></h1>
+<p>This subpackage provides a comprehensive toolkit for atom-level operations within the IPD framework. It aggregates functionalities for processing and analyzing atomic structures, including utilities, alignment components, body representations, and assembly manipulations.</p>
+<dl>
+<dt>Modules:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>atom_utils:</dt><dd><p>Provides helper functions and utilities for common atom-level operations such as chain splitting, coordinate transformations, and sequence alignment support.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>components:</dt><dd><p>Contains classes and functions for aligning atomic structures based on sequence alignment and RMSD
+fitting, and for managing the resulting alignment data.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>body:</dt><dd><p>Defines building blocks for constructing higher-level atomic body representations and related operations.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>assembly:</dt><dd><p>Offers tools for handling and manipulating assemblies of atomic structures, including merging, splitting, and transforming multiple chains.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Usage Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;1dxh&#39;</span><span class="p">,</span> <span class="n">assembly</span><span class="o">=</span><span class="s1">&#39;largest&#39;</span><span class="p">,</span> <span class="n">het</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chainlist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">components</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">find_components_by_seqaln_rmsfit</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
+<span class="go">Components:</span>
+<span class="go">  atoms: [2669]</span>
+<span class="go">  frames: [(12, 4, 4)]</span>
+<span class="go">  seqmatch: [array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])]</span>
+<span class="go">  rmsd: [array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])]</span>
+<span class="go">  idx: [array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])]</span>
+<span class="go">  source_: &lt;class &#39;list&#39;&gt;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Dependencies:</dt><dd><ul class="simple">
+<li><p>numpy</p></li>
+<li><p>biotite (accessed via lazy import)</p></li>
+</ul>
+</dd>
+</dl>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ipd.atom.assembly.html">ipd.atom.assembly module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly"><code class="docutils literal notranslate"><span class="pre">Assembly</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.bodies"><code class="docutils literal notranslate"><span class="pre">Assembly.bodies</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.body"><code class="docutils literal notranslate"><span class="pre">Assembly.body()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.enumerate"><code class="docutils literal notranslate"><span class="pre">Assembly.enumerate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.enumerate_symbodies"><code class="docutils literal notranslate"><span class="pre">Assembly.enumerate_symbodies()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.frames"><code class="docutils literal notranslate"><span class="pre">Assembly.frames</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.fzf"><code class="docutils literal notranslate"><span class="pre">Assembly.fzf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.get_metadata"><code class="docutils literal notranslate"><span class="pre">Assembly.get_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.groupby"><code class="docutils literal notranslate"><span class="pre">Assembly.groupby()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.meta"><code class="docutils literal notranslate"><span class="pre">Assembly.meta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.pick"><code class="docutils literal notranslate"><span class="pre">Assembly.pick()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.set_metadata"><code class="docutils literal notranslate"><span class="pre">Assembly.set_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.symbodies"><code class="docutils literal notranslate"><span class="pre">Assembly.symbodies()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.symbodyids"><code class="docutils literal notranslate"><span class="pre">Assembly.symbodyids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.Assembly.sync_metadata"><code class="docutils literal notranslate"><span class="pre">Assembly.sync_metadata()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.AsuSelector"><code class="docutils literal notranslate"><span class="pre">AsuSelector</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.AsuSelector.bodyid"><code class="docutils literal notranslate"><span class="pre">AsuSelector.bodyid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.AsuSelector.frameid"><code class="docutils literal notranslate"><span class="pre">AsuSelector.frameid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.NeighborhoodSelector"><code class="docutils literal notranslate"><span class="pre">NeighborhoodSelector()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.assembly_from_file"><code class="docutils literal notranslate"><span class="pre">assembly_from_file()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.new_frame"><code class="docutils literal notranslate"><span class="pre">new_frame()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.assembly.html#ipd.atom.assembly.to_bodies"><code class="docutils literal notranslate"><span class="pre">to_bodies()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ipd.atom.atom_utils.html">ipd.atom.atom_utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#module-ipd-atom-atom-utils">Module: ipd.atom.atom_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.atoms_to_seqstr"><code class="docutils literal notranslate"><span class="pre">atoms_to_seqstr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.centered"><code class="docutils literal notranslate"><span class="pre">centered()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_dict"><code class="docutils literal notranslate"><span class="pre">chain_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_id_ranges"><code class="docutils literal notranslate"><span class="pre">chain_id_ranges()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_ranges"><code class="docutils literal notranslate"><span class="pre">chain_ranges()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.chain_ranges_from_breaks"><code class="docutils literal notranslate"><span class="pre">chain_ranges_from_breaks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.com"><code class="docutils literal notranslate"><span class="pre">com()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.get"><code class="docutils literal notranslate"><span class="pre">get()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_atomarray"><code class="docutils literal notranslate"><span class="pre">is_atomarray()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_atomarraystack"><code class="docutils literal notranslate"><span class="pre">is_atomarraystack()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_atoms"><code class="docutils literal notranslate"><span class="pre">is_atoms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.is_protein"><code class="docutils literal notranslate"><span class="pre">is_protein()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.join"><code class="docutils literal notranslate"><span class="pre">join()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.merge_chains"><code class="docutils literal notranslate"><span class="pre">merge_chains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.pick_representative_chains"><code class="docutils literal notranslate"><span class="pre">pick_representative_chains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.primary_polymer_atoms"><code class="docutils literal notranslate"><span class="pre">primary_polymer_atoms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.remove_garbage_residues"><code class="docutils literal notranslate"><span class="pre">remove_garbage_residues()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.remove_nan_atoms"><code class="docutils literal notranslate"><span class="pre">remove_nan_atoms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.remove_nonprotein"><code class="docutils literal notranslate"><span class="pre">remove_nonprotein()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.select"><code class="docutils literal notranslate"><span class="pre">select()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.seqalign"><code class="docutils literal notranslate"><span class="pre">seqalign()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.split"><code class="docutils literal notranslate"><span class="pre">split()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.split_chains"><code class="docutils literal notranslate"><span class="pre">split_chains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.atom_utils.html#ipd.atom.atom_utils.to_seq"><code class="docutils literal notranslate"><span class="pre">to_seq()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ipd.atom.body.html">ipd.atom.body module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body"><code class="docutils literal notranslate"><span class="pre">Body</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.atoms"><code class="docutils literal notranslate"><span class="pre">Body.atoms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.atomsel"><code class="docutils literal notranslate"><span class="pre">Body.atomsel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.centered"><code class="docutils literal notranslate"><span class="pre">Body.centered</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.clone"><code class="docutils literal notranslate"><span class="pre">Body.clone()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.com"><code class="docutils literal notranslate"><span class="pre">Body.com</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.contacts"><code class="docutils literal notranslate"><span class="pre">Body.contacts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.coord"><code class="docutils literal notranslate"><span class="pre">Body.coord</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.get_metadata"><code class="docutils literal notranslate"><span class="pre">Body.get_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.hasclash"><code class="docutils literal notranslate"><span class="pre">Body.hasclash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.hetero"><code class="docutils literal notranslate"><span class="pre">Body.hetero</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.hydro"><code class="docutils literal notranslate"><span class="pre">Body.hydro</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.isclose"><code class="docutils literal notranslate"><span class="pre">Body.isclose()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.meta"><code class="docutils literal notranslate"><span class="pre">Body.meta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.movedby"><code class="docutils literal notranslate"><span class="pre">Body.movedby()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.movedto"><code class="docutils literal notranslate"><span class="pre">Body.movedto()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.natom"><code class="docutils literal notranslate"><span class="pre">Body.natom</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.nclash"><code class="docutils literal notranslate"><span class="pre">Body.nclash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.nres"><code class="docutils literal notranslate"><span class="pre">Body.nres</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.pos"><code class="docutils literal notranslate"><span class="pre">Body.pos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.positioned_atoms"><code class="docutils literal notranslate"><span class="pre">Body.positioned_atoms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.rescen"><code class="docutils literal notranslate"><span class="pre">Body.rescen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.rg"><code class="docutils literal notranslate"><span class="pre">Body.rg</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.set_metadata"><code class="docutils literal notranslate"><span class="pre">Body.set_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.slide_into_contact"><code class="docutils literal notranslate"><span class="pre">Body.slide_into_contact()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.slide_into_contact_rand"><code class="docutils literal notranslate"><span class="pre">Body.slide_into_contact_rand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.summary"><code class="docutils literal notranslate"><span class="pre">Body.summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.sync_metadata"><code class="docutils literal notranslate"><span class="pre">Body.sync_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.Body.water"><code class="docutils literal notranslate"><span class="pre">Body.water</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts"><code class="docutils literal notranslate"><span class="pre">BodyContacts</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.body2"><code class="docutils literal notranslate"><span class="pre">BodyContacts.body2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.contact_matrix_stack"><code class="docutils literal notranslate"><span class="pre">BodyContacts.contact_matrix_stack()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.exclude"><code class="docutils literal notranslate"><span class="pre">BodyContacts.exclude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.max_contacts"><code class="docutils literal notranslate"><span class="pre">BodyContacts.max_contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.mean_contacts"><code class="docutils literal notranslate"><span class="pre">BodyContacts.mean_contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.min_contacts"><code class="docutils literal notranslate"><span class="pre">BodyContacts.min_contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.nuniq"><code class="docutils literal notranslate"><span class="pre">BodyContacts.nuniq</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.nuniq1"><code class="docutils literal notranslate"><span class="pre">BodyContacts.nuniq1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.nuniq2"><code class="docutils literal notranslate"><span class="pre">BodyContacts.nuniq2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.pairs"><code class="docutils literal notranslate"><span class="pre">BodyContacts.pairs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.ranges"><code class="docutils literal notranslate"><span class="pre">BodyContacts.ranges</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.symbody"><code class="docutils literal notranslate"><span class="pre">BodyContacts.symbody</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.BodyContacts.total_contacts"><code class="docutils literal notranslate"><span class="pre">BodyContacts.total_contacts</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody"><code class="docutils literal notranslate"><span class="pre">SymBody</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.asu"><code class="docutils literal notranslate"><span class="pre">SymBody.asu</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.atoms"><code class="docutils literal notranslate"><span class="pre">SymBody.atoms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.atomsel"><code class="docutils literal notranslate"><span class="pre">SymBody.atomsel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.bodies"><code class="docutils literal notranslate"><span class="pre">SymBody.bodies</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.centered"><code class="docutils literal notranslate"><span class="pre">SymBody.centered</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.clone"><code class="docutils literal notranslate"><span class="pre">SymBody.clone()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.com"><code class="docutils literal notranslate"><span class="pre">SymBody.com</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.contacts"><code class="docutils literal notranslate"><span class="pre">SymBody.contacts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.coord"><code class="docutils literal notranslate"><span class="pre">SymBody.coord</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.frames"><code class="docutils literal notranslate"><span class="pre">SymBody.frames</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.get_metadata"><code class="docutils literal notranslate"><span class="pre">SymBody.get_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.hasclash"><code class="docutils literal notranslate"><span class="pre">SymBody.hasclash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.isclose"><code class="docutils literal notranslate"><span class="pre">SymBody.isclose()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.meta"><code class="docutils literal notranslate"><span class="pre">SymBody.meta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.movedby"><code class="docutils literal notranslate"><span class="pre">SymBody.movedby()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.movedto"><code class="docutils literal notranslate"><span class="pre">SymBody.movedto()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.natoms"><code class="docutils literal notranslate"><span class="pre">SymBody.natoms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.natomsel"><code class="docutils literal notranslate"><span class="pre">SymBody.natomsel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.nclash"><code class="docutils literal notranslate"><span class="pre">SymBody.nclash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.pos"><code class="docutils literal notranslate"><span class="pre">SymBody.pos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.rg"><code class="docutils literal notranslate"><span class="pre">SymBody.rg</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.set_metadata"><code class="docutils literal notranslate"><span class="pre">SymBody.set_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.slide_into_contact"><code class="docutils literal notranslate"><span class="pre">SymBody.slide_into_contact()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.slide_into_contact_rand"><code class="docutils literal notranslate"><span class="pre">SymBody.slide_into_contact_rand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.subs"><code class="docutils literal notranslate"><span class="pre">SymBody.subs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.subunit_contact_matrix"><code class="docutils literal notranslate"><span class="pre">SymBody.subunit_contact_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.subunit_contacts"><code class="docutils literal notranslate"><span class="pre">SymBody.subunit_contacts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.summary"><code class="docutils literal notranslate"><span class="pre">SymBody.summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.SymBody.sync_metadata"><code class="docutils literal notranslate"><span class="pre">SymBody.sync_metadata()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.body_from_file"><code class="docutils literal notranslate"><span class="pre">body_from_file()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.body.html#ipd.atom.body.symbody_from_file"><code class="docutils literal notranslate"><span class="pre">symbody_from_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ipd.atom.components.html">ipd.atom.components module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components"><code class="docutils literal notranslate"><span class="pre">Components</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.atoms"><code class="docutils literal notranslate"><span class="pre">Components.atoms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.frames"><code class="docutils literal notranslate"><span class="pre">Components.frames</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.seqmatch"><code class="docutils literal notranslate"><span class="pre">Components.seqmatch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.rmsd"><code class="docutils literal notranslate"><span class="pre">Components.rmsd</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.idx"><code class="docutils literal notranslate"><span class="pre">Components.idx</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.source_"><code class="docutils literal notranslate"><span class="pre">Components.source_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.intermediates_"><code class="docutils literal notranslate"><span class="pre">Components.intermediates_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.tolerances_"><code class="docutils literal notranslate"><span class="pre">Components.tolerances_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.add"><code class="docutils literal notranslate"><span class="pre">Components.add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.add_intermediate_result"><code class="docutils literal notranslate"><span class="pre">Components.add_intermediate_result()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id0"><code class="docutils literal notranslate"><span class="pre">Components.atoms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.enumerate"><code class="docutils literal notranslate"><span class="pre">Components.enumerate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.enumerate_intermediates"><code class="docutils literal notranslate"><span class="pre">Components.enumerate_intermediates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id1"><code class="docutils literal notranslate"><span class="pre">Components.frames</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.fzf"><code class="docutils literal notranslate"><span class="pre">Components.fzf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.groupby"><code class="docutils literal notranslate"><span class="pre">Components.groupby()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id2"><code class="docutils literal notranslate"><span class="pre">Components.idx</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id3"><code class="docutils literal notranslate"><span class="pre">Components.intermediates_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.mapwise"><code class="docutils literal notranslate"><span class="pre">Components.mapwise</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.match"><code class="docutils literal notranslate"><span class="pre">Components.match</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.npwise"><code class="docutils literal notranslate"><span class="pre">Components.npwise</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.pick"><code class="docutils literal notranslate"><span class="pre">Components.pick()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.print_intermediates"><code class="docutils literal notranslate"><span class="pre">Components.print_intermediates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.remove_small_chains"><code class="docutils literal notranslate"><span class="pre">Components.remove_small_chains()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id4"><code class="docutils literal notranslate"><span class="pre">Components.rmsd</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id5"><code class="docutils literal notranslate"><span class="pre">Components.seqmatch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id6"><code class="docutils literal notranslate"><span class="pre">Components.source_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#id7"><code class="docutils literal notranslate"><span class="pre">Components.tolerances_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.Components.valwise"><code class="docutils literal notranslate"><span class="pre">Components.valwise</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.accumulate_seqalign_rmsfit"><code class="docutils literal notranslate"><span class="pre">accumulate_seqalign_rmsfit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.find_components_by_seqaln_rmsfit"><code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.find_components_by_seqaln_rmsfit_recurse"><code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit_recurse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.merge_small_components"><code class="docutils literal notranslate"><span class="pre">merge_small_components()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.components.html#ipd.atom.components.stub"><code class="docutils literal notranslate"><span class="pre">stub()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ipd.atom.crops.html">ipd.atom.crops module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ipd.atom.crops.html#ipd.atom.crops.symmetric_crop"><code class="docutils literal notranslate"><span class="pre">symmetric_crop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ipd.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ipd package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ipd.atom.assembly.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ipd.atom.assembly module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

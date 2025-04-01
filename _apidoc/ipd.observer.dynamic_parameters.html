@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ipd.observer.dynamic_parameters module &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_apidoc/ipd.observer.dynamic_parameters';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ipd.observer.observer module" href="ipd.observer.observer.html" />
+    <link rel="prev" title="ipd.observer package" href="ipd.observer.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ipd.html">ipd package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.atom.html">ipd.atom package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html">ipd.atom.assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.atom_utils.html">ipd.atom.atom_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html">ipd.atom.body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html">ipd.atom.components module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.crops.html">ipd.atom.crops module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.crud.html">ipd.crud package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.backend.html">ipd.crud.backend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.crudcli.html">ipd.crud.crudcli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.frontend.html">ipd.crud.frontend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.server.html">ipd.crud.server module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.dev.html">ipd.dev package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.cli.html">ipd.dev.cli package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.code.html">ipd.dev.code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.instrumentation.html">ipd.dev.instrumentation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.qt.html">ipd.dev.qt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.state.html">ipd.dev.state package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.storage.html">ipd.dev.storage package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.testing.html">ipd.dev.testing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.contexts.html">ipd.dev.contexts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.debug.html">ipd.dev.debug module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.decorators.html">ipd.dev.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.element_wise.html">ipd.dev.element_wise module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.error.html">ipd.dev.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.files.html">ipd.dev.files module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.format.html">ipd.dev.format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.functional.html">ipd.dev.functional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.iterables.html">ipd.dev.iterables module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.meta.html">ipd.dev.meta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.metadata.html">ipd.dev.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.misc.html">ipd.dev.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.objinfo.html">ipd.dev.objinfo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.safe_eval.html">ipd.dev.safe_eval module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.serialization.html">ipd.dev.serialization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.shell.html">ipd.dev.shell module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.strings.html">ipd.dev.strings module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.tolerances.html">ipd.dev.tolerances module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.homog.html">ipd.homog package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.contact_matrix.html">ipd.homog.contact_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.hgeom.html">ipd.homog.hgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.infix.html">ipd.homog.infix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.npth_common.html">ipd.homog.npth_common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.pointgen.html">ipd.homog.pointgen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.quat.html">ipd.homog.quat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.thgeom.html">ipd.homog.thgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.util.html">ipd.homog.util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.viz.html">ipd.homog.viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.xform_info.html">ipd.homog.xform_info module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.ml.html">ipd.ml package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.ml.datahub_util.html">ipd.ml.datahub_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.motif.html">ipd.motif package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_factory.html">ipd.motif.motif_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_manager.html">ipd.motif.motif_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_options.html">ipd.motif.motif_options module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ipd.observer.html">ipd.observer package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">ipd.observer.dynamic_parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.observer.html">ipd.observer.observer module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.pdb.html">ipd.pdb package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.bbutil.html">ipd.pdb.bbutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.chemical.html">ipd.pdb.chemical module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbdump.html">ipd.pdb.pdbdump module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfetch.html">ipd.pdb.pdbfetch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfile.html">ipd.pdb.pdbfile module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbmeta.html">ipd.pdb.pdbmeta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbread.html">ipd.pdb.pdbread module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pisces.html">ipd.pdb.pisces module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.readstruct.html">ipd.pdb.readstruct module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.viz_pdb.html">ipd.pdb.viz_pdb module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.protocol.html">ipd.protocol package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.protocol.sieve.html">ipd.protocol.sieve module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sel.html">ipd.sel package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sel.sel_pymol.html">ipd.sel.sel_pymol module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sym.html">ipd.sym package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.helix.html">ipd.sym.helix package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.high_t.html">ipd.sym.high_t package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.xtal.html">ipd.sym.xtal package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.guess_symmetry.html">ipd.sym.guess_symmetry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.ipd_sym_manager.html">ipd.sym.ipd_sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.permutations.html">ipd.sym.permutations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym.html">ipd.sym.sym module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_adapt.html">ipd.sym.sym_adapt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_builder.html">ipd.sym.sym_builder module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_check.html">ipd.sym.sym_check module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_color.html">ipd.sym.sym_color module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_detect.html">ipd.sym.sym_detect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_factory.html">ipd.sym.sym_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_fitting.html">ipd.sym.sym_fitting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_index.html">ipd.sym.sym_index module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_kind.html">ipd.sym.sym_kind module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_manager.html">ipd.sym.sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_options.html">ipd.sym.sym_options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_slice.html">ipd.sym.sym_slice module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_util.html">ipd.sym.sym_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.symframes.html">ipd.sym.symframes module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.tools.html">ipd.tools package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.citool.html">ipd.tools.citool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.codetool.html">ipd.tools.codetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.conda.html">ipd.tools.conda module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.idetool.html">ipd.tools.idetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.ipdtool.html">ipd.tools.ipdtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.pkgtool.html">ipd.tools.pkgtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.run_tests_on_file.html">ipd.tools.run_tests_on_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.symtool.html">ipd.tools.symtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.tool_util.html">ipd.tools.tool_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.viz.html">ipd.viz package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.plot.html">ipd.viz.plot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.primitives.html">ipd.viz.primitives module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_cgo.html">ipd.viz.pymol_cgo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_pose.html">ipd.viz.pymol_pose module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_viz.html">ipd.viz.pymol_viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_assembly.html">ipd.viz.viz_assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_atoms.html">ipd.viz.viz_atoms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_body.html">ipd.viz.viz_body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_bond.html">ipd.viz.viz_bond module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_deco.html">ipd.viz.viz_deco module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_helix.html">ipd.viz.viz_helix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_rigidbody.html">ipd.viz.viz_rigidbody module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_xtal.html">ipd.viz.viz_xtal module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.bunch.html">ipd.bunch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.project_config.html">ipd.project_config module</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.html" class="nav-link">ipd package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.observer.html" class="nav-link">ipd.observer package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.observer.dynamic_parameters module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ipd.observer.dynamic_parameters">
+<span id="ipd-observer-dynamic-parameters-module"></span><h1>ipd.observer.dynamic_parameters module<a class="headerlink" href="#module-ipd.observer.dynamic_parameters" title="Link to this heading">#</a></h1>
+<section id="this-file-defines-a-dynamicparameter-management-system">
+<h2>This file defines a DynamicParameter management system<a class="headerlink" href="#this-file-defines-a-dynamicparameter-management-system" title="Link to this heading">#</a></h2>
+<p>The DynamicParameters class allows parameter values to change through a run based on the design number, diffusion T number, and iterative simulator block number. Boolean parameters can be set by specifying particular iterations, or a range of values. Numerical parameters can be set by specifying example values for particular iterations, then 1D or 2D spline smoothing is used to get the value for intermediate iterations. Parameters are accessed by attribute, e.g. by accessing symopts.fit, you will get a true/false value depending on where you are in the run. Behavior is specified in config or command line, with no extra logic needed in the code that accesses the parameter. For example, <code class="docutils literal notranslate"><span class="pre">sym.fit='rfold:[7,13,27,35]'</span></code> will set fit to true on blocks 7, 13, 27 and 35, <code class="docutils literal notranslate"><span class="pre">sym.fit='diffuse:[[12,27]]'</span></code> will set sym.fit to true on diffusion steps 12 thru 27 inclusive, <code class="docutils literal notranslate"><span class="pre">sym.fit='rfold:[[0,0.5]]*diffuse:[[0,10]]'</span></code> will set fit to true for the first half of the rosettafold blocks when the diffusion step is 10 or less. DynamicParameters implements a Mapping, so it can be used for kwargs like so, foo(a,b,**symopts).</p>
+<p class="rubric">Examples</p>
+<p>A central DynamicParameter manager class creates and contains all parameters and is
+created for a run with 10 designs, 50 diffusion steps, and 40 total rfold steps like so</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">DynamicParameters</span><span class="p">(</span><span class="n">ndesign</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ndiffuse</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">nrfold</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>New parameters are created with factory member functions of DynamicParameter
+with a specified name and will depend on any combination of the current design,
+diffusion, and/or rfold step. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_false_on_steps</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;done_on_first_3_steps&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>and then accessed like this from anywhere using the DynamicParameter object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">StepObserver</span><span class="p">()</span><span class="o">.</span><span class="n">set_nstep</span><span class="p">(</span><span class="n">diffuse</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span> <span class="c1"># system will call this automatically</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">StepObserver</span><span class="p">()</span><span class="o">.</span><span class="n">set_step</span><span class="p">(</span><span class="n">diffuse</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span> <span class="c1"># system will call this automatically</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">done_on_first_3_steps</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">StepObserver</span><span class="p">()</span><span class="o">.</span><span class="n">set_step</span><span class="p">(</span><span class="n">diffuse</span><span class="o">=</span><span class="mi">48</span><span class="p">)</span> <span class="c1"># system will call this automatically</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">done_on_first_3_steps</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">StepObserver</span><span class="p">()</span><span class="o">.</span><span class="n">set_step</span><span class="p">(</span><span class="n">diffuse</span><span class="o">=</span><span class="mi">47</span><span class="p">)</span> <span class="c1"># system will call this automatically</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">done_on_first_3_steps</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The factory functions newparam_false_on_steps and newparam_false_on_steps create new
+boolean parameters that are true/false for specified steps in the protocol</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_on_steps</span><span class="p">(</span><span class="s1">&#39;name1&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_on_steps</span><span class="p">(</span><span class="s1">&#39;name2&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_on_steps</span><span class="p">(</span><span class="s1">&#39;name3&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_false_on_steps</span><span class="p">(</span><span class="s1">&#39;name4&#39;</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_on_steps</span><span class="p">(</span><span class="s1">&#39;name5&#39;</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="n">_NotIn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>floats can be used as a fraction</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_on_steps</span><span class="p">(</span><span class="s1">&#39;name6&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">[</span><span class="mf">0.33</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_on_steps</span><span class="p">(</span><span class="s1">&#39;name7&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.33</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The factory functions newparam_true_in_range, newparam_false_in_range create new
+boolean parameters based on ranges of steps. The range is inclusive. Floats can be
+used to specify, for example, true when the fraction of steps done is between 0.3 and 0.8</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_in_range</span><span class="p">(</span><span class="s1">&#39;name8&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>or explicit step numbers can be used for ex: the first 5 steps</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_true_in_range</span><span class="p">(</span><span class="s1">&#39;name9&#39;</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">StepObserver</span><span class="p">()</span><span class="o">.</span><span class="n">set_step</span><span class="p">(</span><span class="n">rfold</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">name9</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">StepObserver</span><span class="p">()</span><span class="o">.</span><span class="n">set_step</span><span class="p">(</span><span class="n">rfold</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">name9</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>multiple ranges can be specified</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_false_in_range</span><span class="p">(</span><span class="s1">&#39;name10&#39;</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>python range objects can also be used, eg the first 10 odd steps</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_false_in_range</span><span class="p">(</span><span class="s1">&#39;name11&#39;</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Floating point parameters can be created with newparam_spline_1d and newparam_spline_2d
+with two points, basically linear interp. (Do we need integer valued parameters? What
+would be a good way to specify those? I’m kinda planning to round spline values for int
+params that need to vary, but I dunno if that will be a good approach)</p>
+<p>this example has values n+1, where n is the step number and N is total steps</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">N</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_spline_1d</span><span class="p">(</span><span class="s1">&#39;name12&#39;</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>with 3 points, a quadratic fit
+this example has values (n+1)**2, where n is the step number and N is total steps</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_spline_1d</span><span class="p">(</span><span class="s1">&#39;name13&#39;</span><span class="p">,</span> <span class="n">rfold</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">4</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="o">**</span><span class="mi">2</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>with 4 or more points, cubic spline fit
+this example has values (n+1)**3, where n is the step number and N is total steps</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_spline_1d</span><span class="p">(</span><span class="s1">&#39;name14&#39;</span><span class="p">,</span> <span class="n">design</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">4</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="o">**</span><span class="mi">3</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>can also do fancy 2D triangulation-based interploation to vary rfold params
+over the course of an individual diffusion trajectory
+values are specified as triples of (diffuse_step, rfold_step, value)
+there must be at least 3, and anything outside their convex hull will
+have&gt;&gt;&gt;  an undefined value, so the points must cover the unit square [0-1,0-1]
+(you’ll get an informative error). I think it’s probably best to always give values
+for the four corners exactly</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">newparam_spline_2d</span><span class="p">(</span><span class="s1">&#39;twod&#39;</span><span class="p">,</span> <span class="n">diffuse_rfold</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParam">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.observer.dynamic_parameters.</span></span><span class="sig-name descname"><span class="pre">DynamicParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L462-L487"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParam" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Parameter that can change values through a process.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParam.attach_manager">
+<span class="sig-name descname"><span class="pre">attach_manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manager</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L468-L471"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParam.attach_manager" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParam.progress">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">progress</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L462-L487"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParam.progress" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParam.value">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L482-L484"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParam.value" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.observer.dynamic_parameters.</span></span><span class="sig-name descname"><span class="pre">DynamicParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndesign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndiffuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_testing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L183-L416"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></p>
+<p>A central class that manages all dynamic parameters for a run.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L197-L198"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.copy" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.design">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">design</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L183-L416"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.design" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.diffuse">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">diffuse</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L183-L416"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.diffuse" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.has">
+<span class="sig-name descname"><span class="pre">has</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L290-L292"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.has" title="Link to this definition">#</a></dt>
+<dd><p>like contains, except returns false for None values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.istrue">
+<span class="sig-name descname"><span class="pre">istrue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L294-L295"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.istrue" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.newparam_constant">
+<span class="sig-name descname"><span class="pre">newparam_constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L253-L254"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_constant" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_in_range">
+<span class="sig-name descname"><span class="pre">newparam_false_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L243-L245"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_in_range" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_on_steps">
+<span class="sig-name descname"><span class="pre">newparam_false_on_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(True,</span> <span class="pre">False)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L230-L231"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_on_steps" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_1d">
+<span class="sig-name descname"><span class="pre">newparam_spline_1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L247-L248"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_1d" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_2d">
+<span class="sig-name descname"><span class="pre">newparam_spline_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse_rfold</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L250-L251"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_2d" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_in_range">
+<span class="sig-name descname"><span class="pre">newparam_true_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(True,</span> <span class="pre">False)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L233-L241"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_in_range" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_on_steps">
+<span class="sig-name descname"><span class="pre">newparam_true_on_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(True,</span> <span class="pre">False)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L227-L228"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_on_steps" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.parse_dynamic_param">
+<span class="sig-name descname"><span class="pre">parse_dynamic_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L200-L225"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.parse_dynamic_param" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.rfold">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rfold</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L183-L416"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.rfold" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.tag">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tag</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L183-L416"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.tag" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.DynamicParameters.to_bunch">
+<span class="sig-name descname"><span class="pre">to_bunch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L383-L384"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.DynamicParameters.to_bunch" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.Step">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.observer.dynamic_parameters.</span></span><span class="sig-name descname"><span class="pre">Step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfold</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.Step" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.Step.design">
+<span class="sig-name descname"><span class="pre">design</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.Step.design" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.Step.diffuse">
+<span class="sig-name descname"><span class="pre">diffuse</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.Step.diffuse" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.Step.rfold">
+<span class="sig-name descname"><span class="pre">rfold</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.Step.rfold" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.StepObserver">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.observer.dynamic_parameters.</span></span><span class="sig-name descname"><span class="pre">StepObserver</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L129-L181"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.StepObserver" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ipd.observer.observer.html#ipd.observer.observer.Observer" title="ipd.observer.observer.Observer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observer</span></code></a></p>
+<p>Can be used to track the progress of a run, design step, diffusion step
+and rfold block step.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.StepObserver.rfold_begin">
+<span class="sig-name descname"><span class="pre">rfold_begin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L170-L172"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.StepObserver.rfold_begin" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.StepObserver.rfold_end">
+<span class="sig-name descname"><span class="pre">rfold_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L174-L176"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.StepObserver.rfold_end" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.StepObserver.rfold_iter_begin">
+<span class="sig-name descname"><span class="pre">rfold_iter_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L178-L181"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.StepObserver.rfold_iter_begin" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.StepObserver.set_config">
+<span class="sig-name descname"><span class="pre">set_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conf</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L143-L148"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.StepObserver.set_config" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.StepObserver.set_nstep">
+<span class="sig-name descname"><span class="pre">set_nstep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L157-L161"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.StepObserver.set_nstep" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.observer.dynamic_parameters.StepObserver.set_step">
+<span class="sig-name descname"><span class="pre">set_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/observer/dynamic_parameters.py#L163-L168"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.observer.dynamic_parameters.StepObserver.set_step" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ipd.observer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ipd.observer package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ipd.observer.observer.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ipd.observer.observer module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#this-file-defines-a-dynamicparameter-management-system">This file defines a DynamicParameter management system</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParam"><code class="docutils literal notranslate"><span class="pre">DynamicParam</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParam.attach_manager"><code class="docutils literal notranslate"><span class="pre">DynamicParam.attach_manager()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParam.progress"><code class="docutils literal notranslate"><span class="pre">DynamicParam.progress</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParam.value"><code class="docutils literal notranslate"><span class="pre">DynamicParam.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters"><code class="docutils literal notranslate"><span class="pre">DynamicParameters</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.copy"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.design"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.design</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.diffuse"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.diffuse</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.has"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.has()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.istrue"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.istrue()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_constant"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.newparam_constant()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_in_range"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.newparam_false_in_range()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_false_on_steps"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.newparam_false_on_steps()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_1d"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.newparam_spline_1d()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_spline_2d"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.newparam_spline_2d()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_in_range"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.newparam_true_in_range()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.newparam_true_on_steps"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.newparam_true_on_steps()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.parse_dynamic_param"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.parse_dynamic_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.rfold"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.rfold</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.tag"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.tag</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.DynamicParameters.to_bunch"><code class="docutils literal notranslate"><span class="pre">DynamicParameters.to_bunch()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.Step"><code class="docutils literal notranslate"><span class="pre">Step</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.Step.design"><code class="docutils literal notranslate"><span class="pre">Step.design</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.Step.diffuse"><code class="docutils literal notranslate"><span class="pre">Step.diffuse</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.Step.rfold"><code class="docutils literal notranslate"><span class="pre">Step.rfold</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.StepObserver"><code class="docutils literal notranslate"><span class="pre">StepObserver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.StepObserver.rfold_begin"><code class="docutils literal notranslate"><span class="pre">StepObserver.rfold_begin()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.StepObserver.rfold_end"><code class="docutils literal notranslate"><span class="pre">StepObserver.rfold_end()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.StepObserver.rfold_iter_begin"><code class="docutils literal notranslate"><span class="pre">StepObserver.rfold_iter_begin()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.StepObserver.set_config"><code class="docutils literal notranslate"><span class="pre">StepObserver.set_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.StepObserver.set_nstep"><code class="docutils literal notranslate"><span class="pre">StepObserver.set_nstep()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.observer.dynamic_parameters.StepObserver.set_step"><code class="docutils literal notranslate"><span class="pre">StepObserver.set_step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

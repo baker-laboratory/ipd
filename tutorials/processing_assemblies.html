@@ -1,0 +1,716 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Determining Biological Architecture &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/processing_assemblies';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Body and SymBody Objects" href="working_with_bodies.html" />
+    <link rel="prev" title="Working with .cif files and atoms" href="working_with_atoms.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="using_homog.html">Homogeneous Coordinates and ipd.hnumpy / ipd.htorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_with_atoms.html">Working with .cif files and atoms</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Determining Biological Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_with_bodies.html">Body and SymBody Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="symmetry_detection.html">Understanding Symmetry Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact_matrix.html">Cumulative sums primer and rapid contact matrix processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_decorators.html">Class Decorators Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_decorators.html">Function Decorator Tutorial</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Determining Biological Architecture</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="determining-biological-architecture">
+<span id="processing-assemblies"></span><h1><a class="toc-backref" href="#id1" role="doc-backlink">Determining Biological Architecture</a><a class="headerlink" href="#determining-biological-architecture" title="Link to this heading">#</a></h1>
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#determining-biological-architecture" id="id1">Determining Biological Architecture</a></p>
+<ul>
+<li><p><a class="reference internal" href="#overview" id="id2">Overview</a></p>
+<ul>
+<li><p><a class="reference internal" href="#api-find-components-by-seqaln-rmsfit" id="id3">API: <code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit</span></code></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#recursive-matching-process" id="id4">Recursive Matching Process</a></p>
+<ul>
+<li><p><a class="reference internal" href="#rms-fitting" id="id5">RMS Fitting</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#example-usage" id="id6">Example Usage</a></p></li>
+<li><p><a class="reference internal" href="#working-with-the-components-object" id="id7">Working with the Components Object</a></p>
+<ul>
+<li><p><a class="reference internal" href="#stubs-and-frame-estimation" id="id8">Stubs and Frame Estimation</a></p></li>
+<li><p><a class="reference internal" href="#related-utilities" id="id9">Related Utilities</a></p></li>
+<li><p><a class="reference internal" href="#conclusion" id="id10">Conclusion</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>The IPD library provides tools to automatically determine the biological organization
+of a molecular assembly. This is done by detecting repeated chains based on both
+sequence identity and structural alignment. The centerpiece of this process is the function:</p>
+<p><strong>``find_components_by_seqaln_rmsfit()``</strong></p>
+<p>This function analyzes a list of chains or subunits to determine how many <em>unique components</em> exist based on biological similarity, and it determines the homogeneous transforms that relate each similar subunit to a chosen reference. This allows for handling pseudo symmetrical configurations to some degree, depending on sequence matching and rmsd tolerance. In many cases, you can adjust these until you get the correct unique components. For example, a T4 icosahedral cage may initially result in multiple components depending on differences in the asymmetric unit or other factors. By carefully setting tolerances, you shold be able to get a system with one unique component and <code class="docutils literal notranslate"><span class="pre">60*4</span> <span class="pre">=</span> <span class="pre">240</span> <span class="pre">frames</span></code>.</p>
+<section id="overview">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Uses <strong>sequence alignment</strong> (via Biotite) to find chains with matching sequences</p></li>
+<li><p>Uses <strong>least-squares RMSD fitting</strong> to determine the transformation that maps one chain onto another</p></li>
+<li><p>Operates recursively: once a matching group is found, unmatched chains are re-evaluated</p></li>
+<li><p>Returns a <cite>Components</cite> object containing atoms, frames, RMSDs, sequence matches, and metadata</p></li>
+</ul>
+<section id="api-find-components-by-seqaln-rmsfit">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">API: <code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit</span></code></a><a class="headerlink" href="#api-find-components-by-seqaln-rmsfit" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.atom.find_components_by_seqaln_rmsfit">
+<span class="sig-prename descclassname"><span class="pre">ipd.atom.</span></span><span class="sig-name descname"><span class="pre">find_components_by_seqaln_rmsfit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atomslist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalresult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxsub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minatoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protein_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/atom.py#L35-L96"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.find_components_by_seqaln_rmsfit" title="Link to this definition">#</a></dt>
+<dd><p>Align atomic structures using sequence alignment and RMSD fitting.</p>
+<p>This function recursively aligns a list of atomic structures (or chains) based on their
+sequence similarity. It computes transformation frames using RMSD (Root Mean Square Deviation)
+fitting and checks the quality of the alignment using defined tolerance thresholds.
+The aligned frames, along with statistics like RMSD and sequence match fractions, are accumulated
+into a <cite>Components</cite> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atomslist</strong> (<em>list</em><em>[</em><em>bs.AtomArray</em><em>] or </em><em>bs.AtomArray</em>) – A list of atomic structures to be aligned or a single structure that will be split into chains.</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance value for assessing RMSD and sequence match quality. Defaults to 0.7.</p></li>
+<li><p><strong>finalresult</strong> (<a class="reference internal" href="../_apidoc/ipd.atom.components.html#ipd.atom.components.Components" title="ipd.atom.components.Components"><em>Components</em></a><em>, </em><em>optional</em>) – An existing Components instance to which new alignment results will be appended.
+If None, a new Components instance is created.</p></li>
+<li><p><strong>idx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of indices corresponding to the atomic structures to align. Defaults to None.</p></li>
+<li><p><strong>maxsub</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of subunits (chains) to align. Defaults to 60.</p></li>
+<li><p><strong>**kw</strong> – Additional keyword arguments passed to alignment helper functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A Components object containing:</dt><dd><ul class="simple">
+<li><p>Aligned atomic structures.</p></li>
+<li><p>4x4 transformation matrices representing the alignment frames.</p></li>
+<li><p>RMSD values and sequence match fractions.</p></li>
+<li><p>Original source structures and intermediate alignment results.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../_apidoc/ipd.atom.components.html#ipd.atom.components.Components" title="ipd.atom.components.Components">Components</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function initially attempts to align the structures based on protein C-alpha atoms.
+If that fails, it falls back to aligning nucleic acid phosphate atoms.
+The process is performed recursively until all components meet the tolerance criteria.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="recursive-matching-process">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Recursive Matching Process</a><a class="headerlink" href="#recursive-matching-process" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Input: a list of chains or chain-like AtomArrays</p></li>
+<li><p>Select a representative chain as reference</p></li>
+<li><p>For each other chain:
+- Align sequences
+- If a sufficient sequence match is found, compute RMSD alignment
+- Store the transformation frame, RMSD value, and sequence match score</p></li>
+<li><p>Accept matches where:
+- RMSD &lt; <cite>tol.rms_fit</cite>
+- sequence match &gt; <cite>tol.seqmatch</cite></p></li>
+<li><p>Remaining unmatched chains are recursively processed as a new group</p></li>
+</ol>
+<p>Sequence Matching</p>
+<p>Biological similarity is first established by aligning the amino acid or nucleotide sequences
+of each chain against the reference chain. The function uses Biotite’s
+<a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.sequence.align.align_optimal.html#biotite.sequence.align.align_optimal" title="(in Biotite v1.2.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">align_optimal()</span></code></a> function with a standard substitution matrix.</p>
+<section id="rms-fitting">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">RMS Fitting</a><a class="headerlink" href="#rms-fitting" title="Link to this heading">#</a></h3>
+<p>If sequence alignment is successful, 3D coordinates for the matching residues are extracted,
+and a rigid transformation is computed using least-squares fitting (via <cite>hrmsfit</cite>) to minimize RMSD.
+Only matches below the specified RMSD threshold are accepted as symmetric subunits.</p>
+<p>The result is a frame (4×4 transform matrix) that maps the reference structure to the matched structure.</p>
+</section>
+</section>
+<section id="example-usage">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Example Usage</a><a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h2>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load the largest biological assembly of a PDB file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chains</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;1g5q&quot;</span><span class="p">,</span> <span class="n">assembly</span><span class="o">=</span><span class="s2">&quot;largest&quot;</span><span class="p">,</span> <span class="n">het</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chainlist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">find_components_by_seqaln_rmsfit</span><span class="p">(</span><span class="n">chains</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span><span class="o">.</span><span class="n">seqmatch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.95</span>
+<span class="go">array([ True,  True,  True,  True,  True,  True,  True,  True,  True,</span>
+<span class="go">        True,  True,  True])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span><span class="o">.</span><span class="n">rmsd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span>
+<span class="go">array([ True,  True,  True,  True,  True,  True,  True,  True,  True,</span>
+<span class="go">        True,  True,  True])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The returned Components object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+<span class="go">Components:</span>
+<span class="go">  atoms: [...]</span>
+<span class="go">  frames: [...]</span>
+<span class="go">  seqmatch: [...]</span>
+<span class="go">  rmsd: [...]</span>
+<span class="go">  idx: [...]</span>
+<span class="go">  source_: &lt;class &#39;list&#39;&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="working-with-the-components-object">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Working with the Components Object</a><a class="headerlink" href="#working-with-the-components-object" title="Link to this heading">#</a></h2>
+<p>The result from <a class="reference internal" href="../_apidoc/ipd.atom.components.html#ipd.atom.components.find_components_by_seqaln_rmsfit" title="ipd.atom.components.find_components_by_seqaln_rmsfit"><code class="xref py py-func docutils literal notranslate"><span class="pre">ipd.atom.components.find_components_by_seqaln_rmsfit()</span></code></a> is a <a class="reference internal" href="../_apidoc/ipd.atom.components.html#ipd.atom.components.Components" title="ipd.atom.components.Components"><code class="xref py py-class docutils literal notranslate"><span class="pre">ipd.atom.components.Components</span></code></a> object. Each field is a list indexed by component:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">atoms</span></code>: the aligned atom arrays (reference and matched)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frames</span></code>: 4x4 homogeneous transforms from reference to target</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seqmatch</span></code>: sequence match fractions (0 to 1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmsd</span></code>: root mean square deviations between matched coordinates</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idx</span></code>: matched indices used during alignment</p></li>
+</ul>
+<p>You can remove short or partial chains with:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span><span class="o">.</span><span class="n">remove_small_chains</span><span class="p">(</span><span class="n">minatom</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="stubs-and-frame-estimation">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Stubs and Frame Estimation</a><a class="headerlink" href="#stubs-and-frame-estimation" title="Link to this heading">#</a></h3>
+<p>If you only have a single chain and wish to extract a reference frame,
+you can use the <code class="docutils literal notranslate"><span class="pre">stub()</span></code> function to compute a local frame from its CA atoms:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.atom.stub">
+<span class="sig-prename descclassname"><span class="pre">ipd.atom.</span></span><span class="sig-name descname"><span class="pre">stub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/atom.py#L276-L304"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.atom.stub" title="Link to this definition">#</a></dt>
+<dd><p>Compute the transformation frame for an atomic structure using SVD on C-alpha atoms.</p>
+<p>This function calculates the center of mass of the atomic structure and performs a Singular Value Decomposition (SVD)
+on the coordinates of the C-alpha atoms. A 4x4 homogeneous transformation matrix is then constructed to represent
+the alignment frame of the structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atoms</strong> (<em>bs.AtomArray</em>) – An atomic structure containing coordinate data and atom type information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 4x4 homogeneous transformation matrix representing the computed alignment frame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;1qys&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+<span class="go">[[ 0.91638  0.33896 -0.21296  4.20985]</span>
+<span class="go"> [ 0.06904  0.3902   0.91814  5.34147]</span>
+<span class="go"> [ 0.39431 -0.85607  0.33417 11.52762]</span>
+<span class="go"> [ 0.       0.       0.       1.     ]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">atoms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;1qys&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">stub</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="related-utilities">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Related Utilities</a><a class="headerlink" href="#related-utilities" title="Link to this heading">#</a></h3>
+<p>The alignment process uses:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">atom.seqalign()</span></code> for sequence matching</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hrmsfit()</span></code> from <cite>ipd.homog</cite> for structural fitting</p></li>
+</ul>
+<p>If Biotite or your PDB files are unavailable, make sure you’ve downloaded the required files using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ipd</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">download_test_pdbs</span><span class="p">([</span><span class="s2">&quot;1g5q&quot;</span><span class="p">,</span> <span class="s2">&quot;1dxh&quot;</span><span class="p">,</span> <span class="s2">&quot;1qys&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="conclusion">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Conclusion</a><a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h3>
+<p>This system allows you to automatically extract structural symmetry relationships
+within molecular assemblies and to build compact representations of those symmetries
+for further use in modeling, visualization, or symmetry-aware computations.</p>
+<p><code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit</span></code> powers the construction of the <cite>SymBody</cite> class
+and other higher-level structures in IPD.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="working_with_atoms.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Working with .cif files and atoms</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="working_with_bodies.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Body and SymBody Objects</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-find-components-by-seqaln-rmsfit">API: <code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.find_components_by_seqaln_rmsfit"><code class="docutils literal notranslate"><span class="pre">find_components_by_seqaln_rmsfit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recursive-matching-process">Recursive Matching Process</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rms-fitting">RMS Fitting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage">Example Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-the-components-object">Working with the Components Object</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stubs-and-frame-estimation">Stubs and Frame Estimation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.atom.stub"><code class="docutils literal notranslate"><span class="pre">stub()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#related-utilities">Related Utilities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/tutorials/processing_assemblies.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

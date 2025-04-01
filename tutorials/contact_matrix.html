@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cumulative sums primer and rapid contact matrix processing &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/contact_matrix';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class Decorators Tutorial" href="class_decorators.html" />
+    <link rel="prev" title="Understanding Symmetry Detection" href="symmetry_detection.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_apidoc/modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="using_homog.html">Homogeneous Coordinates and ipd.hnumpy / ipd.htorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_with_atoms.html">Working with .cif files and atoms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing_assemblies.html">Determining Biological Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_with_bodies.html">Body and SymBody Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="symmetry_detection.html">Understanding Symmetry Detection</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Cumulative sums primer and rapid contact matrix processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_decorators.html">Class Decorators Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_decorators.html">Function Decorator Tutorial</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Cumulative sums primer and rapid contact matrix processing</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="cumulative-sums-primer-and-rapid-contact-matrix-processing">
+<span id="contact-matrix"></span><h1><a class="toc-backref" href="#id3" role="doc-backlink">Cumulative sums primer and rapid contact matrix processing</a><a class="headerlink" href="#cumulative-sums-primer-and-rapid-contact-matrix-processing" title="Link to this heading">#</a></h1>
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#cumulative-sums-primer-and-rapid-contact-matrix-processing" id="id3">Cumulative sums primer and rapid contact matrix processing</a></p>
+<ul>
+<li><p><a class="reference internal" href="#cumulative-sums-1d-basics" id="id4">Cumulative sums, 1D basics</a></p></li>
+<li><p><a class="reference internal" href="#cumsum-performance-example" id="id5">Cumsum Performance Example</a></p></li>
+<li><p><a class="reference internal" href="#cumulative-sums-2d" id="id6">Cumulative sums, 2D</a></p></li>
+<li><p><a class="reference internal" href="#contactmatrixstack-example" id="id7">ContactMatrixStack Example</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="cumulative-sums-1d-basics">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Cumulative sums, 1D basics</a><a class="headerlink" href="#cumulative-sums-1d-basics" title="Link to this heading">#</a></h2>
+<p>ContactMatrixStack uses a precomputed 2D partialsum array for efficient region-based queries. To explain
+start with the 1D partialsum case. <code class="docutils literal notranslate"><span class="pre">DATA</span></code> is a 1D array and <code class="docutils literal notranslate"><span class="pre">SUMS</span></code> is the cumulative sum
+of <code class="docutils literal notranslate"><span class="pre">DATA</span></code> (<code class="docutils literal notranslate"><span class="pre">ipd.partialsum(DATA)</span></code>. If we want the sum of <code class="docutils literal notranslate"><span class="pre">DATA[i:j]</span></code> we can compute it as
+<code class="docutils literal notranslate"><span class="pre">SUMS[j]</span> <span class="pre">-</span> <span class="pre">SUMS[i]</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Index</span><span class="p">:</span>          <span class="mi">0</span>     <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">3</span>     <span class="mi">4</span>
+<span class="n">DATA</span><span class="p">:</span>         <span class="p">[</span> <span class="mi">2</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">7</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">3</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">5</span> <span class="p">]</span>
+              \<span class="n">___________________________</span><span class="o">/</span>
+<span class="n">Cumulative</span>
+<span class="n">Sum</span> <span class="p">(</span><span class="n">SUM</span><span class="p">):</span>   <span class="p">[</span> <span class="mi">0</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">2</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">9</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">10</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">13</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">18</span> <span class="p">]</span>
+<span class="n">Index</span><span class="p">:</span>         <span class="o">^</span>     <span class="o">^</span>     <span class="o">^</span>      <span class="o">^</span>      <span class="o">^</span>      <span class="o">^</span>
+               <span class="mi">0</span>     <span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">3</span>      <span class="mi">4</span>      <span class="mi">5</span>
+             <span class="p">(</span><span class="n">think</span> <span class="n">of</span> <span class="n">SUM</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span> <span class="n">of</span> <span class="n">DATA</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To find the sum of <code class="docutils literal notranslate"><span class="pre">DATA[lb:ub]</span></code>, use <code class="docutils literal notranslate"><span class="pre">SUM[ub]</span> <span class="pre">-</span> <span class="pre">SUM[lb]</span></code>. <code class="docutils literal notranslate"><span class="pre">SUMS[ub]</span></code> will be the sum of
+<code class="docutils literal notranslate"><span class="pre">DATA[:ub]</span></code> and <code class="docutils literal notranslate"><span class="pre">SUMS[lb]</span></code> will be the sum of <code class="docutils literal notranslate"><span class="pre">DATA[:lb]</span></code>. So, <code class="docutils literal notranslate"><span class="pre">SUM[ub]</span> <span class="pre">-</span> <span class="pre">SUM[lb]</span></code> will be
+the sum of <code class="docutils literal notranslate"><span class="pre">DATA[lb:ub]</span></code>. The key observation is that <code class="docutils literal notranslate"><span class="pre">SUM[ub]</span></code> is the sum of elements <code class="docutils literal notranslate"><span class="pre">DATA[0:ub]</span></code>, so it “overcounts” all elements up to <code class="docutils literal notranslate"><span class="pre">lb</span></code>.    Subtracting <code class="docutils literal notranslate"><span class="pre">SUM[lb]</span></code> precisely
+removes that overcount, leaving just the slice from <code class="docutils literal notranslate"><span class="pre">lb</span></code> to <code class="docutils literal notranslate"><span class="pre">ub</span></code>.</p>
+</section>
+<section id="cumsum-performance-example">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Cumsum Performance Example</a><a class="headerlink" href="#cumsum-performance-example" title="Link to this heading">#</a></h2>
+<p>Setup</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ipd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sums</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">partialsum</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slice_sums1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slice_sums2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timer</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s1">&#39;Cumsum Perf Example&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute all sums the brute force way</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>        <span class="n">slice_sums1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;dumb way, summing explicitly like a barbarian&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute all sums using partialsum</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>        <span class="n">slice_sums2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">sums</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;kinda smarter way using partialsum&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute all sums using partialsum without loops</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">slice_sums3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sums</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sums</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;big brain way using partialsum and numpy broadcasting&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Verify results</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">slice_sums1</span><span class="p">,</span> <span class="n">slice_sums2</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">slice_sums1</span><span class="p">,</span> <span class="n">slice_sums3</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># check runtimes, note how much faster partialsum + broadcasting is</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timer</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">timecut</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">Timer.report: Cumsum Perf Example order=longest: summary: sum</span>
+<span class="go">   0.19970 * dumb way, summing explicitly like a barbarian</span>
+<span class="go">   0.03875 * kinda smarter way using partialsum</span>
+<span class="go">   0.00078 * big brain way using partialsum and numpy broadcasting</span>
+</pre></div>
+</div>
+</section>
+<section id="cumulative-sums-2d">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Cumulative sums, 2D</a><a class="headerlink" href="#cumulative-sums-2d" title="Link to this heading">#</a></h2>
+<p>Note how much faster the partialsum + broadcasting version was for the 1D version, almost 1000x faster.
+It makes an even bigger difference in the 2D case because the arrays tend to be much larger.</p>
+<figure class="align-default" id="id1">
+<img alt="partialsum2d illustration" src="../_images/partialsum2d.png" />
+<figcaption>
+<p><span class="caption-text">Illustration of data 2D with pink region to be “summed” and 2D cumulative sum array from which four points are needed to computs the “sum:” <code class="docutils literal notranslate"><span class="pre">sum</span> <span class="pre">=</span> <span class="pre">CSUM[ub1,ub2]</span> <span class="pre">(red</span> <span class="pre">point)</span> <span class="pre">+</span> <span class="pre">CSUM[lb1,lb2]</span> <span class="pre">(green</span> <span class="pre">point)</span> <span class="pre">-</span> <span class="pre">CUSM[ub1,lb2]</span> <span class="pre">(blue</span> <span class="pre">point)</span> <span class="pre">-</span> <span class="pre">CSUM[lb1,lb2]</span> <span class="pre">(blue</span> <span class="pre">point</span></code>.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The method <code class="xref py py-meth docutils literal notranslate"><span class="pre">ContactMatrixStack.fragment_contact()</span></code> uses this idea to compute the total contacts of all
+pairs of fragments of a given length using a 2D partialsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
+compute every fragment pair, so stride is mainly useful as simple way to reduce redundancy.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">fragment_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="gp">... </span>  <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="o">-</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="o">-</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="o">+</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>This function retuns an <code class="docutils literal notranslate"><span class="pre">S</span> <span class="pre">x</span> <span class="pre">M</span> <span class="pre">x</span> <span class="pre">N</span></code> array containing the total contacts for all pairs of fragments for each contact matrix s in the stack: <code class="docutils literal notranslate"><span class="pre">fragment1</span></code> starting at m ending at <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">+</span> <span class="pre">fragsize</span></code>, to fragment2 starting at <code class="docutils literal notranslate"><span class="pre">n</span></code> and ending at <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">-</span> <span class="pre">fragsize</span></code>.</p>
+<p>The method <code class="xref py py-meth docutils literal notranslate"><span class="pre">ContactMatrixStack.topk_fragment_contact_by_subset_summary()</span></code> uses the
+arrays produced by
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">ContactMatrixStack.fragment_contact()</span></code> to search for subsets of subunits that
+all “multibody” contacts by enumerating all subsets of contacting subunits, and taking
+the minimum number of contacts for each fragment pair. See the example below.</p>
+</section>
+<section id="contactmatrixstack-example">
+<span id="contact-matrix-overview"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">ContactMatrixStack Example</a><a class="headerlink" href="#contactmatrixstack-example" title="Link to this heading">#</a></h2>
+<p>Setup, reading in and positioning some data</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">top7</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">body_from_file</span><span class="p">(</span><span class="s1">&#39;1qys&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">centered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxh</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">symbody_from_file</span><span class="p">(</span><span class="s1">&#39;1dxh&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">centered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxh</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">top7</span><span class="p">)</span><span class="o">.</span><span class="n">total_contacts</span>  <span class="c1"># lots, both are centered</span>
+<span class="go">3033</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top7</span> <span class="o">=</span> <span class="n">top7</span><span class="o">.</span><span class="n">slide_into_contact</span><span class="p">(</span><span class="n">dxh</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># just touching</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top7</span> <span class="o">=</span> <span class="n">top7</span><span class="o">.</span><span class="n">movedby</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># now way clashing, but lots of contacts</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">dxh</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">top7</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Get best pair of fragment</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmat</span> <span class="o">=</span> <span class="n">contacts</span><span class="o">.</span><span class="n">contact_matrix_stack</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmat</span>
+<span class="go">ContactMatrixStack(shape: (4, 92, 335) subs: [ 2  6  8 10])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 4 contact matrices, thus top7 contacts 4 (of 12) subunit in dxh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pair_frag_contacts</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">fragment_contact</span><span class="p">(</span><span class="n">fragsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isub</span><span class="p">,</span> <span class="n">itop7</span><span class="p">,</span> <span class="n">idxh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">pair_frag_contacts</span><span class="p">),</span> <span class="n">pair_frag_contacts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">best_ncontact</span> <span class="o">=</span> <span class="n">pair_frag_contacts</span><span class="p">[</span><span class="n">isub</span><span class="p">,</span> <span class="n">itop7</span><span class="p">,</span> <span class="n">idxh</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s1">&#39;best frag pair is top7 resi </span><span class="si">{</span><span class="n">itop7</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">itop7</span><span class="o">+</span><span class="mi">19</span><span class="si">}</span><span class="s1"> to dxh sub </span><span class="si">{</span><span class="n">cmat</span><span class="o">.</span><span class="n">subs</span><span class="p">[</span><span class="n">isub</span><span class="p">]</span><span class="si">}</span><span class="s1"> resi </span><span class="si">{</span><span class="n">idxh</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">idxh</span><span class="o">+</span><span class="mi">19</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="go">&#39;best frag pair is top7 resi 4-23 to dxh sub 8 resi 0-19&#39;</span>
+</pre></div>
+</div>
+<p>Get fragments pairs with multiple subunit contacts</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fragsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bestfrags</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">topk_fragment_contact_by_subset_summary</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">bestfrags</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="go">[(0, 2), (0,), (1,), (2,), (3,)]</span>
+</pre></div>
+</div>
+<p>bestfrags.index and bestfrags.vals are dicts mapping a set of subunits to fragment pairs that have contacts involving all the subunits. The subsets <code class="docutils literal notranslate"><span class="pre">(0,),</span> <span class="pre">(1,),</span> <span class="pre">(2,),</span> <span class="pre">(3,)</span></code> contain only one subunit, but there is one subset (0, 2), indicating fragment pairs that contact both subunit 0 and subunit 2.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s1">&#39;subunits in 1dxh </span><span class="si">{</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)]</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="go">&#39;subunits in 1dxh [2, 8]&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bestfrags</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">bestfrags</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">((2, 7), (7,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">bestfrags</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">bestfrags</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">][:,</span><span class="kc">None</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([[ 32, 112,  11],</span>
+<span class="go">       [ 28, 112,   6],</span>
+<span class="go">       [ 28, 116,   6],</span>
+<span class="go">       [ 36,   0,   1],</span>
+<span class="go">       [ 32,   0,   1],</span>
+<span class="go">       [ 36,   4,   1],</span>
+<span class="go">       [ 32,   4,   1]], dtype=int32)</span>
+</pre></div>
+</div>
+<p>This tells us that top7 resi <code class="docutils literal notranslate"><span class="pre">32-51</span></code> has <strong>at least</strong> 11 contacts to <em>both</em>
+1dxh subunit 2 resi <code class="docutils literal notranslate"><span class="pre">112-131</span></code> <em>and</em> 1dxh subunit 8 resi <code class="docutils literal notranslate"><span class="pre">112-131</span></code>. Lets get the atoms
+and see if it’s legit.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">top7frag</span> <span class="o">=</span> <span class="n">top7</span><span class="o">.</span><span class="n">positioned_atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">top7</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">52</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxhfrag1</span> <span class="o">=</span> <span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">positioned_atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">132</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxhfrag2</span> <span class="o">=</span> <span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">positioned_atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">132</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">top7frag</span><span class="p">,</span> <span class="s1">&#39;/tmp/top7frag.cif&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dxhfrag1</span><span class="p">,</span> <span class="s1">&#39;/tmp/dxhfrag1.cif&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dxhfrag2</span><span class="p">,</span> <span class="s1">&#39;/tmp/dxhfrag2.cif&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(top7frag, name=&#39;top7&#39;, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(dxhfrag1, name=&#39;dxh1&#39;, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(dxhfrag2, name=&#39;dxh2&#39;, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(dxh, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(top7, force=True)</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id2">
+<img alt="Top7 / 1dxh fragment contact example" src="../_images/contact_matrix_topk_frag__example.png" />
+<figcaption>
+<p><span class="caption-text">Screenshot from pymol (as launched by ipd.showme). These contacts are’t super good, but this
+is a totally arbitrary “dock” of top7 to 1dxh, not a real biological interface. (probably should
+have used a real biological interface for this example…) There may also be slightly better
+fragments if stride is set to 1.</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<dl class="simple">
+<dt>Note: <a class="reference internal" href="../_apidoc/ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.showme" title="ipd.viz.pymol_viz.showme"><code class="xref py py-func docutils literal notranslate"><span class="pre">ipd.viz.pymol_viz.showme()</span></code></a> (just call ipd.showme) is super useful for visualizing all kinds of things, mainly in pymol.</dt><dd><p>It can show AtomArrays, Bodies, Symbodies, homogeneous transforms, stacks of xyz coords, symmetry
+elements, crystal lattices, etc etc. All you need is pymol in your conda environment, and runnable.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="symmetry_detection.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Understanding Symmetry Detection</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="class_decorators.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Class Decorators Tutorial</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sums-1d-basics">Cumulative sums, 1D basics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cumsum-performance-example">Cumsum Performance Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sums-2d">Cumulative sums, 2D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contactmatrixstack-example">ContactMatrixStack Example</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/tutorials/contact_matrix.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

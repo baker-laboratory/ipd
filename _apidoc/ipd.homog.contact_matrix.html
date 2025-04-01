@@ -1,0 +1,1087 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ipd.homog.contact_matrix module &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_apidoc/ipd.homog.contact_matrix';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ipd.homog.hgeom module" href="ipd.homog.hgeom.html" />
+    <link rel="prev" title="ipd.homog package" href="ipd.homog.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ipd.html">ipd package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.atom.html">ipd.atom package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html">ipd.atom.assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.atom_utils.html">ipd.atom.atom_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html">ipd.atom.body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html">ipd.atom.components module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.crops.html">ipd.atom.crops module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.crud.html">ipd.crud package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.backend.html">ipd.crud.backend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.crudcli.html">ipd.crud.crudcli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.frontend.html">ipd.crud.frontend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.server.html">ipd.crud.server module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.dev.html">ipd.dev package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.cli.html">ipd.dev.cli package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.code.html">ipd.dev.code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.instrumentation.html">ipd.dev.instrumentation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.qt.html">ipd.dev.qt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.state.html">ipd.dev.state package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.storage.html">ipd.dev.storage package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.testing.html">ipd.dev.testing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.contexts.html">ipd.dev.contexts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.debug.html">ipd.dev.debug module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.decorators.html">ipd.dev.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.element_wise.html">ipd.dev.element_wise module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.error.html">ipd.dev.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.files.html">ipd.dev.files module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.format.html">ipd.dev.format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.functional.html">ipd.dev.functional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.iterables.html">ipd.dev.iterables module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.meta.html">ipd.dev.meta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.metadata.html">ipd.dev.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.misc.html">ipd.dev.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.objinfo.html">ipd.dev.objinfo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.safe_eval.html">ipd.dev.safe_eval module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.serialization.html">ipd.dev.serialization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.shell.html">ipd.dev.shell module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.strings.html">ipd.dev.strings module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.tolerances.html">ipd.dev.tolerances module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ipd.homog.html">ipd.homog package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">ipd.homog.contact_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.hgeom.html">ipd.homog.hgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.infix.html">ipd.homog.infix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.npth_common.html">ipd.homog.npth_common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.pointgen.html">ipd.homog.pointgen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.quat.html">ipd.homog.quat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.thgeom.html">ipd.homog.thgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.util.html">ipd.homog.util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.viz.html">ipd.homog.viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.xform_info.html">ipd.homog.xform_info module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.ml.html">ipd.ml package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.ml.datahub_util.html">ipd.ml.datahub_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.motif.html">ipd.motif package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_factory.html">ipd.motif.motif_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_manager.html">ipd.motif.motif_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_options.html">ipd.motif.motif_options module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.observer.html">ipd.observer package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.dynamic_parameters.html">ipd.observer.dynamic_parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.observer.html">ipd.observer.observer module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.pdb.html">ipd.pdb package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.bbutil.html">ipd.pdb.bbutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.chemical.html">ipd.pdb.chemical module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbdump.html">ipd.pdb.pdbdump module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfetch.html">ipd.pdb.pdbfetch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfile.html">ipd.pdb.pdbfile module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbmeta.html">ipd.pdb.pdbmeta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbread.html">ipd.pdb.pdbread module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pisces.html">ipd.pdb.pisces module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.readstruct.html">ipd.pdb.readstruct module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.viz_pdb.html">ipd.pdb.viz_pdb module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.protocol.html">ipd.protocol package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.protocol.sieve.html">ipd.protocol.sieve module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sel.html">ipd.sel package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sel.sel_pymol.html">ipd.sel.sel_pymol module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sym.html">ipd.sym package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.helix.html">ipd.sym.helix package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.high_t.html">ipd.sym.high_t package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.xtal.html">ipd.sym.xtal package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.guess_symmetry.html">ipd.sym.guess_symmetry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.ipd_sym_manager.html">ipd.sym.ipd_sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.permutations.html">ipd.sym.permutations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym.html">ipd.sym.sym module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_adapt.html">ipd.sym.sym_adapt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_builder.html">ipd.sym.sym_builder module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_check.html">ipd.sym.sym_check module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_color.html">ipd.sym.sym_color module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_detect.html">ipd.sym.sym_detect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_factory.html">ipd.sym.sym_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_fitting.html">ipd.sym.sym_fitting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_index.html">ipd.sym.sym_index module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_kind.html">ipd.sym.sym_kind module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_manager.html">ipd.sym.sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_options.html">ipd.sym.sym_options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_slice.html">ipd.sym.sym_slice module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_util.html">ipd.sym.sym_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.symframes.html">ipd.sym.symframes module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.tools.html">ipd.tools package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.citool.html">ipd.tools.citool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.codetool.html">ipd.tools.codetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.conda.html">ipd.tools.conda module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.idetool.html">ipd.tools.idetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.ipdtool.html">ipd.tools.ipdtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.pkgtool.html">ipd.tools.pkgtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.run_tests_on_file.html">ipd.tools.run_tests_on_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.symtool.html">ipd.tools.symtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.tool_util.html">ipd.tools.tool_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.viz.html">ipd.viz package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.plot.html">ipd.viz.plot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.primitives.html">ipd.viz.primitives module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_cgo.html">ipd.viz.pymol_cgo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_pose.html">ipd.viz.pymol_pose module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_viz.html">ipd.viz.pymol_viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_assembly.html">ipd.viz.viz_assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_atoms.html">ipd.viz.viz_atoms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_body.html">ipd.viz.viz_body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_bond.html">ipd.viz.viz_bond module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_deco.html">ipd.viz.viz_deco module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_helix.html">ipd.viz.viz_helix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_rigidbody.html">ipd.viz.viz_rigidbody module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_xtal.html">ipd.viz.viz_xtal module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.bunch.html">ipd.bunch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.project_config.html">ipd.project_config module</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.html" class="nav-link">ipd package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.homog.html" class="nav-link">ipd.homog package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.homog.contact_matrix module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ipd.homog.contact_matrix">
+<span id="ipd-homog-contact-matrix-module"></span><h1>ipd.homog.contact_matrix module<a class="headerlink" href="#module-ipd.homog.contact_matrix" title="Link to this heading">#</a></h1>
+<p>Efficient contact matrix processing for biological structure data.</p>
+<p>This module provides the <a class="reference internal" href="#ipd.homog.contact_matrix.ContactMatrixStack" title="ipd.homog.contact_matrix.ContactMatrixStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContactMatrixStack</span></code></a>, which enables fast spatial
+queries over a stack of symmetric residue-residue contact matrices. These matrices
+are commonly used to represent pairwise atomic or residue interactions across
+multiple structures (e.g., frames in a trajectory or members of an ensemble).</p>
+<section id="key-features">
+<h2>Key features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Efficient prefix-sum accumulation for fast region-based queries</p></li>
+<li><p>Fragment-based contact extraction with adjustable fragsize size and stride</p></li>
+<li><p>Subset enumeration and summarization</p></li>
+<li><p>Optional PyTorch acceleration for GPU computation</p></li>
+</ul>
+</section>
+<section id="cumulative-sums-1d-basics">
+<h2>Cumulative sums, 1D basics<a class="headerlink" href="#cumulative-sums-1d-basics" title="Link to this heading">#</a></h2>
+<p>ContactMatrixStack uses a precomputed 2D partialsum array for efficient region-based queries. To explain
+start with the 1D partialsum case. <code class="docutils literal notranslate"><span class="pre">DATA</span></code> is a 1D array and <code class="docutils literal notranslate"><span class="pre">SUMS</span></code> is the cumulative sum
+of <code class="docutils literal notranslate"><span class="pre">DATA</span></code> (<code class="docutils literal notranslate"><span class="pre">ipd.partialsum(DATA)</span></code>. If we want the sum of <code class="docutils literal notranslate"><span class="pre">DATA[i:j]</span></code> we can compute it as
+<code class="docutils literal notranslate"><span class="pre">SUMS[j]</span> <span class="pre">-</span> <span class="pre">SUMS[i]</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Index</span><span class="p">:</span>          <span class="mi">0</span>     <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">3</span>     <span class="mi">4</span>
+<span class="n">DATA</span><span class="p">:</span>         <span class="p">[</span> <span class="mi">2</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">7</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">3</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">5</span> <span class="p">]</span>
+              \<span class="n">___________________________</span><span class="o">/</span>
+<span class="n">Cumulative</span>
+<span class="n">Sum</span> <span class="p">(</span><span class="n">SUM</span><span class="p">):</span>   <span class="p">[</span> <span class="mi">0</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">2</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">9</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">10</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">13</span> <span class="p">]</span> <span class="p">[</span> <span class="mi">18</span> <span class="p">]</span>
+<span class="n">Index</span><span class="p">:</span>         <span class="o">^</span>     <span class="o">^</span>     <span class="o">^</span>      <span class="o">^</span>      <span class="o">^</span>      <span class="o">^</span>
+               <span class="mi">0</span>     <span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">3</span>      <span class="mi">4</span>      <span class="mi">5</span>
+             <span class="p">(</span><span class="n">think</span> <span class="n">of</span> <span class="n">SUM</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span> <span class="n">of</span> <span class="n">DATA</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To find the sum of <code class="docutils literal notranslate"><span class="pre">DATA[lb:ub]</span></code>, use <code class="docutils literal notranslate"><span class="pre">SUM[ub]</span> <span class="pre">-</span> <span class="pre">SUM[lb]</span></code>. <code class="docutils literal notranslate"><span class="pre">SUMS[ub]</span></code> will be the sum of
+<code class="docutils literal notranslate"><span class="pre">DATA[:ub]</span></code> and <code class="docutils literal notranslate"><span class="pre">SUMS[lb]</span></code> will be the sum of <code class="docutils literal notranslate"><span class="pre">DATA[:lb]</span></code>. So, <code class="docutils literal notranslate"><span class="pre">SUM[ub]</span> <span class="pre">-</span> <span class="pre">SUM[lb]</span></code> will be
+the sum of <code class="docutils literal notranslate"><span class="pre">DATA[lb:ub]</span></code>. The key observation is that <code class="docutils literal notranslate"><span class="pre">SUM[ub]</span></code> is the sum of elements <code class="docutils literal notranslate"><span class="pre">DATA[0:ub]</span></code>, so it “overcounts” all elements up to <code class="docutils literal notranslate"><span class="pre">lb</span></code>.    Subtracting <code class="docutils literal notranslate"><span class="pre">SUM[lb]</span></code> precisely
+removes that overcount, leaving just the slice from <code class="docutils literal notranslate"><span class="pre">lb</span></code> to <code class="docutils literal notranslate"><span class="pre">ub</span></code>.</p>
+</section>
+<section id="cumsum-performance-example">
+<h2>Cumsum Performance Example<a class="headerlink" href="#cumsum-performance-example" title="Link to this heading">#</a></h2>
+<p>Setup</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sums</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">partialsum</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># yes, it&#39;s really called that... in torch too.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slice_sums1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slice_sums2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timer</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s1">&#39;Cumsum Perf Example&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute all sums the brute force way</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>        <span class="n">slice_sums1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;dumb way, summing explicitly like a barbarian&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute all sums using partialsum</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="gp">... </span>        <span class="n">slice_sums2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">sums</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;kinda smarter way using partialsum&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute all sums using partialsum without loops</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">slice_sums3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sums</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sums</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span><span class="s1">&#39;big brain way using partialsum and numpy broadcasting&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Verify results</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">slice_sums1</span><span class="p">,</span> <span class="n">slice_sums2</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">slice_sums1</span><span class="p">,</span> <span class="n">slice_sums3</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># check runtimes, note how much faster partialsum + broadcasting is</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timer</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">timecut</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">Timer.report: Cumsum Perf Example order=longest: summary: sum</span>
+<span class="go">   0.19970 * dumb way, summing explicitly like a barbarian</span>
+<span class="go">   0.03875 * kinda smarter way using partialsum</span>
+<span class="go">   0.00078 * big brain way using partialsum and numpy broadcasting</span>
+</pre></div>
+</div>
+</section>
+<section id="cumulative-sums-2d">
+<h2>Cumulative sums, 2D<a class="headerlink" href="#cumulative-sums-2d" title="Link to this heading">#</a></h2>
+<p>Note how much faster the partialsum + broadcasting version was for the 1D version, almost 1000x faster.
+It makes an even bigger difference in the 2D case because the arrays tend to be much larger.</p>
+<figure class="align-default" id="id3">
+<img alt="partialsum2d illustration" src="../_images/partialsum2d.png" />
+<figcaption>
+<p><span class="caption-text">Illustration of data 2D with pink region to be “summed” and 2D cumulative sum array from which four points are needed to computs the “sum:” <code class="docutils literal notranslate"><span class="pre">sum</span> <span class="pre">=</span> <span class="pre">CSUM[ub1,ub2]</span> <span class="pre">(red</span> <span class="pre">point)</span> <span class="pre">+</span> <span class="pre">CSUM[lb1,lb2]</span> <span class="pre">(green</span> <span class="pre">point)</span> <span class="pre">-</span> <span class="pre">CUSM[ub1,lb2]</span> <span class="pre">(blue</span> <span class="pre">point)</span> <span class="pre">-</span> <span class="pre">CSUM[lb1,lb2]</span> <span class="pre">(blue</span> <span class="pre">point</span></code>.</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The method <a class="reference internal" href="#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact" title="ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ContactMatrixStack.fragment_contact()</span></code></a> uses this idea to compute the total contacts of all
+pairs of fragments of a given length using a 2D partialsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
+compute every fragment pair, so stride is mainly useful as simple way to reduce redundancy.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">fragment_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="gp">... </span>  <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="o">-</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="o">-</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">,</span> <span class="n">fragsize</span><span class="p">:</span>         <span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="o">+</span>
+<span class="gp">... </span>    <span class="bp">self</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[:,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">,</span>         <span class="p">:</span><span class="o">-</span><span class="n">fragsize</span><span class="p">:</span><span class="n">stride</span><span class="p">]</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>This function retuns an <code class="docutils literal notranslate"><span class="pre">S</span> <span class="pre">x</span> <span class="pre">M</span> <span class="pre">x</span> <span class="pre">N</span></code> array containing the total contacts for all pairs of fragments for each contact matrix s in the stack: <code class="docutils literal notranslate"><span class="pre">fragment1</span></code> starting at m ending at <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">+</span> <span class="pre">fragsize</span></code>, to fragment2 starting at <code class="docutils literal notranslate"><span class="pre">n</span></code> and ending at <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">-</span> <span class="pre">fragsize</span></code>.</p>
+<p>The method <a class="reference internal" href="#ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary" title="ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ContactMatrixStack.topk_fragment_contact_by_subset_summary()</span></code></a> uses the
+arrays produced by
+<a class="reference internal" href="#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact" title="ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ContactMatrixStack.fragment_contact()</span></code></a> to search for subsets of subunits that
+all “multibody” contacts by enumerating all subsets of contacting subunits, and taking
+the minimum number of contacts for each fragment pair. See the example below.</p>
+</section>
+<section id="contactmatrixstack-example">
+<h2>ContactMatrixStack Example<a class="headerlink" href="#contactmatrixstack-example" title="Link to this heading">#</a></h2>
+<p>Setup, reading in and positioning some data</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">top7</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">body_from_file</span><span class="p">(</span><span class="s1">&#39;1qys&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">centered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxh</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">symbody_from_file</span><span class="p">(</span><span class="s1">&#39;1dxh&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">centered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxh</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">top7</span><span class="p">)</span><span class="o">.</span><span class="n">total_contacts</span>  <span class="c1"># lots, both are centered</span>
+<span class="go">3033</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top7</span> <span class="o">=</span> <span class="n">top7</span><span class="o">.</span><span class="n">slide_into_contact</span><span class="p">(</span><span class="n">dxh</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># just touching</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top7</span> <span class="o">=</span> <span class="n">top7</span><span class="o">.</span><span class="n">movedby</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># now way clashing, but lots of contacts</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">dxh</span><span class="o">.</span><span class="n">contacts</span><span class="p">(</span><span class="n">top7</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Get best pair of fragment</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmat</span> <span class="o">=</span> <span class="n">contacts</span><span class="o">.</span><span class="n">contact_matrix_stack</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmat</span>
+<span class="go">ContactMatrixStack(shape: (4, 92, 335) subs: [ 2  6  8 10])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 4 contact matrices, thus top7 contacts 4 (of 12) subunit in dxh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pair_frag_contacts</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">fragment_contact</span><span class="p">(</span><span class="n">fragsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isub</span><span class="p">,</span> <span class="n">itop7</span><span class="p">,</span> <span class="n">idxh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">pair_frag_contacts</span><span class="p">),</span> <span class="n">pair_frag_contacts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">best_ncontact</span> <span class="o">=</span> <span class="n">pair_frag_contacts</span><span class="p">[</span><span class="n">isub</span><span class="p">,</span> <span class="n">itop7</span><span class="p">,</span> <span class="n">idxh</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s1">&#39;best frag pair is top7 resi </span><span class="si">{</span><span class="n">itop7</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">itop7</span><span class="o">+</span><span class="mi">19</span><span class="si">}</span><span class="s1"> to dxh sub </span><span class="si">{</span><span class="n">cmat</span><span class="o">.</span><span class="n">subs</span><span class="p">[</span><span class="n">isub</span><span class="p">]</span><span class="si">}</span><span class="s1"> resi </span><span class="si">{</span><span class="n">idxh</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">idxh</span><span class="o">+</span><span class="mi">19</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="go">&#39;best frag pair is top7 resi 4-23 to dxh sub 8 resi 0-19&#39;</span>
+</pre></div>
+</div>
+<p>Get fragments pairs with multiple subunit contacts</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fragsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bestfrags</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">topk_fragment_contact_by_subset_summary</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">bestfrags</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="go">[(0, 2), (0,), (1,), (2,), (3,)]</span>
+</pre></div>
+</div>
+<p>bestfrags.index and bestfrags.vals are dicts mapping a set of subunits to fragment pairs that have contacts involving all the subunits. The subsets <code class="docutils literal notranslate"><span class="pre">(0,),</span> <span class="pre">(1,),</span> <span class="pre">(2,),</span> <span class="pre">(3,)</span></code> contain only one subunit, but there is one subset (0, 2), indicating fragment pairs that contact both subunit 0 and subunit 2.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s1">&#39;subunits in 1dxh </span><span class="si">{</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)]</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="go">&#39;subunits in 1dxh [2, 8]&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bestfrags</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">bestfrags</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">((2, 7), (7,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">bestfrags</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">bestfrags</span><span class="o">.</span><span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">][:,</span><span class="kc">None</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([[ 32, 112,  11],</span>
+<span class="go">       [ 28, 112,   6],</span>
+<span class="go">       [ 28, 116,   6],</span>
+<span class="go">       [ 36,   0,   1],</span>
+<span class="go">       [ 32,   0,   1],</span>
+<span class="go">       [ 36,   4,   1],</span>
+<span class="go">       [ 32,   4,   1]], dtype=int32)</span>
+</pre></div>
+</div>
+<p>This tells us that top7 resi <code class="docutils literal notranslate"><span class="pre">32-51</span></code> has <strong>at least</strong> 11 contacts to <em>both</em>
+1dxh subunit 2 resi <code class="docutils literal notranslate"><span class="pre">112-131</span></code> <em>and</em> 1dxh subunit 8 resi <code class="docutils literal notranslate"><span class="pre">112-131</span></code>. Lets get the atoms
+and see if it’s legit.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">top7frag</span> <span class="o">=</span> <span class="n">top7</span><span class="o">.</span><span class="n">positioned_atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">top7</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">52</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxhfrag1</span> <span class="o">=</span> <span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">positioned_atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">132</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dxhfrag2</span> <span class="o">=</span> <span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">positioned_atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">dxh</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">res_id</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">132</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">top7frag</span><span class="p">,</span> <span class="s1">&#39;/tmp/top7frag.cif&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dxhfrag1</span><span class="p">,</span> <span class="s1">&#39;/tmp/dxhfrag1.cif&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipd</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dxhfrag2</span><span class="p">,</span> <span class="s1">&#39;/tmp/dxhfrag2.cif&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(top7frag, name=&#39;top7&#39;, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(dxhfrag1, name=&#39;dxh1&#39;, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(dxhfrag2, name=&#39;dxh2&#39;, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(dxh, force=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ipd.showme(top7, force=True)</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id4">
+<img alt="Top7 / 1dxh fragment contact example" src="../_images/contact_matrix_topk_frag__example.png" />
+<figcaption>
+<p><span class="caption-text">Screenshot from pymol (as launched by ipd.showme). These contacts are’t super good, but this
+is a totally arbitrary “dock” of top7 to 1dxh, not a real biological interface. (probably should
+have used a real biological interface for this example…) There may also be slightly better
+fragments if stride is set to 1.</span><a class="headerlink" href="#id4" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<dl class="simple">
+<dt>Note: <a class="reference internal" href="ipd.viz.pymol_viz.html#ipd.viz.pymol_viz.showme" title="ipd.viz.pymol_viz.showme"><code class="xref py py-func docutils literal notranslate"><span class="pre">ipd.viz.pymol_viz.showme()</span></code></a> (just call ipd.showme) is super useful for visualizing all kinds of things, mainly in pymol.</dt><dd><p>It can show AtomArrays, Bodies, Symbodies, homogeneous transforms, stacks of xyz coords, symmetry
+elements, crystal lattices, etc etc. All you need is pymol in your conda environment, and runnable.</p>
+</dd>
+</dl>
+</section>
+<section id="api-docs">
+<h2>API docs<a class="headerlink" href="#api-docs" title="Link to this heading">#</a></h2>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.homog.contact_matrix.</span></span><span class="sig-name descname"><span class="pre">ContactMatrixStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contacts:</span> <span class="pre">~numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subs:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isub0:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partialsum:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A stack of contact matrices with efficient region and fragment query operations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.contacts">
+<span class="sig-name descname"><span class="pre">contacts</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.contacts" title="Link to this definition">#</a></dt>
+<dd><p>An array of shape (N, L, L) representing N square contact matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.subs">
+<span class="sig-name descname"><span class="pre">subs</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.subs" title="Link to this definition">#</a></dt>
+<dd><p>Optional metadata describing subsets (not used internally).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.partialsum">
+<span class="sig-name descname"><span class="pre">partialsum</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.partialsum" title="Link to this definition">#</a></dt>
+<dd><p>Internal cumulative sum array of shape (N, L+1, L+1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContactMatrixStack</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span> <span class="o">=</span> <span class="n">ContactMatrixStack</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 5, 5)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">contacts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact">
+<span class="sig-name descname"><span class="pre">fragment_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L300-L330"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact" title="Link to this definition">#</a></dt>
+<dd><p>Extract fragment contact maps using a sliding fragsize.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fragsize</strong> (<em>int</em>) – Fragment size.</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Distance between sliding windows.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Lower triangular matrix of shape (N, M, M), where</dt><dd><p>M = floor((L - fragsize) / stride) + 1</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContactMatrixStack</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span> <span class="o">=</span> <span class="n">ContactMatrixStack</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fc</span> <span class="o">=</span> <span class="n">cms</span><span class="o">.</span><span class="n">fragment_contact</span><span class="p">(</span><span class="n">fragsize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fc</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 4, 4)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>ncontact for detail on how the partialsum calculation works.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact_torch">
+<span class="sig-name descname"><span class="pre">fragment_contact_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragsize</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L372-L376"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact_torch" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.isub0">
+<span class="sig-name descname"><span class="pre">isub0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.isub0" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.ncontact">
+<span class="sig-name descname"><span class="pre">ncontact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L250-L298"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.ncontact" title="Link to this definition">#</a></dt>
+<dd><p>Compute total contact counts in rectangular subregions for each matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lb</strong> (<em>list</em><em> of </em><em>ranges</em>) – Lower bounds for rows (inclusive).</p></li>
+<li><p><strong>ub</strong> (<em>list</em><em> of </em><em>ranges</em>) – Upper bounds for rows (exclusive).</p></li>
+<li><p><strong>lb2</strong> (<em>list</em><em> of </em><em>ranges</em><em>, </em><em>optional</em>) – Lower bounds for columns (defaults to lb).</p></li>
+<li><p><strong>ub2</strong> (<em>list</em><em> of </em><em>ranges</em><em>, </em><em>optional</em>) – Upper bounds for columns (defaults to ub).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contact count per region, shape (N, len(lb[0]))</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">ContactMatrixStack</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span><span class="o">.</span><span class="n">ncontact</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">lb2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ub2</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">np.float64(10.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span><span class="o">.</span><span class="n">ncontact</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">ub</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">lb2</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span> <span class="n">ub2</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">20</span><span class="p">])</span>
+<span class="go">array([25., 25., 25.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span><span class="o">.</span><span class="n">ncontact</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">)],</span> <span class="n">ub</span><span class="o">=</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">)])</span>
+<span class="go">array([[64., 64., 64., 64., 64., 64.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>  <span class="c1"># stack of 3 now</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span> <span class="o">=</span> <span class="n">ipd</span><span class="o">.</span><span class="n">homog</span><span class="o">.</span><span class="n">ContactMatrixStack</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span><span class="o">.</span><span class="n">ncontact</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>    <span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)],</span>
+<span class="gp">... </span>             <span class="n">ub</span><span class="o">=</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">16</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">16</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">15</span><span class="p">)])</span>
+<span class="go">array([[ 64.,  64.,  64.,  64.,  64.,  64.],</span>
+<span class="go">       [100., 100., 100., 100., 100., 100.],</span>
+<span class="go">       [ 64.,  64.,  64.,  64.,  64.,  64.]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">partialsum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">subs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L199-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary">
+<span class="sig-name descname"><span class="pre">topk_fragment_contact_by_subset_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragsize=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k=13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary=&lt;function</span> <span class="pre">min&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride=1</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L332-L370"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary" title="Link to this definition">#</a></dt>
+<dd><p>Compute top-k fragment contact values summarized across subsets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fragsize</strong> (<em>int</em>) – Fragment size.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Number of top values to return.</p></li>
+<li><p><strong>summary</strong> (<em>Callable</em>) – Summary function applied across subset (e.g., np.min).</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride for fragment sampling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary-like object with keys <cite>vals</cite> and <cite>index</cite> for each subset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ipd.Bunch</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContactMatrixStack</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span> <span class="o">=</span> <span class="n">ContactMatrixStack</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">cms</span><span class="o">.</span><span class="n">topk_fragment_contact_by_subset_summary</span><span class="p">(</span><span class="n">fragsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary_torch">
+<span class="sig-name descname"><span class="pre">topk_fragment_contact_by_subset_summary_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L378-L390"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary_torch" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.ContactMatrixStack.update_partialsum">
+<span class="sig-name descname"><span class="pre">update_partialsum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L231-L248"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.ContactMatrixStack.update_partialsum" title="Link to this definition">#</a></dt>
+<dd><p>Compute and store cumulative sums of each contact matrix for fast region queries.</p>
+<p>This method initializes a zero-padded prefix sum array with shape (N, L+1, L+1),
+where N is the number of matrices and L is the matrix size.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContactMatrixStack</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span> <span class="o">=</span> <span class="n">ContactMatrixStack</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span><span class="o">.</span><span class="n">partialsum</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="go">np.float64(9.0)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.is_contact_matrix">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.contact_matrix.</span></span><span class="sig-name descname"><span class="pre">is_contact_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L417-L437"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.is_contact_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Check if an object is a valid 3D contact matrix stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arg</strong> (<em>Any</em>) – Object to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if it’s a 3D square matrix with shape (N, L, L).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ipd.homog</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_contact_matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_contact_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.homog.contact_matrix.rand_contacts">
+<span class="sig-prename descclassname"><span class="pre">ipd.homog.contact_matrix.</span></span><span class="sig-name descname"><span class="pre">rand_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/homog/contact_matrix.py#L439-L485"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.homog.contact_matrix.rand_contacts" title="Link to this definition">#</a></dt>
+<dd><p>AI slop, very slow. Create a stack of m random symmetric contact matrices of size n x n.</p>
+<p>smoothed noise field that biases the contact probability in adjacent cells.
+For each off-diagonal cell (i,j), an effective probability is:
+p_eff = clip(frac + index_bias * noise[i, j], 0, 1)
+where the noise field is generated and smoothed for spatial correlation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Size of each matrix (n x n).</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – Number of matrices to generate.</p></li>
+<li><p><strong>frac</strong> (<em>float</em>) – Base probability for an off-diagonal contact to be nonzero.</p></li>
+<li><p><strong>cen</strong> (<em>float</em>) – Mean of the normal distribution for nonzero contacts.</p></li>
+<li><p><strong>std</strong> (<em>float</em>) – Standard deviation of the normal distribution for nonzero contacts.</p></li>
+<li><p><strong>index_bias</strong> (<em>float</em>) – A multiplier for a smoothed noise</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A stack of m symmetric contact matrices with shape (m, n, n).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ipd.homog.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ipd.homog package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ipd.homog.hgeom.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ipd.homog.hgeom module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sums-1d-basics">Cumulative sums, 1D basics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cumsum-performance-example">Cumsum Performance Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sums-2d">Cumulative sums, 2D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contactmatrixstack-example">ContactMatrixStack Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-docs">API docs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.contacts"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.contacts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.subs"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.subs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.partialsum"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.partialsum</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.contacts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.fragment_contact()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.fragment_contact_torch"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.fragment_contact_torch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.isub0"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.isub0</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.ncontact"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.ncontact()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.partialsum</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.subs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.topk_fragment_contact_by_subset_summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.topk_fragment_contact_by_subset_summary_torch"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.topk_fragment_contact_by_subset_summary_torch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.ContactMatrixStack.update_partialsum"><code class="docutils literal notranslate"><span class="pre">ContactMatrixStack.update_partialsum()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.is_contact_matrix"><code class="docutils literal notranslate"><span class="pre">is_contact_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.homog.contact_matrix.rand_contacts"><code class="docutils literal notranslate"><span class="pre">rand_contacts()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1190 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ipd.sym.sym_adapt module &#8212; IPD 0.3.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=d97aba73" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=c1cae59a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_apidoc/ipd.sym.sym_adapt';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ipd.sym.sym_builder module" href="ipd.sym.sym_builder.html" />
+    <link rel="prev" title="ipd.sym.sym module" href="ipd.sym.sym.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">IPD 0.3.8 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev_guide/index.html">
+    IPD Dev Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
+    ipd
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ipd.html">ipd package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.atom.html">ipd.atom package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.assembly.html">ipd.atom.assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.atom_utils.html">ipd.atom.atom_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.body.html">ipd.atom.body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.components.html">ipd.atom.components module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.atom.crops.html">ipd.atom.crops module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.crud.html">ipd.crud package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.backend.html">ipd.crud.backend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.crudcli.html">ipd.crud.crudcli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.frontend.html">ipd.crud.frontend module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.crud.server.html">ipd.crud.server module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.dev.html">ipd.dev package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.cli.html">ipd.dev.cli package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.code.html">ipd.dev.code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.instrumentation.html">ipd.dev.instrumentation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.qt.html">ipd.dev.qt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.state.html">ipd.dev.state package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.storage.html">ipd.dev.storage package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.testing.html">ipd.dev.testing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.contexts.html">ipd.dev.contexts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.debug.html">ipd.dev.debug module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.decorators.html">ipd.dev.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.element_wise.html">ipd.dev.element_wise module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.error.html">ipd.dev.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.files.html">ipd.dev.files module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.format.html">ipd.dev.format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.functional.html">ipd.dev.functional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.iterables.html">ipd.dev.iterables module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.meta.html">ipd.dev.meta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.metadata.html">ipd.dev.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.misc.html">ipd.dev.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.objinfo.html">ipd.dev.objinfo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.safe_eval.html">ipd.dev.safe_eval module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.serialization.html">ipd.dev.serialization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.shell.html">ipd.dev.shell module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.strings.html">ipd.dev.strings module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.dev.tolerances.html">ipd.dev.tolerances module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.homog.html">ipd.homog package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.contact_matrix.html">ipd.homog.contact_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.hgeom.html">ipd.homog.hgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.infix.html">ipd.homog.infix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.npth_common.html">ipd.homog.npth_common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.pointgen.html">ipd.homog.pointgen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.quat.html">ipd.homog.quat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.thgeom.html">ipd.homog.thgeom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.util.html">ipd.homog.util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.viz.html">ipd.homog.viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.homog.xform_info.html">ipd.homog.xform_info module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.ml.html">ipd.ml package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.ml.datahub_util.html">ipd.ml.datahub_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.motif.html">ipd.motif package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_factory.html">ipd.motif.motif_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_manager.html">ipd.motif.motif_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.motif.motif_options.html">ipd.motif.motif_options module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.observer.html">ipd.observer package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.dynamic_parameters.html">ipd.observer.dynamic_parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.observer.observer.html">ipd.observer.observer module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.pdb.html">ipd.pdb package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.bbutil.html">ipd.pdb.bbutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.chemical.html">ipd.pdb.chemical module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbdump.html">ipd.pdb.pdbdump module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfetch.html">ipd.pdb.pdbfetch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbfile.html">ipd.pdb.pdbfile module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbmeta.html">ipd.pdb.pdbmeta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pdbread.html">ipd.pdb.pdbread module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.pisces.html">ipd.pdb.pisces module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.readstruct.html">ipd.pdb.readstruct module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.pdb.viz_pdb.html">ipd.pdb.viz_pdb module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.protocol.html">ipd.protocol package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.protocol.sieve.html">ipd.protocol.sieve module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.sel.html">ipd.sel package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sel.sel_pymol.html">ipd.sel.sel_pymol module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ipd.sym.html">ipd.sym package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.helix.html">ipd.sym.helix package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.high_t.html">ipd.sym.high_t package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.xtal.html">ipd.sym.xtal package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.guess_symmetry.html">ipd.sym.guess_symmetry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.ipd_sym_manager.html">ipd.sym.ipd_sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.permutations.html">ipd.sym.permutations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym.html">ipd.sym.sym module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">ipd.sym.sym_adapt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_builder.html">ipd.sym.sym_builder module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_check.html">ipd.sym.sym_check module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_color.html">ipd.sym.sym_color module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_detect.html">ipd.sym.sym_detect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_factory.html">ipd.sym.sym_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_fitting.html">ipd.sym.sym_fitting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_index.html">ipd.sym.sym_index module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_kind.html">ipd.sym.sym_kind module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_manager.html">ipd.sym.sym_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_options.html">ipd.sym.sym_options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_slice.html">ipd.sym.sym_slice module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.sym_util.html">ipd.sym.sym_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.sym.symframes.html">ipd.sym.symframes module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.tools.html">ipd.tools package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.citool.html">ipd.tools.citool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.codetool.html">ipd.tools.codetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.conda.html">ipd.tools.conda module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.idetool.html">ipd.tools.idetool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.ipdtool.html">ipd.tools.ipdtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.pkgtool.html">ipd.tools.pkgtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.run_tests_on_file.html">ipd.tools.run_tests_on_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.symtool.html">ipd.tools.symtool module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.tools.tool_util.html">ipd.tools.tool_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ipd.viz.html">ipd.viz package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.plot.html">ipd.viz.plot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.primitives.html">ipd.viz.primitives module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_cgo.html">ipd.viz.pymol_cgo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_pose.html">ipd.viz.pymol_pose module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.pymol_viz.html">ipd.viz.pymol_viz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_assembly.html">ipd.viz.viz_assembly module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_atoms.html">ipd.viz.viz_atoms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_body.html">ipd.viz.viz_body module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_bond.html">ipd.viz.viz_bond module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_deco.html">ipd.viz.viz_deco module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_helix.html">ipd.viz.viz_helix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_rigidbody.html">ipd.viz.viz_rigidbody module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipd.viz.viz_xtal.html">ipd.viz.viz_xtal module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.bunch.html">ipd.bunch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipd.project_config.html">ipd.project_config module</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">ipd</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.html" class="nav-link">ipd package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ipd.sym.html" class="nav-link">ipd.sym package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ipd.sym.sym_adapt module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ipd.sym.sym_adapt">
+<span id="ipd-sym-sym-adapt-module"></span><h1>ipd.sym.sym_adapt module<a class="headerlink" href="#module-ipd.sym.sym_adapt" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">DepRecatEd_symAdaptTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isidx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tlib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'torch'</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L406-L593"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.adapted">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adapted</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L406-L593"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.adapted" title="Link to this definition">#</a></dt>
+<dd><p>convert to tensor ready for symmetrization</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L406-L593"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.adapts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.kind">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.SymKind" title="ipd.sym.sym_kind.SymKind"><span class="pre">SymKind</span></a></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L406-L593"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.make_room_for_sym">
+<span class="sig-name descname"><span class="pre">make_room_for_sym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L490-L497"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.make_room_for_sym" title="Link to this definition">#</a></dt>
+<dd><p>if input is asymmetric, resize symdims to full symmetric size</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L471-L488"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SimpleSparseTensor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SimpleSparseTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isidx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">slice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L227-L232"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SimpleSparseTensor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SimpleSparseTensor.idx">
+<span class="sig-name descname"><span class="pre">idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SimpleSparseTensor.idx" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SimpleSparseTensor.isidx">
+<span class="sig-name descname"><span class="pre">isidx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">slice</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SimpleSparseTensor.isidx" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SimpleSparseTensor.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L227-L232"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SimpleSparseTensor.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SimpleSparseTensor.val">
+<span class="sig-name descname"><span class="pre">val</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SimpleSparseTensor.val" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdapt">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdapt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L52-L94"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdapt" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>You must define a subclass of SymAdapt for each type you want to symmetrize.</p>
+<p>Must have a kind and adapted property. These classes are not meant for the end user,
+they will be used internally by the sym manager</p>
+<dl class="simple">
+<dt>seelso::</dt><dd><p>ipd.sym.SymAdaptDataClass</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdapt.adapted">
+<span class="sig-name descname"><span class="pre">adapted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdapt.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdapt.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdapt.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdapt.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.SymKind" title="ipd.sym.sym_kind.SymKind"><span class="pre">SymKind</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdapt.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdapt.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdapt.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdapt.reconstruct">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_symmetrized</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L82-L84"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdapt.reconstruct" title="Link to this definition">#</a></dt>
+<dd><p>Restore from dict of components that have been symmetrized.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptDataClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L177-L222"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<p>Base class for adapting dataclasses.</p>
+<p>All fields must be sym-adaptable and all tensor fields must have
+intepretable shapes, or dim names via add_tensor_dim_names</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass.adapted">
+<span class="sig-name descname"><span class="pre">adapted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L177-L222"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass.adapts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.SymKind" title="ipd.sym.sym_kind.SymKind"><span class="pre">SymKind</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symparts</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L211-L222"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptDataClass.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptDataClass.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L165-L175"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap.adapted">
+<span class="sig-name descname"><span class="pre">adapted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L165-L175"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap.adapts" title="Link to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.SymKind" title="ipd.sym.sym_kind.SymKind"><span class="pre">SymKind</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_symmetrized</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L174-L175"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptMap.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptMap.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptNDArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L339-L365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<p>Symmetrizable ndarray.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray.adapted">
+<span class="sig-name descname"><span class="pre">adapted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L339-L365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray.adapts" title="Link to this definition">#</a></dt>
+<dd><p>alias of <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray.kind">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kind</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L339-L365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L364-L365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNDArray.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNDArray.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptNamedDenseTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L245-L292"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.adapted">
+<span class="sig-name descname"><span class="pre">adapted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L245-L292"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.adapts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.SymKind" title="ipd.sym.sym_kind.SymKind"><span class="pre">SymKind</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L290-L292"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptNamedSparseTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L294-L337"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.adapted">
+<span class="sig-name descname"><span class="pre">adapted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L294-L337"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.adapts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.SymKind" title="ipd.sym.sym_kind.SymKind"><span class="pre">SymKind</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L334-L337"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L143-L163"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence.adapted">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adapted</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L143-L163"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L143-L163"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence.adapts" title="Link to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence.kind">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kind</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L143-L163"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_symmetrized</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L162-L163"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptSequence.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptSequence.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptStr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L100-L119"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr.adapted">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adapted</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L100-L119"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L100-L119"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr.adapts" title="Link to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_kind.html#ipd.sym.sym_kind.SymKind" title="ipd.sym.sym_kind.SymKind"><span class="pre">SymKind</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">canon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L118-L119"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptStr.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptStr.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">SymAdaptTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L121-L141"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ipd.sym.sym_adapt.SymAdapt" title="ipd.sym.sym_adapt.SymAdapt"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymAdapt</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple.adapted">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adapted</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L121-L141"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple.adapted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple.adapts">
+<span class="sig-name descname"><span class="pre">adapts</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L121-L141"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple.adapts" title="Link to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple.isasym">
+<span class="sig-name descname"><span class="pre">isasym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple.isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple.kind">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kind</span></span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L121-L141"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple.kind" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple.orig">
+<span class="sig-name descname"><span class="pre">orig</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple.orig" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_symmetrized</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L140-L141"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple.reconstruct" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.SymAdaptTuple.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ipd.sym.sym_manager.html#ipd.sym.sym_manager.SymmetryManager" title="ipd.sym.sym_manager.SymmetryManager"><span class="pre">SymmetryManager</span></a></em><a class="headerlink" href="#ipd.sym.sym_adapt.SymAdaptTuple.sym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.check_isasym">
+<span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">check_isasym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isasym</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L238-L243"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.check_isasym" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.deprecated_tensor_keydims_to_front">
+<span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">deprecated_tensor_keydims_to_front</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keydim</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L369-L387"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.deprecated_tensor_keydims_to_front" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.tensor_is_xyz">
+<span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">tensor_is_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L403-L404"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.tensor_is_xyz" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ipd.sym.sym_adapt.tensor_undo_perm">
+<span class="sig-prename descclassname"><span class="pre">ipd.sym.sym_adapt.</span></span><span class="sig-name descname"><span class="pre">tensor_undo_perm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">undo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resizefrom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/baker-laboratory/ipd/blob/main//ipd/sym/sym_adapt.py#L395-L401"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipd.sym.sym_adapt.tensor_undo_perm" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ipd.sym.sym.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ipd.sym.sym module</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ipd.sym.sym_builder.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ipd.sym.sym_builder module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.adapted"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.adapts"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.isasym"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.kind"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.make_room_for_sym"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor.make_room_for_sym()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.orig"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.DepRecatEd_symAdaptTensor.reconstruct"><code class="docutils literal notranslate"><span class="pre">DepRecatEd_symAdaptTensor.reconstruct()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SimpleSparseTensor"><code class="docutils literal notranslate"><span class="pre">SimpleSparseTensor</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SimpleSparseTensor.idx"><code class="docutils literal notranslate"><span class="pre">SimpleSparseTensor.idx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SimpleSparseTensor.isidx"><code class="docutils literal notranslate"><span class="pre">SimpleSparseTensor.isidx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SimpleSparseTensor.kind"><code class="docutils literal notranslate"><span class="pre">SimpleSparseTensor.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SimpleSparseTensor.val"><code class="docutils literal notranslate"><span class="pre">SimpleSparseTensor.val</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdapt"><code class="docutils literal notranslate"><span class="pre">SymAdapt</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdapt.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdapt.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdapt.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdapt.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdapt.kind"><code class="docutils literal notranslate"><span class="pre">SymAdapt.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdapt.orig"><code class="docutils literal notranslate"><span class="pre">SymAdapt.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdapt.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdapt.reconstruct()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptDataClass.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptDataClass.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptMap.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptMap.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNDArray.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptNDArray.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedDenseTensor.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedDenseTensor.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptNamedSparseTensor.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptNamedSparseTensor.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptSequence.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptSequence.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptStr.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptStr.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple.adapted"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple.adapted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple.adapts"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple.adapts</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple.isasym"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple.isasym</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple.kind"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple.kind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple.orig"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple.orig</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple.reconstruct"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple.reconstruct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.SymAdaptTuple.sym"><code class="docutils literal notranslate"><span class="pre">SymAdaptTuple.sym</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.check_isasym"><code class="docutils literal notranslate"><span class="pre">check_isasym()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.deprecated_tensor_keydims_to_front"><code class="docutils literal notranslate"><span class="pre">deprecated_tensor_keydims_to_front()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.tensor_is_xyz"><code class="docutils literal notranslate"><span class="pre">tensor_is_xyz()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ipd.sym.sym_adapt.tensor_undo_perm"><code class="docutils literal notranslate"><span class="pre">tensor_undo_perm()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
