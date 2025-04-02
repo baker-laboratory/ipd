@@ -97,7 +97,7 @@ def find_components_by_seqaln_rmsfit(
 
 @ipd.dev.timed
 def find_components_by_seqaln_rmsfit_recurse(atomslist, tol, finalresult, idx):
-    alignment = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0], match=[True ])
+    alignment = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0], match=[True])
     ca = [a[(a.atom_name == 'CA') & ~a.hetero] for a in atomslist]
     aligned_on_protein = accumulate_seqalign_rmsfit(ca, alignment.mapwise.append)
     if not aligned_on_protein:
@@ -158,6 +158,13 @@ class Components:
     source_: list['bs.AtomArray'] = ipd.field(list)
     intermediates_: list[dict] = ipd.field(list)
     tolerances_: ipd.Tolerances = None
+
+    def symbody(self, component=None):
+        if not component and len(self) == 1: conponent = 0
+        return ipd.sym.SymBody(self.atoms[component], self.frames[component])
+
+    def symbodies(self):
+        return [self.symbody(i) for i in range(len(self))]
 
     def add(self, **atom_frame_match_rms_idx):
         """

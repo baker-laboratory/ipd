@@ -218,6 +218,8 @@ class ContactMatrixStack:
     contacts: np.ndarray
     subs: ipd.Optional[np.ndarray] = None
     isub0: ipd.Optional[int] = None
+    tokens1: ipd.Optional[np.ndarray] = None
+    tokens2: ipd.Optional[np.ndarray] = None
     partialsum: np.ndarray = ipd.field(lambda: np.empty(0))
 
     def __post_init__(self):
@@ -225,6 +227,7 @@ class ContactMatrixStack:
         if self.subs is None: self.subs = np.arange(len(self.contacts))
         assert len(self.subs) == len(self.contacts)
         assert len(self.contacts.shape) == 3
+        assert len(self.contacts), 'contacts must not be empty'
         # assert self.contacts.shape[2] == self.contacts.shape[1], 'contacts must be square'
         self.update_partialsum()
 
@@ -246,6 +249,9 @@ class ContactMatrixStack:
         shape = self.contacts.shape
         self.partialsum = np.zeros((shape[0], shape[1] + 1, shape[2] + 1), dtype=self.contacts.dtype)
         self.partialsum[:, 1:, 1:] = ipd.partialsum(ipd.partialsum(self.contacts, axis=1), axis=2)
+
+    def to_original_index(self, index):
+        assert 0
 
     def ncontact(self, lb, ub, lb2=None, ub2=None):
         r"""

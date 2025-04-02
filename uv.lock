@@ -40,6 +40,12 @@ wheels = [
 ]
 
 [[package]]
+name = "antlr4-python3-runtime"
+version = "4.9.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3e/38/7859ff46355f76f8d19459005ca000b6e7012f2f1ca597746cbcd1fbfe5e/antlr4-python3-runtime-4.9.3.tar.gz", hash = "sha256:f224469b4168294902bb1efa80a8bf7855f24c99aef99cbefc1bcd3cce77881b", size = 117034 }
+
+[[package]]
 name = "anyio"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1057,11 +1063,11 @@ wheels = [
 
 [[package]]
 name = "h11"
-version = "0.9.0"
+version = "0.14.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/34/5a/abaa557d20b210117d8c3e6b0b817ce9b329b2e81f87612e60102a924323/h11-0.9.0.tar.gz", hash = "sha256:33d4bca7be0fa039f4e84d50ab00531047e53d6ee8ffbc83501ea602c169cae1", size = 93331 }
+sdist = { url = "https://files.pythonhosted.org/packages/f5/38/3af3d3633a34a3316095b39c8e8fb4853a28a536e55d347bd8d8e9a14b03/h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d", size = 100418 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/fd/3dad730b0f95e78aeeb742f96fa7bbecbdd56a58e405d3da440d5bfb90c6/h11-0.9.0-py2.py3-none-any.whl", hash = "sha256:4bc6d6a1238b7615b266ada57e0618568066f57dd6fa967d1290ec9309b2f2f1", size = 53607 },
+    { url = "https://files.pythonhosted.org/packages/95/04/ff642e65ad6b90db43e668d70ffb6736436c7ce41fcc549f4e9472234127/h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761", size = 58259 },
 ]
 
 [[package]]
@@ -1125,43 +1131,44 @@ wheels = [
 
 [[package]]
 name = "httpcore"
-version = "0.13.2"
+version = "1.0.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "certifi" },
     { name = "h11" },
-    { name = "sniffio" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/66/84/692d3c32c67b6dc94361f74e3320e01fc288eec131e92b527d06e4ed2603/httpcore-0.13.2.tar.gz", hash = "sha256:c16efbdf643e1b57bde0adc12c53b08645d7d92d6d345a3f71adfc2a083e7fd2", size = 44667 }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/41/d7d0a89eb493922c37d343b607bc1b5da7f5be7e383740b4753ad8943e90/httpcore-1.0.7.tar.gz", hash = "sha256:8551cb62a169ec7162ac7be8d4817d561f60e08eaa485234898414bb5a8a0b4c", size = 85196 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/d9/e9bd4ce296a965113070b7eee3919844058573ab361588c1d211f6ad2d35/httpcore-0.13.2-py3-none-any.whl", hash = "sha256:52b7d9413f6f5592a667de9209d70d4d41aba3fb0540dd7c93475c78b85941e9", size = 56667 },
+    { url = "https://files.pythonhosted.org/packages/87/f5/72347bc88306acb359581ac4d52f23c0ef445b57157adedb9aee0cd689d2/httpcore-1.0.7-py3-none-any.whl", hash = "sha256:a3fff8f43dc260d5bd363d9f9cf1830fa3a458b332856f34282de498ed420edd", size = 78551 },
 ]
 
 [[package]]
 name = "httpx"
-version = "0.25.1"
+version = "0.28.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "certifi" },
     { name = "httpcore" },
     { name = "idna" },
-    { name = "sniffio" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1c/fe/c0523094193929a68b288e0ae3eb865725f1ee9faca0f21693a86e96c943/httpx-0.25.1.tar.gz", hash = "sha256:ffd96d5cf901e63863d9f1b4b6807861dbea4d301613415d9e6e57ead15fc5d0", size = 81938 }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/df/48c586a5fe32a0f01324ee087459e112ebb7224f646c0b5023f5e79e9956/httpx-0.28.1.tar.gz", hash = "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc", size = 141406 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/82/61/a5fca4a1e88e40969bbd0cf0d981f3aa76d5057db160b94f49603fc18740/httpx-0.25.1-py3-none-any.whl", hash = "sha256:fec7d6cc5c27c578a391f7e87b9aa7d3d8fbcd034f6399f9f79b45bcc12a866a", size = 75044 },
+    { url = "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl", hash = "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad", size = 73517 },
 ]
 
 [[package]]
 name = "hydra-core"
-version = "0.11.3"
+version = "1.3.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "antlr4-python3-runtime" },
     { name = "omegaconf" },
+    { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2c/ef/967df96458190a00337222a609dcfd01e886daa167fef6ef8ad4c0e93798/hydra-core-0.11.3.tar.gz", hash = "sha256:173d2688b65ba1345f4f43b6bc5a3d92485b3cebfccca2ca33d5f8a37ec6fdc6", size = 43051 }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/8e/07e42bc434a847154083b315779b0a81d567154504624e181caf2c71cd98/hydra-core-1.3.2.tar.gz", hash = "sha256:8a878ed67216997c3e9d88a8e72e7b4767e81af37afb4ea3334b269a4390a824", size = 3263494 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/28/2f/e8dbf1266062d4041cbdcd725cb91210d9811aefb9cdf5fc04cb381bf9b9/hydra_core-0.11.3-py3-none-any.whl", hash = "sha256:43ef27b4a32a70cbf566b10bd198def5c5d03cab212d4ea49e744aeb0c14a6b7", size = 72107 },
+    { url = "https://files.pythonhosted.org/packages/c6/50/e0edd38dcd63fb26a8547f13d28f7a008bc4a3fd4eb4ff030673f22ad41a/hydra_core-1.3.2-py3-none-any.whl", hash = "sha256:fa0238a9e31df3373b35b0bfb672c34cc92718d21f81311d8996a16de1141d8b", size = 154547 },
 ]
 
 [[package]]
@@ -1252,7 +1259,7 @@ wheels = [
 
 [[package]]
 name = "ipd"
-version = "0.3.7"
+version = "0.3.8"
 source = { editable = "." }
 dependencies = [
     { name = "assertpy" },
@@ -1261,6 +1268,7 @@ dependencies = [
     { name = "evn" },
     { name = "gitpython" },
     { name = "hgeom" },
+    { name = "httpx" },
     { name = "hydra-core" },
     { name = "hypothesis" },
     { name = "icecream" },
@@ -1282,6 +1290,7 @@ dependencies = [
 
 [package.optional-dependencies]
 all = [
+    { name = "basedpyright" },
     { name = "bio", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "bio", version = "1.7.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "biotite", version = "0.39.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
@@ -1289,15 +1298,26 @@ all = [
     { name = "debugpy" },
     { name = "fastapi" },
     { name = "gitpython" },
+    { name = "hypothesis", extra = ["numpy"] },
     { name = "jinja2" },
+    { name = "nox" },
+    { name = "packaging" },
     { name = "pandas" },
     { name = "pdot" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-dotenv" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
     { name = "scipy", version = "1.13.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "scipy", version = "1.15.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "sqlmodel" },
     { name = "submitit" },
     { name = "torch" },
     { name = "uvicorn" },
+    { name = "validate-pyproject", extra = ["all"] },
+    { name = "yapf" },
 ]
 crud = [
     { name = "fastapi" },
@@ -1314,7 +1334,6 @@ dev = [
     { name = "nox" },
     { name = "packaging" },
     { name = "pytest" },
-    { name = "pytest-benchmark" },
     { name = "pytest-cov" },
     { name = "pytest-dotenv" },
     { name = "pytest-sugar" },
@@ -1364,13 +1383,14 @@ tools = [
 [package.metadata]
 requires-dist = [
     { name = "assertpy" },
+    { name = "basedpyright", marker = "extra == 'all'" },
     { name = "basedpyright", marker = "extra == 'dev'" },
     { name = "bio", marker = "extra == 'all'" },
     { name = "bio", marker = "extra == 'docs'" },
     { name = "bio", marker = "extra == 'ml'" },
-    { name = "biotite", marker = "python_full_version >= '3.10' and extra == 'all'", specifier = ">1.1" },
-    { name = "biotite", marker = "python_full_version >= '3.10' and extra == 'docs'", specifier = ">1.1" },
-    { name = "biotite", marker = "python_full_version >= '3.10' and extra == 'ml'", specifier = ">1.1" },
+    { name = "biotite", marker = "python_full_version >= '3.10' and extra == 'all'", specifier = ">=1.2" },
+    { name = "biotite", marker = "python_full_version >= '3.10' and extra == 'docs'", specifier = ">=1.2" },
+    { name = "biotite", marker = "python_full_version >= '3.10' and extra == 'ml'", specifier = ">=1.2" },
     { name = "biotite", marker = "python_full_version < '3.10' and extra == 'all'" },
     { name = "biotite", marker = "python_full_version < '3.10' and extra == 'docs'" },
     { name = "biotite", marker = "python_full_version < '3.10' and extra == 'ml'" },
@@ -1387,8 +1407,10 @@ requires-dist = [
     { name = "gitpython", marker = "extra == 'dev'" },
     { name = "gitpython", marker = "extra == 'tools'" },
     { name = "hgeom", specifier = ">=2.0.5" },
-    { name = "hydra-core" },
+    { name = "httpx", specifier = ">=0.20" },
+    { name = "hydra-core", specifier = ">=1.3.2" },
     { name = "hypothesis" },
+    { name = "hypothesis", extras = ["numpy"], marker = "extra == 'all'" },
     { name = "hypothesis", extras = ["numpy"], marker = "extra == 'dev'" },
     { name = "icecream" },
     { name = "jinja2", marker = "extra == 'all'" },
@@ -1396,9 +1418,11 @@ requires-dist = [
     { name = "jinja2", marker = "extra == 'tools'" },
     { name = "lark" },
     { name = "matplotlib", marker = "extra == 'docs'" },
+    { name = "nox", marker = "extra == 'all'" },
     { name = "nox", marker = "extra == 'dev'" },
     { name = "numpy" },
     { name = "opt-einsum" },
+    { name = "packaging", marker = "extra == 'all'" },
     { name = "packaging", marker = "extra == 'dev'" },
     { name = "pandas", marker = "extra == 'all'" },
     { name = "pandas", marker = "extra == 'docs'" },
@@ -1408,17 +1432,22 @@ requires-dist = [
     { name = "pydantic" },
     { name = "pydata-sphinx-theme", marker = "extra == 'docs'" },
     { name = "pytest" },
+    { name = "pytest", marker = "extra == 'all'" },
     { name = "pytest", marker = "extra == 'dev'" },
-    { name = "pytest-benchmark", marker = "extra == 'dev'" },
+    { name = "pytest-cov", marker = "extra == 'all'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
+    { name = "pytest-dotenv", marker = "extra == 'all'" },
     { name = "pytest-dotenv", marker = "extra == 'dev'" },
+    { name = "pytest-sugar", marker = "extra == 'all'" },
     { name = "pytest-sugar", marker = "extra == 'dev'" },
+    { name = "pytest-xdist", marker = "extra == 'all'" },
     { name = "pytest-xdist", marker = "extra == 'dev'" },
     { name = "rapidfuzz" },
     { name = "requests" },
     { name = "requests-cache" },
     { name = "restrictedpython" },
     { name = "rich" },
+    { name = "ruff", marker = "extra == 'all'" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "scipy", marker = "extra == 'all'" },
     { name = "sphinx", marker = "python_full_version >= '3.13' and extra == 'docs'", specifier = ">8" },
@@ -1436,15 +1465,17 @@ requires-dist = [
     { name = "submitit", marker = "extra == 'tools'" },
     { name = "tomli" },
     { name = "toolz" },
-    { name = "torch", marker = "extra == 'all'" },
-    { name = "torch", marker = "extra == 'docs'" },
-    { name = "torch", marker = "extra == 'ml'" },
+    { name = "torch", marker = "extra == 'all'", specifier = "==2.6.0" },
+    { name = "torch", marker = "extra == 'docs'", specifier = "==2.6.0" },
+    { name = "torch", marker = "extra == 'ml'", specifier = "==2.6.0" },
     { name = "typer" },
     { name = "urllib3", marker = "extra == 'docs'", specifier = ">2" },
     { name = "uvicorn", marker = "extra == 'all'" },
     { name = "uvicorn", marker = "extra == 'crud'" },
     { name = "uvicorn", marker = "extra == 'docs'", specifier = ">=0.34" },
+    { name = "validate-pyproject", extras = ["all"], marker = "extra == 'all'" },
     { name = "validate-pyproject", extras = ["all"], marker = "extra == 'dev'" },
+    { name = "yapf", marker = "extra == 'all'" },
     { name = "yapf", marker = "extra == 'dev'" },
 ]
 provides-extras = ["crud", "tools", "ml", "docs", "dev", "all"]
@@ -2264,15 +2295,15 @@ wheels = [
 
 [[package]]
 name = "omegaconf"
-version = "1.4.1"
+version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "antlr4-python3-runtime" },
     { name = "pyyaml" },
-    { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a2/49/91b8c32d0d047c65c8aa2d4cf95c901428e4eb8657681034bbe12b22c0fd/omegaconf-1.4.1.tar.gz", hash = "sha256:5bb6c9391224c6277e06171b661904a68dcbcfbabd831eb552f4803a02eefddc", size = 11745 }
+sdist = { url = "https://files.pythonhosted.org/packages/09/48/6388f1bb9da707110532cb70ec4d2822858ddfb44f1cdf1233c20a80ea4b/omegaconf-2.3.0.tar.gz", hash = "sha256:d5d4b6d29955cc50ad50c46dc269bcd92c6e00f5f90d23ab5fee7bfca4ba4cc7", size = 3298120 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/53/d285f1faa36eca666f6d04ac17c5f3a9e72cedaeb530e663fdc025209780/omegaconf-1.4.1-py3-none-any.whl", hash = "sha256:01c9f93c3578dce7d42ce06f3d1305437322234ccc1accfc71d344d5e17413a1", size = 14948 },
+    { url = "https://files.pythonhosted.org/packages/e3/94/1843518e420fa3ed6919835845df698c7e27e183cb997394e4a670973a65/omegaconf-2.3.0-py3-none-any.whl", hash = "sha256:7b4df175cdb08ba400f45cae3bdcae7ba8365db4d165fc65fd04b050ab63b46b", size = 79500 },
 ]
 
 [[package]]
@@ -2466,15 +2497,6 @@ wheels = [
 ]
 
 [[package]]
-name = "py-cpuinfo"
-version = "9.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/37/a8/d832f7293ebb21690860d2e01d8115e5ff6f2ae8bbdc953f0eb0fa4bd2c7/py-cpuinfo-9.0.0.tar.gz", hash = "sha256:3cdbbf3fac90dc6f118bfd64384f309edeadd902d7c8fb17f02ffa1fc3f49690", size = 104716 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/a9/023730ba63db1e494a271cb018dcd361bd2c917ba7004c3e49d5daf795a2/py_cpuinfo-9.0.0-py3-none-any.whl", hash = "sha256:859625bc251f64e21f077d099d4162689c762b5d6a4c3c97553d56241c9674d5", size = 22335 },
-]
-
-[[package]]
 name = "pydantic"
 version = "2.10.6"
 source = { registry = "https://pypi.org/simple" }
@@ -2638,19 +2660,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ae/3c/c9d525a414d506893f0cd8a8d0de7706446213181570cdbd766691164e40/pytest-8.3.5.tar.gz", hash = "sha256:f4efe70cc14e511565ac476b57c279e12a855b11f48f212af1080ef2263d3845", size = 1450891 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/30/3d/64ad57c803f1fa1e963a7946b6e0fea4a70df53c1a7fed304586539c2bac/pytest-8.3.5-py3-none-any.whl", hash = "sha256:c69214aa47deac29fad6c2a4f590b9c4a9fdb16a403176fe154b79c0b4d4d820", size = 343634 },
-]
-
-[[package]]
-name = "pytest-benchmark"
-version = "5.1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "py-cpuinfo" },
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/39/d0/a8bd08d641b393db3be3819b03e2d9bb8760ca8479080a26a5f6e540e99c/pytest-benchmark-5.1.0.tar.gz", hash = "sha256:9ea661cdc292e8231f7cd4c10b0319e56a2118e2c09d9f50e1b3d150d2aca105", size = 337810 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9e/d6/b41653199ea09d5969d4e385df9bbfd9a100f28ca7e824ce7c0a016e3053/pytest_benchmark-5.1.0-py3-none-any.whl", hash = "sha256:922de2dfa3033c227c96da942d1878191afa135a29485fb942e85dff1c592c89", size = 44259 },
 ]
 
 [[package]]

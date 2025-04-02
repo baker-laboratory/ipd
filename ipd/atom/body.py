@@ -132,9 +132,11 @@ class Body:
     nres = property(lambda self: len(self.seq))
     natom = property(lambda self: len(self.atoms))
     positioned_atoms = property(lambda self: h.xform(self.pos, self.atoms))
+    asupos = property(lambda self: self.pos)
     com = property(lambda self: h.xform(self.pos, bs.mass_center(self.atoms)))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
     centered = property(lambda self: self.movedby(-self.com))
+    is_symmetric = False
 
     def __post_init__(self):
         if not self.hetero: self.atoms = self.atoms[~self.atoms.hetero]
@@ -238,11 +240,13 @@ class SymBody:
     frames: np.ndarray = ipd.field(lambda: np.eye(4)[None])
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
     bodies = property(lambda self: [self.asu.movedby(self.pos @ f) for f in self.frames])
-    atoms = property(lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
+    positioned_atoms = property(lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
     com = property(lambda self: h.xform(self.pos, self.frames, self.asu.com).mean(0))
     centered = property(lambda self: self.movedby(-self.com))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
     natoms = property(lambda self: len(self) * len(self.asu.atoms))
+    is_symmetric = property(lambda self: len(self.frames) > 1)
+    asupos = property(lambda self: h.xform(self.pos, self.frames[0], self.asu.pos))
 
     def __post_init__(self):
         assert h.valid44(self.frames)
@@ -417,6 +421,11 @@ class BodyContacts:
     def __post_init__(self):
         self.subs = self.symbody.subs(without=self.exclude)
         self.body2 = self.body2 or self.symbody
+        same_atoms = self.symbody.asu.atoms is self.body2.asu.atoms
+        symmetric = self.symbody.is_symmetric or self.body2.is_symmetric
+        same_pos = not symmetric and h.allclose(self.symbody.asupos, self.body2.asupos)
+        if same_atoms and same_pos and not symmetric:
+            raise ValueError('Bodys must have different atoms, different positions, or non-C1 symmetry')
 
     def __len__(self):
         return len(self.pairs)
@@ -448,8 +457,12 @@ class BodyContacts:
             mats.append(mat.T)  # so asu is first
             subs.append(self.subs[isub1])
         isub0 = self.exclude[0] if len(self.exclude) == 1 else None
-        return ipd.homog.ContactMatrixStack(np.stack(mats), np.stack(subs), isub0=isub0)
+        if not mats: raise ValueError('No contacts found')
+        return ipd.homog.ContactMatrixStack(np.stack(mats),
+                                            np.stack(subs),
+                                            isub0=isub0,
+                                            tokens1=tokens1,
+                                            tokens2=tokens2)
 
     def __repr__(self):
         return f'SymContacts(subs: {self.exclude} vs {self.subs} ranges: {self.ranges.shape[:2]} pairs: {self.pairs.shape[0]})'
-

@@ -316,7 +316,7 @@ def centered(atoms, primary_only=True, ignore_nan=True, ignore_garbage=True):
     atoms.coord -= cen
     return atoms
 
-@ipd.iterize_on_first_param(basetype='AtomArray')
+@ipd.iterize_on_first_param(basetype='AtomArray', pass_wrap_ctx=True)
 def info(atoms, wrap_ctx):
     if wrap_ctx.firstcall:
         print(f'ipd.atom.info: {wrap_ctx.input_type()}')

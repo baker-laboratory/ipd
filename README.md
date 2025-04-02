@@ -6,3 +6,5 @@
 
 # ipd
 Various base libraries for code at the IPD
+
+<https://baker-laboratory.github.io/ipd/index.html>
