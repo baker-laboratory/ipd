@@ -1,8 +1,11 @@
+import os
+from types import GenericAlias  # for Python 3.9+ generic types
+import inspect
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 import contextlib
 import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, is_dataclass
 from functools import singledispatch
 import dataclasses
 from typing import Any, TypeVar, Generic, TYPE_CHECKING
@@ -24,7 +27,7 @@ T = TypeVar('T')
 def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
     """Return a Symmable object that knows how to convert beteen input and a
     symmetrizable adapted form."""
-    raise NotImplementedError(f"Don't know how to make SymAdapt for {type(thing)}")
+    raise NotImplementedError(f"Don't know how to make SymAdapt for {type(thing)} ({os.getpid()})")
 
 @_sym_adapt.register(type(None))  # type: ignore
 def _(*a, **kw):
@@ -35,7 +38,7 @@ with contextlib.suppress(ImportError):
     @_sym_adapt.register(th.Tensor)  # type: ignore
     def _(tensor, sym, isasym):
         if all(n is None for n in tensor.names):
-            return DepRecatEd_symAdaptTensor(tensor, sym, isasym)
+            return deprecated_SymAdaptTensor(tensor, sym, isasym)
         elif 'Lsparse' in tensor.names:
             return SymAdaptNamedSparseTensor(tensor, sym, isasym)
         else:
@@ -45,9 +48,12 @@ with contextlib.suppress(ImportError):
 def _(ary, sym, isasym):
     if ary.dtype in (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32,
                      np.int16, np.int8, np.uint8, bool):
-        return DepRecatEd_symAdaptTensor(ary, sym, isasym, tlib='numpy')
+        return deprecated_SymAdaptTensor(ary, sym, isasym, tlib='numpy')
     else:
         return SymAdaptNDArray(ary, sym, isasym)
+
+class AdaptTypes(tuple):
+    pass
 
 @dataclass
 class SymAdapt(ABC, Generic[T]):
@@ -64,20 +70,26 @@ class SymAdapt(ABC, Generic[T]):
     kind: SymKind
     isasym: bool
     adapted: Any
+    __adapts__: type = object
 
     def __init_subclass__(cls, **kw):
-        if not hasattr(cls, 'adapts'):
-            raise TypeError(f'class {name} must define adapted type via adapts = ThingType')  # type: ignore
-        if cls.adapts is not None:  # type: ignore
-
-            @_sym_adapt.register(cls.adapts)  # type: ignore
+        if not hasattr(cls, '__adapts__'):
+            raise TypeError(
+                f'class {name} must define adapted type via __adapts__ = ThingType')  # type: ignore
+        if cls.__adapts__ is object: return  # base class of some kind
+        assert cls.__adapts__ is not None
+        if not isinstance(cls.__adapts__, AdaptTypes):
+            cls.__adapts__ = AdaptTypes((cls.__adapts__,))
+        for adapted_type in cls.__adapts__:
+            print(f'SymAdapt registering {adapted_type}')
+            @_sym_adapt.register(adapted_type)
             def _(thing, sym, isasym=None):
-                return cls(thing, sym, isasym)  # type: ignore
+                return cls(thing, sym, isasym)
 
     def __init__(self, x: T, sym: 'ipd.sym.SymmetryManager', isasym: bool):
-        self.orig: T = x
-        self.sym: 'ipd.sym.SymmetryManager' = sym
-        self.kind: ipd.sym.SymKind
+        self.orig = x
+        self.sym = sym
+        self.isasym = isasym
 
     @abstractmethod
     def reconstruct(self, list_of_symmetrized) -> T:
@@ -98,7 +110,7 @@ def _(thing, sym, isasym):
     return thing  # already sym adapted
 
 class SymAdaptStr(SymAdapt):
-    adapts = str
+    __adapts__ = str
 
     def __init__(self, x, sym, isasym):
         self.orig = x
@@ -119,7 +131,7 @@ class SymAdaptStr(SymAdapt):
         return ''.join(canon)
 
 class SymAdaptTuple(SymAdapt):
-    adapts = tuple
+    __adapts__ = tuple
 
     def __init__(self, x, sym, isasym):
         self.orig = x
@@ -141,7 +153,7 @@ class SymAdaptTuple(SymAdapt):
         return type(self.orig)(*list_of_symmetrized)
 
 class SymAdaptSequence(SymAdapt):
-    adapts = Sequence
+    __adapts__ = Sequence
 
     def __init__(self, x, sym, isasym):
         self.orig = x
@@ -163,7 +175,7 @@ class SymAdaptSequence(SymAdapt):
         return type(self.orig)(list_of_symmetrized)
 
 class SymAdaptMap(SymAdapt):
-    adapts = Mapping
+    __adapts__ = Mapping
 
     def __init__(self, x, sym, isasym):
         self.orig = x
@@ -174,13 +186,29 @@ class SymAdaptMap(SymAdapt):
     def reconstruct(self, list_of_symmetrized):  # type: ignore
         return type(self.orig)(list_of_symmetrized)
 
+class DataclassProxy:
+    """A dummy type to register dataclass fallback handling."""
+
+@_sym_adapt.register
+def _(obj: DataclassProxy):
+    return f"Handled dataclass: {obj.__class__.__name__}"
+
+original_dispatch = _sym_adapt.dispatch
+
+def dispatch_with_dataclass_check(cls):
+    if inspect.isclass(cls) and is_dataclass(cls):
+        return _sym_adapt.registry[DataclassProxy]
+    return original_dispatch(cls)
+
+_sym_adapt.dispatch = dispatch_with_dataclass_check
+
 class SymAdaptDataClass(SymAdapt):
     """Base class for adapting dataclasses.
 
     All fields must be sym-adaptable and all tensor fields must have
     intepretable shapes, or dim names via add_tensor_dim_names
     """
-    adapts = None
+    __adapts__ = DataclassProxy
 
     def __init__(self, dataclass, sym, isasym):
         self.orig = dataclass
@@ -233,7 +261,7 @@ with contextlib.suppress(ImportError):
 
     # @_sym_adapt.register(SimpleSparseTensor)  # type: ignore
     # def _(sparse, sym):
-    # return DepRecatEd_symAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
+    # return deprecated_SymAdaptTensor(sparse.val, sym, idx=sparse.idx, isidx=sparse.isidx)
 
     def check_isasym(tensor, sym, isasym, idx):
         if isasym is not None: return isasym
@@ -243,7 +271,6 @@ with contextlib.suppress(ImportError):
         assert idx is not None
 
     class SymAdaptNamedDenseTensor(SymAdapt):
-        adapts = None
 
         def __init__(self, tensor, sym, isasym=None):  # sourcery skip: de-morgan
             if not ('L' in tensor.names or 'L1' in tensor.names or 'L2' in tensor.names):
@@ -292,7 +319,6 @@ with contextlib.suppress(ImportError):
                 self.orig.dtype).rename(None)
 
     class SymAdaptNamedSparseTensor(SymAdapt):
-        adapts = None
 
         def __init__(self, tensor, sym, isasym):
             assert 'Lsparse' in tensor.names
@@ -338,7 +364,7 @@ with contextlib.suppress(ImportError):
 
     class SymAdaptNDArray(SymAdapt):
         """Symmetrizable ndarray."""
-        adapts = np.ndarray
+        __adapts__ = np.ndarray
 
         def __init__(self, x, sym, isasym=None):
             """Handles object and str dtypes."""
@@ -364,7 +390,7 @@ with contextlib.suppress(ImportError):
         def reconstruct(self, ary, **kw):  # type: ignore
             return ary
 
-    ########## DepRecatEd_symAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
+    ########## deprecated_SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
 
     def deprecated_tensor_keydims_to_front(x, keydim):
         if tensor_is_xyz(x):
@@ -403,8 +429,7 @@ with contextlib.suppress(ImportError):
     def tensor_is_xyz(x):
         return 2 <= x.ndim < 5 and x.shape[-1] == 3 and th.is_floating_point(x)
 
-    class DepRecatEd_symAdaptTensor(SymAdapt):
-        adapts = None
+    class deprecated_SymAdaptTensor(SymAdapt):
 
         def __init__(self, tensor, sym, isasym=None, idx=None, isidx=None, kind=None, tlib='torch'):
             '''Args:

@@ -9,11 +9,12 @@ from typing_extensions import TypeVar
 import numpy as np
 
 import ipd
+from ipd.sym.sym_adapt import SymAdapt
 from ipd.sym.sym_factory import MetaSymManager
 
 h = ipd.lazyimport('ipd.homog.thgeom')
 th = ipd.lazyimport('torch')
-from ipd.sym import ShapeKind, ValueKind
+from ipd.sym import SymKind, ShapeKind, ValueKind
 # from ipd.sym.sym_adapt import _sym_adapt, SymAdapt
 from ipd.sym.sym_index import SymIndex
 
@@ -157,9 +158,10 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def __call__(
         self,
         thing: T,
-        key=None,
-        isasym=None,
-        kind=None,
+        key: str = None,
+        isasym: bool = None,
+        kind: SymKind = None,
+        debug: bool = False,
         **kw,
     ) -> T:
         """This is the main entry point for applying symmetry to any object.
@@ -177,8 +179,16 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         SCALAR = (bool, int, float)
         if any([not self, key in self.skip_keys, thing is None, isinstance(thing, SCALAR)]): return thing
         self.verify_index(thing)
-        adaptor = self.sym_adapt(thing, isasym=isasym)
-        kw = self.opt.to_bunch().sub(kind=adaptor.kind, **kw)
+        try:
+            adaptor = self.sym_adapt(thing, isasym=isasym)
+        except NotImplementedError:
+            print(f'Cannot symmetrize {type(thing)}, doing ugly hack')
+            from rf_diffusion.sym.sym_indep import SymAdaptDFChiralsIdxAtomFrames
+            adaptor = SymAdaptDFChiralsIdxAtomFrames(thing, self, isasym)
+        kw = self.opt.to_bunch().sub(kind=adaptor.kind, debug=debug, **kw)
+
+        if debug:
+            print(f'symmetrizing key: {key} type: {type(thing)} isasym: {isasym} kind: {adaptor.kind}')
 
         if isinstance(thing, XYZPair):
             xyzadapt, pairadapt = adaptor.adapted
