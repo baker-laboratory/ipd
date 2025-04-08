@@ -33,7 +33,7 @@ from ipd.dev.testing import *
 from ipd import lazyimport as lazyimport
 # utils involving optional dependencies
 cli = lazyimport('ipd.dev.cli')
-cuda = lazyimport('ipd.dev.cuda')
+cuda = lazyimport('ipd.cuda')
 qt = lazyimport('ipd.dev.qt')
 
 _global_timer = None

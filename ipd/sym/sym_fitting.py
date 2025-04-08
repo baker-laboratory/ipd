@@ -91,7 +91,7 @@ def set_motif_placement_if_necessary(sym, xyz, fixed=None, **kw):
         # ipd.icv(gpbb.shape)
         # ipd.icv(bb.shape)
         Lasu = len(bb) // sym.nsub
-        idx, rms, xform = ipd.fit.qcp_scan_AB(bb, gpbb, Lasu)
+        idx, rms, xform = ipd.cuda.rms.qcp_scan_AB(bb, gpbb, Lasu)
         # ipd.icv(idx, rms, R, T)
         # rms2, fit, xform = ipd.wrmsfit(gpbb.reshape(-1, 3), bb[idx].reshape(-1, 3))
         mask = th.logical_or(sym.idx.kind == 1, sym.idx.kind == 12)

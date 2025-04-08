@@ -153,25 +153,11 @@ ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
 minversion = '6.0'
-addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure'
-ignore = ['ipd/cuda', 'ipd/tests/cuda']
-
-testpaths = [
-    'ipd/tests',
-    'ipd/atom',
-    'ipd/homog',
-    'ipd/sym',
-    'ipd/bunch.py',
-    'ipd/crud',
-    'ipd/dev',
-    'ipd/observer',
-    'ipd/pdb',
-    'ipd/protocol',
-    'ipd/tool',
-]
+addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure --ignore ipd/cuda --ignore ipd/tests/cuda'
+testpaths = ['ipd']
 markers = [
     'slow: marks tests as slow to run',
-    'fast: tests that run in a second or two',
+    'fast: tests that run in a second or two DEPRICATED',
     'ci: tests that should only run in ci',
 ]
 
@@ -194,7 +180,7 @@ arithmetic_precedence_indication = true
 #     # 'ipd/fit/*',
 #     # 'ipd/homog/*',
 #     # 'ipd/pdb/*',
-#     # 'ipd/voxel/*',
+#     # 'ipd.cuda.voxel/*',
 #     # 'ipd/samp/*',
 #     # 'ipd/sym/old/*',
 #     # 'ipd/sym/xtal/*',

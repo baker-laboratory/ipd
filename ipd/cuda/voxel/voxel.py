@@ -6,7 +6,7 @@ import torch as th  # type: ignore
 import ipd
 import ipd.homog.thgeom as h
 
-_voxel = ipd.lazyimport('ipd.voxel.voxel_cuda')
+_voxel = ipd.lazyimport('ipd.cuda.voxel.voxel_cuda')
 
 class Voxel:
 
@@ -14,7 +14,7 @@ class Voxel:
             self,
             xyz: th.Tensor,
             resl: float = 1,
-            func: ipd.dev.cuda.CudaFunc = ipd.dev.cuda.ClashFunc(3, 4),  # type: ignore
+            func: ipd.cuda.CudaFunc = ipd.cuda.ClashFunc(3, 4),  # type: ignore
             repulsive_only: th.Tensor = None,  # type: ignore
     ):
         assert th.cuda.is_available()

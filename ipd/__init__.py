@@ -91,8 +91,6 @@ from ipd._prelude.typehints import (
     NDArray_MN2_int32 as NDArray_MN2_int32,
     NDArray_N2_int32 as NDArray_N2_int32,
 )
-from ipd._prelude.chrono import Chrono as Chrono, chrono as chrono, checkpoint as checkpoint
-
 optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
 capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
 ic, icm, icv = cherry_pick_imports('ipd.dev.debug', 'ic icm icv')
@@ -101,21 +99,15 @@ element_wise_operations = cherry_pick_import('ipd.dev.element_wise.element_wise_
 subscriptable_for_attributes = cherry_pick_import('ipd.dev.decorators.subscriptable_for_attributes')
 iterize_on_first_param = cherry_pick_import('ipd.dev.decorators.iterize_on_first_param')
 
-_global_chrono = None
-
 ipd_init_checkpoint('INIT ipd prelude imports')
 
 def __getattr__(name):
-    global _global_chrono
     if name.startswith('debug'):
         return getattr(hub, name)
     elif name == 'symmetrize':
         return sym.get_global_symmetry()
     elif name == 'motif_applier':
         return motif.get_global_motif_manager()
-    elif name == 'global_chrono':
-        _global_chrono = _global_chrono or Chrono(checkpoints=_timings)
-        return _global_chrono
     raise AttributeError(f'module {__name__} has no attribute {name}')
 
 ipd_init_checkpoint('INIT ipd globals')
@@ -154,7 +146,7 @@ if typing.TYPE_CHECKING:
 else:
     atom = lazyimport('ipd.atom')
     crud = lazyimport('ipd.crud')
-    cuda = lazyimport('ipd.dev.cuda')
+    cuda = lazyimport('ipd.cuda')
     h = lazyimport('ipd.homog.thgeom')
     hnumpy = lazyimport('ipd.homog.hgeom')
     htorch = lazyimport('ipd.homog.thgeom')
@@ -167,10 +159,11 @@ else:
     sym = lazyimport('ipd.sym')
     tests = lazyimport('ipd.tests')
     tools = lazyimport('ipd.tools')
-    # fit = lazyimport('ipd.fit')
+    # fit = lazyimport('ipd.cuda.rms')
     # samp = lazyimport('>ipd.samp')
-    # voxel = lazyimport('ipd.voxel')
+    # voxel = lazyimport('ipd.cuda.voxel')
 viz = lazyimport('ipd.viz')
+pickle = lazyimport(('_pickle', 'pickle'))
 ipd_init_checkpoint('INIT ipd subpackage imports')
 
 with contextlib.suppress(ImportError):
@@ -189,8 +182,6 @@ def showme(*a, **kw):
 # install_ipd_pre_commit_hook(projdir, '..')
 # ipd_init_checkpoint('INIT ipd pre commit hook')
 
-if _global_chrono: _global_chrono.checkpoints.update(_timings)
-else: _global_chrono = Chrono(checkpoints=_timings)
 dev.global_timer.checkpoints.update(_timings)
 
 caching_enabled = True

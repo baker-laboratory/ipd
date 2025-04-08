@@ -1,4 +1,3 @@
-import _pickle
 import os
 import shutil
 from argparse import Namespace
@@ -146,10 +145,10 @@ def test_bunch_pickle(tmpdir):
     x = Bunch(dict(a=2, b="bee"))
     x.c = "see"
     with open(f"{tmpdir}/foo", "wb") as out:
-        _pickle.dump(x, out)
+        ipd.pickle.dump(x, out)
 
     with open(f"{tmpdir}/foo", "rb") as inp:
-        y = _pickle.load(inp)
+        y = ipd.pickle.load(inp)
 
     assert x == y
     assert y.a == 2

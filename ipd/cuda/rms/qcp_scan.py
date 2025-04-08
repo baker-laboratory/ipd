@@ -14,7 +14,7 @@ import torch.utils.cpp_extension  # type: ignore
 import ipd
 import ipd.homog.thgeom as h
 
-_rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
+_rms = ipd.lazyimport('ipd.cuda.rms.qcp_rms_cuda')
 
 def scan_rms_seqpos(bb, tgt, ranges, cyclic=1, rmsout=False, maxdist=9e9, lasu=0, nthread=256, chainbreak=0):
     """"""
@@ -135,7 +135,7 @@ def _qcp_scan_checks(bb, tgt, idx0, idx, rmsfull, cyclic, Lasu):
     bb = bb.reshape(-1, 3)
     selpts = selpts.reshape(-1, 3)
     tgt = tgt.reshape(-1, 3)
-    rms, R, T = ipd.fit.qcp_rms_align(tgt.cpu().to(float), selpts.to(float))
+    rms, R, T = ipd.cuda.rms.qcp_rms_align(tgt.cpu().to(float), selpts.to(float))
     R, T = R.to(th.float32), T.to(th.float32)
     if abs(minrms - rms) > 0.001:
         ipd.icv(rms, minrms, idx)

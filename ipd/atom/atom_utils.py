@@ -266,7 +266,8 @@ def is_protein(atoms, strict_protein_or_nucleic=False) -> npt.NDArray[np.bool_]:
 def join(atomslist, one_letter_chain=True):
     formt = f'0{len(str(len(atomslist)))}'
     for i, atoms in enumerate(atomslist):
-        atoms.chain_id = f'S{i:{formt}}' + atoms.chain_id
+        # E           numpy.core._exceptions._UFuncNoLoopError: ufunc 'add' did not contain a loop with signature matching types (dtype('<U2'), dtype('<U4')) -> None
+        atoms.chain_id = f'S{i:{formt}}' + atoms.chain_id # TODO: err above
     if one_letter_chain:
         unique_ids = ipd.dev.UniqueIDs()
         for i, atoms in enumerate(atomslist):

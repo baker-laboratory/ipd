@@ -13,7 +13,7 @@ def main():
 def test_broken_package():
     if 'doctest' not in sys.modules:
         borked = lazyimport('ipd.data.tests.broken_py_file')
-        with pytest.raises(ModuleNotFoundError) as e:
+        with pytest.raises(ImportError) as e:
             borked.foo
 
 def test_maybeimport():
@@ -45,6 +45,16 @@ def helper_test_re_ft_it(re, ft, it):
 
 def test_multi_lazyimport_args():
     helper_test_re_ft_it(*ipd.lazyimports('re', 'functools', 'itertools'))
+
+def test_lazyimport_contingency():
+    mod = ipd.lazyimport(('ipd.not_these', 'ipd.me_neither', 'ipd.bunch', 'ipd.atom'))
+    assert mod.__file__.endswith('ipd/bunch.py')
+
+def test_lazyimport_contingency2():
+    mod = ipd.lazyimport(('ipd.not_these', 'ipd.me_neither'))
+    with pytest.raises(ImportError) as e:
+        assert mod.__file__.endswith('ipd/bunch.py')
+    assert "any of ('ipd.not_these', 'ipd.me_neither'" in str(e)
 
 if __name__ == '__main__':
     main()

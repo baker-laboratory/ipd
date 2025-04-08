@@ -5,7 +5,7 @@ per second on a single GPU.
 """
 import ipd
 
-rms = ipd.lazyimport('ipd.fit.qcp_rms_cuda')
+rms = ipd.lazyimport('ipd.cuda.rms.qcp_rms_cuda')
 
 # from typing import TYPE_CHECKING
 # if TYPE_CHECKING:

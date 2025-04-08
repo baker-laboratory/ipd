@@ -31,11 +31,18 @@ def lazyimports(
 def timed_import_module(name):
     import ipd
     ipd.dev.global_timer.checkpoint(interject=True)
-    mod = import_module(name)
+    if isinstance(name, str): name = (name, )
+    for modname in name:
+        try:
+            mod = import_module(modname)
+            break
+        except ImportError:
+            mod = None
+    if mod is None: raise ImportError(f'Failed to import any of {name}')
     ipd.dev.global_timer.checkpoint(f'LAZY import {name}')
     return mod
 
-def lazyimport(name: str,
+def lazyimport(name: 'str | tuple[str]',
                package: str = '',
                pip: bool = False,
                mamba: bool = False,
@@ -59,6 +66,11 @@ def maybeimports(*names) -> list[ModuleType]:
 class LazyImportError(ImportError):
     pass
 
+def _get_package(name):
+    if isinstance(name, str): return name.split('.', maxsplit=1)[0]
+    if isinstance(name, tuple): return tuple(n.split('.', maxsplit=1)[0] for n in name)
+    raise ValueError(f'Invalid name type: {type(name)}')
+
 class _LazyModule(ModuleType):
     """A class to represent a lazily imported module."""
 
@@ -67,7 +79,7 @@ class _LazyModule(ModuleType):
     def __init__(self, name: str, package: str = '', pip=False, mamba=False, channels='', warn=True):
         from ipd.dev.code.inspect import caller_info
         self._lazymodule_name = name
-        self._lazymodule_package = package or name.split('.', maxsplit=1)[0]
+        self._lazymodule_package = package or _get_package(name)
         self._lazymodule_pip = pip
         self._lazymodule_mamba = mamba
         self._lazymodule_channels = channels
@@ -164,11 +176,11 @@ _warned = set()
 
 # _DEBUG_ALLOW_LAZY_IMPORT = [
 #     'ipd.crud',
-#     'ipd.dev.cuda',
+#     'ipd.cuda',
 #     'ipd.observer',
 #     'ipd.dev.qt',
 #     'ipd.dev.sieve',
-#     'ipd.fit',
+#     'ipd.cuda.rms',
 #     'ipd.motif',
 #     'ipd.pdb',
 #     'ipd.samp',
@@ -179,7 +191,7 @@ _warned = set()
 #     'ipd.tools',
 #     'ipd.viz',
 #     'ipd.viz.viz_pdb',
-#     'ipd.voxel',
+#     'ipd.cuda.voxel',
 #     'pymol',
 #     'pymol.cgo',
 #     'pymol.cmd',

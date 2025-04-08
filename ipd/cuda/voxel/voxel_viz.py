@@ -12,7 +12,7 @@ except ImportError:
 if 'pymol' in sys.modules:
 
     @ipd.viz.pymol_scene
-    @ipd.viz.pymol_load.register(ipd.voxel.Voxel)
+    @ipd.viz.pymol_load.register(ipd.cuda.voxel.Voxel)
     def pymol_load_Voxel(vox, name='Voxel', sym=None, **kw):
         ipd.viz.show_ndarray_point_or_vec(vox.xyz - vox.lb, name=name + '_xyz', sphere=1, **kw)
         with tempfile.TemporaryDirectory() as d:
@@ -22,7 +22,7 @@ if 'pymol' in sys.modules:
             pymol.cmd.delete(f'{d}/{name}_map')  # type: ignore
 
     @ipd.viz.pymol_scene
-    @ipd.viz.pymol_load.register(ipd.voxel.VoxRB)
+    @ipd.viz.pymol_load.register(ipd.cuda.voxel.VoxRB)
     def pymol_load_VoxRB(rb, name='Voxel', sym=None, **kw):
         kw = ipd.dev.Bunch(kw)
         kw.set_if_missing('sphere', 1)
