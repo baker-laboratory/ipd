@@ -12,8 +12,7 @@ import ipd
 from ipd import cherry_pick_import, cherry_pick_imports
 
 def main():
-    with make_temp_package_structure() as tps:
-        ipd.tests.maintest(globals(), fixtures=dict(tmp_package=tps))
+    ipd.tests.maintest(globals())
 
 @pytest.fixture(scope='session')
 def tmp_package() -> Generator[Tuple[str, str], None, None]:
@@ -161,7 +160,7 @@ def make_temp_package_structure() -> Generator[Tuple[str, str], None, None]:
         Tuple containing the temp directory path and the package name
     """
     temp_dir = tempfile.mkdtemp()
-    pkg_name = "test_pkg"
+    pkg_name = "test_tmp_pkg"
 
     try:
         # Create package structure

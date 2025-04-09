@@ -4,6 +4,7 @@ import tempfile
 
 import pytest
 
+import evn
 import ipd
 
 T = typing.TypeVar('T')
@@ -29,7 +30,11 @@ class TestConfig(ipd.Bunch):
         for name, obj in namespace.items():
             if callable(obj) and hasattr(obj, '_pytestfixturefunction'):
                 assert name not in self.fixtures
-                self.fixtures[name] = obj.__wrapped__()
+                self.fixtures[name] = obj.__wrapped__()  # type: ignore
+                if evn.is_generator(self.fixtures[name]):  # type: ignore
+                    # assume session scope
+                    self.fixtures[name] = tuple(self.fixtures[name])
+        ic(self.fixtures)
 
 class TestResult(ipd.Bunch):
 

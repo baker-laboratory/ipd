@@ -33,8 +33,8 @@ def cherry_pick_import(qualname: str, attribute: str = '', path: str = '') -> An
         >>> import tempfile, os
         >>> # Setup a temporary module for testing
         >>> temp_dir = tempfile.mkdtemp()
-        >>> os.makedirs(os.path.join(temp_dir, "test_pkg", "subpkg"), exist_ok=True)
-        >>> with open(os.path.join(temp_dir, "test_pkg", "subpkg", "test_module.py"), "w") as f:
+        >>> os.makedirs(os.path.join(temp_dir, "test_tmp_pkg", "subpkg"), exist_ok=True)
+        >>> with open(os.path.join(temp_dir, "test_tmp_pkg", "subpkg", "test_module.py"), "w") as f:
         ...     _ = f.write("test_value = 42\\ndef test_func(): return 'Hello'")
         >>> # Adjust sys.path to include our temp directory
         >>> import sys
@@ -42,10 +42,10 @@ def cherry_pick_import(qualname: str, attribute: str = '', path: str = '') -> An
         >>> sys.path.insert(0, temp_dir)
         >>> os.chdir(temp_dir)
         >>> # Now we can test the function
-        >>> value = cherry_pick_import("test_pkg.subpkg.test_module", "test_value", temp_dir)
+        >>> value = cherry_pick_import("test_tmp_pkg.subpkg.test_module", "test_value", temp_dir)
         >>> value
         42
-        >>> func = cherry_pick_import("test_pkg.subpkg.test_module", "test_func")
+        >>> func = cherry_pick_import("test_tmp_pkg.subpkg.test_module", "test_func")
         >>> func()
         'Hello'
         >>> # Clean up
@@ -99,8 +99,8 @@ def cherry_pick_imports(qualname: str, attributes: str, path='') -> List[Any]:
         >>> import tempfile, os
         >>> # Setup a temporary module for testing
         >>> temp_dir = tempfile.mkdtemp()
-        >>> os.makedirs(os.path.join(temp_dir, "test_pkg", "subpkg"), exist_ok=True)
-        >>> with open(os.path.join(temp_dir, "test_pkg", "subpkg", "test_module.py"), "w") as f:
+        >>> os.makedirs(os.path.join(temp_dir, "test_tmp_pkg", "subpkg"), exist_ok=True)
+        >>> with open(os.path.join(temp_dir, "test_tmp_pkg", "subpkg", "test_module.py"), "w") as f:
         ...     _ = f.write("test_value = 42\\ntest_string = 'Hello'\\ndef test_func(): return 'World'")
         >>> # Adjust sys.path to include our temp directory
         >>> import sys
@@ -108,7 +108,7 @@ def cherry_pick_imports(qualname: str, attributes: str, path='') -> List[Any]:
         >>> sys.path.insert(0, temp_dir)
         >>> os.chdir(temp_dir)
         >>> # Now we can test the function
-        >>> val, func = cherry_pick_imports("test_pkg.subpkg.test_module", "test_value test_func", path=temp_dir)
+        >>> val, func = cherry_pick_imports("test_tmp_pkg.subpkg.test_module", "test_value test_func", path=temp_dir)
         >>> val
         42
         >>> func()
