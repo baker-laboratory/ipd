@@ -1,3 +1,4 @@
+import inspect
 import subprocess
 import sys
 from importlib import import_module
@@ -28,18 +29,18 @@ def lazyimports(
     modules = [lazyimport(name, package=pkg, **kw) for name, pkg in zip(names, package)]
     return modules
 
-def timed_import_module(name):
+def timed_import_module(modnames):
     import ipd
     ipd.dev.global_timer.checkpoint(interject=True)
-    if isinstance(name, str): name = (name, )
-    for modname in name:
+    if isinstance(modnames, str): modnames = (modnames, )
+    for modname in modnames:
         try:
             mod = import_module(modname)
             break
         except ImportError:
             mod = None
-    if mod is None: raise ImportError(f'Failed to import any of {name}')
-    ipd.dev.global_timer.checkpoint(f'LAZY import {name}')
+    if mod is None: import_module(modnames[0])
+    ipd.dev.global_timer.checkpoint(f'LAZY import {modnames}')
     return mod
 
 def lazyimport(name: 'str | tuple[str]',
@@ -53,7 +54,7 @@ def lazyimport(name: 'str | tuple[str]',
         try:
             return timed_import_module(name)
         except ImportError:
-            return FalseModule(name)
+            return FalseModule(name if isinstance(name, str) else name[0])
     else:
         return _LazyModule(name, package, pip, mamba, channels, warn)
 
@@ -94,7 +95,9 @@ class _LazyModule(ModuleType):
         try:
             return timed_import_module(self._lazymodule_name)
         except ImportError as e:
-            if 'doctest' in sys.modules: return FalseModule(self._lazymodule_name)
+            if 'doctest' in sys.modules:
+                if in_doctest():
+                    return FalseModule(self._lazymodule_name if isinstance(self._lazymodule_name, str) else self._lazymodule_name[0])
             ci = self._lazymodule_callerinfo
             callinfo = f'\n  File "{ci.filename}", line {ci.lineno}\n    {ci.code}'
             raise e
@@ -163,6 +166,11 @@ class FalseModule(ModuleType):
 
     def __bool__(self):
         return False
+
+
+def in_doctest():
+    return any('doctest' in frame.filename for frame in inspect.stack())
+
 
 _all_skipped_lazy_imports = set()
 _skip_global_install = False

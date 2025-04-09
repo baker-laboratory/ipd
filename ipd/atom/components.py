@@ -399,4 +399,3 @@ def _accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
             ipd.dev.global_timer.checkpoint('hrmsfit')
             accumulator(xfit, rms, matchfrac, i, match)
     return True
-

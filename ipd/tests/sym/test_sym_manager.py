@@ -325,6 +325,7 @@ def test_sym_manager_fuzz_basic_sym(sym):
     assert th.all(msym[idx.asym, idx.asym] == m[idx.asym, idx.asym])
     sym.check(msym)
 
+@pytest.mark.slow
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 def test_sym_manager_fuzz_fill_from_contiguous(sym):

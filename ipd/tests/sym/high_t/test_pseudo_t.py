@@ -11,6 +11,7 @@ def test_t2():
 def test_t4():
     ipd.sym.high_t.pseudo_t_start(4)
 
+@pytest.mark.slow
 @pytest.mark.skipif(not th.cuda.is_available(), reason="test needs CUDA")
 def test_pseudo_t_dist_min():
     asym = ipd.sym.high_t.pseudo_t_start(2)
@@ -20,6 +21,7 @@ def test_pseudo_t_dist_min():
     # ipd.showme(hscaled(0.1, asym2))
     # ipd.showme(hscaled(0.1, ipd.sym.make('I', asym)))
 
+@pytest.mark.slow
 @pytest.mark.skipif(not th.cuda.is_available(), reason="test needs CUDA")
 def test_pseudo_t_env_min():
     asym = ipd.sym.high_t.pseudo_t_start(2)

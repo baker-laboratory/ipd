@@ -2,24 +2,8 @@
 requires = ['hatchling', 'hatch-cython']
 build-backend = 'hatchling.build'
 
-# [tool.hatch.build.targets.wheel.hooks.cython]
-# sources = ['src/my_package/**/*.pyx']
-# extra_compile_args = ['-O3']
-
-#[tool.hatch.build.targets.wheel]
-#only-include = ['ipd']
-#
-#[tool.hatch.build.targets.wheel.hooks.cython]
-#dependenciees = ['hatch-cython']
-#
 [tool.hatch.metadata]
 allow-direct-references = true
-#
-#[build.targets.wheel.hooks.cython.options.files]
-#targets = ['ipd/cython/dynamic_float_array.pyx']
-#
-# [tool.hatch.build.hooks.custom]
-# path = 'build.py'
 
 [project]
 name = 'ipd'
@@ -53,6 +37,7 @@ dependencies = [
     'toolz',
     'pytest',
 ]
+
 [project.optional-dependencies]
 crud = [
     'fastapi',
@@ -153,7 +138,7 @@ ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
 minversion = '6.0'
-addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure --ignore ipd/cuda --ignore ipd/tests/cuda'
+addopts = '-m "not ci" --disable-warnings --durations=10 --doctest-continue-on-failure --ignore ipd/cuda --ignore ipd/tests/cuda'
 testpaths = ['ipd']
 markers = [
     'slow: marks tests as slow to run',

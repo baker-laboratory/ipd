@@ -353,4 +353,3 @@ coordinate, then:
     >>> d = h.xform(T, d)  # updates d.coords via transformation
     >>> np.allclose(d.coords, T @ h.point([1, 2, 3]))
     True
-

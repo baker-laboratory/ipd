@@ -1,5 +1,4 @@
 import os
-from types import GenericAlias  # for Python 3.9+ generic types
 import inspect
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence

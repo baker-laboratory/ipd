@@ -83,7 +83,7 @@ Note how much faster the partialsum + broadcasting version was for the 1D versio
 It makes an even bigger difference in the 2D case because the arrays tend to be much larger.
 
 .. figure:: ../_static/img/partialsum2d.png
-   :alt: partialsum2d illustration 
+   :alt: partialsum2d illustration
 
    Illustration of data 2D with pink region to be "summed" and 2D cumulative sum array from which four points are needed to computs the "sum:" ``sum = CSUM[ub1,ub2] (red point) + CSUM[lb1,lb2] (green point) - CUSM[ub1,lb2] (blue point) - CSUM[lb1,lb2] (blue point``.
 
@@ -183,3 +183,53 @@ and see if it's legit.
 Note: :py:func:`ipd.viz.pymol_viz.showme` (just call ipd.showme) is super useful for visualizing all kinds of things, mainly in pymol.
  It can show AtomArrays, Bodies, Symbodies, homogeneous transforms, stacks of xyz coords, symmetry
  elements, crystal lattices, etc etc. All you need is pymol in your conda environment, and runnable.
+
+
+Top-k Fragment Contact Subset Summary Output
+----------------------------------------------
+
+The method :meth:`ContactMatrixStack.topk_fragment_contact_by_subset_summary` returns an
+:class:`ipd.Bunch` object that acts like a dictionary, with two primary entries:
+
+- ``index``: a dictionary mapping each subset of contacting subunits to the fragment pairs
+  that exhibit high contact across **all** members of that subset.
+- ``vals``: a dictionary mapping each subset to the corresponding contact values for the
+  fragment pairs stored in ``index``.
+
+Each key in these dictionaries is a tuple of subunit indices, corresponding to a subset of
+the `ContactMatrixStack`. For example, a key ``(0, 2)`` refers to fragment pairs that simultaneously contact
+**both** subunit 0 and subunit 2.
+
+Each ``index[subset]`` value is a 2D NumPy array of shape ``(2, k)``, where:
+
+- ``index[subset][0, i]`` is the start index of the fragment in the **target** structure (e.g. top7).
+- ``index[subset][1, i]`` is the start index of the fragment in the **subset** structure (e.g. symbody).
+- The fragments are assumed to span ``fragsize`` residues starting from these indices.
+- These indices are **unstrided**: the stride factor has been multiplied back in, so they reflect real positions.
+
+Each ``vals[subset]`` is a 1D NumPy array of length ``k``, storing the **summary contact value**
+associated with each fragment pair in ``index[subset]``. This value is computed using the
+user-supplied ``summary`` function (e.g., ``np.min``), which aggregates the contact counts
+across all matrices in the subset.
+
+Fragment pairs with zero contacts across all subset matrices are excluded from the result.
+
+Example:
+
+.. code-block:: python
+
+    result = cmat.topk_fragment_contact_by_subset_summary(fragsize=10, stride=4, k=20, summary=np.min)
+    result.index.keys()
+    # dict_keys([(0, 2), (0,), (1,), (2,), (3,)])
+
+    result.index[(0, 2)].shape
+    # (2, 7) – seven top fragment pairs for subset (0, 2)
+
+    result.vals[(0, 2)]
+    # array([11.,  6.,  6.,  1.,  1.,  1.,  1.])
+
+    # Each pair (top_idx, sym_idx, contact_value):
+    np.concatenate([result.index[(0, 2)].T, result.vals[(0, 2)][:, None]], axis=1)
+    # array([[ 32, 112,  11],
+    #        [ 28, 112,   6],
+    #        [ 28,

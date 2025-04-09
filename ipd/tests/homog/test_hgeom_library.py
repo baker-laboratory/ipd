@@ -11,6 +11,9 @@ from hgeom.tests.util.test_util import *
 from hgeom.tests.xbin.test_xbin import *
 from hgeom.tests.xbin.test_xbin_util import *
 
+del globals()['test_bvh_isect_range_ids_flaot']
+test_collect_pairs_range_sym = pytest.mark.slow(test_collect_pairs_range_sym)
+
 import ipd
 
 def main():

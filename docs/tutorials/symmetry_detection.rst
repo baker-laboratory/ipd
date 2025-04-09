@@ -202,4 +202,3 @@ Conclusion
 ^^^^^^^^^^^
 
 The symmetry detection system in IPD is highly flexible and powerful. It combines biological sequence matching with geometric reasoning to robustly identify symmetrical assemblies. The use of transform decomposition and axis consolidation enables consistent classification across structures with noise or imperfect symmetry.
-

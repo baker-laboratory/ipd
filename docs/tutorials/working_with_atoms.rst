@@ -138,4 +138,3 @@ Notes
 
 ^ For real PDB/CIF/BCIF data, Biotite must be installed and able to access the internet or your test data.
 ^ The IPD module adds rich metadata and assembly parsing features over the base Biotite readers.
-

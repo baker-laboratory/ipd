@@ -54,7 +54,7 @@ def test_lazyimport_contingency2():
     mod = ipd.lazyimport(('ipd.not_these', 'ipd.me_neither'))
     with pytest.raises(ImportError) as e:
         assert mod.__file__.endswith('ipd/bunch.py')
-    assert "any of ('ipd.not_these', 'ipd.me_neither'" in str(e)
+    assert "ipd.not_these" in str(e)
 
 if __name__ == '__main__':
     main()

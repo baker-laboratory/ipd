@@ -9,6 +9,7 @@ def main():
     test_basic_parse()
 
 @pytest.mark.xfail
+@pytest.mark.slow
 def test_basic_parse():
     test_selections = [
         'name ca and all within 7 of (elem O+H within 4 of lig)', 'obj* and name ca', 'resn ALA like \'A*\'',

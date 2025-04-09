@@ -23,6 +23,7 @@ def main():
     test_sym_fit_icos_unsym()
     test_sym_fit_icos_unsym_multislice()
 
+@pytest.mark.slow
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 def test_sym_manager_fuzz_xyz_sym(sym):
