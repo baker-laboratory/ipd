@@ -139,7 +139,7 @@ ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
 minversion = '6.0'
-addopts = '-m "not ci" --disable-warnings --durations=10 --doctest-continue-on-failure --ignore ipd/cuda --ignore ipd/tests/cuda'
+addopts = '-m "not ci" --disable-warnings --durations=3 --doctest-continue-on-failure --ignore ipd/cuda --ignore ipd/tests/cuda'
 testpaths = ['ipd']
 markers = [
     'slow: marks tests as slow to run',

@@ -80,7 +80,7 @@ class SymAdapt(ABC, Generic[T]):
         if not isinstance(cls.__adapts__, AdaptTypes):
             cls.__adapts__ = AdaptTypes((cls.__adapts__,))
         for adapted_type in cls.__adapts__:
-            print(f'SymAdapt registering {adapted_type}')
+            # print(f'SymAdapt esg {adapted_type}')
             @_sym_adapt.register(adapted_type)
             def _(thing, sym, isasym=None):
                 return cls(thing, sym, isasym)

@@ -30,7 +30,6 @@ def test_dump_pdb_nchain_nres_natom():
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom((11, 13), nres=4) == (11, 4, 13)
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom((11, 13), nresatom=4) == (11, 13, 4)
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(nchain=3, nres=5, nresatom=7) == (3, 5, 7)
-
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nchain=5) == (5, 4, 1)
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nres=5) == (1, 5, 4)
     assert ipd.pdb.pdbdump.dump_pdb_nchain_nres_natom(shape=(20, ), nresatom=5) == (1, 4, 5)
@@ -79,7 +78,6 @@ def test_pdbdump_ncac(pdb1pgx):
     xyz, mask = pdb.atomcoords()[:10]
     with tempfile.TemporaryDirectory() as d:
         fname = f"{d}/xyz.pdb"
-        fname = "xyz.pdb"
         ipd.pdb.dumppdb(fname, xyz, mask)
 
 if __name__ == "__main__":
