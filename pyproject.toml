@@ -133,6 +133,7 @@ all = [
     'uvicorn',
     'validate-pyproject[all]',
     'yapf',]
+
 [project.scripts]
 ipd = 'ipd.__main__:main'
 

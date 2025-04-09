@@ -181,10 +181,13 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         self.verify_index(thing)
         try:
             adaptor = self.sym_adapt(thing, isasym=isasym)
-        except NotImplementedError:
-            print(f'Cannot symmetrize {type(thing)}, doing ugly hack')
-            from rf_diffusion.sym.sym_indep import SymAdaptDFChiralsIdxAtomFrames
-            adaptor = SymAdaptDFChiralsIdxAtomFrames(thing, self, isasym)
+        except NotImplementedError as e:
+            try:
+                print(f'Cannot symmetrize {type(thing)}, doing ugly hack')
+                from rf_diffusion.sym.sym_indep import SymAdaptDFChiralsIdxAtomFrames
+                adaptor = SymAdaptDFChiralsIdxAtomFrames(thing, self, isasym)
+            except ImportError:
+                raise e from None
         kw = self.opt.to_bunch().sub(kind=adaptor.kind, debug=debug, **kw)
 
         if debug:

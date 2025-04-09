@@ -142,7 +142,7 @@ def get_coords_stack(pdblines):
     chains
     """
     atom_dtype = np.dtype([
-        ("chnid", np.unicode_, 1),  # type: ignore
+        ("chnid", np.str_, 1),
         ("resid", np.int32),
         ("X", np.float64, 3),
     ])
