@@ -1,5 +1,6 @@
 import sys
 import argparse
+
 import ipd
 import ipd.homog.hgeom as h
 
@@ -18,6 +19,16 @@ def main():
     if args.mode == 'abbas': return build_from_components_abbas(*args.files, output=args.output)
     raise ValueError(f"Unknown mode {args.mode}")
 
+def get_component_syminfo(fname, atoms, tol, **kw):
+    sinfo = ipd.sym.syminfo_from_atomslist(atoms, tol=tol, **kw)
+    if isinstance(sinfo, list):
+        sinfo = [s for s in sinfo if s.symid != 'C1']
+        assert len(sinfo) == 1, f'more than one component in {fname}'
+        sinfo = sinfo[0]
+    print(f'------------------------ {fname} ---------------------------')
+    print(sinfo)
+    return sinfo
+
 def build_from_components_abbas(fname1, fname2, output, tol=0.1, **kw):
     """
     this is currently bespoke for a case abbas had... would like to make more general
@@ -30,8 +41,8 @@ def build_from_components_abbas(fname1, fname2, output, tol=0.1, **kw):
         atoms2[i].coord = h.xform(xfit, a2.coord)
         atoms2[i].chain_id[:] = 'ABCDEFGHIJK'[i + len(atoms1)]
 
-    sinfo1 = ipd.sym.syminfo_from_atomslist(atoms1, tol=tol, **kw)
-    sinfo2 = ipd.sym.syminfo_from_atomslist(atoms2, tol=tol, **kw)
+    sinfo1 = get_component_syminfo(fname1, atoms1, tol=tol, **kw)
+    sinfo2 = get_component_syminfo(fname2, atoms2, tol=tol, **kw)
     se1, se2 = sinfo1.symelem, sinfo2.symelem
 
     p1, p2 = h.line_line_closest_points_pa(se1.cen, se1.axis, se2.cen, se2.axis)
