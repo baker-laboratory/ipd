@@ -252,6 +252,8 @@ class SymBody:
     bodies = property(lambda self: [self.asu.movedby(self.pos @ f) for f in self.frames])
     positioned_atoms = property(
         lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
+    positioned_atomslist = property(
+        lambda self: h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms))
     com = property(lambda self: h.xform(self.pos, self.frames, self.asu.com).mean(0))
     centered = property(lambda self: self.movedby(-self.com))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
@@ -378,6 +380,20 @@ class SymBody:
 
     def clone(self):
         return copy.copy(self)
+
+    def labeled_chains(self, oneletter=False):
+        chains = self.positioned_atomslist
+        for i, a in enumerate(chains):
+            a.chain_id = np.char.add(str(i), a.chain_id)
+        atoms = ipd.atom.join(chains)
+        if oneletter:
+            uniqids = ipd.dev.UniqueIDs()
+            atoms.chain_id = uniqids(atoms.chain_id, reset=True)
+        return atoms
+
+    def dump(self, fname, **kw):
+        atoms = self.labeled_chains(oneletter=True)
+        ipd.atom.dump(atoms, fname, **kw)
 
 def _bvh_binary_operation(
     op,

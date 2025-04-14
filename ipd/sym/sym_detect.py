@@ -55,6 +55,7 @@ def detect(
     raise ValueError(f'cant detect symmetry on object {type(thing)} order {order}')
 
 @ipd.subscriptable_for_attributes
+# @ipd.dev.holds_metadata
 # @ipd.element_wise_operations
 @ipd.struct
 class SymInfo:

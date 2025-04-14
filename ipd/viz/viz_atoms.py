@@ -9,7 +9,6 @@ def show_atoms_pymol(atoms, name='atoms'):
     atoms = atoms[~np.any(np.isnan(atoms.coord), axis=1)]
     pymol_chains = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz")
     uniqids = ipd.dev.UniqueIDs(pymol_chains)
-    atoms.chain_id = uniqids(atoms.chain_id, reset=True)
 
     # ipd.icv(tag)
     with tempfile.TemporaryDirectory() as td:
