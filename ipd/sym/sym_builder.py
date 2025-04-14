@@ -16,7 +16,7 @@ def get_args(sysargv):
 
 def main():
     args = get_args(sys.argv)
-    if mode == 'abbas':
+    if args.mode == 'abbas':
         return build_from_components_abbas(*args.files)
     raise ValueError(f"Unknown mode {args.mode}")
 

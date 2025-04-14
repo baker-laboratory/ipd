@@ -13,7 +13,7 @@ dependencies = [
     'assertpy',
     'colorlog',
     'compact-json',
-    'evn>=0.7.2',
+    'evn>=0.7.3',
     'gitpython',
     'hgeom>=2.0.5',
     'httpx>=0.20',
