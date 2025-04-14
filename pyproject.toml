@@ -11,6 +11,8 @@ version = '0.3.9'
 requires-python = '>=3.9' # for woodys old pipeline stuff
 dependencies = [
     'assertpy',
+    'biotite>=1.2; python_version>="3.10"',
+    'biotite; python_version<"3.10"',
     'colorlog',
     'compact-json',
     'evn>=0.7.3',
@@ -54,8 +56,6 @@ tools = [
 ml = [
     'torch==2.6.0',
     'pandas',
-    'biotite>=1.2; python_version>="3.10"',
-    'biotite; python_version<"3.10"',
     'Bio',
 ]
 docs = [
