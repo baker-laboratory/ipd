@@ -35,6 +35,7 @@ def all_test_bcif(path=None):
 
 @ipd.dev.timed
 def download_test_pdbs(pdbs, path=None, overwrite=False):
+    if isinstance(pdbs, str): pdbs = [pdbs]
     path = path or ipd.dev.package_testdata_path('pdb')
     existing, pdbs = all_test_bcif(path), set(pdbs)
     if not overwrite: pdbs -= existing

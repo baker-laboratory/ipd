@@ -1,5 +1,5 @@
 [build-system]
-requires = ['hatchling', 'hatch-cython']
+requires = ['hatchling']
 build-backend = 'hatchling.build'
 
 [tool.hatch.metadata]
@@ -13,7 +13,7 @@ dependencies = [
     'assertpy',
     'colorlog',
     'compact-json',
-    'evn',
+    'evn>=0.7.2',
     'gitpython',
     'hgeom>=2.0.5',
     'httpx>=0.20',
@@ -138,7 +138,7 @@ all = [
 ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
-minversion = '6.0'
+minversion = '8.0'
 addopts = '-m "not ci" --disable-warnings --durations=3 --doctest-continue-on-failure --ignore ipd/cuda --ignore ipd/tests/cuda'
 testpaths = ['ipd']
 markers = [

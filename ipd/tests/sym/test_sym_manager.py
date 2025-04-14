@@ -18,6 +18,10 @@ import ipd
 pytestmark = pytest.mark.fast
 
 def main():
+    import evn
+    evn.testing.quicktest(globals())
+    return
+
     test_sym_slices()
     test_unsym()
     test_sym_pair_samechain()

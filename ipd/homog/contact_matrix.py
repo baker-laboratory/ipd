@@ -1,7 +1,7 @@
 r"""
 Efficient contact matrix processing for biological structure data.
 
-This module provides the :class:`ContactMatrixStack`, which enables fast spatial
+This module provides the :class:`ContactBlockMatrix`, which enables fast spatial
 queries over a stack of symmetric residue-residue contact matrices. These matrices
 are commonly used to represent pairwise atomic or residue interactions across
 multiple structures (e.g., frames in a trajectory or members of an ensemble).
@@ -17,7 +17,7 @@ Key features
 Cumulative sums, 1D basics
 --------------------------
 
-ContactMatrixStack uses a precomputed 2D partialsum array for efficient region-based queries. To explain
+ContactBlockMatrix uses a precomputed 2D partialsum array for efficient region-based queries. To explain
 start with the 1D partialsum case. ``DATA`` is a 1D array and ``SUMS`` is the cumulative sum
 of ``DATA`` (``ipd.partialsum(DATA)``. If we want the sum of ``DATA[i:j]`` we can compute it as
 ``SUMS[j] - SUMS[i]``.
@@ -93,7 +93,7 @@ It makes an even bigger difference in the 2D case because the arrays tend to be 
 
    Illustration of data 2D with pink region to be "summed" and 2D cumulative sum array from which four points are needed to computs the "sum:" ``sum = CSUM[ub1,ub2] (red point) + CSUM[lb1,lb2] (green point) - CUSM[ub1,lb2] (blue point) - CSUM[lb1,lb2] (blue point``.
 
-The method :py:meth:`ContactMatrixStack.fragment_contact` uses this idea to compute the total contacts of all
+The method :py:meth:`ContactBlockMatrix.fragment_contact` uses this idea to compute the total contacts of all
 pairs of fragments of a given length using a 2D partialsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
 compute every fragment pair, so stride is mainly useful as simple way to reduce redundancy.
 
@@ -106,13 +106,13 @@ compute every fragment pair, so stride is mainly useful as simple way to reduce 
 
 This function retuns an ``S x M x N`` array containing the total contacts for all pairs of fragments for each contact matrix s in the stack: ``fragment1`` starting at m ending at ``m + fragsize``, to fragment2 starting at ``n`` and ending at ``n - fragsize``.
 
-The method :py:meth:`ContactMatrixStack.topk_fragment_contact_by_subset_summary` uses the
+The method :py:meth:`ContactBlockMatrix.topk_fragment_contact_by_subset_summary` uses the
 arrays produced by
-:py:meth:`ContactMatrixStack.fragment_contact` to search for subsets of subunits that
+:py:meth:`ContactBlockMatrix.fragment_contact` to search for subsets of subunits that
 all "multibody" contacts by enumerating all subsets of contacting subunits, and taking
 the minimum number of contacts for each fragment pair. See the example below.
 
-ContactMatrixStack Example
+ContactBlockMatrix Example
 ---------------------------
 
 Setup, reading in and positioning some data
@@ -127,9 +127,9 @@ Setup, reading in and positioning some data
 
 Get best pair of fragment
 
->>> cmat = contacts.contact_matrix_stack()
+>>> cmat = contacts.contact_blocks()
 >>> cmat
-ContactMatrixStack(shape: (4, 92, 335) subs: [ 2  6  8 10])
+ContactBlockMatrix(shape: (4, 92, 335) subs: [ 2  6  8 10])
 >>> # 4 contact matrices, thus top7 contacts 4 (of 12) subunit in dxh
 >>> pair_frag_contacts = cmat.fragment_contact(fragsize=20, stride=5)
 >>> isub, itop7, idxh = np.unravel_index(np.argmax(pair_frag_contacts), pair_frag_contacts.shape)
@@ -197,7 +197,7 @@ import ipd
 th = ipd.lazyimport('torch')
 
 @ipd.struct
-class ContactMatrixStack:
+class ContactBlockMatrix:
     """
     A stack of contact matrices with efficient region and fragment query operations.
 
@@ -208,9 +208,9 @@ class ContactMatrixStack:
 
     Example:
         >>> import numpy as np
-        >>> from ipd.homog import ContactMatrixStack
+        >>> from ipd.homog import ContactBlockMatrix
         >>> contacts = np.tril(np.ones((1, 5, 5)))
-        >>> cms = ContactMatrixStack(contacts)
+        >>> cms = ContactBlockMatrix(contacts)
         >>> cms.contacts.shape
         (1, 5, 5)
     """
@@ -240,9 +240,9 @@ class ContactMatrixStack:
 
         Example:
             >>> import numpy as np
-            >>> from ipd.homog import ContactMatrixStack
+            >>> from ipd.homog import ContactBlockMatrix
             >>> contacts = np.ones((1, 3, 3))
-            >>> cms = ContactMatrixStack(contacts)
+            >>> cms = ContactBlockMatrix(contacts)
             >>> cms.partialsum[0, 3, 3]
             np.float64(9.0)
         """
@@ -269,7 +269,7 @@ class ContactMatrixStack:
         Example:
             >>> import numpy as np
             >>> contacts = np.ones((1, 20, 20))
-            >>> cms = ipd.homog.ContactMatrixStack(contacts)
+            >>> cms = ipd.homog.ContactBlockMatrix(contacts)
             >>> cms.ncontact(lb=10, ub=12, lb2=1, ub2=6)
             np.float64(10.0)
             >>> cms.ncontact(lb=[0,3,5], ub=[5,8,10], lb2=[10,13,15], ub2=[15,18,20])
@@ -277,7 +277,7 @@ class ContactMatrixStack:
             >>> cms.ncontact(lb=[range(2, 8)], ub=[range(10, 16)])
             array([[64., 64., 64., 64., 64., 64.]])
             >>> contacts = np.ones((3, 20, 20))  # stack of 3 now
-            >>> cms = ipd.homog.ContactMatrixStack(contacts)
+            >>> cms = ipd.homog.ContactBlockMatrix(contacts)
             >>> cms.ncontact(lb=[range( 2, 8), range(6)    , range(1, 7)],
             ...              ub=[range(10,16), range(10,16), range(9,15)])
             array([[ 64.,  64.,  64.,  64.,  64.,  64.],
@@ -318,9 +318,9 @@ class ContactMatrixStack:
 
         Example:
             >>> import numpy as np
-            >>> from ipd.homog import ContactMatrixStack
+            >>> from ipd.homog import ContactBlockMatrix
             >>> contacts = np.ones((1, 6, 6))
-            >>> cms = ContactMatrixStack(contacts)
+            >>> cms = ContactBlockMatrix(contacts)
             >>> fc = cms.fragment_contact(fragsize=3, stride=1)
             >>> fc.shape
             (1, 4, 4)
@@ -351,9 +351,9 @@ class ContactMatrixStack:
 
         Example:
             >>> import numpy as np
-            >>> from ipd.homog import ContactMatrixStack
+            >>> from ipd.homog import ContactBlockMatrix
             >>> contacts = np.random.rand(3, 50, 50)
-            >>> cms = ContactMatrixStack(contacts)
+            >>> cms = ContactBlockMatrix(contacts)
             >>> result = cms.topk_fragment_contact_by_subset_summary(fragsize=10, k=5, stride=5)
             >>> isinstance(result.index, dict)
             True
@@ -404,8 +404,8 @@ class ContactMatrixStack:
 
         Example:
             >>> import numpy as np
-            >>> from ipd.homog import ContactMatrixStack
-            >>> cms = ContactMatrixStack(np.ones((3, 10, 10)))
+            >>> from ipd.homog import ContactBlockMatrix
+            >>> cms = ContactBlockMatrix(np.ones((3, 10, 10)))
             >>> len(cms)
             3
         """
@@ -418,7 +418,7 @@ class ContactMatrixStack:
         Returns:
             str: Summary of matrix shape and optional subsets.
         """
-        return f'ContactMatrixStack(shape: {self.contacts.shape} subs: {self.subs})'
+        return f'ContactBlockMatrix(shape: {self.contacts.shape} subs: {self.subs})'
 
 def is_contact_matrix(arg):
     """

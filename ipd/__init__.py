@@ -1,11 +1,5 @@
-from time import perf_counter
-
-_start, _timings = perf_counter(), dict()
-
-def ipd_init_checkpoint(name):
-    global _start, _timings
-    _timings[name] = [perf_counter() - _start]
-    _start = perf_counter()
+import evn
+evn.chrono_enter_scope('ipd.__init__')
 
 import contextlib
 import os
@@ -37,11 +31,11 @@ from typing import (
     Optional as Optional,
 )
 
-ipd_init_checkpoint('INIT ipd basic imports')
+evn.chrono_checkpoint('IPD basic imports')
+
 STRUCTURE_FILE_SUFFIX = tuple('.pdb .pdb.gz .cif .bcif'.split())
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 projdir = os.path.realpath(os.path.dirname(__file__))
-from ipd._prelude.version import __version__ as __version__
 from ipd._prelude.wraps import wraps as wraps
 from ipd._prelude.import_util import (
     is_installed as is_installed,
@@ -61,6 +55,7 @@ from ipd._prelude.structs import (
     mutablestruct as mutablestruct,
     basestruct as basestruct,
     field as field,
+    npNone as npNone,
 )
 from ipd._prelude.typehints import (
     KW as KW,
@@ -94,12 +89,11 @@ from ipd._prelude.typehints import (
 optional_imports = cherry_pick_import('ipd.dev.contexts.optional_imports')
 capture_stdio = cherry_pick_import('ipd.dev.contexts.capture_stdio')
 ic, icm, icv = cherry_pick_imports('ipd.dev.debug', 'ic icm icv')
-timed = cherry_pick_import('ipd.dev.instrumentation.timer.timed')
 element_wise_operations = cherry_pick_import('ipd.dev.element_wise.element_wise_operations')
 subscriptable_for_attributes = cherry_pick_import('ipd.dev.decorators.subscriptable_for_attributes')
 iterize_on_first_param = cherry_pick_import('ipd.dev.decorators.iterize_on_first_param')
 
-ipd_init_checkpoint('INIT ipd prelude imports')
+evn.chrono_checkpoint('IPD prelude imports')
 
 def __getattr__(name):
     if name.startswith('debug'):
@@ -110,7 +104,7 @@ def __getattr__(name):
         return motif.get_global_motif_manager()
     raise AttributeError(f'module {__name__} has no attribute {name}')
 
-ipd_init_checkpoint('INIT ipd globals')
+evn.chrono_checkpoint('IPD globals')
 
 from ipd.dev.error import panic as panic
 from ipd.dev.meta import kwcheck as kwcheck, kwcall as kwcall, kwcurry as kwcurry
@@ -123,7 +117,7 @@ from ipd.dev.tolerances import Tolerances as Tolerances
 from ipd.dev.iterables import first as first
 from ipd.dev.contexts import stdio as stdio, catch_em_all as catch_em_all
 
-ipd_init_checkpoint('INIT ipd from subpackage imports')
+evn.chrono_checkpoint('IPD from subpackage imports')
 from ipd import dev as dev, homog as homog
 
 if typing.TYPE_CHECKING:
@@ -164,7 +158,8 @@ else:
     # voxel = lazyimport('ipd.cuda.voxel')
 viz = lazyimport('ipd.viz')
 pickle = lazyimport(('_pickle', 'pickle'))
-ipd_init_checkpoint('INIT ipd subpackage imports')
+
+evn.chrono_checkpoint('IPD subpackage imports')
 
 with contextlib.suppress(ImportError):
     import builtins
@@ -180,8 +175,9 @@ def showme(*a, **kw):
 
 # from ipd.project_config import install_ipd_pre_commit_hook
 # install_ipd_pre_commit_hook(projdir, '..')
-# ipd_init_checkpoint('INIT ipd pre commit hook')
-
-dev.global_timer.checkpoints.update(_timings)
+# evn.chrono_checkpoint('IPD pre commit hook')
 
 caching_enabled = True
+
+evn.chrono_checkpoint('IPD init funcs')
+evn.chrono_exit_scope('ipd.__init__')

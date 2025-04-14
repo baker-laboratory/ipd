@@ -1,15 +1,14 @@
 import os
-import inspect
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 import contextlib
 import copy
 from dataclasses import dataclass, is_dataclass
-from functools import singledispatch
 import dataclasses
 from typing import Any, TypeVar, Generic, TYPE_CHECKING
 
 import numpy as np
+import evn
 
 import ipd
 from ipd import lazyimport
@@ -22,7 +21,8 @@ else:
 
 T = TypeVar('T')
 
-@singledispatch
+@evn.lazydispatch
+# @singledispatch
 def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
     """Return a Symmable object that knows how to convert beteen input and a
     symmetrizable adapted form."""
@@ -32,16 +32,15 @@ def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
 def _(*a, **kw):
     return None
 
-with contextlib.suppress(ImportError):
 
-    @_sym_adapt.register(th.Tensor)  # type: ignore
-    def _(tensor, sym, isasym):
-        if all(n is None for n in tensor.names):
-            return deprecated_SymAdaptTensor(tensor, sym, isasym)
-        elif 'Lsparse' in tensor.names:
-            return SymAdaptNamedSparseTensor(tensor, sym, isasym)
-        else:
-            return SymAdaptNamedDenseTensor(tensor, sym, isasym)
+@_sym_adapt.register('torch.Tensor')
+def _(tensor, sym, isasym):
+    if all(n is None for n in tensor.names):
+        return deprecated_SymAdaptTensor(tensor, sym, isasym)
+    elif 'Lsparse' in tensor.names:
+        return SymAdaptNamedSparseTensor(tensor, sym, isasym)
+    else:
+        return SymAdaptNamedDenseTensor(tensor, sym, isasym)
 
 @_sym_adapt.register(np.ndarray)  # type: ignore
 def _(ary, sym, isasym):
@@ -192,14 +191,14 @@ class DataclassProxy:
 def _(obj: DataclassProxy):
     return f"Handled dataclass: {obj.__class__.__name__}"
 
-original_dispatch = _sym_adapt.dispatch
+# original_dispatch = _sym_adapt.dispatch
 
-def dispatch_with_dataclass_check(cls):
-    if inspect.isclass(cls) and is_dataclass(cls):
-        return _sym_adapt.registry[DataclassProxy]
-    return original_dispatch(cls)
+# def dispatch_with_dataclass_check(cls):
+#     if inspect.isclass(cls) and is_dataclass(cls):
+#         return _sym_adapt.registry[DataclassProxy]
+#     return original_dispatch(cls)
 
-_sym_adapt.dispatch = dispatch_with_dataclass_check
+# _sym_adapt.dispatch = dispatch_with_dataclass_check
 
 class SymAdaptDataClass(SymAdapt):
     """Base class for adapting dataclasses.
@@ -207,7 +206,7 @@ class SymAdaptDataClass(SymAdapt):
     All fields must be sym-adaptable and all tensor fields must have
     intepretable shapes, or dim names via add_tensor_dim_names
     """
-    __adapts__ = DataclassProxy
+    __adapts__ = is_dataclass
 
     def __init__(self, dataclass, sym, isasym):
         self.orig = dataclass
@@ -253,8 +252,8 @@ with contextlib.suppress(ImportError):
 
     @dataclasses.dataclass
     class SimpleSparseTensor:
-        val: th.Tensor  # type: ignore
-        idx: th.Tensor  # type: ignore
+        val: th.Tensor
+        idx: th.Tensor
         isidx: slice
         kind: kind = None  # type: ignore
 

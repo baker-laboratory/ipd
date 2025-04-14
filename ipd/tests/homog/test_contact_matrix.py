@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 
 import ipd
-from ipd.homog.contact_matrix import ContactMatrixStack
+from ipd.homog.contact_matrix import ContactBlockMatrix
 
 config_test = ipd.Bunch(
     re_only=[
@@ -35,7 +35,7 @@ def test_contacts_partialsum():
     # contacts = ipd.homog.rand_contacts(20, m=1, frac=0.3, cen=5.0, std=4.0, index_bias=0.5)
     contacts = np.random.rand(3, 20, 20)
     contacts += contacts.swapaxes(1, 2)
-    mat = ipd.homog.ContactMatrixStack(contacts)
+    mat = ipd.homog.ContactBlockMatrix(contacts)
     assert np.allclose(mat.contacts[:, :4, :4].sum((1, 2)), mat.partialsum[:, 4, 4])
     assert np.allclose(mat.contacts[:, :8, :12].sum((1, 2)), mat.partialsum[:, 8, 12])
 
@@ -46,7 +46,7 @@ def test_contacts_partialsum():
 
 def test_ncontact():
     contacts = np.ones((1, 20, 20))
-    cms = ipd.homog.ContactMatrixStack(contacts)
+    cms = ipd.homog.ContactBlockMatrix(contacts)
     cms.ncontact(lb=10, ub=12, lb2=1, ub2=6)
     np.float64(10.0)
     v = cms.ncontact(lb=[0, 3, 5], ub=[5, 8, 10], lb2=[10, 13, 15], ub2=[15, 18, 20])
@@ -56,7 +56,7 @@ def test_ncontact():
     v = cms.ncontact(lb=[range(0, 6)], ub=[range(2, 8)])
     assert np.allclose(v, np.array([[4., 4., 4., 4., 4., 4.]]))
     contacts = np.ones((3, 20, 20))  # stack of 3 now
-    cms = ipd.homog.ContactMatrixStack(contacts)
+    cms = ipd.homog.ContactBlockMatrix(contacts)
     v = cms.ncontact(
         lb=[range(2, 8), range(6), range(1, 7)],
         ub=[range(10, 16), range(10, 16), range(9, 15)],
@@ -68,7 +68,7 @@ def test_ncontact():
 
 def test_contacts_rand_m1():
     contacts = ipd.homog.rand_contacts(20, m=1, frac=0.3, cen=5.0, std=4.0, index_bias=0.5)
-    mat = ipd.homog.ContactMatrixStack(contacts)
+    mat = ipd.homog.ContactBlockMatrix(contacts)
     lb = [range(0, 5)]
     # lb2 = [range(5, 10)]
     ub = [range(10, 15)]
@@ -82,7 +82,7 @@ def test_contacts_rand_m1():
 def test_contacts_allone_m1():
     # contacts = ipd.homog.rand_contacts(20, m=1, frac=0.3, cen=5.0, std=4.0, index_bias=0.5)
     contacts = np.ones((1, 20, 20))
-    mat = ipd.homog.ContactMatrixStack(contacts)
+    mat = ipd.homog.ContactBlockMatrix(contacts)
     lb = [range(0, 5)]
     lb2 = [range(5, 10)]
     ub = [range(10, 15)]
@@ -95,7 +95,7 @@ def test_contacts_allone_m1():
 
 def test_contacts_rand_m3():
     contacts = ipd.homog.rand_contacts(20, m=1, frac=0.3, cen=5.0, std=4.0, index_bias=0.5)
-    mat = ipd.homog.ContactMatrixStack(contacts)
+    mat = ipd.homog.ContactBlockMatrix(contacts)
     lb = [range(0, 5)] * len(mat)
     lb2 = [range(5, 10)] * len(mat)
     ub = [range(10, 15)] * len(mat)
@@ -108,7 +108,7 @@ def test_contacts_rand_m3():
 def test_fragment_contact():
     # np.random.seed(0)
     contacts = ipd.homog.rand_contacts(100, m=3, frac=0.3, cen=5.0, std=4.0, index_bias=0.5)
-    mat = ipd.homog.ContactMatrixStack(contacts)
+    mat = ipd.homog.ContactBlockMatrix(contacts)
     nfragsize = mat.fragment_contact(20)
     mins = [np.unravel_index(np.argsort((-nw).flat)[:10], nw.shape) for nw in nfragsize]
     for i, mn in enumerate(mins):
@@ -121,7 +121,7 @@ def test_fragment_contact():
 def test_topk_fragment_contact_by_subset_summary():
     with ipd.dev.temporary_random_seed(0):
         contacts = np.random.rand(4, 1000, 1000) * 2
-        mat = ipd.homog.ContactMatrixStack(contacts.astype(np.int32))
+        mat = ipd.homog.ContactBlockMatrix(contacts.astype(np.int32))
         topk = mat.topk_fragment_contact_by_subset_summary(fragsize=20, k=13, stride=4)
         assert np.all(topk.vals[(1, )] >= topk.vals[1, 2])
         assert np.all(topk.vals[1, 3] >= topk.vals[1, 2, 3])
@@ -132,12 +132,31 @@ def test_fragment_contact_sparse():
     contacts = np.zeros((1, 11, 11), dtype=int)
     contacts[0, 5, 5] = 1
     # ic(contacts)
-    stack = ContactMatrixStack(contacts)
+    stack = ContactBlockMatrix(contacts)
     assert np.all(stack.fragment_contact(1) == contacts)
     assert stack.fragment_contact(2).sum() == 4
     assert stack.fragment_contact(3).sum() == 9
     assert stack.fragment_contact(4).sum() == 16
     assert stack.fragment_contact(5).sum() == 25
+
+def test_topk_fragment_contact_fragment_score():
+    contacts = np.zeros((3, 50, 50))
+    # Inject strong contact between fragment 1 and 6 (~residues 10–20 and 30–40)
+    for i in range(3):
+        contacts[i, 10:20, 30:40] = 10.0
+        contacts[i, 30:40, 10:20] = 10.0
+
+    cms = ContactBlockMatrix(contacts)
+    result = cms.topk_fragment_contact_by_subset_summary(fragsize=10, k=3, stride=1)
+
+    # Verify that fragment pair (1,6) or (6,1) is in the top k
+    found = False
+    nfrag = (cms.contacts.shape[1] - 10) // 5 + 1
+    for subset, indices in result["index"].items():
+        for i,j in indices.T:
+            if (i, j) in [(10, 30), (30, 10)]:
+                found = True
+    assert found, "Expected top contact fragment (1,6) not found"
 
 class TestRandomContactMatrices(unittest.TestCase):
     """ai slop"""

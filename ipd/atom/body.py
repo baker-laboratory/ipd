@@ -52,7 +52,6 @@ import ipd
 import ipd.homog.hgeom as h
 
 if typing.TYPE_CHECKING:
-    from biotite.structure import AtomArray
     import hgeom as hg
 
 hg = ipd.maybeimport('hgeom')
@@ -120,11 +119,12 @@ def symbody_from_file(
 @ipd.dev.holds_metadata
 @ipd.mutablestruct
 class Body:
-    atoms: 'AtomArray'
+    atoms: 'bs.AtomArray'  # type: ignore
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
-    rescen: np.ndarray = None
-    _atombvh: 'hg.SphereBVH_double' = None
-    _resbvh: 'hg.SphereBVH_double' = None
+    rescen: np.ndarray = ipd.npNone
+    tokens: np.ndarray = ipd.npNone
+    _atombvh: 'hg.SphereBVH_double' = None  # type: ignore
+    _resbvh: 'hg.SphereBVH_double' = None  # type: ignore
     hydro: bool = False
     hetero: bool = False
     water: bool = False
@@ -143,11 +143,15 @@ class Body:
         if not self.hydro: self.atoms = self.atoms[self.atoms.element != 'H']
         if not self.water: self.atoms = self.atoms[self.atoms.res_name != 'HOH']
         self.rescen = bs.apply_residue_wise(self.atoms, self.atoms.coord, np.mean, axis=0)
-        self._atombvh = hg.SphereBVH_double(self.atoms.coord)
-        self._resbvh = hg.SphereBVH_double(self.rescen)
+        self._atombvh = hg.SphereBVH_double(self.atoms.coord)  # type: ignore
+        self._resbvh = hg.SphereBVH_double(self.rescen)  # type: ignore
         self.asu = self
+        if not self.tokens: self.tokens = self.atoms.res_id
         # self.seq = ipd.atom.atoms_to_seqstr(self.atoms)
         assert h.valid44(self.pos)
+
+    def __len__(self):
+        return len(self.atoms)
 
     def __eq__(self, other):
         return self.atoms is other.atoms
@@ -200,6 +204,12 @@ class Body:
     def atomsel(self, **kw):
         return ipd.atom.select(self.positioned_atoms, **kw)
 
+    def to_token_index(self, atomidx: np.ndarray) -> np.ndarray:
+        return self.tokens[atomidx]
+
+    def to_atom_index(self, tokenidx: np.ndarray) -> np.ndarray:
+        return np.where(self.tokens == tokenidx)[0]
+
     def __getitem__(self, *slices):
         return h.xformpts(self.pos, self.atoms.coord[tuple(slices)])
 
@@ -240,7 +250,8 @@ class SymBody:
     frames: np.ndarray = ipd.field(lambda: np.eye(4)[None])
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
     bodies = property(lambda self: [self.asu.movedby(self.pos @ f) for f in self.frames])
-    positioned_atoms = property(lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
+    positioned_atoms = property(
+        lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
     com = property(lambda self: h.xform(self.pos, self.frames, self.asu.com).mean(0))
     centered = property(lambda self: self.movedby(-self.com))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
@@ -300,7 +311,7 @@ class SymBody:
 
     def subunit_contact_matrix(self, subunit=0, radius=5):
         contactlist = self.subunit_contacts(subunit, radius=radius)
-        contactmat = contactlist.contact_matrix_stack(self.asu.atoms.res_id)
+        contactmat = contactlist.contact_blocks(self.asu.atoms.res_id)
         return contactmat
 
     def slide_into_contact(self, other, along=(1, 0, 0), radius=3.0) -> 'SymBody':
@@ -441,7 +452,7 @@ class BodyContacts:
                 yield isub1, isub2, sub1, sub2, iatom1, iatom2
             isub1 += 1
 
-    def contact_matrix_stack(self, tokens1=None, tokens2=None):
+    def contact_blocks(self, tokens1=None, tokens2=None):
         if tokens1 is None: tokens1 = self.symbody.asu.atoms.res_id
         if tokens2 is None: tokens2 = self.body2.asu.atoms.res_id
         tokens1, tokens2 = ipd.cast(np.ndarray, tokens1), ipd.cast(np.ndarray, tokens2)
@@ -458,7 +469,7 @@ class BodyContacts:
             subs.append(self.subs[isub1])
         isub0 = self.exclude[0] if len(self.exclude) == 1 else None
         if not mats: raise ValueError('No contacts found')
-        return ipd.homog.ContactMatrixStack(np.stack(mats),
+        return ipd.homog.ContactBlockMatrix(np.stack(mats),
                                             np.stack(subs),
                                             isub0=isub0,
                                             tokens1=tokens1,

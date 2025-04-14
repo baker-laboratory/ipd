@@ -17,6 +17,10 @@ import numpy as np
 import torch  # type: ignore
 
 def main():
+    import evn
+    evn.testing.quicktest(globals())
+    return
+
     test_dim_rearrange_basic()
     test_dim_rearrange_xyz()
     test_dim_rearrange_errors()

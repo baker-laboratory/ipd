@@ -1,5 +1,6 @@
 import sys
 import dataclasses as dc
+import numpy as np
 # from typing import final
 final = lambda x: x
 
@@ -17,3 +18,9 @@ def field(dfac=dc.MISSING, *a, **kw):
     if dfac and 'default_factory' in kw:
         raise TypeError("default_factory specified twice (as arg0 dfac)")
     return dc.field(*a, default_factory=dfac, **kw)
+
+class NumpyNone(np.ndarray):
+    def __bool__(self) -> bool:
+        return False
+
+npNone = field(lambda: NumpyNone(0))

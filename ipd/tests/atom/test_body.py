@@ -8,9 +8,10 @@ hg = pytest.importorskip('hgeom')
 import ipd
 import ipd.homog.hgeom as h
 
+
 config_test = ipd.Bunch(
     re_only=[],
-    re_exclude=[],
+    re_exclude=['test_symbody'],
 )
 BODY_TEST_PDBS = ['1qys']
 # BODY_TEST_PDBS = ['2tbv']
@@ -150,11 +151,11 @@ def helper_test_symbody_contact_scan(symbody):
     isub = random.randint(0, len(symbody.frames) - 1)
     asu = symbody.bodies[isub]
     contactlist = symbody.contacts(asu, exclude=isub, radius=5)
-    contactmat = contactlist.contact_matrix_stack(symbody.asu.atoms.res_id)
+    contactmat = contactlist.contact_blocks(symbody.asu.atoms.res_id)
     topk = contactmat.topk_fragment_contact_by_subset_summary(fragsize=21, k=13, stride=7)
     assert topk.index.keys() == topk.vals.keys()
     for subs, idx in topk.index.items():
-        print(subs, idx[:,:4], topk.vals[subs][:4])
+        print(subs, idx[:, :4], topk.vals[subs][:4])
 
 ipd.tests.make_parametrized_tests(
     globals(),

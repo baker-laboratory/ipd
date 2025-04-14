@@ -10,7 +10,7 @@ Cumulative sums primer and rapid contact matrix processing
 Cumulative sums, 1D basics
 --------------------------
 
-ContactMatrixStack uses a precomputed 2D partialsum array for efficient region-based queries. To explain
+ContactBlockMatrix uses a precomputed 2D partialsum array for efficient region-based queries. To explain
 start with the 1D partialsum case. ``DATA`` is a 1D array and ``SUMS`` is the cumulative sum
 of ``DATA`` (``ipd.partialsum(DATA)``. If we want the sum of ``DATA[i:j]`` we can compute it as
 ``SUMS[j] - SUMS[i]``.
@@ -87,7 +87,7 @@ It makes an even bigger difference in the 2D case because the arrays tend to be 
 
    Illustration of data 2D with pink region to be "summed" and 2D cumulative sum array from which four points are needed to computs the "sum:" ``sum = CSUM[ub1,ub2] (red point) + CSUM[lb1,lb2] (green point) - CUSM[ub1,lb2] (blue point) - CSUM[lb1,lb2] (blue point``.
 
-The method :py:meth:`ContactMatrixStack.fragment_contact` uses this idea to compute the total contacts of all
+The method :py:meth:`ContactBlockMatrix.fragment_contact` uses this idea to compute the total contacts of all
 pairs of fragments of a given length using a 2D partialsum array. The stride parameter allows for computing only evey Nth value. Note, even on large inputs, this function is fast enough to
 compute every fragment pair, so stride is mainly useful as simple way to reduce redundancy.
 
@@ -100,16 +100,16 @@ compute every fragment pair, so stride is mainly useful as simple way to reduce 
 
 This function retuns an ``S x M x N`` array containing the total contacts for all pairs of fragments for each contact matrix s in the stack: ``fragment1`` starting at m ending at ``m + fragsize``, to fragment2 starting at ``n`` and ending at ``n - fragsize``.
 
-The method :py:meth:`ContactMatrixStack.topk_fragment_contact_by_subset_summary` uses the
+The method :py:meth:`ContactBlockMatrix.topk_fragment_contact_by_subset_summary` uses the
 arrays produced by
-:py:meth:`ContactMatrixStack.fragment_contact` to search for subsets of subunits that
+:py:meth:`ContactBlockMatrix.fragment_contact` to search for subsets of subunits that
 all "multibody" contacts by enumerating all subsets of contacting subunits, and taking
 the minimum number of contacts for each fragment pair. See the example below.
 
 
 .. _contact_matrix_overview:
 
-ContactMatrixStack Example
+ContactBlockMatrix Example
 ---------------------------
 
 Setup, reading in and positioning some data
@@ -124,9 +124,9 @@ Setup, reading in and positioning some data
 
 Get best pair of fragment
 
->>> cmat = contacts.contact_matrix_stack()
+>>> cmat = contacts.contact_blocks()
 >>> cmat
-ContactMatrixStack(shape: (4, 92, 335) subs: [ 2  6  8 10])
+ContactBlockMatrix(shape: (4, 92, 335) subs: [ 2  6  8 10])
 >>> # 4 contact matrices, thus top7 contacts 4 (of 12) subunit in dxh
 >>> pair_frag_contacts = cmat.fragment_contact(fragsize=20, stride=5)
 >>> isub, itop7, idxh = np.unravel_index(np.argmax(pair_frag_contacts), pair_frag_contacts.shape)
@@ -188,7 +188,7 @@ Note: :py:func:`ipd.viz.pymol_viz.showme` (just call ipd.showme) is super useful
 Top-k Fragment Contact Subset Summary Output
 ----------------------------------------------
 
-The method :meth:`ContactMatrixStack.topk_fragment_contact_by_subset_summary` returns an
+The method :meth:`ContactBlockMatrix.topk_fragment_contact_by_subset_summary` returns an
 :class:`ipd.Bunch` object that acts like a dictionary, with two primary entries:
 
 - ``index``: a dictionary mapping each subset of contacting subunits to the fragment pairs
@@ -197,7 +197,7 @@ The method :meth:`ContactMatrixStack.topk_fragment_contact_by_subset_summary` re
   fragment pairs stored in ``index``.
 
 Each key in these dictionaries is a tuple of subunit indices, corresponding to a subset of
-the `ContactMatrixStack`. For example, a key ``(0, 2)`` refers to fragment pairs that simultaneously contact
+the `ContactBlockMatrix`. For example, a key ``(0, 2)`` refers to fragment pairs that simultaneously contact
 **both** subunit 0 and subunit 2.
 
 Each ``index[subset]`` value is a 2D NumPy array of shape ``(2, k)``, where:

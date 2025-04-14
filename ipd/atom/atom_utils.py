@@ -46,6 +46,38 @@ bs = ipd.lazyimport('biotite.structure')
 
 from ipd.pdb.readstruct import readatoms as load, dump as dump
 
+def select(
+    atoms: 'AtomsArray',
+    chainlist=False,
+    caonly=False,
+    bbonly=False,
+    chaindict=False,
+    het=True,
+    element=None,
+    chain_id=None,
+    atom_name=None,
+    res_name=None,
+    path=None,
+    # **kw,
+) -> 'AtomArray':
+    if isinstance(atoms, bs.AtomArrayStack):
+        assert len(atoms) == 1, f'bad select {len(atoms)=} {atoms=}'
+        atoms = atoms[0]
+    meta = ipd.dev.get_metadata(atoms)
+    if caonly: atoms = atoms[atoms.atom_name == 'CA']
+    elif bbonly: atoms = atoms[atoms.atom_nameisin(('CA', 'N', 'C', 'O'))]
+    if not het: atoms = atoms[~atoms.hetero]
+    for attr in 'element atom_name res_name chain_id'.split():
+        if (val := locals()[attr]) is not None:
+            if isinstance(val, str):
+                atoms = atoms[getattr(atoms, attr) == val]
+            else:
+                atoms = atoms[np.isin(getattr(atoms, attr), val)]
+    if chaindict: atoms = ipd.atom.chain_dict(atoms)
+    if chainlist: atoms = ipd.atom.split(atoms)
+    ipd.dev.set_metadata(atoms, meta)
+    return atoms
+
 def get(pdbcode, path='', **kw):
     if path: fname = os.path.join(path, f'{pdbcode}.bcif.gz')
     else: fname = ipd.dev.package_testcif_path(pdbcode)
@@ -196,37 +228,6 @@ def chain_id_ranges(atoms) -> dict[str, list[tuple[int, int]]]:
     breaks.append(len(atoms))
     return chain_ranges_from_breaks(atoms, breaks)
 
-def select(
-    atoms: 'AtomsArray',
-    chainlist=False,
-    caonly=False,
-    bbonly=False,
-    chaindict=False,
-    het=True,
-    element=None,
-    chain_id=None,
-    atom_name=None,
-    res_name=None,
-    **kw,
-) -> 'AtomArray':
-    if isinstance(atoms, bs.AtomArrayStack):
-        assert len(atoms) == 1, f'bad select {len(atoms)=} {atoms=}'
-        atoms = atoms[0]
-    meta = ipd.dev.get_metadata(atoms)
-    if caonly: atoms = atoms[atoms.atom_name == 'CA']
-    elif bbonly: atoms = atoms[atoms.atom_nameisin(('CA', 'N', 'C', 'O'))]
-    if not het: atoms = atoms[~atoms.hetero]
-    for attr in 'element atom_name res_name chain_id'.split():
-        if (val := locals()[attr]) is not None:
-            if isinstance(val, str):
-                atoms = atoms[getattr(atoms, attr) == val]
-            else:
-                atoms = atoms[np.isin(getattr(atoms, attr), val)]
-    if chaindict: atoms = ipd.atom.chain_dict(atoms)
-    if chainlist: atoms = ipd.atom.split(atoms)
-    ipd.dev.set_metadata(atoms, meta)
-    return atoms
-
 def pick_representative_chains(atomslist):
     chains = []
     for atoms in atomslist:
@@ -303,6 +304,10 @@ def primary_polymer_atoms(atoms):
 @ipd.iterize_on_first_param(basetype='AtomArray')
 def com(atoms):
     return bs.mass_center(atoms)
+
+def chaincom(atoms):
+    chains = split_chains(atoms)
+    return com(chains)
 
 @ipd.iterize_on_first_param(basetype='AtomArray')
 def centered(atoms, primary_only=True, ignore_nan=True, ignore_garbage=True):
