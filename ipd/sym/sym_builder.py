@@ -1,7 +1,5 @@
 import sys
 import argparse
-import functools
-import operator
 import ipd
 import ipd.homog.hgeom as h
 
@@ -10,20 +8,21 @@ bs = ipd.lazyimport('biotite.structure', 'bs')
 def get_args(sysargv):
     """get command line arguments"""
     parser = argparse.ArgumentParser()
-    parser.add_argument('mode', type=str, nargs=1)
+    parser.add_argument('mode', type=str)
     parser.add_argument('files', type=str, nargs='+')
+    parser.add_argument('-o', '--output', type=str, default='out.pdb')
     return parser.parse_args(sysargv[1:])
 
 def main():
     args = get_args(sys.argv)
-    if args.mode == 'abbas':
-        return build_from_components_abbas(*args.files)
+    if args.mode == 'abbas': return build_from_components_abbas(*args.files, output=args.output)
     raise ValueError(f"Unknown mode {args.mode}")
 
-def build_from_components_abbas(atoms1: 'list[bs.AtomArray]', atoms2: 'list[bs.AtomArray]', tol=0.1, **kw):
+def build_from_components_abbas(fname1, fname2, output, tol=0.1, **kw):
     """
     this is currently bespoke for a case abbas had... would like to make more general
     """
+    atoms1, atoms2 = (ipd.atom.load(f, chainlist=True) for f in [fname1, fname2])
     tol = ipd.dev.Tolerances(tol, **kw)
     rms, _, xfit = h.rmsfit(atoms2[0].coord, atoms1[0].coord)
     if rms > tol.rms_fit: return None
@@ -39,10 +38,12 @@ def build_from_components_abbas(atoms1: 'list[bs.AtomArray]', atoms2: 'list[bs.A
     cen = (p1+p2) / 2
     axes = ipd.sym.axes('I')
 
-    joint = functools.reduce(operator.add, atoms1 + atoms2[1:])
+    joint = ipd.atom.join(atoms1 + atoms2[1:])
     joint.coord -= cen[0, :3]
     x = h.halign2(se1.axis[0], se2.axis[0], axes[3], axes[5])
     joint.coord = h.xform(x, joint.coord)
+
+    ipd.atom.dump(joint, output)
 
     return joint
 
