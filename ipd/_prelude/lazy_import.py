@@ -1,4 +1,4 @@
-forbid = set()  # for debugging stuff that is being incorrectly imported
+forbid = set([])  # for debugging stuff that is being incorrectly imported
 
 import inspect
 import sys

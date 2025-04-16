@@ -1,7 +1,7 @@
+import sys
 import os
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
-import contextlib
 import copy
 from dataclasses import dataclass, is_dataclass
 import dataclasses
@@ -248,7 +248,8 @@ class SymAdaptDataClass(SymAdapt):
         return type(self.orig)(**symparts)
 
 # ipd libs shouldn't require torch
-with contextlib.suppress(ImportError):
+# with contextlib.suppress(ImportError):
+if 'torch' in sys.modules:
 
     @dataclasses.dataclass
     class SimpleSparseTensor:
