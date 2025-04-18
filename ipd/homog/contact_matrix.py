@@ -196,7 +196,7 @@ import ipd
 
 th = ipd.lazyimport('torch')
 
-@ipd.struct
+@ipd.dc.dataclass
 class ContactBlockMatrix:
     """
     A stack of contact matrices with efficient region and fragment query operations.
@@ -329,10 +329,8 @@ class ContactBlockMatrix:
             ncontact for detail on how the partialsum calculation works.
         """
         fsz, s = fragsize, stride
-        result = (self.partialsum[:, fsz::s, fsz::s] -
-                  self.partialsum[:, fsz::s, :-fsz:s] -
-                  self.partialsum[:, :-fsz:s, fsz::s] +
-                  self.partialsum[:, :-fsz:s, :-fsz:s])
+        result = (self.partialsum[:, fsz::s, fsz::s] - self.partialsum[:, fsz::s, :-fsz:s] -
+                  self.partialsum[:, :-fsz:s, fsz::s] + self.partialsum[:, :-fsz:s, :-fsz:s])
         return result
 
     @ipd.dev.timed
@@ -361,17 +359,17 @@ class ContactBlockMatrix:
         result = ipd.Bunch(index=dict(), vals=dict(), _orig_isub0=self.isub0, _orig_subnum=self.subs)
         # ncontact[id_nbr,inbr,iasu] for all pairs of frags between neighbor id_nbr and asu
         ncontact = self.fragment_contact(fragsize, stride)
-        for i, subset in ipd.dev.subsetenum(range(len(self))): # loop over all neighbor combos
-            if not subset: continue # skip the empty subset
-            vals = summary(ncontact[list(subset)], axis=0) # worst value for all subset neighbors
-            idx = np.argsort((-vals).flat)[:k] # sort so indices of best vals are first
-            idx = np.unravel_index(idx, vals.shape) # get he unflattened indices
-            result.vals[subset] = vals[idx] # the values for the best indices
-            result.index[subset] = np.array(idx, dtype=np.int32) * stride # undo the stride
-            result.index[subset] = result.index[subset][:, vals[idx] > 0] # remove zero vals
-            result.vals[subset] = result.vals[subset][vals[idx] > 0] # remove zero vals
+        for i, subset in ipd.dev.subsetenum(range(len(self))):  # loop over all neighbor combos
+            if not subset: continue  # skip the empty subset
+            vals = summary(ncontact[list(subset)], axis=0)  # worst value for all subset neighbors
+            idx = np.argsort((-vals).flat)[:k]  # sort so indices of best vals are first
+            idx = np.unravel_index(idx, vals.shape)  # get he unflattened indices
+            result.vals[subset] = vals[idx]  # the values for the best indices
+            result.index[subset] = np.array(idx, dtype=np.int32) * stride  # undo the stride
+            result.index[subset] = result.index[subset][:, vals[idx] > 0]  # remove zero vals
+            result.vals[subset] = result.vals[subset][vals[idx] > 0]  # remove zero vals
             if result.index[subset].size == 0:
-                del result.index[subset] # if all values are 0, remove subset from consideration
+                del result.index[subset]  # if all values are 0, remove subset from consideration
                 del result.vals[subset]
         return result
 
@@ -442,7 +440,7 @@ def is_contact_matrix(arg):
     if arg.shape[2] < 5: return False
     return True
 
-def rand_contacts(n, m=1, frac=0.2, cen=5, std=3, index_bias=0.0):
+def rand_contacts(n, m=1, frac: float = 0.2, cen: float = 5, std: float = 3, index_bias=0.0):
     """
     AI slop, very slow. Create a stack of m random symmetric contact matrices of size n x n.
 

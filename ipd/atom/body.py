@@ -117,12 +117,12 @@ def symbody_from_file(
     return SymBody(asu, comp.frames[which], _atomslist=atomslist, _assembly_xforms=asmx)
 
 @ipd.dev.holds_metadata
-@ipd.mutablestruct
-class Body:
+@ipd.dc.dataclass
+class Body(ipd.dev.HoldsMetadata):
     atoms: 'bs.AtomArray'  # type: ignore
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
-    rescen: np.ndarray = ipd.npNone
-    tokens: np.ndarray = ipd.npNone
+    rescen: np.ndarray = ipd.npNone()
+    tokens: np.ndarray = ipd.npNone()
     _atombvh: 'hg.SphereBVH_double' = None  # type: ignore
     _resbvh: 'hg.SphereBVH_double' = None  # type: ignore
     hydro: bool = False
@@ -166,11 +166,11 @@ class Body:
         return self.atoms is other.atoms and np.allclose(self.pos, other.pos)
 
     def hasclash(self, other=None, radius: float = 2, **kw) -> bool:
-        result = _bvh_binary_operation(hg.bvh_isect, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_isect', self, other, radius=radius, **kw)
         return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
-        result = _bvh_binary_operation(hg.bvh_count_pairs, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_count_pairs', self, other, radius=radius, **kw)
         return ipd.cast(int, result)
 
     def contacts(self, other=None, radius: float = 4, **kw) -> 'BodyContacts':
@@ -178,7 +178,7 @@ class Body:
 
     def slide_into_contact(self, other, along: ipd.Vec = (1, 0, 0), radius=3.0) -> 'Body':
         kwpos = self._get_pos_otherpos(other)
-        delta = _bvh_binary_operation(hg.bvh_slide_vec, self, other, rad=radius, dirn=along, **kwpos)
+        delta = _bvh_binary_operation('bvh_slide_vec', self, other, rad=radius, dirn=along, **kwpos)
         delta = np.min(delta)
         return self.movedby((delta - np.sign(delta) * radius) * np.array(along))
 
@@ -244,16 +244,15 @@ class Body:
         return copy.copy(self)
 
 @ipd.dev.holds_metadata
-@ipd.mutablestruct
-class SymBody:
+@ipd.dc.dataclass
+class SymBody(ipd.dev.HoldsMetadata):
     asu: Body
     frames: np.ndarray = ipd.field(lambda: np.eye(4)[None])
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
     bodies = property(lambda self: [self.asu.movedby(self.pos @ f) for f in self.frames])
     positioned_atoms = property(
         lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
-    positioned_atomslist = property(
-        lambda self: h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms))
+    positioned_atomslist = property(lambda self: h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms))
     com = property(lambda self: h.xform(self.pos, self.frames, self.asu.com).mean(0))
     centered = property(lambda self: self.movedby(-self.com))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
@@ -290,19 +289,23 @@ class SymBody:
 
     def hasclash(self, other: 'Body|SymBody|None' = None, radius: float = 2, **kw) -> bool:
         kw |= self._get_pos_otherpos(other)
-        result = _bvh_binary_operation(hg.bvh_isect_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_isect_vec', self, other, radius=radius, **kw)
         return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
         kw |= self._get_pos_otherpos(other)
-        result = _bvh_binary_operation(hg.bvh_count_pairs_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_count_pairs_vec', self, other, radius=radius, **kw)
         return ipd.cast(int, result)
 
-    def contacts(self, other=None, radius: float = 4, exclude: list[int] = (), **kw) -> 'BodyContacts':
-        if not isinstance(exclude, ipd.Iterable): exclude = [exclude]
+    def contacts(self,
+                 other=None,
+                 radius: float = 4,
+                 exclude: list[int] | int | None = None,
+                 **kw) -> 'BodyContacts':
+        if not isinstance(exclude, ipd.Iterable): exclude = [ipd.cast(int, exclude)]
         kw |= self._get_pos_otherpos(other, exclude=exclude)
-        result = _bvh_binary_operation(hg.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
-        p, r = ipd.cast(tuple[np.ndarray, np.ndarray], result)
+        result = _bvh_binary_operation('bvh_collect_pairs_vec', self, other, radius=radius, **kw)
+        p, r = ipd.cast(tuple[ipd.NDArray_N2_int32, ipd.NDArray_MN2_int32], result)
         return BodyContacts(self, other or self, p, r, exclude)
 
     def subunit_contacts(self, subunit=0, radius=5):
@@ -325,7 +328,7 @@ class SymBody:
 
     @property
     def coord(self):
-        return h.xform(self.pos, self.frames, self.atoms.coord)
+        return h.xform(self.pos, self.frames, self.asu.positioned_atoms)
 
     def movedby(self, xform):
         return self.movedto(xform, moveby=True)
@@ -396,9 +399,9 @@ class SymBody:
         ipd.atom.dump(atoms, fname, **kw)
 
 def _bvh_binary_operation(
-    op,
-    this,
-    other=None,
+    op: str,
+    this: Body | SymBody,
+    other: Body | SymBody | None = None,
     bvh=None,
     otherbvh=None,
     pos=None,
@@ -413,16 +416,16 @@ def _bvh_binary_operation(
     pos = this.pos if pos is None else pos
     otherpos = other.pos if otherpos is None else otherpos
     npos, nother = 1, 1
-    if op.__name__.endswith('_vec'):
+    if op.endswith('_vec'):
         pos, otherpos = pos.reshape(-1, 4, 4), otherpos.reshape(-1, 4, 4)
         npos, nother = len(pos), len(otherpos)
         pos = np.repeat(pos, nother, axis=0)
         otherpos = np.tile(otherpos, (npos, 1, 1))
     # ipd.icv(op, pos.shape, otherpos.shape)
     extra = kw.values()
-    if debug: ipd.icv(op, otherpos.shape)
-    result = op(bvh, otherbvh, pos, otherpos, *extra)
-    if op.__name__.endswith('_vec'):
+    if debug: print(op, otherpos.shape)
+    result = getattr(hg, op)(bvh, otherbvh, pos, otherpos, *extra)
+    if op.endswith('_vec'):
         if isinstance(result, tuple):
             val, ranges = result
             result = val, ranges.reshape(npos, nother, *ranges.shape[1:])

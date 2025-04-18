@@ -72,6 +72,7 @@ See Also:
 - `pytest.mark` – Markers for controlling pytest test execution.
 
 """
+import contextlib
 import copy
 import dis
 import re
@@ -420,7 +421,7 @@ def visit(data, func) -> None:
 def shallow_copy(obj):
     origcopy = getattr(obj.__class__, '__copy__', None)
     try:
-        if hasattr(obj.__class__, '__copy__'):
+        with contextlib.suppress(AttributeError):
             delattr(obj.__class__, '__copy__')
         return copy.copy(obj)
     finally:

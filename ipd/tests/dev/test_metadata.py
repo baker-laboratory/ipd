@@ -41,7 +41,7 @@ def test_sync_metadata():
 def test_metadata_decorator__init__():
 
     @ipd.dev.holds_metadata
-    class Foo:
+    class Foo(ipd.dev.HoldsMetadata):
 
         def __init__(self, a, b):
             self.a, self.b = a, b
@@ -51,15 +51,15 @@ def test_metadata_decorator__init__():
     assert obj.a == 1 and obj.b == 2
 
     with pytest.raises(TypeError):
-        obj = Foo(1, b=2, c=3)
-    obj = Foo(1, b=2, _c=3)
+        obj = Foo(1, b=2, c=3) # type:ignore
+    obj = Foo(1, b=2, _c=3) #type:ignore
     assert obj.a == 1 and obj.b == 2
     assert obj.get_metadata() == {'c': 3}
 
 def test_metadata_decorator():
 
     @ipd.dev.holds_metadata
-    class Foo:
+    class Foo(ipd.dev.HoldsMetadata):
         pass
 
     obj = Foo()
@@ -77,7 +77,7 @@ def test_metadata_decorator():
 def test_metadata_copy():
 
     @ipd.dev.holds_metadata
-    class Foo:
+    class Foo(ipd.dev.HoldsMetadata):
         pass
 
     a = Foo()
@@ -94,7 +94,7 @@ def test_doctest_issue():
 
     obj = Example()
     ipd.dev.set_metadata(obj, {'key': 'value'})  # doctest:+SKIP
-    assert isinstance(obj.__ipd_metadata__, ipd.Bunch)
+    assert isinstance(obj.__ipd_metadata__, ipd.Bunch) # type:ignore
     assert 'value' == ipd.dev.get_metadata(obj).key
     obj2 = Example()
     assert ipd.Bunch() == ipd.dev.get_metadata(obj2)

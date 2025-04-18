@@ -118,6 +118,15 @@ def test_fragment_contact():
             assert tot <= prev + 0.001
             prev = tot
 
+def test_fragment_contact_argsort():
+    contacts = np.random.rand(3, 20, 20)
+    contacts += contacts.swapaxes(1, 2)
+    mat = ipd.homog.ContactBlockMatrix(contacts)
+    frag_contacts = mat.fragment_contact(10)
+    idx = np.argsort(frag_contacts.flat)[:5]
+    top_k_frag_starts = np.unravel_index(idx, frag_contacts.shape)
+    assert len(top_k_frag_starts) == 3
+
 def test_topk_fragment_contact_by_subset_summary():
     with ipd.dev.temporary_random_seed(0):
         contacts = np.random.rand(4, 1000, 1000) * 2

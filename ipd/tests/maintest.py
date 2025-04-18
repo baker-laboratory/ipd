@@ -1,3 +1,4 @@
+import functools
 import copy
 import typing
 import tempfile
@@ -154,14 +155,16 @@ def make_parametrized_tests(namespace: ipd.MutableMapping,
         def run_convert(arg, kw=kw):
             return ipd.kwcall(kw, convert, arg)
 
-        processed = run_convert(arg)
+        @functools.cache
+        def processed(arg=arg):
+            return run_convert(arg)
 
         for k, func in list(namespace.items()):
             if k.startswith(prefix):
                 name = k[prefix.find('test_'):]
 
                 def testfunc(arg=arg, func=func, processed=processed, kw=kw):
-                    return ipd.kwcall(kw, func, copy.copy(processed))
+                    return ipd.kwcall(kw, func, copy.copy(processed()))
 
                 # c = ipd.dev.timed(lambda arg, kw=kw: ipd.kwcall(kw, convert, arg), name=f'{name}_setup')
                 # testfunc = lambda func=func, arg=arg, c=c, kw=kw: ipd.kwcall(kw, func, c(arg))

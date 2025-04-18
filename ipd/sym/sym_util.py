@@ -60,7 +60,6 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
 
         for e in range(3):
             loss = lbfgs.step(closure)
-            ipd.icv(loss)
 
         Q0 = Q0.detach()
         T0 = T0.detach()

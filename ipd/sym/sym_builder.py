@@ -35,7 +35,7 @@ def get_component_syminfo(fname, atoms, tol, **kw):
         print('   ', j.symelem)
     return sinfo
 
-def build_from_components_abbas(files, output, tol=0.1, **kw):
+def build_from_components_abbas(files, output=None, tol=0.1, **kw):
     """
     this is currently bespoke for a case abbas had... would like to make more general
     """
@@ -46,7 +46,7 @@ def build_from_components_abbas(files, output, tol=0.1, **kw):
     if rms > tol.rms_fit: return None
     for i, a2 in enumerate(atoms2):
         atoms2[i].coord = h.xform(xfit, a2.coord)
-        atoms2[i].chain_id[:] = 'ABCDEFGHIJK'[i + len(atoms1)]
+        atoms2[i].chain_id[:] = 'ABCDEFGHIJK'[i + len(atoms1)] # type:ignore
 
     sinfo1 = get_component_syminfo(fname1, atoms1, tol=tol, **kw)
     sinfo2 = get_component_syminfo(fname2, atoms2, tol=tol, **kw)
@@ -73,11 +73,13 @@ def build_from_components_abbas(files, output, tol=0.1, **kw):
         ]).swapaxes(0, 1))
     joint = h.xform(x, joint)
 
-    print('dumping to:', output)
-    output, ext = output.rsplit('.', 1)
-    ipd.atom.dump(joint, f'{output}_components.{ext}')
-    sym = ipd.atom.SymBody(joint[joint.chain_id == 'A'], ipd.sym.frames('I'))
-    sym.dump(f'{output}_icos.{ext}')
+    if output:
+        print('dumping to:', output)
+        output, ext = output.rsplit('.', 1)
+        ipd.atom.dump(joint, f'{output}_components.{ext}')
+        asu = ipd.atom.Body(joint[joint.chain_id == 'A'])
+        sym = ipd.atom.SymBody(asu, ipd.sym.frames('I'))
+        sym.dump(f'{output}_icos.{ext}')
 
     return joint
 

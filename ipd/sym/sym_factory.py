@@ -31,7 +31,7 @@ def get_default_sym_manager():
 def set_default_sym_manager(kind):
     """Set the default symmetry manager."""
     global _default_sym_manager
-    print('SET_DEFAULT_SYM_MANAGER', kind, flush=True)
+    # print('SET_DEFAULT_SYM_MANAGER', kind, flush=True)
     _default_sym_manager = kind
     # ipd.icv('set_default_sym_manager', kind, _default_sym_manager)
 

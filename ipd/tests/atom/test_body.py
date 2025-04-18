@@ -4,24 +4,24 @@ import pytest
 
 bs = pytest.importorskip('biotite.structure')
 hg = pytest.importorskip('hgeom')
+import evn
 
 import ipd
 import ipd.homog.hgeom as h
 
-
-config_test = ipd.Bunch(
+config_test = evn.Bunch(
     re_only=[],
-    re_exclude=['test_symbody'],
+    # re_exclude=['test_symbody'],
 )
 BODY_TEST_PDBS = ['1qys']
 # BODY_TEST_PDBS = ['2tbv']
 SYMBODY_TEST_PDBS = ['1dxh', '1wa3', '6u9d', '3sne', '1n0e', '1a2n', '1n0e', '1bfr', '1g5q']
 
 def main():
-    ipd.tests.maintest(
+    evn.testing.quicktest(
         namespace=globals(),
         config=config_test,
-        verbose=1,
+        # debug=1,
         check_xfail=False,
         # dryrun=True,
     )
@@ -90,7 +90,8 @@ def helper_test_body_contacts(body):
     for i, j in contacts.pairs:
         assert 5 > h.norm(kissing[i] - body[j])
 
-def helper_test_symbody_slide(symbody):
+def test_symbody_slide():
+    symbody = ipd.atom.symbody_from_file('1wa3', assembly='largest')
     top7 = ipd.atom.body_from_file('1qys').centered
     symbody = symbody.centered
     for body1, body2 in ipd.it.combinations([symbody, top7], 2):
@@ -157,18 +158,18 @@ def helper_test_symbody_contact_scan(symbody):
     for subs, idx in topk.index.items():
         print(subs, idx[:, :4], topk.vals[subs][:4])
 
-ipd.tests.make_parametrized_tests(
-    globals(),
-    'helper_test_body_',
-    BODY_TEST_PDBS,
-    ipd.atom.body_from_file,
+evn.testing.make_parametrized_tests(
+    namespace=globals(),
+    args=BODY_TEST_PDBS,
+    prefix='helper_test_body_',
+    make_testdata=ipd.atom.body_from_file,
 )
 
-ipd.tests.make_parametrized_tests(
-    globals(),
-    'helper_test_symbody_',
-    SYMBODY_TEST_PDBS,
-    ipd.atom.symbody_from_file,
+evn.testing.make_parametrized_tests(
+    namespace=globals(),
+    args=SYMBODY_TEST_PDBS,
+    prefix='helper_test_symbody_',
+    make_testdata=ipd.atom.symbody_from_file,
     components='largest_assembly',
     strict=True,
 )

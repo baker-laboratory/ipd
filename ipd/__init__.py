@@ -112,7 +112,7 @@ from ipd.dev.metadata import get_metadata as get_metadata, set_metadata as set_m
 from ipd.dev.functional import map as map, visit as visit
 from ipd.dev.format import print_table as print_table, print as print
 from ipd.bunch import Bunch as Bunch, bunchify as bunchify, unbunchify as unbunchify
-from ipd.observer import hub as hub
+from ipd.observer import hub as hub, Observer as Observer
 from ipd.dev.tolerances import Tolerances as Tolerances
 from ipd.dev.iterables import first as first
 from ipd.dev.contexts import stdio as stdio, catch_em_all as catch_em_all
