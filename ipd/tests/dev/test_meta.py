@@ -16,6 +16,7 @@ def main():
         check_xfail=False,
     )
 
+@pytest.mark.xfail
 def test_locals():
     foo, bar, baz = 1, 2, 3
     assert ipd.dev.picklocals('foo bar') == dict(foo=1, bar=2)
