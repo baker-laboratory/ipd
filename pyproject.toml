@@ -7,7 +7,7 @@ allow-direct-references = true
 
 [project]
 name = 'ipd'
-version = '0.3.9'
+version = '0.3.10'
 requires-python = '>=3.9' # for woodys old pipeline stuff
 dependencies = [
     'assertpy',
@@ -15,7 +15,7 @@ dependencies = [
     'biotite; python_version<"3.10"',
     'colorlog',
     'compact-json',
-    'evn>=0.7.3',
+    'evn>=0.7.5',
     'gitpython',
     'hgeom>=2.0.5',
     'httpx>=0.20',
@@ -86,20 +86,20 @@ docs = [
     'urllib3>2',
 ]
 dev = [
+    # 'pytest-benchmark',
+    'basedpyright',
     'debugpy',
-    'hypothesis[numpy]',
-    'pytest',
-    'pytest-xdist',
+    'evn[dev]>=0.7.5',
     'gitpython',
+    'hypothesis[numpy]',
     'jinja2',
     'nox',
     'packaging',
-    'pytest-xdist',
-    'pytest-sugar',
+    'pytest',
     'pytest-cov',
-    # 'pytest-benchmark',
     'pytest-dotenv',
-    'basedpyright',
+    'pytest-sugar',
+    'pytest-xdist',
     'ruff',
     'validate-pyproject[all]',
     'yapf',
