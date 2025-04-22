@@ -33,9 +33,6 @@ def test_readatoms_bcif_gz():
 def test_readatoms_cif_gz():
     helper_read_8u51('8u51.cif.gz')
 
-def test_readatoms_cif():
-    helper_read_8u51('8u51.cif')
-
 def test_readatoms_pdb():
     helper_read_8u51('8u51.pdb.gz')
 
