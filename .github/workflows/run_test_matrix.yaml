@@ -8,12 +8,12 @@ on:
 
 jobs:
   nox:
-    name: Run Nox - Python ${{ matrix.python }} on ${{ matrix.os }} (extra=${{ matrix.extra }})
-    runs-on: ${{ matrix.runs-on }}
+    name: Run Nox - Python ${{ matrix.python }} on ${{ matrix.platform }} (extra=${{ matrix.extra }})
+    runs-on: ${{ matrix.platform }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ linux-intel, linux-arm, macOS-arm ]
+        platform: [ubuntu-latest, macos-latest]
         python: [3.10, 3.11, 3.12, 3.13]
         extra: ["", "all"]
     steps:
