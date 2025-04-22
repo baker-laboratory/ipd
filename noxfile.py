@@ -17,7 +17,7 @@ def test_matrix(session, extra):
     session.install(f'.[dev,{extra}]' if extra else '.[dev]')
     args = ['pytest']
     if nproc > 0: args.append('-n2')
-    if session.python >= '3.12' and extra == 'all':
+    if session.python >= '3.12' and extra == 'all' and sys.platform != "darwin":
         args.append('--doctest-modules')
     args.extend([
          '-m', 'not noci', '--ignore', 'ipd/tests/homog/test_hgeom_library.py', '--ignore', 'ipd/cuda', '--ignore', 'ipd/tests/cuda'
