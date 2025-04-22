@@ -8,6 +8,7 @@ bio = pytest.importorskip('biotite')
 def main():
     ipd.tests.maintest(namespace=globals())
 
+@pytest.mark.noci
 def test_build_from_components_abbas():
     fnames = [
         ipd.dev.package_testdata_path('pdb/L2_D1_C3_Apo.pdb'),

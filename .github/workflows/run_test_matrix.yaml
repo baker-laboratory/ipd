@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ linux-intel, linux-arm, macOS-arm ]
         python: [3.10, 3.11, 3.12, 3.13]
         extra: ["", "all"]
     steps:
