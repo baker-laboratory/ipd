@@ -27,6 +27,12 @@ extensions = [
     # 'sphinx_gallery.gen_gallery',  # For example galleries like Biotite
 ]
 
+autodoc_mock_imports = [
+    "ipd.cuda",
+    "ipd.cython",
+    "ipd/tests",
+]
+
 # -- HTML Theme Configuration ------------------------------------------------
 pygments_style = 'sphinx'
 
