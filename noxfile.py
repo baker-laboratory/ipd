@@ -16,7 +16,7 @@ def test_matrix(session, extra):
         session.skip(f"Skipping {session.python}/{extra}, not in posargs {args}")
     session.install(f'.[dev,{extra}]' if extra else '.[dev]')
     args = ['pytest']
-    if nproc > 0: args.append('-n2')
+    # if nproc > 0: args.append('-n2')
     if session.python >= '3.12' and extra == 'all':
         args.append('--doctest-modules')
     args.extend([
