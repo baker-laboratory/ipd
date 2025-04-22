@@ -8,8 +8,8 @@ on:
 
 jobs:
   nox:
-    name: Run Nox - Python ${{ matrix.python }} on ${{ matrix.platform }} (extra=${{ matrix.extra }})
-    runs-on: ${{ matrix.platform }}
+    name: Run Nox - Python ${{ matrix.python }} on ${{ matrix.os }} (extra=${{ matrix.extra }})
+    runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
