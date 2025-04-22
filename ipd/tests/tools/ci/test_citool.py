@@ -24,7 +24,7 @@ def runipd(cmd):
     assert result.exit_code == 0
     return result.stdout
 
-@pytest.mark.ci
+@pytest.mark.noci
 def test_citool_update_library():
     runipd('ci update_library')
 
