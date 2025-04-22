@@ -188,3 +188,4 @@ junit*.xml
 
 _autosummary
 _apidoc
+package-lock.json

@@ -44,7 +44,7 @@ repos:
     rev: 1.0.0
     hooks:
       - id: pytest
-        additional_dependencies: ['evn', 'typing_extensions', 'hypothesis', 'numpy', 'pytest-xdist', 'jinja2', 'icecream','rapidfuzz','yapf', 'rich', 'toolz', 'pyyaml', 'tomli', 'assertpy', 'opt_einsum', 'requests', 'requests_cache','hgeom', 'RestrictedPython']
+        additional_dependencies: ['evn', 'typing_extensions', 'hypothesis', 'numpy', 'pytest-xdist', 'jinja2', 'icecream','rapidfuzz','yapf', 'rich', 'toolz', 'pyyaml', 'tomli', 'assertpy', 'opt_einsum', 'requests', 'requests_cache','hgeom', 'RestrictedPython', 'evn>=0.7.5']
         args: [-n,auto,--config-file,pyproject.toml,-k,'not slow',ipd/tests,--ignore=ipd/tests/homog/test_hgeom_library.py,--ignore=ipd/tests/_prelude/test_import_util.py]
         pass_filenames: false
         always_run: true
