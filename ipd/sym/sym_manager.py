@@ -179,15 +179,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         SCALAR = (bool, int, float)
         if any([not self, key in self.skip_keys, thing is None, isinstance(thing, SCALAR)]): return thing
         self.verify_index(thing)
-        try:
-            adaptor = self.sym_adapt(thing, isasym=isasym)
-        except NotImplementedError as e:
-            try:
-                print(f'Cannot symmetrize {type(thing)}, doing ugly hack')
-                from rf_diffusion.sym.sym_indep import SymAdaptDFChiralsIdxAtomFrames
-                adaptor = SymAdaptDFChiralsIdxAtomFrames(thing, self, isasym)
-            except ImportError:
-                raise e from None
+        adaptor = self.sym_adapt(thing, isasym=isasym)
         kw = self.opt.to_bunch().sub(kind=adaptor.kind, debug=debug, **kw)
 
         if debug:
@@ -535,7 +527,15 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def sym_adapt(self, thing, isasym=None) -> 'ipd.sym.sym_adapt.SymAdapt':
         """Return a SymAdapt object with metadata about the symmetry of the
         thing."""
-        return ipd.sym.sym_adapt._sym_adapt(thing, self, isasym)
+        try:
+            return ipd.sym.sym_adapt._sym_adapt(thing, self, isasym)
+        except NotImplementedError as e:
+            try:
+                print(f'Cannot symmetrize {type(thing)}, doing ugly hack')
+                from rf_diffusion.sym.sym_indep import SymAdaptDFChiralsIdxAtomFrames
+                return SymAdaptDFChiralsIdxAtomFrames(thing, self, isasym)
+            except ImportError:
+                raise e from None
 
     @property
     def is_dummy_sym(self) -> bool:
