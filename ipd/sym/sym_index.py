@@ -44,6 +44,9 @@ class SymIndex:
         kind              (Tensor): residue kind, where 0 is 'standard'
     """
 
+    def __bool__(self):
+        return self.nsub > 0
+
     def __init__(self, nsub: int, slices, debug=False):
         '''
         Args:
@@ -51,6 +54,7 @@ class SymIndex:
             slices: a list of slices
         '''
         self.nsub = nsub
+        if nsub <= 0: return
         self.orig_input = slices
         if isinstance(slices, int): slices = [slices]
         self.slices = [SymSlice.make_symslice(s) for s in slices]

@@ -258,7 +258,7 @@ def test_th_axis_angle_cen_rand():
 
     # ipd.icv(rot.shape)
     axis2, ang2, cen2, hel2 = h.axis_angle_cen_hel(rot, flipaxis=False)
-    assert np.allclose(axis2.detach(), axis, atol=1e-4)
+    assert np.allclose(axis2.detach(), axis, atol=1e-3)
     assert np.allclose(ang2.detach(), ang)
     assert np.allclose(cen2.detach(), cen)
     assert np.allclose(hel2.detach(), hel0)

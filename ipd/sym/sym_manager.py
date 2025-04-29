@@ -2,11 +2,13 @@ from abc import ABC, abstractmethod
 import collections
 import contextlib
 import copy
+import dataclasses
 import itertools
 import random
 from typing_extensions import TypeVar
 
 import numpy as np
+import evn
 
 import ipd
 from ipd.sym.sym_adapt import SymAdapt
@@ -21,10 +23,15 @@ from ipd.sym.sym_index import SymIndex
 T = TypeVar('T')
 XYZPair = collections.namedtuple('XYZPair', 'xyz pair')
 
+evn.chronometer.report_name_replace['.sym_manager'] = ''
+
 class XYZPairUnsupportedError(Exception):
     pass
 
-@ipd.mutablestruct
+null_sym_index = SymIndex(0,0)
+null_sym_kind = SymKind(ShapeKind(0), ValueKind(0))
+
+@dataclasses.dataclass(init=False)
 class SymmetryManager(ABC, metaclass=MetaSymManager):
     """Abstract base class for managing symmetry operations in the IPD framework.
 
@@ -90,7 +97,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     L: int
     _idx: SymIndex
     kind: str = 'base'
-    _frames: ipd.FramesN44 = None
+    _frames: ipd.FramesN44 = None#ipd.framesNone()
     SymIndexType: type[SymIndex] = SymIndex
 
     def __init__(self, conf, opt, symid=None, device=None, **kw) -> None:
@@ -101,9 +108,8 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         # self.opt.symid =symid or self.opt.symid
         self.device = device or ('cuda' if th.cuda.is_available() else 'cpu')
         self.skip_keys = set()
-        self._idx = None
+        self._idx = null_sym_index
         self._post_init_args = ipd.dev.Bunch(kw)
-        self._frames = None
         self.x2local = self.x2global = self.xasuinit = th.eye(4, device=self.device)
         self.add_properties()
         self.init(**kw)
@@ -155,12 +161,13 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
                     name = name[1:]
                 setattr(self.__class__, prop, makeprop(location, name))
 
+    @evn.chrono
     def __call__(
         self,
         thing: T,
-        key: str = None,
-        isasym: bool = None,
-        kind: SymKind = None,
+        key: str = '',
+        isasym: bool|None = None,
+        kind: SymKind = null_sym_kind,
         debug: bool = False,
         **kw,
     ) -> T:
@@ -219,6 +226,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
         return self.mark_symmetrical(result)
 
+    @evn.chrono
     def apply_symmetry_xyz_maybe_pair(self, xyz, pair=None, origxyz=None, **kw):
         # assert len(xyz) == self.L, f'bad length {xyz.shape}, expected {self.L}'
         xyz = self.apply_symmetry(xyz, pair=pair, opts=ipd.dev.Bunch(kw, _strict=False), **kw)
@@ -227,6 +235,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         if len(xyz) == 1: xyz = xyz[0]
         return xyz if pair is None else XYZPair(xyz, pair)
 
+    @evn.chrono
     def apply_sym_slices_xyzpair(self, xyzadaptor, pairadaptor, matchpair=False, **kw):
         kw = ipd.dev.Bunch(kw)
         origxyz, xyz, kw['Lasu'] = self.to_contiguous(xyzadaptor, matchpair=matchpair, **kw)
@@ -266,6 +275,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             result = self.move_unsym_to_match_asu(adapted, result)
         return result
 
+    @evn.chrono
     def apply_symmetry_pair(self, pair: 'th.Tensor', **kw) -> 'th.Tensor':
         if not self.opt.symmetrize_repeats and not self.opt.sympair_enabled:
             return pair
@@ -300,6 +310,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
         return pair
 
+    @evn.chrono
     def apply_symmetry_index(self, idx: T, val: T, isidx, **kw) -> T:
         """handles index data types where values must be reindexed in context of the symmetric object"""
         ipd.icv(self.symid, self.nsub, idx, val, isidx)
@@ -322,6 +333,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         assert 0
         return new
 
+    @evn.chrono
     def apply_symmetry_scalar(self, shapekind: ShapeKind, contig: 'th.Tensor', **kw) -> 'th.Tensor':
         N = len(contig) // self.nsub
         if shapekind == ShapeKind.ONEDIM:
@@ -335,6 +347,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             # contig[i * N:(i + 1) * N, (i + 1) * N:(i + 2) * N] = contig[:N, N:2 * N]
         return contig
 
+    @evn.chrono
     def move_unsym_to_match_asu(self, orig, moved, move_all_nonprot=False):
         if not self.opt.move_unsym_with_asu: return moved
         tomove = self.munsym | (self.mnonprot if move_all_nonprot else False)
@@ -362,6 +375,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
                 assert rms < 1e-3
         return moved
 
+    @evn.chrono
     def to_contiguous(self,
                       thing,
                       matchpair=False,
@@ -389,6 +403,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
             return adapted, adapted[idx[:, 0], idx[:, 1]].reshape(shape), self.Nasu
         raise ValueError(f'SymManager.to_contiguous: unknown thing {type(thing)}')
 
+    @evn.chrono
     def fill_from_contiguous(self,
                              thing,
                              orig,
@@ -460,9 +475,11 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
 
         raise ValueError(f'SymManager.extract: unknown thing {thing.kind}')
 
+    @evn.chrono
     def asym(self, thing: T, **kw) -> T:
         return self.extract(thing, self.masym, asym=True, **kw)
 
+    @evn.chrono
     def asu(self, thing: T, **kw) -> T:
         return self.extract(thing, self.masu, asu=True, **kw)
 
@@ -527,6 +544,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
     def verify_index(self, thing):
         assert self._idx, 'SymmetryManager.idx is not set'
 
+    @evn.chrono
     def sym_adapt(self, thing, isasym=None) -> 'ipd.sym.sym_adapt.SymAdapt':
         """Return a SymAdapt object with metadata about the symmetry of the
         thing."""
@@ -561,6 +579,7 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         self.opt.symmsub = None
         self._idx = None
 
+    @evn.chrono
     def is_on_symaxis(self, xyz):
         if len(xyz) == 0: return None
         onaxis = th.zeros(len(xyz), dtype=bool)

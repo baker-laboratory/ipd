@@ -136,9 +136,9 @@ def run_pytest(
     sel = f'-k "{sel}"' if sel else ''
     par = '' if parallel == 1 else f'-n {parallel}'
     if cmdonly:
-        cmd = f'cd TESTDIR && {env} PYTHONPATH=. EXE {mark} {sel} {dry} {par} {flags} {stee} {log}'
+        cmd = f'cd TESTDIR && {env} PYTHONPATH=.:$PYTHONPATH EXE {mark} {sel} {dry} {par} {flags} {stee} {log}'
         return ipd.dev.strip_duplicate_spaces(cmd)
-    cmd = f'cd {testdir} && {env} PYTHONPATH=. {exe} {mark} {sel} {dry} {par} {flags} {stee} {log}'
+    cmd = f'cd {testdir} && {env} PYTHONPATH=.:$PYTHONPATH {exe} {mark} {sel} {dry} {par} {flags} {stee} {log}'
     cmd = ipd.dev.strip_duplicate_spaces(cmd)
     print(f'running: {cmd}')
     if os.path.exists(log): os.remove(log)

@@ -9,10 +9,6 @@ import evn
 import ipd
 import ipd.homog.hgeom as h
 
-config_test = evn.Bunch(
-    re_only=[],
-    # re_exclude=['test_symbody'],
-)
 BODY_TEST_PDBS = ['1qys']
 # BODY_TEST_PDBS = ['2tbv']
 SYMBODY_TEST_PDBS = ['1dxh', '1wa3', '6u9d', '3sne', '1n0e', '1a2n', '1n0e', '1bfr', '1g5q']
@@ -20,11 +16,10 @@ SYMBODY_TEST_PDBS = ['1dxh', '1wa3', '6u9d', '3sne', '1n0e', '1a2n', '1n0e', '1b
 def main():
     evn.testing.quicktest(
         namespace=globals(),
-        config=config_test,
         # debug=1,
         check_xfail=False,
         # dryrun=True,
-    )
+        re_only=['test_symbody_positioned_atoms.*'])
 
 def _celllist_nclash(cell_list, other, radius: float = 3) -> int:
     nclash = 0
@@ -89,6 +84,10 @@ def helper_test_body_contacts(body):
     assert len(contacts.ranges) == 1
     for i, j in contacts.pairs:
         assert 5 > h.norm(kissing[i] - body[j])
+
+def helper_test_symbody_positioned_atoms(symbody):
+    symatoms = symbody.positioned_atoms
+    assert np.allclose(symbody[:].reshape(-1,3), symatoms.coord, atol=1e-2)
 
 def test_symbody_slide():
     symbody = ipd.atom.symbody_from_file('1wa3', assembly='largest')

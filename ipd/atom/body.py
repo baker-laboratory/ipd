@@ -349,6 +349,7 @@ class SymBody(ipd.dev.HoldsMetadata):
 
     def __getitem__(self, *slices):
         first, *rest = slices
+        rest = rest or slice(0, None)
         frames = self.frames[first]
         if rest: return h.xformpts(frames, self.asu[rest])
         else: pass

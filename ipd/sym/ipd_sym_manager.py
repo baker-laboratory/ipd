@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 else:
     th = lazyimport('torch')
 
+
+# @dataclasses.dataclass(init=False)
 class IpdSymmetryManager(SymmetryManager):
     """Implements default ipd symmetry operations.
 

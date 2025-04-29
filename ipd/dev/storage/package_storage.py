@@ -179,7 +179,7 @@ def is_pickle_fname(fname):
         >>> is_pickle_fname('data.json')
         False
     """
-    return os.path.basename(fname).count(".pickle") > 0
+    return os.path.basename(fname).count(".pickle") > 0 or fname.endswith((".pickle.gz", ".pickle.xz")) or fname.endswith(".pkl") or fname.endswith(".pkl.gz") or fname.endswith(".pkl.xz")
 
 class open_lzma_cached:
     """Context manager for opening LZMA-compressed files with caching.

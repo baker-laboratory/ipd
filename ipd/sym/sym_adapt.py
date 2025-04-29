@@ -5,7 +5,7 @@ from collections.abc import Mapping, Sequence
 import copy
 from dataclasses import dataclass, is_dataclass
 import dataclasses
-from typing import Any, TypeVar, Generic, TYPE_CHECKING
+from typing import Any, TypeVar, Generic, TYPE_CHECKING, Callable
 
 import numpy as np
 import evn
@@ -31,7 +31,6 @@ def _sym_adapt(thing: Any, sym, isasym=None) -> 'SymAdapt':
 @_sym_adapt.register(type(None))  # type: ignore
 def _(*a, **kw):
     return None
-
 
 @_sym_adapt.register('torch.Tensor')
 def _(tensor, sym, isasym):
@@ -68,7 +67,7 @@ class SymAdapt(ABC, Generic[T]):
     kind: SymKind
     isasym: bool
     adapted: Any
-    __adapts__: type = object
+    __adapts__: type | AdaptTypes | Callable[[Any], bool] = object
 
     def __init_subclass__(cls, **kw):
         if not hasattr(cls, '__adapts__'):
@@ -77,17 +76,17 @@ class SymAdapt(ABC, Generic[T]):
         if cls.__adapts__ is object: return  # base class of some kind
         assert cls.__adapts__ is not None
         if not isinstance(cls.__adapts__, AdaptTypes):
-            cls.__adapts__ = AdaptTypes((cls.__adapts__,))
+            cls.__adapts__ = AdaptTypes((cls.__adapts__, ))
         for adapted_type in cls.__adapts__:
             # print(f'SymAdapt esg {adapted_type}')
             @_sym_adapt.register(adapted_type)
-            def _(thing, sym, isasym=None):
+            def _(thing, sym, isasym: bool | None = None):
                 return cls(thing, sym, isasym)
 
-    def __init__(self, x: T, sym: 'ipd.sym.SymmetryManager', isasym: bool):
+    def __init__(self, x: T, sym: 'ipd.sym.SymmetryManager', isasym: bool | None):
         self.orig = x
         self.sym = sym
-        self.isasym = isasym
+        self.isasym = bool(isasym)
 
     @abstractmethod
     def reconstruct(self, list_of_symmetrized) -> T:
@@ -208,6 +207,7 @@ class SymAdaptDataClass(SymAdapt):
     """
     __adapts__ = is_dataclass
 
+    @evn.chrono
     def __init__(self, dataclass, sym, isasym):
         self.orig = dataclass
         self.sym = sym
@@ -234,6 +234,7 @@ class SymAdaptDataClass(SymAdapt):
         #         print(f'{f.name:15} {[x.shape for x in v]}')
         self.adapted = d
 
+    @evn.chrono
     def reconstruct(self, symparts, **kw):  # type: ignore
         # print(f'SymAdaptDataClass.reconstruct {self.orig.__class__.__name__}')
         for k, v in symparts.items():
@@ -271,6 +272,7 @@ if 'torch' in sys.modules:
 
     class SymAdaptNamedDenseTensor(SymAdapt):
 
+        @evn.chrono
         def __init__(self, tensor, sym, isasym=None):  # sourcery skip: de-morgan
             if not ('L' in tensor.names or 'L1' in tensor.names or 'L2' in tensor.names):
                 self.kind = SymKind(ShapeKind.SCALAR, ValueKind.BASIC)
@@ -313,12 +315,14 @@ if 'torch' in sys.modules:
                 self.adapted = self.perm.rename(None)
             self.adapted = self.adapted.to(sym.device).to(self.orig.dtype)
 
+        @evn.chrono
         def reconstruct(self, x, **kw):  # type: ignore
             return x.rename(*self.perm.names).align_to(*self.orig.names).to(self.orig.device).to(
                 self.orig.dtype).rename(None)
 
     class SymAdaptNamedSparseTensor(SymAdapt):
 
+        @evn.chrono
         def __init__(self, tensor, sym, isasym):
             assert 'Lsparse' in tensor.names
             assert 1 == sum(n.startswith('IdxAll') for n in tensor.names)
@@ -356,6 +360,7 @@ if 'torch' in sys.modules:
             self.adapted.idx = self.adapted.idx.to(sym.device)
             self.adapted.val = self.adapted.val.rename(None).to(sym.device).to(self.orig.dtype)
 
+        @evn.chrono
         def reconstruct(self, x, **kw):  # type: ignore
             # ipd.icv(self.perm.names, self.orig.names)
             x = x.val.rename(*self.perm.names).align_to(*self.orig.names).rename(None)
@@ -365,6 +370,7 @@ if 'torch' in sys.modules:
         """Symmetrizable ndarray."""
         __adapts__ = np.ndarray
 
+        @evn.chrono
         def __init__(self, x, sym, isasym=None):
             """Handles object and str dtypes."""
             self.orig = x
@@ -386,11 +392,13 @@ if 'torch' in sys.modules:
         def kind(self):  # type: ignore
             return SymKind(ShapeKind.ONEDIM, ValueKind.BASIC)
 
+        @evn.chrono
         def reconstruct(self, ary, **kw):  # type: ignore
             return ary
 
     ########## deprecated_SymAdaptTensor is kinda gross and depricated, trying to replace with the NamedTensor variant ###########
 
+    @evn.chrono
     def deprecated_tensor_keydims_to_front(x, keydim):
         if tensor_is_xyz(x):
             undo = [x.shape]
@@ -430,6 +438,7 @@ if 'torch' in sys.modules:
 
     class deprecated_SymAdaptTensor(SymAdapt):
 
+        evn.chrono
         def __init__(self, tensor, sym, isasym=None, idx=None, isidx=None, kind=None, tlib='torch'):
             '''Args:
                 tensor: tensor to symmetrize
@@ -474,6 +483,7 @@ if 'torch' in sys.modules:
             return SymKind(shapekind, valuekind)  # type: ignore
 
         @property
+        @evn.chrono
         def adapted(self):
             'convert to tensor ready for symmetrization'
             if self.idx is not None:
@@ -492,6 +502,7 @@ if 'torch' in sys.modules:
             # adapted.val = adapted.val[self.isidx]
             return adapted
 
+        evn.chrono
         def reconstruct(self, x, asym=False, asu=False, unsym=False, symonly=False):  # type: ignore
             assert asym + asu + unsym <= 1
             if isinstance(x, SimpleSparseTensor):

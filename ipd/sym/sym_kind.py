@@ -2,6 +2,7 @@ import dataclasses
 from enum import Enum
 
 class ShapeKind(Enum):
+    NULL = 0
     SPARSE = 7
     ONEDIM = 13
     TWODIM = 4135667696
@@ -10,6 +11,7 @@ class ShapeKind(Enum):
     SCALAR = 186282
 
 class ValueKind(Enum):
+    NULL = 0
     PAIR = 26
     BASIC = 196883
     XYZ = 163
