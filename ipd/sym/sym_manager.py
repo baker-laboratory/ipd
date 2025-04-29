@@ -178,12 +178,15 @@ class SymmetryManager(ABC, metaclass=MetaSymManager):
         """
         SCALAR = (bool, int, float)
         if any([not self, key in self.skip_keys, thing is None, isinstance(thing, SCALAR)]): return thing
+        if debug:
+            print(f'symmetrizing key: {key} type: {type(thing)} isasym: {isasym}')
+            if hasattr(thing, 'shape'): print('   ', thing.shape)
+
         self.verify_index(thing)
         adaptor = self.sym_adapt(thing, isasym=isasym)
         kw = self.opt.to_bunch().sub(kind=adaptor.kind, debug=debug, **kw)
 
-        if debug:
-            print(f'symmetrizing key: {key} type: {type(thing)} isasym: {isasym} kind: {adaptor.kind}')
+        if debug: print(f'    kind: {adaptor.kind}')
 
         if isinstance(thing, XYZPair):
             xyzadapt, pairadapt = adaptor.adapted

@@ -41,6 +41,11 @@ default_params = dict(
     rand_rot_lig_gp=False,
     recenter_for_diffusion=None,
     recenter_xt_chains_on_px0=None,
+    remote_gp=ipd.Bunch(  # Aiko, added your options here just so there are defaults before conf loaded
+        enabled=False,  # if only this, then it will pick residues that is far to noise
+        num_pick=None,  # number of residue to pick. It can be a range, e.g. [1,3] or an exact number, e.g. 3
+        options=[]  # options for picking remote residues e.g. ["A11", "A52"]
+    ),
     rfsym_enabled=None,
     subsymid=None,
     sym_enabled=True,
