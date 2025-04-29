@@ -9,7 +9,7 @@ else:
     th = lazyimport('torch')
 
 pytest.skip(allow_module_level=True)
-pytest.importorskip('ipd.voxel.voxel_cuda')
+pytest.importorskip('ipd.cuda.voxel.voxel_cuda')
 
 def main():
     test_cudafunc_clash()
@@ -20,7 +20,7 @@ def main():
     print('test_cuda DONE')
 
 def test_cudafunc_clash():
-    func = ipd.dev.cuda.ClashFunc(3, 4)
+    func = ipd.cuda.ClashFunc(3, 4)
     assert func.reference_impl(0) == 1
     assert func.reference_impl(3) == 1
     assert func.reference_impl(3.5) == 0.5
@@ -28,14 +28,14 @@ def test_cudafunc_clash():
     assert func.reference_impl(10) == 0
 
 def test_cudafunc_clash_on_gpu():
-    func = ipd.dev.cuda.ClashFunc(3, 4)
+    func = ipd.cuda.ClashFunc(3, 4)
     dist = th.arange(0, 10.001, 0.5).to('cuda').to(th.float32)
     ref = th.tensor([func.reference_impl(x) for x in dist])
     tst = func(dist)
     assert th.allclose(tst.cpu(), ref)
 
 def test_cudafunc_contact():
-    func = ipd.dev.cuda.ContactFunc()
+    func = ipd.cuda.ContactFunc()
     # for f in th.arange(0,10.01,0.25):
     # print(f'{f}) == {func.reference_impl(f)}')
     assert func.reference_impl(0.0) == 10000.0
@@ -52,7 +52,7 @@ def test_cudafunc_contact():
     assert func.reference_impl(10.0) == 0
 
 def test_cudafunc_contact_10():
-    func = ipd.dev.cuda.ContactFunc(clashscore=10,
+    func = ipd.cuda.ContactFunc(clashscore=10,
                                     contactscore=-1,
                                     clashend=3,
                                     contactbeg=4,
@@ -73,7 +73,7 @@ def test_cudafunc_contact_10():
     assert func.reference_impl(9.25) == 0.00
 
 def test_cudafunc_contact_on_gpu():
-    func = ipd.dev.cuda.ContactFunc()
+    func = ipd.cuda.ContactFunc()
     dist = th.arange(0, 10.001, 0.5).to('cuda').to(th.float32)
     ref = th.tensor([func.reference_impl(x) for x in dist])
     tst = func(dist)

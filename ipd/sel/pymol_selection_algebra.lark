@@ -185,4 +185,3 @@ COMMENT: /#[^\n]*/
 %import common.WS
 %ignore WS
 %ignore COMMENT
-

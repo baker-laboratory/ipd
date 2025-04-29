@@ -60,7 +60,6 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
 
         for e in range(3):
             loss = lbfgs.step(closure)
-            ipd.icv(loss)
 
         Q0 = Q0.detach()
         T0 = T0.detach()
@@ -142,7 +141,7 @@ def get_coords_stack(pdblines):
     chains
     """
     atom_dtype = np.dtype([
-        ("chnid", np.unicode_, 1),  # type: ignore
+        ("chnid", np.str_, 1),
         ("resid", np.int32),
         ("X", np.float64, 3),
     ])

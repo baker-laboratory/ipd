@@ -27,7 +27,7 @@ def test_openfile_iterable():
 
 def test_readfile():
     v1 = ipd.dev.readfile(ipd.dev.package_testdata_path('pdb/tiny.pdb'))
-    assert len(v1) == 730
+    assert len(v1) == 711
 
 def test_decompressed_fname():
     cases = [

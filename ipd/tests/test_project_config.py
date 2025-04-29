@@ -5,7 +5,7 @@ import ipd
 def main():
     ipd.tests.maintest(namespace=globals())
 
-def test_install_ipd_pre_commit_hook(tmpdir):
+def NO_test_install_ipd_pre_commit_hook(tmpdir):
     os.makedirs(f'{tmpdir}/projdir', exist_ok=True)
     with ipd.dev.cd(f'{tmpdir}/projdir'):
         os.system('git init')

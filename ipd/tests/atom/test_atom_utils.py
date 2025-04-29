@@ -125,6 +125,7 @@ def test_remove_nan_atoms(atoms):
     clean = ipd.atom.remove_nan_atoms(atoms)
     assert not np.isnan(clean.coord).any()
 
+@pytest.mark.slow
 def test_centered(atoms):
     centered_atoms = ipd.atom.centered(atoms)
     cen = ipd.atom.bs.mass_center(centered_atoms)

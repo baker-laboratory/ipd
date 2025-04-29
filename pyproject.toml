@@ -1,38 +1,25 @@
 [build-system]
-requires = ['hatchling', 'hatch-cython']
+requires = ['hatchling']
 build-backend = 'hatchling.build'
 
-# [tool.hatch.build.targets.wheel.hooks.cython]
-# sources = ['src/my_package/**/*.pyx']
-# extra_compile_args = ['-O3']
-
-#[tool.hatch.build.targets.wheel]
-#only-include = ['ipd']
-#
-#[tool.hatch.build.targets.wheel.hooks.cython]
-#dependenciees = ['hatch-cython']
-#
 [tool.hatch.metadata]
 allow-direct-references = true
-#
-#[build.targets.wheel.hooks.cython.options.files]
-#targets = ['ipd/cython/dynamic_float_array.pyx']
-#
-# [tool.hatch.build.hooks.custom]
-# path = 'build.py'
 
 [project]
 name = 'ipd'
-version = '0.3.8'
-requires-python = '>=3.9' # for woodys old pipeline stuff
+version = '0.4.8'
+requires-python = '>=3.10'
 dependencies = [
     'assertpy',
+    'biotite>=1.2; python_version>="3.10"',
+    'biotite; python_version<"3.10"',
     'colorlog',
     'compact-json',
-    'evn',
+    'evn>=0.7.8',
     'gitpython',
     'hgeom>=2.0.5',
-    'hydra-core',
+    'httpx>=0.20',
+    'hydra-core>=1.3.2',
     'hypothesis',
     'icecream',
     'lark',
@@ -52,6 +39,7 @@ dependencies = [
     'toolz',
     'pytest',
 ]
+
 [project.optional-dependencies]
 crud = [
     'fastapi',
@@ -66,10 +54,8 @@ tools = [
     'jinja2',
     ]
 ml = [
-    'torch',
+    'torch==2.6.0',
     'pandas',
-    'biotite>1.1; python_version>="3.10"',
-    'biotite; python_version<"3.10"',
     'Bio',
 ]
 docs = [
@@ -87,9 +73,9 @@ docs = [
     'sqlalchemy',
     'sqlmodel',
     'uvicorn>=0.34',
-    'biotite>1.1; python_version>="3.10"',
+    'biotite>=1.2; python_version>="3.10"',
     'biotite; python_version<"3.10"',
-    'torch',
+    'torch==2.6.0',
     'Bio',
     'pandas',
     # 'apidoc',
@@ -100,65 +86,64 @@ docs = [
     'urllib3>2',
 ]
 dev = [
+    # 'pytest-benchmark',
+    'basedpyright',
     'debugpy',
-    'hypothesis[numpy]',
-    'pytest',
-    'pytest-xdist',
+    'evn[dev]>=0.7.8',
     'gitpython',
+    'hypothesis[numpy]',
     'jinja2',
     'nox',
     'packaging',
-    'pytest-xdist',
-    'pytest-sugar',
+    'pytest',
     'pytest-cov',
-    'pytest-benchmark',
     'pytest-dotenv',
-    'basedpyright',
+    'pytest-sugar',
+    'pytest-xdist',
     'ruff',
     'validate-pyproject[all]',
     'yapf',
 ]
 all = [
+    # 'psycopg2',
     'Bio',
-    'biotite>1.1; python_version>="3.10"',
+    'basedpyright',
     'biotite; python_version<"3.10"',
+    'biotite>=1.2; python_version>="3.10"',
     'debugpy',
     'fastapi',
     'gitpython',
+    'hypothesis[numpy]',
     'jinja2',
+    'nox',
+    'packaging',
     'pandas',
     'pdot',
-    # 'psycopg2',
+    'pytest',
+    # 'pytest-benchmark',
+    'pytest-cov',
+    'pytest-dotenv',
+    'pytest-sugar',
+    'pytest-xdist',
+    'ruff',
     'scipy',
     'sqlmodel',
     'submitit',
-    'torch',
+    'torch==2.6.0',
     'uvicorn',
-]
+    'validate-pyproject[all]',
+    'yapf',]
+
 [project.scripts]
 ipd = 'ipd.__main__:main'
 
 [tool.pytest.ini_options]
-minversion = '6.0'
-addopts = '-m "not ci" --disable-warnings --doctest-continue-on-failure'
-ignore = ['ipd/cuda', 'ipd/tests/cuda']
-
-testpaths = [
-    'ipd/tests',
-    'ipd/atom',
-    'ipd/homog',
-    'ipd/sym',
-    'ipd/bunch.py',
-    'ipd/crud',
-    'ipd/dev',
-    'ipd/observer',
-    'ipd/pdb',
-    'ipd/protocol',
-    'ipd/tool',
-]
+minversion = '8.0'
+addopts = '-m "not ci" --disable-warnings --durations=3 --doctest-continue-on-failure --ignore ipd/cuda --ignore ipd/tests/cuda'
+testpaths = ['ipd']
 markers = [
     'slow: marks tests as slow to run',
-    'fast: tests that run in a second or two',
+    'fast: tests that run in a second or two DEPRICATED',
     'ci: tests that should only run in ci',
 ]
 
@@ -181,7 +166,7 @@ arithmetic_precedence_indication = true
 #     # 'ipd/fit/*',
 #     # 'ipd/homog/*',
 #     # 'ipd/pdb/*',
-#     # 'ipd/voxel/*',
+#     # 'ipd.cuda.voxel/*',
 #     # 'ipd/samp/*',
 #     # 'ipd/sym/old/*',
 #     # 'ipd/sym/xtal/*',

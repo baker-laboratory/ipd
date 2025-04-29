@@ -32,4 +32,6 @@ Dependencies:
 from ipd.atom.atom_utils import *
 from ipd.atom.components import *
 from ipd.atom.body import *
+from ipd.atom.frags import *
+from ipd.atom.crops import *
 from ipd.atom.assembly import *

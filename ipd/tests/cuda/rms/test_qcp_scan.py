@@ -12,11 +12,11 @@ else:
 
 import ipd
 
-pytest.importorskip('ipd.fit.qcp_rms_cuda')
+pytest.importorskip('ipd.cuda.rms.qcp_rms_cuda')
 import numpy as np
 
 import ipd.homog.thgeom as h
-from ipd.fit.qcp_rms import _rms
+from ipd.cuda.rms.qcp_rms import _rms
 
 def main():
     test_qcp_scan()
@@ -38,7 +38,7 @@ def test_qcp_scan_partition():
         bb = th.randn((60, 3), dtype=th.float32, device='cuda')
         tgt = th.randn((4, 3), dtype=th.float32, device='cuda')
         lbub = th.tensor([[0, 4]] * 4, dtype=th.int32, device='cuda')
-        idx, rms = ipd.fit.scan_rms_seqpos(bb, tgt, lbub, chainbreak=2, nthread=1)
+        idx, rms = ipd.cuda.rms.scan_rms_seqpos(bb, tgt, lbub, chainbreak=2, nthread=1)
         assert idx.sum() == 6
 
 @ipd.timed
@@ -49,11 +49,11 @@ def test_qcp_bbhetero():
     lbub = th.tensor([[0, nscan]] * 3, dtype=th.int32, device='cuda')
 
     bb = th.stack([bb0[th.randn(60) > 0][:nscan] for i in range(3)])
-    idx, rms = ipd.fit.scan_rms_seqpos(bb, tgt, lbub, rmsout=True)
+    idx, rms = ipd.cuda.rms.scan_rms_seqpos(bb, tgt, lbub, rmsout=True)
     bb = bb.reshape(3 * nscan, 1, 3)
     lbub[1] += nscan
     lbub[2] += 2 * nscan
-    idx2, rms2 = ipd.fit.scan_rms_seqpos(bb, tgt, lbub, rmsout=True)
+    idx2, rms2 = ipd.cuda.rms.scan_rms_seqpos(bb, tgt, lbub, rmsout=True)
     # print(nscan, th.sum(rms > 9e8))
     # rms2[rms == 9e9] = 9e9
     assert th.allclose(rms, rms2, atol=1e-3)
@@ -67,8 +67,8 @@ def helper_test_qcp_scan_cuda(N, Ncyc, natom, i=0, ntgt=0, bbhetero=False):
         bb = th.randn((60 * Ncyc, natom, 3), dtype=th.float32, device='cuda')
         tgt = th.randn((3 * Ncyc, natom, 3), dtype=th.float32, device='cuda')
         lbub = th.tensor([[0, N], [20, 20 + N], [40, 40 + N]], dtype=th.int32, device='cuda')
-        idx, rms = ipd.fit.scan_rms_seqpos(bb, tgt, lbub, rmsout=True, cyclic=Ncyc)
-        idx2, rms2, _ = ipd.fit.qcp_scan_ref(bb, tgt, lbub, rmsout=True, cyclic=Ncyc)
+        idx, rms = ipd.cuda.rms.scan_rms_seqpos(bb, tgt, lbub, rmsout=True, cyclic=Ncyc)
+        idx2, rms2, _ = ipd.cuda.rms.qcp_scan_ref(bb, tgt, lbub, rmsout=True, cyclic=Ncyc)
         rms = rms.reshape(rms2.shape)
         if not th.allclose(rms, rms2, atol=1e-2):
             ipd.icv(th.sum(~th.isclose(rms, rms2)))
@@ -119,7 +119,7 @@ def helper_test_qcpscan_perf(nscan, nres, natom, cyclic, nsamp):
     if nscan**len(lbub) < 1e8:
         with ipd.dev.Timer(verbose=False) as t:
             for isamp in range(nsamp):
-                idx, rms, xfit = ipd.fit.qcp_scan_ref(bb, tgt, lbub, cyclic)
+                idx, rms, xfit = ipd.cuda.rms.qcp_scan_ref(bb, tgt, lbub, cyclic)
         assert all(idx == idx0)  # type: ignore
         assert abs(rms) < 0.001  # type: ignore
         assert th.allclose(xrand[:3, :3], xfit[:3, :3], atol=1e-4)  # type: ignore
@@ -135,7 +135,7 @@ def helper_test_qcpscan_perf(nscan, nres, natom, cyclic, nsamp):
     for threads in [4]:  #range(1, 20):
         with ipd.dev.Timer(verbose=False) as t:
             for isamp in range(nsamp):
-                idx, rms = ipd.fit.scan_rms_seqpos(bb, tgt, lbub, nthread=threads * 32)
+                idx, rms = ipd.cuda.rms.scan_rms_seqpos(bb, tgt, lbub, nthread=threads * 32)
         rate = th.prod(lbub[:, 1] - lbub[:, 0]) / t.elapsed() / 1_000_000 * nsamp
         print(
             f'scan_rms_seqpos cuda {threads*32:3}t {nscan:4}s {nres:2}r {natom:3}a {cyclic:2}c rate {rate:8.3f}M elapsed {t.elapsed()/nsamp:7.3f}'
@@ -151,7 +151,7 @@ def test_qcp_scan_AB():
     for i in range(3, 7):
         pts1 = th.randn((30, 3), dtype=th.float32, device='cuda')
         pts2 = th.randn((i, 3), dtype=th.float32, device='cuda')
-        idx, rms, xfit = ipd.fit.qcp_scan_AB(pts1, pts2, 10)
+        idx, rms, xfit = ipd.cuda.rms.qcp_scan_AB(pts1, pts2, 10)
         assert i // 2 <= sum(10 <= idx) <= (i - i//2)
 
 @ipd.timed
@@ -165,7 +165,7 @@ def helper_test_qcp_scan(ranges):
     pts1 = th.randn((100, 5, 3), dtype=th.float32, device='cuda')
     pts2 = th.randn((len(ranges), 5, 3), dtype=th.float32, device='cuda')
     lbub = th.tensor(ranges, dtype=th.int32, device='cuda')
-    _, scan_rms, _ = ipd.fit.qcp_scan_ref(pts1, pts2, lbub, rmsout=True)
+    _, scan_rms, _ = ipd.cuda.rms.qcp_scan_ref(pts1, pts2, lbub, rmsout=True)
     # return
     # scan_rms = _rms.qcp_scan_ref(pts1, pts2, lbub, False).cpu()
     # ipd.icv(scan_rms)
@@ -222,7 +222,7 @@ def helper_test_qcp_scan(ranges):
     for i in range(10):
         idx = th.tensor([random.randint(0, s - 1) for s in sizes])
         idxlb = idx + lbub[:, 0]
-        rms = ipd.fit.rmsd(pts1[idxlb].reshape(-1, 3), pts2.reshape(-1, 3))
+        rms = ipd.cuda.rms.rmsd(pts1[idxlb].reshape(-1, 3), pts2.reshape(-1, 3))
         assert abs(rms - scan_rms[tuple(idx)]) < 0.001
 
 if __name__ == '__main__':

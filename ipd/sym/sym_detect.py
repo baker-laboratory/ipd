@@ -5,6 +5,8 @@ import ipd
 import ipd.homog.hgeom as h
 
 bs = ipd.lazyimport('biotite.structure')
+if ipd.TYPE_CHECKING:
+    from biotite.structure import AtomArray
 
 def detect(
     thing,  #Union[ipd.Tensor, 'AtomArray', 'Iterable[bs.AtomArray]'],
@@ -50,14 +52,14 @@ def detect(
             atoms = ipd.atom.split(atoms, order)
         elif not order and isinstance(atoms, AtomArray):
             atoms = ipd.atom.split(atoms, bychain=True)
-        if isinstance(atoms, Iterable) and all(isinstance(a, AtomArray) for a in atoms):
-            return syminfo_from_atomslist(atoms, tol=tol, **kw)
+        if isinstance(atoms, Iterable) and isinstance(ipd.first(atoms), AtomArray):
+            return syminfo_from_atomslist(atoms, tol=tol, **kw) # type:ignore
     raise ValueError(f'cant detect symmetry on object {type(thing)} order {order}')
 
 @ipd.subscriptable_for_attributes
-# @ipd.element_wise_operations
-@ipd.struct
-class SymInfo:
+@ipd.element_wise_operations
+@ipd.dc.dataclass
+class SymInfo(ipd.dev.HoldsMetadata):
     """
     Contains information about detected symmetry, returned from `detect`.
 
@@ -96,35 +98,35 @@ class SymInfo:
     components: ipd.atom.Components = None
     asu_components: ipd.atom.Components = None
 
-    guess_symid: str = None
-    has_translation: bool = None
-    is_point: bool = None
-    is_1d: bool = None
-    is_2d: bool = None
-    is_3d: bool = None
+    guess_symid: str = ''
+    has_translation: bool = False
+    is_point: bool = False
+    is_1d: bool = False
+    is_2d: bool = False
+    is_3d: bool = False
     provenance: ipd.Bunch = ipd.field(ipd.Bunch)
 
-    unique_nfold: list = None
-    nfaxis: dict[int, np.ndarray] = None
-    origin: np.ndarray = None
-    toorigin: np.ndarray = None
+    unique_nfold: list = ipd.field(list)
+    nfaxis: dict[int, np.ndarray] = ipd.field(dict)
+    origin: np.ndarray = ipd.npNone()
+    toorigin: np.ndarray = ipd.npNone()
 
     # debug: which tolerances caused rejection of sym
-    axes_dists: np.ndarray = None
-    tolerances: ipd.Tolerances = None
-    tol_checks: dict = None
+    axes_dists: np.ndarray = ipd.npNone()
+    tolerances: ipd.Tolerances | None = None
+    tol_checks: dict = ipd.field(dict)
 
     # if constructed from coords
     rms: np.ndarray = ipd.field(lambda: np.array([0.0]))
-    stub0: np.ndarray = None
+    stub0: np.ndarray = ipd.npNone()
 
     # if is_multichain asu
     asuframes: np.ndarray = ipd.field(lambda: np.eye(4)[None])
-    allframes: np.ndarray = None
+    allframes: np.ndarray = ipd.npNone()
 
     # coords and is_multichain
-    asustub: np.ndarray = None
-    allstub: np.ndarray = None
+    asustub: np.ndarray = ipd.npNone()
+    allstub: np.ndarray = ipd.npNone()
 
     is_cyclic = property(lambda self: self.symid[0] == 'C')
     is_dihedral = property(lambda self: self.symid[0] == 'D')
@@ -188,7 +190,7 @@ symdetect_ideal_tolerances = dict(
     cageang=1e-4,
 )
 
-def syminfo_from_atomslist(atomslist: 'list[biotite.structure.AtomArray]', **kw) -> SymInfo:
+def syminfo_from_atomslist(atomslist: 'list[AtomArray]', **kw) -> SymInfo:
     """
     Generate symmetry information from a list of AtomArrays.
 
@@ -404,8 +406,7 @@ def syminfo_to_str(sinfo, verbose=True):
         rms = sinfo.components.rmsd[sinfo.component].max() if sinfo.components else -1
         seqmatch = sinfo.components.seqmatch[sinfo.component].min() if sinfo.components else -1
         if sinfo.stub0 is not None:
-            rmstable = ipd.dev.make_table([[seqmatch, rms]],
-                                          header=['worst seq match', 'worst rms'])
+            rmstable = ipd.dev.make_table([[seqmatch, rms]], header=['worst seq match', 'worst rms'])
             tables.append([rmstable])
         ipd.dev.print_table(tables, header=['SymInfo'])
     return out.read().rstrip()

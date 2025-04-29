@@ -25,6 +25,3 @@ numpy
 ~~~~~~~~
 You know what this is. (If you don't, you're in the wrong place.) (courtney: I don't know what this is)
 This strange and snarky comment courtesy of github copilot, thank you AI overloards.
-
-
-

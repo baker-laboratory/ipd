@@ -18,28 +18,8 @@ import ipd
 pytestmark = pytest.mark.fast
 
 def main():
-    test_sym_slices()
-    test_unsym()
-    test_sym_pair_samechain()
-    test_sym_pair()
-    test_sym_manager_list_asym()
-    test_sym_manager_list_tensor_asym()
-    test_sym_xyzpair()
-    test_sym_asu_xyz()
-    test_atom_on_axis()
-    test_create_test_sym_manager()
-    test_sym_asu_seq()
-    test_sym_slices()
-    test_sym_manager_fuzz_basic_sym()
-    test_sym_manager_fuzz_fill_from_contiguous()
-    test_sym_manager_contiguous()
-    test_sym_manager_2d_2slice()
-    test_sym_manager_1d_2slice()
-    test_sym_manager_string_2slice()
-    test_sym_manager_string()
-    test_sym_manager_list()
-    test_sym_manager_dict()
-    print('DONE')
+    import evn
+    evn.testing.quicktest(globals())
 
 def test_unsym():
     sym = ipd.tests.sym.create_test_sym_manager(['sym.symid=C3'])
@@ -325,6 +305,7 @@ def test_sym_manager_fuzz_basic_sym(sym):
     assert th.all(msym[idx.asym, idx.asym] == m[idx.asym, idx.asym])
     sym.check(msym)
 
+@pytest.mark.slow
 @hypothesis.settings(deadline=2000, max_examples=10)
 @hypothesis.given(ipd.tests.sym.sym_manager(L=50, maxslice=8))
 def test_sym_manager_fuzz_fill_from_contiguous(sym):

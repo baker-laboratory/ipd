@@ -1,3 +1,4 @@
+import functools
 import sys
 import dataclasses as dc
 # from typing import final
@@ -13,7 +14,12 @@ else:
 mutablestruct = lambda cls: final(dc.dataclass()(cls))
 basemutablestruct = dc.dataclass()
 
+struct = functools.wraps(dc.dataclass)(struct)
+mutablestruct = functools.wraps(dc.dataclass)(mutablestruct)
+basestruct = functools.wraps(dc.dataclass)(basestruct)
+basemutablestruct = functools.wraps(dc.dataclass)(struct)
+
 def field(dfac=dc.MISSING, *a, **kw):
     if dfac and 'default_factory' in kw:
         raise TypeError("default_factory specified twice (as arg0 dfac)")
-    return dc.field(*a, default_factory=dfac, **kw)
+    return dc.field(*a, default_factory=dfac, **kw) # type:ignore

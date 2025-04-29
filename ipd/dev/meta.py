@@ -72,6 +72,7 @@ See Also:
 - `pytest.mark` – Markers for controlling pytest test execution.
 
 """
+import contextlib
 import copy
 import dis
 import re
@@ -116,7 +117,7 @@ def picklocals(name, idx=None):
 
     """
     if sys.version_info.minor < 12:
-        val = inspect.currentframe().f_back.f_back.f_back.f_back.f_locals[name]  # type: ignore
+        val = inspect.currentframe().f_back.f_back.f_back.f_locals[name]  # type: ignore
     else:
         val = inspect.currentframe().f_back.f_back.f_back.f_locals[name]  # type: ignore
     if idx is None:
@@ -378,8 +379,8 @@ def func_params(func, required_only=False):
 
     Example:
     >>> def my_func(a, b, c=1): pass
-    >>> print(func_params(my_func))
-    OrderedDict({'a': <Parameter "a">, 'b': <Parameter "b">, 'c': <Parameter "c=1">})
+    >>> print(list(func_params(my_func).keys()))
+    ['a', 'b', 'c']
 
     >>> print(func_params(my_func, required_only=True))
     {'a': <Parameter "a">, 'b': <Parameter "b">}
@@ -420,7 +421,7 @@ def visit(data, func) -> None:
 def shallow_copy(obj):
     origcopy = getattr(obj.__class__, '__copy__', None)
     try:
-        if hasattr(obj.__class__, '__copy__'):
+        with contextlib.suppress(AttributeError):
             delattr(obj.__class__, '__copy__')
         return copy.copy(obj)
     finally:

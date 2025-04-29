@@ -61,7 +61,7 @@ class TipAtomTarget:
         self.resn = np.asarray(resn)[idx]
         self.tgtres = th.unique(self.ires) if tgtres is None else tgtres
         self.source = source
-        # self.vox = ipd.voxel.Voxel(self.xyz, resl=0.5, func=ipd.dev.cuda.ClashFunc(2.8, 3.3))
+        # self.vox = ipd.cuda.voxel.Voxel(self.xyz, resl=0.5, func=ipd.cuda.ClashFunc(2.8, 3.3))
         self.find_don_acc(clashthresh)
 
     def place_tip_atoms(self, tips, **kw):

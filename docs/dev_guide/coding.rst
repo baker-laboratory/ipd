@@ -47,6 +47,3 @@ All modules, classes, and functions should have docstrings. Use google style, an
             3
         """
         return a + b
-
-
-

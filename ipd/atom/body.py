@@ -52,7 +52,6 @@ import ipd
 import ipd.homog.hgeom as h
 
 if typing.TYPE_CHECKING:
-    from biotite.structure import AtomArray
     import hgeom as hg
 
 hg = ipd.maybeimport('hgeom')
@@ -118,13 +117,14 @@ def symbody_from_file(
     return SymBody(asu, comp.frames[which], _atomslist=atomslist, _assembly_xforms=asmx)
 
 @ipd.dev.holds_metadata
-@ipd.mutablestruct
-class Body:
-    atoms: 'AtomArray'
+@ipd.dc.dataclass
+class Body(ipd.dev.HoldsMetadata):
+    atoms: 'bs.AtomArray'  # type: ignore
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
-    rescen: np.ndarray = None
-    _atombvh: 'hg.SphereBVH_double' = None
-    _resbvh: 'hg.SphereBVH_double' = None
+    rescen: np.ndarray = ipd.npNone()
+    tokens: np.ndarray = ipd.npNone()
+    _atombvh: 'hg.SphereBVH_double' = None  # type: ignore
+    _resbvh: 'hg.SphereBVH_double' = None  # type: ignore
     hydro: bool = False
     hetero: bool = False
     water: bool = False
@@ -132,20 +132,26 @@ class Body:
     nres = property(lambda self: len(self.seq))
     natom = property(lambda self: len(self.atoms))
     positioned_atoms = property(lambda self: h.xform(self.pos, self.atoms))
+    asupos = property(lambda self: self.pos)
     com = property(lambda self: h.xform(self.pos, bs.mass_center(self.atoms)))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
     centered = property(lambda self: self.movedby(-self.com))
+    is_symmetric = False
 
     def __post_init__(self):
         if not self.hetero: self.atoms = self.atoms[~self.atoms.hetero]
         if not self.hydro: self.atoms = self.atoms[self.atoms.element != 'H']
         if not self.water: self.atoms = self.atoms[self.atoms.res_name != 'HOH']
         self.rescen = bs.apply_residue_wise(self.atoms, self.atoms.coord, np.mean, axis=0)
-        self._atombvh = hg.SphereBVH_double(self.atoms.coord)
-        self._resbvh = hg.SphereBVH_double(self.rescen)
+        self._atombvh = hg.SphereBVH_double(self.atoms.coord)  # type: ignore
+        self._resbvh = hg.SphereBVH_double(self.rescen)  # type: ignore
         self.asu = self
+        if not self.tokens: self.tokens = self.atoms.res_id
         # self.seq = ipd.atom.atoms_to_seqstr(self.atoms)
         assert h.valid44(self.pos)
+
+    def __len__(self):
+        return len(self.atoms)
 
     def __eq__(self, other):
         return self.atoms is other.atoms
@@ -160,11 +166,11 @@ class Body:
         return self.atoms is other.atoms and np.allclose(self.pos, other.pos)
 
     def hasclash(self, other=None, radius: float = 2, **kw) -> bool:
-        result = _bvh_binary_operation(hg.bvh_isect, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_isect', self, other, radius=radius, **kw)
         return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
-        result = _bvh_binary_operation(hg.bvh_count_pairs, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_count_pairs', self, other, radius=radius, **kw)
         return ipd.cast(int, result)
 
     def contacts(self, other=None, radius: float = 4, **kw) -> 'BodyContacts':
@@ -172,7 +178,7 @@ class Body:
 
     def slide_into_contact(self, other, along: ipd.Vec = (1, 0, 0), radius=3.0) -> 'Body':
         kwpos = self._get_pos_otherpos(other)
-        delta = _bvh_binary_operation(hg.bvh_slide_vec, self, other, rad=radius, dirn=along, **kwpos)
+        delta = _bvh_binary_operation('bvh_slide_vec', self, other, rad=radius, dirn=along, **kwpos)
         delta = np.min(delta)
         return self.movedby((delta - np.sign(delta) * radius) * np.array(along))
 
@@ -197,6 +203,12 @@ class Body:
 
     def atomsel(self, **kw):
         return ipd.atom.select(self.positioned_atoms, **kw)
+
+    def to_token_index(self, atomidx: np.ndarray) -> np.ndarray:
+        return self.tokens[atomidx]
+
+    def to_atom_index(self, tokenidx: np.ndarray) -> np.ndarray:
+        return np.where(self.tokens == tokenidx)[0]
 
     def __getitem__(self, *slices):
         return h.xformpts(self.pos, self.atoms.coord[tuple(slices)])
@@ -232,17 +244,21 @@ class Body:
         return copy.copy(self)
 
 @ipd.dev.holds_metadata
-@ipd.mutablestruct
-class SymBody:
+@ipd.dc.dataclass
+class SymBody(ipd.dev.HoldsMetadata):
     asu: Body
     frames: np.ndarray = ipd.field(lambda: np.eye(4)[None])
     pos: np.ndarray = ipd.field(lambda: np.eye(4))
     bodies = property(lambda self: [self.asu.movedby(self.pos @ f) for f in self.frames])
-    atoms = property(lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
+    positioned_atoms = property(
+        lambda self: ipd.atom.join(h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms)))
+    positioned_atomslist = property(lambda self: h.xform(self.pos, self.frames, self.asu.pos, self.asu.atoms))
     com = property(lambda self: h.xform(self.pos, self.frames, self.asu.com).mean(0))
     centered = property(lambda self: self.movedby(-self.com))
     rg = property(lambda self: h.radius_of_gyration(self[:], self.com))
     natoms = property(lambda self: len(self) * len(self.asu.atoms))
+    is_symmetric = property(lambda self: len(self.frames) > 1)
+    asupos = property(lambda self: h.xform(self.pos, self.frames[0], self.asu.pos))
 
     def __post_init__(self):
         assert h.valid44(self.frames)
@@ -273,19 +289,23 @@ class SymBody:
 
     def hasclash(self, other: 'Body|SymBody|None' = None, radius: float = 2, **kw) -> bool:
         kw |= self._get_pos_otherpos(other)
-        result = _bvh_binary_operation(hg.bvh_isect_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_isect_vec', self, other, radius=radius, **kw)
         return ipd.cast(bool, result)
 
     def nclash(self, other=None, radius: float = 2, **kw) -> int:
         kw |= self._get_pos_otherpos(other)
-        result = _bvh_binary_operation(hg.bvh_count_pairs_vec, self, other, radius=radius, **kw)
+        result = _bvh_binary_operation('bvh_count_pairs_vec', self, other, radius=radius, **kw)
         return ipd.cast(int, result)
 
-    def contacts(self, other=None, radius: float = 4, exclude: list[int] = (), **kw) -> 'BodyContacts':
-        if not isinstance(exclude, ipd.Iterable): exclude = [exclude]
+    def contacts(self,
+                 other=None,
+                 radius: float = 4,
+                 exclude: list[int] | int | None = None,
+                 **kw) -> 'BodyContacts':
+        if not isinstance(exclude, ipd.Iterable): exclude = [ipd.cast(int, exclude)]
         kw |= self._get_pos_otherpos(other, exclude=exclude)
-        result = _bvh_binary_operation(hg.bvh_collect_pairs_vec, self, other, radius=radius, **kw)
-        p, r = ipd.cast(tuple[np.ndarray, np.ndarray], result)
+        result = _bvh_binary_operation('bvh_collect_pairs_vec', self, other, radius=radius, **kw)
+        p, r = ipd.cast(tuple[ipd.NDArray_N2_int32, ipd.NDArray_MN2_int32], result)
         return BodyContacts(self, other or self, p, r, exclude)
 
     def subunit_contacts(self, subunit=0, radius=5):
@@ -296,7 +316,7 @@ class SymBody:
 
     def subunit_contact_matrix(self, subunit=0, radius=5):
         contactlist = self.subunit_contacts(subunit, radius=radius)
-        contactmat = contactlist.contact_matrix_stack(self.asu.atoms.res_id)
+        contactmat = contactlist.contact_blocks(self.asu.atoms.res_id)
         return contactmat
 
     def slide_into_contact(self, other, along=(1, 0, 0), radius=3.0) -> 'SymBody':
@@ -308,7 +328,7 @@ class SymBody:
 
     @property
     def coord(self):
-        return h.xform(self.pos, self.frames, self.atoms.coord)
+        return h.xform(self.pos, self.frames, self.asu.positioned_atoms)
 
     def movedby(self, xform):
         return self.movedto(xform, moveby=True)
@@ -329,6 +349,7 @@ class SymBody:
 
     def __getitem__(self, *slices):
         first, *rest = slices
+        rest = rest or slice(0, None)
         frames = self.frames[first]
         if rest: return h.xformpts(frames, self.asu[rest])
         else: pass
@@ -364,10 +385,24 @@ class SymBody:
     def clone(self):
         return copy.copy(self)
 
+    def labeled_chains(self, oneletter=False):
+        chains = self.positioned_atomslist
+        for i, a in enumerate(chains):
+            a.chain_id = np.char.add(str(i), a.chain_id)
+        atoms = ipd.atom.join(chains)
+        if oneletter:
+            uniqids = ipd.dev.UniqueIDs()
+            atoms.chain_id = uniqids(atoms.chain_id, reset=True)
+        return atoms
+
+    def dump(self, fname, **kw):
+        atoms = self.labeled_chains(oneletter=True)
+        ipd.atom.dump(atoms, fname, **kw)
+
 def _bvh_binary_operation(
-    op,
-    this,
-    other=None,
+    op: str,
+    this: Body | SymBody,
+    other: Body | SymBody | None = None,
     bvh=None,
     otherbvh=None,
     pos=None,
@@ -382,16 +417,16 @@ def _bvh_binary_operation(
     pos = this.pos if pos is None else pos
     otherpos = other.pos if otherpos is None else otherpos
     npos, nother = 1, 1
-    if op.__name__.endswith('_vec'):
+    if op.endswith('_vec'):
         pos, otherpos = pos.reshape(-1, 4, 4), otherpos.reshape(-1, 4, 4)
         npos, nother = len(pos), len(otherpos)
         pos = np.repeat(pos, nother, axis=0)
         otherpos = np.tile(otherpos, (npos, 1, 1))
     # ipd.icv(op, pos.shape, otherpos.shape)
     extra = kw.values()
-    if debug: ipd.icv(op, otherpos.shape)
-    result = op(bvh, otherbvh, pos, otherpos, *extra)
-    if op.__name__.endswith('_vec'):
+    if debug: print(op, otherpos.shape)
+    result = getattr(hg, op)(bvh, otherbvh, pos, otherpos, *extra)
+    if op.endswith('_vec'):
         if isinstance(result, tuple):
             val, ranges = result
             result = val, ranges.reshape(npos, nother, *ranges.shape[1:])
@@ -417,6 +452,11 @@ class BodyContacts:
     def __post_init__(self):
         self.subs = self.symbody.subs(without=self.exclude)
         self.body2 = self.body2 or self.symbody
+        same_atoms = self.symbody.asu.atoms is self.body2.asu.atoms
+        symmetric = self.symbody.is_symmetric or self.body2.is_symmetric
+        same_pos = not symmetric and h.allclose(self.symbody.asupos, self.body2.asupos)
+        if same_atoms and same_pos and not symmetric:
+            raise ValueError('Bodys must have different atoms, different positions, or non-C1 symmetry')
 
     def __len__(self):
         return len(self.pairs)
@@ -432,7 +472,7 @@ class BodyContacts:
                 yield isub1, isub2, sub1, sub2, iatom1, iatom2
             isub1 += 1
 
-    def contact_matrix_stack(self, tokens1=None, tokens2=None):
+    def contact_blocks(self, tokens1=None, tokens2=None):
         if tokens1 is None: tokens1 = self.symbody.asu.atoms.res_id
         if tokens2 is None: tokens2 = self.body2.asu.atoms.res_id
         tokens1, tokens2 = ipd.cast(np.ndarray, tokens1), ipd.cast(np.ndarray, tokens2)
@@ -448,8 +488,12 @@ class BodyContacts:
             mats.append(mat.T)  # so asu is first
             subs.append(self.subs[isub1])
         isub0 = self.exclude[0] if len(self.exclude) == 1 else None
-        return ipd.homog.ContactMatrixStack(np.stack(mats), np.stack(subs), isub0=isub0)
+        if not mats: raise ValueError('No contacts found')
+        return ipd.homog.ContactBlockMatrix(np.stack(mats),
+                                            np.stack(subs),
+                                            isub0=isub0,
+                                            tokens1=tokens1,
+                                            tokens2=tokens2)
 
     def __repr__(self):
         return f'SymContacts(subs: {self.exclude} vs {self.subs} ranges: {self.ranges.shape[:2]} pairs: {self.pairs.shape[0]})'
-

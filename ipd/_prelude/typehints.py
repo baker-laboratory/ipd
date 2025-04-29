@@ -1,5 +1,6 @@
 import sys
 import abc
+import dataclasses
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -48,22 +49,35 @@ class Frames44Meta(abc.ABCMeta):
     def __instancecheck__(cls, obj: Any) -> bool:
         return isinstance(obj, np.ndarray) and obj.shape[-2:] == (4, 4)
 
-class Frames44(np.ndarray, metaclass=Frames44Meta):
-    pass
-
 class FramesN44Meta(abc.ABCMeta):
 
     def __instancecheck__(cls, obj: Any) -> bool:
         return isinstance(obj, np.ndarray) and len(obj.shape) == 3 and obj.shape[-2:] == (4, 4)
 
+class FalseNDarray:
+
+    def __bool__(self) -> bool:
+        return False
+
+class Frames44(np.ndarray, metaclass=Frames44Meta):
+    pass
+
 class FramesN44(np.ndarray, metaclass=FramesN44Meta):
     pass
 
-class NDArray_MN2_int32(np.ndarray):
+class NDArray_MN2_int32(FalseNDarray):
     pass
 
-class NDArray_N2_int32(np.ndarray):
+class NDArray_N2_int32(FalseNDarray):
     pass
+
+def npNone():
+    return dataclasses.field(default_factory=FalseNDarray)
+
+def framesNone():
+    return dataclasses.field(default_factory=FramesN44)
+
+############## type checks ######################
 
 def isstr(s: Any) -> bool:
     return isinstance(s, str)

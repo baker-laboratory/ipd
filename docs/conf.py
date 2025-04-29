@@ -1,9 +1,8 @@
 import os
 import sys
 import inspect
-from typing import Type
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.append(os.path.abspath('..'))
 import importlib.metadata
 
 # -- Project information -----------------------------------------------------
@@ -26,6 +25,12 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
     # 'sphinx_gallery.gen_gallery',  # For example galleries like Biotite
+]
+
+autodoc_mock_imports = [
+    "ipd.cuda",
+    "ipd.cython",
+    "ipd/tests",
 ]
 
 # -- HTML Theme Configuration ------------------------------------------------

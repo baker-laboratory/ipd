@@ -1,6 +1,8 @@
 import copy
 import ipd
+from ipd.bunch import Bunch
 from ipd.dev.decorators import iterize_on_first_param
+import typing as t
 
 @iterize_on_first_param(basetype='notlist')
 def get_metadata(obj):
@@ -94,10 +96,23 @@ def holds_metadata(cls):
     cls.__copy_after_ipd_metadata__ = getattr(cls, '__copy__', None)
     cls.__copy__ = newcopy
 
-    assert not any(hasattr(cls, name) for name in 'set_metadata get_metadata sync_metadata meta'.split())
-    cls.set_metadata = set_metadata
-    cls.get_metadata = get_metadata
-    cls.sync_metadata = sync_metadata
+    # assert not any(hasattr(cls, name) for name in 'set_metadata get_metadata sync_metadata meta'.split())
     cls.meta = property(lambda self: get_metadata(self))
 
     return cls
+
+class HoldsMetadata:
+    __ipd_metadata__: dict[str, t.Any]
+
+    def set_metadata(self, dct=None, **metadata) -> None:
+        set_metadata(self, dct, **metadata)
+
+    def get_metadata(self) -> Bunch:
+        return get_metadata(self)
+
+    def sync_metadata(self, *objs) -> None:
+        sync_metadata(self, *objs)
+
+    @property
+    def meta(self) -> Bunch:
+        return get_metadata(self)

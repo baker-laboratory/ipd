@@ -1,5 +1,5 @@
+import sys
 import contextlib
-import os
 import nox
 
 nox.options.sessions = ["test_matrix"]
@@ -17,11 +17,10 @@ def test_matrix(session, extra):
         session.skip(f"Skipping {session.python}/{extra}, not in posargs {args}")
     session.install(f'.[dev,{extra}]' if extra else '.[dev]')
     args = ['pytest']
-    if nproc > 0: args.append(f'-n{min(nproc, os.cpu_count() or 1)}')
-    if session.python >= '3.12' and extra == 'all':
+    if nproc > 0: args.append('-n2')
+    if session.python >= '3.12' and extra == 'all' and sys.platform != "darwin":
         args.append('--doctest-modules')
     args.extend([
-        '--ignore', 'ipd/tests/homog/test_hgeom_library.py', '--ignore',
-        'ipd/tests/dev/code/test_format_code.py', '--ignore', 'ipd/cuda', '--ignore', 'ipd/tests/cuda'
+         '-m', 'not noci', '--ignore', 'ipd/tests/homog/test_hgeom_library.py', '--ignore', 'ipd/cuda', '--ignore', 'ipd/tests/cuda'
     ])
     session.run(*args)

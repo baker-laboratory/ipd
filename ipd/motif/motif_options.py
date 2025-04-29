@@ -5,7 +5,7 @@ import ipd
 from ipd import lazyimport
 from ipd.sym.sym_options import resolve_option
 
-hydra = lazyimport('hydra')
+# hydra = lazyimport('hydra')
 omegaconf = lazyimport('omegaconf')
 
 default_params = dict(motif_pdb='motif.pdb', )

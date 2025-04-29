@@ -51,6 +51,34 @@ if typing.TYPE_CHECKING:
     from biotite.structure import AtomArray
     from biotite.structure.io.pdb import PDBFile
     from biotite.structure.io.pdbx import CIFFile, BinaryCIFFile
+    from typing import overload, Literal
+
+    @overload
+    def readatoms(
+        fname: str | ipd.Path,
+        chainlist: Literal[False] = False,
+        chaindict: Literal[False] = False,
+        **kw,
+    ) -> AtomArray:
+        ...
+
+    @overload
+    def readatoms(
+        fname: str | ipd.Path,
+        chainlist: Literal[True] = True,
+        chaindict: Literal[False] = False,
+        **kw,
+    ) -> list[AtomArray]:
+        ...
+
+    @overload
+    def readatoms(
+        fname: str | ipd.Path,
+        chainlist: Literal[False] = False,
+        chaindict: Literal[True] = True,
+        **kw,
+    ) -> dict[str, AtomArray]:
+        ...
 
 bs = lazyimport('biotite.structure')
 bpdb = lazyimport('biotite.structure.io.pdb')
@@ -58,7 +86,11 @@ bpdbx = lazyimport('biotite.structure.io.pdbx')
 
 @ipd.dev.iterize_on_first_param_path
 @functools.lru_cache
-def readatoms(fname, **kw) -> 'AtomArray|list[AtomArray]':
+def readatoms(fname,
+              chainlist: bool = False,
+              chaindict: bool = False,
+              **kw) -> 'AtomArray|list[AtomArray]|dict[str,AtomArray]':
+    kw['chainlist'], kw['chaindict'] = chainlist, chaindict
     fname = str(fname)
     if not ipd.maybeimport('biotite'):
         raise ImportError('ipd.pdb.readatoms requires biotite')
@@ -70,6 +102,7 @@ def readatoms(fname, **kw) -> 'AtomArray|list[AtomArray]':
         elif fname.endswith(('.cif', '.bcif')): reader = _readatoms_cif
         else: raise ValueError(f'bad filename {fname}')
         atoms = reader(fname, file, **kw)
+        assert len(atoms)
         ipd.dev.set_metadata(atoms, fname=fname, pdbcode=ipd.Path(fname).stem)
         return atoms
 

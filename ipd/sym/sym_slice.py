@@ -25,7 +25,7 @@ class SymSlice:
 
     def __init__(self, mask, fit=False, kind=None):
         '''Args:
-            mask: a boolean mask of the slice
+            mask: a boolean mask of the slice OR a length and range tuple
             fit: whether to fit on this slice of coords
             kind: the kind of slice, prot=0, atom=1, gp=2
         Attributes:

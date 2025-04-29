@@ -35,16 +35,109 @@ Usage Examples:
 
 import os
 import numpy.typing as npt
-import typing
+import typing as t
 import numpy as np
 import ipd
-
-if typing.TYPE_CHECKING:
-    from biotite.structure import AtomArray
+from ipd.pdb.readstruct import readatoms as load, dump as dump
 
 bs = ipd.lazyimport('biotite.structure')
 
-from ipd.pdb.readstruct import readatoms as load, dump as dump
+if t.TYPE_CHECKING:
+    from biotite.structure import AtomArrayStack, AtomArray
+
+    @t.overload
+    def select(
+        atoms: AtomArray,
+        chainlist: t.Literal[False] = False,
+        chaindict: t.Literal[False] = False,
+        *,
+        caonly: bool = False,
+        bbonly: bool = False,
+        het: bool = True,
+        element: str = '',
+        chain_id: str | list[str] = '',
+        atom_name: str | list[str] = '',
+        res_name: str | list[str] = '',
+        path=None,
+    ) -> AtomArray:
+        pass
+
+    @t.overload
+    def select(
+        atoms: AtomArray,
+        chainlist: t.Literal[True] = True,
+        chaindict: t.Literal[False] = False,
+        *,
+        caonly: bool = False,
+        bbonly: bool = False,
+        het: bool = True,
+        element: str = '',
+        chain_id: str | list[str] = '',
+        atom_name: str | list[str] = '',
+        res_name: str | list[str] = '',
+        path=None,
+    ) -> list[AtomArray]:
+        pass
+
+    @t.overload
+    def select(
+        atoms: AtomArray | AtomArrayStack,
+        chainlist: t.Literal[False] = False,
+        chaindict: t.Literal[True] = True,
+        *,
+        caonly: bool = False,
+        bbonly: bool = False,
+        het: bool = True,
+        element: str = '',
+        chain_id: str | list[str] = '',
+        atom_name: str | list[str] = '',
+        res_name: str | list[str] = '',
+        path=None,
+    ) -> dict[str, AtomArray]:
+        pass
+
+def castaa(atoms) -> 'AtomArray':
+    from biotite.structure import AtomArray
+    return ipd.cast(AtomArray, atoms)
+
+missingstr=''
+
+def select(
+    atoms: 'AtomArray | AtomArrayStack',
+    chainlist=False,
+    chaindict=False,
+    caonly=False,
+    bbonly=False,
+    het=True,
+    element: str = missingstr,
+    chain_id: str | list[str] = missingstr,
+    atom_name: str | list[str] = missingstr,
+    res_name: str | list[str] = missingstr,
+    path=None,
+    # **kw,
+) -> 'AtomArray | list[AtomArray] | dict[str, AtomArray]':
+    from biotite.structure import AtomArrayStack
+    if isinstance(atoms, AtomArrayStack):
+        assert len(atoms) == 1, f'bad select {len(atoms)=} {atoms=}'
+        atoms = ipd.cast(AtomArrayStack, atoms[0])
+    meta = ipd.dev.get_metadata(atoms)
+    new = castaa(atoms)
+    assert len(new)
+    if caonly: new = castaa(new[new.atom_name == 'CA'])
+    elif bbonly: new = castaa(new[np.isin(new.atom_name, ('CA', 'N', 'C', 'O'))])  # type:ignore
+    if not het: new = castaa(new[~new.hetero])  # type:ignore
+    assert len(new)
+    for attr in 'element atom_name res_name chain_id'.split():
+        if (val := locals()[attr]) is not missingstr:
+            if isinstance(val, str):
+                new = castaa(new[getattr(new, attr) == val])
+            else:
+                new = castaa(new[np.isin(getattr(new, attr), val)])
+    assert len(new)
+    if chaindict: new = ipd.atom.chain_dict(new)
+    if chainlist: new = ipd.atom.split(new)
+    ipd.dev.set_metadata(new, meta)
+    return new
 
 def get(pdbcode, path='', **kw):
     if path: fname = os.path.join(path, f'{pdbcode}.bcif.gz')
@@ -196,37 +289,6 @@ def chain_id_ranges(atoms) -> dict[str, list[tuple[int, int]]]:
     breaks.append(len(atoms))
     return chain_ranges_from_breaks(atoms, breaks)
 
-def select(
-    atoms: 'AtomsArray',
-    chainlist=False,
-    caonly=False,
-    bbonly=False,
-    chaindict=False,
-    het=True,
-    element=None,
-    chain_id=None,
-    atom_name=None,
-    res_name=None,
-    **kw,
-) -> 'AtomArray':
-    if isinstance(atoms, bs.AtomArrayStack):
-        assert len(atoms) == 1, f'bad select {len(atoms)=} {atoms=}'
-        atoms = atoms[0]
-    meta = ipd.dev.get_metadata(atoms)
-    if caonly: atoms = atoms[atoms.atom_name == 'CA']
-    elif bbonly: atoms = atoms[atoms.atom_nameisin(('CA', 'N', 'C', 'O'))]
-    if not het: atoms = atoms[~atoms.hetero]
-    for attr in 'element atom_name res_name chain_id'.split():
-        if (val := locals()[attr]) is not None:
-            if isinstance(val, str):
-                atoms = atoms[getattr(atoms, attr) == val]
-            else:
-                atoms = atoms[np.isin(getattr(atoms, attr), val)]
-    if chaindict: atoms = ipd.atom.chain_dict(atoms)
-    if chainlist: atoms = ipd.atom.split(atoms)
-    ipd.dev.set_metadata(atoms, meta)
-    return atoms
-
 def pick_representative_chains(atomslist):
     chains = []
     for atoms in atomslist:
@@ -266,7 +328,7 @@ def is_protein(atoms, strict_protein_or_nucleic=False) -> npt.NDArray[np.bool_]:
 def join(atomslist, one_letter_chain=True):
     formt = f'0{len(str(len(atomslist)))}'
     for i, atoms in enumerate(atomslist):
-        atoms.chain_id = f'S{i:{formt}}' + atoms.chain_id
+        atoms.chain_id = np.char.add(f'S{i:{formt}}', atoms.chain_id)
     if one_letter_chain:
         unique_ids = ipd.dev.UniqueIDs()
         for i, atoms in enumerate(atomslist):
@@ -303,6 +365,10 @@ def primary_polymer_atoms(atoms):
 def com(atoms):
     return bs.mass_center(atoms)
 
+def chaincom(atoms):
+    chains = split_chains(atoms)
+    return com(chains)
+
 @ipd.iterize_on_first_param(basetype='AtomArray')
 def centered(atoms, primary_only=True, ignore_nan=True, ignore_garbage=True):
     ref = atoms = atoms.copy()
@@ -316,7 +382,7 @@ def centered(atoms, primary_only=True, ignore_nan=True, ignore_garbage=True):
     atoms.coord -= cen
     return atoms
 
-@ipd.iterize_on_first_param(basetype='AtomArray')
+@ipd.iterize_on_first_param(basetype='AtomArray', pass_wrap_ctx=True)
 def info(atoms, wrap_ctx):
     if wrap_ctx.firstcall:
         print(f'ipd.atom.info: {wrap_ctx.input_type()}')

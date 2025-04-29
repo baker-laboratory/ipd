@@ -15,11 +15,11 @@ else:
 import ipd
 
 pytest.skip(allow_module_level=True)
-pytest.importorskip('ipd.fit.qcp_rms_cuda')
+pytest.importorskip('ipd.cuda.rms.qcp_rms_cuda')
 import numpy as np
 
 import ipd.homog.thgeom as h
-from ipd.fit.qcp_rms import _rms
+from ipd.cuda.rms.qcp_rms import _rms
 
 def main():
     test_qcp_kernel_numba()
@@ -46,13 +46,13 @@ def test_qcp_kernel_numba():
     N1, N2, Natm = 19, 31, 17
     pts1 = th.randn((N1, Natm, 3), dtype=th.float32, device='cuda')
     pts2 = th.randn((N2, Natm, 3), dtype=th.float32, device='cuda')
-    a, b, c1, c2, iprod, E0 = ipd.fit.calc_iprod_E0(pts1, pts2)
+    a, b, c1, c2, iprod, E0 = ipd.cuda.rms.calc_iprod_E0(pts1, pts2)
     rms2 = th.empty(N1 * N2, device='cuda')
     xfit1 = th.empty((N1 * N2, 4, 4), device='cuda')
-    ipd.fit.numba_kernel_qcp_raw[len(iprod), 256](rms2, xfit1, iprod, E0, Natm, True)
+    ipd.cuda.rms.numba_kernel_qcp_raw[len(iprod), 256](rms2, xfit1, iprod, E0, Natm, True)
     rms2 = rms2.reshape(N1, N2)
     xfit1 = xfit1.reshape(N1, N2, 4, 4)
-    rms2, xfit2 = ipd.fit.rmsd(pts1.cpu(), pts2.cpu(), True)
+    rms2, xfit2 = ipd.cuda.rms.rmsd(pts1.cpu(), pts2.cpu(), True)
     # ipd.icv(xfit1[...,:3,:3])
     # ipd.icv(xfit2[...,:3,:3])
     assert th.allclose(rms2.cpu(), rms2, atol=1e-3)
@@ -64,20 +64,20 @@ def test_rms_perf():
         pts1 = th.randn((100, 50, 3), dtype=th.float32, device=dev)
         pts2 = th.randn((100, 50, 3), dtype=th.float32, device=dev)
         count = 100 if dev == 'cuda' else 1
-        ipd.fit.rmsd(pts1, pts2)
+        ipd.cuda.rms.rmsd(pts1, pts2)
         if dev == 'cuda':
-            t = timeit(lambda: ipd.fit.rmsd(pts1, pts2, usenumba=True), number=count)
+            t = timeit(lambda: ipd.cuda.rms.rmsd(pts1, pts2, usenumba=True), number=count)
             print(f'numba noxform {t/count*1000:7.3f}ms')
-        t = timeit(lambda: ipd.fit.rmsd(pts1, pts2), number=count)
+        t = timeit(lambda: ipd.cuda.rms.rmsd(pts1, pts2), number=count)
         print(f'{dev:4}  noxform {t/count*1000:7.3f}ms')
-        t = timeit(lambda: ipd.fit.rmsd(pts1, pts2, getfit=True), number=count)
+        t = timeit(lambda: ipd.cuda.rms.rmsd(pts1, pts2, getfit=True), number=count)
         print(f'{dev:4} getfit {t/count*1000:7.3f}ms')
 
 def test_rms():
     for dev in 'cuda cpu'.split():
         pts1 = th.randn((13, 11, 3), dtype=th.float32, device=dev)
         pts2 = th.randn((7, 11, 3), dtype=th.float32, device=dev)
-        rms1, xfit1 = ipd.fit.rmsd(pts1, pts2, getfit=True)
+        rms1, xfit1 = ipd.cuda.rms.rmsd(pts1, pts2, getfit=True)
         rms2 = th.empty([13, 7])
         xfit2 = th.empty([13, 7, 4, 4])
         for i in range(len(pts1)):

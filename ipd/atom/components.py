@@ -39,9 +39,10 @@ def find_components_by_seqaln_rmsfit(
     finalresult=None,
     idx=None,
     maxsub=60,
-    minatoms=10,
-    prune_res=True,
-    protein_only=True,
+    prune_res:bool=True,
+    protein_only:bool=True,
+    pickchain: str = 'largest',
+    min_chain_atoms: int = 10,
     **kw,
 ):
     """
@@ -93,30 +94,10 @@ def find_components_by_seqaln_rmsfit(
     if protein_only: atomslist = ipd.atom.remove_nonprotein(atomslist)
     idx = np.arange(len(atomslist))
     finalresult = Components(source_=atomslist, tolerances_=tol)
-    return find_components_by_seqaln_rmsfit_recurse(atomslist, tol, finalresult, idx)
-
-@ipd.dev.timed
-def find_components_by_seqaln_rmsfit_recurse(atomslist, tol, finalresult, idx):
-    alignment = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0], match=[True ])
-    ca = [a[(a.atom_name == 'CA') & ~a.hetero] for a in atomslist]
-    aligned_on_protein = accumulate_seqalign_rmsfit(ca, alignment.mapwise.append)
-    if not aligned_on_protein:
-        phos = [a[a.atom_name == 'P'] for a in atomslist]
-        aligned_on_nucleic = accumulate_seqalign_rmsfit(phos, alignment.mapwise.append)
-        if not aligned_on_nucleic:
-            return finalresult
-
-    assert aligned_on_protein or aligned_on_nucleic
-    assert np.all(alignment.npwise(len) == len(atomslist))
-    finalresult.add_intermediate_result(alignment)
-    alignment.idx = idx
-    alignment = alignment.mapwise(ipd.homog.np_array)
-
-    ok = (alignment.rmsd < tol.rms_fit) & (alignment.seqmatch > tol.seqmatch)
-    finalresult.add(atoms=atomslist[0], **alignment.mapwise[ok])
-    if all(ok): return finalresult
-    unfound = [a for i, a in enumerate(atomslist) if not ok[i]]
-    return find_components_by_seqaln_rmsfit_recurse(unfound, tol, finalresult, idx[~ok])
+    comp = _find_components_by_seqaln_rmsfit_recurse(atomslist, tol, finalresult, idx)
+    if min_chain_atoms > 0:
+        merge_small_components(comp, pickchain, min_chain_atoms)
+    return comp
 
 @ipd.subscriptable_for_attributes
 @ipd.element_wise_operations
@@ -158,6 +139,13 @@ class Components:
     source_: list['bs.AtomArray'] = ipd.field(list)
     intermediates_: list[dict] = ipd.field(list)
     tolerances_: ipd.Tolerances = None
+
+    def symbody(self, component=None):
+        if not component and len(self) == 1: conponent = 0
+        return ipd.sym.SymBody(self.atoms[component], self.frames[component])
+
+    def symbodies(self):
+        return [self.symbody(i) for i in range(len(self))]
 
     def add(self, **atom_frame_match_rms_idx):
         """
@@ -273,6 +261,43 @@ class Components:
     def __len__(self):
         return len(self.atoms)
 
+def merge_small_components(
+    components: Components,
+    pickchain: str = 'largest',
+    min_chain_atoms: int = 0,
+    **kw,
+):
+    """
+    Process and refine alignment components by optionally merging small chains.
+
+    This function iterates over the alignment results stored in a `Components` container and processes each chain.
+    Depending on the provided parameters, it may merge chains that do not meet the minimum atom threshold,
+    based on chain selection strategies and the shape compatibility of transformation frames.
+
+    Parameters:
+        components (Components):
+            A Components object containing the alignment results.
+        pickchain (str, optional):
+            Strategy for selecting chains. Defaults to 'largest'.
+        min_chain_atoms (int, optional):
+            Minimum number of atoms required for a chain to be processed individually.
+            Chains with fewer atoms may be merged. Defaults to 0.
+        **kw:
+            Additional keyword arguments for customizing the processing behavior.
+
+    Returns:
+        None:
+            The function modifies the `components` object in place.
+    """
+    for i, atoms, frames in components.enumerate('atoms frames', order=reversed):
+        if len(atoms) < min_chain_atoms and i > 0:
+            if components.frames[i - 1].shape == frames.shape:
+                components.atoms[i - 1] += atoms
+                components.atoms.pop(i)
+                components.frames.pop(i)
+
+
+
 def stub(atoms):
     """
     Compute the transformation frame for an atomic structure using SVD on C-alpha atoms.
@@ -304,7 +329,30 @@ def stub(atoms):
     return ipd.homog.hframe(*Components.T, cen)
 
 @ipd.dev.timed
-def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
+def _find_components_by_seqaln_rmsfit_recurse(atomslist, tol, finalresult, idx):
+    alignment = ipd.Bunch(frames=[np.eye(4)], rmsd=[0], seqmatch=[1], idx=[0], match=[True])
+    ca = [a[(a.atom_name == 'CA') & ~a.hetero] for a in atomslist]
+    aligned_on_protein = _accumulate_seqalign_rmsfit(ca, alignment.mapwise.append)
+    if not aligned_on_protein:
+        phos = [a[a.atom_name == 'P'] for a in atomslist]
+        aligned_on_nucleic = _accumulate_seqalign_rmsfit(phos, alignment.mapwise.append)
+        if not aligned_on_nucleic:
+            return finalresult
+
+    assert aligned_on_protein or aligned_on_nucleic
+    assert np.all(alignment.npwise(len) == len(atomslist))
+    finalresult.add_intermediate_result(alignment)
+    alignment.idx = idx
+    alignment = alignment.mapwise(ipd.homog.np_array)
+
+    ok = (alignment.rmsd < tol.rms_fit) & (alignment.seqmatch > tol.seqmatch)
+    finalresult.add(atoms=atomslist[0], **alignment.mapwise[ok])
+    if all(ok): return finalresult
+    unfound = [a for i, a in enumerate(atomslist) if not ok[i]]
+    return _find_components_by_seqaln_rmsfit_recurse(unfound, tol, finalresult, idx[~ok])
+
+@ipd.dev.timed
+def _accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
     """
     Perform sequence alignment and RMSD fitting on a list of backbone atoms.
 
@@ -351,42 +399,3 @@ def accumulate_seqalign_rmsfit(bb, accumulator, min_align_points=3):
             ipd.dev.global_timer.checkpoint('hrmsfit')
             accumulator(xfit, rms, matchfrac, i, match)
     return True
-
-def merge_small_components(
-    components: Components,
-    pickchain: str = 'largest',
-    merge_chains: bool = True,
-    min_chain_atoms: int = 0,
-    **kw,
-):
-    """
-    Process and refine alignment components by optionally merging small chains.
-
-    This function iterates over the alignment results stored in a `Components` container and processes each chain.
-    Depending on the provided parameters, it may merge chains that do not meet the minimum atom threshold,
-    based on chain selection strategies and the shape compatibility of transformation frames.
-
-    Parameters:
-        components (Components):
-            A Components object containing the alignment results.
-        pickchain (str, optional):
-            Strategy for selecting chains. Defaults to 'largest'.
-        merge_chains (bool, optional):
-            If True, chains that do not meet the `min_chain_atoms` threshold may be merged with adjacent chains.
-            Defaults to True.
-        min_chain_atoms (int, optional):
-            Minimum number of atoms required for a chain to be processed individually.
-            Chains with fewer atoms may be merged. Defaults to 0.
-        **kw:
-            Additional keyword arguments for customizing the processing behavior.
-
-    Returns:
-        None:
-            The function modifies the `components` object in place.
-    """
-    for i, atoms, frames in components.enumerate('atoms frames', order=reversed):
-        if len(atoms) < min_chain_atoms and i > 0:
-            if components.frames[i - 1].shape == frames.shape:
-                components.atoms[i - 1] += atoms
-                components.atoms.pop(i)
-                components.frames.pop(i)

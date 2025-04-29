@@ -20,7 +20,7 @@ class CudaFunc(abc.ABC):
 
     def __call__(self, dist):
         if isinstance(dist, (int, float)): dist = [dist]
-        from ipd.voxel.voxel import _voxel
+        from ipd.cuda.voxel.voxel import _voxel
         dist = th.as_tensor(dist).to('cuda').to(th.float32)
         arg = th.as_tensor(self.arg).to('cuda').to(th.float32)
         return _voxel.eval_func(dist, self.label, arg)

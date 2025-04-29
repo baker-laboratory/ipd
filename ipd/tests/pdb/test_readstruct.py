@@ -1,16 +1,40 @@
 import pytest
-
+import evn
 import ipd
 
 pytest.importorskip('biotite')
 TEST_PDBS = [
-    '6u9d', '1hv4', '1hv4', '1ql2', '5im6', '1out', '3sne', '1dxh', '1n0e', '1wa3', '1a2n', '1n0e', '1bfr',
-    '1g5q', '3woc', '7abl', '2tbv', '2btv'
+    '6u9d',
+    '1hv4',
+    '1hv4',
+    '1ql2',
+    '5im6',
+    '1out',
+    '3sne',
+    '1dxh',
+    '1n0e',
+    '1wa3',
+    '1a2n',
+    '1n0e',
+    '1bfr',
+    '1g5q',
+    '3woc',
+    '7abl',
+    '2tbv',
 ]
 ipd.pdb.download_test_pdbs(TEST_PDBS)
 
 def main():
-    ipd.tests.maintest(namespace=globals())
+    evn.testing.quicktest(namespace=globals())
+
+def test_readatoms_bcif_gz():
+    helper_read_8u51('8u51.bcif.gz')
+
+def test_readatoms_cif_gz():
+    helper_read_8u51('8u51.cif.gz')
+
+def test_readatoms_pdb():
+    helper_read_8u51('8u51.pdb.gz')
 
 def helper_test_readatoms_types(atomslist):
     assert isinstance(atomslist, list)
@@ -40,18 +64,6 @@ def helper_read_8u51(fname):
     ipd.ic(chainlens)
     assert chainlens == {'A': 267, 'B': 10}
     assert all(chatom.A.atom_name == 'CA')
-
-def test_readatoms_bcif_gz():
-    helper_read_8u51('8u51.bcif.gz')
-
-def test_readatoms_cif_gz():
-    helper_read_8u51('8u51.cif.gz')
-
-def test_readatoms_cif():
-    helper_read_8u51('8u51.cif')
-
-def test_readatoms_pdb():
-    helper_read_8u51('8u51.pdb.gz')
 
 if __name__ == '__main__':
     main()

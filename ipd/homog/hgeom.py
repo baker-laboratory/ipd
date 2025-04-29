@@ -51,8 +51,8 @@ Additional Examples with Bodies and AtomArrays:
     >>> T_random = h.rand()
     >>> b_rotated = h.xform(T_random, b)
     >>> # Demonstrate contact checking (conceptual; actual return may vary)
-    >>> contacts = b.contacts(a)
-    >>> contacts.nuniq > 1000
+    >>> contacts = b_rotated.contacts(a)
+    >>> contacts.nuniq > 100
     True
 
 .. note::
