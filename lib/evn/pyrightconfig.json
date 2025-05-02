@@ -1,0 +1,14 @@
+{
+    "venvPath": "/home/sheffler/sw/MambaForge/envs",
+    "venv": "rfdsym312",
+    // "venvPath": "/home/sheffler/rfd/lib/evn",
+    // "venv": ".venv",
+    "defineConstant": { "DEBUG": true },
+    // "typeCheckingMode": "enhanced",
+    "typeCheckingMode": "standard",
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "reportUnusedExpression": false,
+    "pythonPlatform": "Linux",
+    "pythonVersion": "3.13"
+}

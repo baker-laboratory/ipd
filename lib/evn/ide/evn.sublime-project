@@ -1,0 +1,152 @@
+{
+    "folders":
+    [
+        {
+            "path": "/home/sheffler/evn",
+            "folder_exclude_patterns":
+            [
+                "site-packages",
+                ".test*"
+            ]
+        }
+    ],
+    "settings":
+    {
+        "PyYapf":{
+         "yapf_command": "yapf",
+         "on_save": false
+         // "yapf_command": "/home/sheffler/src/willutil/willutil/app/codealign",
+        },
+        "project_environment": {
+            "env": {
+                "PYTHON": "/home/sheffler/sw/MambaForge/envs/evn/bin/python",
+                "PYTEST": "/home/sheffler/sw/MambaForge/envs/evn/bin/pytest",
+                "PIP": "/home/sheffler/sw/MambaForge/envs/evn/bin/pip",
+                // "PYTHON": "/home/sheffler/sw/MambaForge/envs/wu/bin/python",
+                "QT_QPA_PLATFORM": "xcb"
+            }
+        }
+    },
+    "build_systems":
+    [
+        {
+            "name": "run_tests_for_file",
+            "working_dir": "$folder",
+            "shell_cmd": "PYTHONPATH=. \\$PYTHON evn/tool/run_tests_for_file.py --quiet evn --filter-output  $file 2>&1 | tee $folder/ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        },
+        {
+            "name": "run_tests_for_file pytest",
+            "working_dir": "$folder",
+            "shell_cmd": "PYTHONPATH=. \\$PYTHON evn/tool/run_tests_for_file.py --quiet evn --pytest --filter-output $file 2>&1 | tee $folder/ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        },
+        {
+            "name": "run evn",
+            "working_dir": "$folder",
+            "shell_cmd": "PYTHONPATH=. \\$PYTHON -m evn run dispatch file 2>&1 | tee $folder/ide/sublime_build.log",
+            "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        },
+        {
+            "name": "ruff",
+            "working_dir": "$folder",
+            "shell_cmd": "PYTHONPATH=. ruff check evn 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^(.+\\.py):([0-9]+):(\\d+): (.*)$"
+        },
+        {
+            "name": "pytest all",
+            "working_dir": "$folder",
+            "shell_cmd": "uv run pytest --doctest-modules -k 'not Chrono' evn -xs 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^(?:\\s*File \"(.*?)\", line ([0-9]+)|(.+\\.py):([0-9]+):)"
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^E?(.+\\.py):([0-9]+):"
+        },
+        {
+            "name": "run file",
+            "shell_cmd": "cd $folder; PYTHONPATH=. \\$PYTEST $file 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^(.+\\.py):([0-9]+): "
+        },
+        {
+            "name": "pytest cli",
+            "working_dir": "$folder",
+            "shell_cmd": "PYTHONPATH=. \\$PYTHON evn/tests/cli/test_cli_config.py 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^(?:\\s*File \"(.*?)\", line ([0-9]+)|(.+\\.py):([0-9]+):)"
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^E?(.+\\.py):([0-9]+): "
+        },
+        {
+            "name": "pytest treediff",
+            "working_dir": "$folder",
+            "shell_cmd": "PYTHONPATH=. \\$PYTEST evn/tests/tree 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^(?:\\s*File \"(.*?)\", line ([0-9]+)|(.+\\.py):([0-9]+):)"
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^E?(.+\\.py):([0-9]+): "
+        },
+        {
+            "name": "pytest file",
+            "working_dir": "$folder",
+            "shell_cmd": "PYTHONPATH=. \\$PYTEST --doctest-modules $file -svx 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^(?:\\s*File \"(.*?)\", line ([0-9]+)|(.+\\.py):([0-9]+):)"
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^(.+\\.py):([0-9]+): "
+        },
+        {
+            "name": "testapp",
+            "working_dir": "$folder",
+            "shell_cmd": "(PYTHONPATH=. \\$PYTEST evn/tests/cli evn/cli evn/tests/config -s && PYTHONPATH=. \\$PYTHON -m evn.tests.cli.evn_test_app root --help) 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^(?:\\s*File \"(.*?)\", line ([0-9]+)|(.+\\.py):([0-9]+):)"
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^(.+\\.py):([0-9]+): "
+        },
+        {
+            "name": "doit",
+            "shell_cmd": "cd $folder; doit 2>&1 | tee $folder/ide/sublime_build.log; evn -i -f boilerplate $folder/ide/sublime_build.log",
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            "file_regex": "^(.+\\.py):([0-9]+): "
+        }
+        // {
+            // "name": "test filter",
+            // "shell_cmd": "cd $folder/evn; evn --filter boilerplate ~/rfd/sublime_build.log 2>&1 | tee $folder/ide/sublime_build.log",
+            // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+            // "file_regex": "^(.+\\.py):([0-9]+): "
+        // }
+        // {
+        //     "name": "install and pytest file",
+        //     "shell_cmd": "cd $folder; (\\$PIP uninstall -y evn && \\$PIP install .[dev] && \\$PYTHON -m pytest $file) 2>&1 | tee $folder/ide/sublime_build.log",
+        //     // "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        //     "file_regex": "^\\s*(.+?):(\\d+):(\\d+): error:"
+        // },
+        // {
+        //     "name": "nox",
+        //     "shell_cmd": "cd $folder; nox 2>&1 | tee $folder/ide/sublime_build.log",
+        //     "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        // },
+        // {
+        //     "name": "nox files",
+        //     "shell_cmd": "cd $folder; uv pip install pip pytest pytest-xdist numpy; uv pip install --no-index --find-links=wheelhouse evn]; uv run pytest $file 2>&1 | tee $folder/ide/sublime_build.log",
+        //     "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        // },
+        // {
+        //     "name": "tmp build",
+        //     "shell_cmd": "(cd /tmp; mamba activate wcpp; pip uninstall -y evn; pip install ~/evn; python -mpytest --pyargs evn) 2>&1 | tee $folder/ide/sublime_build.log",
+        //     "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        // },
+        // {
+        //     "name": "uv run pytest",
+        //     "shell_cmd": "mkdir -p /tmp/evn; cd /tmp/evn; uv pip install --upgrade /home/sheffler/evn; uv run pytest /home/sheffler/evn 2>&1 | tee $folder/ide/sublime_build.log",
+        //     "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        // },
+        // {
+        //     "name": "pytest ",
+        //     "shell_cmd": "cd $folder; \\$PYTHON -m pytest evn/tests/align/test_line_align.py 2>&1 | tee $folder/ide/sublime_build.log",
+        //     "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        // },
+        // {
+        //     "name": "evn runtestfile",
+        //     "shell_cmd": "cd $folder; PYTHONPATH=. evn.ools.run_tests_for_file evn $file 2>&1 | tee $folder/ide/sublime_build.log",
+        //     "file_regex": "^\\s*File \"(...*?)\", line ([0-9]*)"
+        // }
+    ]
+}
