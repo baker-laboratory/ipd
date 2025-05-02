@@ -16,10 +16,11 @@ def get_sym_frames(symid, opt, cenvec):
     frames, _ = get_nneigh(allframes, min(len(allframes), opt.max_nsub))
     return allframes, frames
 
-def sym_redock(xyz, Lasu, frames, opt, **_):
+def sym_redock(xyz, Lasu, frames, opt, mask=None, **_):
     # resolve clashes in placed subunits
     # could probably use this to optimize the radius as well
-    def clash_error_comp(R0, T0, xyz, fit_tscale):
+    # mask: 1d th.Tensor or list
+    def clash_error_comp(R0, T0, xyz, fit_tscale, mask=None):            
         xyz0 = xyz[:Lasu]
         xyz0_corr = xyz0.reshape(-1, 3) @ R0.T
         xyz0_corr = xyz0_corr.reshape(xyz0.shape) + fit_tscale*T0
@@ -35,9 +36,18 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
         Xsymmall = Xsymmall[:, 0, :]
         dsymm = th.cdist(Xsymmall, Xsymmall, p=2)
         dsymm_2 = dsymm.clone()
+        if mask is not None: 
+            mask0 = mask[:Lasu.item()] if isinstance(Lasu, th.Tensor) else th.tensor(mask[:Lasu])
+            mask_dsymm = ~(mask0[None, :].expand(Lasu, Lasu))
+            mask_dsymm = mask_dsymm | mask_dsymm.T
         # dsymm_2 = dsymm.clone().fill_diagonal_(9999) # avoid in-place operation
-        for i in range(0, len(Xsymmall), Lasu):
-            dsymm_2[i:i + Lasu, i:i + Lasu] = 9999
+        for i in range(0, len(Xsymmall), Lasu): # loop over rows
+            dsymm_2[i:i + Lasu, i:i + Lasu] = 9999 # masking intra-contact
+            if mask is not None: 
+                for j in range(0, len(Xsymmall), Lasu): # loop over cols
+                    if j == i: continue
+                    # masking inter-contacts involving masked residues
+                    dsymm_2[i:i + Lasu, j:j + Lasu][mask_dsymm] = 9999
         clash = th.clamp(opt.fit_wclash - dsymm_2, min=0)
         loss = th.sum(clash) / Lasu
         return loss
@@ -54,7 +64,7 @@ def sym_redock(xyz, Lasu, frames, opt, **_):
 
         def closure():
             lbfgs.zero_grad()
-            loss = clash_error_comp(Q2R(Q0), T0, xyz, opt.fit_tscale)
+            loss = clash_error_comp(Q2R(Q0), T0, xyz, opt.fit_tscale, mask=mask)
             loss.backward()  #retain_graph=True)
             return loss
 
