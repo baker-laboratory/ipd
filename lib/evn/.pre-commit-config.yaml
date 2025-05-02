@@ -1,0 +1,50 @@
+# .pre-commit-config.yaml
+repos:
+  # ✅ Ruff: linter, formatter, isort
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.3
+    hooks:
+      - id: ruff
+        args: [--fix, evn]
+
+  # ✅ Validate pyproject.toml metadata and structure
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+        # Optional extra validations from SchemaStore:
+        additional_dependencies: ["validate-pyproject-schema-store[all]"]
+
+  # ✅ Check for trailing whitespace, tabs, EOFs
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  # ✅ Detect merge conflict markers
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict
+
+  # ✅ Commitizen: Conventional Commit linter (Python-native)
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.21.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+        language_version: python3.12
+
+  - repo: https://github.com/christophmeissner/pytest-pre-commit
+    rev: 1.0.0
+    hooks:
+      - id: pytest
+        args: [--ignore,evn/format,--ignore,evn/tests/format]
+        additional_dependencies: ['assertpy', 'click', 'icecream', 'multipledispatch',
+          'PrettyPrintTree', 'pyyaml', 'rapidfuzz', 'rich', 'ruff',
+          'typing_extensions; python_version < "3.10"', 'wrapt','hypothesis', 'ninja_import', 'tomli']
+        pass_filenames: false
+        always_run: true

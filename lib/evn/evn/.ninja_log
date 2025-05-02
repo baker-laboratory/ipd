@@ -1,0 +1,19 @@
+# ninja log v6
+5	8	1743263471880486728	clean	a31eedcededa8236
+2	3394	1742848350937295409	CMakeFiles/_detect_formatted_blocks.dir/_detect_formatted_blocks.cpp.o	321030c8f6ac06de
+1	3137	1742769425983665321	CMakeFiles/_token_column_format.dir/_token_column_format.cpp.o	3fedb39f8e097117
+2	75	1743263495802377607	build.ninja	5135143e80ad25e2
+3394	5404	1742848354329259863	_detect_formatted_blocks.cpython-313-x86_64-linux-gnu.so	79fa6303d8f2ea96
+3137	4577	1742769429119610036	_token_column_format.cpython-313-x86_64-linux-gnu.so	ea4f560da7a4d621
+11	3974	1743263503484179822	CMakeFiles/_detect_formatted_blocks.dir/_detect_formatted_blocks.cpp.o	321030c8f6ac06de
+1	3983	1743263525384966447	CMakeFiles/_token_column_format.dir/_token_column_format.cpp.o	3fedb39f8e097117
+1	4008	1743263525386517830	CMakeFiles/_detect_formatted_blocks.dir/_detect_formatted_blocks.cpp.o	321030c8f6ac06de
+3983	5862	1743263529366927592	_token_column_format.cpython-313-x86_64-linux-gnu.so	ea4f560da7a4d621
+4009	6087	1743263529392927338	_detect_formatted_blocks.cpython-313-x86_64-linux-gnu.so	79fa6303d8f2ea96
+1	3909	1743264098392454494	CMakeFiles/_detect_formatted_blocks.dir/_detect_formatted_blocks.cpp.o	321030c8f6ac06de
+2	3926	1743264179137423957	CMakeFiles/_detect_formatted_blocks.dir/_detect_formatted_blocks.cpp.o	321030c8f6ac06de
+2	2095	1743264330011152905	_detect_formatted_blocks.cpython-313-x86_64-linux-gnu.so	79fa6303d8f2ea96
+2	3799	1743264383543193544	CMakeFiles/_detect_formatted_blocks.dir/_detect_formatted_blocks.cpp.o	321030c8f6ac06de
+2	3860	1743264383542338723	CMakeFiles/_token_column_format.dir/_token_column_format.cpp.o	3fedb39f8e097117
+3860	5699	1743264387400299269	_token_column_format.cpython-313-x86_64-linux-gnu.so	ea4f560da7a4d621
+3799	5880	1743264387339299892	_detect_formatted_blocks.cpython-313-x86_64-linux-gnu.so	79fa6303d8f2ea96

@@ -1,0 +1,97 @@
+[build-system]
+requires = ['scikit-build-core', 'pybind11', 'cibuildwheel']
+build-backend = 'scikit_build_core.build'
+
+[project]
+name = 'evn'
+version = '0.7.3'
+# dynamic = ["version"]
+# version_variable = "evn/__init__.py:__version__"
+requires-python = '>=3.9'
+dependencies = [
+    'assertpy',
+    'click>=8.0',
+    'icecream',
+    'json5',
+    'ninja_import',
+    'more_itertools',
+    'multipledispatch',
+    'PrettyPrintTree',
+    'pyyaml',
+    'rapidfuzz',
+    'rich',
+    'ruff',
+    'tomli',
+    'typing_extensions',
+    'wrapt',
+]
+
+[project.optional-dependencies]
+dev = [
+    'nox',
+    'tomlkit',
+    'doit>=0.36.0',
+    'hypothesis',
+    'jsonschema',
+    'pytest',
+    'pytest-xdist',
+    'pytest-benchmark',
+    'pytest-cov',
+    'pytest-sugar',
+]
+
+[project.scripts]
+evn = 'evn.__main__:main'
+
+[tool.pytest.ini_options]
+minversion = '8'
+addopts = '--doctest-modules'
+pythonpath = ['.']
+testpaths = ['evn']
+markers = [
+    'slow: marks tests as slow to run',
+    'ci: tests that should only run in ci',
+    'noci: tests that should not run in ci',
+]
+
+
+[tool.ruff]
+# include = ['evn']
+exclude = ["dodo.py", 'noxfile.py']
+lint.ignore = [
+   'E731', #  [ ] Do not assign a `lambda` expression, use a `def`
+   'E402', #  [ ] Module level import not at top of file
+   'E701', #  [ ] Multiple statements on one line (colon)
+   # 'F403', #  [ ] `from Attention_module import *` used; unable to detect undefined names
+   # 'F405',
+   # 'F821',
+   # 'F841',
+]
+lint.dummy-variable-rgx = '^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?)|ic)$'
+line-length = 113
+target-version = 'py312'
+format.quote-style = 'single'
+format.indent-style = 'space'
+format.docstring-code-format = true
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F403", "F401", "F405"]
+"**/test_*.py" = ["E501", "F841", "F403", 'F401', "F405", "F821", "F841", "F811"]
+
+[tool.pyright]
+exclude = [
+  "build",
+  "dist",
+  "**/__pycache__",
+  "evn/tests",
+]
+ignore = ["*.pyi"]
+include = ["evn"]
+venvPath = '/home/sheffler/sw/MambaForge/envs'
+venv = 'evn'
+# defineConstant = { DEBUG = true }
+typeCheckingMode = 'standard'
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnusedExpression = false
+pythonPlatform = 'Linux'
+pythonVersion = '3.13'
